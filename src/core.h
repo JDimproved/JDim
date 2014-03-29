@@ -275,6 +275,7 @@ namespace CORE
         void slot_image_pref();
         void slot_toggle_restore_views();
         void slot_toggle_fold_message();
+        void slot_toggle_select_item_sync();
         void slot_toggle_save_post_log();
         void slot_toggle_save_post_history();
         void slot_toggle_use_mosaic();

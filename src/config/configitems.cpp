@@ -306,7 +306,7 @@ const bool ConfigItems::load( const bool restore )
     // カテゴリを開いたときにツリービューをスクロールする
     scroll_tree = cf.get_option_bool( "scroll_tree", CONF_SCROLL_TREE );
 
-    // ツリービューの選択を、表示中のビューと同期するか
+    // ツリービューの選択を表示中のビューと同期する
     select_item_sync = cf.get_option_int( "select_item_sync", CONF_SELECT_ITEM_SYNC, 0, 2 );
 
     // 各ビューと枠との間の余白

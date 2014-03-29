@@ -631,6 +631,10 @@ void Core::run( const bool init, const bool skip_setupdiag )
                                                     CONFIG::get_fold_message() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_fold_message ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "SelectItemSync", "サイドバー／スレ一覧の選択を表示中のビューと同期する(_S)", std::string(),
+                                                    ( CONFIG::get_select_item_sync() != 0 ) ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_select_item_sync ) );
+
     m_action_group->add( Gtk::ToggleAction::create( "SavePostLog", "書き込みログを保存する(_A)", std::string(), CONFIG::get_save_post_log() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_save_post_log ) );
     m_action_group->add( Gtk::ToggleAction::create( "SavePostHist", "書き込み履歴(鉛筆マーク)を保存する(_P)", std::string(), CONFIG::get_save_post_history() ),
@@ -996,6 +1000,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
             "<menu action='General_Menu'>"
                 "<menuitem action='RestoreViews'/>"
                 "<menuitem action='ToggleFoldMessage'/>"
+                "<menuitem action='SelectItemSync'/>"
                 "<separator/>"
                 "<menuitem action='SavePostLog'/>"
                 "<menuitem action='SavePostHist'/>"

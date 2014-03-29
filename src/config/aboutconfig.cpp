@@ -146,7 +146,7 @@ void AboutConfig::append_rows()
     append_row( "ツリービューのエクスパンダを表示する", get_confitem()->tree_show_expanders, CONF_TREE_SHOW_EXPANDERS );
     append_row( "ツリービューのレベルインデント調整量(ピクセル)", get_confitem()->tree_level_indent, CONF_TREE_LEVEL_INDENT );
     append_row( "カテゴリを開いたときにスクロールする", get_confitem()->scroll_tree, CONF_SCROLL_TREE );
-    append_row( "ツリービューの選択を、表示中のビューと同期する ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )", get_confitem()->select_item_sync, CONF_SCROLL_TREE );
+    append_row( "ツリービューの選択を表示中のビューと同期する ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )", get_confitem()->select_item_sync, CONF_SCROLL_TREE );
 
     // 板一覧、履歴ビュー
     append_row( "" );

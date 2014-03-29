@@ -106,8 +106,9 @@ const int CONFIG::get_tree_level_indent(){ return get_confitem()->tree_level_ind
 // カテゴリを開いたときにツリービューをスクロールする
 const bool CONFIG::get_scroll_tree(){ return get_confitem()->scroll_tree; }
 
-// ツリービューの選択を、表示中のビューと同期するか ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )
+// ツリービューの選択を表示中のビューと同期する ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )
 const int CONFIG::get_select_item_sync(){ return get_confitem()->select_item_sync; }
+void CONFIG::set_select_item_sync( const int sync ){ get_confitem()->select_item_sync = sync; }
 
 const int CONFIG::get_view_margin(){ return get_confitem()->view_margin; }
 

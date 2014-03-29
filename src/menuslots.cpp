@@ -644,6 +644,18 @@ void Core::slot_toggle_fold_message()
 
 
 //
+// ツリービューの選択を表示中のビューと同期する
+//
+void Core::slot_toggle_select_item_sync()
+{
+    if( CONFIG::get_select_item_sync() != 0 )
+        CONFIG::set_select_item_sync( 0 ); // 同期しない
+    else
+        CONFIG::set_select_item_sync( 1 ); // 同期する
+}
+
+
+//
 // 書き込みログを保存
 //
 void Core::slot_toggle_save_post_log()
