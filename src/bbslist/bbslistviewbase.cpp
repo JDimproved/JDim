@@ -1739,7 +1739,7 @@ void BBSListViewBase::slot_opendir_as_board()
     const size_t dirid = m_treeview.path_to_dirid( m_path_selected );
     if( ! dirid ) return;
 
-    const std::string tab = "true";
+    const std::string tab = "newtab";
     const std::string mode = "";
     CORE::core_set_command( "open_sidebar_board", get_url(), tab, mode, MISC::itostr( dirid ) );
 }
@@ -1892,7 +1892,7 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
     if( ! m_treeview.get_row( path ) ) return false;
 
     std::string str_tab = "false";
-    if( tab ) str_tab = "true";
+    if( tab ) str_tab = "opentab";
 
     const std::string str_mode = "";
 

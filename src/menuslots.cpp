@@ -1204,7 +1204,7 @@ void Core::slot_show_sidebarboard()
         && SESSION::get_sidebar_current_url() != URL_HISTBOARDVIEW
         ){
 
-        const std::string tab = "true";
+        const std::string tab = "newtab";
         const std::string mode = "";
         CORE::core_set_command( "open_sidebar_board", SESSION::get_sidebar_current_url(), tab, mode, "0" );
     }
@@ -1240,7 +1240,7 @@ void Core::slot_create_vboard()
 //
 void Core::slot_show_bbs()
 {
-    CORE::core_set_command( "open_board" , DBTREE::url_subject( ENVIRONMENT::get_jdbbs() ), "true" );
+    CORE::core_set_command( "open_board" , DBTREE::url_subject( ENVIRONMENT::get_jdbbs() ), "newtab" );
 }
 
 
@@ -1249,7 +1249,7 @@ void Core::slot_show_bbs()
 //
 void Core::slot_show_old2ch()
 {
-    CORE::core_set_command( "open_board" , DBTREE::url_subject( ENVIRONMENT::get_jd2chlog() ), "true" );
+    CORE::core_set_command( "open_board" , DBTREE::url_subject( ENVIRONMENT::get_jd2chlog() ), "newtab" );
 }
 
 

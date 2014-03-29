@@ -2413,7 +2413,7 @@ void BoardViewBase::slot_open_browser()
 const bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab, const bool reget )
 {
     std::string str_tab = "false";
-    if( tab ) str_tab = "true";
+    if( tab ) str_tab = "opentab";
 
     std::string mode = std::string();;
 

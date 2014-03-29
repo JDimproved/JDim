@@ -143,7 +143,7 @@ const bool HistorySubMenu::open_history( const int i )
 #ifdef _DEBUG
         std::cout << "open " << info_list[ i ].url << std::endl;
 #endif
-        const std::string tab = "true";
+        const std::string tab = "newtab";
         const std::string mode = "";
 
         switch( info_list[ i ].type ){

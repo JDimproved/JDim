@@ -947,7 +947,7 @@ void Admin::update_status( View* view, const bool force )
 // "false" ならアクティブなタブを置き換える ( デフォルト )
 // "true" なら一番右側に新しいタブを開く
 // "right" ならアクティブなタブの右に開く
-// "newtab" なら設定によってアクティブなタブの右に開くか一番右側に開くか切り替える
+// "newtab" "opentab" なら設定によってアクティブなタブの右に開くか一番右側に開くか切り替える
 // "left" ならアクティブなタブの左に開く
 // "page数字" なら指定した位置にタブで開く
 // "replace" なら arg3 に指定したタブがあれば置き換え、なければ "newtab" で動作する
@@ -1076,14 +1076,21 @@ void Admin::open_view( const COMMAND_ARGS& command )
     // タブで表示
     if( open_tab ){
 
+        // 一番右側に新しいタブを開くに仮定
         int openpage = -1;
 
         // 現在のページの右に表示
         if( open_method == "right" ) openpage = page +1;
 
         // 設定によって切り替える
-        if( open_method == "newtab" ){
+        else if( open_method == "newtab" ){
             switch( CONFIG::get_newtab_pos() ){
+                case 1:  openpage = page +1; break;
+                case 2:  openpage = page; break;
+            }
+        }
+        else if( open_method == "opentab" ){
+            switch( CONFIG::get_opentab_pos() ){
                 case 1:  openpage = page +1; break;
                 case 2:  openpage = page; break;
             }
@@ -1096,7 +1103,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
         else if( open_method.find( "page" ) == 0 ) openpage = atoi( open_method.c_str() + 4 );
 
         // ロックされていたら右に表示
-        else if( open_method != "true" && page != -1 && is_locked( page ) ) openpage = page +1;
+        else if( open_method == "false" && page != -1 && is_locked( page ) ) openpage = page +1;
 
 #ifdef _DEBUG
         std::cout << "append openpage = " << openpage << " / page = " << page << std::endl;

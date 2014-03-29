@@ -445,8 +445,11 @@ const bool CONFIG::get_show_tab_icon(){ return get_confitem()->show_tab_icon; }
 // タブ上でマウスホイールを回転してタブを切り替える
 const bool CONFIG::get_switchtab_wheel(){ return get_confitem()->switchtab_wheel; }
 
-// ビュー内から他のビューを開いたときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )
+// 他のビューを開くときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )
 const int CONFIG::get_newtab_pos(){  return get_confitem()->newtab_pos; }
+
+// ツリービューで選択したビューを開くときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )
+const int CONFIG::get_opentab_pos(){  return get_confitem()->opentab_pos; }
 
 // 次スレ検索を開くときのタブの位置 ( 0: 次スレ検索タブ 1:新しいタブ 2:アクティブなタブを置き換え )
 const int CONFIG::get_boardnexttab_pos(){  return get_confitem()->boardnexttab_pos; }

@@ -1541,7 +1541,7 @@ void ArticleViewBase::slot_next_post()
 //
 void ArticleViewBase::slot_jump()
 {
-    const std::string str_tab = "true";
+    const std::string str_tab = "newtab";
     const std::string str_mode = "auto";
     CORE::core_set_command( "open_article", m_url_article , str_tab, str_mode, m_jump_to, m_jump_from );
 }
