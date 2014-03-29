@@ -93,6 +93,7 @@ int board_col_diff;
 
 int board_col_since_time;
 int board_col_write_time;
+int board_col_access_time;
 
 bool win_show_sidebar;
 
@@ -453,6 +454,9 @@ void SESSION::init_session()
     // スレ一覧の 最終書込 の表示モード
     board_col_write_time = cf.get_option_int( "col_write_time", MISC::TIME_NORMAL, 0, MISC::TIME_NUM-1 );
 
+    // スレ一覧の 最終取得 の表示モード
+    board_col_access_time = cf.get_option_int( "col_access_time", MISC::TIME_NORMAL, 0, MISC::TIME_NUM-1 );
+
     embedded_img = cf.get_option_bool( "embedded_img", true );
 
     x_win_img = cf.get_option_int( "x_win_img", 0, 0, 8192 );
@@ -676,6 +680,7 @@ void SESSION::save_session()
 
         << "col_since_time = " << board_col_since_time << std::endl
         << "col_write_time = " << board_col_write_time << std::endl
+        << "col_access_time = " << board_col_access_time << std::endl
 
         << "embedded_img = " << embedded_img << std::endl
         << "x_win_img = " << x_win_img << std::endl
@@ -1149,6 +1154,10 @@ void SESSION::set_col_since_time( const int mode ){ board_col_since_time = mode;
 // スレ一覧の 最終書込 の表示モード
 const int SESSION::get_col_write_time() { return board_col_write_time; }
 void SESSION::set_col_write_time( const int mode ){ board_col_write_time = mode; }
+
+// スレ一覧の 最終取得 の表示モード
+const int SESSION::get_col_access_time() { return board_col_access_time; }
+void SESSION::set_col_access_time( const int mode ){ board_col_access_time = mode; }
 
 // 現在開いているサイドバーのページ
 const int SESSION::get_sidebar_current_page()

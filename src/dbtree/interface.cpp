@@ -1131,14 +1131,19 @@ void DBTREE::update_abone_all_article()
 
 
 // 全articlebaseクラスの書き込み時間とスレ立て時間の文字列をリセット
+void DBTREE::reset_all_since_date()
+{
+    DBTREE::get_root()->reset_all_since_date();
+}
+
 void DBTREE::reset_all_write_date()
 {
     DBTREE::get_root()->reset_all_write_date();
 }
 
-void DBTREE::reset_all_since_date()
+void DBTREE::reset_all_access_date()
 {
-    DBTREE::get_root()->reset_all_since_date();
+    DBTREE::get_root()->reset_all_access_date();
 }
 
 

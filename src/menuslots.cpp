@@ -179,7 +179,7 @@ void Core::slot_toggle_since( const int mode )
 
     SESSION::set_col_since_time( mode );
     DBTREE::reset_all_since_date();
-    BOARD::get_admin()->set_command( "relayout_all" );    
+    BOARD::get_admin()->set_command( "relayout_all" );
 }
 
 
@@ -196,7 +196,24 @@ void Core::slot_toggle_write( const int mode )
 
     SESSION::set_col_write_time( mode );
     DBTREE::reset_all_write_date();
-    BOARD::get_admin()->set_command( "relayout_all" );    
+    BOARD::get_admin()->set_command( "relayout_all" );
+}
+
+
+//
+// スレ一覧の最終取得の表示モード
+void Core::slot_toggle_access( const int mode )
+{
+    if( ! m_enable_menuslot ) return;
+    if( SESSION::get_col_access_time() == mode ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::slot_toggle_access mode = " << mode << std::endl;
+#endif
+
+    SESSION::set_col_access_time( mode );
+    DBTREE::reset_all_access_date();
+    BOARD::get_admin()->set_command( "relayout_all" );
 }
 
 

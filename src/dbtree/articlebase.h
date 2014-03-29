@@ -237,6 +237,7 @@ namespace DBTREE
         const std::string get_access_time_str();
         const time_t& get_access_time() const { return m_access_time.tv_sec; } // 秒
         const std::string& get_access_date(); // string型
+        void reset_access_date(){ m_access_date = std::string(); }
 
         // 最終書き込み時間
         const time_t& get_write_time() const { return m_write_time.tv_sec; } // 秒

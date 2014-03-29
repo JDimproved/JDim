@@ -438,9 +438,9 @@ const std::string& ArticleBase::get_access_date()
     if( m_access_time.tv_sec ){
 
         if( m_access_date.empty() 
-            || SESSION::get_col_write_time() == MISC::TIME_PASSED ){
+            || SESSION::get_col_access_time() == MISC::TIME_PASSED ){
         
-        	m_access_date = MISC::timettostr( m_access_time.tv_sec, SESSION::get_col_write_time() );
+            m_access_date = MISC::timettostr( m_access_time.tv_sec, SESSION::get_col_access_time() );
         }
     }
 

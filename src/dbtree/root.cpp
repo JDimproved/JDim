@@ -1595,15 +1595,21 @@ void Root::update_abone_all_article()
 //
 // 全boardbaseクラスに、それに属する全articlebaseクラスの書き込み時間とスレ立て時間の文字列をリセットさせる
 //
+void Root::reset_all_since_date()
+{
+    std::list< BoardBase* >::iterator it = m_list_board.begin();
+    for( ; it != m_list_board.end(); ++it ) ( *it )->reset_all_since_date();
+}
+
 void Root::reset_all_write_date()
 {
     std::list< BoardBase* >::iterator it = m_list_board.begin();
     for( ; it != m_list_board.end(); ++it ) ( *it )->reset_all_write_date();
 }
 
-
-void Root::reset_all_since_date()
+void Root::reset_all_access_date()
 {
     std::list< BoardBase* >::iterator it = m_list_board.begin();
-    for( ; it != m_list_board.end(); ++it ) ( *it )->reset_all_since_date();
+    for( ; it != m_list_board.end(); ++it ) ( *it )->reset_all_access_date();
 }
+

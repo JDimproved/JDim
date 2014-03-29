@@ -394,6 +394,10 @@ namespace SESSION
     const int get_col_write_time();
     void set_col_write_time( const int mode );
 
+    // スレ一覧の 最終取得 の表示モード
+    const int get_col_access_time();
+    void set_col_access_time( const int mode );
+
     // 現在開いているarticle の ARTICLE::DrawAreaBase
     ARTICLE::DrawAreaBase* get_base_drawarea();
 

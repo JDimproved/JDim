@@ -353,8 +353,9 @@ namespace DBTREE
     void update_abone_all_article();
 
     // 全articlebaseクラスの書き込み時間とスレ立て時間の文字列をリセット
-    void reset_all_write_date();
     void reset_all_since_date();
+    void reset_all_write_date();
+    void reset_all_access_date();
 
     // レスあぼーん
     // グローバルなあぼーん情報は globalconf が管理

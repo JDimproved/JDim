@@ -506,8 +506,9 @@ namespace DBTREE
         void clear_all_post_history();
 
         // 全スレの書き込み時間とスレ立て時間の文字列をリセット
-        void reset_all_write_date();
         void reset_all_since_date();
+        void reset_all_write_date();
+        void reset_all_access_date();
 
         // 実況の秒数
         const time_t get_live_sec() const{ return m_live_sec; }

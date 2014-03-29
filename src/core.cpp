@@ -447,6 +447,34 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( raction_write4,
                          sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_write ), MISC::TIME_PASSED ) );
 
+    // 最終アクセス
+    Gtk::RadioButtonGroup radiogroup_access;
+    m_action_group->add( Gtk::Action::create( "Access_Menu", "スレ一覧の最終取得表示(_N)" ) );
+    Glib::RefPtr< Gtk::RadioAction > raction_access0 = Gtk::RadioAction::create( radiogroup_access, "Access_Normal", "年/月/日 時:分" );
+    Glib::RefPtr< Gtk::RadioAction > raction_access1 = Gtk::RadioAction::create( radiogroup_access, "Access_NoYear", "月/日 時:分" );
+    Glib::RefPtr< Gtk::RadioAction > raction_access2 = Gtk::RadioAction::create( radiogroup_access, "Access_Week", "年/月/日(曜日) 時:分:秒" );
+    Glib::RefPtr< Gtk::RadioAction > raction_access3 = Gtk::RadioAction::create( radiogroup_access, "Access_Second", "年/月/日 時:分:秒" );
+    Glib::RefPtr< Gtk::RadioAction > raction_access4 = Gtk::RadioAction::create( radiogroup_access, "Access_Passed", "～前" );
+
+    switch( SESSION::get_col_access_time() ){
+        case MISC::TIME_NORMAL: raction_access0->set_active( true ); break;
+        case MISC::TIME_NO_YEAR: raction_access1->set_active( true ); break;
+        case MISC::TIME_WEEK: raction_access2->set_active( true ); break;
+        case MISC::TIME_SECOND: raction_access3->set_active( true ); break;
+        case MISC::TIME_PASSED: raction_access4->set_active( true ); break;
+    }
+
+    m_action_group->add( raction_access0,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_access ), MISC::TIME_NORMAL ) );
+    m_action_group->add( raction_access1,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_access ), MISC::TIME_NO_YEAR ) );
+    m_action_group->add( raction_access2,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_access ), MISC::TIME_WEEK ) );
+    m_action_group->add( raction_access3,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_access ), MISC::TIME_SECOND ) );
+    m_action_group->add( raction_access4,
+                         sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_access ), MISC::TIME_PASSED ) );
+
     // ツールバー表示
     m_action_group->add( Gtk::Action::create( "Toolbar_Menu", "ツールバー表示(_T)" ) );
 
@@ -825,13 +853,19 @@ void Core::run( const bool init, const bool skip_setupdiag )
                         "<menuitem action='Since_Second'/>"
                         "<menuitem action='Since_Passed'/>"
                     "</menu>"
-                    "<separator/>"
                     "<menu action='Write_Menu'>"
                         "<menuitem action='Write_Normal'/>"
                         "<menuitem action='Write_NoYear'/>"
                         "<menuitem action='Write_Week'/>"
                         "<menuitem action='Write_Second'/>"
                         "<menuitem action='Write_Passed'/>"
+                    "</menu>"
+                    "<menu action='Access_Menu'>"
+                        "<menuitem action='Access_Normal'/>"
+                        "<menuitem action='Access_NoYear'/>"
+                        "<menuitem action='Access_Week'/>"
+                        "<menuitem action='Access_Second'/>"
+                        "<menuitem action='Access_Passed'/>"
                     "</menu>"
                 "</menu>"
                 "<separator/>"

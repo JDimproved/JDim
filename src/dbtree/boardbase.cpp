@@ -466,16 +466,22 @@ void BoardBase::clear_all_post_history()
 //
 // 全スレの書き込み時間とスレ立て時間の文字列をリセット
 //
-void BoardBase::reset_all_write_date()
-{
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->reset_write_date();
-}    
-
 void BoardBase::reset_all_since_date()
 {
     ArticleHashIterator it = m_hash_article->begin();
     for( ; it != m_hash_article->end(); ++it ) ( *it )->reset_since_date();
+}
+
+void BoardBase::reset_all_write_date()
+{
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ) ( *it )->reset_write_date();
+}
+
+void BoardBase::reset_all_access_date()
+{
+    ArticleHashIterator it = m_hash_article->begin();
+    for( ; it != m_hash_article->end(); ++it ) ( *it )->reset_access_date();
 }
 
 
