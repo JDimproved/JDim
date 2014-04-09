@@ -1,4 +1,4 @@
-ｊｄ##########################################
+##########################################
 # For using svn: do
 # export SVNROOT="http://svn.sourceforge.jp/svnroot/jd4linux/jd"
 # svn checkout $SVNROOT/trunk
