@@ -2251,6 +2251,12 @@ void BoardViewBase::slot_dropped_url_list( const std::list< std::string >& url_l
         CORE::DATA_INFO info;
         info.type = TYPE_FILE;
         info.url = MISC::remove_str( ( *it ), "file://" );
+#ifdef _WIN32
+        // 「file:///C:/hoge/123456789.dat」などの場合、追加の/を削除する。
+        if( ( info.url[ 0 ] == '/' && isalpha( info.url[ 1 ] ) && info.url[ 2 ] == ':' ) ){
+            info.url = info.url.erase( 0, 1 );
+        }
+#endif
         list_info.push_back( info );
 
 #ifdef _DEBUG
