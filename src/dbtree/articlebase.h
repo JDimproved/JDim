@@ -112,7 +112,10 @@ namespace DBTREE
         void set_key( const std::string& key ){ m_key = key; }
         void set_since_time( const time_t since ){ m_since_time = since; }
         void set_is_924( const bool is924 ){ m_924 = is924; }
-        
+
+        // dat落ちしたスレをロードするか
+        virtual const bool is_load_olddat(){ return false; }
+
       public:
 
         ArticleBase( const std::string& datbase, const std::string& id, bool cached );

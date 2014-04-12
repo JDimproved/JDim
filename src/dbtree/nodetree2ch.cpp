@@ -99,6 +99,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 #endif
 
     data.url = std::string();
+    data.byte_readfrom = 0;
 
     //rokka使用 (旧offlawは廃止)
     if( m_mode == MODE_OFFLAW ){
@@ -116,13 +117,19 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         std::ostringstream ss;
         ss << regex.str( 1 ) << "rokka" << regex.str( 3 ) << "/" << regex.str( 2 )
            << regex.str( 4 ) << regex.str( 5 );
+        
+        if( get_res_number() > 0 ){
+            // 総レス数+1からロードする
+            ss << "/" << ( get_res_number() + 1 ) << "-";
+        } else {
+            ss << "/";
+        }
 
         std::string sid = CORE::get_login2ch()->get_sessionid();
-        ss << "/?sid=" << MISC::url_encode( sid.c_str(), sid.length() );
+        ss << "?sid=" << MISC::url_encode( sid.c_str(), sid.length() );
 
         // レジュームは無し
         set_resume( false );
-        data.byte_readfrom = 0;
 
         data.url = ss.str();
     }
@@ -143,9 +150,12 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         ss << regex.str( 1 ) << "/test/offlaw2.so?shiro=kuma&sid=ERROR&bbs=" << regex.str( 2 )
            << "&key=" << regex.str( 3 );
 
-        // レジュームは無し
-        set_resume( false );
-        data.byte_readfrom = 0;
+        // レジューム設定
+        // レジュームを有りにして、サーバが range を無視して送ってきた場合と同じ処理をする
+        if( get_lng_dat() ) {
+            set_resume( true );
+        }
+        else set_resume( false );
 
         data.url = ss.str();
     }
@@ -176,15 +186,12 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 
         // レジュームは無し
         set_resume( false );
-        data.byte_readfrom = 0;
 
         data.url = ss.str();
     }
 
     // 普通の読み込み
     else{
-
-        data.url = get_url();
 
         // レジューム設定
         // 1byte前からレジュームして '\n' が返ってこなかったらあぼーんがあったってこと
@@ -193,6 +200,8 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
             set_resume( true );
         }
         else set_resume( false );
+
+        data.url = get_url();
     }
 
 #ifdef _DEBUG    
@@ -231,7 +240,8 @@ void NodeTree2ch::receive_finish()
     if( ! is_checking_update()
         && SESSION::is_online()
         && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM || get_code() == HTTP_NOT_FOUND
-             || ( m_mode == MODE_OFFLAW && ! get_ext_err().empty() ) // offlaw 読み込み失敗
+             || ( ( m_mode == MODE_OFFLAW || m_mode == MODE_OFFLAW2 )
+                     && ! get_ext_err().empty() ) // rokka or offlaw2 読み込み失敗
             )
         ){
 
@@ -269,7 +279,7 @@ void NodeTree2ch::receive_finish()
 
 */
 
-        // ログインしている場合は offlaw.cgi 経由で旧URLで再取得
+        // ログインしている場合は rokka 経由で旧URLで再取得
         if( m_mode == MODE_NORMAL && CORE::get_login2ch()->login_now() ) m_mode = MODE_OFFLAW;
 
         // offlaw2.so 経由で再取得 ( bbspink を除く )

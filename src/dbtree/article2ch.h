@@ -27,6 +27,11 @@ namespace DBTREE
         // subbbscgi のURL
         virtual const std::string url_subbbscgi();
 
+      protected:
+
+        // dat落ちしたスレをロードするか
+        virtual const bool is_load_olddat();
+
       private:
         
         virtual NodeTreeBase* create_nodetree();

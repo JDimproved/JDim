@@ -1166,8 +1166,8 @@ void ArticleBase::download_dat( const bool check_update )
 
     if( SESSION::is_online() && tv.tv_sec ) m_check_update_time = tv;
 
-    // DAT落ちしていてログイン中で無い時はロードしない
-    if( ( m_status & STATUS_OLD ) && ! CORE::get_login2ch()->login_now() ){
+    // DAT落ちしていてロードしない場合
+    if( ( m_status & STATUS_OLD ) && ! is_load_olddat() ) {
 #ifdef _DEBUG
         std::cout << "old !\n";
 #endif       

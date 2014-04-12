@@ -109,3 +109,16 @@ NodeTreeBase* Article2ch::create_nodetree()
 {
     return new NodeTree2ch( get_url(), get_org_url(), get_date_modified(), get_since_time() );
 }
+
+
+
+//
+// dat落ちしたスレをロードするか
+//
+const bool Article2ch::is_load_olddat()
+{
+    // 2chにログインしている場合
+    // または、offlaw2を使う設定の場合 ( bbspinkを除く )
+    return CORE::get_login2ch()->login_now()
+            || ( CONFIG::get_use_offlaw2_2ch() && get_url().find( ".bbspink.com" ) == std::string::npos );
+}
