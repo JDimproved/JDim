@@ -361,8 +361,8 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
         }
         if( *pos == '\n' ) { ++pos; continue; }
 
-        while( *pos != '<' ) ++pos;
-        ++pos;
+        while( *pos != '\0' && *pos != '<' ) ++pos;
+        if( *pos != '\0' ) ++pos;
         if( *pos != '>' ){
             MISC::ERRMSG( "subject.txt is broken" );
             break;
