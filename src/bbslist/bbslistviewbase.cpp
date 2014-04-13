@@ -2531,6 +2531,13 @@ void BBSListViewBase::select_item( const std::string& url )
         if( url_item.empty() ) return;
     }
 
+    // 現在選択しているものと一致する場合は何もしない
+    Gtk::TreePath path = m_treeview.get_current_path();
+    if( ! path.empty() ){
+        // 板一覧やお気に入りに、該当するURLが2つある場合がある
+        if( url_item == path2rawurl( path ) || url_item == path2url( path ) ) return;
+    }
+
     Gtk::TreePath closed_path;
     int closed_found = false;
 
@@ -2538,12 +2545,11 @@ void BBSListViewBase::select_item( const std::string& url )
     for( ; ! it.end(); ++it ){
 
         Gtk::TreeModel::Row row = *it;
-        const Glib::ustring url_row = row[ m_columns.m_url ];
+        Gtk::TreePath path = GET_PATH( row );
 
-        if( url_item == url_row ){
+        if( url_item == row[ m_columns.m_url ] || url_item == path2url( path ) ){
+
             // 最初に見つかったものにフォーカスする
-            Gtk::TreePath path = GET_PATH( row );
-
             if( m_treeview.is_expand( path ) ){
                 // 開いているエントリ
                 m_treeview.get_selection()->unselect_all();
