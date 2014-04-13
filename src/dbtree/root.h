@@ -164,6 +164,7 @@ namespace DBTREE
 
         // 板のタイプを判定
         int get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc );
+        int get_board_type( const std::string& root, const bool etc = false );
 
         // 板のタイプに合わせて板情報をセット
         bool set_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
@@ -189,7 +190,7 @@ namespace DBTREE
         int is_moved( const std::string& root,
                        const std::string& path_board,
                        const std::string& name,
-                       BoardBase** board_old );
+                       BoardBase** board_old, bool etc );
 
         void load_cache();
         void load_etc();

@@ -609,6 +609,39 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
 
 
 //
+// 板のタイプを簡易判定
+//
+// 通常の get_board_type() で得た root を再判定するときに使用する ( 板移転処理用 )
+//
+int Root::get_board_type( const std::string& root, const bool etc ){
+
+    int type = TYPE_BOARD_UNKNOWN;
+
+    // 2ch
+    if( ! etc && is_2ch( root ) )
+        type = TYPE_BOARD_2CH;
+
+    // JBBS
+    else if( is_JBBS( root ) )
+        type = TYPE_BOARD_JBBS;
+
+    // まち
+    else if( is_machi( root ) )
+        type = TYPE_BOARD_MACHI;
+
+    // ローカルファイル
+    else if( is_local( root ) )
+        type = TYPE_BOARD_LOCAL;
+
+    // その他は互換型
+    else
+        type = TYPE_BOARD_2CH_COMPATI;
+    
+    return type;
+}
+
+
+//
 // 板のタイプに合わせて板情報をセット
 // ついでに移転の自動判定と移転処理もおこなう
 //
@@ -629,7 +662,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 
     // 移転チェック
     BoardBase* board = NULL;
-    const int stat = is_moved( root, path_board, name, &board );
+    const int stat = is_moved( root, path_board, name, &board, etc );
 
 #ifdef _SHOW_BOARD
     std::cout << "root = " << root << " path_board = " << path_board
@@ -977,7 +1010,7 @@ bool Root::remove_board( const std::string& url )
 int Root::is_moved( const std::string& root,
                      const std::string& path_board,
                      const std::string& name,
-                     BoardBase** board_old )
+                     BoardBase** board_old, bool etc )
 {
     std::list< BoardBase* >::iterator it;
     for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
@@ -989,8 +1022,9 @@ int Root::is_moved( const std::string& root,
             // 既にリストに登録されてる
             if( board->get_root() == root ) return BOARD_EXISTS;
 
-            // 名前が同じなら移転
-            if( board->get_name() == name ){
+            // 名前が同じで、サイトが同じなら移転
+            if( board->get_name() == name
+                    && get_board_type( board->get_root() ) == get_board_type( root, etc ) ){
                 *board_old = board;
                 return BOARD_MOVED;
             }
