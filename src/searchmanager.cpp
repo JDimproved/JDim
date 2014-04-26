@@ -257,7 +257,7 @@ void Search_Manager::search_fin_title()
     if( ! m_searchloader->get_data().empty() ){
 
         JDLIB::Regex regex;
-        const size_t offset = 0;
+        size_t offset = 0;
         const bool icase = false;
         const bool newline = true;
         const bool usemigemo = false;
@@ -270,10 +270,13 @@ void Search_Manager::search_fin_title()
 
             std::string line = MISC::remove_space( *it );
 
+            if( line.empty() ) continue;
+
             // & が &amp; に置き換わっているので直す
             if( line.find( "&" ) != std::string::npos ) line = MISC::replace_str( line, "&amp;", "&" );
 
-            if( ! line.empty() && regex.exec( line, offset ) ){
+            offset = 0;
+            while( regex.exec( line, offset ) ){
 
                 SEARCHDATA data;
                 data.url_readcgi = DBTREE::url_readcgi( regex.str( 1 ), 0, 0 );
@@ -295,6 +298,9 @@ void Search_Manager::search_fin_title()
 
                     m_list_data.push_back( data );
                 }
+
+                // 1行に複数の検索結果が返ってくる場合があるので、オフセットを設定して再検索する
+                offset = regex.pos( 0 ) + regex.str( 0 ).length();
             }
         }
     }
