@@ -207,7 +207,7 @@ namespace CONFIG
 #define CONF_LOGIN2CH "https://2chv.tora3.net/futen.cgi"
 
 // p2の認証サーバのアドレス
-#define CONF_LOGINP2 "http://p2.moritapo.jp/p2/"
+#define CONF_LOGINP2 "http://p2.2ch.sc/p2/"
 
 // BEの認証サーバのアドレス
 #define CONF_LOGINBE "http://be.2ch.net/test/login.php"
@@ -216,11 +216,11 @@ namespace CONFIG
 #define CONF_URL_BBSMENU "http://menu.2ch.net/bbsmenu.html"
 
 // スレタイ検索用メニュータイトルアドレス
-#define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (find2ch)"
-#define CONF_URL_SEARCH_TITLE "http://find.moritapo.jp/?STR=$TEXTX&COUNT=50&TYPE=TITLE&BBS=ALL"
+#define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (find.2ch.net)"
+#define CONF_URL_SEARCH_TITLE "http://find.2ch.net/search?q=$TEXTE&board=&match=full&size=50"
 
 // スレタイ検索用正規表現
-#define CONF_REGEX_SEARCH_TITLE "<a href=\"(http[^\"]*)\">(.+?)</a> \\(([0-9]{1,4})\\)"
+#define CONF_REGEX_SEARCH_TITLE "<a [^>]*href=\"(http[^\"]*)\" class=\"title\">([^<]+)</a>"
 
 // WEB検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"
@@ -228,8 +228,8 @@ namespace CONFIG
 
 // p2 書き込み用アドレス
 
-#define CONF_URL_WRITEP2 "http://p2.moritapo.jp/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME"
-#define CONF_URL_RESP2 "http://p2.moritapo.jp/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME&popup=1&inyou=2&resnum=$NUMBER"
+#define CONF_URL_WRITEP2 "http://p2.2ch.sc/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME"
+#define CONF_URL_RESP2 "http://p2.2ch.sc/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME&popup=1&inyou=2&resnum=$NUMBER"
 
 // 2chのクッキー:HAP
 #define CONF_COOKIE_HAP ""
