@@ -117,19 +117,16 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         std::ostringstream ss;
         ss << regex.str( 1 ) << "rokka" << regex.str( 3 ) << "/" << regex.str( 2 )
            << regex.str( 4 ) << regex.str( 5 );
-        
-        if( get_res_number() > 0 ){
-            // 総レス数+1からロードする
-            ss << "/" << ( get_res_number() + 1 ) << "-";
-        } else {
-            ss << "/";
-        }
 
         std::string sid = CORE::get_login2ch()->get_sessionid();
-        ss << "?sid=" << MISC::url_encode( sid.c_str(), sid.length() );
+        ss << "/?sid=" << MISC::url_encode( sid.c_str(), sid.length() );
 
-        // レジュームは無し
-        set_resume( false );
+        // レジューム設定
+        // レジュームを有りにして、サーバが range を無視して送ってきた場合と同じ処理をする
+        if( get_lng_dat() ) {
+            set_resume( true );
+        }
+        else set_resume( false );
 
         data.url = ss.str();
     }
