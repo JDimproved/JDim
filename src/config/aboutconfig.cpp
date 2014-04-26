@@ -73,7 +73,7 @@ void AboutConfig::pack_widgets()
     get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
     get_vbox()->pack_start( m_scrollwin );
 
-    set_title( "about:config　高度な設定" );
+    set_title( "about:config 高度な設定" );
     show_all_children();
 
     append_rows();

@@ -709,7 +709,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "LivePref", "実況設定(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_live ) );
     m_action_group->add( Gtk::Action::create( "UsrCmdPref", "ユーザコマンドの編集(_U)..." ), sigc::mem_fun( *this, &Core::slot_usrcmd_pref ) );
     m_action_group->add( Gtk::Action::create( "FilterPref", "リンクフィルタの編集(_F)..." ), sigc::mem_fun( *this, &Core::slot_filter_pref ) );
-    m_action_group->add( Gtk::Action::create( "AboutConfig", "about:config(_A)..." ), sigc::mem_fun( *this, &Core::slot_aboutconfig ) );
+    m_action_group->add( Gtk::Action::create( "AboutConfig", "about:config 高度な設定(_C)..." ), sigc::mem_fun( *this, &Core::slot_aboutconfig ) );
 
 
     // プライバシー
@@ -1062,9 +1062,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
                 "<menuitem action='LivePref'/>"
                 "<menuitem action='UsrCmdPref'/>"
                 "<menuitem action='FilterPref'/>"
-                "<separator/>"
-                "<menuitem action='AboutConfig'/>"
             "</menu>"
+            "<separator/>"
+            "<menuitem action='AboutConfig'/>"
 
         "</menu>"
 
