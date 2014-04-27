@@ -83,12 +83,13 @@ char* NodeTree2chCompati::process_raw_lines( char* rawlines )
 {
     char* pos = rawlines;
 
-    if( *pos == '+' || *pos == '-' ){
+    if( *pos == '+' || *pos == '-' || *pos == 'E' ){
 
         int status = 0;
         if( pos[ 1 ] == 'O' && pos[ 2 ] == 'K' ) status = 1;
         if( pos[ 1 ] == 'E' && pos[ 2 ] == 'R' && pos[ 3 ] == 'R' ) status = 2;        
         if( pos[ 1 ] == 'I' && pos[ 2 ] == 'N' && pos[ 3 ] == 'C' && pos[ 4 ] == 'R' ) status = 3;
+        if( pos[ 0 ] == 'E' && pos[ 1 ] == 'R' && pos[ 2 ] == 'R' && pos[ 3 ] == 'O' && pos[ 4 ] == 'R' ) status = 4;
 
 #ifdef _DEBUG
         std::cout << "NodeTree2chCompati::process_raw_lines : raw mode status = " << status << std::endl;
