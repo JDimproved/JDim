@@ -217,7 +217,7 @@ namespace CONFIG
 
 // スレタイ検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (find.2ch.net)"
-#define CONF_URL_SEARCH_TITLE "http://find.2ch.net/search?q=$TEXTE&board=&match=full&size=50"
+#define CONF_URL_SEARCH_TITLE "http://find.2ch.net/search?q=$TEXTU&board=&match=full&size=50$OUTE"
 
 // スレタイ検索用正規表現
 #define CONF_REGEX_SEARCH_TITLE "<a [^>]*href=\"(http[^\"]*)\" class=\"title\">([^<]+)</a>"

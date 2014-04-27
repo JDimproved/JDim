@@ -339,37 +339,40 @@ const std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     cmd_out = MISC::replace_str( cmd_out, "$TITLE", DBTREE::article_subject( url ) );
     cmd_out = MISC::replace_str( cmd_out, "$BOARDNAME", DBTREE::board_name( url ) );
 
+    // 範囲選択した文字列
     std::string texti = text;
 
     if( cmd_out.find( "$TEXTIU" ) != std::string::npos ){
         if( ! show_replacetextdiag( texti, "$TEXTIU" ) ) return std::string();
         cmd_out = MISC::replace_str( cmd_out, "$TEXTIU", MISC::charset_url_encode_split( texti, "UTF-8" ) );
     }
-    if( cmd_out.find( "$TEXTU" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTU", MISC::charset_url_encode_split( texti, "UTF-8" ) );
-    }
     if( cmd_out.find( "$TEXTIX" ) != std::string::npos ){
         if( ! show_replacetextdiag( texti, "$TEXTIX" ) ) return std::string();
         cmd_out = MISC::replace_str( cmd_out, "$TEXTIX", MISC::charset_url_encode_split( texti, "EUC-JP" ) );
-    }
-    if( cmd_out.find( "$TEXTX" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTX", MISC::charset_url_encode_split( texti, "EUC-JP" ) );
     }
     if( cmd_out.find( "$TEXTIE" ) != std::string::npos ){
         if( ! show_replacetextdiag( texti, "$TEXTIE" ) ) return std::string();
         cmd_out = MISC::replace_str( cmd_out, "$TEXTIE", MISC::charset_url_encode_split( texti, "MS932" ) );
     }
-    if( cmd_out.find( "$TEXTE" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTE", MISC::charset_url_encode_split( texti, "MS932" ) );
-    }
     if( cmd_out.find( "$TEXTI" ) != std::string::npos ){
         if( ! show_replacetextdiag( texti, "$TEXTI" ) ) return std::string();
         cmd_out = MISC::replace_str( cmd_out, "$TEXTI",  texti );
+    }
+
+    if( cmd_out.find( "$TEXTU" ) != std::string::npos ){
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTU", MISC::charset_url_encode_split( texti, "UTF-8" ) );
+    }
+    if( cmd_out.find( "$TEXTX" ) != std::string::npos ){
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTX", MISC::charset_url_encode_split( texti, "EUC-JP" ) );
+    }
+    if( cmd_out.find( "$TEXTE" ) != std::string::npos ){
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTE", MISC::charset_url_encode_split( texti, "MS932" ) );
     }
     if( cmd_out.find( "$TEXT" ) != std::string::npos ){
         cmd_out = MISC::replace_str( cmd_out, "$TEXT",  texti );
     }
 
+    // 入力ダイアログを表示
     std::string input;
 
     if( cmd_out.find( "$INPUTU" ) != std::string::npos ){
@@ -388,6 +391,11 @@ const std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
         if( ! show_replacetextdiag( input, "$INPUT" ) ) return std::string();
         cmd_out = MISC::replace_str( cmd_out, "$INPUT",  input );
     }
+
+    // 結果のエンコード
+    cmd_out = MISC::replace_str( cmd_out, "$OUTU", "" );
+    cmd_out = MISC::replace_str( cmd_out, "$OUTX", "" );
+    cmd_out = MISC::replace_str( cmd_out, "$OUTE", "" );
 
 #ifdef _DEBUG
     std::cout << "Usrcmd_Manager::replace_cmd\n";

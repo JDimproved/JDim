@@ -20,7 +20,14 @@ SearchLoader::SearchLoader()
     std::string url = CONFIG::get_url_search_title();
 
     m_charset = "UTF-8";
-    if( url.find( "$TEXTX" ) != std::string::npos ) m_charset = "EUC-JP";
+
+    // 結果のエンコード指定を、検索結果のエンコードに設定する
+    if( url.find( "$OUTU" ) != std::string::npos ) m_charset = "UTF-8";
+    else if( url.find( "$OUTX" ) != std::string::npos ) m_charset = "EUC-JP";
+    else if( url.find( "$OUTE" ) != std::string::npos ) m_charset = "MS932";
+
+    // 結果のエンコード指定がない場合は、検索クエリのエンコードを検索結果のエンコードに設定する
+    else if( url.find( "$TEXTX" ) != std::string::npos ) m_charset = "EUC-JP";
     else if( url.find( "$TEXTE" ) != std::string::npos ) m_charset = "MS932";
 
 #ifdef _DEBUG
