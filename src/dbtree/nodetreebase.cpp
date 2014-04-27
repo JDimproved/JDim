@@ -1319,6 +1319,12 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
         add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left + size_in );
     }
 
+    // add_raw_lines() でレジュームに失敗したと判断したら、バッファをクリアする
+    if( m_resume == RESUME_FAILED ){
+        m_byte_buffer_lines_left = 0;
+        return;
+    }
+
     // 残りの分をバッファにコピーしておく
     m_byte_buffer_lines_left = size - size_in;
     if( m_byte_buffer_lines_left ) memcpy( m_buffer_lines, data + size_in, m_byte_buffer_lines_left );
@@ -1353,7 +1359,7 @@ void NodeTreeBase::receive_finish()
             // 特殊スレのdatには、最後の行に'\n'がない場合がある
             if( m_byte_buffer_lines_left > 0 ){
                 // 正常に読込完了した場合で、バッファが残っていれば add_raw_lines()にデータを送る
-                m_buffer_lines[ m_byte_buffer_lines_left + 1 ] = '\0';
+                m_buffer_lines[ m_byte_buffer_lines_left ] = '\0';
                 add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left );
                 // バッファをクリア
                 m_byte_buffer_lines_left = 0;
