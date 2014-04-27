@@ -429,16 +429,18 @@ const std::string MISC::cut_str( const std::string& str, const std::string& str1
 //
 const std::string MISC::replace_str( const std::string& str, const std::string& str1, const std::string& str2 )
 {
+    size_t i, pos = 0;
+    if( ( i = str.find( str1 , pos ) ) == std::string::npos ) return str;
+
     std::string str_out;
     str_out.reserve( str.length() );
 
-    size_t i, pos = 0;
-    while( ( i = str.find( str1 , pos ) ) != std::string::npos ){
-
+    do {
         str_out.append( str, pos, ( i - pos ) );
         str_out.append( str2 );
         pos = i + str1.length();
     }
+    while( ( i = str.find( str1 , pos ) ) != std::string::npos );
 
     str_out.append( str, pos, str.length() );
     return str_out;
