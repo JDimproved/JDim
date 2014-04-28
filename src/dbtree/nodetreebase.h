@@ -54,6 +54,7 @@ namespace DBTREE
         int m_resume;
 
         // レジューム時のチェック用
+        bool m_resume_cached;
         // 生データの先頭から RESUME_CHKSIZE バイト分を入れる
         char m_resume_head[ RESUME_CHKSIZE ];
 
@@ -326,6 +327,9 @@ namespace DBTREE
         const bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
         const int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link );
         const int check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos );
+
+        // レジューム時のチェックデータをキャッシュ
+        void set_resume_data( const char* data, size_t length );
 
         // あぼーんのクリア
         void clear_abone();

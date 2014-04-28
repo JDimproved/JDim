@@ -85,6 +85,7 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
       m_url( url ),
       m_lng_dat( 0 ),
       m_resume ( RESUME_NO ),
+      m_resume_cached( false ),
       m_broken( false ),
       m_heap( SIZE_OF_HEAP ),
       m_buffer_lines( NULL ),
@@ -1135,12 +1136,27 @@ void NodeTreeBase::load_cache()
             }
             receive_finish();
 
-            // レジューム時のチェック用に生データの先頭から RESUME_CHKSIZE バイト分をコピーしておく
-            // 詳しくは NodeTreeBase::receive_data() を参照せよ
-            const size_t length_chk = MIN( RESUME_CHKSIZE, str_length );
-            memcpy( m_resume_head, data, length_chk );
-            m_resume_head[ length_chk ] = '\0';
+            // レジューム時のチェックデータをキャッシュ
+            set_resume_data( data, str_length );
         }
+    }
+}
+
+
+//
+// レジューム時のチェックデータをキャッシュ
+//
+void NodeTreeBase::set_resume_data( const char* data, size_t length )
+{
+    // キャッシュされていない場合だけキャッシュする
+    if( ! m_resume_cached ){
+        m_resume_cached = true;
+
+        // レジューム時のチェック用に生データの先頭から RESUME_CHKSIZE バイト分をコピーしておく
+        // 詳しくは NodeTreeBase::receive_data() を参照せよ
+        const size_t length_chk = MIN( RESUME_CHKSIZE, length );
+        memcpy( m_resume_head, data, length_chk );
+        m_resume_head[ length_chk ] = '\0';
     }
 }
 
@@ -1491,6 +1507,8 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
         if( fwrite( rawlines, 1, lng, m_fout ) < lng ){
             MISC::ERRMSG( "write failed in NodeTreeBase::add_raw_lines\n" );
         }
+        // レジューム時のチェックデータをキャッシュ
+        set_resume_data( rawlines, lng );
     }
 
     // dat形式に変換
