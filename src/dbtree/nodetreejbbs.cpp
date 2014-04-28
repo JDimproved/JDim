@@ -29,8 +29,8 @@ using namespace DBTREE;
 
 NodeTreeJBBS::NodeTreeJBBS( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
-    , m_iconv( 0 )
-    , m_decoded_lines( 0 )
+    , m_iconv( NULL )
+    , m_decoded_lines( NULL )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeJBBS::NodeTreeJBBS url = " << get_url() << " modified = " << date_modified << std::endl;

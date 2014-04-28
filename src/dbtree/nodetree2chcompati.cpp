@@ -17,7 +17,7 @@ using namespace DBTREE;
 
 NodeTree2chCompati::NodeTree2chCompati( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
-    , m_iconv( 0 )
+    , m_iconv( NULL )
 {
 #ifdef _DEBUG
     std::cout << "NodeTree2chCompati::NodeTree2chCompati url = " << url << " modified = " << date_modified << std::endl;

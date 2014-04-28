@@ -85,7 +85,7 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
       m_url( url ),
       m_lng_dat( 0 ),
       m_resume ( RESUME_NO ),
-      m_broken( 0 ),
+      m_broken( false ),
       m_heap( SIZE_OF_HEAP ),
       m_buffer_lines( NULL ),
       m_parsed_text( NULL ),
@@ -93,7 +93,7 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
       m_check_update( false ),
       m_check_write( false ),
       m_loading_newthread( false ),
-      m_fout ( 0 )
+      m_fout ( NULL )
 {
     set_date_modified( modified );
 

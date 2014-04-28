@@ -13,7 +13,7 @@
 using namespace SKELETON;
 
 Loadable::Loadable()
-    : m_loader( 0 ),
+    : m_loader( NULL ),
       m_low_priority( false )
 {
     clear_load_data();

@@ -31,8 +31,8 @@ enum
 
 NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
-    , m_regex( 0 )
-    , m_iconv( 0 )
+    , m_regex( NULL )
+    , m_iconv( NULL )
     , m_decoded_lines( NULL )
     , m_buffer( NULL )
     , m_buffer_for_200( NULL )
