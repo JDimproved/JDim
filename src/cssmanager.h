@@ -112,6 +112,7 @@ namespace CORE
         int nodetype;
         int dat;
         char* chardat;
+        int attr;
 
         DOM* next_dom;
     };
@@ -124,6 +125,10 @@ namespace CORE
         DOMNODE_IMAGE,
     };
 
+    // attribute flags
+    enum{
+        DOMATTR_NOBR = 1,
+    };
 
     /////////////////////////////////////////
 

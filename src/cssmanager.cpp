@@ -616,6 +616,7 @@ DOM* Css_Manager::create_domnode( int type )
 {
     DOM* tmpdom = ( DOM* ) m_heap.heap_alloc( sizeof( DOM ) );
     tmpdom->nodetype = type;
+    tmpdom->attr = 0;
 
     if( m_last_dom ) m_last_dom->next_dom = tmpdom;
     else m_dom = tmpdom;
@@ -775,7 +776,10 @@ bool Css_Manager::read_html()
         else if( block.find( "mail" ) == 0 ) create_blocknode( DBTREE::BLOCK_MAIL );
         else if( block.find( "date" ) == 0 ) create_blocknode( DBTREE::BLOCK_DATE );
         else if( block.find( "id" ) == 0 ) create_blocknode( DBTREE::BLOCK_ID_NAME );
-        else if( block.find( "message" ) == 0 ) create_blocknode( DBTREE::BLOCK_MES );
+        else if( block.find( "message" ) == 0 ){
+            DOM* dom = create_blocknode( DBTREE::BLOCK_MES );
+            if( block.find( " br=\"no\"" ) != std::string::npos ) dom->attr |= DOMATTR_NOBR;
+        }
         else if( block.find( "image" ) == 0 ) create_imagenode();
     }
 

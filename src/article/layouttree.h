@@ -111,7 +111,10 @@ namespace ARTICLE
 
         // true なら連続空白ノードも表示
         bool m_show_multispace;
-        
+
+        // 前回のブロックにあった、DOMノードのattribute
+        int m_last_dom_attr;
+
       public:
         
         // show_abone : true ならあぼーんしたレスも表示する
@@ -133,7 +136,7 @@ namespace ARTICLE
         // joint == true の時はヘッダを作らないで、本文を前のツリーの続きに連結する
         void append_node( DBTREE::NODE* node_header, const bool joint );
 
-        void append_block( DBTREE::NODE* block, const int res_number, IMGDATA* imgdata );
+        void append_block( DBTREE::NODE* block, const int res_number, IMGDATA* imgdata = NULL, const int dom_attr = 0 );
 
         // html をパースして追加
         void append_html( const std::string& html );
@@ -159,7 +162,7 @@ namespace ARTICLE
         LAYOUT* create_layout_text( const char* text, const unsigned char* color_text, bool bold );
         LAYOUT* create_layout_link( const char* text, const char* link, const unsigned char* color_text, bool bold );
         LAYOUT* create_layout_idnum( const char* text, const unsigned char* color_text, bool bold );
-        LAYOUT* create_layout_br();
+        LAYOUT* create_layout_br( const bool nobr = false );
         LAYOUT* create_layout_hr();
         LAYOUT* create_layout_hspace( const int type );
         LAYOUT* create_layout_div( const int id );

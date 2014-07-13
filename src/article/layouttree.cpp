@@ -59,7 +59,8 @@ LayoutTree::LayoutTree( const std::string& url, const bool show_abone, const boo
       m_local_nodetree( 0 ),
       m_separator_header( NULL ),
       m_show_abone( show_abone ),
-      m_show_multispace( show_multispace )
+      m_show_multispace( show_multispace ),
+      m_last_dom_attr( 0 )
 {
 #ifdef _DEBUG
     std::cout << "LayoutTree::LayoutTree : url = " << url << " show_abone = " << m_show_abone << std::endl;
@@ -203,8 +204,11 @@ LAYOUT* LayoutTree::create_layout_idnum( const char* text, const unsigned char* 
 //
 // 改行ノード作成
 //
-LAYOUT* LayoutTree::create_layout_br()
+LAYOUT* LayoutTree::create_layout_br( const bool nobr )
 {
+    if( nobr ){
+        return create_layout_text( " ", NULL, false );
+    }
     LAYOUT* tmplayout = create_layout( DBTREE::NODE_BR );
     m_last_layout->next_layout = tmplayout;
     m_last_layout = tmplayout;
@@ -307,12 +311,13 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
     // 連結モード
     // 本文ブロックだけ追加
     if( joint ){
-        create_layout_br();
-        append_block( headinfo->block[ DBTREE::BLOCK_MES ], res_number, NULL );
+        create_layout_br( m_last_dom_attr & CORE::DOMATTR_NOBR );
+        append_block( headinfo->block[ DBTREE::BLOCK_MES ], res_number, NULL, m_last_dom_attr );
     }
     else{
 
         const CORE::DOM* dom = CORE::get_css_manager()->get_dom();
+        m_last_dom_attr = 0;
 
         IMGDATA imgdata;
         imgdata.num = 0;
@@ -325,6 +330,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
         m_vec_header[ res_number ] = header;
 
         while( dom ){
+            m_last_dom_attr = dom->attr;
 
             switch( dom->nodetype ){
 
@@ -333,7 +339,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
                     break;
 
                 case CORE::DOMNODE_BLOCK:
-                    append_block( headinfo->block[ dom->dat ], res_number, &imgdata );
+                    append_block( headinfo->block[ dom->dat ], res_number, &imgdata, dom->attr );
                     break;
 
                 case CORE::DOMNODE_TEXT:
@@ -376,7 +382,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
 //
 // 名前やメールなどのブロックのコピー
 //
-void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDATA* imgdata )
+void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDATA* imgdata, const int dom_attr )
 {
     if( ! block ) return;
 
@@ -423,7 +429,7 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
                 break;
 
             case DBTREE::NODE_BR:
-                tmplayout = create_layout_br();
+                tmplayout = create_layout_br( dom_attr & CORE::DOMATTR_NOBR );
                 break;
 
             case DBTREE::NODE_HR:
@@ -510,7 +516,7 @@ void LayoutTree::append_html( const std::string& html )
     int classid = CORE::get_css_manager()->get_classid( "comment" );
     *header->css = CORE::get_css_manager()->get_property( classid );
 
-    append_block( node_header->headinfo->block[ DBTREE::BLOCK_MES ], 0, NULL );
+    append_block( node_header->headinfo->block[ DBTREE::BLOCK_MES ], 0 );
 }
 
 
