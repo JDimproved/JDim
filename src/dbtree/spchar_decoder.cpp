@@ -88,6 +88,14 @@ const int decode_char_number( const char* in_char, int& n_in,  char* out_char, i
 //
 const int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
 {
+    // 1文字目が&以外の場合は出力しない
+    if( in_char[ 0 ] != '&' ){
+        n_in = n_out = 0;
+        if( out_char ) out_char[ n_out ] = '\0';
+
+        return DBTREE::NODE_NONE;
+    }
+
     // 数字参照 &#数字;
     if( in_char[ 1 ] == '#' ) return decode_char_number( in_char, n_in, out_char, n_out, only_check );
 
