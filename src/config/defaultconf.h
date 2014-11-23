@@ -36,7 +36,7 @@ namespace CONFIG
         CONF_LOADER_TIMEOUT_CHECKUPDATE = 10,  // 更新チェックのタイムアウト値
         CONF_USE_IPV6 = 1,          // ipv6使用
         CONF_CONNECTION_NUM = 2,    // 同一ホストに対する最大コネクション数( 1 または 2 )
-        CONF_USE_COOKIE_HAP = 1,    // 2chのクッキー:HAPを保存する
+        CONF_USE_COOKIE_HAP = 0,    // 2chのクッキー:HAPを保存する
         CONF_USE_OFFLAW2_2CH = 0,   // 2chの過去ログ取得時にofflaw2を使用する
         CONF_REFPOPUP_BY_MO = 0,    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
         CONF_NAMEPOPUP_BY_MO = 0,   // 名前の上にマウスオーバーしたときにポップアップ表示する
@@ -216,11 +216,11 @@ namespace CONFIG
 #define CONF_URL_BBSMENU "http://menu.2ch.net/bbsmenu.html"
 
 // スレタイ検索用メニュータイトルアドレス
-#define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (find.2ch.net)"
-#define CONF_URL_SEARCH_TITLE "http://find.2ch.net/search?q=$TEXTU&board=&match=full&size=50$OUTE"
+#define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (dig.2ch.net)"
+#define CONF_URL_SEARCH_TITLE "http://dig.2ch.net/?maxResult=100&atLeast=1&Link=1&AndOr=0&Sort=5&Bbs=all&924=1&password=dig&keywords=$TEXTU"
 
 // スレタイ検索用正規表現
-#define CONF_REGEX_SEARCH_TITLE "<a [^>]*href=\"(http[^\"]*)\" class=\"title\">([^<]+)</a>"
+#define CONF_REGEX_SEARCH_TITLE "<a href=\"(http[^\"]*)\">([^<]+) \\(([0-9]{1,4})\\)</a>"
 
 // WEB検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"
