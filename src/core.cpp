@@ -575,7 +575,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ShowSsspIcon", "BEアイコンを表示する(_B)", std::string(), CONFIG::get_show_ssspicon() ),
+    m_action_group->add( Gtk::ToggleAction::create( "ShowSsspIcon", "BEアイコン/エモーションを表示する(_B)", std::string(), CONFIG::get_show_ssspicon() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_show_ssspicon ) );
 
     // リスト表示項目設定

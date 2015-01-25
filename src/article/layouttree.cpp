@@ -414,7 +414,6 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
 
                 if( CONFIG::get_show_ssspicon() ){
                     tmplayout = create_layout_sssp( tmpnode->linkinfo->link );
-                    tmplayout->link = tmpnode->linkinfo->link;
                 }
                 else{
                     // 次が改行ノードの時は飛ばす

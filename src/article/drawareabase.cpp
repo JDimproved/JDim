@@ -53,6 +53,9 @@ enum
     EIMG_ICONSIZE = 32,  // 埋め込み画像のアイコンサイズ
     EIMG_MRG = 8,       // 埋め込み画像のアイコンの間隔
 
+    EIMG_SSSP_MRG = 2,       // SSSP画像のアイコンの間隔 ( 上下マージンのみ )
+    EIMG_SSSP_FULL = EIMG_SSSP_MRG * 2,
+
     WIDTH_FRAME = 1, // フレーム幅
 
     SPACE_TAB =  4, // 水平タブをどれだけ空けるか ( フォントの高さ * SPACE_TAB )
@@ -906,6 +909,8 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
                     if( current_div ){
 
                         y += br_size;
+                        br_size = m_font->br_size; // 次の行の改行位置をリセット
+
                         y += current_div->css->padding_bottom;
                         current_div->rect->height = y - current_div->rect->y;
 
@@ -958,7 +963,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
 
                     // レイアウトして次のノードの左上座標を計算
                     // x,y, br_size が参照なので更新された値が戻る
-                    layout_one_img_node( layout, x, y, br_size, m_width_client, is_popup, EIMG_MRG );
+                    layout_one_img_node( layout, x, y, br_size, m_width_client, is_popup, EIMG_MRG, EIMG_MRG );
 
                     break;
 
@@ -966,15 +971,12 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
 
                 case DBTREE::NODE_SSSP: // sssp アイコン
 
-                    y += EIMG_MRG;
-                    layout_one_img_node( layout, x, y, br_size, m_width_client, is_popup, 0 );
+                    // テキストノードの途中にインラインで表示する
+                    // x,y, br_size が参照なので更新された値が戻る
+                    layout_one_img_node( layout, x, y, br_size, m_width_client, is_popup, 0, EIMG_SSSP_FULL );
 
-                    if( layout->rect->height > m_font->br_size ){
-
-                        br_size = m_font->br_size;
-                        y += layout->rect->height - br_size;
-                    }
-
+                    // 上下マージンあわせた分の余白を、下マージン ( br_size ) に確保しておく
+                    // 上マージンの位置は、後でベースライン合わせするときに再調整する
                     break;
 
                     //////////////////////////////////////////
@@ -987,7 +989,7 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
                     layout->rect->width = layout->div ? layout->div->rect->width - layout->div->css->padding_left : width_view;
                     layout->rect->height = 1;
 
-                    y += 1;
+                    y += 2; // 水平線1px + 余白1px
 
                     // フォールスルー
 
@@ -998,6 +1000,8 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
                     x = 0;
                     if( layout->div ) x = layout->div->rect->x + layout->div->css->padding_left;
                     y += br_size;
+                    br_size = m_font->br_size; // 次の行の改行位置をリセット
+
                     break;
 
                     //////////////////////////////////////////
@@ -1033,6 +1037,9 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
         }
 
         y += br_size;
+
+        // 同じ行にあるノードのベースラインを調整
+        adjust_layout_baseline( header );
 
         // 属している div の高さ確定
         if( current_div ){
@@ -1127,6 +1134,111 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
     if( m_goto_bottom_reserve ) goto_bottom();
 
     return true;
+}
+
+
+//
+// 同じ行にあるノードのベースラインを調整
+//
+void DrawAreaBase::adjust_layout_baseline( LAYOUT* header )
+{
+    int top_y = -1, max_height = 0;
+    LAYOUT* line_layout = NULL;
+    bool line_onsssp = false;
+
+    LAYOUT* layout = header->next_layout;
+    while ( layout ){
+
+        switch( layout->type ){
+        case DBTREE::NODE_IDNUM: // 発言数ノード
+        case DBTREE::NODE_TEXT: // テキスト
+        case DBTREE::NODE_LINK: // リンク
+        case DBTREE::NODE_SSSP: // sssp アイコン
+            break;
+        default:
+            layout = layout->next_layout;
+            continue;
+        }
+
+        RECTANGLE* rect = layout->rect;
+        while ( rect ){
+
+            // 行ごとにベースラインを調整する
+            if( top_y < rect->y ){
+
+                if( line_onsssp ){
+                    max_height += EIMG_SSSP_MRG; // ssspアイコンの上マージンを加える
+                }
+
+                while ( line_layout ){
+
+                    switch( line_layout->type ){
+                    case DBTREE::NODE_IDNUM: // 発言数ノード
+                    case DBTREE::NODE_TEXT: // テキスト
+                    case DBTREE::NODE_LINK: // リンク
+                    case DBTREE::NODE_SSSP: // sssp アイコン
+                        break;
+                    default:
+                        line_layout = line_layout->next_layout;
+                        continue;
+                    }
+
+                    RECTANGLE* line_rect = line_layout->rect;
+                    while ( line_rect ){
+                        if( line_rect == rect ){
+                            goto NEXTLINE;
+                        }
+                        if( line_rect->y == top_y ){
+                            line_rect->y = top_y + max_height - line_rect->height;
+                        }
+                        line_rect = line_rect->next_rect;
+                    }
+                    line_layout = line_layout->next_layout;
+                }
+NEXTLINE:
+                top_y = rect->y;
+                max_height = rect->height;
+                line_layout = layout; // 行ごとにノードの先頭を覚えておく
+                line_onsssp = false;
+            }
+            if( max_height < rect->height ){
+                max_height = rect->height;
+            }
+            if( layout->type == DBTREE::NODE_SSSP ){ // sssp アイコン
+                line_onsssp = true;
+            }
+            rect = rect->next_rect;
+        }
+        layout = layout->next_layout;
+    }
+
+    // 最終行の調整を行う
+    if( line_onsssp ){
+        max_height += EIMG_SSSP_MRG; // ssspアイコンの上マージンを加える
+    }
+
+    while ( line_layout ){
+
+        switch( line_layout->type ){
+        case DBTREE::NODE_IDNUM: // 発言数ノード
+        case DBTREE::NODE_TEXT: // テキスト
+        case DBTREE::NODE_LINK: // リンク
+        case DBTREE::NODE_SSSP: // sssp アイコン
+            break;
+        default:
+            line_layout = line_layout->next_layout;
+            continue;
+        }
+
+        RECTANGLE* line_rect = line_layout->rect;
+        while ( line_rect ){
+            if( line_rect->y == top_y ){
+                line_rect->y = top_y + max_height - line_rect->height;
+            }
+            line_rect = line_rect->next_rect;
+        }
+        line_layout = line_layout->next_layout;
+    }
 }
 
 
@@ -1286,12 +1398,11 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
         }
 
         // 座標情報更新
-        br_size = m_font->br_size;
         rect->end = true;
         rect->x = x;
         rect->y = y;
         rect->width = width_line;
-        rect->height = br_size;
+        rect->height = m_font->br_size;
         rect->pos_start = pos_start;
         rect->n_byte = n_byte;
         rect->n_ustr = n_ustr;
@@ -1302,6 +1413,11 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
 //                  << " w = " << layout->rect->width << " h = " << layout->rect->height << std::endl;
 #endif
 
+        // 改行位置を、フォントよりも大きく設定しておく
+        if( br_size < m_font->br_size ){
+            br_size = m_font->br_size;
+        }
+
         x += rect->width;
         if( pos_to >= byte_to ) break;
 
@@ -1309,6 +1425,7 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
         x = 0;
         if( div ) x = div->rect->x + div->css->padding_left;
         y += br_size;
+        br_size = m_font->br_size; // 次の行の改行位置をリセット
 
         pos_start = pos_to;
     }
@@ -1323,9 +1440,11 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
 // br_size : 現在行での改行量
 // width_view : 描画領域の幅
 // init_popupwin : ポップアップウィンドウの初期サイズ計算をおこなう
+// mrg_right : 右マージン
 // mrg_bottom : 下マージン
 //
-void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_size, const int width_view, const bool init_popupwin, const int mrg_bottom )
+void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_size, const int width_view,
+                                        const bool init_popupwin, const int mrg_right, const int mrg_bottom )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::layout_one_img_node link = " << layout->link << std::endl;
@@ -1367,14 +1486,16 @@ void DrawAreaBase::layout_one_img_node( LAYOUT* layout, int& x, int& y, int& br_
         x = 0;
         if( div ) x = div->rect->x + div->css->padding_left;
         y += br_size;
-        br_size = m_font->br_size;
+        br_size = m_font->br_size; // 次の行の改行位置をリセット
 
         rect->x = x;
         rect->y = y;
     }
 
-    x += rect->width + mrg_bottom;
-    if( br_size < rect->height + mrg_bottom ) br_size = rect->height + mrg_bottom;
+    x += rect->width + mrg_right;
+    if( br_size < rect->height + mrg_bottom ){
+        br_size = rect->height + mrg_bottom;
+    }
 }
 
 
@@ -3717,7 +3838,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 
             //////////////////////////////////////////////
             //
-            // 現在のノードの中、又は左か右にあるか調べる
+            // 現在のテキストノードの中、又は左か右にあるか調べる
             //
             for(;;){
 
@@ -3726,7 +3847,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                 int char_width;
                 int byte_char;
 
-                // ノードの中にある場合
+                // テキストノードの中にある場合
                 if( is_pointer_on_rect( rect, layout->text, pos_start, pos_start + n_byte, x, y,
                                         pos, width_line, char_width, byte_char ) ){
 
@@ -3796,13 +3917,10 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
             //
             // 現在のノードと次のノード、又はヘッダブロックの間にポインタがあるか調べる
             //
-            int next_y = -1; // 次のノード or ブロックのy座標
 
             // 次のノードを取得する
             LAYOUT* layout_next = layout->next_layout;
             while( layout_next && ! ( layout_next->rect && layout_next->text ) ){
-
-                layout_next = layout_next->next_layout;
 
                 // 次のノードが画像ノード場合
                 // 現在のノードの右端にキャレットをセットして画像ノードを返す
@@ -3814,11 +3932,18 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                     caret_pos.set( layout, pos_start + n_byte, x, tmp_x + width, tmp_y );
                     return layout_next;
                 }
+
+                layout_next = layout_next->next_layout;
             }
 
-            // 次のノードのy座標を取得
-            if( layout_next ) next_y = layout_next->rect->y;
-            else next_y = y + BIG_HEIGHT;
+            // 残りのノードのうち、最小のy座標を取得
+            int next_y = y + BIG_HEIGHT; // 次のノード or ブロックのy座標
+            while( layout_next ){
+                if( layout_next->rect && next_y > layout_next->rect->y ){
+                    next_y = layout_next->rect->y;
+                }
+                layout_next = layout_next->next_layout;
+            }
 
             if( next_y > y ){
 

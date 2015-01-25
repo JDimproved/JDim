@@ -360,11 +360,13 @@ namespace ARTICLE
         void init_fontinfo( FONTINFO& fi, std::string& fontname );
 
         // レイアウト処理
+        void adjust_layout_baseline( LAYOUT* header );
         void set_align( LAYOUT* div, int id_end, int align );
         void set_align_line( LAYOUT* div, LAYOUT* layout_from, LAYOUT* layout_to, RECTANGLE* rect_from, RECTANGLE* rect_to,
                              int width_line, int align );
         void layout_one_text_node( LAYOUT* node, int& node_x, int& node_y, int& br_size, const int width_view );
-        void layout_one_img_node( LAYOUT* node, int& node_x, int& node_y, int& brsize, const int width_view, const bool init_popupwin, const int mrg_bottom );
+        void layout_one_img_node( LAYOUT* node, int& node_x, int& node_y, int& brsize, const int width_view,
+                                  const bool init_popupwin, const int mrg_right, const int mrg_bottom );
 
         // 文字の幅などの情報
         const int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );

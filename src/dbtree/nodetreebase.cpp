@@ -1079,8 +1079,7 @@ NODE* NodeTreeBase::append_html( const std::string& html )
     const bool digitlink = false;
     const bool bold = false;
     const bool ahref = true;
-    const bool sssp = false;
-    parse_html( html.c_str(), html.length(), COLOR_CHAR, digitlink, bold, ahref, sssp );
+    parse_html( html.c_str(), html.length(), COLOR_CHAR, digitlink, bold, ahref );
 
     clear();
 
@@ -1621,8 +1620,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     const bool digitlink = false;
     const bool bold = false;
     const bool ahref = false;
-    const bool sssp = true;
-    parse_html( section[ 3 ], section_lng[ 3 ], COLOR_CHAR, digitlink, bold, ahref, sssp );
+    parse_html( section[ 3 ], section_lng[ 3 ], COLOR_CHAR, digitlink, bold, ahref );
 
     // サブジェクト
     if( header->id_header == 1 ){
@@ -1672,7 +1670,6 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
     bool digitlink = true;
     const bool bold = true;
     const bool ahref = false;
-    const bool sssp = false;
 
     const bool defaultname = ( strncmp( m_default_noname.data(), str, lng ) == 0 );
 
@@ -1690,7 +1687,7 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
     // デフォルト名無しと同じときはアンカーを作らない
     if( defaultname ){
         digitlink = false;
-        parse_html( str, lng, color_name, digitlink, bold, ahref, sssp );
+        parse_html( str, lng, color_name, digitlink, bold, ahref );
     }
     else{
 
@@ -1710,7 +1707,7 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
             // </b>の前までパース
             if( i != pos ){
                 digitlink = true;
-                parse_html( str + pos, i - pos, color_name, digitlink, bold, ahref, sssp );
+                parse_html( str + pos, i - pos, color_name, digitlink, bold, ahref );
             }
             if( i >= lng ) break;
             pos = i + 4; // 4 = strlen( "</b>" );
@@ -1737,7 +1734,7 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
 
             // </b><b>の中をパース
             digitlink = false; // 数字が入ってもリンクしない
-            parse_html( str + pos, pos_end - pos, COLOR_CHAR_NAME_B, digitlink, bold, ahref, sssp );
+            parse_html( str + pos, pos_end - pos, COLOR_CHAR_NAME_B, digitlink, bold, ahref );
 
             pos = pos_end + 3; // 3 = strlen( "<b>" );
         }
@@ -1787,8 +1784,7 @@ void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
         const bool digitlink = true;
         const bool bold = false;
         const bool ahref = false;
-        const bool sssp = false;
-        parse_html( str, lng, color, digitlink, bold, ahref, sssp );
+        parse_html( str, lng, color, digitlink, bold, ahref );
 
         create_node_text( "]", color );
     }
@@ -1927,8 +1923,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             const bool digitlink = false;
             const bool bold = false;
             const bool ahref = true;
-            const bool sssp = false;
-            parse_html( str + start_block, lng_block, COLOR_CHAR, digitlink, bold, ahref, sssp );
+            parse_html( str + start_block, lng_block, COLOR_CHAR, digitlink, bold, ahref );
 
             // 次のブロックへ移動
             start = start_block + lng_block;
@@ -1953,9 +1948,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
 // bold : ボールド表示
 //
 // ahref : <a href=～></a> からリンクノードを作成する
-// (例) parse_html( "<a href=\"hoge.com\">hoge</a>", 27, COLOR_CHAR, false, false, true );
-//
-// enable_sssp : true の時はssspアイコンを有効にする( ssspは 1 レス 1 つだけアイコン表示)
+// (例) parse_html( "<a href=\"hoge.com\">hoge</a>", 27, COLOR_CHAR, false, false );
 //
 // (パッチ)
 //
@@ -1964,7 +1957,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
 // http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/28
 //
 void NodeTreeBase::parse_html( const char* str, const int lng, const int color_text,
-                               bool digitlink, const bool bold, const bool ahref, bool enable_sssp )
+                               bool digitlink, const bool bold, const bool ahref )
 {
     const char* pos = str;
     const char* pos_end = str + lng;
@@ -2290,9 +2283,8 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             lng_str = convert_amp( tmpstr, n_in ); // &amp; → &
 
             // ssspアイコン
-            if( enable_sssp && linktype == MISC::SCHEME_SSSP ){
+            if( linktype == MISC::SCHEME_SSSP ){
                 create_node_sssp( tmpreplace, lng_replace );
-                enable_sssp = false;
             }
 
             else {

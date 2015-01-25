@@ -316,9 +316,8 @@ namespace DBTREE
         //             false なら数字の前に >> がついてるときだけアンカーにする
         // bold : ボールド表示
         // ahref : <a href=～></a> からリンクノードを作成する
-        // enable_sssp : true の時はssspアイコンを有効にする( ssspは 1 スレ 1 つだけアイコン表示)
         void parse_html( const char* str, const int lng, const int color_text,
-                         bool digitlink, const bool bold, const bool ahref, const bool sssp );
+                         bool digitlink, const bool bold, const bool ahref );
 
         // 書き込みログ比較用文字列作成
         // m_buffer_write に作成した文字列をセットする
