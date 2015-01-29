@@ -2774,16 +2774,21 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
             std::string text = std::string( node->text + pos_start, n_byte );
             std::list< Pango::Item > list_item = m_context->itemize( text, attr );
 
+            Glib::RefPtr< const Pango::Font > font;
+            Pango::GlyphString grl;
+            Pango::Rectangle pango_rect;
+
             std::list< Pango::Item >::iterator it = list_item.begin();
             for( ; it != list_item.end(); ++it ){
 
                 Pango::Item &item = *it;
-                Pango::GlyphString grl = item.shape( text.substr( item.get_offset(), item.get_length() ) ) ;
-                Pango::Rectangle pango_rect = grl.get_logical_extents(  item.get_analysis().get_font() );
+                font = item.get_analysis().get_font();
+                grl = item.shape( text.substr( item.get_offset(), item.get_length() ) ) ;
+                pango_rect = grl.get_logical_extents( font );
                 int width = PANGO_PIXELS( pango_rect.get_width() );
 
-                m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x, y + m_font->ascent, grl );
-                if( node->bold ) m_backscreen->draw_glyphs( m_gc, item.get_analysis().get_font(), x +1, y + m_font->ascent, grl );
+                m_backscreen->draw_glyphs( m_gc, font, x, y + m_font->ascent, grl );
+                if( node->bold ) m_backscreen->draw_glyphs( m_gc, font, x +1, y + m_font->ascent, grl );
                 x += width;
             }
 
@@ -3941,6 +3946,9 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
             while( layout_next ){
                 if( layout_next->rect && next_y > layout_next->rect->y ){
                     next_y = layout_next->rect->y;
+                    if( next_y <= y ){
+                        break; // 小さいy座標のノードが見つかったので、次のノードの処理に進む
+                    }
                 }
                 layout_next = layout_next->next_layout;
             }

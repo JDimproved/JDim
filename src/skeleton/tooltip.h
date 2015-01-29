@@ -12,7 +12,6 @@ namespace SKELETON
 {
     class Tooltip : public PopupWinBase
     {
-        Glib::RefPtr< Gdk::GC > m_gc;
         Gtk::Label m_label;
 
         int m_counter;
