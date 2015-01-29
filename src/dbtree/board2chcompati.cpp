@@ -335,9 +335,6 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
     std::cout << "Board2chCompati::parse_subject\n";
 #endif 
 
-    // 半角で 1024 文字を越えると Pango-WARNING **: Invalid UTF-8 string passed to pango_layout_set_text() が表示されるので注意
-    const int max_subject = 1024;  
-
     const char* pos = str_subject_txt;
 
     while( *pos != '\0' ){
@@ -384,7 +381,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
             MISC::ERRMSG( "subject.txt is broken" );
             break;
         }
-        lng_subject = MIN( ( int )( pos - str_subject ), max_subject );
+        lng_subject = ( int )( pos - str_subject );
         
         // レス数取得
         ++pos;
