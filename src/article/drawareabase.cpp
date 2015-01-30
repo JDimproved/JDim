@@ -1887,6 +1887,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     m_backscreen->draw_rectangle( m_gc, true, 0, y_screen, width_view, height_screen );
 
     // 描画ループ
+    CLIPINFO ci = { width_view, pos_y, upper, lower }; // 描画領域
     bool relayout = false;
     while( header && header->rect->y < pos_y + height_view ){
 
@@ -1918,7 +1919,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
                 while( rect ){
 
                     if( rect->y + rect->height > upper && rect->y < lower ){
-                        if( draw_one_node( layout, width_view, pos_y, upper, lower ) ) relayout = true;
+                        if( draw_one_node( layout, ci ) ) relayout = true;
                         break;
                     }
 
@@ -2039,7 +2040,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 //
 // 戻り値 : true なら描画後に再レイアウトを実行する
 //
-bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const int pos_y, const int upper, const int lower )
+bool DrawAreaBase::draw_one_node( LAYOUT* layout, const CLIPINFO& ci )
 {
     bool relayout = false;
 
@@ -2050,7 +2051,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
         // div
         case DBTREE::NODE_DIV:
-            draw_div( layout, pos_y, upper, lower );
+            draw_div( layout, ci );
             break;
 
 
@@ -2096,7 +2097,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
             // テキストノード
         case DBTREE::NODE_TEXT:
 
-            draw_one_text_node( layout, width_view, pos_y );
+            draw_one_text_node( layout, ci );
             break;
 
 
@@ -2106,7 +2107,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
             // 発言回数ノード
         case DBTREE::NODE_IDNUM:
 
-            if( set_num_id( layout ) ) draw_one_text_node( layout, width_view, pos_y );
+            if( set_num_id( layout ) ) draw_one_text_node( layout, ci );
             break;
 
 
@@ -2116,7 +2117,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
         // ヘッダ
         case DBTREE::NODE_HEADER:
 
-            draw_div( layout, pos_y, upper, lower );
+            draw_div( layout, ci );
 
             if( layout->res_number ){
 
@@ -2131,12 +2132,12 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
                     y += ( m_font->height - height_bkmk ) / 2;
 
-                    const int s_top = MAX( 0, upper - y );
-                    const int s_bottom = MIN( height_bkmk, lower - y );
+                    const int s_top = MAX( 0, ci.upper - y );
+                    const int s_bottom = MIN( height_bkmk, ci.lower - y );
                     const int height = s_bottom - s_top;
 
                     if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_bkmk,
-                                                                0, s_top, 1, y - pos_y + s_top,
+                                                                0, s_top, 1, y - ci.pos_y + s_top,
                                                                 m_pixbuf_bkmk->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
                     y += height_bkmk;
                 }
@@ -2151,12 +2152,12 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
                         if( y == y_org ) y += ( m_font->height - height_post ) / 2;
 
-                        const int s_top = MAX( 0, upper - y );
-                        const int s_bottom = MIN( height_post, lower - y );
+                        const int s_top = MAX( 0, ci.upper - y );
+                        const int s_bottom = MIN( height_post, ci.lower - y );
                         const int height = s_bottom - s_top;
 
                         if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_post,
-                                                                    0, s_top, 1, y - pos_y + s_top,
+                                                                    0, s_top, 1, y - ci.pos_y + s_top,
                                                                     m_pixbuf_post->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
                         y += height_post;
                     }
@@ -2169,12 +2170,12 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 
                         if( y == y_org ) y += ( m_font->height - height_refer_post ) / 2;
 
-                        const int s_top = MAX( 0, upper - y );
-                        const int s_bottom = MIN( height_refer_post, lower - y );
+                        const int s_top = MAX( 0, ci.upper - y );
+                        const int s_bottom = MIN( height_refer_post, ci.lower - y );
                         const int height = s_bottom - s_top;
 
                         if( height > 0 ) m_backscreen->draw_pixbuf( m_gc, m_pixbuf_refer_post,
-                                                                    0, s_top, 1, y - pos_y + s_top,
+                                                                    0, s_top, 1, y - ci.pos_y + s_top,
                                                                     m_pixbuf_refer_post->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
                         y += height_refer_post;
                     }
@@ -2190,7 +2191,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
             // 画像ノード
         case DBTREE::NODE_IMG:
         case DBTREE::NODE_SSSP:
-            if( draw_one_img_node( layout, pos_y, upper, lower ) ) relayout = true;
+            if( draw_one_img_node( layout, ci ) ) relayout = true;
             break;
 
 
@@ -2200,7 +2201,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
         case DBTREE::NODE_HR:
             if( layout->rect ){
                 const int x = layout->rect->x;
-                const int y = layout->rect->y - pos_y;
+                const int y = layout->rect->y - ci.pos_y;
                 const int color_text = get_colorid_text();
                 m_gc->set_foreground( m_color[ color_text ] );
                 m_backscreen->draw_line( m_gc, x, y, x + layout->rect->width - 1, y );
@@ -2224,9 +2225,9 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const int width_view, const in
 //
 // div 要素の描画
 //
-void DrawAreaBase::draw_div( LAYOUT* layout_div, const int pos_y, const int upper, const int lower )
+void DrawAreaBase::draw_div( LAYOUT* layout_div, const CLIPINFO& ci )
 {
-    if( ! lower ) return;
+    if( ! ci.lower ) return;
 
     int bg_color = layout_div->css->bg_color;
 
@@ -2247,50 +2248,50 @@ void DrawAreaBase::draw_div( LAYOUT* layout_div, const int pos_y, const int uppe
     int y_div = layout_div->rect->y;
     int height_div = layout_div->rect->height;
 
-    if( y_div < upper ){
+    if( y_div < ci.upper ){
 
-        if( border_top && y_div + border_top > upper ) border_top -= ( upper - y_div );
+        if( border_top && y_div + border_top > ci.upper ) border_top -= ( ci.upper - y_div );
         else border_top = 0;
 
-        height_div -= ( upper - y_div );
-        y_div = upper;
+        height_div -= ( ci.upper - y_div );
+        y_div = ci.upper;
     }
-    if( y_div + height_div > lower ){
+    if( y_div + height_div > ci.lower ){
 
-        if( border_bottom && y_div + height_div - border_bottom < lower ) border_bottom -= ( y_div + height_div - lower );
+        if( border_bottom && y_div + height_div - border_bottom < ci.lower ) border_bottom -= ( y_div + height_div - ci.lower );
         else border_bottom = 0;
 
-        height_div = ( lower - y_div );
+        height_div = ( ci.lower - y_div );
     }
 
     // 背景
     if( bg_color >= 0 ){
         m_gc->set_foreground( m_color[ bg_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - pos_y, layout_div->rect->width, height_div );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - ci.pos_y, layout_div->rect->width, height_div );
     }
 
     // left
     if( border_style == CORE::BORDER_SOLID && border_left_color >= 0 && border_left ){
         m_gc->set_foreground( m_color[ border_left_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - pos_y, border_left, height_div );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - ci.pos_y, border_left, height_div );
     }
 
     // right
     if( border_style == CORE::BORDER_SOLID && border_right_color >= 0 && border_right ){
         m_gc->set_foreground( m_color[ border_right_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x + layout_div->rect->width - border_right, y_div - pos_y, border_right, height_div );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x + layout_div->rect->width - border_right, y_div - ci.pos_y, border_right, height_div );
     }
 
     // top
     if( border_style == CORE::BORDER_SOLID && border_top_color >= 0 && border_top ){
         m_gc->set_foreground( m_color[ border_top_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - pos_y, layout_div->rect->width, border_top );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - ci.pos_y, layout_div->rect->width, border_top );
     }
 
     // bottom
     if( border_style == CORE::BORDER_SOLID && border_bottom_color >= 0 && border_bottom ){
         m_gc->set_foreground( m_color[ border_bottom_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div + height_div - border_bottom - pos_y, layout_div->rect->width, border_bottom );
+        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div + height_div - border_bottom - ci.pos_y, layout_div->rect->width, border_bottom );
     }
 }
 
@@ -2494,7 +2495,7 @@ void DrawAreaBase::set_node_font( LAYOUT* layout )
 // width_view : 描画領域の幅
 // pos_y : 描画領域の開始座標
 //
-void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, const int pos_y )
+void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const CLIPINFO& ci )
 {
     // 範囲選択の描画をする必要があるかどうかの判定
     // 二度書きすると重いので、ちょっと式は複雑になるけど同じ所を二度書きしないようにする
@@ -2511,15 +2512,15 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, con
     else if( layout->header && layout->header->css->bg_color >= 0 ) color_back = layout->header->css->bg_color;
 
     // 通常描画
-    if( ! draw_selection ) draw_string( layout, pos_y, width_view, color_text, color_back, 0, 0 );
+    if( ! draw_selection ) draw_string( layout, ci, color_text, color_back, 0, 0 );
 
     else { // 範囲選択の前後描画
 
         // 前
-        if( byte_from ) draw_string( layout, pos_y, width_view, color_text, color_back, 0, byte_from );
+        if( byte_from ) draw_string( layout, ci, color_text, color_back, 0, byte_from );
 
         // 後
-        if( byte_to != strlen( layout->text ) ) draw_string( layout, pos_y, width_view, color_text, color_back, byte_to, strlen( layout->text ) );
+        if( byte_to != strlen( layout->text ) ) draw_string( layout, ci, color_text, color_back, byte_to, strlen( layout->text ) );
     }
 
     // 検索結果のハイライト
@@ -2532,7 +2533,7 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, con
             size_t byte_to2;
             if( get_selection_byte( layout, *it, byte_from2, byte_to2 )){
 
-                draw_string( layout, pos_y, width_view, COLOR_CHAR_HIGHLIGHT, COLOR_BACK_HIGHLIGHT, byte_from2, byte_to2 );
+                draw_string( layout, ci, COLOR_CHAR_HIGHLIGHT, COLOR_BACK_HIGHLIGHT, byte_from2, byte_to2 );
             }
         }
     }
@@ -2540,7 +2541,7 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, con
     // 範囲選択部分を描画
     if( draw_selection && byte_from != byte_to ){
 
-        draw_string( layout, pos_y, width_view, COLOR_CHAR_SELECTION, COLOR_BACK_SELECTION, byte_from, byte_to );
+        draw_string( layout, ci, COLOR_CHAR_SELECTION, COLOR_BACK_SELECTION, byte_from, byte_to );
     }
 }
 
@@ -2554,7 +2555,7 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const int width_view, con
 //
 // 戻り値 : true なら描画後に再レイアウトを実行する
 //
-const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, const int upper, const int lower )
+const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::draw_one_img_node link = " << layout->link << std::endl;
@@ -2624,8 +2625,8 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
             Glib::RefPtr< Gdk::Pixbuf > pixbuf = layout->eimg->get_pixbuf();
             if( pixbuf ){
 
-                const int s_top = MAX( 0, upper - ( rect->y + 1 ) );
-                const int s_bottom = MIN( pixbuf->get_height(), lower - ( rect->y + 1 ) );
+                const int s_top = MAX( 0, ci.upper - ( rect->y + 1 ) );
+                const int s_bottom = MIN( pixbuf->get_height(), ci.lower - ( rect->y + 1 ) );
                 const int height = s_bottom - s_top;
 
                 // モザイク
@@ -2640,7 +2641,7 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
                         pixbuf2 = pixbuf->scale_simple( moswidth, mosheight, Gdk::INTERP_NEAREST );
                         m_backscreen->draw_pixbuf( m_gc,
                                                    pixbuf2->scale_simple( pixbuf->get_width(), pixbuf->get_height(), Gdk::INTERP_NEAREST ),
-                                                   0, s_top, rect->x + 1, ( rect->y + 1 ) - pos_y + s_top,
+                                                   0, s_top, rect->x + 1, ( rect->y + 1 ) - ci.pos_y + s_top,
                                                    pixbuf->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
                     }
                 }
@@ -2648,7 +2649,7 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
                 // 通常
                 else{
                     m_backscreen->draw_pixbuf( m_gc, pixbuf,
-                                               0, s_top, rect->x + 1, ( rect->y + 1 ) - pos_y + s_top,
+                                               0, s_top, rect->x + 1, ( rect->y + 1 ) - ci.pos_y + s_top,
                                                pixbuf->get_width(), height, Gdk::RGB_DITHER_NONE, 0, 0 );
                 }
 
@@ -2662,7 +2663,7 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
     // 枠の描画
     // !! draw_rectangle()の filled を false にすると、1 pixel 幅と高さが大きくなるのに注意 !!
     m_gc->set_foreground( m_color[ color ] );
-    m_backscreen->draw_rectangle( m_gc, false, rect->x , rect->y  - pos_y, rect->width -1, rect->height -1 );
+    m_backscreen->draw_rectangle( m_gc, false, rect->x , rect->y  - ci.pos_y, rect->width -1, rect->height -1 );
 
     // 右上のアイコン
     if( code != HTTP_OK || img->is_loading() ){
@@ -2670,7 +2671,7 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
         const int y_tmp = rect->y + rect->height / 10 + 1;
         const int width_tmp = rect->width / 4;
         const int height_tmp = rect->width / 4;
-        m_backscreen->draw_rectangle( m_gc, true, x_tmp, y_tmp - pos_y, width_tmp, height_tmp );
+        m_backscreen->draw_rectangle( m_gc, true, x_tmp, y_tmp - ci.pos_y, width_tmp, height_tmp );
     }
 
 #ifdef _DEBUG
@@ -2691,7 +2692,7 @@ const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const int pos_y, con
 //
 // たとえば node->text = "abcdefg" で byte_from = 1, byte_to = 3 なら "bc" を描画
 //
-void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_view,
+void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
                                 const int color, const int color_back, const int byte_from, const int byte_to )
 {
     assert( node->text != NULL );
@@ -2703,8 +2704,15 @@ void DrawAreaBase::draw_string( LAYOUT* node, const int pos_y, const int width_v
     RECTANGLE* rect = node->rect;
     while( rect ){
 
+        // 描画領域のチェック
+        if( rect->y + rect->height < ci.upper || rect->y > ci.lower ){
+            if( rect->end ) break;
+            rect = rect->next_rect;
+            continue;
+        }
+
         int x = rect->x;
-        const int y = rect->y - pos_y;
+        const int y = rect->y - ci.pos_y;
         int width_line = rect->width;
         int pos_start = rect->pos_start;
         int n_byte = rect->n_byte;

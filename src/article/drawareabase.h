@@ -76,6 +76,15 @@ namespace ARTICLE
         int mrg_right;     // wrap計算のときに使用する右マージン幅 (ピクセル値)
     };
 
+    // 描画領域
+    struct CLIPINFO
+    {
+        int width_view;
+        int pos_y;
+        int upper; // 画面上、小さい値
+        int lower; // 画面下、大きい値
+    };
+
     ///////////////////////////////////
 
 
@@ -379,13 +388,13 @@ namespace ARTICLE
         const bool draw_screen( const int y, const int height );
         void exec_draw_screen( const int y_redraw, const int height_redraw );
 
-        bool draw_one_node( LAYOUT* layout, const int width_win, const int pos_y, const int upper, const int lower );
-        void draw_div( LAYOUT* layout_div, const int pos_y, const int upper, const int lower );
+        bool draw_one_node( LAYOUT* layout, const CLIPINFO& ci );
+        void draw_div( LAYOUT* layout_div, const CLIPINFO& ci );
         const bool get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from, size_t& byte_to );
-        void draw_one_text_node( LAYOUT* layout, const int width_win, const int pos_y );
-        void draw_string( LAYOUT* node, const int pos_y, const int width_view,
+        void draw_one_text_node( LAYOUT* layout, const CLIPINFO& ci );
+        void draw_string( LAYOUT* node, const CLIPINFO& ci,
                           const int color, const int color_back, const int byte_from, const int byte_to );
-        const bool draw_one_img_node( LAYOUT* layout, const int pos_y, const int upper, const int lower );
+        const bool draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci );
         void set_node_font( LAYOUT* layout );
 
         // drawarea がリサイズ実行
