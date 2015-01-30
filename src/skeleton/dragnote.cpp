@@ -339,7 +339,7 @@ int DragableNoteBook::insert_page( const std::string& url, Gtk::Widget& child, i
 //
 // タブの文字列取得
 //
-const std::string DragableNoteBook::get_tab_fulltext( const int page )
+const std::string& DragableNoteBook::get_tab_fulltext( const int page )
 {
     return m_notebook_tab.get_tab_fulltext( page );
 }

@@ -51,7 +51,9 @@ namespace SKELETON
         bool m_fixtab;
         int m_tab_mrg;
 
-      public:
+        const std::string m_str_empty;
+
+    public:
 
         SIG_BUTTON_PRESS sig_button_press(){ return m_sig_button_press; }
         SIG_BUTTON_RELEASE sig_button_release(){ return m_sig_button_release; }
@@ -79,7 +81,7 @@ namespace SKELETON
         SKELETON::TabLabel* get_tablabel( int page );
 
         // タブの文字列取得/セット
-        const std::string get_tab_fulltext( int page );
+        const std::string& get_tab_fulltext( int page );
         void set_tab_fulltext( const std::string& str, int page );
 
         // タブ幅調整

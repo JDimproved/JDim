@@ -343,7 +343,8 @@ public:
 TabNotebook::TabNotebook( DragableNoteBook* parent )
     : Gtk::Notebook(),
       m_parent( parent ),
-      m_fixtab( false )
+      m_fixtab( false ),
+      m_str_empty( std::string() )
 {
     m_layout_tab = create_pango_layout( "" );
 
@@ -518,10 +519,10 @@ const int TabNotebook::get_page_under_mouse()
 //
 // タブの文字列取得
 //
-const std::string TabNotebook::get_tab_fulltext( int page )
+const std::string& TabNotebook::get_tab_fulltext( int page )
 {
     SKELETON::TabLabel* tablabel = get_tablabel( page );
-    if( ! tablabel ) return std::string();
+    if( ! tablabel ) return m_str_empty;
 
     return tablabel->get_fulltext();
 }
@@ -595,8 +596,6 @@ void TabNotebook::calc_tabsize()
 //
 // タブ幅調整
 //
-#define LABEL_WIDTH ( ulabel.substr( 0,  vec_width[ i ] ) + ( vec_width[ i ] < vec_width_org[ i ] ? "..." : "" ) )
-
 bool TabNotebook::adjust_tabwidth()
 {
     // 起動中とシャットダウン中は処理しない
@@ -614,11 +613,6 @@ bool TabNotebook::adjust_tabwidth()
     m_layout_tab->set_font_description( tab->get_label_font_description() );
     const int label_margin = tab->get_label_margin();
 
-    std::vector< int > vec_width_org; // 変更前のタブの文字数
-    std::vector< int > vec_width; // 変更後のタブの文字数
-    vec_width_org.resize( pages );
-    vec_width.resize( pages );
-
     m_pre_width = get_width();
     const int width_notebook = m_pre_width - mrg_notebook;
 
@@ -633,66 +627,83 @@ bool TabNotebook::adjust_tabwidth()
               << std::endl;
 #endif
 
-    // 一端、全てのタブの幅を平均値以下に縮める
+    int label_width_org; // 変更前のタブの文字数
+    int label_width; // 変更後のタブの文字数
+    int width_total = 0;
+    int n, width;
+
     for( int i = 0; i < pages; ++i ){
 
         tab = get_tablabel( i );
         if( tab ){
 
             Glib::ustring ulabel( tab->get_fulltext() );
-            vec_width_org[ i ] = vec_width[ i ] = ulabel.length();
+            Glib::ustring ulabel_org( ulabel );
 
-            while( vec_width[ i ] > CONFIG::get_tab_min_str() ){
+            bool cut_suffix = false;
+            label_width_org = label_width = ulabel.length();
 
-                m_layout_tab->set_text( LABEL_WIDTH );
-                int width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg;
+            // 長すぎるタブの文字列は表示しないよう、あらかじめ最大値を256に制限する
+            if( label_width > 256 ){
+                label_width = 256;
+                ulabel.resize( label_width );
+            }
+
+            // 一端、全てのタブの幅を平均値以下に縮める
+            while( label_width > CONFIG::get_tab_min_str() ){
+
+                if( ! cut_suffix && label_width < label_width_org ){
+                    cut_suffix = true; // 文字列を切り詰めたら "..." を付与する
+                    ulabel.append( "..." );
+                }
+
+                m_layout_tab->set_text( ulabel );
+                width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "s " << i << " " << width << " / " << avg_width_tab
-                          << " lng = " << vec_width[ i ] << " : " << ulabel.substr( 0, vec_width[ i ] ) << std::endl;
+                          << " lng = " << label_width << " : " << ulabel << std::endl;
 #endif
 
-                if( width < avg_width_tab ) break;
-                --vec_width[ i ];
-                if( vec_width[ i ] < 0 ) vec_width[ i ] = 0;
+                if( width < avg_width_tab ) break; // 平均値以下
+
+                n = 1;
+                if( label_width > 16 && width > avg_width_tab * 2 ){
+                    n = label_width / 4; // 2倍以上差がある場合は、1/4文字を消す
+                }
+                label_width -= n;
+                ulabel.erase( label_width, n ); // 末尾のn文字を消す
             }
-        }
-    }
 
-    // 横をはみださないようにタブ幅を延ばしていく
-    int width_total = 0;
-    for( int i = 0; i < pages; ++i ){
-
-        SKELETON::TabLabel* tab = get_tablabel( i );
-        if( tab ){
-
-            Glib::ustring ulabel( tab->get_fulltext() );
-
+            // 横をはみださないようにタブ幅を延ばしていく
             for(;;){
 
-                if( vec_width[ i ] >= vec_width_org[ i ] ) break;
+                if( label_width >= label_width_org ) break;
 
-                ++vec_width[ i ];
+                ulabel.insert( label_width, 1, ulabel_org[ label_width ] ); // 末尾の1文字を戻す
+                ++label_width;
 
-                m_layout_tab->set_text( LABEL_WIDTH );
-                int width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg;
+                m_layout_tab->set_text( ulabel );
+                width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "w " << i << " " << width << " / " << avg_width_tab
                           << " total= " << width_total + width << " / " << avg_width_tab * ( i + 1 )
-                          << " lng = " << vec_width[ i ] << " : " << ulabel.substr( 0, vec_width[ i ] ) << std::endl;
+                          << " lng = " << label_width << " : " << ulabel << std::endl;
 #endif
                 // 最大値を越えたらひとつ戻してbreak;
                 if( width_total + width > avg_width_tab * ( i + 1 ) ){
-                    --vec_width[ i ];
+                    --label_width;
+                    ulabel.erase( label_width, 1 ); // 末尾の1文字を消す
                     break;
                 }
             }
 
-            m_layout_tab->set_text( LABEL_WIDTH );
+            // タブ幅を確定する
+            m_layout_tab->set_text( ulabel );
             width_total += ( m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg );
 
-            tab->resize_tab( vec_width[ i ] );
+            tab->resize_tab( label_width );
         }
     }
 

@@ -2782,7 +2782,7 @@ void Admin::clear_viewhistory()
             HISTORY::get_history_manager()->create_viewhistory( (*it)->get_url() );
 
             int page = m_notebook->page_num( *(*it) );
-            std::string str_label = m_notebook->get_tab_fulltext( page );
+            const std::string& str_label = m_notebook->get_tab_fulltext( page );
             HISTORY::get_history_manager()->replace_current_title_viewhistory( (*it)->get_url(), str_label );
         }
     }
