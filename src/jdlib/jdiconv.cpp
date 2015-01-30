@@ -1,6 +1,7 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
+//#define _DEBUG_ICONV
 #include "jddebug.h"
 
 #ifdef HAVE_CONFIG_H
@@ -113,7 +114,9 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
 
             if( errno == EILSEQ ){
 
+#ifdef _DEBUG_ICONV
                 char str_tmp[256];
+#endif
                 const unsigned char code0 = *m_buf_in_tmp;
                 const unsigned char code1 = *(m_buf_in_tmp+1);
                 const unsigned char code2 = *(m_buf_in_tmp+2);
@@ -130,8 +133,10 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                     // <>の誤判別 ( 開発スレ 489 を参照 )
                     if( code1 == 0x3c && code2 == 0x3e ){
                         *m_buf_in_tmp = '?';
+#ifdef _DEBUG_ICONV
                         snprintf( str_tmp, 256, "iconv 0x%x%x> -> ?<>", code0, code1 );
                         MISC::MSG( str_tmp );
+#endif
                         continue;
                     }
 
@@ -143,8 +148,10 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                         *m_buf_in_tmp = 0x81;
                         *(m_buf_in_tmp+1) = 0xa0;
 
+#ifdef _DEBUG_ICONV
                         snprintf( str_tmp, 256, "iconv 0x%x%x -> □ (0x81a0) ", code0, code1 );
                         MISC::MSG( str_tmp );
+#endif
                         continue;
                     }
                 }
@@ -179,18 +186,24 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                 if( code0 == 0x20 ) continue;
 
                 //その他、1文字を空白にして続行
+#ifdef _DEBUG_ICONV
                 snprintf( str_tmp, 256, "iconv EILSEQ left = %zd code = %x %x %x", m_byte_left_in, code0, code1, code2 );
                 MISC::ERRMSG( str_tmp );
+#endif
                 *m_buf_in_tmp = 0x20;
             }
 
             else if( errno == EINVAL ){
+#ifdef _DEBUG_ICONV
                 MISC::ERRMSG( "iconv EINVAL\n" );
+#endif
                 break;
             }
 
             else if( errno == E2BIG ){
+#ifdef _DEBUG_ICONV
                 MISC::ERRMSG( "iconv E2BIG\n" );
+#endif
                 break;
             }
         }
