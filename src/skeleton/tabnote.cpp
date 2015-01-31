@@ -611,12 +611,15 @@ bool TabNotebook::adjust_tabwidth()
     SKELETON::TabLabel* tab = get_tablabel( 0 );
     if( ! tab ) return false;
     m_layout_tab->set_font_description( tab->get_label_font_description() );
-    const int label_margin = tab->get_label_margin();
+    const int label_margin = tab->get_label_margin() + m_tab_mrg;
 
     m_pre_width = get_width();
     const int width_notebook = m_pre_width - mrg_notebook;
 
-    const int avg_width_tab = (int)( (double)width_notebook / MAX( 3, pages ) );  // タブ幅の平均値
+    int avg_width_tab = (int)( (double)width_notebook / MAX( 3, pages ) );  // タブ幅の平均値
+    if( avg_width_tab < label_margin ){
+        avg_width_tab = label_margin;
+    }
 
 #ifdef _DEBUG_RESIZE_TAB
     std::cout << "TabNotebook::adjust_tabwidth\n"
@@ -658,7 +661,7 @@ bool TabNotebook::adjust_tabwidth()
                 }
 
                 m_layout_tab->set_text( ulabel );
-                width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg;
+                width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "s " << i << " " << width << " / " << avg_width_tab
@@ -684,7 +687,7 @@ bool TabNotebook::adjust_tabwidth()
                 ++label_width;
 
                 m_layout_tab->set_text( ulabel );
-                width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg;
+                width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "w " << i << " " << width << " / " << avg_width_tab
@@ -701,7 +704,7 @@ bool TabNotebook::adjust_tabwidth()
 
             // タブ幅を確定する
             m_layout_tab->set_text( ulabel );
-            width_total += ( m_layout_tab->get_pixel_logical_extents().get_width() + label_margin + m_tab_mrg );
+            width_total += ( m_layout_tab->get_pixel_logical_extents().get_width() + label_margin );
 
             tab->resize_tab( label_width );
         }
