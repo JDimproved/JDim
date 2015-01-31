@@ -552,8 +552,9 @@ int main( int argc, char **argv )
         FILE *tmp; // warning 消し
         const char *logfile = to_locale_cstr( CACHE::path_msglog() );
         tmp = freopen( logfile, "ab", stdout );
+        setbuf( tmp, NULL );
         tmp = freopen( logfile, "ab", stderr );
-        fclose( tmp );
+        setbuf( tmp, NULL );
     }
 
     /*--- IOMonitor -------------------------------------------------*/
