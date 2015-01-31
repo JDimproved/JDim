@@ -633,7 +633,7 @@ bool TabNotebook::adjust_tabwidth()
     int label_width_org; // 変更前のタブの文字数
     int label_width; // 変更後のタブの文字数
     int width_total = 0;
-    int n, width;
+    int n, tab_width, layout_width;
 
     for( int i = 0; i < pages; ++i ){
 
@@ -645,6 +645,7 @@ bool TabNotebook::adjust_tabwidth()
 
             bool cut_suffix = false;
             label_width_org = label_width = ulabel.length();
+            tab_width = -1; // タブ幅を未計算状態に初期化
 
             // 長すぎるタブの文字列は表示しないよう、あらかじめ最大値を256に制限する
             if( label_width > 256 ){
@@ -661,21 +662,22 @@ bool TabNotebook::adjust_tabwidth()
                 }
 
                 m_layout_tab->set_text( ulabel );
-                width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
+                tab_width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "s " << i << " " << width << " / " << avg_width_tab
                           << " lng = " << label_width << " : " << ulabel << std::endl;
 #endif
 
-                if( width < avg_width_tab ) break; // 平均値以下
+                if( tab_width < avg_width_tab ) break; // 平均値以下
 
                 n = 1;
-                if( label_width > 16 && width > avg_width_tab * 2 ){
+                if( label_width > 16 && tab_width > avg_width_tab * 2 ){
                     n = label_width / 4; // 2倍以上差がある場合は、1/4文字を消す
                 }
                 label_width -= n;
                 ulabel.erase( label_width, n ); // 末尾のn文字を消す
+                tab_width = -1; // タブ幅を初期化
             }
 
             // 横をはみださないようにタブ幅を延ばしていく
@@ -687,7 +689,7 @@ bool TabNotebook::adjust_tabwidth()
                 ++label_width;
 
                 m_layout_tab->set_text( ulabel );
-                width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
+                layout_width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
 
 #ifdef _DEBUG_RESIZE_TAB
                 std::cout << "w " << i << " " << width << " / " << avg_width_tab
@@ -695,16 +697,21 @@ bool TabNotebook::adjust_tabwidth()
                           << " lng = " << label_width << " : " << ulabel << std::endl;
 #endif
                 // 最大値を越えたらひとつ戻してbreak;
-                if( width_total + width > avg_width_tab * ( i + 1 ) ){
+                if( width_total + layout_width > avg_width_tab * ( i + 1 ) ){
                     --label_width;
                     ulabel.erase( label_width, 1 ); // 末尾の1文字を消す
                     break;
                 }
+                tab_width = layout_width; // 最大値を超えていないタブ幅を保存
             }
 
             // タブ幅を確定する
-            m_layout_tab->set_text( ulabel );
-            width_total += ( m_layout_tab->get_pixel_logical_extents().get_width() + label_margin );
+            if( tab_width < 0 ){
+                m_layout_tab->set_text( ulabel );
+                width_total += ( m_layout_tab->get_pixel_logical_extents().get_width() + label_margin );
+            } else {
+                width_total += tab_width;
+            }
 
             tab->resize_tab( label_width );
         }
