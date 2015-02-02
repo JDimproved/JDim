@@ -633,7 +633,7 @@ bool TabNotebook::adjust_tabwidth()
     int label_width_org; // 変更前のタブの文字数
     int label_width; // 変更後のタブの文字数
     int width_total = 0;
-    int n, tab_width, layout_width;
+    int tab_width, max_width;
 
     for( int i = 0; i < pages; ++i ){
 
@@ -645,7 +645,9 @@ bool TabNotebook::adjust_tabwidth()
 
             bool cut_suffix = false;
             label_width_org = label_width = ulabel.length();
+
             tab_width = -1; // タブ幅を未計算状態に初期化
+            max_width = avg_width_tab * ( i + 1 ) - width_total; // 最大値 ( 収まらないときマイナスになる )
 
             // 長すぎるタブの文字列は表示しないよう、あらかじめ最大値を256に制限する
             if( label_width > 256 ){
@@ -653,7 +655,7 @@ bool TabNotebook::adjust_tabwidth()
                 ulabel.resize( label_width );
             }
 
-            // 一端、全てのタブの幅を平均値以下に縮める
+            // タブの幅を最大値以下に縮める
             while( label_width > CONFIG::get_tab_min_str() ){
 
                 if( ! cut_suffix && label_width < label_width_org ){
@@ -662,56 +664,63 @@ bool TabNotebook::adjust_tabwidth()
                 }
 
                 m_layout_tab->set_text( ulabel );
-                tab_width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
+                int width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
 
 #ifdef _DEBUG_RESIZE_TAB
-                std::cout << "s " << i << " " << width << " / " << avg_width_tab
+                std::cout << "s " << i << " " << width << " / " << max_width << " + " << width_total
                           << " lng = " << label_width << " : " << ulabel << std::endl;
 #endif
+                if( width < max_width ){ // 最大値以下
+                    tab_width = width; // タブ幅を保存
+                    break;
+                }
 
-                if( tab_width < avg_width_tab ) break; // 平均値以下
-
-                n = 1;
-                if( label_width > 16 && tab_width > avg_width_tab * 2 ){
-                    n = label_width / 4; // 2倍以上差がある場合は、1/4文字を消す
+                // 最大値を越えていたら、概算で収まるように縮める
+                int n = label_width - (int)( (double)label_width * max_width / width );
+                if( n < 1 ) n = 1;
+                if( label_width - n < CONFIG::get_tab_min_str() ){
+                    n = label_width - CONFIG::get_tab_min_str();
                 }
                 label_width -= n;
                 ulabel.erase( label_width, n ); // 末尾のn文字を消す
-                tab_width = -1; // タブ幅を初期化
             }
 
             // 横をはみださないようにタブ幅を延ばしていく
             for(;;){
 
-                if( label_width >= label_width_org ) break;
+                if( label_width >= label_width_org ) break; // 全て収まった
+                if( max_width < 0 ) break; // 確実に収まらない
 
                 ulabel.insert( label_width, 1, ulabel_org[ label_width ] ); // 末尾の1文字を戻す
                 ++label_width;
 
                 m_layout_tab->set_text( ulabel );
-                layout_width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
+                int width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
 
 #ifdef _DEBUG_RESIZE_TAB
-                std::cout << "w " << i << " " << width << " / " << avg_width_tab
-                          << " total= " << width_total + width << " / " << avg_width_tab * ( i + 1 )
+                std::cout << "w " << i << " " << width << " / " << max_width << " + " << width_total
                           << " lng = " << label_width << " : " << ulabel << std::endl;
 #endif
                 // 最大値を越えたらひとつ戻してbreak;
-                if( width_total + layout_width > avg_width_tab * ( i + 1 ) ){
+                if( width > max_width ){
                     --label_width;
                     ulabel.erase( label_width, 1 ); // 末尾の1文字を消す
                     break;
                 }
-                tab_width = layout_width; // 最大値を超えていないタブ幅を保存
+                tab_width = width; // 最大値を超えていないタブ幅を保存
             }
 
             // タブ幅を確定する
             if( tab_width < 0 ){
                 m_layout_tab->set_text( ulabel );
-                width_total += ( m_layout_tab->get_pixel_logical_extents().get_width() + label_margin );
-            } else {
-                width_total += tab_width;
+                tab_width = m_layout_tab->get_pixel_logical_extents().get_width() + label_margin;
+
+#ifdef _DEBUG_RESIZE_TAB
+                std::cout << "f " << i << " " << tab_width << " / " << max_width << " + " << width_total
+                          << " lng = " << label_width << " : " << ulabel << std::endl;
+#endif
             }
+            width_total += tab_width;
 
             tab->resize_tab( label_width );
         }

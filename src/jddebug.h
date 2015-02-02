@@ -12,6 +12,9 @@
 #ifdef _DEBUG_CARETMOVE
 #include <iostream>
 #endif
+#ifdef _DEBUG_RESIZE_TAB
+#include <iostream>
+#endif
 
 #include <assert.h>
 
