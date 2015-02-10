@@ -37,6 +37,7 @@ namespace ARTICLE
         ~ArticleViewMain();
 
         virtual void clock_in();
+        virtual void clock_in_always();
 
         virtual void goto_num( const int num_to, const int num_from );
 

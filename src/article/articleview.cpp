@@ -38,7 +38,7 @@ using namespace ARTICLE;
 
 enum
 {
-    CANCEL_RELOAD = 500,  // msec  連続リロード防止用カウンタ
+    CANCEL_RELOAD = 800,  // msec  連続リロード防止用カウンタ
     LIVE_SEC_PLUS = 5, // 実況で更新失敗/成功ごとに増減する更新間隔(秒)
     LIVE_MAX_RELOAD = 5  // 実況でこの回数連続でリロードに失敗したら実況停止
 };
@@ -47,7 +47,13 @@ enum
 // メインビュー
 
 ArticleViewMain::ArticleViewMain( const std::string& url )
-    :  ArticleViewBase( url, url ), m_gotonum_reserve_to( 0 ), m_gotonum_reserve_from( 0 ), m_gotonum_seen( 0 ), m_playsound( false ), m_reload_reserve( false ), m_cancel_reload_counter( 0 )
+    : ArticleViewBase( url, url ),
+      m_gotonum_reserve_to( 0 ),
+      m_gotonum_reserve_from( 0 ),
+      m_gotonum_seen( 0 ),
+      m_playsound( false ),
+      m_reload_reserve( false ),
+      m_cancel_reload_counter( 0 )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::ArticleViewMain " << get_url() << " url_article = " << url_article() << std::endl;
@@ -100,6 +106,9 @@ void ArticleViewMain::save_session()
 }
 
 
+//
+// クロック入力
+//
 // virtual
 void ArticleViewMain::clock_in()
 {
@@ -118,6 +127,17 @@ void ArticleViewMain::clock_in()
             show_view();
         }
     }
+}
+
+
+//
+// クロック入力
+// clock_in_always()は常に呼び出されるので重い処理を含めてはいけない
+//
+// virtual
+void ArticleViewMain::clock_in_always()
+{
+    ArticleViewBase::clock_in_always();
 
     if( m_cancel_reload_counter ) --m_cancel_reload_counter;
 }
@@ -236,6 +256,11 @@ void ArticleViewMain::show_view()
 #ifdef _DEBUG
         std::cout << "cancel reload\n";
 #endif
+        // オートリロードのカウンタを0にする
+        reset_autoreload_counter();
+        // タブのアイコン状態を更新
+        ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
+
         return;
     }
 
