@@ -1,0 +1,135 @@
+body{
+
+   background-color: #fdfdf5;
+
+   padding-left:   1em;
+   padding-right:  1em;
+   padding-top:    1em;
+   padding-bottom: 1.5em;
+}
+
+.res{
+
+   margin-bottom: 1.5em;
+
+   padding-left:   2px;
+   padding-right:  2px;
+   padding-top:    2px;
+   padding-bottom: 2px;
+
+   border-style: solid;
+
+   border-left-width: 2px;
+   border-right-width: 2px;
+   border-top-width: 2px;
+   border-bottom-width: 2px;
+
+   border-left-color: black;
+   border-right-color: black;
+   border-top-color: black;
+   border-bottom-color: black;
+}
+
+.title{
+
+   background-color: #ccccff;
+
+   padding-left:   4px;
+   padding-right:  4px;
+   padding-top:    4px;
+   padding-bottom: 4px;
+
+   border-style: solid;
+
+   border-left-width: 2px;
+   border-right-width: 2px;
+   border-top-width: 2px;
+   border-bottom-width: 2px;
+
+   border-left-color: black;
+   border-right-color: black;
+   border-top-color: black;
+   border-bottom-color: black;
+}
+
+.mes{
+
+   padding-left:   0.5em;
+   padding-right:  0.5em;
+   padding-top:    0.5em;
+   padding-bottom: 0.5em;
+
+   border-style: solid;
+
+   border-left-width: 2px;
+   border-right-width: 2px;
+   border-top-width: 0px;
+   border-bottom-width: 0px;
+
+   border-left-color: black;
+   border-right-color: black;
+   border-top-color: black;
+   border-bottom-color: black;
+}
+
+
+.id{
+
+   text-align: right;
+
+   padding-left:   4px;
+   padding-right:  4px;
+   padding-top:    4px;
+   padding-bottom: 4px;
+
+   border-style: solid;
+
+   border-left-width: 2px;
+   border-right-width: 2px;
+
+   border-left-color: black;
+   border-right-color: black;
+}
+
+
+.date{
+
+   text-align: right;
+
+   padding-left:   4px;
+   padding-right:  4px;
+   padding-top:    4px;
+   padding-bottom: 4px;
+
+   border-style: solid;
+
+   border-left-width: 2px;
+   border-right-width: 2px;
+   border-bottom-width: 2px;
+
+   border-left-color: black;
+   border-right-color: black;
+   border-bottom-color: black;
+}
+
+
+.separator{
+
+   text-align: center;
+   color: white;
+   background-color: #ff6666;
+
+   padding-top: 4px;
+   padding-bottom: 4px;
+
+   margin-bottom: 1.5em;
+}
+
+
+imgpopup{
+
+   background-color: #fdfdf5;
+
+   border-width: 2px;
+   border-color: red;
+}

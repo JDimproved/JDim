@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="history.xsl"?>
+<!DOCTYPE document SYSTEM "document.dtd">
+
+<document header="更新履歴(2015年)">
+
+<release version="2.8.9-rc150201" date="2015/02/01(日)">
+エモーションの表示に対応した
+スレタイ検索のURLをdig.2ch.netに変更した
+いわゆる一行スキン用に&lt;MESSAGE br=&quot;no&quot;/&gt;の指定を追加した
+タブ表示を最適化した
+特定のスレタイで落ちるバグを修正
+</release>
+
+<release version="2.8.9-150226" date="2015/02/26(木)">
+リロード待ち状態でスレが更新されないままになる問題を修正した
+タブ表示をさらに最適化した
+</release>
+
+</document>

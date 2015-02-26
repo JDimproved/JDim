@@ -1,0 +1,343 @@
+@charset "UTF-8";
+
+html
+{
+    min-width: 480pt;
+    background-color: silver;
+    color: black;
+}
+
+body
+{
+    margin: 0;
+}
+
+img
+{
+    border-style: none;
+}
+
+a
+{
+    background-color: inherit;
+    color: royalblue;
+}
+
+a:visited
+{
+    background-color: inherit;
+    color: darkblue;
+}
+
+a:hover
+{
+    background-color: highlight;
+    color: highlighttext;
+    text-decoration: none;
+}
+
+ul.none
+{
+    list-style-type: none;
+}
+
+ul.decimal
+{
+    list-style-type: decimal;
+}
+
+ul.circle
+{
+    list-style-type: circle;
+}
+
+ul.square
+{
+    list-style-type: square;
+}
+
+ul.alpha
+{
+    list-style-type: lower-alpha;
+}
+
+ul > li
+{
+    line-height: 1.3em;
+}
+
+/*--------------------------------------------------------------------*/
+
+div#topmenu
+{
+    background-color: menu;
+    color: menutext;
+    margin: 0;
+    padding: 1pt 4pt;
+    font-size: 80%;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+div#topmenu > a
+{
+    background-color: menu;
+    color: menutext;
+    text-decoration: none;
+}
+
+div#topmenu > a:hover
+{
+    background-color: highlight;
+    color: highlighttext;
+}
+
+div#topmenu > span#version
+{
+    float: right;
+    margin-right: 6pt;
+}
+
+p#copyright
+{
+    font-size: 80%;
+    text-align: right;
+    padding: 0 4pt;
+    margin: 1em 0 0 0;
+}
+
+/*--------------------------------------------------------------------*/
+
+div#content
+{
+    padding: 0 1em;
+}
+
+div#index
+{
+    padding: 0;
+    background-color: snow;
+    color: black;
+    border: 1pt solid black;
+}
+
+/*--------------------------------------------------------------------*/
+
+h1
+{
+    background-color: #302000;
+    color: #fdfdf5;
+    padding: 4pt;
+    margin: 0.5em 0;
+}
+
+h1 > img#logo
+{
+    vertical-align: middle;
+    margin-right: 4pt;
+}
+
+h2.header
+{
+    background-color: #303030;
+    color: #fdfdf5;
+    margin: 0;
+    padding: 0.5ex;
+}
+
+h3.header
+{
+    background-color: #fdfdf5;
+    color: #005000;
+}
+
+/*--------------------------------------------------------------------*/
+
+div.group,
+div.release
+{
+    border: 1pt solid #303030;
+    /*-moz-border-radius: 1ex;*/
+    background-color: #fdfdf5;
+    color: black;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+}
+
+div.group > div,
+div.release
+{
+    padding: 0 1em;
+}
+
+div.subgroup
+{
+    padding: 0 1em;
+}
+
+/*--------------------------------------------------------------------*/
+
+p.header
+{
+    font-weight: bold;
+    background-color: #fdfdf5;
+    color: #005000;
+}
+
+p.caption
+{
+    min-width: 300pt;
+    width: 60%;
+    text-align: center;
+}
+
+p.marker
+{
+    margin: 0;
+    visibility: hidden;
+}
+
+/*--------------------------------------------------------------------*/
+
+dl
+{
+    min-width: 300pt;
+    width: 60%;
+    margin: 1em;
+    padding: 4pt;
+    font-size: 80%;
+    border: 1pt dashed black;
+    background-color: ghostwhite;
+    color: black;
+}
+
+dt.oblique
+{
+    font-weight: bold;
+    background-color: inherit;
+    color: #000080;
+}
+
+dd
+{
+    margin: 0.5em 1em 1em 2em;
+}
+
+/*--------------------------------------------------------------------*/
+
+pre.example
+{
+    min-width: 300pt;
+    width: 60%;
+    overflow: auto;
+    margin: 1em;
+    padding: 2pt;
+    border: 1pt dashed threeddarkshadow;
+    background-color: appworkspace;
+    color: windowtext;
+}
+
+pre.shell
+{
+    min-width: 300pt;
+    width: 60%;
+    overflow: auto;
+    margin: 1em;
+    padding: 2pt;
+    background-color: black;
+    color: white;
+}
+
+pre.asciiart
+{
+    font-family: IPAMonaPGothic, Mona, MSPGothic, Sans;
+    min-width: 300pt;
+    width: 60%;
+    overflow: auto;
+    margin: 1em;
+    padding: 2pt;
+    border: 1pt dashed threeddarkshadow;
+    background-color: appworkspace;
+    color: windowtext;
+}
+
+/*--------------------------------------------------------------------*/
+
+div.dialog
+{
+    width: 240pt;
+    overflow: auto;
+    margin: 1em;
+    padding: 0 1em;
+    border: 1pt solid threeddarkshadow;
+    background-color: appworkspace;
+    color: windowtext;
+}
+
+div.dialog > p
+{
+    line-height: 1.5em;
+}
+
+div.dialog > p > input
+{
+    width: 90%;
+}
+
+/*--------------------------------------------------------------------*/
+
+/* スレ風の表示 */
+p.age,
+p.sage
+{
+    background-color: #fdfdf5;
+    color: black;
+}
+
+p.age > span.number
+{
+    background-color: #fdfdf5;
+    color: fuchsia;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+p.sage > span.number
+{
+    background-color: #fdfdf5;
+    color: blue;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+p.age > span.name_caption,
+p.sage > span.name_caption
+{
+    text-decoration: underline;
+    margin-left: 4pt;
+    cursor: pointer;
+}
+
+p.age > span.name,
+p.sage > span.name
+{
+    background-color: #fdfdf5;
+    color: #007000;
+    font-weight: bold;
+}
+
+p.age > span.mail
+{
+    background-color: #fdfdf5;
+    color: red;
+}
+
+pre.history
+{
+    margin-left: 1em;
+    line-height: 1.2em;
+}

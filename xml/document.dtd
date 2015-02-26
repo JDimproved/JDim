@@ -1,0 +1,95 @@
+
+<!-- /document -->
+<!ELEMENT document (history|(group|release|sentence)+)>
+<!ATTLIST document header CDATA #REQUIRED>
+
+<!ENTITY % BLOCK "asciiart|descriptions|dialog|example|list|sentence|shell|subgroup">
+<!ENTITY % INLINE "icon|image|text">
+
+
+<!-- asciiart -->
+<!ELEMENT asciiart (#PCDATA)>
+<!ATTLIST asciiart caption CDATA #IMPLIED>
+
+
+<!-- descriptions -->
+<!ELEMENT descriptions (item)+>
+<!ATTLIST descriptions caption CDATA #IMPLIED>
+
+
+<!-- dialog -->
+<!ELEMENT dialog (item)+>
+
+
+<!-- example -->
+<!ELEMENT example (#PCDATA)>
+<!ATTLIST example caption CDATA #IMPLIED>
+
+
+<!-- group -->
+<!ELEMENT group (%BLOCK;)+>
+<!ATTLIST group header CDATA #IMPLIED>
+
+
+<!-- history -->
+<!ELEMENT history (year)+>
+<!ATTLIST history
+           version CDATA #REQUIRED
+           date    CDATA #REQUIRED>
+
+
+<!-- icon -->
+<!ELEMENT icon EMPTY>
+<!ATTLIST icon uri CDATA #REQUIRED>
+
+
+<!-- image -->
+<!ELEMENT image EMPTY>
+<!ATTLIST image
+           uri  CDATA #REQUIRED
+           link CDATA #IMPLIED>
+
+<!-- issue -->
+<!ELEMENT issue EMPTY>
+
+<!-- item -->
+<!ELEMENT item (#PCDATA|%BLOCK;|%INLINE;)*>
+<!ATTLIST item
+           header CDATA #IMPLIED
+           icon   CDATA #IMPLIED
+           label  CDATA #IMPLIED
+           value  CDATA #IMPLIED>
+
+<!-- list -->
+<!ELEMENT list (item)+>
+<!ATTLIST list type CDATA #IMPLIED>
+
+
+<!-- release -->
+<!ELEMENT release (#PCDATA)>
+<!ATTLIST release
+           version CDATA #REQUIRED
+           date    CDATA #REQUIRED>
+
+
+<!-- sentence -->
+<!ELEMENT sentence (#PCDATA|text)*>
+<!ATTLIST sentence type CDATA #IMPLIED>
+
+
+<!-- shell -->
+<!ELEMENT shell (#PCDATA)>
+<!ATTLIST shell caption CDATA #IMPLIED>
+
+<!-- subgroup -->
+<!ELEMENT subgroup (%BLOCK;)+>
+<!ATTLIST subgroup header CDATA #IMPLIED>
+
+
+<!-- text -->
+<!ELEMENT text (#PCDATA)>
+<!ATTLIST text link CDATA #IMPLIED>
+
+
+<!-- year -->
+<!ELEMENT year (#PCDATA)>
