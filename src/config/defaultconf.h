@@ -220,7 +220,7 @@ namespace CONFIG
 #define CONF_URL_SEARCH_TITLE "http://dig.2ch.net/?maxResult=100&atLeast=1&Link=1&AndOr=0&Sort=5&Bbs=all&924=1&password=dig&keywords=$TEXTU"
 
 // スレタイ検索用正規表現
-#define CONF_REGEX_SEARCH_TITLE "<a href=\"(http[^\"]*)\">([^<]+) \\(([0-9]{1,4})\\)</a>"
+#define CONF_REGEX_SEARCH_TITLE "<a href=\"(https?[^\"]*)\">([^<]+) \\(([0-9]{1,4})\\)</a>"
 
 // WEB検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"

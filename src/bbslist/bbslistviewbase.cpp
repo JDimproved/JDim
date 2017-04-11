@@ -1471,7 +1471,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         }
 
         // http が無ければ付ける
-        if( url.find( "http://" ) != 0 ) url = "http://" + url;
+        if( url.find( "http://" ) != 0 && url.find( "https://" ) != 0 ) url = "http://" + url;
 
         // .htmlを取り除く
         JDLIB::Regex regex;
@@ -1490,7 +1490,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         url += "/";
 
         // boardid 取得
-        if( ! regex.exec( "(http://.*)/([^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
+        if( ! regex.exec( "(https?://.*)/([^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
             SKELETON::MsgDiag mdiag( get_parent_win(), "アドレスが不正な形式になっています", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             mdiag.hide();

@@ -130,7 +130,7 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
         const bool usemigemo = false;
         const bool wchar = false;
 
-        if( regex.exec( "(http://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)", get_url(), offset, icase, newline, usemigemo, wchar ) ){
+        if( regex.exec( "(https?://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)", get_url(), offset, icase, newline, usemigemo, wchar ) ){
 
             data.url = regex.str( 1 ) + std::string( "/bbs/offlaw.cgi/" ) + regex.str( 2 ) + std::string( "/" ) +  regex.str( 3 );
             if( id_header() >= 1 ) data.url += "/" + MISC::itostr( id_header() +1 ) + "-";

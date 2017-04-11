@@ -124,7 +124,8 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
       m_cancel_openrow_counter( 0 )
 {
     // 次スレ検索ビューのようにURLの途中に http が入っている場合は取り除く
-    const size_t pos = url.rfind( "http://" );
+    size_t pos = url.rfind( "http://" );
+    if( pos == std::string::npos || pos == 0 ) pos = url.rfind( "https://" );
     if( pos != std::string::npos && pos != 0 ) m_url_board = DBTREE::url_subject( url.substr( 0, pos ) );
     else m_url_board = DBTREE::url_subject( url );
 

@@ -593,15 +593,15 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 
         // dat 型
         const std::string datpath = MISC::replace_str( url_datpath(), "?", "\\?" );
-        m_query_dat = "^ *(http://.+" + datpath  + ")([1234567890]+" + get_ext() + ") *$";
+        m_query_dat = "^ *(https?://.+" + datpath  + ")([1234567890]+" + get_ext() + ") *$";
 
         // read.cgi型
         const std::string cgipath = MISC::replace_str( url_readcgipath(), "?", "\\?" );
-        m_query_cgi = "^ *(http://.+" + cgipath + ")([1234567890]+)/?r?(l50)?([1234567890]+)?(-)?([1234567890]+)?.*$";
+        m_query_cgi = "^ *(https?://.+" + cgipath + ")([1234567890]+)/?r?(l50)?([1234567890]+)?(-)?([1234567890]+)?.*$";
 
         // 過去ログかどうか
         const std::string pathboard = MISC::replace_str( m_path_board, "?", "\\?" );
-        m_query_kako = "^ *(http://.+)" + pathboard  + "/kako(/[1234567890]+)?/[1234567890]+/([1234567890]+).html *$";
+        m_query_kako = "^ *(https?://.+)" + pathboard  + "/kako(/[1234567890]+)?/[1234567890]+/([1234567890]+).html *$";
 
 #ifdef _DEBUG
         std::cout << "query_dat = " << m_query_dat << std::endl;

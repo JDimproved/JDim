@@ -3578,35 +3578,26 @@ void NodeTreeBase::check_fontid( const int number )
 //
 bool NodeTreeBase::remove_imenu( char* str_link )
 {
-    const int lng_http = 7; // = strlen( "http://" );
+    char *p = str_link;
 
-    if(
-      ! (
-        ( str_link[ lng_http ] == 'i' && str_link[ lng_http + 1 ] == 'm' )
-        || ( str_link[ lng_http ] == 'n' && str_link[ lng_http + 1 ] == 'u' )
-        || ( str_link[ lng_http ] == 'p' && str_link[ lng_http + 1 ] == 'i' )
-      )
-    ) return false;
+    if ( memcmp( p, "http", strlen( "http" ) ) != 0 ) return false;
+    p += strlen( "http" );
+    if ( *p == 's' ) p++;
+    if ( memcmp( p, "://", strlen( "://" ) ) != 0 ) return false;
+    p += strlen( "://" );
 
-    if( memcmp( str_link, "http://ime.nu/", 14 ) == 0
-        || memcmp( str_link, "http://ime.st/", 14 ) == 0
-        || memcmp( str_link, "http://nun.nu/", 14 ) == 0
-        || memcmp( str_link, "http://pinktower.com/", 21 ) == 0 )
-    {
-		int linklen = strlen( str_link );
-		int cutsize = 0; 
-
-		if( str_link[ lng_http ] == 'p' ) cutsize = 14; // = strlen( "pinktower.com/" )
-		else cutsize =  7; // = strlen( "ime.nu/" )
-
-        // "http://ime.nu/"等、URLがそれだけだった場合は削除しない
-        if( linklen == lng_http + cutsize ) return false;
-
-		memmove( str_link + lng_http, str_link + lng_http + cutsize, linklen + 1 - ( lng_http + cutsize ) );
-
-		return true;
-	}
-
+    const char *cut_sites[] = { "ime.nu/", "ime.st/", "nun.nu/", "pinktower.com/", 0 };
+    const char **q = cut_sites;
+    while ( *q ) {
+        size_t cs_len = strlen( *q );
+        if ( memcmp( p, *q, cs_len ) == 0 ) {
+            // "http://ime.nu/"等、URLがそれだけだった場合は削除しない
+            if ( p[cs_len] == '\0' ) return false;
+            memmove( p, p + cs_len, strlen( p + cs_len ) + 1 );
+            return true;
+        }
+        q ++;
+    }
     return false;
 }
 

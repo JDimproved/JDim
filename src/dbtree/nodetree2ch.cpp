@@ -111,7 +111,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         const bool usemigemo = false;
         const bool wchar = false;
 
-        if( ! regex.exec( "(http://)([^/\\.]+)(\\.[^/]+)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
+        if( ! regex.exec( "(https?://)([^/\\.]+)(\\.[^/]+)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
 
         // http://rokka(.2ch.net|.bbspink.com)/<SERVER NAME>/<BOARD NAME>/<DAT NUMBER>/<OPTIONS>?sid=<SID>
         std::ostringstream ss;
@@ -141,7 +141,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         const bool usemigemo = false;
         const bool wchar = false;
 
-        if( ! regex.exec( "(http://[^/]*)/(.*)/dat/(.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
+        if( ! regex.exec( "(https?://[^/]*)/(.*)/dat/(.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
 
         std::ostringstream ss;
         ss << regex.str( 1 ) << "/test/offlaw2.so?shiro=kuma&sid=ERROR&bbs=" << regex.str( 2 )
@@ -167,7 +167,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         const bool usemigemo = false;
         const bool wchar = false;
 
-        if( ! regex.exec( "(http://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
+        if( ! regex.exec( "(https?://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
         const int id = atoi( regex.str( 3 ).c_str() + 1 );
 
         std::ostringstream ss;
