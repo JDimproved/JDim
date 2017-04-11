@@ -15,7 +15,7 @@ libbbslist_a_SOURCES = \
 
 noinst_HEADERS = \
 	bbslistadmin.h \
-	bbslistviewbase.h
+	bbslistviewbase.h \
 	bbslistview.h \
 	favoriteview.h \
 	selectlistview.h \

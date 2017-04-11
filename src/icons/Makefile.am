@@ -10,7 +10,7 @@ icon_headers = jd16.h jd32.h jd48.h jd96.h \
 	play.h hist.h hist_board.h hist_close.h hist_closeboard.h hist_closeimg.h info.h
 
 noinst_HEADERS = \
-	iconmanager.h $(icon_headers)
+	iconmanager.h iconid.h iconfiles.h $(icon_headers)
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 AM_CPPFLAGS = -I$(top_srcdir)/src

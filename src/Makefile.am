@@ -132,7 +132,11 @@ noinst_HEADERS = \
 	openurldiag.h \
 \
 	iomonitor.h \
-	environment.h
+	environment.h \
+	boardcolumnsid.h \
+	data_info.h \
+	gtkmmversion.h \
+	type.h
 
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@

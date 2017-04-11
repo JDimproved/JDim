@@ -1,12 +1,12 @@
 SUBDIRS = src 
 
 desktopdir= $(datadir)/applications
-desktop_DATA = jd.desktop
+dist_desktop_DATA = jd.desktop
 
 icondir = $(datadir)/pixmaps
-icon_DATA = jd.png
+dist_icon_DATA = jd.png
 
-EXTRA_DIST = AUTHORS TODO README configure 
+EXTRA_DIST = AUTHORS TODO README configure jd.spec
 
 jd_BUILDINFO_HEADER = buildinfo.h
 jd_CONFIGURE_ARGS = @ac_configure_args@

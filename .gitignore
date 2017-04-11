@@ -1,0 +1,7 @@
+buildinfo.h
+src/jd
+src/**/*.a
+src/icons/*.h
+!src/icons/iconmanager.h
+!src/icons/iconid.h
+!src/icons/iconfiles.h

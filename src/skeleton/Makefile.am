@@ -60,6 +60,7 @@ noinst_HEADERS = \
 	editcolumns.h \
 	view.h \
 	editview.h \
+	editviewdialog.h \
 	dragnote.h \
 	tabnote.h \
 	toolbarnote.h \
