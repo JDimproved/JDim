@@ -878,7 +878,7 @@ void Loader::run_main()
                 errmsg = "skip_chunk() failed : " + m_data.url;
                 goto EXIT_LOADING;
             }
-            if( ! read_size ) continue;
+            if( ! read_size ) break;
         }
 
         // 圧縮されていない時はそのままコールバック呼び出し
