@@ -330,7 +330,7 @@ namespace ARTICLE
 
         // リアライズしたか
         // Gtk::Widget::is_realized() はうまく動作しない
-        const bool is_drawarea_realized(){ return m_window; }
+        const bool is_drawarea_realized(){ return static_cast<bool>(m_window); }
 
         // 文字色のID( colorid.h にある ID を指定)
         const int get_colorid_text() const{ return m_colorid_text; }
