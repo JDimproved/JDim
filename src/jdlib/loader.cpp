@@ -558,6 +558,87 @@ void* Loader::launcher( void* dat )
 }
 
 
+const bool Loader::send_connect( const int soc, std::string& errmsg )
+{
+    std::string authority;
+    std::string msg_send;
+
+    authority = m_data.host + ":" + std::to_string( m_data.port );
+    msg_send = "CONNECT " + authority + " HTTP/1.1\r\nHost: " + authority + "\r\n\r\n";
+    size_t send_size = strlen( msg_send.data() );
+    while( send_size > 0 && !m_stop ){
+        if( ! wait_recv_send( soc, false ) ){
+            m_data.code = HTTP_TIMEOUT;
+            errmsg = "send timeout";
+            return false;
+        }
+
+#ifdef _WIN32
+        ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
+        int lastError = WSAGetLastError();
+#else
+#ifdef MSG_NOSIGNAL
+        ssize_t tmpsize = send( soc, msg_send.data(), send_size, MSG_NOSIGNAL );
+#else
+        // SolarisにはMSG_NOSIGNALが無いのでSIGPIPEをIGNOREする (FreeBSD4.11Rにもなかった)
+        signal( SIGPIPE , SIG_IGN ); /* シグナルを無視する */
+        ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
+        signal(SIGPIPE,SIG_DFL); /* 念のため戻す */
+#endif // MSG_NOSIGNAL
+#endif // _WIN32
+
+#ifdef _WIN32
+        if( tmpsize == 0
+            || ( tmpsize < 0 && !( lastError == WSAEWOULDBLOCK || errno == WSAEINTR ) ) ){
+#else
+        if( tmpsize == 0
+            || ( tmpsize < 0 && !( errno == EWOULDBLOCK || errno == EINTR ) ) ){
+#endif
+
+            m_data.code = HTTP_ERR;
+            errmsg = "send failed : " + m_data.url;
+            return false;
+        }
+
+        if( tmpsize > 0 ) send_size -= tmpsize;
+    }
+
+    char rbuf[256];
+    size_t read_size = 0;
+    while( read_size < sizeof(rbuf) && !m_stop ){
+
+        ssize_t tmpsize;
+
+        if( !wait_recv_send( soc, true ) ){
+            m_data.code = HTTP_TIMEOUT;
+            errmsg = "CONNECT: read timeout in";
+            return false;
+        }
+
+        tmpsize = recv( soc, rbuf + read_size, sizeof(rbuf) - read_size, 0 );
+        if( tmpsize < 0 && errno != EINTR ){
+            m_data.code = HTTP_ERR;
+            errmsg = "CONNECT: recv() failed";
+            return false;
+        }
+
+        if( tmpsize == 0 ) break;
+        if( tmpsize > 0 ){
+            read_size += tmpsize;
+
+            const int ret = receive_header( rbuf, read_size );
+            if( ret == HTTP_ERR ){
+
+                m_data.code = HTTP_ERR;
+                errmsg = "CONNECT: invalid header : " + m_data.url;
+                return false;
+            }
+            else if( ret == HTTP_OK ) return true;
+        }
+    }
+    return false;
+}
+
 //
 // 実際の処理部
 //
@@ -683,6 +764,10 @@ void Loader::run_main()
     // ssl 初期化とコネクト
     if( m_data.use_ssl ){
 
+        if ( use_proxy ) {
+            if ( ! send_connect( soc, errmsg ) )
+                goto EXIT_LOADING;
+        }
         ssl = new JDLIB::JDSSL();
         if( ! ssl->connect( soc ) ){
             m_data.code = HTTP_ERR;

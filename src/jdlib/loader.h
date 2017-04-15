@@ -104,6 +104,7 @@ namespace JDLIB
         struct addrinfo* get_addrinfo( const std::string& hostname, const int port );
         const std::string create_msg_send();
         const bool wait_recv_send( const int fd, const bool recv );
+        const bool send_connect( const int soc, std::string& errmsg );
 
         // ローディング終了処理
         void finish_loading();
