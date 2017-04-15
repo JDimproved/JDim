@@ -441,7 +441,8 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     else{
 
         // http
-        if( m_data.protocol.find( "http://" ) != std::string::npos ) m_data.port = 80;
+        if( m_data.protocol.find( "http://" ) != std::string::npos )
+            m_data.port = data_in.use_ssl ? 443 : 80;
 
         // https
         else if( m_data.protocol.find( "https://" ) != std::string::npos ){
