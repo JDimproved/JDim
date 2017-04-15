@@ -446,8 +446,6 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
 
         // https
         else if( m_data.protocol.find( "https://" ) != std::string::npos ){
-            m_data.use_ssl = true;
-            m_data.async = false;
             m_data.port = 443;
         }
 
@@ -461,8 +459,14 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
         }
     }
 
-    // 明示的にssl使用指定
-    if( data_in.use_ssl ){
+    // ssl使用指定
+    // HACK: don't use SSL to access 2ch via a scraping proxy
+    if( data_in.use_ssl
+        || ( m_data.protocol.find( "https://" ) != std::string::npos
+             && m_data.host.find( ".2ch.net" ) == std::string::npos
+             && m_data.host.find( ".bbspink.com" ) == std::string::npos
+           )
+      ){
         m_data.use_ssl = true;
         m_data.async = false;
     }
