@@ -465,7 +465,6 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     if( data_in.use_ssl ){
         m_data.use_ssl = true;
         m_data.async = false;
-        m_data.port = 443;
     }
 
     // プロキシ
