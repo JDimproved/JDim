@@ -10,6 +10,8 @@ using namespace JDLIB;
 
 #ifdef USE_GNUTLS
 
+#include <cstring>
+
 // gnutls 使用
 
 void JDLIB::init_ssl()
@@ -51,7 +53,7 @@ JDSSL::~JDSSL()
 }
 
 
-const bool JDSSL::connect( const int soc )
+const bool JDSSL::connect( const int soc, const char *host )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::connect(gnutls)\n";
@@ -84,6 +86,7 @@ const bool JDSSL::connect( const int soc )
     gnutls_transport_set_ptr( m_session, (gnutls_transport_ptr_t)(long) soc );
     gnutls_certificate_allocate_credentials( &m_cred );
     gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
+    gnutls_server_name_set( m_session, GNUTLS_NAME_DNS, host, strlen( host ) );
 
     while ( ( ret = gnutls_handshake( m_session ) ) != GNUTLS_E_SUCCESS )
     {
@@ -178,7 +181,7 @@ JDSSL::~JDSSL()
 }
 
 
-const bool JDSSL::connect( const int soc )
+const bool JDSSL::connect( const int soc, const char *host )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::connect(openssl)\n";
@@ -206,6 +209,7 @@ const bool JDSSL::connect( const int soc )
         return false;
     }
 
+    SSL_set_tlsext_host_name( m_ssl, host ) ;
     if( SSL_connect( m_ssl ) != 1 ){
         m_errmsg = "SSL_connect failed";
         return false;

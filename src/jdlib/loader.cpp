@@ -773,7 +773,7 @@ void Loader::run_main()
                 goto EXIT_LOADING;
         }
         ssl = new JDLIB::JDSSL();
-        if( ! ssl->connect( soc ) ){
+        if( ! ssl->connect( soc, m_data.host.c_str() ) ){
             m_data.code = HTTP_ERR;
             errmsg = ssl->get_errmsg() + " : " + m_data.url;
             goto EXIT_LOADING;

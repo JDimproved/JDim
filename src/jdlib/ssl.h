@@ -50,7 +50,7 @@ namespace JDLIB
 
         const std::string& get_errmsg(){ return m_errmsg; }
 
-        const bool connect( const int soc );
+        const bool connect( const int soc, const char* host );
         const bool close();
 
         const int write( const char* buf, const size_t bufsize );
