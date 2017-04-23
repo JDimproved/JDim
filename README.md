@@ -5,7 +5,7 @@
 
 　一度だけやればいい。
 
-### Redhad系
+### Redhat系
 `  dnf install gtkmm24-devel gnutls-devel libSM-devel libtool automake git `
 
 ### Debin系
