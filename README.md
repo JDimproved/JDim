@@ -9,7 +9,11 @@
 `  dnf install gtkmm24-devel gnutls-devel libSM-devel libtool automake git `
 
 ### Debin系
-`  sudo apt-get install libgtkmm-2.4-dev libgnutls28-dev libsm-dev libtool automake git `
+`   sudo apt-get build-dep jd`
+
+　開発環境が入っていない場合は、
+
+`  sudo apt-get install build-essential automake git`
 
 ## インストール
 
