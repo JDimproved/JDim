@@ -1548,6 +1548,7 @@ const bool Root::is_2ch( const std::string& url )
     const std::string hostname = MISC::get_hostname( url );
 
     if( ( hostname.find( ".2ch.net" ) != std::string::npos && hostname.find( "info.2ch.net" ) == std::string::npos )
+        || ( hostname.find( ".5ch.net" ) != std::string::npos && hostname.find( "info.5ch.net" ) == std::string::npos )
         || hostname.find( ".bbspink.com" ) != std::string::npos ) return true;
 
     return false;

@@ -213,11 +213,11 @@ namespace CONFIG
 #define CONF_LOGINBE "http://be.2ch.net/test/login.php"
 
 // bbsmenu.htmlのURL
-#define CONF_URL_BBSMENU "http://menu.2ch.net/bbsmenu.html"
+#define CONF_URL_BBSMENU "http://menu.5ch.net/bbsmenu.html"
 
 // スレタイ検索用メニュータイトルアドレス
-#define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (dig.2ch.net)"
-#define CONF_URL_SEARCH_TITLE "http://dig.2ch.net/?maxResult=100&atLeast=1&Link=1&AndOr=0&Sort=5&Bbs=all&924=1&password=dig&keywords=$TEXTU"
+#define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (dig.5ch.net)"
+#define CONF_URL_SEARCH_TITLE "http://dig.5ch.net/?maxResult=100&atLeast=1&Link=1&AndOr=0&Sort=5&Bbs=all&924=1&password=dig&keywords=$TEXTU"
 
 // スレタイ検索用正規表現
 #define CONF_REGEX_SEARCH_TITLE "<a href=\"(https?[^\"]*)\">([^<]+) \\(([0-9]{1,4})\\)</a>"

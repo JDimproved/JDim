@@ -464,6 +464,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     if( data_in.use_ssl
         || ( m_data.protocol.find( "https://" ) != std::string::npos
              && m_data.host.find( ".2ch.net" ) == std::string::npos
+             && m_data.host.find( ".5ch.net" ) == std::string::npos
              && m_data.host.find( ".bbspink.com" ) == std::string::npos
            )
       ){
