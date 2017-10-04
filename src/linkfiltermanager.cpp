@@ -94,11 +94,10 @@ void Linkfilter_Manager::save_xml()
     XML::Dom* root = document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME_LINKFILTER ) );
     if( ! root ) return;
 
-    std::vector< LinkFilterItem >::iterator it = m_list_cmd.begin();
-    while( it != m_list_cmd.end() ){
+    for( const LinkFilterItem& item : m_list_cmd ) {
 
-        const std::string url = ( *it ).url;
-        const std::string cmd = ( *it ).cmd;
+        const std::string& url = item.url;
+        const std::string& cmd = item.cmd;
 
         if( ! url.empty() && ! cmd.empty() ){
 
@@ -106,7 +105,6 @@ void Linkfilter_Manager::save_xml()
             node->setAttribute( "url", url );
             node->setAttribute( "data", cmd );
         }
-        ++it;
     }
 
 #ifdef _DEBUG
@@ -141,11 +139,10 @@ bool Linkfilter_Manager::exec( const std::string& url, const std::string& link, 
     const bool usemigemo = false;
     const bool wchar = false;
 
-    std::vector< LinkFilterItem >::iterator it = m_list_cmd.begin();
-    for( ; it != m_list_cmd.end(); ++it ){
+    for( const LinkFilterItem& item : m_list_cmd ) {
 
-        const std::string query = ( *it ).url;
-        const std::string cmd = ( *it ).cmd;
+        const std::string& query = item.url;
+        const std::string& cmd = item.cmd;
 
 #ifdef _DEBUG
         std::cout << "query = " << query << std::endl
