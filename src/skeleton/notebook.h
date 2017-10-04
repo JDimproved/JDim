@@ -15,7 +15,7 @@ namespace SKELETON
       public:
 
         JDNotebook();
-        ~JDNotebook();
+        ~JDNotebook() noexcept;
 
         // unpack = true の時取り除く
         int append_remove_page( bool unpack, Widget& child, const Glib::ustring& tab_label, bool use_mnemonic = false );

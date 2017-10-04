@@ -19,8 +19,7 @@ TreeColumns::TreeColumns()
     : SKELETON::EditColumns()
 {}
 
-TreeColumns::~TreeColumns() noexcept
-{}
+TreeColumns::~TreeColumns() noexcept = default;
 
 void TreeColumns::setup_row( Gtk::TreeModel::Row& row,
                              const Glib::ustring url, const Glib::ustring name, const Glib::ustring data,

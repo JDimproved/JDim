@@ -26,6 +26,10 @@ BoardToolBar::BoardToolBar() :
     add_search_control_mode( CONTROL::MODE_BOARD );
 }
 
+
+BoardToolBar::~BoardToolBar() noexcept = default;
+
+
 // ボタンのパッキング
 // virtual
 void BoardToolBar::pack_buttons()

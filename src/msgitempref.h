@@ -14,7 +14,7 @@ namespace CORE
       public:
 
         MsgItemPref( Gtk::Window* parent, const std::string& url );
-        ~MsgItemPref() noexcept {}
+        ~MsgItemPref() noexcept = default;
 
       private:
 

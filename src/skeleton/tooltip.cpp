@@ -23,6 +23,9 @@ Tooltip::Tooltip()
 }
 
 
+Tooltip::~Tooltip() noexcept = default;
+
+
 // フォント
 void Tooltip::modify_font_label( const std::string& fontname )
 {

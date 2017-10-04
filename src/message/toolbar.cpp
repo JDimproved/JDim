@@ -84,6 +84,9 @@ MessageToolBar::MessageToolBar() :
 }
 
 
+MessageToolBar::~MessageToolBar() noexcept = default;
+
+
 // 新規スレ名entry表示切り替え
 void MessageToolBar::show_entry_new_subject( bool show )
 {
@@ -235,6 +238,8 @@ MessageToolBarPreview::MessageToolBarPreview() :
     pack_buttons();
 }
 
+
+MessageToolBarPreview::~MessageToolBarPreview() noexcept = default;
 
 
 // ボタンのパッキング

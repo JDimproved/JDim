@@ -9,6 +9,9 @@
 
 using namespace SKELETON;
 
+ToolMenuButton::ToolMenuButton() = default;
+
+
 ToolMenuButton::ToolMenuButton( const std::string& label, const bool expand,
                                 const bool show_arrow, Gtk::Widget& widget )
 {
@@ -24,6 +27,9 @@ ToolMenuButton::ToolMenuButton( const std::string& label, const bool expand,
     SKELETON::MenuButton *button = Gtk::manage( new SKELETON::MenuButton( show_arrow, id ) );
     setup( button, label, expand );
 }
+
+
+ToolMenuButton::~ToolMenuButton() noexcept = default;
 
 
 void ToolMenuButton::setup( SKELETON::MenuButton* button, const std::string& label, const bool expand )

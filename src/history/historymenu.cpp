@@ -21,6 +21,9 @@ HistoryMenu::HistoryMenu( const std::string& url_history, const std::string& lab
 }
 
 
+HistoryMenu::~HistoryMenu() noexcept = default;
+
+
 void HistoryMenu::restore_history()
 {
     m_submenu->restore_history();

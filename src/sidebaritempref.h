@@ -14,7 +14,7 @@ namespace CORE
       public:
 
         SidebarItemPref( Gtk::Window* parent, const std::string& url  );
-        ~SidebarItemPref() noexcept {}
+        ~SidebarItemPref() noexcept = default;
 
       private:
 

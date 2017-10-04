@@ -19,14 +19,14 @@ namespace XML
 
     class DomList
     {
-    	std::list< Dom* > m_list;
+        std::list< Dom* > m_list;
 
         //DomList( const DomList& );
 
       public:
 
-        DomList();
-        ~DomList();
+        DomList() = default;
+        ~DomList() noexcept = default;
 
         // std::list< Dom* > が代入された場合
         DomList& operator =( const std::list< Dom* >& list );

@@ -65,6 +65,10 @@ MainToolBar::MainToolBar() :
     pack_buttons();
 }
 
+
+MainToolBar::~MainToolBar() noexcept = default;
+
+
 // ボタンのパッキング
 // virtual
 void MainToolBar::pack_buttons()

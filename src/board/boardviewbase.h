@@ -101,7 +101,7 @@ namespace BOARD
     public:
 
         BoardViewBase( const std::string& url, const bool show_col_board );
-        ~BoardViewBase();
+        ~BoardViewBase() noexcept;
 
         const std::string& get_url_board() const { return m_url_board; }
         std::string url_for_copy() override;

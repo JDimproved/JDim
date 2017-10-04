@@ -147,7 +147,7 @@ namespace CORE
     public:
 
         Css_Manager();
-        virtual ~Css_Manager() noexcept {}
+        virtual ~Css_Manager() noexcept = default;
 
         // ユーザ設定の色取得
         std::string get_color( int colorid );

@@ -66,8 +66,8 @@ ConfigItems::ConfigItems()
     fontname.resize( FONT_NUM );
 }
 
-ConfigItems::~ConfigItems() noexcept
-{}
+ConfigItems::~ConfigItems() noexcept = default;
+
 
 // 設定読み込み
 bool ConfigItems::load( const bool restore )

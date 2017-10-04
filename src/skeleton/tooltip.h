@@ -22,6 +22,8 @@ namespace SKELETON
       public:
 
         Tooltip();
+        ~Tooltip() noexcept;
+
         void clock_in();
         void modify_font_label( const std::string& fontname );
 

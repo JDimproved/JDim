@@ -68,6 +68,8 @@ Urlreplace_Manager::Urlreplace_Manager()
     }
 }
 
+Urlreplace_Manager::~Urlreplace_Manager() noexcept = default;
+
 
 //
 // conf -> リスト

@@ -26,6 +26,9 @@ LabelEntry::LabelEntry( const bool editable, const std::string& label, const std
 }
 
 
+LabelEntry::~LabelEntry() noexcept = default;
+
+
 void LabelEntry::setup()
 {
     if( m_editable ) pack_start( m_entry );

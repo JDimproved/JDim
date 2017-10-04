@@ -9,16 +9,6 @@
 using namespace XML;
 
 
-DomList::DomList()
-{
-
-}
-
-DomList::~DomList()
-{
-
-}
-
 // std::list< Dom* > が代入された場合
 DomList& DomList::operator =( const std::list< Dom* >& list )
 {

@@ -12,8 +12,7 @@ JDNotebook::JDNotebook()
 {}
 
 
-JDNotebook::~JDNotebook()
-{}
+JDNotebook::~JDNotebook() noexcept = default;
 
 
 // unpack = true の時取り除く

@@ -20,10 +20,7 @@ MouseKeyConf::MouseKeyConf()
 {}
 
 
-
-MouseKeyConf::~MouseKeyConf() noexcept
-{}
-
+MouseKeyConf::~MouseKeyConf() noexcept = default;
 
 
 // 設定ファイル保存

@@ -49,3 +49,6 @@ AddEtcDialog::AddEtcDialog( const bool move, const std::string& url, const std::
 
     show_all_children();
 }
+
+
+AddEtcDialog::~AddEtcDialog() noexcept = default;

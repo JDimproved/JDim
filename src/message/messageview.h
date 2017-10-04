@@ -27,7 +27,7 @@ namespace MESSAGE
     {
       public:
         MessageViewNew( const std::string& url, const std::string& msg );
-        ~MessageViewNew() noexcept {}
+        ~MessageViewNew() noexcept = default;
 
         void reload() override;
 

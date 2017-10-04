@@ -66,7 +66,7 @@ namespace BOARD
             add( m_col_article );
         }
 
-        ~TreeColumns(){}
+        ~TreeColumns() noexcept = default;
     };
 }
 

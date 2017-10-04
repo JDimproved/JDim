@@ -12,8 +12,7 @@ JDVBox::JDVBox()
 {}
 
 
-JDVBox::~JDVBox()
-{}
+JDVBox::~JDVBox() noexcept = default;
 
 
 // unpack = true の時取り除く

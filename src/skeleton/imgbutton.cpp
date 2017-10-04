@@ -24,6 +24,9 @@ ImgButton::ImgButton( const Gtk::StockID& stock_id, const std::string label,
 }
 
 
+ImgButton::~ImgButton() noexcept = default;
+
+
 void ImgButton::set( const std::string& label )
 {
     if( ! m_img ) return;

@@ -27,8 +27,8 @@ EditColumns::EditColumns()
     add( m_dirid );
 }
 
-EditColumns::~EditColumns()
-{}
+
+EditColumns::~EditColumns() noexcept = default;
 
 
 void EditColumns::setup_row( Gtk::TreeModel::Row& row,

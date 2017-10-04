@@ -100,7 +100,7 @@ namespace SKELETON
       public:
 
         HPaneControl( Gtk::Paned& paned, int fixmode ) : PaneControl( paned, fixmode ) {}
-        ~HPaneControl() noexcept {}
+        ~HPaneControl() noexcept = default;
 
       protected:
 
@@ -122,7 +122,7 @@ namespace SKELETON
       public:
 
         VPaneControl( Gtk::Paned& paned, int fixmode ) : PaneControl( paned, fixmode ) {}
-        ~VPaneControl() noexcept {}
+        ~VPaneControl() noexcept = default;
 
       protected:
 

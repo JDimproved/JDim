@@ -49,8 +49,7 @@ namespace SKELETON
       public:
 
         AboutDiag( const Glib::ustring& title );
-
-        ~AboutDiag(){}
+        ~AboutDiag() noexcept;
 
         int run();
 

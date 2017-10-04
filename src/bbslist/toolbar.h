@@ -28,7 +28,7 @@ namespace BBSLIST
       public:
 
         BBSListToolBar();
-        ~BBSListToolBar() noexcept {}
+        ~BBSListToolBar() noexcept;
 
         // タブが切り替わった時にDragableNoteBookから呼び出される( Viewの情報を取得する )
         void set_view( SKELETON::View * view ) override;
@@ -57,7 +57,7 @@ namespace BBSLIST
       public:
 
         EditListToolBar();
-        ~EditListToolBar() noexcept {}
+        ~EditListToolBar() noexcept = default;
 
       protected:
 

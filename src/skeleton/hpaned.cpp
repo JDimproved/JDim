@@ -14,6 +14,9 @@ JDHPaned::JDHPaned( const int fixmode )
 {}
 
 
+JDHPaned::~JDHPaned() noexcept = default;
+
+
 void JDHPaned::on_realize()
 {
     Gtk::HPaned::on_realize();

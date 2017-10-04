@@ -120,7 +120,7 @@ namespace CORE
             show_all_children();
         }
 
-        ~GlobalAboneThreadPref() noexcept {}
+        ~GlobalAboneThreadPref() noexcept = default;
     };
 
 }

@@ -23,8 +23,7 @@ ButtonConfig::ButtonConfig()
 {}
 
 
-ButtonConfig::~ButtonConfig() noexcept
-{}
+ButtonConfig::~ButtonConfig() noexcept = default;
 
 
 //

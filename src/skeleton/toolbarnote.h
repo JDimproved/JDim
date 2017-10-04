@@ -21,6 +21,7 @@ namespace SKELETON
       public:
 
         ToolBarNotebook( DragableNoteBook* parent );
+        ~ToolBarNotebook() noexcept;
 
 #if !GTKMM_CHECK_VERSION(3,0,0)
       protected:

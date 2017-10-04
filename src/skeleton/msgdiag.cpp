@@ -56,6 +56,9 @@ MsgDiag::MsgDiag( Gtk::Window* parent,
 }
 
 
+MsgDiag::~MsgDiag() noexcept = default;
+
+
 void MsgDiag::add_default_button( const Gtk::StockID& stock_id, const int id )
 {
     Gtk::Button* button = Gtk::manage( new Gtk::Button( stock_id ) );
@@ -203,6 +206,8 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
 }
 
 
+MsgCheckDiag::~MsgCheckDiag() noexcept = default;
+
 
 /////////////////////////////////////
 
@@ -218,3 +223,6 @@ MsgOverwriteDiag::MsgOverwriteDiag( Gtk::Window* parent )
     add_button( "すべていいえ", OVERWRITE_NO_ALL );
     add_button( "すべて上書き", OVERWRITE_YES_ALL );
 }
+
+
+MsgOverwriteDiag::~MsgOverwriteDiag() noexcept = default;

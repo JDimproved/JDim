@@ -69,7 +69,7 @@ namespace JDLIB
         std::mutex m_provider_lock; // ImgProvider操作時の必須ロック
         
     public:
-        virtual ~ImgProvider() noexcept {}
+        virtual ~ImgProvider() noexcept = default;
         static ImgProvider& get_provider();
         
         Glib::RefPtr< ImgLoader > get_loader( const std::string& file );

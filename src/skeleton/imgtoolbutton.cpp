@@ -16,3 +16,6 @@ ImgToolButton::ImgToolButton( const int id )
     m_img = Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) );
     set_icon_widget( *m_img );
 }
+
+
+ImgToolButton::~ImgToolButton() noexcept = default;

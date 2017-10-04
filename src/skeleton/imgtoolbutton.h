@@ -17,6 +17,7 @@ namespace SKELETON
       public:
 
         ImgToolButton( const int id );
+        ~ImgToolButton() noexcept;
     };
 }
 

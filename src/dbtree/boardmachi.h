@@ -16,6 +16,7 @@ namespace DBTREE
       public:
 
         BoardMachi( const std::string& root, const std::string& path_board,const std::string& name );
+        ~BoardMachi() noexcept = default;
 
         // url がこの板のものかどうか
         bool equal( const std::string& url ) override;

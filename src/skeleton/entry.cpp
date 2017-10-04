@@ -16,6 +16,9 @@
 using namespace SKELETON;
 
 
+JDEntry::~JDEntry() noexcept = default;
+
+
 // ボタン入力のフック
 bool JDEntry::on_button_press_event( GdkEventButton* event )
 {

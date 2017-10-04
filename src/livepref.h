@@ -35,7 +35,7 @@ namespace CORE
       public:
 
         LivePref( Gtk::Window* parent, const std::string& url );
-        ~LivePref() noexcept {}
+        ~LivePref() noexcept = default;
 
       private:
 

@@ -30,6 +30,10 @@ ConfirmDiag::ConfirmDiag( const std::string& url, const std::string& message )
     grab_ok();
 }
 
+
+ConfirmDiag::~ConfirmDiag() noexcept = default;
+
+
 void ConfirmDiag::slot_switch_page( GtkNotebookPage*, guint page )
 {
     if( get_notebook().get_nth_page( page ) == get_detail() ){

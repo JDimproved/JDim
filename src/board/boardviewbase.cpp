@@ -191,7 +191,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
 }
 
 
-BoardViewBase::~BoardViewBase()
+BoardViewBase::~BoardViewBase() noexcept
 {
 #ifdef _DEBUG
     std::cout << "BoardViewBase::~BoardViewBase : " << get_url() << std::endl;

@@ -14,7 +14,7 @@ namespace CORE
       public:
 
         BoardItemMenuPref( Gtk::Window* parent, const std::string& url );
-        ~BoardItemMenuPref() noexcept {}
+        ~BoardItemMenuPref() noexcept = default;
 
       private:
 

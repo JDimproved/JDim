@@ -35,6 +35,9 @@ ToolBarNotebook::ToolBarNotebook( DragableNoteBook* parent )
 }
 
 
+ToolBarNotebook::~ToolBarNotebook() noexcept = default;
+
+
 //
 // 描画イベント
 //

@@ -24,6 +24,9 @@ ArticleToolBarSimple::ArticleToolBarSimple() :
 }
 
 
+ArticleToolBarSimple::~ArticleToolBarSimple() noexcept = default;
+
+
 //
 // ボタンのパッキング
 //
