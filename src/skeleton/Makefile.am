@@ -89,6 +89,7 @@ noinst_HEADERS = \
 	msgdiag.h \
 	aboutdiag.h \
 	detaildiag.h \
+	editviewdialog.h \
 	filediag.h \
 	login.h \
 	panecontrol.h \
