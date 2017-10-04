@@ -268,35 +268,40 @@ AS_IF(
 
 
 dnl
-dnl SSL
+dnl checking OpenSSL (deprecated option)
 dnl
+AC_ARG_WITH(openssl,
+AS_HELP_STRING([--with-openssl], [DEPRECATED. use --with-tls=openssl]),
+[AC_MSG_WARN([--with-openssl is deprecated. Use --with-tls=openssl instead.])
+ with_tls=openssl])
 
-use_gnutls=yes
+dnl
+dnl TLS
+dnl
+AC_MSG_CHECKING(for --with-tls)
+AC_ARG_WITH(tls,
+AC_HELP_STRING([--with-tls=@<:@gnutls|openssl@:>@],
+               [use TLS library @<:@default=gnutls@:>@]),
+[with_tls="$withval"], [with_tls=gnutls])
+AC_MSG_RESULT($with_tls)
 
-AC_ARG_WITH(openssl,[ --with-openssl    (use openssl)],
-       [ if test "$withval" != "no" ;then
-         use_gnutls=no
-       fi ])
-
-case "${use_gnutls}" in 
- yes)
-   echo "use gnutls"
-
-   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2], [echo "gnutls >= 1.2"])
-   AC_DEFINE(USE_GNUTLS, , "use gnutls")
+AS_IF(
+  [test "x$with_tls" = xgnutls],
+  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2])
+   AC_DEFINE(USE_GNUTLS, , [use gnutls])
    AC_CHECK_HEADERS([gcrypt.h])
    AC_CHECK_LIB(gcrypt, gcry_md_hash_buffer, [], [AC_MSG_ERROR([gcrypt not found])])
    AC_SUBST(GNUTLS_CFLAGS)
-   AC_SUBST(GNUTLS_LIBS)
-   ;;
- *)
-   echo "use openssl"
-   PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9] )
-   AC_DEFINE(USE_OPENSSL, , "use openssl")
+   AC_SUBST(GNUTLS_LIBS)],
+
+  [test "x$with_tls" = xopenssl],
+  [PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9])
+   AC_DEFINE(USE_OPENSSL, , [use openssl])
    AC_SUBST(OPENSSL_CFLAGS)
-   AC_SUBST(OPENSSL_LIBS)
-   ;;
-esac
+   AC_SUBST(OPENSSL_LIBS)],
+
+  [AC_MSG_ERROR([TLS library not found])]
+)
 
 
 dnl
