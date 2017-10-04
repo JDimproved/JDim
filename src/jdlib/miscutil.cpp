@@ -1868,7 +1868,7 @@ void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_p
                     }
                 }
 
-                while( !flag_hkana && hkana_table1[ i ][ 0 ][ 0 ] != '\0' ){
+                while( hkana_table1[ i ][ 0 ][ 0 ] != '\0' ){
 
                     if( in1 == hkana_table1[ i ][ 0 ][ 0 ]
                             && in2 == hkana_table1[ i ][ 0 ][ 1 ]
@@ -1879,6 +1879,7 @@ void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_p
 
                         if( dakuten ) pos += 3;
                         flag_hkana = true;
+                        break;
                     }
                     ++i;
                 }
