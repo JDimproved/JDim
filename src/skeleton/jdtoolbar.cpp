@@ -178,10 +178,27 @@ customized_gtk_toolbar_expose (GtkWidget      *widget,
 
 ///////////////////////////////////////////////////
 
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
+
 
 using namespace SKELETON;
 
 
+JDToolbar::JDToolbar()
+    : Gtk::Toolbar()
+{
+#if GTKMM_CHECK_VERSION(3,0,0)
+    // 子ウィジェットの配色がGTKテーマと違うことがある。
+    // ツールバーのcssクラスを削除し配色を修正する。
+    get_style_context()->remove_class( GTK_STYLE_CLASS_TOOLBAR );
+#endif
+}
+
+
+JDToolbar::~JDToolbar() noexcept = default;
+
+
+#if !GTKMM_CHECK_VERSION(3,0,0)
 bool JDToolbar::on_expose_event( GdkEventExpose* event )
 {
 #ifdef _DEBUG
@@ -199,5 +216,4 @@ bool JDToolbar::on_expose_event( GdkEventExpose* event )
 
     return FALSE;
 }
-
 #endif // !GTKMM_CHECK_VERSION(3,0,0)
