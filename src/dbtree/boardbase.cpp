@@ -1149,7 +1149,7 @@ void BoardBase::receive_finish()
         set_date_modified( std::string() );
         send_update_board();
 
-        if( m_lng_rawdata && get_code() == HTTP_OK && std::string( m_rawdata ).find( "window.location.href" ) != std::string::npos ){
+        if( m_lng_rawdata && get_code() == HTTP_OK && strstr( m_rawdata, "window.location.href" ) != nullptr ){
 
 #ifdef _DEBUG
             std::cout << m_rawdata << std::endl;
