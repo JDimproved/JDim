@@ -68,11 +68,9 @@ enum
 
 
 #define IS_URL(node) \
-( node->type == NODE_LINK && node->linkinfo->link \
-&& ( std::string( node->linkinfo->link ).find( "http" ) == 0 \
-|| std::string( node->linkinfo->link ).find( "https" ) == 0  \
-|| std::string( node->linkinfo->link ).find( "ftp" ) == 0 )  \
-)
+ ( node->type == NODE_LINK && node->linkinfo->link \
+  && ( memcmp( node->linkinfo->link, "http", 4 ) == 0 \
+      || memcmp( node->linkinfo->link, "ftp", 3 ) == 0 ) )
 
 
 using namespace DBTREE;
