@@ -216,6 +216,58 @@ AS_IF(
 
 
 dnl
+dnl checking oniguruma (deprecated option)
+dnl
+AC_ARG_WITH(oniguruma,
+AS_HELP_STRING([--with-oniguruma], [DEPRECATED. use --with-regex=oniguruma]),
+[AC_MSG_WARN([--with-oniguruma is deprecated. Use --with-regex=oniguruma instead.])
+ with_regex=oniguruma])
+
+dnl
+dnl checking PCRE (deprecated option)
+dnl
+AC_ARG_WITH(pcre,
+AS_HELP_STRING([--with-pcre], [DEPRECATED. use --with-regex=pcre]),
+[AC_MSG_WARN([--with-pcre is deprecated. Use --with-regex=pcre instead.])
+ with_regex=pcre])
+
+
+dnl
+dnl 正規表現ライブラリ
+dnl
+AC_MSG_CHECKING(for --with-regex)
+AC_ARG_WITH(regex,
+AC_HELP_STRING([--with-regex=@<:@posix|pcre|oniguruma@:>@],
+               [use regular expression library @<:@default=posix@:>@]),
+[], [with_regex=posix])
+AC_MSG_RESULT($with_regex)
+
+AS_IF(
+  [test "x$with_regex" = xposix],
+  [AC_CHECK_HEADERS([regex.h], , [AC_MSG_ERROR([regex.h not found])])
+   AC_CHECK_LIB([regex], [regexec])],
+
+  [test "x$with_regex" = xpcre],
+  [PKG_CHECK_MODULES(PCRE, [libpcre >= 6.5])
+   AC_DEFINE(USE_PCRE, , [use PCRE])
+   AC_SUBST(PCRE_CFLAGS)
+   AC_SUBST(PCRE_LIBS)
+   AC_CHECK_HEADERS([pcreposix.h], , [AC_MSG_ERROR([pcreposix.h not found])])
+   AC_CHECK_LIB([pcreposix], [regexec], , [AC_MSG_ERROR([libpcreposix.a not found])])],
+
+  [test "x$with_regex" = xoniguruma],
+  [PKG_CHECK_MODULES(ONIG, [oniguruma])
+   AC_DEFINE(USE_ONIG, , [use oniguruma regular expressions library])
+   AC_SUBST(ONIG_CFLAGS)
+   AC_SUBST(ONIG_LIBS)
+   AC_CHECK_HEADERS([onigposix.h], , [AC_MSG_ERROR([onigposix.h not found])])
+   AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])],
+
+  [AC_MSG_ERROR([regular expression library not found])]
+)
+
+
+dnl
 dnl SSL
 dnl
 
@@ -325,42 +377,6 @@ case "${host_os}" in
   )
  ;;
 esac
-
-
-dnl
-dnl checking oniguruma
-dnl
-AC_MSG_CHECKING(for --with-oniguruma)
-AC_ARG_WITH(oniguruma,
-  AS_HELP_STRING([--with-oniguruma], [enable oniguruma regular expressions library]),
-  [with_oniguruma="$withval"],
-  [with_oniguruma=no])
-AC_MSG_RESULT($with_oniguruma)
-
-AS_IF(
-  [test "x$with_oniguruma" = xyes],
-  [PKG_CHECK_MODULES(ONIG, [oniguruma])
-   AC_CHECK_HEADER([onigposix.h], , [AC_MSG_ERROR([onigposix.h not found])])
-   AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])
-   AC_DEFINE(USE_ONIG, , [use oniguruma regular expressions library])
-   AC_SUBST(ONIG_CFLAGS)
-   AC_SUBST(ONIG_LIBS)]
-)
-
-
-dnl
-dnl checking PCRE
-dnl
-AC_ARG_WITH(pcre,[ --with-pcre    (enable PCRE)],
-       [ if test "$withval" != "no" ;then
-               echo "use PCRE"
-               PKG_CHECK_MODULES(PCRE, [libpcre >= 6.5] )
-               AC_DEFINE(USE_PCRE, , "use PCRE")
-               AC_SUBST(PCRE_CFLAGS)
-               AC_SUBST(PCRE_LIBS)
-               AC_CHECK_HEADERS([pcreposix.h])
-               AC_CHECK_LIB(pcreposix,regexec)
-       fi ])
 
 
 dnl
