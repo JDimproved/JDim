@@ -4,6 +4,10 @@
 //#define _DEBUG_MEM_PROFILE
 #include "jddebug.h"
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "config/globalconf.h"
 
 #include "winmain.h"

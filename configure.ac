@@ -176,84 +176,43 @@ esac
 dnl
 dnl セッション管理
 dnl
-dnl
-use_xsmp=no
-use_gnomeui=no
-
+AC_MSG_CHECKING(for --with-sessionlib)
 AC_ARG_WITH(sessionlib,
-[
-  --with-sessionlib[[=xsmp/gnomeui/no]]
-                          use session control library [[default=xsmp]]
-],
-[case "${withval}" in
-  xsmp)
-    use_xsmp=yes
-    ;;
-  gnomeui)
-    use_gnomeui=yes
-    ;;
-  no)
-    use_xsmp=no
-    use_gnomeui=no
-    ;;
-  *)
-    use_xsmp=yes
-    ;;
-esac],use_xsmp=yes)
+AC_HELP_STRING([--with-sessionlib=@<:@xsmp|gnomeui|no@:>@],
+               [use session control library @<:@default=xsmp@:>@]),
+[with_sessionlib="$withval"], [with_sessionlib=xsmp])
+AC_MSG_RESULT($with_sessionlib)
 
-dnl
-dnl XSMPを使ってセッション管理をする。libSMとlibICEが必要。無ければXSMPは無効になる
-dnl
-dnl dirsの並びは Tk の configure に書いてあったもの + Fedora 向けにディレクトリを追加
-dnl
-if test x"$use_xsmp" = "xyes" ; then
-  
-  AC_MSG_CHECKING(for SMlib.h and ICElib.h)
-  LIBSM_CFLAGS=""
-  dirs="/usr/unsupported/include /usr/local/include /usr/X386/include /usr/X11R6/include /usr/X11R5/include /usr/include/X11R5 /usr/include/X11R4 /usr/openwin/include /usr/X11/include /usr/sww/include /usr/include"
-  for i in $dirs ; do
-    if test -r $i/X11/ICE/ICElib.h -a -r $i/X11/SM/SMlib.h ; then
-      AC_MSG_RESULT($i)
-      LIBSM_CFLAGS="-I$i"
-      break
-    fi
-  done
-  if test -z "$LIBSM_CFLAGS" ; then
-    AC_MSG_RESULT(could not find SMlib.h and ICElib.h)
-  fi
+AS_IF(
+  [test "x$with_sessionlib" = xno],
+  [],
 
-  AC_MSG_CHECKING(for libSM and libICE)
-  LIBSM_LIBS="" 
-  dirs="/usr/unsupported/lib /usr/local/lib /usr/X386/lib /usr/X11R6/lib /usr/X11R5/lib /usr/lib/X11R5 /usr/lib/X11R4 /usr/openwin/lib /usr/X11/lib /usr/sww/X11/lib /usr/lib /usr/X11R6/lib64 /usr/lib64"
-  for i in $dirs ; do
-    if test -r $i/libICE.so -a -r $i/libSM.so ; then
-      AC_MSG_RESULT($i)
-      LIBSM_LIBS="-L$i -lICE -lSM"
-      break
-    fi
-  done
-  if test -z "$LIBSM_LIBS" ; then
-    AC_MSG_RESULT(could not find libSM and libICE.)
-  fi
+  dnl XSMPを使ってセッション管理をする。libSMとlibICEが必要。無ければXSMPは無効になる
+  [test "x$with_sessionlib" = xxsmp],
+  [PKG_CHECK_MODULES(LIBSM, [sm >= 1.2], [], [ac_sm_ice_found=no])
+   PKG_CHECK_MODULES(LIBICE, [ice >= 1.0], [], [ac_sm_ice_found=no])
+   AS_IF(
+     [test "x$ac_sm_ice_found" = xno],
+     [AC_MSG_NOTICE([Disable XSMP due to LIBSM or LIBICE not found])],
 
-  if test -n "$LIBSM_CFLAGS" -a -n "$LIBSM_LIBS" ; then
-    AC_SUBST(LIBSM_CFLAGS)
-    AC_SUBST(LIBSM_LIBS)
-    CXXFLAGS="$CXXFLAGS -DUSE_XSMP"
-  fi
-fi
+     [LIBSM_CFLAGS="$LIBSM_CFLAGS $LIBICE_CFLAGS"
+      LIBSM_LIBS="$LIBSM_LIBS $LIBICE_LIBS"
+      AC_DEFINE(USE_XSMP, , [use xsmp])
+      AC_SUBST(LIBSM_CFLAGS)
+      AC_SUBST(LIBSM_LIBS)]
+   )],
 
-dnl
-dnl GNOMEUIを使ってセッション管理をする。libgnomeui-develが必要。
-dnl
-if test x"$use_gnomeui" = "xyes" ; then
+  [test "x$with_sessionlib" = xgnomeui -a "x$with_gtkmm3" != xno],
+  [AC_MSG_ERROR([gnomeui won't support for gtkmm3])],
 
-  PKG_CHECK_MODULES(GNOMEUI, [libgnomeui-2.0 >= 2.0] )
+  [test "x$with_sessionlib" = xgnomeui],
+  [PKG_CHECK_MODULES(GNOMEUI, [libgnomeui-2.0 >= 2.0])
+   AC_DEFINE(USE_GNOMEUI, , [use gnomeui])
+   AC_SUBST(GNOMEUI_CFLAGS)
+   AC_SUBST(GNOMEUI_LIBS)],
 
-  AC_SUBST(GNOMEUI_CFLAGS)
-  AC_SUBST(GNOMEUI_LIBS)
-  CXXFLAGS="$CXXFLAGS -DUSE_GNOMEUI"
-fi
+  [AC_MSG_ERROR([session control library not found])]
+)
 
 
 dnl
