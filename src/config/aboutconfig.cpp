@@ -49,6 +49,7 @@ void AboutConfig::pack_widgets()
     m_label.set_text( "動作保証外です。高度な設定を変更するとJDimが誤作動する場合があります。" );
 
     m_liststore = Gtk::ListStore::create( m_columns );
+    m_treeview.property_fixed_height_mode() = true;
     m_treeview.set_model( m_liststore );
     m_treeview.set_size_request( 700, 400 );
     m_treeview.signal_row_activated().connect( sigc::mem_fun( *this, &AboutConfig::slot_row_activated ) );
@@ -62,6 +63,8 @@ void AboutConfig::pack_widgets()
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &AboutConfig::slot_cell_data ) );
 
     column = Gtk::manage( new Gtk::TreeViewColumn( "値", m_columns.m_col_value ) );
+    column->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
+    column->set_resizable( true );
     m_treeview.append_column( *column );
     cell = column->get_first_cell();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &AboutConfig::slot_cell_data ) );
