@@ -3091,7 +3091,11 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
                 pango_cairo_show_layout( text_cr, m_pango_layout->gobj() );
             }
 #else
-            m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
+            // Glib::ustringのコンストラクタでchar*から変換するとUTF-8が
+            // 壊れている場合にインスタンスが生成されない
+            // (例外をキャッチしないとクラッシュする)ので
+            // std::stringからGlib::ustringに変換するコンストラクタを使う
+            m_pango_layout->set_text( std::string( node->text + pos_start, n_byte ) );
             m_backscreen->draw_layout( m_gc,x, y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
 
             if( node->bold ){
