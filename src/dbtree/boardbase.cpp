@@ -1164,7 +1164,13 @@ void BoardBase::receive_finish()
             std::string query = ".*window.location.href=\"([^\"]*)\".*";
             if( regex.exec( query, m_rawdata, offset, icase, newline, usemigemo, wchar ) ){
 
-                const std::string new_url = regex.str( 1 );
+                std::string new_url = regex.str( 1 );
+                if( new_url.compare( 0, 2, "//" ) == 0 ){
+                    std::string tmp_url = url_boardbase();
+                    size_t pos = tmp_url.find("://");
+                    if( pos != std::string::npos )
+                        new_url.insert( 0, tmp_url.substr( 0, pos + 1 ) );
+                }
                 int ret = Gtk::RESPONSE_YES;
 
                 if( CONFIG::get_show_movediag() ){
