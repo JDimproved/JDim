@@ -577,6 +577,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( raction_img1, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_EMB ) );
     m_action_group->add( raction_img2, sigc::bind< int >( sigc::mem_fun( *this, &Core::slot_toggle_imgview ), IMGVIEW_NO ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseImgPopup", "画像ポップアップを表示する(_P)", std::string(), CONFIG::get_use_image_popup() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
@@ -646,8 +648,6 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::ToggleAction::create( "SavePostHist", "書き込み履歴(鉛筆マーク)を保存する(_P)", std::string(), CONFIG::get_save_post_history() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_save_post_history ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "UseMosaic", "画像にモザイクをかける(_M)", std::string(), CONFIG::get_use_mosaic() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_use_mosaic ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "UseMachiOfflaw", "まちBBSでofflaw.cgiを使用する(_O)", std::string(), CONFIG::get_use_machi_offlaw() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_machi_offlaw ) );
@@ -930,6 +930,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                         "<menuitem action='UseEmbImg'/>"
                         "<menuitem action='NoUseImg'/>"
                     "</menu>"
+                    "<menuitem action='UseMosaic'/>"
                     "<menuitem action='UseImgPopup'/>"
                     "<menuitem action='UseInlineImg'/>"
                     "<menuitem action='ShowSsspIcon'/>"
@@ -1010,8 +1011,6 @@ void Core::run( const bool init, const bool skip_setupdiag )
                 "<separator/>"
                 "<menuitem action='SavePostLog'/>"
                 "<menuitem action='SavePostHist'/>"
-                "<separator/>"
-                "<menuitem action='UseMosaic'/>"
                 "<separator/>"
                 "<menuitem action='UseMachiOfflaw'/>"
             "</menu>"
