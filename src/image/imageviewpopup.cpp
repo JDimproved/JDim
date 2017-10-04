@@ -319,7 +319,12 @@ void ImageViewPopup::update_label()
         m_length_prev = get_img()->current_length();
 
         char tmpstr[ 256 ];
-        snprintf( tmpstr, 256, "%zd k / %zd k", m_length_prev/1024, get_img()->total_length()/1024 );
+#if _WIN32
+        snprintf( tmpstr, sizeof( tmpstr ), "%u / %u KiB", m_length_prev/1024, get_img()->total_length()/1024 );
+#else
+        snprintf( tmpstr, sizeof( tmpstr ), "%zu / %zu KiB", m_length_prev/1024, get_img()->total_length()/1024 );
+#endif
+        tmpstr[ sizeof( tmpstr ) - 1 ] = '\0';
         m_label->set_text( tmpstr );
     }
 }
