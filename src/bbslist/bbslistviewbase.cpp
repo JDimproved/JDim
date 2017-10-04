@@ -2524,6 +2524,10 @@ void BBSListViewBase::select_item( const std::string& url )
         // スレまたは画像の場合
     }
     else {
+        // 板以外の履歴は処理しない
+        if( get_url() == URL_HISTTHREADVIEW || get_url() == URL_HISTCLOSEVIEW ||
+            get_url() == URL_HISTCLOSEIMGVIEW ) return;
+
         // 板の場合
         url_item = DBTREE::url_boardbase( url );
 
