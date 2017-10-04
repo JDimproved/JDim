@@ -181,13 +181,10 @@ void MenuButton::on_clicked()
 //
 void MenuButton::slot_popup_pos( int& x, int& y, bool& push_in )
 {
-    const int mrg = 16;
-
-    get_pointer( x, y );
     int ox, oy;
     get_window()->get_origin( ox, oy );
     Gdk::Rectangle rect = get_allocation();
-    x += ox + rect.get_x() - mrg;
+    x = ox + rect.get_x();
     y = oy + rect.get_y() + rect.get_height();
     push_in = false;
 }
