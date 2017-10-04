@@ -91,11 +91,11 @@ namespace SKELETON
         void init_font( const std::string& fontname );
         
         // ツールチップ表示
-        // set_tooltip_min_width()で指定した幅よりもツールチップが広い場合は表示
         void set_str_tooltip( const std::string& str );
-        void set_tooltip_min_width( const int min_width );
-        void hide_tooltip();
-        void show_tooltip();
+        // ツールチップ最小幅設定(指定した幅よりもツールチップが広い場合は表示)
+        void set_tooltip_min_width( const int min_width ){ m_tooltip.set_min_width( min_width ); }
+        void hide_tooltip(){ m_tooltip.hide_tooltip(); }
+        void show_tooltip(){ m_tooltip.show_tooltip(); }
 
         // ポップアップウィンドウ表示
         const std::string& pre_popup_url() const { return m_pre_popup_url; }
