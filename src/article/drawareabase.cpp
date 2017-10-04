@@ -3854,7 +3854,7 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
 
                         const size_t lng = strlen( tmplayout->text );
 
-                        if( buffer_lng + lng > SEARCH_BUFFER_SIZE ){
+                        if( buffer_lng + lng >= SEARCH_BUFFER_SIZE ){
 
                             MISC::ERRMSG( "DrawAreaBase::search : buffer overflow." );
                             break;
