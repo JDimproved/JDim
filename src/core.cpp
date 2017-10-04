@@ -581,7 +581,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::mem_fun( *this, &Core::slot_toggle_use_imgpopup ) );
     m_action_group->add( Gtk::ToggleAction::create( "UseInlineImg", "インライン画像を表示する(_I)", std::string(), CONFIG::get_use_inline_image() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_use_inlineimg ) );
-    m_action_group->add( Gtk::ToggleAction::create( "ShowSsspIcon", "BEアイコン/エモーションを表示する(_B)", std::string(), CONFIG::get_show_ssspicon() ),
+    m_action_group->add( Gtk::ToggleAction::create( "ShowSsspIcon", "BEアイコン/エモティコンを表示する(_B)", std::string(), CONFIG::get_show_ssspicon() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_show_ssspicon ) );
 
     // リスト表示項目設定
@@ -1381,7 +1381,7 @@ void Core::set_maintitle()
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
     if( CORE::get_loginp2()->login_now() ) title +=" [ p2 ]";
-    if( ! SESSION::is_online() ) title += " [ オフライン ]";
+    if( ! SESSION::is_online() ) title += " [ offline ]";
     m_win_main.set_title( title );
 }
 
