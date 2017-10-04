@@ -1364,6 +1364,7 @@ void NodeTreeBase::receive_finish()
         && get_code() != HTTP_OK
         && get_code() != HTTP_PARTIAL_CONTENT
         && get_code() != HTTP_NOT_MODIFIED
+        && get_code() != HTTP_RANGE_ERR
         && get_code() != HTTP_OLD
         ){
         is_error = true;
@@ -1371,7 +1372,7 @@ void NodeTreeBase::receive_finish()
         std::ostringstream err;
         err << m_url << std::endl
             << "load failed. : " << get_str_code();
-        if( get_code() == HTTP_REDIRECT || get_code() == HTTP_REDIRECT ) err << " location = " << location();
+        if( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT ) err << " location = " << location();
         MISC::ERRMSG( err.str() );
     }
 
