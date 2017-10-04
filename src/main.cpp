@@ -16,7 +16,6 @@
 #include "iomonitor.h"
 
 #include "jdlib/miscmsg.h"
-#include "jdlib/miscutil.h"
 #include "jdlib/ssl.h"
 #include "jdlib/jdregex.h"
 
