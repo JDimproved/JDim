@@ -1469,8 +1469,8 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
             return;
         }
 
-        // http が無ければ付ける
-        if( url.find( "http://" ) != 0 && url.find( "https://" ) != 0 ) url = "http://" + url;
+        // http[s] が無ければ付ける
+        if( url.find( "://" ) == std::string::npos ) url = "http://" + url;
 
         // .htmlを取り除く
         JDLIB::Regex regex;
