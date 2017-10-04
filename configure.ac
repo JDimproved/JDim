@@ -32,25 +32,20 @@ dnl OSを判定してOS別の設定
 dnl 
 case "${host_os}" in 
  freebsd*) 
-   echo "os = freebsd"
    AC_DEFINE(USE_MKTIME, , "use mktime")
    ;;
  solaris*)
-   echo "os = solaris"
    AC_DEFINE(NO_TIMEGM, , "no timegm")
    ;;
  mingw*)
-   echo "os = ${host_os}"
    AC_DEFINE(USE_MKTIME, , "use mktime")
    ;;
  darwin*)
-   echo "os = ${host_os}"
    AC_DEFUN([AM_ICONV], [])
    AC_DEFINE(USE_MKTIME, , "use mktime")
    ;;
 dnl linux*|gnu*|*-gnu
  *)
-   echo "os = ${host_os}"
    AC_DEFUN([AM_ICONV], [])
    ;;
 esac
@@ -110,8 +105,6 @@ AC_SUBST(GTKMM_LIBS)
 dnl
 dnl crypt
 dnl
-
-echo "use crypt"
 AC_CHECK_HEADERS([crypt.h])
 AC_CHECK_LIB(crypt,crypt)
 
@@ -119,8 +112,6 @@ AC_CHECK_LIB(crypt,crypt)
 dnl
 dnl zlib
 dnl
-
-echo "use zlib"
 AC_CHECK_HEADERS([zlib.h])
 AC_CHECK_LIB(z,inflate)
 
@@ -137,19 +128,14 @@ case "${host_os}" in
    dnl not available uname on windows
    dnl
    
-   echo "use winsock2"
    AC_CHECK_HEADERS([winsock2.h])
    AC_CHECK_LIB(ws2_32,_head_libws2_32_a)
    
-   echo "use regex2"
    AC_CHECK_HEADERS([regex.h])
    AC_CHECK_LIB(regex,regexec)
    
-   echo "use iconv"
    AC_CHECK_HEADERS([iconv.h])
    AC_CHECK_LIB(iconv,_head_libiconv_a)
-   
-   echo "use windows resources"
    AC_CHECK_TOOL([WINDRES], [windres], [windres])
    AC_SUBST(WINDRES)
    AC_DEFINE(USE_WINDRES, , "use windres")
@@ -160,10 +146,8 @@ case "${host_os}" in
    dnl any other POSIX systems
    dnl
 
-   echo "use uname"
    AC_CHECK_HEADERS([sys/utsname.h])
 
-   echo "use socket"
    AC_CHECK_HEADERS([socket.h])
    AC_CHECK_LIB(socket,socket)
    ;;
@@ -253,7 +237,6 @@ if test x"$use_xsmp" = "xyes" ; then
   fi
 
   if test -n "$LIBSM_CFLAGS" -a -n "$LIBSM_LIBS" ; then
-    echo "use XSMP"
     AC_SUBST(LIBSM_CFLAGS)
     AC_SUBST(LIBSM_LIBS)
     CXXFLAGS="$CXXFLAGS -DUSE_XSMP"
@@ -267,7 +250,6 @@ if test x"$use_gnomeui" = "xyes" ; then
 
   PKG_CHECK_MODULES(GNOMEUI, [libgnomeui-2.0 >= 2.0] )
 
-  echo "use GNOMEUI"
   AC_SUBST(GNOMEUI_CFLAGS)
   AC_SUBST(GNOMEUI_LIBS)
   CXXFLAGS="$CXXFLAGS -DUSE_GNOMEUI"
