@@ -302,7 +302,7 @@ void BoardBase::set_list_cookies_for_write( const std::list< std::string >& list
 #endif
 
         std::string key;
-        const size_t n = cookie.find( "=" );
+        const size_t n = cookie.find( '=' );
         if( n != std::string::npos ) key = cookie.substr( 0, n+1 );
 
         // 更新

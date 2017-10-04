@@ -104,7 +104,7 @@ void Dom::parse( const std::string& str )
         std::string next_source;
 
         // "<"を探す
-        tag_lt_pos = str.find( "<", current_pos );
+        tag_lt_pos = str.find( '<', current_pos );
 
         // タグの前のテキストノード
         if( current_pos < tag_lt_pos )
@@ -125,7 +125,7 @@ void Dom::parse( const std::string& str )
         // 要素ノード
         else if( current_pos == tag_lt_pos )
         {
-            tag_gt_pos = str.find( ">", tag_lt_pos + 1 );
+            tag_gt_pos = str.find( '>', tag_lt_pos + 1 );
 
             current_pos = tag_gt_pos + 1;
 
@@ -138,7 +138,7 @@ void Dom::parse( const std::string& str )
             // タグ構造が壊れてる場合
             size_t broken_pos = 0;
             if( open_tag.empty() || ! is_alpha ) continue;
-            else if( ( broken_pos = open_tag.find( "<" ) ) != std::string::npos )
+            else if( ( broken_pos = open_tag.find( '<' ) ) != std::string::npos )
             {
                  current_pos += broken_pos;
                  continue;
@@ -183,8 +183,8 @@ void Dom::parse( const std::string& str )
             {
                 // count は見つける必要がある終了タグの数
                 size_t close_tag_lt_pos = 0, close_tag_gt_pos = 0, count = 1;
-                while( ( close_tag_lt_pos = str.find( "<", current_pos ) ) != std::string::npos
-                     && ( close_tag_gt_pos = str.find( ">", close_tag_lt_pos + 1 ) ) != std::string::npos )
+                while( ( close_tag_lt_pos = str.find( '<', current_pos ) ) != std::string::npos
+                     && ( close_tag_gt_pos = str.find( '>', close_tag_lt_pos + 1 ) ) != std::string::npos )
                 {
                     current_pos = close_tag_gt_pos + 1;
 
@@ -193,7 +193,7 @@ void Dom::parse( const std::string& str )
 
                     // タグ構造が壊れてる場合
                     if( close_tag.empty() ) continue;
-                    else if( ( broken_pos = close_tag.find( "<" ) ) != std::string::npos )
+                    else if( ( broken_pos = close_tag.find( '<' ) ) != std::string::npos )
                     {
                          current_pos += broken_pos;
                          continue;

@@ -25,7 +25,7 @@ std::list< std::string > MISC::get_lines( const std::string& str ){
         
     std::list< std::string > lines;
     size_t i = 0, i2 = 0, r = 0;
-    while ( ( i2 = str.find( "\n", i ) ) != std::string::npos ){
+    while ( ( i2 = str.find( '\n', i ) ) != std::string::npos ){
         r = 0;
         if( (i2 >= 1) && (str[ i2 - 1 ] == '\r') ) r = 1;
         if( i2 - i > 0 ){
@@ -899,7 +899,7 @@ std::string MISC::html_escape( const std::string& str, const bool include_url )
 std::string MISC::html_unescape( const std::string& str )
 {
     if( str.empty() ) return str;
-    if( str.find( "&" ) == std::string::npos ) return str;
+    if( str.find( '&' ) == std::string::npos ) return str;
 
     std::string str_out;
     const size_t str_length = str.length();
