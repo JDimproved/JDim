@@ -4498,7 +4498,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
 
                         ) pos_left = pos_tmp + byte_char;
 
-                    pos_tmp += byte_char;
+                    pos_tmp += ( byte_char ? byte_char : 1 );
                 }
 
                 // 右位置を求める
@@ -4516,7 +4516,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                     // 区切り文字が来たらbreak
                     if( is_separate_char( ucs2 ) ) break;
 
-                    pos_right += byte_char;
+                    pos_right += ( byte_char ? byte_char : 1 );
 
                     // 文字種が変わった
                     if( ucs2_next == '\0'
