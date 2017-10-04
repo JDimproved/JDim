@@ -27,6 +27,12 @@
 #include <windows.h>
 #endif
 
+#if defined(USE_GNUTLS)
+#  include <gnutls/gnutls.h>
+#elif defined(USE_OPENSSL)
+#  include <openssl/ssl.h>
+#endif
+
 std::string ENVIRONMENT::get_progname() { return "JDim"; }
 std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
 std::string ENVIRONMENT::get_jdcopyright(){ return std::string( JDCOPYRIGHT ); }
@@ -606,6 +612,25 @@ std::string ENVIRONMENT::get_glibmm_version()
 
 
 //
+// TLSライブラリのバージョンを取得
+//
+std::string ENVIRONMENT::get_tlslib_version()
+{
+    std::string version;
+
+#if defined(USE_GNUTLS)
+    version = "GnuTLS ";
+    version += gnutls_check_version(nullptr);
+#elif defined(USE_OPENSSL)
+    version = SSLeay_version(SSLEAY_VERSION);
+#endif
+
+    return version;
+}
+
+
+
+//
 // 動作環境を取得
 //
 std::string ENVIRONMENT::get_jdinfo()
@@ -640,7 +665,8 @@ std::string ENVIRONMENT::get_jdinfo()
     "[パッケージ] " << "バイナリ/ソース( <配布元> )" << "\n" <<
     "[ DE／WM ] " << desktop << "\n" <<
     "[　gtkmm 　] " << get_gtkmm_version() << "\n" <<
-    "[　glibmm 　] " << get_glibmm_version()<< "\n" <<
+    "[　glibmm 　] " << get_glibmm_version() << "\n" <<
+    "[　TLS lib　] " << get_tlslib_version() << "\n" <<
 #ifdef CONFIGURE_ARGS
     "[オプション ] " << get_configure_args( CONFIGURE_OMITTED_MULTILINE ) << "\n" <<
 #endif
