@@ -24,7 +24,7 @@ SettingLoader::SettingLoader( const std::string& url_boadbase )
       m_message_count( 0 )
 {
 #ifdef _DEBUG
-    std::cout << "SettingLoader::SettingLoader : " << get_url() << std::endl;
+    std::cout << "SettingLoader::SettingLoader : " << m_url_boadbase << std::endl;
 #endif
 
     set_date_modified( DBTREE::board_get_modified_setting( m_url_boadbase ) );
@@ -34,7 +34,7 @@ SettingLoader::SettingLoader( const std::string& url_boadbase )
 SettingLoader::~SettingLoader()
 {
 #ifdef _DEBUG
-    std::cout << "SettingLoader::~SettingLoader : " << get_url() << std::endl;
+    std::cout << "SettingLoader::~SettingLoader : " << m_url_boadbase << std::endl;
 #endif
 }
 
