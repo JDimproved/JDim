@@ -93,11 +93,11 @@ namespace XML
         void clear();
 
         // XMLタグ構造の文字列を生成
-        std::string get_xml( const int n = 0 );
+        std::string get_xml( const int n = 0 ) const;
 
         // getElement(s)By*()
-        Dom* getElementById( const std::string& id );
-        DomList getElementsByTagName( const std::string& name );
+        Dom* getElementById( const std::string& id ) const;
+        DomList getElementsByTagName( const std::string& name ) const;
 
         // プロパティを扱うアクセッサ
         int nodeType();
@@ -113,25 +113,25 @@ namespace XML
         // 事で、メンバ関数の内部でnewして追加されたノードのポインタ
         // を返すようにしてあります。
 
-        Dom* ownerDocument();
+        Dom* ownerDocument() const;
         Dom* parentNode();
         bool hasChildNodes();
-        DomList childNodes();
-        Dom* firstChild();
-        Dom* lastChild();
+        DomList childNodes() const;
+        Dom* firstChild() const;
+        Dom* lastChild() const;
         Dom* appendChild( const int node_type, const std::string& node_name );
         bool removeChild( Dom* node );
         Dom* replaceChild( const int node_type, const std::string& node_name, Dom* oldNode );
         Dom* insertBefore( const int node_type, const std::string& node_name, Dom* insNode );
-        Dom* previousSibling();
-        Dom* nextSibling();
+        Dom* previousSibling() const;
+        Dom* nextSibling() const;
 
         // 属性
         bool hasAttributes();
         std::map< std::string, std::string > attributes();
         void attributes( const std::map< std::string, std::string > attributes );
-        bool hasAttribute( const std::string& name );
-        std::string getAttribute( const std::string& name );
+        bool hasAttribute( const std::string& name ) const;
+        std::string getAttribute( const std::string& name ) const;
         bool setAttribute( const std::string& name, const std::string& value );
         bool setAttribute( const std::string& name, const int value );
         bool removeAttribute( const std::string& name );

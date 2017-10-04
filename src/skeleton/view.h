@@ -168,7 +168,7 @@ namespace SKELETON
 
         virtual void save_session() = 0;
 
-        virtual const std::string& get_url(){ return m_url; }
+        virtual const std::string& get_url() const { return m_url; }
         const std::string& get_url_admin();
 
         virtual void set_parent_win( Gtk::Window* parent_win ){ m_parent_win = parent_win; }
@@ -178,7 +178,7 @@ namespace SKELETON
         virtual void update_url( const std::string& url_old, const std::string& url_new );
 
         // 検索文字列
-        const std::string& get_search_query(){ return m_search_query; }
+        const std::string& get_search_query() const { return m_search_query; }
 
         // ツールバーのID
         // タブの切り替えのときに Admin から参照される
@@ -210,20 +210,20 @@ namespace SKELETON
                                   const std::string& arg2 = {} ) { return true; }
 
         // コピー用のURL
-        virtual std::string url_for_copy(){ return m_url; }
+        virtual std::string url_for_copy() const { return m_url; }
 
         // ツールバーのラベルに表示する文字列
-        const std::string& get_label(){ return m_label; }
+        const std::string& get_label() const { return m_label; }
 
         // メインウィンドウのタイトルバーに表示する文字列
-        virtual const std::string& get_title(){ return m_title; }
+        virtual const std::string& get_title() const { return m_title; }
 
         // メインウィンドウのステータスバーに表示する文字列
-        virtual const std::string& get_status(){ return m_status; }
+        virtual const std::string& get_status() const { return m_status; }
 
         // クライアント領域の幅、高さ
-        virtual int width_client(){ return m_width_client; }
-        virtual int height_client(){ return m_height_client; }
+        virtual int width_client() const { return m_width_client; }
+        virtual int height_client() const { return m_height_client; }
         void set_width_client( int val ){ m_width_client = val; }
         void set_height_client( int val ){ m_height_client = val; }
 
@@ -241,28 +241,28 @@ namespace SKELETON
         void set_reget( const bool reget ){ m_reget = reget; }
 
         // アイコンのID取得
-        virtual int get_icon( const std::string& iconname ){ return -1; }
+        virtual int get_icon( const std::string& iconname ) const { return -1; }
 
         // ロード中
         virtual bool is_loading() const { return false; }
 
         // 更新した
-        virtual bool is_updated(){ return false;}
+        virtual bool is_updated() const { return false; }
 
         // 更新チェックして更新可能か
-        virtual bool is_check_update(){ return false;}
+        virtual bool is_check_update() const { return false; }
 
         // 古いデータか
-        virtual bool is_old(){ return false;}
+        virtual bool is_old() const { return false; }
 
         // 壊れているか
-        virtual bool is_broken(){ return false; }
+        virtual bool is_broken() const { return false; }
 
         // レス数が最大表示可能数以上か
         virtual bool is_overflow() const noexcept { return false; }
 
         // ラベルやステータスバーの色
-        std::string get_color();
+        std::string get_color() const;
 
         // キーを押した
         virtual bool slot_key_press( GdkEventKey* event ){ return false; }

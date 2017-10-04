@@ -194,7 +194,7 @@ namespace BBSLIST
         // 親ウィンドウをセット
         void set_parent_win( Gtk::Window* parent_win ) override;
 
-        std::string url_for_copy() override { return {}; }
+        std::string url_for_copy() const override { return {}; }
 
         bool set_command( const std::string& command,
                           const std::string& arg1 = {},

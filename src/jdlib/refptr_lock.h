@@ -32,7 +32,8 @@ namespace JDLIB
         }        
 
 
-        T* operator -> () const noexcept { return m_p; }
+        T* operator -> () noexcept { return m_p; }
+        const T* operator -> () const noexcept { return m_p; }
         bool operator == ( const T *p ) const { return( m_p == p ); }
         bool operator != ( const T *p ) const { return( m_p != p ); }
         bool operator ! () const { return ( m_p == NULL ); }

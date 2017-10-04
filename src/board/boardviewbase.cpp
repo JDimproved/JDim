@@ -219,7 +219,7 @@ void BoardViewBase::update_url( const std::string& url_old, const std::string& u
 
 
 // アイコンのID取得
-int BoardViewBase::get_icon( const std::string& iconname )
+int BoardViewBase::get_icon( const std::string& iconname ) const
 {
     int id = ICON::NONE;
 
@@ -240,7 +240,7 @@ int BoardViewBase::get_icon( const std::string& iconname )
 //
 // コピー用URL(メインウィンドウのURLバーなどに表示する)
 //
-std::string BoardViewBase::url_for_copy()
+std::string BoardViewBase::url_for_copy() const
 {
     return DBTREE::url_boardbase( get_url_board() );
 }

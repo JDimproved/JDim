@@ -204,7 +204,7 @@ void Loadable::callback_dispatch()
 
 // ローダから各種情報の取得
 
-int Loadable::get_loader_code()
+int Loadable::get_loader_code() const
 {
     if( ! m_loader ) return HTTP_INIT;
 
@@ -212,7 +212,7 @@ int Loadable::get_loader_code()
 }
 
 
-std::string Loadable::get_loader_str_code()
+std::string Loadable::get_loader_str_code() const
 {
     if( ! m_loader ) return std::string();
 
@@ -220,7 +220,7 @@ std::string Loadable::get_loader_str_code()
 }
 
 
-std::string Loadable::get_loader_contenttype()
+std::string Loadable::get_loader_contenttype() const
 {
     if( ! m_loader ) return std::string();
 
@@ -228,7 +228,7 @@ std::string Loadable::get_loader_contenttype()
 }
 
 
-std::string Loadable::get_loader_modified()
+std::string Loadable::get_loader_modified() const
 {
     if( ! m_loader ) return std::string();
 
@@ -236,7 +236,7 @@ std::string Loadable::get_loader_modified()
 }
 
 
-std::list< std::string > Loadable::get_loader_cookies()
+std::list< std::string > Loadable::get_loader_cookies() const
 {
     if( ! m_loader ) return std::list< std::string >();
 
@@ -244,7 +244,7 @@ std::list< std::string > Loadable::get_loader_cookies()
 }
 
 
-std::string Loadable::get_loader_location()
+std::string Loadable::get_loader_location() const
 {
     if( ! m_loader ) return std::string();
 
@@ -252,7 +252,7 @@ std::string Loadable::get_loader_location()
 }
 
 
-size_t Loadable::get_loader_length()
+size_t Loadable::get_loader_length() const
 {
     if( ! m_loader ) return 0;
 

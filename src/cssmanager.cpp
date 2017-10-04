@@ -85,7 +85,7 @@ void Css_Manager::clear_property( CSS_PROPERTY* css )
 //
 // ユーザ設定の色取得
 // 
-std::string Css_Manager::get_color( int colorid )
+std::string Css_Manager::get_color( int colorid ) const
 {
     colorid -= USRCOLOR_BASE;
     return m_colors[ colorid ];
@@ -95,11 +95,11 @@ std::string Css_Manager::get_color( int colorid )
 //
 // クラス名からID取得
 //
-int Css_Manager::get_classid( const std::string& classname )
+int Css_Manager::get_classid( const std::string& classname ) const
 {
     int id = 0;
 
-    std::list< std::string >::iterator it = m_css_class.begin();
+    std::list< std::string >::const_iterator it = m_css_class.begin();
     for( ; it != m_css_class.end(); ++it, ++id ) if( ( *it ) == classname ) return id;
 
     return -1;
@@ -542,7 +542,7 @@ void Css_Manager::set_property( const std::string& classname, const CSS_PROPERTY
 //
 // 文字の高さを与えてemをセット
 //
-void Css_Manager::set_size( CSS_PROPERTY* css, double height )
+void Css_Manager::set_size( CSS_PROPERTY* css, double height ) const
 {
     if( ! css ) return;
     if( ! height ) return;

@@ -120,23 +120,9 @@ SKELETON::Admin* ArticleViewBase::get_admin()
 //
 // メインウィンドウのURLバーなどの表示用にも使う
 //
-std::string ArticleViewBase::url_for_copy()
+std::string ArticleViewBase::url_for_copy() const
 {
     return DBTREE::url_readcgi( m_url_article, 0, 0 );
-}
-
-
-const JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& ArticleViewBase::get_article() const noexcept
-{
-    assert( m_article );
-    return  m_article;
-}
-
-
-DrawAreaBase* ArticleViewBase::drawarea()
-{
-    assert( m_drawarea );
-    return m_drawarea;
 }
 
 
@@ -685,7 +671,7 @@ const char* ArticleViewBase::get_menu_item( const int item )
 //
 // クライアント領域幅
 //
-int ArticleViewBase::width_client()
+int ArticleViewBase::width_client() const
 {
 #ifdef _DEBUG
     if( m_drawarea ) std::cout << "ArticleViewBase::width_client : " << m_drawarea->width_client() << std::endl;
@@ -700,7 +686,7 @@ int ArticleViewBase::width_client()
 //
 // クライアント領高さ
 //
-int ArticleViewBase::height_client()
+int ArticleViewBase::height_client() const
 {
 #ifdef _DEBUG
     if( m_drawarea ) std::cout << "ArticleViewBase::height_client : " << m_drawarea->height_client() << std::endl;
@@ -713,7 +699,7 @@ int ArticleViewBase::height_client()
 
 
 // アイコンのID取得
-int ArticleViewBase::get_icon( const std::string& iconname )
+int ArticleViewBase::get_icon( const std::string& iconname ) const
 {
     int id = ICON::NONE;
 

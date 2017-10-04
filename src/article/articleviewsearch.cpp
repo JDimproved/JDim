@@ -186,7 +186,7 @@ void ArticleViewSearch::regex_escape()
 //
 // メインウィンドウのURLバーなどの表示用にも使う
 //
-std::string ArticleViewSearch::url_for_copy()
+std::string ArticleViewSearch::url_for_copy() const
 {
     if( m_searchmode == CORE::SEARCHMODE_TITLE ) return m_url_title;
 

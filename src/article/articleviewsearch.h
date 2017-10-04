@@ -35,7 +35,7 @@ namespace ARTICLE
 
         // SKELETON::View の関数のオーバロード
 
-        std::string url_for_copy() override; // コピーやURLバー表示用のURL
+        std::string url_for_copy() const override; // コピーやURLバー表示用のURL
         bool set_command( const std::string& command,
                           const std::string& arg1 = {},
                           const std::string& arg2 = {} ) override;

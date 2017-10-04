@@ -182,7 +182,7 @@ bool ArticleViewMain::is_loading() const
 
 
 // 更新した
-bool ArticleViewMain::is_updated()
+bool ArticleViewMain::is_updated() const
 {
 
 #ifdef _DEBUG
@@ -194,7 +194,7 @@ bool ArticleViewMain::is_updated()
 
 
 // 更新チェックして更新可能か
-bool ArticleViewMain::is_check_update()
+bool ArticleViewMain::is_check_update() const
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::is_check_update " << url_article() << " " << ( get_article()->get_status() & STATUS_UPDATE ) << std::endl;
@@ -204,13 +204,13 @@ bool ArticleViewMain::is_check_update()
 }
 
 // 古いデータか
-bool ArticleViewMain::is_old()
+bool ArticleViewMain::is_old() const
 {
     return ( get_article()->get_status() & STATUS_OLD );
 }
 
 // 壊れているか
-bool ArticleViewMain::is_broken()
+bool ArticleViewMain::is_broken() const
 {
     return ( get_article()->get_status() & STATUS_BROKEN );
 }

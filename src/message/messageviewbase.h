@@ -96,7 +96,7 @@ namespace MESSAGE
         Gtk::Window* get_parent_win() override;
 
         // コピー用のURL
-        std::string url_for_copy() override;
+        std::string url_for_copy() const override;
 
         // コマンド
         bool set_command( const std::string& command,
@@ -107,7 +107,7 @@ namespace MESSAGE
         bool is_loading() const override;
 
         // 規制中や行数や文字列がオーバーして書き込めない
-        bool is_broken() override { return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }
+        bool is_broken() const override { return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }
 
         // キーを押した        
         bool slot_key_press( GdkEventKey* event ) override;

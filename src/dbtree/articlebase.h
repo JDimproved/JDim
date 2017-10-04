@@ -146,7 +146,7 @@ namespace DBTREE
         int get_number_diff() const { return m_number_diff; }
         int get_number_new() const { return m_number_new; }
         int get_number_load() const { return m_number_load; }
-        int get_number_seen() const{  return m_number_seen; }
+        int get_number_seen() const {  return m_number_seen; }
 
         void set_number_max( const int number ){ m_number_max = number; }
 
@@ -380,7 +380,7 @@ namespace DBTREE
         virtual void save_info( const bool force );
 
         bool is_loading() const; // ロード中か
-        bool is_checking_update();  // 更新チェック中か
+        bool is_checking_update() const;  // 更新チェック中か
 
         // スレッドのロード停止
         void stop_load();

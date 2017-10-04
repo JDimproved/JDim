@@ -62,7 +62,7 @@ void BoardView::save_session()
 
 
 // 更新した
-bool BoardView::is_updated()
+bool BoardView::is_updated() const
 {
     const int status = DBTREE::board_status( get_url_board() );
 
@@ -75,7 +75,7 @@ bool BoardView::is_updated()
 
 
 // 更新チェックして更新可能か
-bool BoardView::is_check_update()
+bool BoardView::is_check_update() const
 {
     const int status = DBTREE::board_status( get_url_board() );
 
