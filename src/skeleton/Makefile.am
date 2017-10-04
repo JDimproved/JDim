@@ -26,6 +26,7 @@ libskeleton_a_SOURCES = \
 	menubutton.cpp \
 	toolmenubutton.cpp \
 	backforwardbutton.cpp \
+	popupwinbase.cpp \
 	popupwin.cpp \
 	tooltip.cpp \
 	entry.cpp \
