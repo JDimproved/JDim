@@ -148,6 +148,13 @@ std::string MISC::get_entry_color_text()
     auto rgba = entry.get_style_context()->get_color( Gtk::STATE_FLAG_NORMAL );
     return color_to_str( rgba );
 #else
+    Gtk::Window win( Gtk::WINDOW_POPUP );
+
+    win.add( entry );
+    win.move( 0,0 );
+    win.resize( 1,1 );
+    win.show_all();
+
     return color_to_str( entry.get_style()->get_text( Gtk::STATE_NORMAL ) );
 #endif
 }
@@ -169,6 +176,13 @@ std::string MISC::get_entry_color_base()
     }
     return color_to_str( rgba );
 #else
+    Gtk::Window win( Gtk::WINDOW_POPUP );
+
+    win.add( entry );
+    win.move( 0,0 );
+    win.resize( 1,1 );
+    win.show_all();
+
     return color_to_str( entry.get_style()->get_base( Gtk::STATE_NORMAL ) );
 #endif
 }
