@@ -970,13 +970,15 @@ int MISC::is_url_scheme_impl( const char* str_in, int* length )
         if( *( str_in + len ) == 's' ) ++len;
     }
     // sssp
-    // デフォルトでモザイクを解除するのでimg.2ch以外のアドレスにはリンクを張らない
-    else if( *str_in == 's' && *( str_in + 1 ) == 's' && *( str_in + 2 ) == 's' && *( str_in + 3 ) == 'p'
-             && *( str_in + 7 ) == 'i' && *( str_in + 8 ) == 'm' && *( str_in + 9 ) == 'g' && *( str_in + 10 ) == '.'
-             && *( str_in + 11 ) == '2' && *( str_in + 12 ) == 'c' && *( str_in + 13 ) == 'h'
-        )
-    {
-        scheme = SCHEME_SSSP;
+    else if( *str_in == 's' && *( str_in + 1 ) == 's' && *( str_in + 2 ) == 's' && *( str_in + 3 ) == 'p' ){
+        if( *( str_in + 7 ) == 'i' && *( str_in + 8 ) == 'm' && *( str_in + 9 ) == 'g' && *( str_in + 10 ) == '.'
+             && *( str_in + 11 ) == '2' && *( str_in + 12 ) == 'c' && *( str_in + 13 ) == 'h'){
+            scheme = SCHEME_SSSP;
+        }
+        else{
+            // XXX img.2ch以外のアドレスはHTTPスキームにする
+            scheme = SCHEME_HTTP;
+        }
         len = 4;
     }
 
