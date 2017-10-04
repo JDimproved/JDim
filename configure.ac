@@ -380,37 +380,43 @@ esac
 
 
 dnl
-dnl checking gthread
+dnl checking gthread (deprecated option)
 dnl
-AC_MSG_CHECKING(for --with-gthread)
 AC_ARG_WITH(gthread,
-  AS_HELP_STRING([--with-gthread],
-                 [use gthread instead of pthread [default=no]]),
-  [with_gthread="$withval"],
-  [with_gthread=no])
-AC_MSG_RESULT($with_gthread)
-
+AS_HELP_STRING([--with-gthread], [DEPRECATED. use --with-thread=glib]),
+[AC_MSG_WARN([--with-gthread is deprecated. Use --with-thread=glib instead.])
+ with_thread=glib])
 
 dnl
-dnl checking std::thread
+dnl checking std::thread (deprecated option)
 dnl
-AC_MSG_CHECKING(for --with-stdthread)
 AC_ARG_WITH(stdthread,
-  AS_HELP_STRING([--with-stdthread],
-                 [use std::thread instead of pthread [default=no]]),
-  [with_stdthread="$withval"],
-  [with_stdthread=no])
-AC_MSG_RESULT($with_stdthread)
+AS_HELP_STRING([--with-stdthread], [DEPRECATED. use --with-thread=std]),
+[AC_MSG_WARN([--with-stdthread is deprecated. Use --with-thread=std instead.])
+ with_thread=std])
 
+dnl
+dnl thread
+dnl
+AC_MSG_CHECKING(for --with-thread)
+AC_ARG_WITH(thread,
+AC_HELP_STRING([--with-thread=@<:@posix|glib|std@:>@],
+               [use thread library @<:@default=posix@:>@]),
+[with_thread="$withval"], [with_thread=posix])
+AC_MSG_RESULT($with_thread)
 
 AS_IF(
-  [test "x$with_gthread" = xyes -a "x$with_stdthread" = xyes],
-  [AC_MSG_ERROR([cannot configure both gthread and stdthread.])],
-  [test "x$with_gthread" = xyes],
-  [AC_MSG_WARN([--with-gthread is deprecated. Use --with-stdthread instead.])
-   AC_DEFINE(USE_GTHREAD, , [use gthread instead of pthread])],
-  [test "x$with_stdthread" = xyes],
-  [AC_DEFINE(WITH_STD_THREAD, 1, [Use std::thread instead of pthread])]
+  [test "x$with_thread" = xposix],
+  [],
+
+  [test "x$with_thread" = xglib],
+  [AC_MSG_WARN([--with-thread=glib is deprecated. Use --with-thread=std instead.])
+   AC_DEFINE(USE_GTHREAD, , [Use gthread instead of pthread])],
+
+  [test "x$with_thread" = xstd],
+  [AC_DEFINE(WITH_STD_THREAD, 1, [Use std::thread instead of pthread])],
+
+  [AC_MSG_ERROR([thread library not found])]
 )
 
 
