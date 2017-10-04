@@ -32,17 +32,17 @@ dnl OSを判定してOS別の設定
 dnl 
 case "${host_os}" in 
  freebsd*) 
-   AC_DEFINE(USE_MKTIME, , "use mktime")
+   AC_DEFINE(USE_MKTIME, , [use mktime])
    ;;
  solaris*)
-   AC_DEFINE(NO_TIMEGM, , "no timegm")
+   AC_DEFINE(NO_TIMEGM, , [no timegm])
    ;;
  mingw*)
-   AC_DEFINE(USE_MKTIME, , "use mktime")
+   AC_DEFINE(USE_MKTIME, , [use mktime])
    ;;
  darwin*)
    AC_DEFUN([AM_ICONV], [])
-   AC_DEFINE(USE_MKTIME, , "use mktime")
+   AC_DEFINE(USE_MKTIME, , [use mktime])
    ;;
 dnl linux*|gnu*|*-gnu
  *)
@@ -138,7 +138,7 @@ case "${host_os}" in
    AC_CHECK_LIB(iconv,_head_libiconv_a)
    AC_CHECK_TOOL([WINDRES], [windres], [windres])
    AC_SUBST(WINDRES)
-   AC_DEFINE(USE_WINDRES, , "use windres")
+   AC_DEFINE(USE_WINDRES, , [use windres])
    use_windres="yes"
    ;;
  *)
@@ -291,57 +291,79 @@ esac
 dnl
 dnl enable gprof
 dnl
+AC_MSG_CHECKING(for --enable-gprof)
+AC_ARG_ENABLE(gprof,
+AC_HELP_STRING([--enable-gprof],[enable gprof]),
+[enable_gprof="$enableval"], [enable_gprof=no])
+AC_MSG_RESULT($enable_gprof)
 
-use_gprof=no
+AS_IF(
+  [test "x$enable_gprof" = xyes],
+  [CXXFLAGS="$CXXFLAGS -pg"]
+)
 
-AC_ARG_ENABLE(gprof,[ --enable-gprof  (enable gprof)],
-       [ if test "$enable_gprof" = "yes"; then
-               echo "use gprof"
-               CXXFLAGS="$CXXFLAGS -pg"
-               use_gprof=yes
-       fi ])
 
 dnl
 dnl checking migemo
 dnl
-AC_ARG_WITH(migemo,[ --with-migemo    (enable migemo search)],
-       [ if test "$withval" != "no" ;then
-               echo "use migemo"
-               AC_CHECK_HEADERS([migemo.h])
-               AC_CHECK_LIB(migemo,migemo_open)
-       fi ])
+AC_MSG_CHECKING(for --with-migemo)
+AC_ARG_WITH(migemo,
+AC_HELP_STRING([--with-migemo],[enable migemo search]),
+[with_migemo="$withval"], [with_migemo=no])
+AC_MSG_RESULT($with_migemo)
+
+AS_IF(
+  [test "x$with_migemo" = xyes],
+  [AC_CHECK_HEADERS([migemo.h])
+   AC_CHECK_LIB(migemo, migemo_open)]
+)
 
 
-AC_ARG_WITH(migemodict,[ --with-migemodict    (specifiy the path of migemo dictionary)],
-       [ if test "$withval" ;then
-               echo "migemodict = $withval"
-               AC_DEFINE_UNQUOTED(MIGEMODICT, "$withval" , "migemodict")
-       fi ])
+AC_MSG_CHECKING(for --with-migemodict)
+AC_ARG_WITH(migemodict,
+AC_HELP_STRING([--with-migemodict=PATH],[specifiy the path of migemo dictionary]),
+[with_migemodict="$withval"], [with_migemodict=])
+AC_MSG_RESULT($with_migemodict)
+
+AS_IF(
+  [test -n "$with_migemodict"],
+  [AC_DEFINE_UNQUOTED(MIGEMODICT, "$with_migemodict", [migemodict])]
+)
 
 
 dnl
 dnl checking xdg-open
 dnl
-AC_ARG_WITH(xdgopen,[ --with-xdgopen    (use xdg-open as default browser)],
-       [ if test "$withval" ;then
-               echo "use xdg-open"
-               AC_DEFINE(XDGOPEN, , "use xdg-open")
-       fi ])
+AC_MSG_CHECKING(for --with-xdgopen)
+AC_ARG_WITH(xdgopen,
+AC_HELP_STRING([--with-xdgopen],[use xdg-open as default browser]),
+[with_xdgopen="$withval"], [with_xdgopen=no])
+AC_MSG_RESULT($with_xdgopen)
+
+AS_IF(
+  [test "x$with_xdgopen" = xyes],
+  [AC_DEFINE(XDGOPEN, , [use xdg-open])]
+)
 
 
 dnl
 dnl checking alsa
 dnl
 case "${host_os}" in
- linux*|*linux)
- AC_ARG_WITH(alsa,[ --with-alsa (enable alsa)],
-       [ if test "$withval" != "no" ;then
-               echo "use alsa"
-	       PKG_CHECK_MODULES(ALSA, [alsa >= 1.0] )
-	       AC_DEFINE(USE_ALSA, , "use alsa")
-	       AC_SUBST(ALSA_CFLAGS)
-	       AC_SUBST(ALSA_LIBS)
-       fi ])
+  linux*|*linux)
+  AC_MSG_CHECKING(for --with-alsa)
+  AC_ARG_WITH(alsa,
+  AC_HELP_STRING([--with-alsa],[enable alsa]),
+  [with_alsa="$withval"], [with_alsa=no])
+  AC_MSG_RESULT($with_alsa)
+
+  AS_IF(
+    [test "x$with_alsa" = xyes],
+    [PKG_CHECK_MODULES(ALSA, [alsa >= 1.0])
+     AC_DEFINE(USE_ALSA, , [use alsa])
+     AC_SUBST(ALSA_CFLAGS)
+     AC_SUBST(ALSA_LIBS)]
+  )
  ;;
 esac
 
@@ -418,9 +440,24 @@ AS_IF(
 
 
 dnl
+dnl checking pangolayout
+dnl
+AC_MSG_CHECKING(for --with-pangolayout)
+AC_ARG_WITH(pangolayout,
+AC_HELP_STRING([--with-pangolayout],[use pangolayout]),
+[with_pangolayout="$withval"], [with_pangolayout=no])
+AC_MSG_RESULT($with_pangolayout)
+
+AS_IF(
+  [test "x$with_pangolayout" = xyes],
+  [AC_DEFINE(USE_PANGOLAYOUT, , [use pangolayout])]
+)
+
+
+dnl
 dnl CPU別の最適化オプション
 dnl
-if test "$use_gprof" = "no"; then
+if test "x$enable_gprof" = "xno"; then
 
     dnl
     dnl checking native (gcc >= 4.2 x86 & x86_64)
@@ -481,16 +518,6 @@ if test "$use_gprof" = "no"; then
             CXXFLAGS="$CXXFLAGS -mcpu=7450 -maltivec -mabi=altivec"
         fi ])
 fi
-
-
-dnl
-dnl checking pangolayout
-dnl
-AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
-       [ if test "$withval" != "no" ;then
-               echo "use pango_layout for drawing"
-	       CXXFLAGS="$CXXFLAGS -DUSE_PANGOLAYOUT"
-       fi ])
 
 
 AC_ARG_VAR(GTEST_SRCDIR, [path overriding googletest framework source directory])
