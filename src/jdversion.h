@@ -16,7 +16,7 @@
 #define MAJORVERSION 2
 #define MINORVERSION 8
 #define MICROVERSION 9
-#define JDDATE    "171003"
+#define JDDATE    "171124"
 #define JDTAG     ""
 
 //---------------------------------
