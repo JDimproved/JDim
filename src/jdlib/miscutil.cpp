@@ -1274,20 +1274,20 @@ const int MISC::spchar_number_ln( const char* in_char, int& offset )
     // 10 進数
     if( offset == 2 ){
 
-        // 最大5桁 (&#65536;)
-        for( lng = 0; lng <= 5; lng++ ){
+        // 最大7桁 (&#1114111;)
+        for( lng = 0; lng <= 7; lng++ ){
             if( in_char[ offset + lng ] < '0' || in_char[ offset + lng ] > '9' ) break;
         }
         
         // 桁数チェック
-        if( lng == 0 || lng == 6 ) return -1;
+        if( lng == 0 || lng == 8 ) return -1;
     }
 
     // 16 進数
     else{
 
-        // 最大4桁 (&#xFFFF;)
-        for( lng = 0; lng <= 4; lng++ ){
+        // 最大6桁 (&#x10FFFF;)
+        for( lng = 0; lng <= 6; lng++ ){
             if(
                 ! (
                     ( in_char[ offset + lng ] >= '0' && in_char[ offset + lng ] <= '9' )
@@ -1298,7 +1298,7 @@ const int MISC::spchar_number_ln( const char* in_char, int& offset )
         }
         
         // 桁数チェック
-        if( lng == 0 || lng == 5 ) return -1;
+        if( lng == 0 || lng == 7 ) return -1;
     }
 
     return lng;
@@ -1439,18 +1439,18 @@ const int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
 {
     int byte = 0;
 
-    if( ucs2 < 0x7f ){ // ascii
+    if( ucs2 <= 0x7f ){ // ascii
         byte = 1;
         utfstr[ 0 ] = ucs2;
     }
 
-    else if( ucs2 < 0x07ff ){
+    else if( ucs2 <= 0x07ff ){
         byte = 2;
         utfstr[ 0 ] = ( 0xc0 ) + ( ucs2 >> 6 );
         utfstr[ 1 ] = ( 0x80 ) + ( ucs2 & 0x3f );
     }
 
-    else if( ucs2 < 0xffff){
+    else if( ucs2 <= 0xffff){
         byte = 3;
         utfstr[ 0 ] = ( 0xe0 ) + ( ucs2 >> 12 );
         utfstr[ 1 ] = ( 0x80 ) + ( ( ucs2 >>6 ) & 0x3f );

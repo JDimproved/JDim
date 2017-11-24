@@ -29,7 +29,7 @@ static bool strict_of_char = false;
 
 enum
 {
-    UCS2_MAX = 65536
+    UCS2_MAX = 1114111
 };
 
 
