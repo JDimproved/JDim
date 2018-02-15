@@ -21,9 +21,7 @@
 #include <gcrypt.h>
 #endif
 
-#ifdef _WIN32
 #include <crypt.h>
-#endif
 
 
 /*--------------------------------------------------------------------*/
