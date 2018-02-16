@@ -136,7 +136,7 @@ const std::list< std::string > MISC::split_line( const std::string& str )
 
         // " から始まる ( \"は除く )
         dquote = false;
-        if( str[ i ] == '\"' && i >= 1 && str[ i -1 ] != '\\' ){
+        if( str[ i ] == '\"' && (i < 1 || str[ i -1 ] != '\\') ){
             dquote = true;
             ++i;
         }
