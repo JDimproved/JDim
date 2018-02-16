@@ -136,7 +136,7 @@ const std::list< std::string > MISC::split_line( const std::string& str )
 
         // " から始まる ( \"は除く )
         dquote = false;
-        if( str[ i ] == '\"' && str[ i -1 ] != '\\' ){
+        if( str[ i ] == '\"' && i >= 1 && str[ i -1 ] != '\\' ){
             dquote = true;
             ++i;
         }
@@ -184,7 +184,7 @@ const std::list< std::string > MISC::StringTokenizer( const std::string& str, co
     for(;;){
 
         while( i2 < lng && str[ i2++ ] != delim );
-        int tmp = ( str[ i2-1 ] == delim || str[ i2 -1 ] == '\n' ) ? 1 : 0;
+        int tmp = ( i2 >= 1 && ( str[ i2-1 ] == delim || str[ i2 -1 ] == '\n' ) ) ? 1 : 0;
         if( i2 - i ) list_str.push_back( str.substr( i, i2 - i - tmp ) );
         if( i2 >= lng ) break;
         i = i2;
@@ -324,7 +324,8 @@ const std::string MISC::remove_space( const std::string& str )
         if( str[ i2 ] == ' ' ) --i2;
 
         // 全角
-        else if( str[ i2 - lng_space +1 ] == str_space[ 0 ] &&
+        else if( i2 +1 >= lng_space &&
+                 str[ i2 - lng_space +1 ] == str_space[ 0 ] &&
                  str[ i2 - lng_space +2 ] == str_space[ 1 ] &&
                  ( lng_space == 2 || str[ i2 - lng_space +3 ] == str_space[ 2 ] ) ) i2 -= lng_space;
         else break;
