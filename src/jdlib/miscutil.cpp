@@ -27,7 +27,7 @@ const std::list< std::string > MISC::get_lines( const std::string& str ){
     size_t i = 0, i2 = 0, r = 0;
     while ( ( i2 = str.find( "\n", i ) ) != std::string::npos ){
         r = 0;
-        if( str[ i2 - 1 ] == '\r' ) r = 1;
+        if( (i2 >= 1) && (str[ i2 - 1 ] == '\r') ) r = 1;
         if( i2 - i > 0 ){
             lines.push_back( str.substr( i, i2 - i - r ) );
         }
