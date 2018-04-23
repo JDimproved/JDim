@@ -1431,19 +1431,25 @@ bool Loader::skip_chunk( char* buf, size_t& read_size )
             if( m_lng_leftdata == 0 ) m_status_chunk = 2;
         }
 
-        // データ部→サイズ部切り替え中( "\r" と "\n" の間でサーバからの入力が分かれる時がある)
-        if( m_status_chunk == 2 ){
+        // データ部→サイズ部切り替え中("\r"の前)
+        if( m_status_chunk == 2 && pos_chunk != read_size ){
 
-            unsigned char c = buf[ pos_chunk ];
-            if( c != '\r' && c != '\n' ){
+            if( buf[ pos_chunk++ ] != '\r' ){
                 MISC::ERRMSG( "broken chunked data." );
                 return false;
             }
 
-            // \r\nが来たらサイズ部に戻る
-            if( c == '\r' ) ++pos_chunk; else break;      
-            if( buf[ pos_chunk ] == '\n' ) ++pos_chunk; else break;
-            
+            m_status_chunk = 3;
+        }
+
+        // データ部→サイズ部切り替え中("\n"の前: "\r" と "\n" の間でサーバからの入力が分かれる時がある)
+        if( m_status_chunk == 3 && pos_chunk != read_size ){
+
+            if( buf[ pos_chunk++ ] != '\n' ){
+                MISC::ERRMSG( "broken chunked data." );
+                return false;
+            }
+
 #ifdef _DEBUG_CHUNKED
             std::cout << "[[ skip_chunk : data chunk finished. ]]\n";
 #endif
