@@ -481,6 +481,7 @@ int main( int argc, char **argv )
     }
 #endif
 
+#if ! GLIB_CHECK_VERSION(2, 46, 0)
 #ifdef _DEBUG_MEM_PROFILE
     g_mem_set_vtable( glib_mem_profiler_table );
     atexit( g_mem_profile );
@@ -494,6 +495,7 @@ int main( int argc, char **argv )
     vtable.try_malloc = malloc;
     vtable.try_realloc = realloc;
     g_mem_set_vtable( &vtable );
+#endif
 #endif
 
     Gtk::Main m( &argc, &argv );
