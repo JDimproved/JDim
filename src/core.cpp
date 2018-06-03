@@ -1719,11 +1719,19 @@ bool Core::open_color_diag( std::string title, int id )
     Gdk::Color color( CONFIG::get_color( id ) );
 
     Gtk::ColorSelectionDialog diag( title );
+#if GTKMM_CHECK_VERSION(2,14,0)
+    diag.get_color_selection()->set_current_color( color );
+#else
     diag.get_colorsel()->set_current_color( color );
+#endif
     diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
-
-        CONFIG::set_color( id, MISC::color_to_str( diag.get_colorsel()->get_current_color() ) );
+#if GTKMM_CHECK_VERSION(2,14,0)
+        Gtk::ColorSelection* sel = diag.get_color_selection();
+#else
+        Gtk::ColorSelection* sel = diag.get_colorsel();
+#endif
+        CONFIG::set_color( id, MISC::color_to_str( sel->get_current_color() ) );
         return true;
     }
 

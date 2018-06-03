@@ -454,7 +454,14 @@ void FontColorPref::slot_change_color()
     }
 
     Gtk::ColorSelectionDialog colordiag;
-    if( colorid != COLOR_NONE ) colordiag.get_colorsel()->set_current_color( Gdk::Color( CONFIG::get_color( colorid ) ) );
+    if( colorid != COLOR_NONE ) {
+#if GTKMM_CHECK_VERSION(2,14,0)
+        Gtk::ColorSelection* sel = colordiag.get_color_selection();
+#else
+        Gtk::ColorSelection* sel = colordiag.get_colorsel();
+#endif
+        sel->set_current_color( Gdk::Color( CONFIG::get_color( colorid ) ) );
+    }
     colordiag.set_transient_for( *CORE::get_mainwindow() );
     const int ret = colordiag.run();
 
@@ -466,8 +473,14 @@ void FontColorPref::slot_change_color()
             if( ! row ) continue;
 
             colorid = row[ m_columns_color.m_col_colorid ];
-            if( colorid != COLOR_NONE )
-                CONFIG::set_color( colorid , MISC::color_to_str( colordiag.get_colorsel()->get_current_color() ) );
+            if( colorid != COLOR_NONE ) {
+#if GTKMM_CHECK_VERSION(2,14,0)
+                Gtk::ColorSelection* sel = colordiag.get_color_selection();
+#else
+                Gtk::ColorSelection* sel = colordiag.get_colorsel();
+#endif
+                CONFIG::set_color( colorid, MISC::color_to_str( sel->get_current_color() ) );
+            }
         }
     }
 }
