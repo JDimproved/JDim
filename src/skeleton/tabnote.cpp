@@ -570,7 +570,12 @@ void TabNotebook::calc_tabsize()
             int tab_w = -1;
             int tab_h = -1;
 
-            if( tab->is_mapped() && page ){
+#if GTKMM_CHECK_VERSION(2,20,0)
+            const bool mapped = tab->get_mapped();
+#else
+            const bool mapped = tab->is_mapped();
+#endif
+            if( mapped && page ) {
 
                 tab_x = page->allocation.x;
                 tab_y = page->allocation.y;

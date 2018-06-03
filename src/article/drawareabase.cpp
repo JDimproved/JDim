@@ -4593,7 +4593,12 @@ bool DrawAreaBase::slot_configure_event( GdkEventConfigure* event )
 void DrawAreaBase::configure_impl()
 {
     if( ! m_configure_reserve ) return;
-    if( ! m_view.is_drawable() ) return;
+#if GTKMM_CHECK_VERSION(2,18,0)
+    const bool is_drawable = m_view.get_is_drawable();
+#else
+    const bool is_drawable = m_view.is_drawable();
+#endif
+    if( !is_drawable ) return;
 
     m_configure_reserve = false;
 
