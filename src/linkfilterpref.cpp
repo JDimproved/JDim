@@ -21,8 +21,8 @@ using namespace CORE;
 
 LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, const std::string& cmd )
     : SKELETON::PrefDiag( parent, "" ),
-      m_label_url( "アドレス", Gtk::ALIGN_LEFT ),
-      m_label_cmd( "実行するコマンド", Gtk::ALIGN_LEFT ),
+      m_label_url( "アドレス", Gtk::ALIGN_START ),
+      m_label_cmd( "実行するコマンド", Gtk::ALIGN_START ),
       m_button_manual( "オンラインマニュアルの置換文字一覧を表示" )
 {
     resize( 640, 1 );

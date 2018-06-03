@@ -18,7 +18,7 @@ LabelEntry::LabelEntry( const bool editable, const std::string& label, const std
     pack_start( m_label, Gtk::PACK_SHRINK );
 
     m_info.set_size_request( 0, 0 );
-    m_info.set_alignment( Gtk::ALIGN_LEFT );
+    m_info.set_alignment( Gtk::ALIGN_START );
     m_info.set_selectable( true );
 
     setup();

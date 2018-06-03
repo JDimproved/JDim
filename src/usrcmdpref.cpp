@@ -25,8 +25,8 @@ using namespace CORE;
 
 UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Glib::ustring& cmd )
     : SKELETON::PrefDiag( parent, "" ),
-      m_label_name( "コマンド名", Gtk::ALIGN_LEFT ),
-      m_label_cmd( "実行するコマンド", Gtk::ALIGN_LEFT ),
+      m_label_name( "コマンド名", Gtk::ALIGN_START ),
+      m_label_cmd( "実行するコマンド", Gtk::ALIGN_START ),
       m_button_manual( "オンラインマニュアルの置換文字一覧を表示" )
 {
     resize( 640, 1 );

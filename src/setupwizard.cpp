@@ -20,8 +20,8 @@ enum
 };
 
 PageStart::PageStart() : Gtk::VBox(),
-                         m_label( "１/５．JD セットアップ開始", Gtk::ALIGN_LEFT ),
-                         m_label2( "JDセットアップウィザードへようこそ\n\nこのウィザードでネットワークとフォント等の設定をおこないます\n\n設定を始めるには［次へ］を押してください", Gtk::ALIGN_LEFT )
+                         m_label( "１/５．JD セットアップ開始", Gtk::ALIGN_START ),
+                         m_label2( "JDセットアップウィザードへようこそ\n\nこのウィザードでネットワークとフォント等の設定をおこないます\n\n設定を始めるには［次へ］を押してください", Gtk::ALIGN_START )
 {
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
     m_hbox_label.set_spacing( SPACING_SIZE );
@@ -38,11 +38,11 @@ PageStart::PageStart() : Gtk::VBox(),
 
 
 PageNet::PageNet() : Gtk::VBox(),
-                     m_label( "２/５．ネットワークの設定をします", Gtk::ALIGN_LEFT ),
+                     m_label( "２/５．ネットワークの設定をします", Gtk::ALIGN_START ),
                      m_proxy( "プロキシ設定(_P)", true ),
                      m_browser( "ブラウザ設定(_W)", true ),
                      m_frame( "ブラウザ起動コマンド" ),   // フレーム
-                     m_label_browser( CONFIG::get_command_openurl(), Gtk::ALIGN_LEFT )
+                     m_label_browser( CONFIG::get_command_openurl(), Gtk::ALIGN_START )
 {
 
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
@@ -103,11 +103,11 @@ void PageNet::slot_setup_browser()
 
 
 PageFont::PageFont() : Gtk::VBox(),
-                       m_label( "３/５．フォントの設定をします", Gtk::ALIGN_LEFT ),
+                       m_label( "３/５．フォントの設定をします", Gtk::ALIGN_START ),
                        m_table( 2, 3 ),
-                       m_label_res( "スレ(_T)", Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP, true ),
-                       m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP, true ),
-                       m_label_tree( "板／スレ一覧(_O)", Gtk::ALIGN_LEFT, Gtk::ALIGN_TOP,  true ),
+                       m_label_res( "スレ(_T)", Gtk::ALIGN_START, Gtk::ALIGN_START, true ),
+                       m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_START, Gtk::ALIGN_START, true ),
+                       m_label_tree( "板／スレ一覧(_O)", Gtk::ALIGN_START, Gtk::ALIGN_START,  true ),
                        m_font_res( "スレフォント" ),
                        m_font_popup( "ポップアップフォント" ),
                        m_font_tree( "板／スレ一覧フォント" )
@@ -167,11 +167,11 @@ void PageFont::slot_font_tree()
 
 
 PagePane::PagePane() : Gtk::VBox(),
-                       m_label( "４/５．ペイン表示設定をします", Gtk::ALIGN_LEFT ),
+                       m_label( "４/５．ペイン表示設定をします", Gtk::ALIGN_START ),
                        m_2pane( m_radiogroup, "２ペイン表示(_2)", true ),
                        m_3pane( m_radiogroup, "３ペイン表示(_3)", true ),
                        m_v3pane( m_radiogroup, "縦３ペイン表示(_V)", true ),
-                       m_label_inst( "" , Gtk::ALIGN_LEFT )
+                       m_label_inst( "" , Gtk::ALIGN_START )
 {
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
     m_hbox_label.set_spacing( SPACING_SIZE );
@@ -222,8 +222,8 @@ void PagePane::slot_v3pane()
 
 
 PageEnd::PageEnd() : Gtk::VBox(),
-                     m_label( "５/５．JD セットアップ完了", Gtk::ALIGN_LEFT ),
-                     m_label2( "その他の設定は起動後に設定及び表示メニューからおこなって下さい\n\n完了を押すとJDを起動して板一覧のリストをロードします\n板一覧が表示されるまでしばらくお待ち下さい" , Gtk::ALIGN_LEFT )
+                     m_label( "５/５．JD セットアップ完了", Gtk::ALIGN_START ),
+                     m_label2( "その他の設定は起動後に設定及び表示メニューからおこなって下さい\n\n完了を押すとJDを起動して板一覧のリストをロードします\n板一覧が表示されるまでしばらくお待ち下さい" , Gtk::ALIGN_START )
 {
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
     m_hbox_label.set_spacing( SPACING_SIZE );

@@ -407,8 +407,8 @@ void MessageViewBase::set_mail()
 void MessageViewBase::pack_widget()
 {
     // 書き込みビュー
-    m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
-    m_label_mail.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
+    m_label_name.set_alignment( Gtk::ALIGN_START, Gtk::ALIGN_CENTER );
+    m_label_mail.set_alignment( Gtk::ALIGN_START, Gtk::ALIGN_CENTER );
     m_label_name.set_text( " 名前 " );
     m_label_mail.set_text( " メール " );
 

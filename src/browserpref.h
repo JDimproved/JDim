@@ -59,7 +59,7 @@ namespace CORE
             m_hbox.add( m_entry_browser );
             m_frame.set_label( "ブラウザ起動コマンド" );
             m_frame.add( m_hbox );
-            m_label_notice.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
+            m_label_notice.set_alignment( Gtk::ALIGN_START, Gtk::ALIGN_CENTER );
 
             m_vbox.set_border_width( mrg );
             m_vbox.pack_start( m_label_notice, Gtk::PACK_EXPAND_WIDGET, mrg );
