@@ -45,7 +45,9 @@ namespace SKELETON
         Gtk::Label m_label_stat;
         Gtk::EventBox m_label_stat_ebox;
         Gtk::EventBox m_mginfo_ebox;
+#if !GTKMM_CHECK_VERSION(2,12,0)
         Gtk::Tooltips m_tooltip;
+#endif
 #else
         Gtk::Statusbar m_statbar;
 #endif

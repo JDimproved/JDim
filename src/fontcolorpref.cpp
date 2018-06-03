@@ -98,8 +98,13 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
 
     m_combo_font.set_active( 0 );
     m_fontbutton.set_font_name( CONFIG::get_fontname( m_font_tbl[ 0 ] ) );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_event_font.set_tooltip_text( m_tooltips_font[ 0 ] );
+    m_fontbutton.set_tooltip_text( m_tooltips_font[ 0 ] );
+#else
     m_tooltips.set_tip( m_event_font, m_tooltips_font[ 0 ] );
     m_tooltips.set_tip( m_fontbutton, m_tooltips_font[ 0 ] );
+#endif
 
     set_title( "フォントと色の詳細設定" );
     show_all_children();
@@ -128,7 +133,11 @@ void FontColorPref::pack_widget()
 
     m_checkbutton_font.add_label( "スレビューでフォント幅の近似計算を厳密に行う(_S)", true ),
     m_checkbutton_font.set_active( CONFIG::get_strict_char_width() );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_checkbutton_font.set_tooltip_text( WARNING_STRICTCHAR );
+#else
     m_tooltips.set_tip( m_checkbutton_font, WARNING_STRICTCHAR );
+#endif
     m_hbox_checkbutton.pack_start( m_checkbutton_font, Gtk::PACK_SHRINK );
     m_vbox_font.pack_start( m_hbox_checkbutton, Gtk::PACK_SHRINK, mrg/2 );
 
@@ -143,7 +152,12 @@ void FontColorPref::pack_widget()
     m_hbox_space.set_spacing ( mrg );
     m_hbox_space.pack_start( m_label_space, Gtk::PACK_SHRINK );
     m_hbox_space.pack_start( m_spin_space, Gtk::PACK_SHRINK );
-    m_tooltips.set_tip( m_spin_space, "スレビューにおいて行の高さを調節します( 標準は 1 )" );
+    constexpr const char* ss_tip = "スレビューにおいて行の高さを調節します( 標準は 1 )";
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_spin_space.set_tooltip_text( ss_tip );
+#else
+    m_tooltips.set_tip( m_spin_space, ss_tip );
+#endif
     m_vbox_font.pack_start( m_hbox_space, Gtk::PACK_SHRINK, mrg/2 );
 
     set_activate_entry( m_spin_space );
@@ -159,14 +173,25 @@ void FontColorPref::pack_widget()
     m_hbox_ubar.pack_start( m_label_ubar, Gtk::PACK_SHRINK );
     m_hbox_ubar.pack_start( m_spin_ubar, Gtk::PACK_SHRINK );
     m_vbox_font.pack_start( m_hbox_ubar, Gtk::PACK_SHRINK, mrg/2 );
-    m_tooltips.set_tip( m_spin_ubar, "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )" );
+    constexpr const char* su_tip = "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )";
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_spin_ubar.set_tooltip_text( su_tip );
+#else
+    m_tooltips.set_tip( m_spin_ubar, su_tip );
+#endif
 
     set_activate_entry( m_spin_ubar );
 
     // AAレスと判定する正規表現
     m_label_aafont.set_text( CONFIG::get_regex_res_aa() );
     m_vbox_font.pack_start( m_label_aafont, Gtk::PACK_SHRINK, mrg/2 );
-    m_tooltips.set_tip( m_label_aafont, "この正規表現に一致したレスは、アスキーアートフォントで表示します( 次に開いたスレから有効 )" );
+    constexpr const char* la_tip =
+        "この正規表現に一致したレスは、アスキーアートフォントで表示します( 次に開いたスレから有効 )";
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_label_aafont.set_tooltip_text( la_tip );
+#else
+    m_tooltips.set_tip( m_label_aafont, la_tip );
+#endif
 
     set_activate_entry( m_label_aafont );
 
@@ -312,8 +337,13 @@ void FontColorPref::slot_combo_font_changed()
 {
     const int num = m_combo_font.get_active_row_number();
     m_fontbutton.set_font_name( CONFIG::get_fontname( m_font_tbl[ num ] ) );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_event_font.set_tooltip_text( m_tooltips_font[ num ] );
+    m_fontbutton.set_tooltip_text( m_tooltips_font[ num ] );
+#else
     m_tooltips.set_tip( m_event_font, m_tooltips_font[ num ] );
     m_tooltips.set_tip( m_fontbutton, m_tooltips_font[ num ] );
+#endif
 }
 
 

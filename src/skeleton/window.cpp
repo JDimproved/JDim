@@ -383,7 +383,11 @@ void JDWindow::set_status( const std::string& stat )
 
 #if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( stat );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_label_stat_ebox.set_tooltip_text( stat );
+#else
     m_tooltip.set_tip( m_label_stat_ebox, stat );
+#endif
 #else
     m_statbar.push( stat );
 #endif
