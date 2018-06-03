@@ -332,7 +332,14 @@ const gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, 
 class DummyWidget : public Gtk::Widget
 {
 public:
-    DummyWidget() : Gtk::Widget(){ set_flags(Gtk::NO_WINDOW); }
+    DummyWidget() : Gtk::Widget()
+    {
+#if GTKMM_CHECK_VERSION(2,18,0)
+        set_has_window( false );
+#else
+        set_flags( Gtk::NO_WINDOW );
+#endif
+    }
     virtual ~DummyWidget(){}
 };
 

@@ -170,7 +170,11 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_view.add_events( Gdk::VISIBILITY_NOTIFY_MASK );
 
     // focus 可にセット
+#if GTKMM_CHECK_VERSION(2,18,0)
+    m_view.set_can_focus( true );
+#else
     m_view.set_flags( m_view.get_flags() | Gtk::CAN_FOCUS );
+#endif
     m_view.add_events( Gdk::KEY_PRESS_MASK );
     m_view.add_events( Gdk::KEY_RELEASE_MASK );
 

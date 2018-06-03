@@ -67,7 +67,12 @@ void MsgDiag::add_default_button( Gtk::Widget* button, const int id )
     add_action_widget( *button, id );
     button->show();
 
+#if GTKMM_CHECK_VERSION(2,18,0)
+    button->set_can_default( true );
+#else
     button->set_flags( Gtk::CAN_DEFAULT );
+#endif
+
     button->grab_default();
     button->grab_focus();
 }
