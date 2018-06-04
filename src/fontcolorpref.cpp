@@ -298,7 +298,7 @@ void FontColorPref::set_font_settings( const std::string& name, const int fontid
 {
     if( ! name.empty() && fontid < FONT_NUM )
     {
-        m_combo_font.append_text( name );
+        m_combo_font.append( name );
         m_font_tbl.push_back( fontid );
         m_tooltips_font.push_back( tooltip );
     }

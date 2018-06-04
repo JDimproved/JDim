@@ -47,7 +47,7 @@ namespace CORE
             for(;;){
                 std::string label = CORE::get_browser_label( i++ );
                 if( label.empty() ) break;
-                m_combo.append_text( label );
+                m_combo.append( label );
             }
 
             m_combo.set_active( CONFIG::get_browsercombo_id() );
