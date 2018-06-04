@@ -262,7 +262,7 @@ bool CompletionEntry::slot_entry_focus_out( GdkEventFocus* )
 bool CompletionEntry::slot_treeview_motion( GdkEventMotion* )
 {
     Gtk::TreeModel::Path path = m_treeview.get_path_under_mouse();
-    if( path.get_depth() > 0 ) m_treeview.set_cursor( path );
+    if( path.size() > 0 ) m_treeview.set_cursor( path );
 
     return true;
 }

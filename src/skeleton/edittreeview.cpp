@@ -948,7 +948,7 @@ const bool EditTreeView::is_dir( Gtk::TreeModel::iterator& it )
 
 const bool EditTreeView::is_dir( const Gtk::TreePath& path )
 {
-    if( path.get_depth() <= 0 ) return false;
+    if( path.size() <= 0 ) return false;
     Gtk::TreeModel::iterator it = get_model()->get_iter( path );
     return is_dir( it );
 }
@@ -977,7 +977,7 @@ void EditTreeView::next_dir()
     Gtk::TreePath path = get_current_path();
     for(;;){
         path = next_path( path );
-        if( ! path.get_depth() || ! get_row( path ) ){
+        if( ! path.size() || ! get_row( path ) ){
             goto_bottom();
             return;
         }
@@ -1801,7 +1801,7 @@ void EditTreeView::sort( const Gtk::TreePath& path, const int mode )
     if( ! get_row( path_head ) ) return;
 
     Gtk::TreePath path_parent = path_head;
-    if( path_parent.get_depth() >= 2 ) path_parent.up();
+    if( path_parent.size() >= 2 ) path_parent.up();
     else path_parent = Gtk::TreePath();
 
 #ifdef _DEBUG
@@ -1895,7 +1895,7 @@ EditTreeViewIterator::EditTreeViewIterator( EditTreeView& treeview, EditColumns&
     if( ! row ) m_end = true;
     else{
 
-        m_depth = m_path.get_depth();
+        m_depth = m_path.size();
         if( ! root ) ++m_depth;
     }
 }
@@ -1931,7 +1931,7 @@ void EditTreeViewIterator::operator ++ ()
 
         else{
 
-            if( m_path.get_depth() > m_depth ){
+            if( m_path.size() > m_depth ){
                 m_path.up();
                 m_path.next();
             }
