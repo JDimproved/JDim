@@ -499,7 +499,7 @@ Gtk::TreeViewColumn* EditTreeView::create_column( const int ypad )
     col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
 
     // 実際の描画時に偶数行に色を塗る
-    col->set_cell_data_func( *col->get_first_cell_renderer(), sigc::mem_fun( *this, &DragTreeView::slot_cell_data ) );
+    col->set_cell_data_func( *col->get_first_cell(), sigc::mem_fun( *this, &DragTreeView::slot_cell_data ) );
     col->set_cell_data_func( *m_ren_text, sigc::mem_fun( *this, &DragTreeView::slot_cell_data ) );
 
     append_column( *col );

@@ -202,12 +202,12 @@ void FontColorPref::pack_widget()
     column->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
     column->set_resizable( true );
     m_treeview_color.append_column( *column );
-    Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+    Gtk::CellRenderer *cell = column->get_first_cell();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &FontColorPref::slot_cell_data_name ) );
 
     column = Gtk::manage( new Gtk::TreeViewColumn( "色", m_columns_color.m_col_color ) );
     m_treeview_color.append_column( *column );
-    cell = column->get_first_cell_renderer();
+    cell = column->get_first_cell();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &FontColorPref::slot_cell_data_color ) );
 
     m_bt_change_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_change_color ) );

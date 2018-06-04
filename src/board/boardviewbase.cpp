@@ -673,7 +673,7 @@ void BoardViewBase::update_columns()
                 break;
         }
 
-        Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+        Gtk::CellRenderer *cell = column->get_first_cell();
 
         // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
         if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardViewBase::slot_cell_data ) );

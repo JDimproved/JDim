@@ -529,7 +529,7 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     column = Gtk::manage( new Gtk::TreeViewColumn( target, m_columns.m_col_motions ) );
     column->set_resizable( true );
     m_treeview.append_column( *column );
-    Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+    Gtk::CellRenderer *cell = column->get_first_cell();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &MouseKeyPref::slot_cell_data ) );
 
     m_scrollwin.add( m_treeview );
