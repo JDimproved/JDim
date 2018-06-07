@@ -15,6 +15,15 @@
 
 `  sudo apt-get install build-essential automake autoconf-archive git`
 
+### Ubuntu 18.04
+　開発環境が入っていない場合は、
+
+`    sudo apt-get install build-essential automake autoconf-archive git libtool`
+
+　必要なライブラリを入れる。(抜けがあるかも)
+
+`    sudo apt-get install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev`
+
 ## インストール
 
 ```
