@@ -1974,18 +1974,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     }
 
     // バックスクリーンの背景クリア
-#if GTKMM_CHECK_VERSION(3,0,0)
-    {
-        cairo_t* const cr = cairo_create( m_backscreen.get() );
-        gdk_cairo_set_source_rgba( cr, m_color[ get_colorid_back() ].gobj() );
-        cairo_rectangle( cr, 0.0, y_screen, width_view, height_screen );
-        cairo_fill( cr );
-        cairo_destroy( cr );
-    }
-#else
-    m_gc->set_foreground( m_color[ get_colorid_back() ] );
-    m_backscreen->draw_rectangle( m_gc, true, 0, y_screen, width_view, height_screen );
-#endif
+    fill_backscreen( get_colorid_back(), 0, y_screen, width_view, height_screen );
 
     // 描画ループ
     CLIPINFO ci = { width_view, pos_y, upper, lower }; // 描画領域
@@ -2449,74 +2438,34 @@ void DrawAreaBase::draw_div( LAYOUT* layout_div, const CLIPINFO& ci )
 
     // 背景
     if( bg_color >= 0 ){
-#if GTKMM_CHECK_VERSION(3,0,0)
-        cairo_t* const cr = cairo_create( m_backscreen.get() );
-        gdk_cairo_set_source_rgba( cr, m_color[ bg_color ].gobj() );
-        cairo_rectangle( cr, layout_div->rect->x, y_div - ci.pos_y, layout_div->rect->width, height_div );
-        cairo_fill( cr );
-        cairo_destroy( cr );
-#else
-        m_gc->set_foreground( m_color[ bg_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - ci.pos_y, layout_div->rect->width, height_div );
-#endif
+        fill_backscreen( bg_color, layout_div->rect->x, y_div - ci.pos_y,
+                         layout_div->rect->width, height_div );
     }
 
     // left
     if( border_style == CORE::BORDER_SOLID && border_left_color >= 0 && border_left ){
-#if GTKMM_CHECK_VERSION(3,0,0)
-        cairo_t* const cr = cairo_create( m_backscreen.get() );
-        gdk_cairo_set_source_rgba( cr, m_color[ border_left_color ].gobj() );
-        cairo_rectangle( cr, layout_div->rect->x, y_div - ci.pos_y, border_left, height_div );
-        cairo_fill( cr );
-        cairo_destroy( cr );
-#else
-        m_gc->set_foreground( m_color[ border_left_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - ci.pos_y, border_left, height_div );
-#endif
+        fill_backscreen( border_left_color, layout_div->rect->x, y_div - ci.pos_y,
+                         border_left, height_div );
     }
 
     // right
     if( border_style == CORE::BORDER_SOLID && border_right_color >= 0 && border_right ){
-#if GTKMM_CHECK_VERSION(3,0,0)
-        cairo_t* const cr = cairo_create( m_backscreen.get() );
-        gdk_cairo_set_source_rgba( cr, m_color[ border_right_color ].gobj() );
-        cairo_rectangle( cr, layout_div->rect->x + layout_div->rect->width - border_right, y_div - ci.pos_y,
+        fill_backscreen( border_right_color,
+                         layout_div->rect->x + layout_div->rect->width - border_right, y_div - ci.pos_y,
                          border_right, height_div );
-        cairo_fill( cr );
-        cairo_destroy( cr );
-#else
-        m_gc->set_foreground( m_color[ border_right_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x + layout_div->rect->width - border_right, y_div - ci.pos_y, border_right, height_div );
-#endif
     }
 
     // top
     if( border_style == CORE::BORDER_SOLID && border_top_color >= 0 && border_top ){
-#if GTKMM_CHECK_VERSION(3,0,0)
-        cairo_t* const cr = cairo_create( m_backscreen.get() );
-        gdk_cairo_set_source_rgba( cr, m_color[ border_top_color ].gobj() );
-        cairo_rectangle( cr, layout_div->rect->x, y_div - ci.pos_y, layout_div->rect->width, border_top );
-        cairo_fill( cr );
-        cairo_destroy( cr );
-#else
-        m_gc->set_foreground( m_color[ border_top_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div - ci.pos_y, layout_div->rect->width, border_top );
-#endif
+        fill_backscreen( border_top_color, layout_div->rect->x, y_div - ci.pos_y,
+                         layout_div->rect->width, border_top );
     }
 
     // bottom
     if( border_style == CORE::BORDER_SOLID && border_bottom_color >= 0 && border_bottom ){
-#if GTKMM_CHECK_VERSION(3,0,0)
-        cairo_t* const cr = cairo_create( m_backscreen.get() );
-        gdk_cairo_set_source_rgba( cr, m_color[ border_bottom_color ].gobj() );
-        cairo_rectangle( cr, layout_div->rect->x, y_div + height_div - border_bottom - ci.pos_y,
+        fill_backscreen( border_bottom_color,
+                         layout_div->rect->x, y_div + height_div - border_bottom - ci.pos_y,
                          layout_div->rect->width, border_bottom );
-        cairo_fill( cr );
-        cairo_destroy( cr );
-#else
-        m_gc->set_foreground( m_color[ border_bottom_color ] );
-        m_backscreen->draw_rectangle( m_gc, true, layout_div->rect->x, y_div + height_div - border_bottom - ci.pos_y, layout_div->rect->width, border_bottom );
-#endif
     }
 }
 
@@ -2653,6 +2602,24 @@ void DrawAreaBase::draw_frame()
 
     m_gc->set_foreground( m_color[ COLOR_FRAME ] );
     m_window->draw_rectangle( m_gc, false, WIDTH_FRAME-1, WIDTH_FRAME-1, width_win-WIDTH_FRAME, height_win-WIDTH_FRAME );
+#endif
+}
+
+
+//
+// バックスクリーンを矩形で塗りつぶす
+//
+void DrawAreaBase::fill_backscreen( const int colorid, int x, int y, int width, int height )
+{
+#if GTKMM_CHECK_VERSION(3,0,0)
+    cairo_t* const cr = cairo_create( m_backscreen.get() );
+    gdk_cairo_set_source_rgba( cr, m_color[ colorid ].gobj() );
+    cairo_rectangle( cr, x, y, width, height );
+    cairo_fill( cr );
+    cairo_destroy( cr );
+#else
+    m_gc->set_foreground( m_color[ colorid ] );
+    m_backscreen->draw_rectangle( m_gc, true, x, y, width, height );
 #endif
 }
 
@@ -2979,15 +2946,7 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
         const int y_tmp = rect->y + rect->height / 10 + 1;
         const int width_tmp = rect->width / 4;
         const int height_tmp = rect->width / 4;
-#if GTKMM_CHECK_VERSION(3,0,0)
-        cairo_t* const cr = cairo_create( m_backscreen.get() );
-        gdk_cairo_set_source_rgba( cr, m_color[ color ].gobj() );
-        cairo_rectangle( cr, x_tmp, y_tmp - ci.pos_y, width_tmp, height_tmp );
-        cairo_fill( cr );
-        cairo_destroy( cr );
-#else
-        m_backscreen->draw_rectangle( m_gc, true, x_tmp, y_tmp - ci.pos_y, width_tmp, height_tmp );
-#endif
+        fill_backscreen( color, x_tmp, y_tmp - ci.pos_y, width_tmp, height_tmp );
     }
 
 #ifdef _DEBUG
@@ -3118,17 +3077,12 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
 
             assert( m_context );
 
+            fill_backscreen( color_back, x, y, width_line, m_font->height );
 #if GTKMM_CHECK_VERSION(3,0,0)
             cairo_t* const text_cr = cairo_create( m_backscreen.get() );
-            gdk_cairo_set_source_rgba( text_cr, m_color[ color_back ].gobj() );
-            cairo_rectangle( text_cr, x, y, width_line, m_font->height );
-            cairo_fill( text_cr );
 
             gdk_cairo_set_source_rgba( text_cr, m_color[ color ].gobj() );
 #else
-            m_gc->set_foreground( m_color[ color_back ] );
-            m_backscreen->draw_rectangle( m_gc, true, x, y, width_line, m_font->height );
-
             m_gc->set_foreground( m_color[ color ] );
 #endif
 

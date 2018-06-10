@@ -459,6 +459,9 @@ namespace ARTICLE
         // 枠の描画
         void draw_frame();
 
+        // バックスクリーンを矩形で塗りつぶす
+        void fill_backscreen( const int colorid, int x, int y, int width, int height );
+
         // スロット
         void slot_change_adjust();
         bool slot_expose_event( GdkEventExpose* event );
