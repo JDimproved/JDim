@@ -59,11 +59,11 @@ void ImageAreaIcon::show_image()
     if( m_shown && get_img()->is_cached() ) return;
 
     if( m_pixbuf ){
-        m_pixbuf.clear();
-        m_pixbuf_loading.clear();
-        m_pixbuf_err.clear();
+        m_pixbuf.reset();
+        m_pixbuf_loading.reset();
+        m_pixbuf_err.reset();
     }
-    if( m_pixbuf_icon ) m_pixbuf_icon.clear();
+    if( m_pixbuf_icon ) m_pixbuf_icon.reset();
 
     m_shown = false;
     set_ready( false );
@@ -111,7 +111,7 @@ void ImageAreaIcon::load_image_thread()
         if( pixbuf ) 
             m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
     }
-    m_imgloader.clear();
+    m_imgloader.reset();
 
     if( m_pixbuf_icon ){
         m_imagetype = IMAGE_SHOW_ICON;

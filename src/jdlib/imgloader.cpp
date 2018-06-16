@@ -181,7 +181,7 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
 #endif
         if( ! m_stop ){
             m_errmsg = err.what();
-            m_loader.clear();
+            m_loader.reset();
             ret = false;
         }
     }

@@ -295,7 +295,7 @@ void BoardViewBase::setup_action()
     // その他
     action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC "(_O)" ) );
 
-    ui_manager().clear();
+    ui_manager().reset();
     ui_manager() = Gtk::UIManager::create();
     ui_manager()->insert_action_group( action_group() );
 

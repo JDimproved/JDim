@@ -227,7 +227,7 @@ void ImageAreaBase::set_image()
             set( m_imgloader->get_animation() );
         }
     }
-    m_imgloader.clear();
+    m_imgloader.reset();
 
     set_ready( true );
 }
