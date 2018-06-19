@@ -84,16 +84,32 @@ GNOMEUI_LIBS=""
 dnl
 dnl パッケージのチェック
 dnl
-PKG_CHECK_MODULES(GTKMM,[gtkmm-2.4 >= 2.4.0], [], [])
 PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.0] )
 
-AC_SUBST(GTKMM_CFLAGS)
-AC_SUBST(GTKMM_LIBS)
 AC_SUBST(GTHREAD_CFLAGS)
 AC_SUBST(GTHREAD_LIBS)
 
 
-dnl 
+dnl
+dnl checking gtkmm
+dnl
+AC_MSG_CHECKING(for --with-gtkmm3)
+AC_ARG_WITH(gtkmm3,
+  [AS_HELP_STRING([--with-gtkmm3], [use gtkmm-3.0 instead of gtkmm-2.4 [default=no]])],
+  [with_gtkmm3="$withval"],
+  [with_gtkmm3=no])
+AC_MSG_RESULT($with_gtkmm3)
+
+AS_IF([test "x$with_gtkmm3" = xno],
+      [PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.4.0], [], [])],
+      [PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.0.0], [], [])
+       AC_DEFINE(WITH_GTKMM_3_0, 1, [Use gtkmm-3.0 instead of gtkmm-2.4])])
+
+AC_SUBST(GTKMM_CFLAGS)
+AC_SUBST(GTKMM_LIBS)
+
+
+dnl
 dnl crypt
 dnl
 
