@@ -5,7 +5,13 @@
 #ifndef _DETAILDIAG_H
 #define _DETAILDIAG_H
 
+#include "gtkmmversion.h"
+
 #include "prefdiag.h"
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+using GtkNotebookPage = Gtk::Widget;
+#endif
 
 namespace SKELETON
 {

@@ -7,7 +7,13 @@
 #ifndef _SETUPWIZARD_H
 #define _SETUPWIZARD_H
 
+#include "gtkmmversion.h"
+
 #include <gtkmm.h>
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+using GtkNotebookPage = Gtk::Widget;
+#endif
 
 namespace CORE
 {

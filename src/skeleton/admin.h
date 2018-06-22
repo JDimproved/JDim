@@ -7,6 +7,8 @@
 #ifndef _ADMIN_H
 #define _ADMIN_H
 
+#include "gtkmmversion.h"
+
 #include "dispatchable.h"
 
 #include <gtkmm.h>
@@ -14,6 +16,10 @@
 #include <list>
 
 #include "command_args.h"
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+using GtkNotebookPage = Gtk::Widget;
+#endif
 
 namespace SKELETON
 {

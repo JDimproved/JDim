@@ -3,11 +3,17 @@
 #ifndef _BOARD_PREFERENCES_H
 #define _BOARD_PREFERENCES_H
 
+#include "gtkmmversion.h"
+
 #include "skeleton/view.h"
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
 #include "skeleton/label_entry.h"
 #include "skeleton/spinbutton.h"
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+using GtkNotebookPage = Gtk::Widget;
+#endif
 
 namespace BOARD
 {
