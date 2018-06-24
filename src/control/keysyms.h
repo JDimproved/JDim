@@ -5,6 +5,12 @@
 #ifndef _KEYSYMS_H
 #define _KEYSYMS_H
 
+#include "gtkmmversion.h"
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+#include <gdk/gdkkeysyms-compat.h>
+#endif
+
 enum
 {
     MAX_KEYNAME = 64

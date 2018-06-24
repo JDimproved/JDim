@@ -1,6 +1,7 @@
 // AA 選択ポップアップメニュークラス
 
 //#define _DEBUG
+#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "aamenu.h"
@@ -13,6 +14,10 @@
 #include "colorid.h"
 #include "aamanager.h"
 #include "cache.h"
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+#include <gdk/gdkkeysyms-compat.h>
+#endif
 
 using namespace SKELETON;
 

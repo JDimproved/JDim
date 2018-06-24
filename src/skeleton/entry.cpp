@@ -1,12 +1,16 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
+#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "entry.h"
 
 #include "control/controlid.h"
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+#include <gdk/gdkkeysyms-compat.h>
+#endif
 #include <gtk/gtkentry.h>
 
 using namespace SKELETON;
