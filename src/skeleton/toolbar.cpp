@@ -335,15 +335,25 @@ void ToolBar::set_color( const std::string& color )
 
         if( m_ebox_label->get_visible_window() ){
             m_ebox_label->set_visible_window( false );
+#if GTKMM_CHECK_VERSION(3,0,0)
+            m_label->unset_color( Gtk::STATE_FLAG_NORMAL );
+#else
             m_label->unset_fg( Gtk::STATE_NORMAL );
+#endif
         }
     }
     else{
 
         m_ebox_label->set_visible_window( true );
+#if GTKMM_CHECK_VERSION(3,0,0)
+        m_label->override_color( Gdk::RGBA( "white" ), Gtk::STATE_FLAG_NORMAL );
+        m_ebox_label->override_background_color( Gdk::RGBA( color ), Gtk::STATE_FLAG_NORMAL );
+        m_ebox_label->override_background_color( Gdk::RGBA( color ), Gtk::STATE_FLAG_ACTIVE );
+#else
         m_label->modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
         m_ebox_label->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) );
         m_ebox_label->modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( color ) );
+#endif
     }
 }
 

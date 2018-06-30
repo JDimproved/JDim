@@ -22,7 +22,11 @@
 
 
 // 枠を描く
-#define DRAW_FRAME( color ) m_event_frame->modify_bg( Gtk::STATE_NORMAL, color ); 
+#if GTKMM_CHECK_VERSION(3,0,0)
+#define DRAW_FRAME( color ) m_event_frame->override_background_color( Gdk::RGBA( color ), Gtk::STATE_FLAG_NORMAL )
+#else
+#define DRAW_FRAME( color ) m_event_frame->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) )
+#endif
 
 using namespace IMAGE;
 
@@ -42,7 +46,7 @@ ImageViewIcon::ImageViewIcon( const std::string& url )
     pack_start( *m_event_frame );
     m_event_frame->add( get_event() );
     get_event().set_border_width( 1 );
-    DRAW_FRAME( Gdk::Color( "white" ) );
+    DRAW_FRAME( "white" );
 
     setup_common();
 
@@ -103,7 +107,7 @@ void ImageViewIcon::clock_in()
 //
 void ImageViewIcon::focus_view()
 {
-    DRAW_FRAME( Gdk::Color( "red" ) );
+    DRAW_FRAME( "red" );
     get_event().grab_focus();
 }
 
@@ -114,7 +118,7 @@ void ImageViewIcon::focus_view()
 void ImageViewIcon::focus_out()
 {
     SKELETON::View::focus_out();
-    DRAW_FRAME( Gdk::Color( "white" ) );
+    DRAW_FRAME( "white" );
 }
 
 
@@ -157,7 +161,7 @@ void ImageViewIcon::show_view()
 //
 void ImageViewIcon::switch_icon()
 {
-    DRAW_FRAME( Gdk::Color( "red" ) );
+    DRAW_FRAME( "red" );
 }
 
 
