@@ -120,7 +120,11 @@ std::set< std::string > MISC::get_font_families()
 std::string MISC::get_entry_font()
 {
     Gtk::Entry entry;
+#if GTKMM_CHECK_VERSION(3,0,0)
+    return entry.get_style_context()->get_font().to_string();
+#else
     return entry.get_style()->get_font().to_string();
+#endif
 }
 
 

@@ -3,6 +3,8 @@
 #ifndef _EDITVIEW_H
 #define _EDITVIEW_H
 
+#include "gtkmmversion.h"
+
 #include <gtkmm.h>
 
 #include "control/control.h"
@@ -158,7 +160,14 @@ namespace SKELETON
         void set_editable( bool editable ){ m_textview.set_editable( editable ); }
         void set_accepts_tab( bool accept ){ m_textview.set_accepts_tab( accept ); }
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+        void modify_font( const Pango::FontDescription& font_desc )
+        {
+            m_textview.override_font( font_desc );
+        }
+#else
         void modify_font( const Pango::FontDescription& font_desc ){ m_textview.modify_font( font_desc ); }
+#endif
 
         void focus_view(){ m_textview.grab_focus(); }
 

@@ -28,7 +28,11 @@ void Tooltip::modify_font_label( const std::string& fontname )
 {
     Pango::FontDescription pfd( fontname );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
+#if GTKMM_CHECK_VERSION(3,0,0)
+    m_label.override_font( pfd );
+#else
     m_label.modify_font( pfd );
+#endif
 }
 
 
