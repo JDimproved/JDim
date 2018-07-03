@@ -236,7 +236,7 @@ void JDTreeViewBase::page_up()
     bool set_top = false;
 
     // スクロール
-    Gtk::Adjustment *adj = get_vadjustment();
+    auto adj = get_vadjustment();
     double val = adj->get_value();
     if( val > adj->get_page_size()/2 ) set_top = true;
     val = MAX( 0, val - adj->get_page_size() );
@@ -258,7 +258,7 @@ void JDTreeViewBase::page_down()
     bool set_bottom = false;
 
     // スクロール
-    Gtk::Adjustment *adj = get_vadjustment();
+    auto adj = get_vadjustment();
     double val = adj->get_value();
     if( val < adj->get_upper() - adj->get_page_size() - adj->get_page_size()/2 ) set_bottom = true;
     val = MIN( adj->get_upper() - adj->get_page_size(), val + adj->get_page_size() );

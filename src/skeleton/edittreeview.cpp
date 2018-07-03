@@ -248,7 +248,7 @@ void EditTreeView::clock_in()
             m_dnd_counter = 0;
 
             Gtk::TreePath path = get_path_under_mouse();
-            Gtk::Adjustment* adjust = get_vadjustment();
+            auto adjust = get_vadjustment();
 
             if( get_row( path ) && adjust ){
 

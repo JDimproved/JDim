@@ -590,7 +590,7 @@ void BBSListViewBase::clock_in()
     // 初期化直後など、まだスクロールバーが表示されてない時があるので表示されるまでジャンプしない
     if( m_jump_y != -1 ){
 
-        Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
+        auto adjust = m_treeview.get_vadjustment();
         if( adjust && adjust->get_upper() > m_jump_y ){
 
 #ifdef _DEBUG
@@ -2246,7 +2246,7 @@ void BBSListViewBase::tree2xml( const std::string& root_name )
 
     // 座標
     int y = 0;
-    Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
+    const auto adjust = m_treeview.get_vadjustment();
     if( adjust )
     {
         if( m_jump_y != -1 && adjust->get_upper() > m_jump_y ) y = m_jump_y;

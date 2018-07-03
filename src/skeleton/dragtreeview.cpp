@@ -499,7 +499,7 @@ bool DragTreeView::on_scroll_event( GdkEventScroll* event )
 //
 void DragTreeView::wheelscroll( GdkEventScroll* event )
 {
-    Gtk::Adjustment *adj = get_vadjustment();
+    auto adj = get_vadjustment();
     double val = adj->get_value();
 
     int scr_inc = get_row_height() * CONFIG::get_tree_scroll_size();

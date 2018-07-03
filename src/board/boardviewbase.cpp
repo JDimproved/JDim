@@ -1624,7 +1624,7 @@ void BoardViewBase::goto_num( const int num, const int )
 //
 void BoardViewBase::scroll_left()
 {
-    Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
+    auto hadjust = m_scrwin.get_hadjustment();
     if( !hadjust ) return;
     hadjust->set_value( MAX( 0,  hadjust->get_value() - hadjust->get_step_increment() ) );
 }
@@ -1635,7 +1635,7 @@ void BoardViewBase::scroll_left()
 //
 void BoardViewBase::scroll_right()
 {
-    Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
+    auto hadjust = m_scrwin.get_hadjustment();
     if( !hadjust ) return;
     hadjust->set_value(  MIN( hadjust->get_upper() - hadjust->get_page_size(),
                               hadjust->get_value() + hadjust->get_step_increment() ) );
