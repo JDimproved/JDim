@@ -5551,7 +5551,13 @@ void DrawAreaBase::change_cursor( const Gdk::CursorType type )
     if( m_cursor_type != type ){
         m_cursor_type = type;
         if( m_cursor_type == Gdk::ARROW ) m_window->set_cursor();
-        else m_window->set_cursor( Gdk::Cursor( m_cursor_type ) );
+        else {
+#if GTKMM_CHECK_VERSION(3,0,0)
+            m_window->set_cursor( Gdk::Cursor::create( m_cursor_type ) );
+#else
+            m_window->set_cursor( Gdk::Cursor( m_cursor_type ) );
+#endif
+        }
     }
 }
 
