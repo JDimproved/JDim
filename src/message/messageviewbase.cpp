@@ -665,12 +665,12 @@ void MessageViewBase::write()
 //
 void MessageViewBase::insert_draft()
 {
-    const std::list< std::string > list_files = CACHE::open_load_diag( MESSAGE::get_admin()->get_win(),
-                                                                       SESSION::get_dir_draft(), CACHE::FILE_TYPE_TEXT, false );
+    const auto list_files = CACHE::open_load_diag( MESSAGE::get_admin()->get_win(),
+                                                   SESSION::get_dir_draft(), CACHE::FILE_TYPE_TEXT, false );
 
     if( list_files.size() )
     {
-        const std::string open_path = *list_files.begin();
+        const std::string& open_path = list_files.front();
         std::string draft;
 
         SESSION::set_dir_draft( MISC::get_dir( open_path ) );

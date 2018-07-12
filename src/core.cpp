@@ -2569,7 +2569,7 @@ void Core::set_command( const COMMAND_ARGS& command )
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
         }
 
-        std::list< std::string > list_files;
+        std::vector< std::string > list_files;
 
         // ダイアログを開いてファイルのリストを取得
         if( command.arg2.empty() ){
@@ -4271,7 +4271,7 @@ void Core::hide_imagetab()
 //
 // 板にdatファイルをインポートする
 //
-void Core::import_dat( const std::string& url_board, const std::list< std::string > list_files )
+void Core::import_dat( const std::string& url_board, const std::vector< std::string >& list_files )
 {
     if( ! list_files.size() ) return;
 
@@ -4285,10 +4285,7 @@ void Core::import_dat( const std::string& url_board, const std::list< std::strin
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
 
-    std::list< std::string >::const_iterator it = list_files.begin();
-    for(; it != list_files.end(); ++it ){
-
-        const std::string& filename = ( *it );
+    for( const auto& filename : list_files ) {
 
 #ifdef _DEBUG
         std::cout << filename << std::endl;

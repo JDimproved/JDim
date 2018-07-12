@@ -1037,7 +1037,7 @@ void CACHE::add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type )
 // multi == true なら複数選択可能
 // 戻り値は選択されたファイルのpathのリスト
 //
-const std::list< std::string > CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type, const bool multi )
+std::vector< std::string > CACHE::open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type, const bool multi )
 {
     std::string dir = MISC::get_dir( open_path );
     if( dir.empty() ) dir = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH );
@@ -1055,7 +1055,7 @@ const std::list< std::string > CACHE::open_load_diag( Gtk::Window* parent, const
         return MISC::recover_path( diag.get_filenames() );
     }
 
-    return std::list< std::string >();
+    return {};
 }
 
 
