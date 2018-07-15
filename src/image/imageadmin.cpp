@@ -167,7 +167,7 @@ bool ImageAdmin::empty()
 //
 int ImageAdmin::get_tab_nums()
 {
-    return m_iconbox.children().size();
+    return static_cast< int >( m_iconbox.get_children().size() );
 }
 
 
@@ -178,12 +178,12 @@ int ImageAdmin::get_tab_nums()
 const std::list< std::string > ImageAdmin::get_URLs()
 {
     std::list< std::string > urls;
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view ) urls.push_back( view->get_url() );
-    }
-
+    m_iconbox.foreach( [&urls]( Gtk::Widget& w ) {
+        auto view = dynamic_cast< SKELETON::View* >( &w );
+        if( view ) {
+            urls.push_back( view->get_url() );
+        }
+    } );
     return urls;
 }
 
@@ -197,11 +197,12 @@ const std::list< std::string > ImageAdmin::get_URLs()
 void ImageAdmin::clock_in()
 {
     // アイコンにクロックを送る
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view ) view->clock_in();
-    }
+    m_iconbox.foreach( []( Gtk::Widget& w ) {
+        auto view = dynamic_cast< SKELETON::View* >( &w );
+        if( view ) {
+            view->clock_in();
+        }
+    } );
 
     // 画像が表示されている場合viewにクロックを回す
     if( SESSION::is_shown_win_img() ){
@@ -355,25 +356,26 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
 //
 void ImageAdmin::tab_left( const bool updated )
 {
-    if( m_iconbox.children().size() == 1 ) return;
-
-    SKELETON::View* view;
     std::string url_to;
-    SKELETON::View* icon = get_current_icon();
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view ){
+
+    // gtk2のGlib::ListHandleのイテレーターはデクリメント不可なので型変換する
+    const std::vector< Gtk::Widget* > widgets = m_iconbox.get_children();
+    if( widgets.size() <= 1 ) return;
+
+    const SKELETON::View* const icon = get_current_icon();
+    for( auto&& widget : widgets ) {
+        auto view = dynamic_cast< SKELETON::View* >( widget );
+        if( view ) {
             if( view == icon ) break;
             url_to = view->get_url();
         }
     }
-
     // 一番最後へ戻る
-    if( url_to.empty() ){
-        it = m_iconbox.children().end();
-        view = dynamic_cast< SKELETON::View* >( (--it)->get_widget() );
-        if( view ) url_to = view->get_url();
+    if( url_to.empty() ) {
+        auto view = dynamic_cast< SKELETON::View* >( widgets.back() );
+        if( view ) {
+            url_to = view->get_url();
+        }
     }
 
     if( !url_to.empty() ) switch_img( url_to );
@@ -383,23 +385,18 @@ void ImageAdmin::tab_left( const bool updated )
 
 void ImageAdmin::tab_right( const bool updated )
 {
-    if( m_iconbox.children().size() == 1 ) return;
-
     std::string url_to;
-    SKELETON::View* icon = get_current_icon();
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it != m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view == icon ){
 
-            ++it;
-            // 一番最初へ戻る
-            if( it == m_iconbox.children().end() ) it = m_iconbox.children().begin();
+    const auto widgets = m_iconbox.get_children();
+    if( widgets.size() <= 1 ) return;
 
-            view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-            if( view ) url_to = view->get_url();
-            break;
-        }
+    auto it = std::find( widgets.begin(), widgets.end(), static_cast< Gtk::Widget* >( get_current_icon() ) );
+    if( ++it == widgets.end() ) {
+        it = widgets.begin();
+    }
+    auto view = dynamic_cast< SKELETON::View* >( *it );
+    if( view ) {
+        url_to = view->get_url();
     }
 
     if( !url_to.empty() ) switch_img( url_to );
@@ -413,12 +410,12 @@ void ImageAdmin::tab_right( const bool updated )
 //
 void ImageAdmin::tab_head()
 {
-    if( m_iconbox.children().size() == 1 ) return;
+    const auto widgets = m_iconbox.get_children();
+    if( widgets.size() <= 1 ) return;
 
+    auto view = dynamic_cast< SKELETON::View* >( *widgets.begin() );
     std::string url_to;
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
 
-    SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
     if( view ) url_to = view->get_url();
 
     if( !url_to.empty() ) switch_img( url_to );
@@ -432,13 +429,12 @@ void ImageAdmin::tab_head()
 //
 void ImageAdmin::tab_tail()
 {
-    if( m_iconbox.children().size() == 1 ) return;
+    const std::vector< Gtk::Widget* > widgets = m_iconbox.get_children();
+    if( widgets.size() <= 1 ) return;
 
+    auto view = dynamic_cast< SKELETON::View* >( widgets.back() );
     std::string url_to;
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().end();
-    it--;
-    
-    SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+
     if( view ) url_to = view->get_url();
 
     if( !url_to.empty() ) switch_img( url_to );
@@ -550,13 +546,15 @@ void ImageAdmin::close_view( const std::string& url )
 
         m_view.remove();
 
-        SKELETON::View* view_prev = NULL;
-        SKELETON::View* view_next = NULL;        
-        Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-        for(; it !=  m_iconbox.children().end(); ++it ){
-            SKELETON::View* view_tmp = dynamic_cast< SKELETON::View* >( it->get_widget() );
-            if( view_tmp->get_url() == url ){
-                if( ++it != m_iconbox.children().end() ) view_next = dynamic_cast< SKELETON::View* >( it->get_widget() );
+        SKELETON::View* view_prev = nullptr;
+        SKELETON::View* view_next = nullptr;
+        const auto widgets = m_iconbox.get_children();
+        for( auto it = widgets.begin(); it != widgets.end(); ++it ) {
+            auto view_tmp = dynamic_cast< SKELETON::View* >( *it );
+            if( view_tmp->get_url() == url ) {
+                if( ++it != widgets.end() ) {
+                    view_next = dynamic_cast< SKELETON::View* >( *it );
+                }
                 break;
             }
             view_prev = view_tmp;
@@ -631,11 +629,12 @@ void ImageAdmin::close_other_views( const std::string& url )
 {
     set_command( "set_imgtab_operating", "", "true" );
 
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view && view->get_url() != url ) set_command( "close_view", view->get_url() );
-    }
+    m_iconbox.foreach( [this, &url]( Gtk::Widget& w ) {
+        auto view = dynamic_cast< SKELETON::View* >( &w );
+        if( view && view->get_url() != url ) {
+            set_command( "close_view", view->get_url() );
+        }
+    } );
 
     set_command( "set_imgtab_operating", "", "false" );
 }
@@ -648,11 +647,12 @@ void ImageAdmin::close_left_views( const std::string& url )
 {
     set_command( "set_imgtab_operating", "", "true" );
 
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+    for( auto&& widget : m_iconbox.get_children() ) {
+        auto view = dynamic_cast< SKELETON::View* >( widget );
         if( view->get_url() == url ) break;
-        if( view ) set_command( "close_view", view->get_url() );
+        if( view ) {
+            set_command( "close_view", view->get_url() );
+        }
     }
 
     set_command( "set_imgtab_operating", "", "false" );
@@ -666,15 +666,17 @@ void ImageAdmin::close_right_views( const std::string& url )
 {
     set_command( "set_imgtab_operating", "", "true" );
 
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+    const auto widgets = m_iconbox.get_children();
+    auto it = widgets.begin();
+    for( ; it != widgets.end(); ++it ) {
+        auto view = dynamic_cast< SKELETON::View* >( *it );
         if( view->get_url() == url ) break;
     }
-    ++it;
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view ) set_command( "close_view", view->get_url() );
+    for( ++it; it != widgets.end(); ++it ) {
+        auto view = dynamic_cast< SKELETON::View* >( *it );
+        if( view ) {
+            set_command( "close_view", view->get_url() );
+        }
     }
 
     set_command( "set_imgtab_operating", "", "false" );
@@ -692,10 +694,8 @@ void ImageAdmin::close_error_views( const std::string mode )
 
     set_command( "set_imgtab_operating", "", "true" );
 
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+    for( auto&& widget : m_iconbox.get_children() ) {
+        auto view = dynamic_cast< SKELETON::View* >( widget );
         if( view ){
 
             const std::string url = view->get_url();
@@ -731,10 +731,8 @@ void ImageAdmin::close_noerror_views()
 
     set_command( "set_imgtab_operating", "", "true" );
 
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+    for( auto&& widget : m_iconbox.get_children() ) {
+        auto view = dynamic_cast< SKELETON::View* >( widget );
         if( view ){
 
             const std::string url = view->get_url();
@@ -792,11 +790,12 @@ void ImageAdmin::focus_current_view()
 //
 void ImageAdmin::focus_out_all()
 {
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view ) view->focus_out();
-    }
+    m_iconbox.foreach( []( Gtk::Widget& w ) {
+        auto view = dynamic_cast< SKELETON::View* >( &w );
+        if( view ) {
+            view->focus_out();
+        }
+    } );
 }
 
 
@@ -872,10 +871,11 @@ void ImageAdmin::switch_img( const std::string& url )
 // 
 SKELETON::View* ImageAdmin::get_icon( const std::string& url, int& pos )
 {
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for( pos = 0; it !=  m_iconbox.children().end(); ++it, ++pos ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
+    pos = 0;
+    for( auto&& widget : m_iconbox.get_children() ) {
+        auto view = dynamic_cast< SKELETON::View* >( widget );
         if( view && view->get_url() == url ) return view;
+        ++pos;
     }
 
     pos = -1;
@@ -895,12 +895,10 @@ SKELETON::View* ImageAdmin::get_icon( const std::string& url)
 //
 SKELETON::View* ImageAdmin::get_nth_icon( const unsigned int n )
 {
-    if( n >= m_iconbox.children().size() ) return NULL;
+    const std::vector< Gtk::Widget* > widgets = m_iconbox.get_children();
+    if( n >= widgets.size() ) return nullptr;
 
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for( unsigned int i = 0; i < n; ++i, ++it );
-
-    return dynamic_cast< SKELETON::View* >( it->get_widget() );
+    return dynamic_cast< SKELETON::View* >( widgets[ n ] );
 }
 
 
@@ -1186,11 +1184,12 @@ std::list< bool > ImageAdmin::get_locked()
 {
     std::list< bool > locked;
 
-    Gtk::Box_Helpers::BoxList::iterator it = m_iconbox.children().begin();
-    for(; it !=  m_iconbox.children().end(); ++it ){
-        SKELETON::View* view = dynamic_cast< SKELETON::View* >( it->get_widget() );
-        if( view ) locked.push_back( view->is_locked() );
-    }
+    m_iconbox.foreach( [&locked]( Gtk::Widget& w ) {
+        const auto view = dynamic_cast< SKELETON::View* >( &w );
+        if( view ) {
+            locked.push_back( view->is_locked() );
+        }
+    } );
 
     return locked;
 }
