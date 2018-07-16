@@ -1,6 +1,7 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
+#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "miscx.h"
@@ -10,6 +11,10 @@
 #else
 #include <gdk/gdkwin32.h>
 #include <windows.h>
+#endif
+
+#if !defined( GDK_WINDOW_XWINDOW ) && GTKMM_CHECK_VERSION(3,0,0)
+#define GDK_WINDOW_XWINDOW( win ) gdk_x11_window_get_xid( win )
 #endif
 
 //
