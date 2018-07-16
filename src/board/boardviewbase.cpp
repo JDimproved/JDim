@@ -37,7 +37,6 @@
 
 #include "icons/iconmanager.h"
 
-#include <gtk/gtk.h> // m_liststore->gobj()->sort_column_id = -2
 #include <sstream>
 
 using namespace BOARD;
@@ -503,7 +502,8 @@ const int BoardViewBase::get_row_size()
 //
 void BoardViewBase::unsorted_column()
 {
-    m_liststore->gobj()->sort_column_id = -2;
+    m_liststore->set_sort_column( Gtk::TreeSortable::DEFAULT_UNSORTED_COLUMN_ID,
+                                  Gtk::SortType::SORT_ASCENDING );
 }
 
 
