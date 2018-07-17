@@ -368,11 +368,15 @@ int Control::MG_wheel_scroll( const GdkEventScroll* event )
     if( m_wheel_scroll_time && time_tmp < time_cancel ) return control;
     m_wheel_scroll_time = event->time;
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+    Gdk::ModifierType mask = static_cast< Gdk::ModifierType >( event->state );
+#else
     // 押しているボタンは event から取れないので
     // get_pointer()から取る
     int x, y;
     Gdk::ModifierType mask;
     Gdk::Display::get_default()->get_pointer( x, y, mask );
+#endif
 
     int button = 0;
     GdkEventButton ev = GdkEventButton();
