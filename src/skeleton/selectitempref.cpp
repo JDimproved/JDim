@@ -108,7 +108,7 @@ void SelectItemPref::pack_widgets()
     m_vbuttonbox_v.set_spacing( 4 );
     m_vbox.pack_start( m_vbuttonbox_v, Gtk::PACK_EXPAND_WIDGET );
 
-    m_vbuttonbox_h.set_layout( Gtk::BUTTONBOX_DEFAULT_STYLE );
+    m_vbuttonbox_h.set_layout( Gtk::BUTTONBOX_EDGE );
     m_vbuttonbox_h.set_spacing( 4 );
     m_vbox.pack_start( m_vbuttonbox_h, Gtk::PACK_SHRINK );
 
