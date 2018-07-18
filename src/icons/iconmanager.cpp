@@ -88,7 +88,17 @@ using namespace ICON;
 
 ICON_Manager::ICON_Manager()
 {
+#if GTKMM_CHECK_VERSION(3,0,0)
+    struct Dummy : public Gtk::Image
+    {
+        Glib::RefPtr< Gdk::Pixbuf > render_icon( Gtk::BuiltinStockID stock, Gtk::BuiltinIconSize size )
+        {
+            return render_icon_pixbuf( stock, size );
+        }
+    } m_dummy;
+#else
     Gtk::Image m_dummy;
+#endif
 
     m_list_icons.resize( NUM_ICONS );
 
