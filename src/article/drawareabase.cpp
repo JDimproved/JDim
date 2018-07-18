@@ -1756,8 +1756,13 @@ bool DrawAreaBase::draw_screen( const int y, const int height )
     }
 
     // キューに expose イベントが溜まっている時は全画面再描画
-    Gdk::Region rg = m_window->get_update_area();
-    if( rg.gobj() ){
+    auto* const updated = gdk_window_get_update_area( m_window->gobj() );
+    if( updated ) {
+#if GTKMM_CHECK_VERSION(3,0,0)
+        cairo_region_destroy( updated );
+#else
+        gdk_region_destroy( updated );
+#endif
         redraw_view_force();
         return true;
     }
