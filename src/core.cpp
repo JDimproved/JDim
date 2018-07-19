@@ -1130,7 +1130,15 @@ void Core::run( const bool init, const bool skip_setupdiag )
     // その他設定とwidgetのパッキング
     m_notebook_right.set_show_tabs( false );
     m_notebook_right.set_show_border( false );
+#if GTKMM_CHECK_VERSION(3,12,0)
+    m_notebook_right.set_margin_start( 0 );
+    m_notebook_right.set_margin_end( 0 );
+#elif GTKMM_CHECK_VERSION(3,0,0)
+    m_notebook_right.set_margin_left( 0 );
+    m_notebook_right.set_margin_right( 0 );
+#else
     m_notebook_right.get_style()->set_xthickness( 10 );
+#endif
 
     if( CONFIG::get_open_sidebar_by_click() ) m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
     m_hpaned.get_ctrl().add_remove1( false, *m_sidebar );
