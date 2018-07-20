@@ -468,7 +468,11 @@ namespace ARTICLE
 
         // スロット
         void slot_change_adjust();
+#if GTKMM_CHECK_VERSION(3,0,0)
+        bool slot_draw( const Cairo::RefPtr< Cairo::Context >& cr );
+#else
         bool slot_expose_event( GdkEventExpose* event );
+#endif
         bool slot_scroll_event( GdkEventScroll* event );
         bool slot_leave_notify_event( GdkEventCrossing* event );
         bool slot_visibility_notify_event( GdkEventVisibility* event );
