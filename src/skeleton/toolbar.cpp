@@ -76,6 +76,12 @@ ToolBar::ToolBar( Admin* admin )
     m_buttonbar.set_icon_size( Gtk::ICON_SIZE_MENU );
 #endif
     m_buttonbar.set_toolbar_style( Gtk::TOOLBAR_ICONS );
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+    // ツールバーの子ウィジェットのコンテキストメニューの配色がGTKテーマと違うことがある。
+    // ツールバーのcssクラスを削除しコンテキストメニューの配色を修正する。
+    m_buttonbar.get_style_context()->remove_class( GTK_STYLE_CLASS_TOOLBAR );
+#endif
 }
 
 

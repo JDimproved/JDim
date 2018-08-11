@@ -11,6 +11,8 @@
 
 #include <gtk/gtk.h>
 
+#if !GTKMM_CHECK_VERSION(3,0,0)
+
 ///////////////////////////////////////////
 //
 // gtk+-2.12.9/gtk/gtktoolbar.c より引用
@@ -197,3 +199,5 @@ bool JDToolbar::on_expose_event( GdkEventExpose* event )
 
     return FALSE;
 }
+
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
