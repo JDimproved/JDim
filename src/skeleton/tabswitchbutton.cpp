@@ -4,16 +4,18 @@
 #include "jddebug.h"
 
 #include "tabswitchbutton.h"
+#if !GTKMM_CHECK_VERSION(3,0,0)
 #include "dragnote.h"
+#endif
 
 using namespace SKELETON;
 
 
 TabSwitchButton::TabSwitchButton( DragableNoteBook* parent )
-    : Gtk::Notebook(),
-      m_parent( parent ),
-      m_arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ),
-      m_shown( false )
+    : Gtk::Notebook()
+#if !GTKMM_CHECK_VERSION(3,0,0)
+    , m_parent( parent )
+#endif
 {
     set_border_width( 0 );
 
@@ -24,6 +26,7 @@ TabSwitchButton::TabSwitchButton( DragableNoteBook* parent )
 
     // フォーカス時にボタンの枠がはみ出さないようにする
 #if GTKMM_CHECK_VERSION(3,0,0)
+    static_cast< void >( parent );
     m_button.set_margin_top( 0 );
     m_button.set_margin_bottom( 0 );
 #else
@@ -64,6 +67,7 @@ void TabSwitchButton::hide_button()
 //
 // 自前でビュー領域の枠を描画する
 //
+#if !GTKMM_CHECK_VERSION(3,0,0)
 bool TabSwitchButton::on_expose_event( GdkEventExpose* event )
 {
     if( ! m_shown ) return Gtk::Notebook::on_expose_event( event );
@@ -76,3 +80,4 @@ bool TabSwitchButton::on_expose_event( GdkEventExpose* event )
 
     return true;
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)

@@ -18,6 +18,8 @@
 
 using namespace SKELETON;
 
+#if !GTKMM_CHECK_VERSION(3,0,0)
+
 //////////////////////////////////////////
 //
 // gtknotebook.c( Revision 19311, 2008-01-06 ) より引用
@@ -97,6 +99,8 @@ struct _GtkNotebookPage
   gulong mnemonic_activate_signal;
   gulong notify_visible_handler;
 };
+
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 //////////////////////////////////////////
@@ -824,6 +828,7 @@ bool TabNotebook::adjust_tabwidth()
 //
 // タブの高さ、幅、位置を取得 ( 描画用 )
 //
+#if !GTKMM_CHECK_VERSION(3,0,0)
 void TabNotebook::get_alloc_tab( Alloc_NoteBook& alloc )
 {
     alloc.x_tab = 0;
@@ -843,6 +848,7 @@ void TabNotebook::get_alloc_tab( Alloc_NoteBook& alloc )
         alloc.height_tab = notebook->cur_page->allocation.height;
     }
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 //

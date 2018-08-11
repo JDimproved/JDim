@@ -98,8 +98,10 @@ namespace SKELETON
         // マウスがタブの右側にある場合はページ数の値を返す
         int get_page_under_mouse();
 
+#if !GTKMM_CHECK_VERSION(3,0,0)
         // タブの高さ、幅、位置を取得 ( 描画用 )
         void get_alloc_tab( Alloc_NoteBook& alloc );
+#endif
 
       private:
 
