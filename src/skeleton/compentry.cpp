@@ -30,6 +30,11 @@ CompletionEntry::CompletionEntry( const int mode )
     m_entry.signal_activate().connect( sigc::mem_fun( *this, &CompletionEntry::slot_entry_acivate ) );
     m_entry.signal_changed().connect( sigc::mem_fun( *this, &CompletionEntry::slot_entry_changed ) );
     m_entry.signal_focus_out_event().connect( sigc::mem_fun(*this, &CompletionEntry::slot_entry_focus_out ) );
+#if GTKMM_CHECK_VERSION(3,0,0)
+    m_entry.set_max_width_chars( 1 );
+    m_entry.set_width_chars( 1 );
+    m_entry.set_hexpand( true );
+#endif
     pack_start( m_entry );
 
     // ポップアップ
