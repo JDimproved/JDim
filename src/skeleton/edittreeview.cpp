@@ -1369,7 +1369,7 @@ void EditTreeView::replace_infopath( CORE::DATA_INFO_LIST& list_info,
 
         if( children.empty() ) path = Gtk::TreePath( "0" );
         else{
-            path = get_model()->get_path( *( children.rbegin() ) );
+            path = get_model()->get_path( *( std::prev( children.end() ) ) );
             path.next();
         }
     }

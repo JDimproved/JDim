@@ -2648,7 +2648,9 @@ void BoardViewBase::exec_search()
     Gtk::TreePath path = m_treeview.get_current_path();;
     if( path.empty() ){
         if( m_search_invert ) path = GET_PATH( *( m_liststore->children().begin() ) );
-        else GET_PATH( *( m_liststore->children().rbegin() ) );
+        else {
+            GET_PATH( *( std::prev( m_liststore->children().end() ) ) );
+        }
     }
 
     Gtk::TreePath path_start = path;
@@ -2675,7 +2677,7 @@ void BoardViewBase::exec_search()
             // 前へ
             if( ! path.prev() ){
                 // 一番後へ
-                path =  GET_PATH( *( m_liststore->children().rbegin() ) );
+                path = GET_PATH( *( std::prev( m_liststore->children().end() ) ) );
             }
         }
 
