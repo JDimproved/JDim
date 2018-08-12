@@ -74,6 +74,9 @@ void AboutConfig::pack_widgets()
     get_vbox()->pack_start( m_scrollwin );
 
     set_title( "about:config 高度な設定" );
+#if GTKMM_CHECK_VERSION(3,0,0)
+    set_default_size_ratio( 0.666 );
+#endif
     show_all_children();
 
     append_rows();
