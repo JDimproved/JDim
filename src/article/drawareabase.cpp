@@ -177,7 +177,12 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_article = DBTREE::get_article( m_url );
     m_layout_tree = new LayoutTree( m_url, show_abone, show_multispace );
 
+#if !GTKMM_CHECK_VERSION(3,9,2)
+    // GTK+ 3.9.2からGTK/GDKのダブルバッファ処理が再構成された
+    // この影響でスレビューのスクロール時に画面のちらつきが発生するようになった
+    // ちらつきを抑えるため3.9.2以降の環境ではデフォルトのダブルバッファを使う
     m_view.set_double_buffered( false );
+#endif
 
     // デフォルトではoffになってるイベントを追加
     m_view.add_events( Gdk::BUTTON_PRESS_MASK );
@@ -1806,6 +1811,16 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     int upper = pos_y + y_screen;
     int lower = upper + height_screen;
 
+#if GTKMM_CHECK_VERSION(3,9,2)
+    {
+        // 全画面再描画
+        dy = 0;
+        y_screen = 0;
+        height_screen = height_view;
+        upper = pos_y;
+        lower = pos_y + height_screen;
+    }
+#else // !GTKMM_CHECK_VERSION(3,9,2)
     if( m_pre_pos_y == -1 // 初回呼び出し時
 
         // 高速スクロールモードでなく、バックスクリーンが全て描画されていない場合
@@ -1853,6 +1868,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
             return;
         }
     }
+#endif // GTKMM_CHECK_VERSION(3,9,2)
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::exec_draw_screen "
