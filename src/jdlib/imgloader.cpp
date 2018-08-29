@@ -43,7 +43,7 @@ ImgLoader::~ImgLoader()
 Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 {
     ImgProvider& provider = ImgProvider::get_provider();
-    Glib::Mutex::Lock lock( provider.m_provider_lock );
+    JDLIB::LockGuard lock( provider.m_provider_lock );
     Glib::RefPtr< ImgLoader > loader = provider.get_loader( file );
     if( ! loader ) {
         loader = Glib::RefPtr< ImgLoader >( new ImgLoader( file ) );
@@ -58,7 +58,7 @@ Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 // 画像サイズ取得
 bool ImgLoader::get_size( int& width, int& height )
 {
-    Glib::Mutex::Lock lock( m_loader_lock );
+    JDLIB::LockGuard lock( m_loader_lock );
     bool ret = load_imgfile( LOADLEVEL_SIZEONLY );
     width = m_width;
     height = m_height;
@@ -68,7 +68,7 @@ bool ImgLoader::get_size( int& width, int& height )
 Glib::RefPtr< Gdk::Pixbuf > ImgLoader::get_pixbuf( const bool pixbufonly )
 {
     Glib::RefPtr< Gdk::Pixbuf > ret;
-    Glib::Mutex::Lock lock( m_loader_lock );
+    JDLIB::LockGuard lock( m_loader_lock );
     if( load_imgfile( pixbufonly ? LOADLEVEL_PIXBUFONLY : LOADLEVEL_NORMAL ) ) {
         ret = m_loader->get_pixbuf();
     }
@@ -78,7 +78,7 @@ Glib::RefPtr< Gdk::Pixbuf > ImgLoader::get_pixbuf( const bool pixbufonly )
 Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 {
     Glib::RefPtr< Gdk::PixbufAnimation > ret;
-    Glib::Mutex::Lock lock( m_loader_lock );
+    JDLIB::LockGuard lock( m_loader_lock );
     if( load_imgfile( LOADLEVEL_NORMAL ) ) {
         ret = m_loader->get_animation();
     }
@@ -89,7 +89,7 @@ Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 // 動画でpixbufonly = true の時はアニメーションさせない
 const bool ImgLoader::load( const bool pixbufonly )
 {
-    Glib::Mutex::Lock lock( m_loader_lock );
+    JDLIB::LockGuard lock( m_loader_lock );
     return load_imgfile( pixbufonly ? LOADLEVEL_PIXBUFONLY : LOADLEVEL_NORMAL );
 }
 

@@ -93,9 +93,9 @@
 
        正規表現ライブラリとしてPOSIX regex の代わりにPCREを使用する。PCREはBSDライセンスなのでJDをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。UTF-8が有効な ( --enable-utf オプションを用いて make する ) PCRE 6.5 以降が必要となる。Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
 
-    --with-gthread
+    --with-[gthread|stdthread]
 
-       pthreadの代わりにgthreadを使用する。
+       pthreadの代わりにgthreadまたはstd::threadを使用する。
 
 * メモ
 
