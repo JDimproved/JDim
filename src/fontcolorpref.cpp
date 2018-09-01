@@ -373,11 +373,13 @@ void FontColorPref::slot_checkbutton_font_toggled()
 
 void FontColorPref::slot_chk_use_gtkrc_toggled()
 {
+#if !GTKMM_CHECK_VERSION(3,0,0)
     if( m_chk_use_gtkrc_tree.property_active() )
     {
         SKELETON::MsgDiag mdiag( NULL, WARNING_GTKRC_TREE );
         mdiag.run();
     }
+#endif
 }
 
 
@@ -559,11 +561,13 @@ void FontColorPref::slot_reset_color()
 //
 void FontColorPref::slot_reset_all_colors()
 {
+#if !GTKMM_CHECK_VERSION(3,0,0)
     if( m_chk_use_gtkrc_tree.property_active() )
     {
         SKELETON::MsgDiag mdiag( NULL, WARNING_GTKRC_TREE );
         mdiag.run();
     }
+#endif
 #if GTKMM_CHECK_VERSION(3,0,0)
     m_chk_use_gtktheme_message.set_active( CONFIG::CONF_USE_MESSAGE_GTKTHEME );
 #endif

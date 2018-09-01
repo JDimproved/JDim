@@ -32,6 +32,10 @@
 using namespace SKELETON;
 
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+constexpr const char* DragTreeView::s_css_classname;
+#endif
+
 DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget,
     const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
     : JDTreeViewBase(),
@@ -49,6 +53,12 @@ DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget
     set_enable_search( false );
     set_rules_hint( CONFIG::get_use_tree_gtkrc() );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+    auto context = get_style_context();
+    context->add_class( s_css_classname );
+    context->add_provider( m_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
+#endif
 
     if( use_usr_fontcolor ){
         init_color( colorid_text, colorid_bg, colorid_bg_even );
@@ -115,26 +125,41 @@ void DragTreeView::redraw_view()
 //
 void DragTreeView::init_color( const int colorid_text, const int colorid_bg, const int colorid_bg_even )
 {
-    if( CONFIG::get_use_tree_gtkrc() ) return;
+    if( CONFIG::get_use_tree_gtkrc() ) {
+#if GTKMM_CHECK_VERSION(3,0,0)
+        m_use_bg_even = false;
+        m_provider->load_from_data( u8"" );
+#endif
+        return;
+    }
 
     // 文字色
     m_color_text.set( CONFIG::get_color( colorid_text ) );
-#if GTKMM_CHECK_VERSION(3,0,0)
-    override_color( m_color_text, get_state_flags() );
-#else
-    modify_text( get_state(), m_color_text );
-#endif
-
     // 背景色
     m_color_bg.set( CONFIG::get_color( colorid_bg ) );
-#if GTKMM_CHECK_VERSION(3,0,0)
-    override_background_color( m_color_bg, get_state_flags() );
-#else
-    modify_base( get_state(), m_color_bg );
-#endif
 
     m_use_bg_even = ! ( CONFIG::get_color( colorid_bg ) == CONFIG::get_color( colorid_bg_even ) );
     m_color_bg_even.set( CONFIG::get_color( colorid_bg_even ) );
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+    // TreeViewの偶数/奇数行を指定するCSSセレクタは動作しないバージョンが
+    // 存在するため偶数行の背景色設定は既存のコードをそのまま使う
+    // https://gitlab.gnome.org/GNOME/gtk/issues/581
+    try {
+        m_provider->load_from_data( Glib::ustring::compose(
+            u8".%1.view:not(:selected) { color: %2; background-color: %3; }",
+            s_css_classname, m_color_text.to_string(), m_color_bg.to_string() ) );
+    }
+    catch( Gtk::CssProviderError& err ) {
+#ifdef _DEBUG
+        std::cout << "ERROR:DragTreeView::init_color load from data failed: "
+                  << err.what() << std::endl;
+#endif
+    }
+#else // !GTKMM_CHECK_VERSION(3,0,0)
+    modify_text( get_state(), m_color_text );
+    modify_base( get_state(), m_color_bg );
+#endif
 }
 
 
@@ -596,7 +621,11 @@ void DragTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel
 
     // 偶数行に色を塗る
     if( even ){
+#if GTKMM_CHECK_VERSION(3,0,0)
+        cell->property_cell_background_rgba() = m_color_bg_even;
+#else
         cell->property_cell_background_gdk() = m_color_bg_even;
+#endif
         cell->property_cell_background_set() = true;
     }
 
