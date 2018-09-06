@@ -365,7 +365,7 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
     // ドロップ側に設定する
     drag_source_unset();
     drag_dest_unset();
-    std::list< Gtk::TargetEntry > targets;
+    std::vector< Gtk::TargetEntry > targets;
     targets.push_back( Gtk::TargetEntry( DNDTARGET_TAB, Gtk::TARGET_SAME_APP, 0 ) );
     drag_dest_set( targets, Gtk::DEST_DEFAULT_MOTION | Gtk::DEST_DEFAULT_DROP );
 

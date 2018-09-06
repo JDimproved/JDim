@@ -58,7 +58,7 @@ DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget
     get_selection()->signal_changed().connect( sigc::mem_fun( *this, &DragTreeView::slot_selection_changed ) );
 
     // D&D 設定
-    std::list< Gtk::TargetEntry > targets;
+    std::vector< Gtk::TargetEntry > targets;
     targets.push_back( Gtk::TargetEntry( get_dndtarget(), Gtk::TARGET_SAME_APP, 0 ) );
 
     // ドラッグ開始ボタン設定
@@ -89,7 +89,7 @@ DragTreeView::~DragTreeView()
 //
 void DragTreeView::set_enable_drop_uri_list()
 {
-    std::list< Gtk::TargetEntry > targets_drop;
+    std::vector< Gtk::TargetEntry > targets_drop;
     targets_drop.push_back( Gtk::TargetEntry( "text/uri-list" ) );
 
     // ドロップされると on_drag_data_received() が呼び出される

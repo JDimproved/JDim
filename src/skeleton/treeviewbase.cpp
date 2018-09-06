@@ -40,11 +40,11 @@ const int JDTreeViewBase::get_row_size()
 Gtk::TreeModel::Path JDTreeViewBase::get_current_path()
 {
     Gtk::TreeModel::Path path;
-    
-    std::list< Gtk::TreeModel::Path > paths = get_selection()->get_selected_rows();
+
+    std::vector< Gtk::TreeModel::Path > paths = get_selection()->get_selected_rows();
     if( paths.size() ){
-    
-        std::list< Gtk::TreeModel::Path >::iterator it = paths.begin();
+
+        std::vector< Gtk::TreeModel::Path >::iterator it = paths.begin();
         path = ( *it );
     }
 
@@ -115,8 +115,8 @@ std::list< Gtk::TreeModel::iterator > JDTreeViewBase::get_selected_iterators()
     
     if( get_model() ){
 
-        std::list< Gtk::TreeModel::Path > paths = get_selection()->get_selected_rows();
-        std::list< Gtk::TreeModel::Path >::iterator it = paths.begin();
+        std::vector< Gtk::TreeModel::Path > paths = get_selection()->get_selected_rows();
+        std::vector< Gtk::TreeModel::Path >::iterator it = paths.begin();
         for( ; it != paths.end(); ++it ) list_it.push_back( get_model()->get_iter( ( *it ) ) );
     }
 
@@ -129,7 +129,7 @@ std::list< Gtk::TreeModel::iterator > JDTreeViewBase::get_selected_iterators()
 //
 void JDTreeViewBase::delete_selected_rows( const bool force )
 {
-    std::list< Gtk::TreeModel::Path > list_path = get_selection()->get_selected_rows();
+    std::vector< Gtk::TreeModel::Path > list_path = get_selection()->get_selected_rows();
 
     if( ! list_path.size() ) return;
 
@@ -146,7 +146,7 @@ void JDTreeViewBase::delete_selected_rows( const bool force )
     const bool gotobottom = ( ! get_row( next ) );
     if( ! gotobottom ) set_cursor( next );
 
-    std::list< Gtk::TreePath >::reverse_iterator it = list_path.rbegin();
+    std::vector< Gtk::TreePath >::reverse_iterator it = list_path.rbegin();
     for( ; it != list_path.rend(); ++it ){
         Gtk::TreeRow row = get_row( *it );
 

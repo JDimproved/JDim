@@ -225,7 +225,7 @@ void EditTreeView::set_editable_view( const bool editable )
     if( m_editable ){
 
         // D&D のドロップを可能にする
-        std::list< Gtk::TargetEntry > targets;
+        std::vector< Gtk::TargetEntry > targets;
         targets.push_back( Gtk::TargetEntry( get_dndtarget(), Gtk::TARGET_SAME_APP, 0 ) );
         drag_dest_set( targets );
     }

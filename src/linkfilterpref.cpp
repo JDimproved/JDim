@@ -149,7 +149,7 @@ const Gtk::TreeModel::iterator LinkFilterPref::get_selected_row()
 {
     Gtk::TreeModel::iterator row;
 
-    std::list< Gtk::TreeModel::Path > paths = m_treeview.get_selection()->get_selected_rows();
+    std::vector< Gtk::TreeModel::Path > paths = m_treeview.get_selection()->get_selected_rows();
     if( ! paths.size() ) return row;
 
     row = *( m_liststore->get_iter( *paths.begin() ) );
