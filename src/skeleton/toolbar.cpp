@@ -299,7 +299,11 @@ Gtk::ToolItem* ToolBar::get_label()
         m_ebox_label = Gtk::manage( new Gtk::EventBox );
         m_label = Gtk::manage( new Gtk::Label );
 
+#if GTKMM_CHECK_VERSION(2,6,0)
+        m_label->set_ellipsize( Pango::ELLIPSIZE_END );
+#else
         m_label->set_size_request( 0, 0 );
+#endif
         m_label->set_alignment( Gtk::ALIGN_START );
         m_label->set_selectable( true );
 

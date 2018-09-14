@@ -36,6 +36,9 @@ BBSListToolBar::BBSListToolBar() :
     m_button_toggle.get_button()->set_tooltip_arrow( "ページ切り替え\n\nマウスホイール回転でも切り替え可能" );
 
     m_label.set_alignment( Gtk::ALIGN_START );
+#if GTKMM_CHECK_VERSION(2,6,0)
+    m_label.set_ellipsize( Pango::ELLIPSIZE_END );
+#endif
     std::vector< std::string > menu;
     menu.push_back( ITEM_NAME_BBSLISTVIEW );
     menu.push_back( ITEM_NAME_FAVORITEVIEW );
