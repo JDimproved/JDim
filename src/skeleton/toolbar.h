@@ -180,6 +180,12 @@ namespace SKELETON
         void drawframe_button_write( const bool draw );
         bool slot_focusout_write_button( GdkEventFocus* event );
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+        // 閉じるボタン関係
+        static constexpr const char* s_css_leave = u8"jd-leave";
+        void setup_manual_styling( Gtk::ToolButton& toolbutton );
+#endif
+
 
         // 検索関係
         void slot_toggle_searchbar();
