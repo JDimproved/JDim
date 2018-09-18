@@ -1,7 +1,6 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
-#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "admin.h"
@@ -14,10 +13,6 @@
 #include "global.h"
 #include "session.h"
 #include "command.h"
-
-#if GTKMM_CHECK_VERSION(3,0,0)
-#include <gdk/gdkkeysyms-compat.h>
-#endif
 
 using namespace SKELETON;
 
@@ -166,9 +161,9 @@ void View::reset_keyjump_counter()
 bool View::release_keyjump_key( int key )
 {
     // キーパッド対応
-    if( key >= GDK_KP_0 && key <= GDK_KP_9 ) key = key - GDK_KP_0 + GDK_0;
+    if( key >= GDK_KEY_KP_0 && key <= GDK_KEY_KP_9 ) key = key - GDK_KEY_KP_0 + GDK_KEY_0;
 
-    if( key >= GDK_0 && key <= GDK_9 ){
+    if( key >= GDK_KEY_0 && key <= GDK_KEY_9 ){
         m_keyjump_counter = 1;
         m_keyjump_num *= 10;
         m_keyjump_num += key - '0';

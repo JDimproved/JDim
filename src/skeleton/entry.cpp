@@ -1,16 +1,12 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
-#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "entry.h"
 
 #include "control/controlid.h"
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-#include <gdk/gdkkeysyms-compat.h>
-#endif
 #include <gtk/gtkentry.h>
 
 using namespace SKELETON;
@@ -43,9 +39,9 @@ bool JDEntry::on_key_press_event( GdkEventKey* event )
 
     const guint key = event->keyval;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
-    const bool up = ( key == GDK_Up || ( ctrl && key == 'p' ) );
-    const bool down = ( key == GDK_Down || ( ctrl && key == 'n' ) );
-    const bool esc = ( key == GDK_Escape );
+    const bool up = ( key == GDK_KEY_Up || ( ctrl && key == 'p' ) );
+    const bool down = ( key == GDK_KEY_Down || ( ctrl && key == 'n' ) );
+    const bool esc = ( key == GDK_KEY_Escape );
 
     // 上下をキャンセル
     // gtkentry.cpp からのハック。環境やバージョンによっては問題が出るかもしれないので注意

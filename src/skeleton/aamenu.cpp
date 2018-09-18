@@ -13,10 +13,6 @@
 #include "aamanager.h"
 #include "cache.h"
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-#include <gdk/gdkkeysyms-compat.h>
-#endif
-
 using namespace SKELETON;
 
 AAMenu::AAMenu( Gtk::Window& parent )
@@ -207,9 +203,9 @@ bool AAMenu::on_key_press_event( GdkEventKey* event )
 #endif
 
     // 下移動
-    if( event->keyval == GDK_j
-             || ( ( event->state & GDK_CONTROL_MASK ) && event->keyval == GDK_n )
-             || event->keyval == GDK_space
+    if( event->keyval == GDK_KEY_j
+             || ( ( event->state & GDK_CONTROL_MASK ) && event->keyval == GDK_KEY_n )
+             || event->keyval == GDK_KEY_space
         ){
 
         move_down();
@@ -217,8 +213,8 @@ bool AAMenu::on_key_press_event( GdkEventKey* event )
     }
 
     // 上移動
-    else if( event->keyval == GDK_k
-                  || ( ( event->state & GDK_CONTROL_MASK ) && event->keyval == GDK_p )
+    else if( event->keyval == GDK_KEY_k
+                  || ( ( event->state & GDK_CONTROL_MASK ) && event->keyval == GDK_KEY_p )
         ){
         move_up();
         return true;

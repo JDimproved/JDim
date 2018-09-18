@@ -19,10 +19,6 @@
 
 #include "gtk/gtktextview.h"
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-#include <gdk/gdkkeysyms-compat.h>
-#endif
-
 using namespace SKELETON;
 
 enum
@@ -352,7 +348,7 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
 
     bool cancel_event = false;
     m_delete_pushed = false;
-    if( event->keyval == GDK_Delete ) m_delete_pushed = true;
+    if( event->keyval == GDK_KEY_Delete ) m_delete_pushed = true;
 
     const int controlid = m_control.key_press( event );
 
@@ -425,7 +421,7 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::UndoEdit: undo(); return true;
 
         case CONTROL::EnterEdit:
-            event->keyval = GDK_Return;
+            event->keyval = GDK_KEY_Return;
             event->state &= ~GDK_CONTROL_MASK;
             event->state &= ~GDK_SHIFT_MASK;
             event->state &= ~GDK_MOD1_MASK;
