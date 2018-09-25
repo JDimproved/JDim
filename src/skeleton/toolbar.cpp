@@ -26,7 +26,6 @@
 #include "command.h"
 #include "prefdiagfactory.h"
 
-#include <gtk/gtk.h>  // gtk_separator_tool_item_set_draw
 #if !GTKMM_CHECK_VERSION(3,0,0)
 #include <gtk/gtkbutton.h>
 #endif
@@ -281,7 +280,7 @@ void ToolBar::pack_separator()
 void ToolBar::pack_transparent_separator()
 {
     Gtk::SeparatorToolItem *sep = Gtk::manage( new Gtk::SeparatorToolItem() ); // delete は unpack_buttons() で行う
-    gtk_separator_tool_item_set_draw( sep->gobj(), false );
+    sep->set_draw( false );
     m_buttonbar.append( *sep );
 }
 
