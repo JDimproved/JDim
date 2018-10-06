@@ -586,11 +586,31 @@ void TabNotebook::calc_tabsize()
 
 #if GTKMM_CHECK_VERSION(3,0,0)
     // gtk3は実装の詳細がバージョンによって異なるためタブの代わりにラベルの領域を取得する
-    // この影響によりDnDでタブを並べ替えるときに表示する目標の矢印はタブの境界からずれる
-    // XXX: タブの領域の正確な値を必要とする場合は修正が必要
     const int n_pages = get_n_pages();
+    // ラベルの領域とタブの領域のオフセットを概算する
+    // GTKテーマが変更されるとオフセットが変わる可能性があるので毎回計算する
+    // XXX: この修正はラベルの左右の余白の大きさが同じであることを前提とする
+    int offset = 0;
+
+    if( n_pages > 1 ) {
+        const auto* tab1 = get_tablabel( 0 );
+        for( int i = 1; i < n_pages; ++i ) {
+            const auto* const tab2 = get_tablabel( i );
+            if( tab1 && tab2 && tab1->get_mapped() && tab2->get_mapped() ) {
+                const auto alloc1 = tab1->get_allocation();
+                const auto alloc2 = tab2->get_allocation();
+                offset = alloc2.get_x() - ( alloc1.get_x() + alloc1.get_width() );
+#ifdef _DEBUG
+                std::cout << "computed offset = " << offset << std::endl;
+#endif
+                break;
+            }
+            tab1 = tab2;
+        }
+    }
+
     for( int i = 0; i < n_pages; ++i ) {
-        auto tab_label = get_tablabel( i );
+        auto* const tab_label = get_tablabel( i );
         if( tab_label ) {
             int tab_x = -1;
             int tab_y = -1;
@@ -600,9 +620,9 @@ void TabNotebook::calc_tabsize()
             if( tab_label->get_mapped() ) {
                 Gdk::Rectangle rect = tab_label->get_allocation();
 
-                tab_x = rect.get_x();
+                tab_x = rect.get_x() - ( offset / 2 );
                 tab_y = rect.get_y();
-                tab_w = rect.get_width();
+                tab_w = rect.get_width() + offset;
                 tab_h = rect.get_height();
 
                 m_tab_mrg = 0;
