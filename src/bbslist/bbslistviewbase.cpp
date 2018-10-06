@@ -1859,7 +1859,7 @@ void BBSListViewBase::slot_row_exp( const Gtk::TreeModel::iterator&, const Gtk::
 
     // 他のフォルダを全て閉じる
     if( m_open_only_onedir
-        && path.get_depth() == 1  // 子フォルダの時は閉じない
+        && path.size() == 1  // 子フォルダの時は閉じない
         ){
         m_expanding = true;
         m_treeview.collapse_all();

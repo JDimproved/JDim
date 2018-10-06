@@ -190,7 +190,7 @@ void ArticleViewBase::setup_action()
 #endif
 
     // アクショングループを作ってUIマネージャに登録
-    action_group().clear();
+    action_group().reset();
     action_group() = Gtk::ActionGroup::create();
     action_group()->add( Gtk::Action::create( "BookMark", "しおりを設定/解除(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_bookmark ) );
     action_group()->add( Gtk::Action::create( "PostedMark", "書き込みマークを設定/解除(_P)"), sigc::mem_fun( *this, &ArticleViewBase::slot_postedmark ) );
@@ -321,7 +321,7 @@ void ArticleViewBase::setup_action()
             sigc::bind< int >( sigc::mem_fun( *this, &ArticleViewBase::slot_usrcmd ), i ) );
     }
 
-    ui_manager().clear();
+    ui_manager().reset();
     ui_manager() = Gtk::UIManager::create();
     ui_manager()->insert_action_group( action_group() );
 

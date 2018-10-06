@@ -47,7 +47,7 @@ namespace CORE
             for(;;){
                 std::string label = CORE::get_browser_label( i++ );
                 if( label.empty() ) break;
-                m_combo.append_text( label );
+                m_combo.append( label );
             }
 
             m_combo.set_active( CONFIG::get_browsercombo_id() );
@@ -59,7 +59,7 @@ namespace CORE
             m_hbox.add( m_entry_browser );
             m_frame.set_label( "ブラウザ起動コマンド" );
             m_frame.add( m_hbox );
-            m_label_notice.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
+            m_label_notice.set_alignment( Gtk::ALIGN_START, Gtk::ALIGN_CENTER );
 
             m_vbox.set_border_width( mrg );
             m_vbox.pack_start( m_label_notice, Gtk::PACK_EXPAND_WIDGET, mrg );

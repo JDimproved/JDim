@@ -221,7 +221,7 @@ const bool JDTreeViewBase::row_down()
     if( !get_row( path ) ) return false;
 
     Gtk::TreePath new_path = next_path( path );
-    if( new_path.get_depth() && get_row( new_path ) ) set_cursor( new_path );
+    if( new_path.size() && get_row( new_path ) ) set_cursor( new_path );
     else return false;
 
     return true;
@@ -246,7 +246,7 @@ void JDTreeViewBase::page_up()
     Gtk::TreePath path;
     if( set_top ) path = get_path_under_xy( 0, (int)adj->get_page_size() - 4 );
     else path = get_path_under_xy( 0, 0 );
-    if( path.get_depth() && get_row( path ) )set_cursor( path );
+    if( path.size() && get_row( path ) )set_cursor( path );
 }
 
 
@@ -268,7 +268,7 @@ void JDTreeViewBase::page_down()
     Gtk::TreePath path;
     if( set_bottom ) path = get_path_under_xy( 0, 0 );
     else path = get_path_under_xy( 0, (int)adj->get_page_size() - 4 );
-    if( path.get_depth() && get_row( path ) ) set_cursor( path );
+    if( path.size() && get_row( path ) ) set_cursor( path );
 }
 
 
@@ -291,7 +291,7 @@ Gtk::TreePath JDTreeViewBase::prev_path( const Gtk::TreePath& path, bool check_e
 
     // 一番上まで到達したらup
     path_out = path;
-    if( ! path_out.prev() && path_out.get_depth() >= 2 ) path_out.up();
+    if( ! path_out.prev() && path_out.size() >= 2 ) path_out.up();
 
     return path_out;;
 }
@@ -314,7 +314,7 @@ Gtk::TreePath JDTreeViewBase::next_path( const Gtk::TreePath& path, bool check_e
 
     // next()してレベルの一番下まで到達したら上のレベルに移動
     path_out = path;
-    while( path_out.next(), ( ! get_row( path_out ) && path_out.get_depth() >=2 ) ) path_out.up();
+    while( path_out.next(), ( ! get_row( path_out ) && path_out.size() >=2 ) ) path_out.up();
 
     return path_out;
 }
@@ -342,12 +342,12 @@ void JDTreeViewBase::expand_parents( const Gtk::TreePath& path )
 {
     if( ! get_model() ) return;
 
-    for( int level = 1; level < path.get_depth(); ++level ){
+    for( Gtk::TreePath::size_type level = 1; level < path.size(); ++level ){
                     
         Gtk::TreeModel::Row row_tmp = get_row( path );
         if( ! row_tmp ) return;
 
-        for( int i = 0; i < path.get_depth() - level; ++i ){
+        for( Gtk::TreePath::size_type i = 0; i < path.size() - level; ++i ){
             if( row_tmp.parent() ) row_tmp = *( row_tmp.parent() );
         }
         Gtk::TreePath path_tmp  = get_model()->get_path( row_tmp );
@@ -363,7 +363,7 @@ const bool JDTreeViewBase::is_expand( const Gtk::TreePath& path )
 {
     Gtk::TreePath parent( path );
 
-    if( path.get_depth() < 2 ) return true;
+    if( path.size() < 2 ) return true;
     if( parent.up() && row_expanded( parent ) ) return true;
     return false;
 }

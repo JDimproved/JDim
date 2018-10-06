@@ -1118,13 +1118,13 @@ const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset
     std::cout << "create backscreen : width = " << m_view.get_width() << " height = " << m_view.get_height() << std::endl;
 #endif
 
-    m_backscreen.clear();
+    m_backscreen.reset();
     m_backscreen = Gdk::Pixmap::create( m_window, m_view.get_width(), m_view.get_height() );
 
     m_rect_backscreen.y = 0;
     m_rect_backscreen.height = 0;
 
-    m_back_frame.clear();
+    m_back_frame.reset();
     m_back_frame = Gdk::Pixmap::create( m_window, m_view.get_width(), WIDTH_FRAME * 2 );
 
     m_ready_back_frame = false;

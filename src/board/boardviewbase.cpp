@@ -295,7 +295,7 @@ void BoardViewBase::setup_action()
     // その他
     action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC "(_O)" ) );
 
-    ui_manager().clear();
+    ui_manager().reset();
     ui_manager() = Gtk::UIManager::create();
     ui_manager()->insert_action_group( action_group() );
 
@@ -673,7 +673,7 @@ void BoardViewBase::update_columns()
                 break;
         }
 
-        Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+        Gtk::CellRenderer *cell = column->get_first_cell();
 
         // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
         if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardViewBase::slot_cell_data ) );

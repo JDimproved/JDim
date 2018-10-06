@@ -120,7 +120,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     if( CONFIG::get_abone_transparent() || CONFIG::get_abone_chain() ){
         m_label_abone.set_text( "チェック出来ない場合は設定メニューから「デフォルトで透明/連鎖あぼ〜ん」を解除して下さい" );
-        m_label_abone.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
+        m_label_abone.set_alignment( Gtk::ALIGN_START, Gtk::ALIGN_CENTER );
         m_vbox_abone.pack_start( m_label_abone, Gtk::PACK_SHRINK );
     }
 

@@ -300,7 +300,7 @@ Gtk::ToolItem* ToolBar::get_label()
         m_label = Gtk::manage( new Gtk::Label );
 
         m_label->set_size_request( 0, 0 );
-        m_label->set_alignment( Gtk::ALIGN_LEFT );
+        m_label->set_alignment( Gtk::ALIGN_START );
         m_label->set_selectable( true );
 
         m_ebox_label->add( *m_label );
@@ -624,7 +624,7 @@ Gtk::ToolItem* ToolBar::get_button_board()
     if( ! m_button_board ){
 
         m_label_board = Gtk::manage( new Gtk::Label );
-        m_label_board->set_alignment( Gtk::ALIGN_LEFT );
+        m_label_board->set_alignment( Gtk::ALIGN_START );
 
         m_button_board = Gtk::manage( new SKELETON::ToolMenuButton( CONTROL::get_label( CONTROL::OpenParentBoard ), false, true, *m_label_board ) );
 

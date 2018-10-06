@@ -270,7 +270,7 @@ namespace SKELETON
     {
         EditTreeView& m_treeview;
         EditColumns& m_columns;
-        int m_depth;
+        Gtk::TreePath::size_type m_depth;
         bool m_end;
 
         Gtk::TreePath m_path;
