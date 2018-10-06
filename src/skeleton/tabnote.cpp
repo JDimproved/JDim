@@ -332,7 +332,14 @@ const gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, 
 class DummyWidget : public Gtk::Widget
 {
 public:
-    DummyWidget() : Gtk::Widget(){ set_flags(Gtk::NO_WINDOW); }
+    DummyWidget() : Gtk::Widget()
+    {
+#if GTKMM_CHECK_VERSION(2,18,0)
+        set_has_window( false );
+#else
+        set_flags( Gtk::NO_WINDOW );
+#endif
+    }
     virtual ~DummyWidget(){}
 };
 
@@ -570,7 +577,12 @@ void TabNotebook::calc_tabsize()
             int tab_w = -1;
             int tab_h = -1;
 
-            if( tab->is_mapped() && page ){
+#if GTKMM_CHECK_VERSION(2,20,0)
+            const bool mapped = tab->get_mapped();
+#else
+            const bool mapped = tab->is_mapped();
+#endif
+            if( mapped && page ) {
 
                 tab_x = page->allocation.x;
                 tab_y = page->allocation.y;

@@ -53,7 +53,11 @@ void PrefDiag::grab_ok()
 {
     if( ! m_bt_ok ) return;
 
+#if GTKMM_CHECK_VERSION(2,18,0)
+    m_bt_ok->set_can_default( true );
+#else
     m_bt_ok->set_flags( Gtk::CAN_DEFAULT );
+#endif
     m_bt_ok->grab_default();
     m_bt_ok->grab_focus();
 }

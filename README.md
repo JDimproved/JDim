@@ -62,3 +62,10 @@ automakeのマクロはubuntuでは autoconf-archive というパッケージ名
 　もしこれで駄目な場合はgccのversionが古すぎるので、
 gccのバージョンアップをするか、ディストリをバージョンアップしてください。
 
+### ●configureチェック中に `AX_CXX_COMPILE_STDCXX_11(noext, mandatory)` に関連したエラーがでた場合
+ubuntuでは `autoconf-archive` をインストールして `autoreconf -i` からやり直してみてください。
+パッケージが見つからないまたはエラーが消えない場合は以下の手順を試してみてください。
+
+1. `configure.ac` の `AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])` の行を削除する。
+2. `autoreconf -i` で `configure` を作りconfigureチェックをやり直す。
+3. `make CXXFLAGS+="-std=c++11"` でビルドする。

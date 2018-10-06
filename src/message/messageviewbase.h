@@ -3,6 +3,8 @@
 #ifndef _MESSAGEVIEWBASE_H
 #define _MESSAGEVIEWBASE_H
 
+#include "gtkmmversion.h"
+
 #include "skeleton/view.h"
 #include "skeleton/imgbutton.h"
 #include "skeleton/compentry.h"
@@ -30,7 +32,9 @@ namespace MESSAGE
     {
         Post* m_post;
 
+#if !GTKMM_CHECK_VERSION(2,12,0)
         Gtk::Tooltips m_tooltip;
+#endif
 
         Gtk::Notebook m_notebook;
         SKELETON::View* m_preview;

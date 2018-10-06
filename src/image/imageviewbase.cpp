@@ -94,7 +94,11 @@ void ImageViewBase::setup_common()
     set_height_client( default_height );
 
     // focus 可、モーションキャプチャ可
+#if GTKMM_CHECK_VERSION(2,18,0)
+    m_event.set_can_focus( true );
+#else
     m_event.set_flags( m_event.get_flags() | Gtk::CAN_FOCUS );
+#endif
     m_event.add_events( Gdk::POINTER_MOTION_MASK );
 
     m_event.signal_button_press_event().connect( sigc::mem_fun( *this, &ImageViewBase::slot_button_press ) );

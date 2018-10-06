@@ -383,7 +383,11 @@ void JDWindow::set_status( const std::string& stat )
 
 #if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( stat );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_label_stat_ebox.set_tooltip_text( stat );
+#else
     m_tooltip.set_tip( m_label_stat_ebox, stat );
+#endif
 #else
     m_statbar.push( stat );
 #endif
@@ -419,7 +423,14 @@ void JDWindow::restore_status()
 // マウスジェスチャ表示
 void JDWindow::set_mginfo( const std::string& mginfo )
 {
-    if( m_mginfo.is_realized() ) m_mginfo.set_text( mginfo );
+#if GTKMM_CHECK_VERSION(2,20,0)
+    const bool realized = m_mginfo.get_realized();
+#else
+    const bool realized = m_mginfo.is_realized();
+#endif
+    if( realized ) {
+        m_mginfo.set_text( mginfo );
+    }
 }
 
 

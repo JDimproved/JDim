@@ -37,8 +37,10 @@ namespace CORE
     {
         Gtk::Notebook m_notebook;
 
+#if !GTKMM_CHECK_VERSION(2,12,0)
         // ツールチップ
         Gtk::Tooltips m_tooltips;
+#endif
 
         // フォントの設定
         std::vector< int > m_font_tbl;

@@ -46,7 +46,12 @@ DragableNoteBook::DragableNoteBook()
 
     m_hbox_tab.pack_start( m_notebook_tab );
     m_hbox_tab.pack_start( m_bt_tabswitch, Gtk::PACK_SHRINK );
-    m_tooltip_tabswitch.set_tip( m_bt_tabswitch, "タブの一覧表示" );
+    constexpr const char* bt_tabswitch_tip = "タブの一覧表示";
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_bt_tabswitch.set_tooltip_text( bt_tabswitch_tip );
+#else
+    m_tooltip_tabswitch.set_tip( m_bt_tabswitch, bt_tabswitch_tip );
+#endif
 
     pack_start( m_hbox_tab, Gtk::PACK_SHRINK );
     pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
