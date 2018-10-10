@@ -37,7 +37,6 @@
 
 #include "icons/iconmanager.h"
 
-#include <gtk/gtk.h> // m_liststore->gobj()->sort_column_id = -2
 #include <sstream>
 
 using namespace BOARD;
@@ -503,7 +502,8 @@ const int BoardViewBase::get_row_size()
 //
 void BoardViewBase::unsorted_column()
 {
-    m_liststore->gobj()->sort_column_id = -2;
+    m_liststore->set_sort_column( Gtk::TreeSortable::DEFAULT_UNSORTED_COLUMN_ID,
+                                  Gtk::SortType::SORT_ASCENDING );
 }
 
 
@@ -1624,7 +1624,7 @@ void BoardViewBase::goto_num( const int num, const int )
 //
 void BoardViewBase::scroll_left()
 {
-    Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
+    auto hadjust = m_scrwin.get_hadjustment();
     if( !hadjust ) return;
     hadjust->set_value( MAX( 0,  hadjust->get_value() - hadjust->get_step_increment() ) );
 }
@@ -1635,7 +1635,7 @@ void BoardViewBase::scroll_left()
 //
 void BoardViewBase::scroll_right()
 {
-    Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
+    auto hadjust = m_scrwin.get_hadjustment();
     if( !hadjust ) return;
     hadjust->set_value(  MIN( hadjust->get_upper() - hadjust->get_page_size(),
                               hadjust->get_value() + hadjust->get_step_increment() ) );
@@ -2648,7 +2648,9 @@ void BoardViewBase::exec_search()
     Gtk::TreePath path = m_treeview.get_current_path();;
     if( path.empty() ){
         if( m_search_invert ) path = GET_PATH( *( m_liststore->children().begin() ) );
-        else GET_PATH( *( m_liststore->children().rbegin() ) );
+        else {
+            GET_PATH( *( std::prev( m_liststore->children().end() ) ) );
+        }
     }
 
     Gtk::TreePath path_start = path;
@@ -2675,7 +2677,7 @@ void BoardViewBase::exec_search()
             // 前へ
             if( ! path.prev() ){
                 // 一番後へ
-                path =  GET_PATH( *( m_liststore->children().rbegin() ) );
+                path = GET_PATH( *( std::prev( m_liststore->children().end() ) ) );
             }
         }
 

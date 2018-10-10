@@ -206,8 +206,8 @@ void ToolBar::update_button()
 // ボタンのアンパック
 void ToolBar::unpack_buttons()
 {
-    std::list< Gtk::Widget* > lists = m_buttonbar.get_children();
-    std::list< Gtk::Widget* >::iterator it = lists.begin();
+    std::vector< Gtk::Widget* > lists = m_buttonbar.get_children();
+    std::vector< Gtk::Widget* >::iterator it = lists.begin();
     for( ; it != lists.end(); ++it ){
         m_buttonbar.remove( *(*it) );
         if( dynamic_cast< Gtk::SeparatorToolItem* >( *it ) ) delete *it;
@@ -219,8 +219,8 @@ void ToolBar::unpack_search_buttons()
 {
     if( ! m_searchbar ) return;
 
-    std::list< Gtk::Widget* > lists = m_searchbar->get_children();
-    std::list< Gtk::Widget* >::iterator it = lists.begin();
+    std::vector< Gtk::Widget* > lists = m_searchbar->get_children();
+    std::vector< Gtk::Widget* >::iterator it = lists.begin();
     for( ; it != lists.end(); ++it ){
         m_searchbar->remove( *(*it) );
         if( dynamic_cast< Gtk::SeparatorToolItem* >( *it ) ) delete *it;
@@ -230,15 +230,15 @@ void ToolBar::unpack_search_buttons()
 // ボタンのrelief指定
 void ToolBar::set_relief()
 {
-    std::list< Gtk::Widget* > lists_toolbar = get_children();
-    std::list< Gtk::Widget* >::iterator it_toolbar = lists_toolbar.begin();
+    std::vector< Gtk::Widget* > lists_toolbar = get_children();
+    std::vector< Gtk::Widget* >::iterator it_toolbar = lists_toolbar.begin();
     for( ; it_toolbar != lists_toolbar.end(); ++it_toolbar ){
 
         Gtk::Toolbar* toolbar = dynamic_cast< Gtk::Toolbar* >( *it_toolbar );
         if( ! toolbar ) continue;
 
-        std::list< Gtk::Widget* > lists = toolbar->get_children();
-        std::list< Gtk::Widget* >::iterator it = lists.begin();
+        std::vector< Gtk::Widget* > lists = toolbar->get_children();
+        std::vector< Gtk::Widget* >::iterator it = lists.begin();
         for( ; it != lists.end(); ++it ){
 
             Gtk::Button* button = NULL;

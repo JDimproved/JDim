@@ -93,7 +93,7 @@ void TabLabel::set_dragable( bool dragable, int button )
 {
     if( dragable ){
 
-        std::list< Gtk::TargetEntry > targets;
+        std::vector< Gtk::TargetEntry > targets;
         targets.push_back( Gtk::TargetEntry( DNDTARGET_FAVORITE, Gtk::TARGET_SAME_APP, 0 ) );
         targets.push_back( Gtk::TargetEntry( DNDTARGET_TAB, Gtk::TARGET_SAME_APP, 0 ) );
 

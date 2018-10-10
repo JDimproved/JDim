@@ -47,7 +47,7 @@ ImageViewIcon::ImageViewIcon( const std::string& url )
     setup_common();
 
     // D&D可能にする
-    std::list< Gtk::TargetEntry > targets;
+    std::vector< Gtk::TargetEntry > targets;
     targets.push_back( Gtk::TargetEntry( DNDTARGET_IMAGETAB, Gtk::TARGET_SAME_APP, 0 ) );
     get_event().drag_dest_set( targets );
 

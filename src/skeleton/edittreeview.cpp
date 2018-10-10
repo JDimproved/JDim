@@ -225,7 +225,7 @@ void EditTreeView::set_editable_view( const bool editable )
     if( m_editable ){
 
         // D&D のドロップを可能にする
-        std::list< Gtk::TargetEntry > targets;
+        std::vector< Gtk::TargetEntry > targets;
         targets.push_back( Gtk::TargetEntry( get_dndtarget(), Gtk::TARGET_SAME_APP, 0 ) );
         drag_dest_set( targets );
     }
@@ -248,7 +248,7 @@ void EditTreeView::clock_in()
             m_dnd_counter = 0;
 
             Gtk::TreePath path = get_path_under_mouse();
-            Gtk::Adjustment* adjust = get_vadjustment();
+            auto adjust = get_vadjustment();
 
             if( get_row( path ) && adjust ){
 
@@ -1369,7 +1369,7 @@ void EditTreeView::replace_infopath( CORE::DATA_INFO_LIST& list_info,
 
         if( children.empty() ) path = Gtk::TreePath( "0" );
         else{
-            path = get_model()->get_path( *( children.rbegin() ) );
+            path = get_model()->get_path( *( std::prev( children.end() ) ) );
             path.next();
         }
     }

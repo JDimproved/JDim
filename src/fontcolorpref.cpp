@@ -469,11 +469,11 @@ void FontColorPref::slot_change_color()
 {
     Gtk::TreeModel::Path path;
     Gtk::TreeRow row;
-    
-    std::list< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
+
+    std::vector< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
     if( selection_path.empty() ) return;
 
-    std::list< Gtk::TreePath >::iterator it = selection_path.begin();
+    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
 
     int colorid = COLOR_NONE;
     if( selection_path.size() == 1 ){
@@ -521,10 +521,10 @@ void FontColorPref::slot_change_color()
 //
 void FontColorPref::slot_reset_color()
 {
-    std::list< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
+    std::vector< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
     if( selection_path.empty() ) return;
 
-    std::list< Gtk::TreePath >::iterator it = selection_path.begin();
+    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
 
     for( ; it != selection_path.end(); ++it ){
 

@@ -590,7 +590,7 @@ void BBSListViewBase::clock_in()
     // 初期化直後など、まだスクロールバーが表示されてない時があるので表示されるまでジャンプしない
     if( m_jump_y != -1 ){
 
-        Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
+        auto adjust = m_treeview.get_vadjustment();
         if( adjust && adjust->get_upper() > m_jump_y ){
 
 #ifdef _DEBUG
@@ -2246,7 +2246,7 @@ void BBSListViewBase::tree2xml( const std::string& root_name )
 
     // 座標
     int y = 0;
-    Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
+    const auto adjust = m_treeview.get_vadjustment();
     if( adjust )
     {
         if( m_jump_y != -1 && adjust->get_upper() > m_jump_y ) y = m_jump_y;
@@ -2779,7 +2779,7 @@ void BBSListViewBase::exec_search()
             // 先頭にいるときは最後に戻る
             if( path == GET_PATH( *( m_treestore->children().begin() ) ) ){
 
-                path = GET_PATH( *( m_treestore->children().rbegin() ) );
+                path = GET_PATH( *( std::prev( m_treestore->children().end() ) ) );
                 Gtk::TreePath path_tmp = path;
                 while( m_treeview.get_row( path_tmp ) ){
                     path = path_tmp;
@@ -2954,13 +2954,17 @@ void BBSListViewBase::append_history()
     m_treeview.append_one_row( ( *it_info ).url, ( *it_info ).name, ( *it_info ).type, ( *it_info ).dirid, ( *it_info ).data, path, before, subdir );
 
     // サイズが越えていたら最後を削除
-    while( ( int )m_treestore->children().size() > CONFIG::get_historyview_size() ){
-
-        Gtk::TreeModel::Row row = *( m_treestore->children().rbegin() );
-        m_treestore->erase( row );
+    const Gtk::TreeNodeChildren children = m_treestore->children();
+    const int history_size = CONFIG::get_historyview_size();
+    if( static_cast< int >( children.size() ) > history_size ) {
+        const auto end = children.end();
+        auto it = std::next( children.begin(), history_size );
+        while( it != end ) {
+            it = m_treestore->erase( *it );
 #ifdef _DEBUG
-        std::cout << "erase bottom\n";
+            std::cout << "erase bottom\n";
 #endif
+        }
     }
 
     goto_top();

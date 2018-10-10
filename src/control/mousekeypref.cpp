@@ -419,7 +419,7 @@ void MouseKeyDiag::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tr
 // 行削除
 void MouseKeyDiag::slot_delete()
 {
-    std::list< Gtk::TreeModel::Path > rows = m_treeview.get_selection()->get_selected_rows();
+    std::vector< Gtk::TreeModel::Path > rows = m_treeview.get_selection()->get_selected_rows();
     if( ! rows.size() ) return;
 
     Gtk::TreeModel::Path path = *rows.begin();
