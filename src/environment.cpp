@@ -128,6 +128,76 @@ std::string get_svn_revision( const char* rev = NULL )
     return svn_revision;
 }
 
+//
+// GITリビジョンとして表示する文字列を返す
+// リビジョンが得られなかった場合（tarballのソース等）は、fallbackの日付を返す
+// git_dirtyは、まだcommitされてない変更があるかどうか
+//
+std::string get_git_revision (const char *git_date, const char *git_hash, const int git_dirty, const char *fallback_date)
+{
+	std::string git_revision = "";
+
+	const size_t max_hash_length = 8;
+	size_t string_length;
+	size_t n;
+
+	bool date_valid = false;
+	if (git_date)
+	{
+		date_valid = true;
+		string_length = strlen(git_date);
+		if (string_length < 8) date_valid = false;
+		if (date_valid)
+		{
+			for (n = 0; n < string_length; n++)
+			{
+				if (! isdigit(git_date[n]))
+				{
+					date_valid = false;
+					break;
+				}
+			}
+		}
+		if (git_date[0] < '1') date_valid = false;
+	}
+
+	bool hash_valid = false;
+	if (git_hash)
+	{
+		hash_valid = true;
+		string_length = strlen(git_hash);
+		if (string_length < max_hash_length) hash_valid = false;
+		if (hash_valid)
+		{
+			for (n = 0; n < max_hash_length; n++)
+			{
+				if (! isgraph(git_hash[n]))
+				{
+					hash_valid = false;
+					break;
+				}
+			}
+		}
+	}
+
+
+	if (date_valid && hash_valid)
+	{
+		git_revision.append( std::string(git_date) + "(git:");
+		git_revision.append( std::string(git_hash), 0, max_hash_length);
+		if (git_dirty)
+		{
+			git_revision.append(":M");
+		}
+		git_revision.append(")");
+	}
+	else {
+		git_revision.append( std::string(fallback_date) );
+	}
+
+	return git_revision;
+}
+
 
 //
 // JDのバージョンを取得
@@ -148,7 +218,7 @@ std::string ENVIRONMENT::get_jdversion()
     jd_version << MAJORVERSION << "."
                 << MINORVERSION << "."
                 << MICROVERSION << "-"
-                << JDTAG << JDDATE;
+                << JDTAG << get_git_revision(GIT_DATE, GIT_HASH, GIT_DIRTY, JDDATE);
 #endif // JDVERSION_SVN
 
     return jd_version.str();

@@ -69,6 +69,36 @@ $(jd_BUILDINFO_HEADER):
 	fi
 
 	@echo '' >> $@.new
+	@echo '// Version information of GIT.' >> $@.new
+
+	@GIT_HASH="" ; \
+	GIT_DATE="" ; \
+	GIT_DIRTY=0; \
+	GIT_STATUS="" ; \
+	if test -n "$(GIT)" ; \
+	then \
+		GIT_HASH=`LANG=C.utf8 "$(GIT)" log --pretty=format:%h -n 1 2>/dev/null`; \
+		GIT_DATE=`LANG=C.utf8 "$(GIT)" log --pretty=format:%ad --date=format:%Y%m%d -n 1 2>/dev/null`; \
+		GIT_STATUS="`LANG=C.utf8 "$(GIT)" status -uno -s 2>/dev/null | head -n 1`" ; \
+		if test -n "$${GIT_HASH}" ; \
+		then \
+			echo "GIT: Hash = \"$${GIT_HASH}\"" ; \
+		fi ; \
+		if test -n "$${GIT_DATE}" ; \
+		then \
+			echo "GIT: Date = \"$${GIT_DATE}\"" ; \
+		fi ; \
+		if test -n "$${GIT_STATUS}" ; \
+		then \
+			echo "GIT: There are changes not committed yet." ; \
+			GIT_DIRTY=1 ; \
+		fi \
+	fi ; \
+	echo "#define GIT_HASH \"$${GIT_HASH}\"" >> $@.new ; \
+	echo "#define GIT_DATE \"$${GIT_DATE}\"" >> $@.new ; \
+	echo "#define GIT_DIRTY $${GIT_DIRTY}" >> $@.new
+
+	@echo '' >> $@.new
 	@echo '#endif' >> $@.new
 
 	@if test ! -e $@; \
