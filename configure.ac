@@ -23,6 +23,7 @@ dnl
 AC_DEFINE(HAVE_BUILDINFO_H, 1, Define to 1 if you have the 'buildinfo.h' header file.)
 AC_PATH_PROG(SVN, svn)
 AC_PATH_PROG(SVNVERSION, svnversion)
+AC_PATH_PROG(GIT, git)
 AC_PATH_PROG(XSUM, md5sum, [cksum])
 AC_SUBST(ac_configure_args)
 
