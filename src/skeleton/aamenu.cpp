@@ -234,7 +234,11 @@ void AAMenu::slot_configured_popup( int width, int height )
 {
     int sw = get_screen()->get_width();
     int x, y;
+#if GTKMM_CHECK_VERSION(2,18,0)
+    get_window()->get_root_coords( 0, 0, x, y );
+#else
     get_window()->get_root_origin( x, y );
+#endif
 
 #ifdef _DEBUG
     std::cout << " AAMenu::slot_configured_popup w = " << width
