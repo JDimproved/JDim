@@ -374,6 +374,7 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
 
     add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
+    add_events( Gdk::SCROLL_MASK );
 
     // DnD設定
     // ドロップ側に設定する

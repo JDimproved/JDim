@@ -728,14 +728,33 @@ bool DragableNoteBook::slot_scroll_event( GdkEventScroll* event )
 
     bool ret = false;
 
-    // タブの循環
-    if( event->direction == GDK_SCROLL_UP && get_current_page() == 0 ){
-        set_current_page( get_n_pages() -1 );
-        ret = true;
+    // gtk3ではタブの循環に加え隣のタブへ切り替える処理も実装する必要がある
+    // REVIEW: GTK3版ではホイールによるタブの切り替えが動作しない環境がある
+    if( event->direction == GDK_SCROLL_UP ) {
+        const int current_page = get_current_page();
+        if( current_page == 0 ) {
+            set_current_page( get_n_pages() - 1 );
+            ret = true;
+        }
+#if GTKMM_CHECK_VERSION(3,0,0)
+        else {
+            set_current_page( current_page - 1 );
+            ret = true;
+        }
+#endif
     }
-    else if( event->direction == GDK_SCROLL_DOWN && get_current_page() == get_n_pages() -1 ){
-        set_current_page( 0 );
-        ret = true;
+    else if( event->direction == GDK_SCROLL_DOWN ) {
+        const int current_page = get_current_page();
+        if( current_page == get_n_pages() - 1 ) {
+            set_current_page( 0 );
+            ret = true;
+        }
+#if GTKMM_CHECK_VERSION(3,0,0)
+        else {
+            set_current_page( current_page + 1 );
+            ret = true;
+        }
+#endif
     }
 
     m_sig_tab_scrolled.emit( event );
