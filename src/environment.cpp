@@ -137,7 +137,9 @@ std::string get_git_revision (const char *git_date, const char *git_hash, const 
 {
 	std::string git_revision = "";
 
-	const size_t max_hash_length = 8;
+	// ハッシュ省略表記はgit 2.11から長さを自動で調整するようになった
+	// ビルドメタデータが表記揺れするのは紛らわしいので固定長にする
+	constexpr const size_t fixed_hash_length = 10;
 	size_t string_length;
 	size_t n;
 
@@ -166,10 +168,10 @@ std::string get_git_revision (const char *git_date, const char *git_hash, const 
 	{
 		hash_valid = true;
 		string_length = strlen(git_hash);
-		if (string_length < max_hash_length) hash_valid = false;
+		if (string_length != fixed_hash_length) hash_valid = false;
 		if (hash_valid)
 		{
-			for (n = 0; n < max_hash_length; n++)
+			for (n = 0; n < fixed_hash_length; n++)
 			{
 				if (! isgraph(git_hash[n]))
 				{
@@ -184,7 +186,7 @@ std::string get_git_revision (const char *git_date, const char *git_hash, const 
 	if (date_valid && hash_valid)
 	{
 		git_revision.append( std::string(git_date) + "(git:");
-		git_revision.append( std::string(git_hash), 0, max_hash_length);
+		git_revision.append( std::string(git_hash), 0, fixed_hash_length);
 		if (git_dirty)
 		{
 			git_revision.append(":M");
