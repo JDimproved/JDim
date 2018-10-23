@@ -230,20 +230,35 @@ void MessageViewBase::init_color()
     if( m_text_message ){
 
 #if GTKMM_CHECK_VERSION(3,0,0)
-        m_text_message->override_color( Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_MESSAGE ) ),
-                                        Gtk::STATE_FLAG_NORMAL );
-        m_text_message->override_color( Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ),
-                                        Gtk::STATE_FLAG_SELECTED );
-        m_text_message->override_background_color( Gdk::RGBA( CONFIG::get_color( COLOR_BACK_MESSAGE ) ),
-                                                   Gtk::STATE_FLAG_NORMAL );
-        m_text_message->override_background_color( Gdk::RGBA( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ),
-                                                   Gtk::STATE_FLAG_SELECTED );
+        if( CONFIG::get_use_message_gtktheme() ) {
+            m_text_message->update_style( u8"" );
+        }
+        else {
+            const char* const classname = m_text_message->get_css_classname();
+            const auto fg = Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_MESSAGE ) ).to_string();
+            const auto bg = Gdk::RGBA( CONFIG::get_color( COLOR_BACK_MESSAGE ) ).to_string();
+            const auto sel_fg = Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ).to_string();
+            const auto sel_bg = Gdk::RGBA( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ).to_string();
+#if GTKMM_CHECK_VERSION(3,20,0)
+            constexpr const char* const caret_prop = u8"caret-color";
+#else
+            constexpr const char* const caret_prop = u8"-GtkWidget-cursor-color";
+#endif
+            m_text_message->update_style( Glib::ustring::compose(
+                u8R"(
+                    .%1, .%1 text { color: %2; background-color: %3; %4: %2; }
+                    .%1:selected, .%1:selected:focus,
+                    .%1 text:selected, .%1 text:selected:focus,
+                    .%1 text selection, .%1 text selection:focus { color: %5; background-color: %6; }
+                )",
+                classname, fg, bg, caret_prop, sel_fg, sel_bg ) );
+        }
 #else
         m_text_message->modify_text( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE ) ) );
         m_text_message->modify_text( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ) );
         m_text_message->modify_base( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE ) ) );
         m_text_message->modify_base( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ) );
-#endif
+#endif // GTKMM_CHECK_VERSION(3,0,0)
     }
 }
 

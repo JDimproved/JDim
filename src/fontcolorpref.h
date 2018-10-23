@@ -70,6 +70,9 @@ namespace CORE
         Gtk::Label m_label_warning_color;
         Gtk::VBox m_vbox_color;
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+        Gtk::CheckButton m_chk_use_gtktheme_message;
+#endif
         Gtk::CheckButton m_chk_use_gtkrc_tree;
         Gtk::CheckButton m_chk_use_gtkrc_selection;
 

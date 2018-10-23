@@ -716,3 +716,29 @@ void EditTextView::slot_hide_aamenu()
 
     SESSION::set_popupmenu_shown( false );
 }
+
+
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+constexpr const char* EditView::s_css_classname;
+#endif
+
+//
+// EditTextViewのスタイルを更新する
+//
+#if GTKMM_CHECK_VERSION(3,0,0)
+void EditView::update_style( const Glib::ustring& custom_css )
+{
+#ifdef _DEBUG
+        std::cout << "EditView::update_style custom css: " << custom_css << std::endl;
+#endif
+    try {
+        m_provider->load_from_data( custom_css );
+    }
+    catch( Gtk::CssProviderError& err ) {
+#ifdef _DEBUG
+        std::cout << "ERROR:EditView::update_style fail " << err.what() << std::endl;
+#endif
+    }
+}
+#endif // GTKMM_CHECK_VERSION(3,0,0)

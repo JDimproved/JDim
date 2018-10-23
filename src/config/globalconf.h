@@ -44,6 +44,10 @@ namespace CONFIG
     void set_color( const int id, const std::string& color );
     void reset_colors();
 
+    // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
+    bool get_use_message_gtktheme();
+    void set_use_message_gtktheme( const bool use );
+
     // ツリービューでgtkrcの設定を使用するか
     bool get_use_tree_gtkrc();
     void set_use_tree_gtkrc( const bool use );
