@@ -29,7 +29,6 @@
 
 #include <gtk/gtk.h>  // gtk_separator_tool_item_set_draw
 #include <gtk/gtkbutton.h>
-#include <list>
 
 using namespace SKELETON;
 

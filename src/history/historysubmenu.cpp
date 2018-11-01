@@ -23,8 +23,6 @@
 
 #include "xml/tools.h"
 
-#include <list>
-
 using namespace HISTORY;
 
 #define HIST_NONAME "--------------"
