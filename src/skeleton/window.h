@@ -53,6 +53,11 @@ namespace SKELETON
 #endif
         Gtk::Label m_mginfo;
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+        static constexpr const char* s_css_stat_label = u8"jd-stat-label";
+        Glib::RefPtr< Gtk::CssProvider > m_stat_provider = Gtk::CssProvider::create();
+#endif
+
       public:
 
         JDWindow( const bool fold_when_focusout, const bool need_mginfo = true );
