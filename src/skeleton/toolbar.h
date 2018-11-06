@@ -75,6 +75,11 @@ namespace SKELETON
         SKELETON::ToolBackForwardButton* m_button_back;
         SKELETON::ToolBackForwardButton* m_button_forward;
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+        static constexpr const char* s_css_label = u8"jd-toolbar-label";
+        Glib::RefPtr< Gtk::CssProvider > m_label_provider = Gtk::CssProvider::create();
+#endif
+
       public:
 
         ToolBar( Admin* admin );

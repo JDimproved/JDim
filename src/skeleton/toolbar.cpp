@@ -36,6 +36,7 @@ using namespace SKELETON;
 
 
 #if GTKMM_CHECK_VERSION(3,0,0)
+constexpr const char* ToolBar::s_css_label;
 constexpr const char* ToolBar::s_css_leave;
 #endif
 
@@ -323,6 +324,12 @@ Gtk::ToolItem* ToolBar::get_label()
 
         m_tool_label->add( *m_ebox_label );
         m_tool_label->set_expand( true );
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+        auto context = m_label->get_style_context();
+        context->add_class( s_css_label );
+        context->add_provider( m_label_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
+#endif
     }
 
     return m_tool_label;
@@ -343,30 +350,42 @@ void ToolBar::set_color( const std::string& color )
 {
     if( ! m_ebox_label ) return;
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+    Glib::ustring css;
+    if( color.empty() ) {
+        css = Glib::ustring::compose( u8".%1:not(:selected) { color: unset; }", s_css_label );
+    }
+    else {
+        css = Glib::ustring::compose(
+            u8".%1:not(:selected), .%1:active:not(:selected) { color: white; background-color: %2; }",
+            s_css_label, Gdk::RGBA( color ).to_string() );
+    }
+
+    try {
+        m_label_provider->load_from_data( css );
+    }
+    catch( Gtk::CssProviderError& err ) {
+#ifdef _DEBUG
+        std::cout << "ERROR:ToolBar::set_color fail " << err.what() << std::endl;
+#endif
+    }
+
+#else // !GTKMM_CHECK_VERSION(3,0,0)
     if( color.empty() ){
 
         if( m_ebox_label->get_visible_window() ){
             m_ebox_label->set_visible_window( false );
-#if GTKMM_CHECK_VERSION(3,0,0)
-            m_label->unset_color( Gtk::STATE_FLAG_NORMAL );
-#else
             m_label->unset_fg( Gtk::STATE_NORMAL );
-#endif
         }
     }
     else{
 
         m_ebox_label->set_visible_window( true );
-#if GTKMM_CHECK_VERSION(3,0,0)
-        m_label->override_color( Gdk::RGBA( "white" ), Gtk::STATE_FLAG_NORMAL );
-        m_ebox_label->override_background_color( Gdk::RGBA( color ), Gtk::STATE_FLAG_NORMAL );
-        m_ebox_label->override_background_color( Gdk::RGBA( color ), Gtk::STATE_FLAG_ACTIVE );
-#else
         m_label->modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
         m_ebox_label->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) );
         m_ebox_label->modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( color ) );
-#endif
     }
+#endif // GTKMM_CHECK_VERSION(3,0,0)
 }
 
 
