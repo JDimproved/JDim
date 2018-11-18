@@ -3,7 +3,7 @@
 // アイコンテーマのファイル
 
 #ifndef _ICONFILES_H
-#define _ICONFILSE_H
+#define _ICONFILES_H
 
 enum
 {
