@@ -125,7 +125,7 @@ std::list< Dom* >::iterator DomList::insert( std::list< Dom* >::iterator it, Dom
 
 std::list< Dom* >::iterator DomList::erase( std::list< Dom* >::iterator it )
 {
-    return erase( it );
+    return m_list.erase( it );
 }
 
 void DomList::clear()
