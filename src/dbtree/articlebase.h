@@ -22,7 +22,7 @@
 namespace DBTREE
 {
     class NodeTreeBase;
-    class NODE;
+    struct NODE;
 
     class ArticleBase : public SKELETON::Lockable
     {
