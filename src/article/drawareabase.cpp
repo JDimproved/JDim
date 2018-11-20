@@ -3956,17 +3956,19 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 
             // 残りのノードのうち、最小のy座標を取得
             int next_y = y + BIG_HEIGHT; // 次のノード or ブロックのy座標
+            bool next_found = false;
             while( layout_next ){
                 if( layout_next->rect && next_y > layout_next->rect->y ){
                     next_y = layout_next->rect->y;
                     if( next_y <= y ){
+                        next_found = true;
                         break; // 小さいy座標のノードが見つかったので、次のノードの処理に進む
                     }
                 }
                 layout_next = layout_next->next_layout;
             }
 
-            if( next_y > y ){
+            if( !next_found ) {
 
 #ifdef _DEBUG_CARETMOVE
                 std::cout << "found: between\n";
