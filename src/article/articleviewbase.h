@@ -159,7 +159,7 @@ namespace ARTICLE
         // Viewが所属するAdminクラス
         virtual SKELETON::Admin* get_admin();
 
-        JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article();
+        const JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article() const noexcept;
 
         // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
         virtual void activate_act_before_popupmenu( const std::string& url );

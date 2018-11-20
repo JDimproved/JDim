@@ -245,7 +245,7 @@ namespace SKELETON
         virtual const int get_icon( const std::string& iconname ){ return -1; }
 
         // ロード中
-        virtual const bool is_loading(){ return false;}
+        virtual const bool is_loading() const { return false; }
 
         // 更新した
         virtual const bool is_updated(){ return false;}

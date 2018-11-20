@@ -378,7 +378,7 @@ namespace DBTREE
         // キャッシュがあって、force = true の時は強制書き込み
         virtual void save_info( const bool force );
 
-        const bool is_loading(); // ロード中か
+        const bool is_loading() const; // ロード中か
         const bool is_checking_update();  // 更新チェック中か
 
         // スレッドのロード停止

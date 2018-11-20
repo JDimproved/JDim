@@ -57,7 +57,7 @@ void Loadable::clear_load_data()
 
 
 
-const bool Loadable::is_loading()
+const bool Loadable::is_loading() const
 {
     if( ! m_loader ) return false;
 

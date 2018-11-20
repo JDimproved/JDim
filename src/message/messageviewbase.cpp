@@ -255,7 +255,7 @@ const Glib::ustring MessageViewBase::get_message()
 // ロード中
 //
 // virtual
-const bool MessageViewBase::is_loading()
+const bool MessageViewBase::is_loading() const
 {
     if( ! m_post ) return false;
 

@@ -100,7 +100,7 @@ namespace MESSAGE
             );
 
         // ロード中
-        virtual const bool is_loading();
+        virtual const bool is_loading() const;
 
         // 規制中や行数や文字列がオーバーして書き込めない
         virtual const bool is_broken(){ return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }

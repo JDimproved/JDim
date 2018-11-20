@@ -45,7 +45,7 @@ namespace ARTICLE
 
         virtual void save_session();
 
-        virtual const bool is_loading();
+        virtual const bool is_loading() const;
         virtual const bool is_updated();
         virtual const bool is_check_update();
         virtual const bool is_old();

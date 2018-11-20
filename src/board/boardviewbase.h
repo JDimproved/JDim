@@ -116,7 +116,7 @@ namespace BOARD
         virtual void update_url( const std::string& url_old, const std::string& url_new );
 
         virtual const int get_icon( const std::string& iconname );
-        virtual const bool is_loading(){ return m_loading; }
+        virtual const bool is_loading() const { return m_loading; }
         virtual const bool set_command( const std::string& command,
                                         const std::string& arg1 = std::string(),
                                         const std::string& arg2 = std::string()

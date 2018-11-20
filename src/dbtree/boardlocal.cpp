@@ -71,7 +71,7 @@ const std::string BoardLocal::url_readcgi( const std::string& url, int num_from,
 }
 
 
-void BoardLocal::download_subject( const std::string& url_update_view )
+void BoardLocal::download_subject( const std::string& url_update_view, const bool )
 {
     // ダウンロードを実行しない
     get_url_update_views().push_back( url_update_view );

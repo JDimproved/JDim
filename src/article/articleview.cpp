@@ -175,7 +175,7 @@ void ArticleViewMain::goto_num( const int num_to, const int num_from )
 
 
 // ロード中
-const bool ArticleViewMain::is_loading()
+const bool ArticleViewMain::is_loading() const
 {
     return get_article()->is_loading();
 }
