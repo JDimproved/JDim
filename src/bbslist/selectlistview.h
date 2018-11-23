@@ -40,7 +40,7 @@ namespace BBSLIST
         virtual Gtk::Menu* get_popupmenu( const std::string& url );
     };
 
-};
+}
 
 
 #endif

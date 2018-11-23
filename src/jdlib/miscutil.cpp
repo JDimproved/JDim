@@ -1060,8 +1060,7 @@ const std::string MISC::url_decode( const std::string& url )
 
     const size_t url_length = url.length();
 
-    char decoded[ url_length + 1 ];
-    memset( decoded, 0, sizeof( decoded ) );
+    std::vector< char > decoded( url_length + 1, '\0' );
 
     unsigned int a, b;
     for( a = 0, b = a; a < url_length; ++a, ++b )
@@ -1093,7 +1092,7 @@ const std::string MISC::url_decode( const std::string& url )
         }
     }
 
-    return std::string( decoded );
+    return decoded.data();
 }
 
 
@@ -1124,7 +1123,7 @@ const std::string MISC::url_encode( const char* str, const size_t n )
             ( c != '@' ) &&
             ( c != '_' )){
 
-            snprintf( str_tmp, tmplng , "\%%%02x", c );
+            snprintf( str_tmp, tmplng , "%%%02x", c );
         }
         else {
             str_tmp[ 0 ] = c;
@@ -1641,15 +1640,13 @@ const std::string MISC::getenv_limited( const char *name, const size_t size )
 {
     if( ! name || ! getenv( name ) ) return std::string();
 
-    char env[ size + 1 ];
-    env[ size ] = '\0';
-
-    strncpy( env, getenv( name ), size );
+    std::vector< char > env( size + 1, '\0' );
+    strncpy( env.data(), getenv( name ), size );
 
 #ifdef _WIN32
-    return recover_path( Glib::locale_to_utf8( std::string( env ) ) );
+    return recover_path( Glib::locale_to_utf8( std::string( env.data() ) );
 #else
-    return std::string( env );
+    return env.data();
 #endif
 }
 

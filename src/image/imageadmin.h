@@ -124,7 +124,7 @@ namespace IMAGE
 
     IMAGE::ImageAdmin* get_admin();
     void delete_admin();
-};
+}
 
 
 #endif

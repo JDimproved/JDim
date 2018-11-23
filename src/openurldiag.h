@@ -25,7 +25,7 @@ namespace CORE
 
         virtual void slot_ok_clicked();
     };
-};
+}
 
 
 #endif

@@ -18,7 +18,7 @@
 namespace XML
 {
     class Document;
-};
+}
 
 namespace DBTREE
 {

@@ -48,7 +48,7 @@ namespace BBSLIST
         void slot_show_tree();
         virtual void timeout();
     };
-};
+}
 
 
 #endif

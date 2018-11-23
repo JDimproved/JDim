@@ -300,7 +300,7 @@ namespace BOARD
         void draw_bg_articles();
     };
 
-};
+}
 
 
 #endif

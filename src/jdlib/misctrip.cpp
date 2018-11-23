@@ -51,20 +51,20 @@ const std::string create_sha1( const std::string& key )
 
 #ifdef USE_OPENSSL
 
-    const unsigned int digest_length = SHA_DIGEST_LENGTH;
+    constexpr const unsigned int digest_length = SHA_DIGEST_LENGTH;
 
-    unsigned char digest[ digest_length ];
+    std::array< unsigned char, digest_length > digest;
 
     // unsigned char *SHA1( const unsigned char *, size_t, unsigned char * );
-    SHA1( (const unsigned char *)key.c_str(), key.length(), digest );
+    SHA1( (const unsigned char *)key.c_str(), key.length(), digest.data() );
 
 #else // defined USE_GNUTLS
 
     const unsigned int digest_length = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
 
-    unsigned char digest[ digest_length ];
+    std::vector< unsigned char > digest( digest_length );
 
-    gcry_md_hash_buffer( GCRY_MD_SHA1, digest, key.c_str(), key.length() );
+    gcry_md_hash_buffer( GCRY_MD_SHA1, digest.data(), key.c_str(), key.length() );
 
 #endif
 

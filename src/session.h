@@ -16,7 +16,7 @@
 namespace ARTICLE
 {
     class DrawAreaBase;
-};
+}
 
 namespace SESSION
 {

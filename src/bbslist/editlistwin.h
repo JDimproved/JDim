@@ -46,6 +46,6 @@ namespace BBSLIST
         void slot_redo();
         void slot_undo_buffer_changed();
     };
-};
+}
 
 #endif

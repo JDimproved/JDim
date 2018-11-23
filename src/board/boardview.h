@@ -28,6 +28,6 @@ namespace BOARD
         virtual void update_view();
         virtual void update_boardname();
     };
-};
+}
 
 #endif
