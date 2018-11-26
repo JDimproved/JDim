@@ -18,7 +18,7 @@ namespace ARTICLE
         ArticleViewPreview( const std::string& url );
         ~ArticleViewPreview();
 
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
 
       private:
 

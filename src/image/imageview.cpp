@@ -556,7 +556,7 @@ void ImageViewMain::scroll_right()
 //
 // viewの操作
 //
-const bool ImageViewMain::operate_view( const int control )
+bool ImageViewMain::operate_view( const int control )
 {
     // スクロールしたときはキャンセル
     if( m_scrolled ){

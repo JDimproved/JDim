@@ -403,7 +403,7 @@ void ImageViewBase::remove_imagearea()
 //
 // コマンド
 //
-const bool ImageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
+bool ImageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "switch_icon" ) switch_icon();
     else if( command == "update_status" ) update_status();
@@ -636,7 +636,7 @@ void ImageViewBase::clicked()
 //
 // viewの操作
 //
-const bool ImageViewBase::operate_view( const int control )
+bool ImageViewBase::operate_view( const int control )
 {
     if( CONTROL::operate_common( control, get_url(), IMAGE::get_admin() ) ) return true;
 
@@ -741,7 +741,7 @@ const bool ImageViewBase::operate_view( const int control )
 //
 // キープレスイベント
 //
-const bool ImageViewBase::slot_key_press( GdkEventKey* event )
+bool ImageViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG
     std::cout << "ImageViewBase::slot_key_press url = " << get_url() << std::endl;

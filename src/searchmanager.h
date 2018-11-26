@@ -80,8 +80,8 @@ namespace CORE
         const std::vector< DBTREE::ArticleBase* >& get_list_article() const{ return m_list_article; }
         const std::list< SEARCHDATA >& get_list_data() const { return m_list_data; }
 
-        const bool is_searching() const { return m_searching; }
-        const bool is_searching( const std::string& id ) const { if( id == m_id ) return m_searching; else return false;  }
+        bool is_searching() const { return m_searching; }
+        bool is_searching( const std::string& id ) const { if( id == m_id ) return m_searching; else return false;  }
         void stop( const std::string& id );
 
 
@@ -96,12 +96,12 @@ namespace CORE
         // mode_or : false なら AND、true なら OR で検索する
         // bm  : trueの時、しおりが付いている(スレ一覧でしおりを付けた or レスに一つでもしおりが付いている)スレのみを対象に検索する
         // calc_data : 検索終了時に m_list_data を求める
-        const bool search( const std::string& id, const int searchmode, const std::string& url,
-                           const std::string& query, const bool mode_or, const bool bm, const bool calc_data );
+        bool search( const std::string& id, const int searchmode, const std::string& url,
+                     const std::string& query, const bool mode_or, const bool bm, const bool calc_data );
 
 
         // スレタイ検索
-        const bool search_title( const std::string& id, const std::string& query );
+        bool search_title( const std::string& id, const std::string& query );
 
 
       private:

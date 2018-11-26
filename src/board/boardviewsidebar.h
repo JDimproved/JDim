@@ -35,10 +35,10 @@ namespace BOARD
       protected:
 
         // デフォルトのソート状態
-        const int get_default_sort_column() override;
-        const int get_default_view_sort_mode() override;
-        const int get_default_view_sort_pre_column() override;
-        const int get_default_view_sort_pre_mode() override;
+        int get_default_sort_column() override;
+        int get_default_view_sort_mode() override;
+        int get_default_view_sort_pre_column() override;
+        int get_default_view_sort_pre_mode() override;
 
       private:
 

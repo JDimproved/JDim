@@ -107,7 +107,7 @@ namespace BOARD
         const std::string url_for_copy() override;
 
         // 行数
-        const int get_row_size();
+        int get_row_size();
 
         // SKELETON::View の関数のオーバロード
 
@@ -115,16 +115,16 @@ namespace BOARD
 
         void update_url( const std::string& url_old, const std::string& url_new ) override;
 
-        const int get_icon( const std::string& iconname ) override;
-        const bool is_loading() const override { return m_loading; }
-        const bool set_command( const std::string& command,
-                                const std::string& arg1 = {},
-                                const std::string& arg2 = {} ) override;
+        int get_icon( const std::string& iconname ) override;
+        bool is_loading() const override { return m_loading; }
+        bool set_command( const std::string& command,
+                          const std::string& arg1 = {},
+                          const std::string& arg2 = {} ) override;
 
         void clock_in() override;
 
         // キーを押した        
-        const bool slot_key_press( GdkEventKey* event ) override;
+        bool slot_key_press( GdkEventKey* event ) override;
 
         void write() override;
         void stop() override;
@@ -144,7 +144,7 @@ namespace BOARD
         // もし ID が empty() なら全ての行の表示内容を更新する
         void update_item( const std::string& url, const std::string& id ) override;
 
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
         void goto_top() override;
         void goto_bottom() override;
         void goto_num( const int num_to, const int num_from ) override;
@@ -204,10 +204,10 @@ namespace BOARD
         const Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art, const int id );
 
         // デフォルトのソート状態
-        virtual const int get_default_sort_column();
-        virtual const int get_default_view_sort_mode();
-        virtual const int get_default_view_sort_pre_column();
-        virtual const int get_default_view_sort_pre_mode();
+        virtual int get_default_sort_column();
+        virtual int get_default_view_sort_mode();
+        virtual int get_default_view_sort_pre_column();
+        virtual int get_default_view_sort_pre_mode();
 
     private:
 
@@ -223,7 +223,7 @@ namespace BOARD
 
         void update_columns();
 
-        const int get_title_id( const int col );
+        int get_title_id( const int col );
 
         // ソート列やソートモードの保存
         virtual void save_sort_columns();
@@ -245,16 +245,16 @@ namespace BOARD
         // ヘッダをクリックしたときのslot関数
         void slot_col_clicked( const int col );
 
-        const int compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        const int compare_col( const int col, const int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        const int slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
+        int compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
+        int compare_col( const int col, const int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
+        int slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
 
         // UI
-        const bool slot_button_press( GdkEventButton* event );
-        const bool slot_button_release( GdkEventButton* event );
-        const bool slot_motion_notify( GdkEventMotion* event );
-        const bool slot_key_release( GdkEventKey* event );
-        const bool slot_scroll_event( GdkEventScroll* event );
+        bool slot_button_press( GdkEventButton* event );
+        bool slot_button_release( GdkEventButton* event );
+        bool slot_motion_notify( GdkEventMotion* event );
+        bool slot_key_release( GdkEventKey* event );
+        bool slot_scroll_event( GdkEventScroll* event );
 
         void slot_bookmark( int bookmark );
         void slot_open_tab();
@@ -276,13 +276,13 @@ namespace BOARD
                                  Gtk::SelectionData& selection_data, guint info, guint time );
         void slot_dropped_url_list( const std::list< std::string >& );
 
-        const bool open_row( Gtk::TreePath& path, const bool tab, const bool reget );
+        bool open_row( Gtk::TreePath& path, const bool tab, const bool reget );
         void open_selected_rows( const bool reget );
         const std::string path2daturl( const Gtk::TreePath& path );
         const std::string path2url_board( const Gtk::TreePath& path );
 
         // 検索
-        const bool drawout( const bool force_reset );
+        bool drawout( const bool force_reset );
 
         void update_row_common( const Gtk::TreeModel::Row& row );
         const std::string get_subject_from_path( Gtk::TreePath& path );

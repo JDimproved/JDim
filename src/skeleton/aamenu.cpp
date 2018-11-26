@@ -45,7 +45,7 @@ AAMenu::~AAMenu()
 }
 
 
-const int AAMenu::get_size()
+int AAMenu::get_size()
 {
     return static_cast< int >( get_children().size() );
 }

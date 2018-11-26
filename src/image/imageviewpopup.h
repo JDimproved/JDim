@@ -33,7 +33,7 @@ namespace IMAGE
         void stop() override;
         void show_view() override;
         void close_view() override;
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
 
       protected:
 

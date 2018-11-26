@@ -108,10 +108,10 @@ namespace MISC
     const std::string recover_quot( const std::string& str );
 
     // str 中に含まれている str2 の 数を返す
-    const int count_str( const std::string& str, const std::string& str2 );
+    int count_str( const std::string& str, const std::string& str2 );
     
     // str 中に含まれている chr の 数を返す
-    const int count_chr( const std::string& str, const char chr );
+    int count_chr( const std::string& str, const char chr );
 
     // 文字列(utf-8も) -> 整数変換
     // (例) "12３" -> 123
@@ -120,7 +120,7 @@ namespace MISC
     // dig: 桁数、0なら失敗
     // n : str から何バイト読み取ったか
     // 戻り値: 数値
-    const int str_to_uint( const char* str, size_t& dig, size_t& n );
+    int str_to_uint( const char* str, size_t& dig, size_t& n );
 
     // 数字　-> 文字変換
     const std::string itostr( const int n );
@@ -131,14 +131,14 @@ namespace MISC
     // 16進数表記文字をバイナリに変換する( 例 "E38182" -> 0xE38182 )
     // 出力 : char_out 
     // 戻り値: 変換に成功した chr_in のバイト数
-    const size_t chrtobin( const char* chr_in, char* chr_out );
+    size_t chrtobin( const char* chr_in, char* chr_out );
 
     // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
     const std::string cut_str( const std::string& str, const unsigned int maxsize );
 
     // 正規表現のメタ文字が含まれているか
     // escape == true ならエスケープを考慮 (例)  escape == true なら \+ → \+ のまま、falseなら \+ → \\\+
-    const bool has_regex_metachar( const std::string& str, const bool escape );
+    bool has_regex_metachar( const std::string& str, const bool escape );
 
     // 正規表現のメタ文字をエスケープ
     // escape == true ならエスケープを考慮 (例)  escape == true なら \+ → \+ のまま、falseなら \+ → \\\+
@@ -157,8 +157,8 @@ namespace MISC
     // URL中のスキームを判別する
     // 戻り値 : スキームタイプ
     // length    : "http://"等の文字数
-    const int is_url_scheme( const char* str_in, int* length = NULL );
-    const int is_url_scheme_impl( const char* str_in, int* length );
+    int is_url_scheme( const char* str_in, int* length = NULL );
+    int is_url_scheme_impl( const char* str_in, int* length );
 
     // URLとして扱う文字かどうか判別する
     // 基本 : 「!#$%&'()*+,-./0-9:;=?@A-Z_a-z~」
@@ -166,7 +166,7 @@ namespace MISC
     //
     // "RFC 3986" : http://www.ietf.org/rfc/rfc3986.txt
     // "RFC 2396" : http://www.ietf.org/rfc/rfc2396.txt
-    const bool is_url_char( const char* str_in, const bool loose_url );
+    bool is_url_char( const char* str_in, const bool loose_url );
 
     // URLデコード
     const std::string url_decode( const std::string& url );
@@ -199,7 +199,7 @@ namespace MISC
     //
     // 例 : &#9999; なら 戻り値 = 4、 offset = 2
     //
-    const int spchar_number_ln( const char* in_char, int& offset );
+    int spchar_number_ln( const char* in_char, int& offset );
 
     // 「&#数字;」形式の数字参照文字列を数字(int)に変換する
     //
@@ -211,7 +211,7 @@ namespace MISC
     //
     // 戻り値 : 「&#数字;」の中の数字(int型)
     //
-    const int decode_spchar_number( const char* in_char, const int offset, const int lng );
+    int decode_spchar_number( const char* in_char, const int offset, const int lng );
 
     // str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
     const std::string decode_spchar_number( const std::string& str );
@@ -220,15 +220,15 @@ namespace MISC
     // 入力 : utfstr 入力文字 (UTF-8)
     // 出力 :  byte  長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 or 4 を入れて返す
     // 戻り値 : ucs2
-    const int utf8toucs2( const char* utfstr, int& byte );
+    int utf8toucs2( const char* utfstr, int& byte );
 
     // ucs2 の種類
-    const int get_ucs2mode( const int ucs2 );
+    int get_ucs2mode( const int ucs2 );
 
     // ucs2 -> utf8 変換
     // 出力 : utfstr 変換後の文字
     // 戻り値 : バイト数
-    const int ucs2toutf8( const int ucs2, char* utfstr );
+    int ucs2toutf8( const int ucs2, char* utfstr );
 
     // WAVEDASHなどのWindows系UTF-8文字をUnix系文字と相互変換
     const std::string utf8_fix_wavedash( const std::string& str, const int mode );
@@ -260,7 +260,7 @@ namespace MISC
     std::vector< std::string > recover_path( std::vector< std::string >&& list_str );
 
     // 文字列(utf-8)に全角英数字が含まれるか判定する
-    const bool has_widechar( const char* str );
+    bool has_widechar( const char* str );
 
     // 全角英数字(str1) -> 半角英数字(str2)
     // table_pos : 置き換えた文字列の位置
@@ -269,7 +269,7 @@ namespace MISC
 
 
     // URL中のスキームを判別する
-    inline const int is_url_scheme( const char* str_in, int* length )
+    inline int is_url_scheme( const char* str_in, int* length )
     {
         // 候補になり得ない場合は以降の処理はしない
         if( *str_in != 'h' && *str_in != 'f' && *str_in != 't' && *str_in != 's' )

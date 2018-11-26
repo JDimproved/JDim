@@ -145,7 +145,7 @@ void ButtonPref::set_motions( const int id, const std::string& str_motions )
 }
 
 
-const bool ButtonPref::remove_motions( const int id )
+bool ButtonPref::remove_motions( const int id )
 {
     return CONTROL::remove_buttonmotions( id );
 }

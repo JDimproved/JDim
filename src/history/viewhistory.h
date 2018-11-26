@@ -26,12 +26,12 @@ namespace HISTORY
         ViewHistory();
         virtual ~ViewHistory();
 
-        const int get_size() const { return m_items.size(); }
+        int get_size() const { return m_items.size(); }
         const ViewHistoryItem* get_item( const int pos ){ return m_items[ pos ]; }
 
-        const int get_top() const { return m_history_top; }
-        const int get_cur() const { return m_history_current; }
-        const int get_end() const { return m_history_end; }
+        int get_top() const { return m_history_top; }
+        int get_cur() const { return m_history_current; }
+        int get_end() const { return m_history_end; }
 
         void set_top( const int top );
         void set_cur( const int cur );
@@ -52,8 +52,8 @@ namespace HISTORY
         std::vector< ViewHistoryItem* >& get_items_forward( const int count );
 
         // 戻る / 進む 可能かの判定
-        const bool can_back( const int count );
-        const bool can_forward( const int count );
+        bool can_back( const int count );
+        bool can_forward( const int count );
 
         // 追加
         void append( const std::string& url );

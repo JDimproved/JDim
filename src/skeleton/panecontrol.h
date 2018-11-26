@@ -69,11 +69,11 @@ namespace SKELETON
 
         // PANE_MAX_PAGE1 などを指定
         void set_mode( int mode );
-        const int get_mode() const { return m_mode; }
+        int get_mode() const { return m_mode; }
 
         // PANE_CLICK_FOLD_PAGE1 などを指定
         void set_click_fold( int mode ){ m_click_fold = mode; }
-        const int get_click_fold() const { return m_click_fold; }
+        int get_click_fold() const { return m_click_fold; }
 
         void add_remove1( bool unpack, Gtk::Widget& child );
         void add_remove2( bool unpack, Gtk::Widget& child );
@@ -86,7 +86,7 @@ namespace SKELETON
 
       protected:
 
-        const bool is_on_paned() const { return m_on_paned; }
+        bool is_on_paned() const { return m_on_paned; }
         Gtk::Paned& get_paned(){ return m_paned; }
         virtual int get_size() = 0;
         virtual bool is_separater_clicked( GdkEventButton* event ) = 0;

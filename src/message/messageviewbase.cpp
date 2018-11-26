@@ -255,7 +255,7 @@ const Glib::ustring MessageViewBase::get_message()
 // ロード中
 //
 // virtual
-const bool MessageViewBase::is_loading() const
+bool MessageViewBase::is_loading() const
 {
     if( ! m_post ) return false;
 
@@ -266,7 +266,7 @@ const bool MessageViewBase::is_loading() const
 //
 // コマンド
 //
-const bool MessageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
+bool MessageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "empty" ) return get_message().empty();
 
@@ -532,7 +532,7 @@ void MessageViewBase::focus_view()
 //
 // viewの操作
 //
-const bool MessageViewBase::operate_view( const int control )
+bool MessageViewBase::operate_view( const int control )
 {
     if( control == CONTROL::None ) return false;
 
@@ -697,7 +697,7 @@ void MessageViewBase::toggle_preview()
 //
 // テキストビューでキーを押した
 //
-const bool MessageViewBase::slot_key_press( GdkEventKey* event )
+bool MessageViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG_KEY
     guint key = event->keyval;

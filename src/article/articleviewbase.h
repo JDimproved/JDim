@@ -103,18 +103,18 @@ namespace ARTICLE
         void save_session() override {}
 
         const std::string url_for_copy() override; // コピーやURLバー表示用のURL
-        const int width_client() override;
-        const int height_client() override;
-        const int get_icon( const std::string& iconname ) override;
-        const bool set_command( const std::string& command,
-                                const std::string& arg1 = {},
-                                const std::string& arg2 = {} ) override;
+        int width_client() override;
+        int height_client() override;
+        int get_icon( const std::string& iconname ) override;
+        bool set_command( const std::string& command,
+                          const std::string& arg1 = {},
+                          const std::string& arg2 = {} ) override;
 
         void clock_in() override;
         void clock_in_smooth_scroll();
 
         // キーを押した
-        const bool slot_key_press( GdkEventKey* event ) override;
+        bool slot_key_press( GdkEventKey* event ) override;
 
         void write() override;
         void reload() override;
@@ -125,7 +125,7 @@ namespace ARTICLE
         void close_view() override;
         void delete_view() override;
         void set_favorite() override;
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
         void goto_top() override;
         void goto_bottom() override;
         void goto_num( const int num_to, const int num_from ) override;
@@ -146,10 +146,10 @@ namespace ARTICLE
         void delete_open_view();
 
         // 実況モードが可能か
-        const bool get_enable_live();
+        bool get_enable_live();
 
         // 実況モードか
-        const bool get_live() const { return m_live; }
+        bool get_live() const { return m_live; }
 
         DrawAreaBase* drawarea();
 
@@ -170,7 +170,7 @@ namespace ARTICLE
         void hide_popup( const bool force = false );
 
         // ポップアップが表示されているか
-        const bool is_popup_shown() const;
+        bool is_popup_shown() const;
 
         // 初期設定
         void setup_view();
@@ -268,7 +268,7 @@ namespace ARTICLE
         // レスポップアップ関係
 
         // ポップアップが表示されていてかつマウスがその上にあるか
-        const bool is_mouse_on_popup();
+        bool is_mouse_on_popup();
 
         void show_popup( SKELETON::View* view, const int mrg_x, const int mrg_y );
         bool slot_popup_leave_notify_event( GdkEventCrossing* event );

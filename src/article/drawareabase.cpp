@@ -211,7 +211,7 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
 //
 // 背景色のID( colorid.h にある ID を指定)
 //
-const int DrawAreaBase::get_colorid_back()
+int DrawAreaBase::get_colorid_back()
 {
     if( m_css_body.bg_color >= 0 ) return m_css_body.bg_color;
 
@@ -477,7 +477,7 @@ void DrawAreaBase::focus_out()
 
 
 // 新着セパレータのあるレス番号の取得とセット
-const int DrawAreaBase::get_separator_new()
+int DrawAreaBase::get_separator_new()
 {
     return m_layout_tree->get_separator_new();
 }
@@ -498,7 +498,7 @@ void DrawAreaBase::hide_separator_new()
 
 
 // セパレータが画面に表示されているか
-const bool DrawAreaBase::is_separator_on_screen()
+bool DrawAreaBase::is_separator_on_screen()
 {
     if( ! m_layout_tree ) return false;
 
@@ -517,7 +517,7 @@ const bool DrawAreaBase::is_separator_on_screen()
 
 
 // 現在のポインタの下にあるレス番号取得
-const int DrawAreaBase::get_current_res_num()
+int DrawAreaBase::get_current_res_num()
 {
     const int y = m_y_pointer + get_vscr_val();
 
@@ -546,7 +546,7 @@ const std::string DrawAreaBase::str_selection()
 
 
 // 範囲選択を開始したレス番号
-const int DrawAreaBase::get_selection_resnum_from()
+int DrawAreaBase::get_selection_resnum_from()
 {
     if( ! m_selection.select ) return 0;
     if( ! m_selection.caret_from.layout ) return 0;
@@ -556,7 +556,7 @@ const int DrawAreaBase::get_selection_resnum_from()
 
 
 // 範囲選択を終了したレス番号
-const int DrawAreaBase::get_selection_resnum_to()
+int DrawAreaBase::get_selection_resnum_to()
 {
     if( ! m_selection.select ) return 0;
     if( ! m_selection.caret_to.layout ) return 0;
@@ -800,7 +800,7 @@ bool DrawAreaBase::exec_layout()
 // is_popup = true ならポップアップウィンドウの幅を親ビューの幅とする
 // offset_y は y 座標の上オフセット行数
 //
-const bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
+bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 {
     // 起動中とシャットダウン中は処理しない
     if( SESSION::is_booting() ) return false;
@@ -1546,7 +1546,7 @@ bool DrawAreaBase::set_init_wide_mode( const char* str, const int pos_start, con
 // wide_mode :  全角半角モード( アルファベット以外の文字ではモードにしたがって幅を変える )
 // mode : fontid.h で定義されているフォントのID
 //
-const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pre_char, bool& wide_mode, const int mode )
+int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pre_char, bool& wide_mode, const int mode )
 {
     int width = 0;
     int width_wide = 0;
@@ -1676,7 +1676,7 @@ const int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, ch
 // y から height の高さ分だけ描画する
 // height == 0 ならスクロールした分だけ描画( y は無視 )
 //
-const bool DrawAreaBase::draw_screen( const int y, const int height )
+bool DrawAreaBase::draw_screen( const int y, const int height )
 {
     if( ! m_enable_draw ) return false;
     if( ! m_gc ) return false;
@@ -2398,7 +2398,7 @@ void DrawAreaBase::draw_frame()
 // byte_from : 描画開始位置
 // byte_to : 描画終了位置
 //
-const bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from, size_t& byte_to )
+bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from, size_t& byte_to )
 {
     if( ! layout ) return false;
     if( ! selection.caret_from.layout ) return false;
@@ -2560,7 +2560,7 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const CLIPINFO& ci )
 //
 // 戻り値 : true なら描画後に再レイアウトを実行する
 //
-const bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
+bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::draw_one_img_node link = " << layout->link << std::endl;
@@ -2864,7 +2864,7 @@ int DrawAreaBase::set_num_id( LAYOUT* layout )
 //
 // 実際にスクロールして描画を実行するのは exec_scroll()
 //
-const bool DrawAreaBase::set_scroll( const int control )
+bool DrawAreaBase::set_scroll( const int control )
 {
     // スクロール系の操作でないときは関数を抜ける
     switch( control ){
@@ -3450,7 +3450,7 @@ void DrawAreaBase::goto_back()
 //
 // 戻り値: ヒット数
 //
-const int DrawAreaBase::search( const std::list< std::string >& list_query, const bool reverse )
+int DrawAreaBase::search( const std::list< std::string >& list_query, const bool reverse )
 {
     assert( m_layout_tree );
 
@@ -3640,7 +3640,7 @@ const int DrawAreaBase::search( const std::list< std::string >& list_query, cons
 //
 // 戻り値: ヒット数
 //
-const int DrawAreaBase::search_move( const bool reverse )
+int DrawAreaBase::search_move( const bool reverse )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::search_move " << m_multi_selection.size() << std::endl;
@@ -4049,8 +4049,8 @@ bool is_separate_char( const int ucs2 )
 //
 // ダブルクリック時にキャレット位置を決める
 //
-const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right
-                                      ,const int x, const int y, const bool triple )
+bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,
+                                      const int x, const int y, const bool triple )
 {
     if( ! m_layout_tree ) return false;
 
@@ -4206,7 +4206,7 @@ const bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_PO
 // caret_left から caret_right まで範囲選択状態にする
 //
 
-const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_left, const CARET_POSITION& caret_right )
+bool DrawAreaBase::set_selection( const CARET_POSITION& caret_left, const CARET_POSITION& caret_right )
 {
     m_caret_pos_pre = caret_left;
     m_caret_pos = caret_left;
@@ -4220,7 +4220,7 @@ const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_left, const 
 //
 // caret_pos : 移動後のキャレット位置、m_caret_pos_pre から caret_pos まで範囲選択状態にする
 //
-const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos )
+bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos )
 {
     return set_selection( caret_pos, NULL );
 }
@@ -4228,7 +4228,7 @@ const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos )
 
 // rect に再描画範囲を計算して入れる( NULL なら入らない )
 // その後 draw_screen( rect.y, rect.height ) で選択範囲を描画する
-const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANGLE* rect )
+bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANGLE* rect )
 {
     if( ! caret_pos.layout ) return false;
     if( ! m_caret_pos_dragstart.layout ) return false;
@@ -4323,7 +4323,7 @@ const bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANG
 //
 // set_selection()の中で毎回やると重いので、ボタンのリリース時に一回だけ呼び出すこと
 //
-const bool DrawAreaBase::set_selection_str()
+bool DrawAreaBase::set_selection_str()
 {
     assert( m_layout_tree );
 
@@ -4430,7 +4430,7 @@ const bool DrawAreaBase::set_selection_str()
 // caret_pos が範囲選択の上にあるか
 //
 //
-const bool DrawAreaBase::is_caret_on_selection( const CARET_POSITION& caret_pos )
+bool DrawAreaBase::is_caret_on_selection( const CARET_POSITION& caret_pos )
 {
     LAYOUT* layout = caret_pos.layout;
 
@@ -5146,7 +5146,7 @@ bool DrawAreaBase::motion_mouse()
 //
 // 現在のポインターの下のノードからカーソルのタイプを決定する
 //
-const Gdk::CursorType DrawAreaBase::get_cursor_type()
+Gdk::CursorType DrawAreaBase::get_cursor_type()
 {
     Gdk::CursorType cursor_type = Gdk::ARROW;
     if( m_layout_current ){
@@ -5182,7 +5182,7 @@ void DrawAreaBase::change_cursor( const Gdk::CursorType type )
 //
 // キーを押した
 //
-const bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
+bool DrawAreaBase::slot_key_press_event( GdkEventKey* event )
 {
     //オートスクロール中なら無視
     if( m_scrollinfo.mode == SCROLL_AUTO ) return true;

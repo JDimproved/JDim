@@ -51,7 +51,7 @@ void simple_hash_set::erase( const std::string& item )
 }
 
 
-const bool simple_hash_set::find_if( const std::string& item )
+bool simple_hash_set::find_if( const std::string& item )
 {
     if( ! m_hash.size() ) return false;
 
@@ -77,7 +77,7 @@ hash_set_thread::hash_set_thread()
 {}
 
 
-const int hash_set_thread::get_key( const std::string& url )
+int hash_set_thread::get_key( const std::string& url )
 {
 
     const int lng = DBTREE::url_datbase( url ).length();

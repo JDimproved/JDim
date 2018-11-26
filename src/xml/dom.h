@@ -100,7 +100,7 @@ namespace XML
         DomList getElementsByTagName( const std::string& name );
 
         // プロパティを扱うアクセッサ
-        const int nodeType();
+        int nodeType();
         const std::string nodeName();
         std::string nodeValue();
         void nodeValue( const std::string& value );
@@ -115,7 +115,7 @@ namespace XML
 
         Dom* ownerDocument();
         Dom* parentNode();
-        const bool hasChildNodes();
+        bool hasChildNodes();
         DomList childNodes();
         Dom* firstChild();
         Dom* lastChild();
@@ -127,10 +127,10 @@ namespace XML
         Dom* nextSibling();
 
         // 属性
-        const bool hasAttributes();
+        bool hasAttributes();
         std::map< std::string, std::string > attributes();
         void attributes( const std::map< std::string, std::string > attributes );
-        const bool hasAttribute( const std::string& name );
+        bool hasAttribute( const std::string& name );
         std::string getAttribute( const std::string& name );
         bool setAttribute( const std::string& name, const std::string& value );
         bool setAttribute( const std::string& name, const int& value );

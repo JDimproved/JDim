@@ -59,10 +59,10 @@ namespace IMAGE
         void set_imagearea( ImageAreaBase* imagearea );
         void remove_imagearea();
 
-        const bool is_wait() const{ return m_wait; }
+        bool is_wait() const { return m_wait; }
         void set_wait( const bool wait ){ m_wait = wait; }
 
-        const bool is_loading() const override { return m_loading; }
+        bool is_loading() const override { return m_loading; }
         void set_loading( const bool loading ){ m_loading = loading; }
 
         Gtk::EventBox& get_event(){ return  m_event; }
@@ -72,7 +72,7 @@ namespace IMAGE
         ImageViewBase( const std::string& url, const std::string& arg1 = std::string(), const std::string& arg2 = std::string() );
         ~ImageViewBase();
 
-        const bool is_under_mouse() const { return m_under_mouse; }
+        bool is_under_mouse() const { return m_under_mouse; }
 
         //
         // SKELETON::View の関数のオーバロード
@@ -84,19 +84,19 @@ namespace IMAGE
         Gtk::Window* get_parent_win() override;
 
         // キーを押した
-        const bool slot_key_press( GdkEventKey* event ) override;
+        bool slot_key_press( GdkEventKey* event ) override;
 
         // コマンド
-        const bool set_command( const std::string& command,
-                                const std::string& arg1 = {},
-                                const std::string& arg2 = {} ) override;
+        bool set_command( const std::string& command,
+                          const std::string& arg1 = {},
+                          const std::string& arg2 = {} ) override;
 
         void reload() override;
         void stop() override;
         void redraw_view() override;
         void close_view() override;
         void delete_view() override;
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
         void show_preference() override;
 
       protected:

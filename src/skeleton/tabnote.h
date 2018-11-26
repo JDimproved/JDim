@@ -90,7 +90,7 @@ namespace SKELETON
         // マウスの下にあるタブの番号を取得
         // タブ上では無いときは-1を返す
         // マウスがタブの右側にある場合はページ数の値を返す
-        const int get_page_under_mouse();
+        int get_page_under_mouse();
 
         // タブの高さ、幅、位置を取得 ( 描画用 )
         void get_alloc_tab( Alloc_NoteBook& alloc );
@@ -98,7 +98,7 @@ namespace SKELETON
       private:
 
         // gtknotebook.c ( Revision 19311, 2008-01-06 ) を参考にして作成した描画関係の関数
-        const bool paint( GdkEventExpose* event );
+        bool paint( GdkEventExpose* event );
 
         void draw_tab( const GtkNotebook *notebook,
                        const GtkNotebookPage *page,
@@ -114,7 +114,7 @@ namespace SKELETON
                          const int nbarrow );
 
         void get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle, const gboolean before );
-        const gboolean get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle );
+        gboolean get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle );
 
 
         // 各タブのサイズと座標を取得

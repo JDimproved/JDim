@@ -201,7 +201,7 @@ void NodeTreeBase::clear()
 //
 // ロード中は m_id_header 番のレスはまだ処理中なので m_id_header -1 を返す
 //
-const int NodeTreeBase::get_res_number()
+int NodeTreeBase::get_res_number()
 {
     if( is_loading() ) return m_id_header -1;
     
@@ -225,7 +225,7 @@ NODE* NodeTreeBase::res_header( int number )
 //
 // 下の get_num_id_name( int number ) と違って検索するので遅い
 //
-const int NodeTreeBase::get_num_id_name( const std::string& id )
+int NodeTreeBase::get_num_id_name( const std::string& id )
 {
     if( id.empty() ) return 0;
 
@@ -253,7 +253,7 @@ const int NodeTreeBase::get_num_id_name( const std::string& id )
 //
 // number番の ID の重複数
 //
-const int NodeTreeBase::get_num_id_name( const int number )
+int NodeTreeBase::get_num_id_name( const int number )
 {
     NODE* head = res_header( number );
     if( ! head ) return 0;
@@ -2519,8 +2519,8 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
 //
 // 戻り値 : アンカーが現れれば true
 //
-const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
-                                       int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo )
+bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
+                                 int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo )
 {
     char tmp_out[ 64 ];
     int lng_out = 0;
@@ -2683,7 +2683,7 @@ const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 //
 // 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
 //
-const int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos )
+int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos )
 {
     // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
     const bool loose_url = CONFIG::get_loose_url();
@@ -2908,7 +2908,7 @@ void NodeTreeBase::update_abone( const int from_number, const int to_number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_res( const int number )
+bool NodeTreeBase::check_abone_res( const int number )
 {
     if( ! m_vec_abone_res.size() ) return false;
     if( ! m_vec_abone_res[ number ] ) return false;
@@ -2927,7 +2927,7 @@ const bool NodeTreeBase::check_abone_res( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_id( const int number )
+bool NodeTreeBase::check_abone_id( const int number )
 {
     const bool check_id = ! m_list_abone_id.empty();
     const bool check_id_board = ! m_list_abone_id_board.empty();
@@ -2977,7 +2977,7 @@ const bool NodeTreeBase::check_abone_id( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_name( const int number )
+bool NodeTreeBase::check_abone_name( const int number )
 {
     const bool check_name = ! m_list_abone_name.empty();
     const bool check_name_board = ! m_list_abone_name_board.empty();
@@ -3036,7 +3036,7 @@ const bool NodeTreeBase::check_abone_name( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_mail( const int number )
+bool NodeTreeBase::check_abone_mail( const int number )
 {
     if( ! m_abone_age ) return false;
 
@@ -3059,7 +3059,7 @@ const bool NodeTreeBase::check_abone_mail( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_word( const int number )
+bool NodeTreeBase::check_abone_word( const int number )
 {
     const bool check_word = ! m_list_abone_word.empty();
     const bool check_regex = ! m_list_abone_regex.empty();
@@ -3170,7 +3170,7 @@ const bool NodeTreeBase::check_abone_word( const int number )
 //
 // あぼーんしているレスにアンカーを張っているときはtrueを返す
 //
-const bool NodeTreeBase::check_abone_chain( const int number )
+bool NodeTreeBase::check_abone_chain( const int number )
 {
     if( !m_abone_chain ) return false;
 
@@ -3635,7 +3635,7 @@ int NodeTreeBase::convert_amp( char* text, const int n )
 
 
 // 自分の書き込みにレスしたか
-const bool NodeTreeBase::is_refer_posted( const int number )
+bool NodeTreeBase::is_refer_posted( const int number )
 {
     if( ! m_vec_refer_posted.size() ) return false;
     if( m_vec_refer_posted.size() <= ( size_t )number ) return false;

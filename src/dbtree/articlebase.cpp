@@ -121,14 +121,14 @@ ArticleBase::~ArticleBase()
 }
 
 
-const bool ArticleBase::empty()
+bool ArticleBase::empty()
 {
     return  m_url.empty();
 }
 
 
 // ID がこのスレのものかどうか
-const bool ArticleBase::equal( const std::string& datbase, const std::string& id )
+bool ArticleBase::equal( const std::string& datbase, const std::string& id )
 {
     return ( id == m_id );
 }
@@ -158,7 +158,7 @@ const std::string& ArticleBase::get_since_date()
 
 
 // スレ速度
-const int ArticleBase::get_speed()
+int ArticleBase::get_speed()
 {
     time_t current_t = time( NULL );
     return ( get_number() * 60 * 60 * 24 ) / MAX( 1, current_t - get_since_time() );
@@ -166,7 +166,7 @@ const int ArticleBase::get_speed()
 
 
 // キャッシュにあるdatファイルのサイズ
-const size_t ArticleBase::get_lng_dat()
+size_t ArticleBase::get_lng_dat()
 {
     return get_nodetree()->get_lng_dat();
 }
@@ -363,7 +363,7 @@ time_t ArticleBase::get_time_modified()
 
 
 // スレが立ってからの経過時間( 時間 )
-const int ArticleBase::get_hour()
+int ArticleBase::get_hour()
 {
     return ( time( NULL ) - get_since_time() ) / ( 60 * 60 );
 }
@@ -568,7 +568,7 @@ void ArticleBase::update_writetime()
 //
 // 書き込み数
 //
-const int ArticleBase::get_num_posted()
+int ArticleBase::get_num_posted()
 {
     if( ! m_vec_posted.size() ) return 0;
 
@@ -594,7 +594,7 @@ void ArticleBase::set_bookmarked_thread( const bool bookmarked )
 //
 // キャッシュがあって、かつ新着の読み込みが可能
 //
-const bool ArticleBase::enable_load()
+bool ArticleBase::enable_load()
 {
     return ( is_cached() && ( m_status & STATUS_UPDATE ) && ! ( m_status & STATUS_OLD ) );
 }
@@ -603,7 +603,7 @@ const bool ArticleBase::enable_load()
 //
 // キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
 //
-const bool ArticleBase::is_finished()
+bool ArticleBase::is_finished()
 {
     if( is_cached() && ! enable_load() &&  m_number_max && get_number_seen() >= m_number_max ){
 
@@ -621,7 +621,7 @@ const bool ArticleBase::is_finished()
 //
 // 透明あぼーん
 //
-const bool ArticleBase::get_abone_transparent()
+bool ArticleBase::get_abone_transparent()
 {
     if( CONFIG::get_abone_transparent() ) return true;
 
@@ -632,7 +632,7 @@ const bool ArticleBase::get_abone_transparent()
 //
 // 連鎖あぼーん
 //
-const bool ArticleBase::get_abone_chain()
+bool ArticleBase::get_abone_chain()
 {
     if( CONFIG::get_abone_chain() ) return true;
 
@@ -643,7 +643,7 @@ const bool ArticleBase::get_abone_chain()
 //
 // あぼーんしてるか
 //
-const bool ArticleBase::get_abone( int number )
+bool ArticleBase::get_abone( int number )
 {
     return get_nodetree()->get_abone( number );
 }
@@ -890,7 +890,7 @@ void ArticleBase::set_abone_global( const bool set )
 //
 // ブックマークの数
 //
-const int ArticleBase::get_num_bookmark()
+int ArticleBase::get_num_bookmark()
 {
     if( ! m_vec_bookmark.size() ) return 0;
 
@@ -903,7 +903,7 @@ const int ArticleBase::get_num_bookmark()
 //
 // ブックマークされているか
 //
-const bool ArticleBase::is_bookmarked( const int number )
+bool ArticleBase::is_bookmarked( const int number )
 {
     if( number <= 0 || number > m_number_load ) return false;
 
@@ -934,7 +934,7 @@ void ArticleBase::set_bookmark( const int number, const bool set )
 //
 // 自分が書き込んだレスか
 //
-const bool ArticleBase::is_posted( const int number )
+bool ArticleBase::is_posted( const int number )
 {
     if( number <= 0 || number > m_number_load ) return false;
 
@@ -948,7 +948,7 @@ const bool ArticleBase::is_posted( const int number )
 
 
 // 自分の書き込みにレスしたか
-const bool ArticleBase::is_refer_posted( const int number )
+bool ArticleBase::is_refer_posted( const int number )
 {
     return get_nodetree()->is_refer_posted( number );
 }
@@ -1071,7 +1071,7 @@ void ArticleBase::unlock_impl()
 //
 // ロード中か
 //
-const bool ArticleBase::is_loading() const
+bool ArticleBase::is_loading() const
 {
     if( ! m_nodetree ) return false;
     return m_nodetree->is_loading();
@@ -1081,7 +1081,7 @@ const bool ArticleBase::is_loading() const
 //
 // 更新チェック中か
 //
-const bool ArticleBase::is_checking_update()
+bool ArticleBase::is_checking_update()
 {
     if( ! is_loading() ) return false;
 

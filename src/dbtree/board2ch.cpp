@@ -65,7 +65,7 @@ const std::string Board2ch::get_proxy_host()
     return std::string();
 }
 
-const int Board2ch::get_proxy_port()
+int Board2ch::get_proxy_port()
 {
     const int mode = get_mode_local_proxy();
 
@@ -105,7 +105,7 @@ const std::string Board2ch::get_proxy_host_w()
     return std::string();
 }
 
-const int Board2ch::get_proxy_port_w()
+int Board2ch::get_proxy_port_w()
 {
     if( CORE::get_loginp2()->login_now() ) return CONFIG::get_proxy_port_for_data();
 

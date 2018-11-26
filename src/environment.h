@@ -36,7 +36,7 @@ namespace ENVIRONMENT
 
     std::string get_jdversion();
     std::string get_distname();
-    const int get_wm();
+    int get_wm();
     std::string get_wm_str();
 	std::string get_gtkmm_version();
 	std::string get_glibmm_version();

@@ -36,7 +36,7 @@ namespace HISTORY
 
       private:
 
-        const bool open_history( const int i );
+        bool open_history( const int i );
 
         // メニューのslot関数
         void slot_clear();

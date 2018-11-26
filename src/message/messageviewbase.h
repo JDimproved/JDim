@@ -94,18 +94,18 @@ namespace MESSAGE
         const std::string url_for_copy() override;
 
         // コマンド
-        const bool set_command( const std::string& command,
-                                const std::string& arg1 = {},
-                                const std::string& arg2 = {} ) override;
+        bool set_command( const std::string& command,
+                          const std::string& arg1 = {},
+                          const std::string& arg2 = {} ) override;
 
         // ロード中
-        const bool is_loading() const override;
+        bool is_loading() const override;
 
         // 規制中や行数や文字列がオーバーして書き込めない
-        const bool is_broken() override { return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }
+        bool is_broken() override { return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }
 
         // キーを押した        
-        const bool slot_key_press( GdkEventKey* event ) override;
+        bool slot_key_press( GdkEventKey* event ) override;
 
         void clock_in() override;
         void write() override;
@@ -114,7 +114,7 @@ namespace MESSAGE
         void close_view() override;
         void redraw_view() override;
         void focus_view() override;
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
 
       private:
 

@@ -34,7 +34,7 @@ namespace MISC
                                const VEC_IDF& vec_idf, const VEC_WORDS& vec_words );
 
     // tfidf1 と tfidf2 の相関計算
-    const double tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_TFIDF& vec_tfidf2 );
+    double tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_TFIDF& vec_tfidf2 );
 
     // スレ一覧からIDF 計算
     void tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
@@ -43,8 +43,8 @@ namespace MISC
 
     // str1 と str2 間のレーベンシュタイン距離
     // スレ一覧を使用できない場合に使う
-    const double leven( std::vector< std::vector< int > >& dist,
-                        const Glib::ustring& str1, const Glib::ustring& str2 );
+    double leven( std::vector< std::vector< int > >& dist,
+                  const Glib::ustring& str1, const Glib::ustring& str2 );
 }
 
 #endif

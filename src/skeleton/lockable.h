@@ -22,7 +22,7 @@ namespace SKELETON
         
         virtual ~Lockable() noexcept {}
 
-        const int get_lock() const { return m_lock; }
+        int get_lock() const { return m_lock; }
     
         void lock(){ ++m_lock; }
         void unlock(){

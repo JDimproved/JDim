@@ -31,7 +31,7 @@ void SelectListView::close_view()
 }
 
 
-const bool SelectListView::operate_view( const int control )
+bool SelectListView::operate_view( const int control )
 {
     bool ret = true;
 
@@ -82,7 +82,7 @@ Gtk::Menu* SelectListView::get_popupmenu( const std::string& url )
 //
 // 選択した行を開く 
 //
-const bool SelectListView::open_row( Gtk::TreePath& path, const bool tab )
+bool SelectListView::open_row( Gtk::TreePath& path, const bool tab )
 {
     if( ! get_treeview().get_row( path ) ) return false;
 

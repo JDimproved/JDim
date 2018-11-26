@@ -56,7 +56,7 @@ void Thread::slot_wrapper( STARTFUNC func, void* arg )
 
 
 // スレッド作成
-const bool Thread::create( STARTFUNC func , void* arg, const bool detach, const int stack_kbyte )
+bool Thread::create( STARTFUNC func , void* arg, const bool detach, const int stack_kbyte )
 {
     if( JDTH_ISRUNNING( m_thread ) ){
         MISC::ERRMSG( "Thread::create : thread is already running" );
@@ -146,7 +146,7 @@ const bool Thread::create( STARTFUNC func , void* arg, const bool detach, const 
 }
 
 
-const bool Thread::join()
+bool Thread::join()
 {
     if( ! JDTH_ISRUNNING( m_thread ) ) return true;
 

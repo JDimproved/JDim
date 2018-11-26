@@ -197,7 +197,7 @@ const std::string ArticleViewSearch::url_for_copy()
 //
 // コマンド
 //
-const bool ArticleViewSearch::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
+bool ArticleViewSearch::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     // URL とツールバーの状態を一致させる
     if( command == "set_toolbar_from_url" ){

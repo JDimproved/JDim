@@ -530,7 +530,7 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
 //
 // プロパティを扱うアクセッサ
 //
-const int Dom::nodeType()
+int Dom::nodeType()
 {
     return m_nodeType;
 }
@@ -635,7 +635,7 @@ void Dom::parentNode( Dom* parent )
 //
 // ノード：hasChildNodes
 //
-const bool Dom::hasChildNodes()
+bool Dom::hasChildNodes()
 {
     return ! m_childNodes.empty();
 }
@@ -859,7 +859,7 @@ void Dom::attributes( const std::map< std::string, std::string > attributes )
 //
 // 属性：hasAttributes()
 //
-const bool Dom::hasAttributes()
+bool Dom::hasAttributes()
 {
     return ! m_attributes.empty();
 }
@@ -868,7 +868,7 @@ const bool Dom::hasAttributes()
 //
 // 属性：hasAttribute()
 //
-const bool Dom::hasAttribute( const std::string& name )
+bool Dom::hasAttribute( const std::string& name )
 {
     if( name.empty() ) return false;
 

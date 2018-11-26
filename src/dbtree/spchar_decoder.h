@@ -18,7 +18,7 @@ namespace DBTREE
     //
     // 戻り値 : node.h で定義したノード番号
     //
-    const int decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check );
+    int decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check );
 }
 
 #endif

@@ -84,14 +84,14 @@ namespace JDLIB
         Loader( const bool low_priority );
         ~Loader();
 
-        const bool is_loading() const { return m_loading; }
+        bool is_loading() const { return m_loading; }
         const LOADERDATA& data() const { return m_data; }
         
         bool run( SKELETON::Loadable* cb, const LOADERDATA& data_in );
         void wait();
         void stop();
         
-        const bool get_low_priority() const { return m_low_priority; }
+        bool get_low_priority() const { return m_low_priority; }
 
         void create_thread();
 
@@ -103,14 +103,14 @@ namespace JDLIB
         void run_main();
         struct addrinfo* get_addrinfo( const std::string& hostname, const int port );
         const std::string create_msg_send();
-        const bool wait_recv_send( const int fd, const bool recv );
-        const bool send_connect( const int soc, std::string& errmsg );
+        bool wait_recv_send( const int fd, const bool recv );
+        bool send_connect( const int soc, std::string& errmsg );
 
         // ローディング終了処理
         void finish_loading();
 
         // ヘッダ用
-        const int receive_header( char* buf, size_t& read_size );
+        int receive_header( char* buf, size_t& read_size );
         bool analyze_header();
         std::string analyze_header_option( const std::string& option );
         std::list< std::string > analyze_header_option_list( const std::string& option );

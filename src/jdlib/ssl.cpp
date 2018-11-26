@@ -53,7 +53,7 @@ JDSSL::~JDSSL()
 }
 
 
-const bool JDSSL::connect( const int soc, const char *host )
+bool JDSSL::connect( const int soc, const char *host )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::connect(gnutls)\n";
@@ -105,7 +105,7 @@ const bool JDSSL::connect( const int soc, const char *host )
 }
 
 
-const bool JDSSL::close()
+bool JDSSL::close()
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::close(gnutlsl)\n";
@@ -125,7 +125,7 @@ const bool JDSSL::close()
 }
 
 
-const int JDSSL::write( const char* buf, const size_t bufsize )
+int JDSSL::write( const char* buf, const size_t bufsize )
 {
     int tmpsize = gnutls_record_send( m_session, buf, bufsize );
     if( tmpsize < 0 ) m_errmsg = "gnutls_record_send failed";
@@ -134,7 +134,7 @@ const int JDSSL::write( const char* buf, const size_t bufsize )
 }
 
 
-const int JDSSL::read( char* buf, const size_t bufsize )
+int JDSSL::read( char* buf, const size_t bufsize )
 {
     int tmpsize = gnutls_record_recv( m_session, buf, bufsize );
     if( tmpsize < 0 ) m_errmsg = "gnutls_record_recv failed";
@@ -181,7 +181,7 @@ JDSSL::~JDSSL()
 }
 
 
-const bool JDSSL::connect( const int soc, const char *host )
+bool JDSSL::connect( const int soc, const char *host )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::connect(openssl)\n";
@@ -223,7 +223,7 @@ const bool JDSSL::connect( const int soc, const char *host )
 }
 
 
-const bool JDSSL::close()
+bool JDSSL::close()
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::close(openssl)\n";
@@ -243,7 +243,7 @@ const bool JDSSL::close()
 }
 
 
-const int JDSSL::write( const char* buf, const size_t bufsize )
+int JDSSL::write( const char* buf, const size_t bufsize )
 {
     int tmpsize = SSL_write( m_ssl, buf, bufsize );
     if( tmpsize < 0 ) m_errmsg = "SSL_write failed";
@@ -252,7 +252,7 @@ const int JDSSL::write( const char* buf, const size_t bufsize )
 }
 
 
-const int JDSSL::read( char* buf, const size_t bufsize )
+int JDSSL::read( char* buf, const size_t bufsize )
 {
     int tmpsize = SSL_read( m_ssl, buf, bufsize );
     if( tmpsize < 0 ) m_errmsg = "SSL_read failed";

@@ -52,7 +52,7 @@ ArticleViewPreview::~ArticleViewPreview()
 //
 // viewの操作
 //
-const bool ArticleViewPreview::operate_view( const int control )
+bool ArticleViewPreview::operate_view( const int control )
 {
     if( control == CONTROL::None ) return false;
 

@@ -33,7 +33,7 @@ namespace CORE
 
         // 実行
         // 実行したら true を返す
-        const bool exec( const std::string& url, const std::string& link, const std::string& selection );
+        bool exec( const std::string& url, const std::string& link, const std::string& selection );
 
       private:
 

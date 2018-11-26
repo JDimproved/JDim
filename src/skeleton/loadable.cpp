@@ -57,7 +57,7 @@ void Loadable::clear_load_data()
 
 
 
-const bool Loadable::is_loading() const
+bool Loadable::is_loading() const
 {
     if( ! m_loader ) return false;
 
@@ -69,7 +69,7 @@ const bool Loadable::is_loading() const
 //
 // 更新時刻
 //
-const time_t Loadable::get_time_modified()
+time_t Loadable::get_time_modified()
 {
     time_t time_out;
     time_out = MISC::datetotime( m_date_modified );
@@ -204,7 +204,7 @@ void Loadable::callback_dispatch()
 
 // ローダから各種情報の取得
 
-const int Loadable::get_loader_code()
+int Loadable::get_loader_code()
 {
     if( ! m_loader ) return HTTP_INIT;
 
@@ -252,7 +252,7 @@ const std::string Loadable::get_loader_location()
 }
 
 
-const size_t Loadable::get_loader_length()
+size_t Loadable::get_loader_length()
 {
     if( ! m_loader ) return 0;
 

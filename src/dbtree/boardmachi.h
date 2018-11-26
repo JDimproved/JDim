@@ -39,7 +39,7 @@ namespace DBTREE
 
       private:
 
-        const bool is_valid( const std::string& filename ) override;
+        bool is_valid( const std::string& filename ) override;
         ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
         void parse_subject( const char* str_subject_txt ) override;
         void regist_article( const bool is_online ) override;

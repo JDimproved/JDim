@@ -76,11 +76,11 @@ bool initialized_loader = false;
 
 namespace JDLIB
 {
-    const bool get_token( JDLIB::Loader* loader );
+    bool get_token( JDLIB::Loader* loader );
     void return_token( JDLIB::Loader* loader );
 
     void push_loader_queue( JDLIB::Loader* loader );
-    const bool remove_loader_queue( JDLIB::Loader* loader );
+    bool remove_loader_queue( JDLIB::Loader* loader );
     void pop_loader_queue();
 }
 
@@ -94,7 +94,7 @@ bool disable_pop = false;
 
 
 // トークン取得
-const bool JDLIB::get_token( JDLIB::Loader* loader )
+bool JDLIB::get_token( JDLIB::Loader* loader )
 {
     JDLIB::LockGuard lock( mutex_token );
 
@@ -166,7 +166,7 @@ void JDLIB::push_loader_queue( JDLIB::Loader* loader )
 
 
 // キューから Loader を取り除いたらtrueを返す
-const bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
+bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
 {
     JDLIB::LockGuard lock( mutex_queue );
 
@@ -565,7 +565,7 @@ void* Loader::launcher( void* dat )
 }
 
 
-const bool Loader::send_connect( const int soc, std::string& errmsg )
+bool Loader::send_connect( const int soc, std::string& errmsg )
 {
     std::string authority;
     std::string msg_send;
@@ -1183,7 +1183,7 @@ const std::string Loader::create_msg_send()
 // buf : ヘッダが取り除かれたデータ
 // readsize: 出力データサイズ
 //
-const int Loader::receive_header( char* buf, size_t& read_size )
+int Loader::receive_header( char* buf, size_t& read_size )
 {
 #ifdef _DEBUG
     std::cout << "Loader::receive_header : read_size = " << read_size << std::endl;
@@ -1686,7 +1686,7 @@ bool Loader::unzip( char* buf, size_t& read_size )
 //
 // sent, recv待ち
 //
-const bool Loader::wait_recv_send( const int fd, const bool recv )
+bool Loader::wait_recv_send( const int fd, const bool recv )
 {
     if( !fd ) return true;
 

@@ -156,12 +156,12 @@ void JDWinMain::hide()
 }
 
 
-const int JDWinMain::get_x_win()
+int JDWinMain::get_x_win()
 {
     return SESSION::get_x_win_main();
 }
 
-const int JDWinMain::get_y_win()
+int JDWinMain::get_y_win()
 {
     return SESSION::get_y_win_main();
 }
@@ -176,12 +176,12 @@ void JDWinMain::set_y_win( const int y )
     SESSION::set_y_win_main( y );
 }
 
-const int JDWinMain::get_width_win()
+int JDWinMain::get_width_win()
 {
     return SESSION::get_width_win_main();
 }
 
-const int JDWinMain::get_height_win()
+int JDWinMain::get_height_win()
 {
     return SESSION::get_height_win_main();
 }
@@ -196,7 +196,7 @@ void JDWinMain::set_height_win( const int height )
     SESSION::set_height_win_main( height );
 }
 
-const bool JDWinMain::is_focus_win()
+bool JDWinMain::is_focus_win()
 {
     return SESSION::is_focus_win_main();
 }
@@ -207,7 +207,7 @@ void JDWinMain::set_focus_win( const bool set )
 }
 
 
-const bool JDWinMain::is_maximized_win()
+bool JDWinMain::is_maximized_win()
 {
     return SESSION::is_maximized_win_main();
 }
@@ -219,7 +219,7 @@ void JDWinMain::set_maximized_win( const bool set )
 }
 
 
-const bool JDWinMain::is_iconified_win()
+bool JDWinMain::is_iconified_win()
 {
     return SESSION::is_iconified_win_main();
 }
@@ -230,7 +230,7 @@ void JDWinMain::set_iconified_win( const bool set )
 }
 
 
-const bool JDWinMain::is_full_win()
+bool JDWinMain::is_full_win()
 {
     return SESSION::is_full_win_main();
 }
@@ -241,7 +241,7 @@ void JDWinMain::set_full_win( const bool set )
 }
 
 
-const bool JDWinMain::is_shown_win()
+bool JDWinMain::is_shown_win()
 {
     return SESSION::is_shown_win_main();
 }
@@ -344,7 +344,7 @@ bool JDWinMain::on_motion_notify_event( GdkEventMotion* event )
 }
 
 
-const bool JDWinMain::operate_win( const int control )
+bool JDWinMain::operate_win( const int control )
 {
     return CONTROL::operate_common( control, std::string(), NULL );
 }

@@ -87,7 +87,7 @@ Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 
 // 画像読み込み
 // 動画でpixbufonly = true の時はアニメーションさせない
-const bool ImgLoader::load( const bool pixbufonly )
+bool ImgLoader::load( const bool pixbufonly )
 {
     JDLIB::LockGuard lock( m_loader_lock );
     return load_imgfile( pixbufonly ? LOADLEVEL_PIXBUFONLY : LOADLEVEL_NORMAL );
@@ -97,7 +97,7 @@ const bool ImgLoader::load( const bool pixbufonly )
 /* create PixbufLoader ************************************/
 
 // private, NOT thread safe
-const bool ImgLoader::load_imgfile( const int loadlevel )
+bool ImgLoader::load_imgfile( const int loadlevel )
 {
     if( m_loader ) {
         // キャッシュに読み込んだデータが十分かどうか

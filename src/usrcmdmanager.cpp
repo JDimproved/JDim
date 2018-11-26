@@ -277,7 +277,7 @@ void Usrcmd_Manager::exec( const std::string command, // コマンド
 //
 // 文字列置換用テキストダイアログ表示
 //
-const bool Usrcmd_Manager::show_replacetextdiag( std::string& texti, const std::string& title )
+bool Usrcmd_Manager::show_replacetextdiag( std::string& texti, const std::string& title )
 {
     if( ! texti.empty() ) return true;
 
@@ -410,7 +410,7 @@ const std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
 //
 // メニューをアクティブにするか
 //
-const bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::string& selection )
+bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::string& selection )
 {
     const unsigned int max_selection_str = 1024;
 
@@ -450,7 +450,7 @@ const bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const
 //
 // メニューを隠すか
 //
-const bool Usrcmd_Manager::is_hide( int num, const std::string& url )
+bool Usrcmd_Manager::is_hide( int num, const std::string& url )
 {
     if( num >= m_size ) return false;
 

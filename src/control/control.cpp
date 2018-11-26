@@ -61,7 +61,7 @@ void Control::clear_mode()
 
 
 // 戻り値はコントロールID
-const int Control::key_press( const GdkEventKey* event )
+int Control::key_press( const GdkEventKey* event )
 {
     guint key = event->keyval;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
@@ -112,7 +112,7 @@ const int Control::key_press( const GdkEventKey* event )
 
 
 // 戻り値はコントロールID
-const int Control::button_press( const GdkEventButton* event )
+int Control::button_press( const GdkEventButton* event )
 {
     const guint button = event->button;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
@@ -133,7 +133,7 @@ const int Control::button_press( const GdkEventButton* event )
 
 
 // eventがidに割り当てられていたらtrue
-const bool Control::button_alloted( const GdkEventButton* event, const int id )
+bool Control::button_alloted( const GdkEventButton* event, const int id )
 {
     const guint button = event->button;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
@@ -147,7 +147,7 @@ const bool Control::button_alloted( const GdkEventButton* event, const int id )
 
 
 // ID からevent取得
-const bool Control::get_eventbutton( const int id, GdkEventButton& event )
+bool Control::get_eventbutton( const int id, GdkEventButton& event )
 {
     guint button;
     bool ctrl;
@@ -186,7 +186,7 @@ void Control::MG_reset()
 }
 
 
-const bool Control::MG_start( const GdkEventButton* event )
+bool Control::MG_start( const GdkEventButton* event )
 {
     if( ! CONFIG::get_enable_mg() ) return false;
 
@@ -207,7 +207,7 @@ const bool Control::MG_start( const GdkEventButton* event )
 
 
 
-const bool Control::MG_motion( const GdkEventMotion* event )
+bool Control::MG_motion( const GdkEventMotion* event )
 {
     if( ! m_mg ) return false;
     if( m_mg_lng >= MAX_MG_LNG ) return false;
@@ -288,7 +288,7 @@ const bool Control::MG_motion( const GdkEventMotion* event )
 
 
 // 戻り値はコントロールID
-const int Control::MG_end( const GdkEventButton* event )
+int Control::MG_end( const GdkEventButton* event )
 {
     if( ! m_mg ) return None;
 
@@ -341,7 +341,7 @@ void Control::MG_wheel_reset()
 
 
 // ホイールマウスジェスチャ開始
-const bool Control::MG_wheel_start( const GdkEventButton* event )
+bool Control::MG_wheel_start( const GdkEventButton* event )
 {
     MG_wheel_reset();
 
@@ -356,7 +356,7 @@ const bool Control::MG_wheel_start( const GdkEventButton* event )
 
 
 // ホイールマウスジェスチャ。 戻り値はコントロールID
-const int Control::MG_wheel_scroll( const GdkEventScroll* event )
+int Control::MG_wheel_scroll( const GdkEventScroll* event )
 {
     int control = CONTROL::None;
 
@@ -428,7 +428,7 @@ const int Control::MG_wheel_scroll( const GdkEventScroll* event )
 
 // ホイールマウスジェスチャ終了
 // もしジェスチャが実行されたら true が戻る
-const bool Control::MG_wheel_end( const GdkEventButton* event )
+bool Control::MG_wheel_end( const GdkEventButton* event )
 {
 #ifdef _DEBUG
     std::cout << "Control::MG_wheel_end\n";

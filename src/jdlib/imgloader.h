@@ -47,7 +47,7 @@ namespace JDLIB
         
         void request_stop();
         
-        const bool load( const bool pixbufonly = false );
+        bool load( const bool pixbufonly = false );
         Glib::RefPtr<Gdk::Pixbuf> get_pixbuf( const bool pixbufonly = false );
         Glib::RefPtr<Gdk::PixbufAnimation> get_animation();
         
@@ -55,7 +55,7 @@ namespace JDLIB
         
     private:
         ImgLoader( const std::string& file );
-        const bool load_imgfile( const int loadlevel );
+        bool load_imgfile( const int loadlevel );
         
         void slot_size_prepared( int w, int h );
         void slot_area_updated(int x, int y, int w, int h );

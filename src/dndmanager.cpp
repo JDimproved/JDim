@@ -38,7 +38,7 @@ void CORE::DND_End()
 }
 
 
-const bool CORE::DND_Now_dnd()
+bool CORE::DND_Now_dnd()
 {
     CORE::DND_Manager* manager = CORE::get_dnd_manager();
     if( manager ) return manager->now_dnd();

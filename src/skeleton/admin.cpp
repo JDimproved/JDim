@@ -295,7 +295,7 @@ void Admin::delete_jdwin()
 }
 
 
-const bool Admin::is_booting()
+bool Admin::is_booting()
 {
     if( get_jdwin() && get_jdwin()->is_booting() ) return true;
 
@@ -2583,7 +2583,7 @@ std::list< bool > Admin::get_locked()
 }
 
 // タブのロック/アンロック
-const bool Admin::is_lockable( const int page )
+bool Admin::is_lockable( const int page )
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) return view->is_lockable();
@@ -2591,7 +2591,7 @@ const bool Admin::is_lockable( const int page )
     return false;
 }
 
-const bool Admin::is_locked( const int page )
+bool Admin::is_locked( const int page )
 {
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
     if( view ) return view->is_locked();
@@ -2599,7 +2599,7 @@ const bool Admin::is_locked( const int page )
     return false;
 }
 
-const bool Admin::is_locked( const std::string& url )
+bool Admin::is_locked( const std::string& url )
 {
     SKELETON::View* view = get_view( url );
     if( view ) return view->is_locked();
@@ -2626,7 +2626,7 @@ void Admin::unlock( const int page )
 }
 
 // urlで指定されるタブが存在するか
-const bool Admin::exist_tab( const std::string& url )
+bool Admin::exist_tab( const std::string& url )
 {
     SKELETON::View* view = get_view( url );
     if( view ) return true;
@@ -2686,7 +2686,7 @@ void Admin::forward_clicked_viewhistory( const int count )
 //
 // 戻る、進む
 //
-const bool Admin::back_forward_viewhistory( const std::string& url, const bool back, const int count )
+bool Admin::back_forward_viewhistory( const std::string& url, const bool back, const int count )
 {
     if( ! m_use_viewhistory ) return false;
 

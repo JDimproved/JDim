@@ -509,7 +509,7 @@ const std::string MISC::recover_quot( const std::string& str )
 //
 // str 中に含まれている str2 の 数を返す
 //
-const int MISC::count_str( const std::string& str, const std::string& str2  )
+int MISC::count_str( const std::string& str, const std::string& str2  )
 {
     int count = 0;
     size_t found, pos = 0;
@@ -527,7 +527,7 @@ const int MISC::count_str( const std::string& str, const std::string& str2  )
 //
 // str 中に含まれている chr の 数を返す
 //
-const int MISC::count_chr( const std::string& str, const char chr )
+int MISC::count_chr( const std::string& str, const char chr )
 {
     int count = 0;
     const int size = str.size();
@@ -550,7 +550,7 @@ const int MISC::count_chr( const std::string& str, const char chr )
 //
 // 戻り値: 数値
 //
-const int MISC::str_to_uint( const char* str, size_t& dig, size_t& n )
+int MISC::str_to_uint( const char* str, size_t& dig, size_t& n )
 {
     int out = 0;
     dig = 0;
@@ -644,7 +644,7 @@ const std::string MISC::intlisttostr( const std::list< int >& list_num )
 // 出力 : char_out 
 // 戻り値: 変換に成功した chr_in のバイト数
 //
-const size_t MISC::chrtobin( const char* chr_in, char* chr_out )
+size_t MISC::chrtobin( const char* chr_in, char* chr_out )
 {
     if( ! chr_in ) return 0;
 
@@ -705,7 +705,7 @@ const std::string MISC::cut_str( const std::string& str, const unsigned int maxs
 
 #define REGEX_METACHARS ".+*?^$|{}[]()\\"
 
-const bool MISC::has_regex_metachar( const std::string& str, const bool escape )
+bool MISC::has_regex_metachar( const std::string& str, const bool escape )
 {
     const char metachars[] = REGEX_METACHARS;
     const size_t str_length = str.length();
@@ -948,7 +948,7 @@ const std::string MISC::html_unescape( const std::string& str )
 // 戻り値 : スキームタイプ
 // length    : "http://"等の文字数
 //
-const int MISC::is_url_scheme_impl( const char* str_in, int* length )
+int MISC::is_url_scheme_impl( const char* str_in, int* length )
 {
     int scheme = SCHEME_NONE;
     int len = 0;
@@ -1030,7 +1030,7 @@ static const char s_url_char[ 128 ] = {
 //      p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 0, 1, 0,
 };
-const bool MISC::is_url_char( const char* str_in, const bool loose_url )
+bool MISC::is_url_char( const char* str_in, const bool loose_url )
 {
     unsigned char c = (unsigned char)(*str_in);
 
@@ -1259,7 +1259,7 @@ const std::string MISC::Iconv( const std::string& str, const std::string& coding
 //
 // 例 : &#9999; なら 戻り値 = 4、 offset = 2
 //
-const int MISC::spchar_number_ln( const char* in_char, int& offset )
+int MISC::spchar_number_ln( const char* in_char, int& offset )
 {
     int lng = 0;
     offset = 2;
@@ -1316,7 +1316,7 @@ const int MISC::spchar_number_ln( const char* in_char, int& offset )
 //
 // 戻り値 : 「&#数字;」の中の数字(int型)
 //
-const int MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
+int MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
 {
     char str_num[ 16 ];
 
@@ -1382,7 +1382,7 @@ const std::string MISC::decode_spchar_number( const std::string& str )
 //
 // 戻り値 : ucs2
 //
-const int MISC::utf8toucs2( const char* utfstr, int& byte )
+int MISC::utf8toucs2( const char* utfstr, int& byte )
 {
     int ucs2 = 0;
     byte = 0;
@@ -1435,7 +1435,7 @@ const int MISC::utf8toucs2( const char* utfstr, int& byte )
 //
 // 戻り値 : バイト数
 //
-const int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
+int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
 {
     int byte = 0;
 
@@ -1473,7 +1473,7 @@ const int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
 //
 // ucs2 の種類
 //
-const int MISC::get_ucs2mode( const int ucs2 )
+int MISC::get_ucs2mode( const int ucs2 )
 {
     if( ucs2 >= 0x0000 && ucs2 <= 0x007f ) return UCS2MODE_BASIC_LATIN;
     if( ucs2 >= 0x3040 && ucs2 <= 0x309f ) return UCS2MODE_HIRA;
@@ -1686,7 +1686,7 @@ std::vector< std::string > MISC::recover_path( std::vector< std::string >&& list
 //
 // 文字列(utf-8)に全角英数字が含まれるか判定する
 //
-const bool MISC::has_widechar( const char* str )
+bool MISC::has_widechar( const char* str )
 {
     while( *str != '\0' ){
 

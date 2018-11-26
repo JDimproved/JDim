@@ -110,7 +110,7 @@ namespace SKELETON
 
         // マウスジェスチャ
         void set_enable_mg( bool mg ){ m_enable_mg = mg; }
-        const bool enable_mg() const { return m_enable_mg; }
+        bool enable_mg() const { return m_enable_mg; }
 
         // オートリロードのカウンタをインクリメント
         // 指定秒数を越えたら true を返す
@@ -123,11 +123,11 @@ namespace SKELETON
         void reset_autoreload_counter(); 
 
         // オートリロード間隔設定
-        const int get_autoreload_sec() const{ return m_autoreload_sec; }
+        int get_autoreload_sec() const { return m_autoreload_sec; }
         void set_autoreload_sec( const int sec ){ m_autoreload_sec = sec; }
 
         // オートリロード用のカウンタ
-        const int get_autoreload_counter() const{ return m_autoreload_counter; }
+        int get_autoreload_counter() const { return m_autoreload_counter; }
         void set_autoreload_counter( const int counter ) { m_autoreload_counter = counter; }
 
         // 数字入力ジャンプカウンタのインクリメント
@@ -138,7 +138,7 @@ namespace SKELETON
         void reset_keyjump_counter(); 
 
         // 数字入力ジャンプ用に sig_key_press() から呼び出す
-        const bool release_keyjump_key( int key );
+        bool release_keyjump_key( int key );
 
         // ポップアップメニュー表示
         void show_popupmenu( const std::string& url, bool use_slot = false );
@@ -184,31 +184,30 @@ namespace SKELETON
         // タブの切り替えのときに Admin から参照される
         // コンストラクタであらかじめ指定しておくこと
         void set_id_toolbar( const int id ) { m_id_toolbar = id; }
-        const int get_id_toolbar() const { return m_id_toolbar; }
+        int get_id_toolbar() const { return m_id_toolbar; }
 
         // ロック/アンロック
-        const bool is_lockable() const { return m_lockable; }
+        bool is_lockable() const { return m_lockable; }
         void set_lockable( const bool lockable ){ m_lockable = lockable; }
-        const bool is_locked() const { return m_locked; }
+        bool is_locked() const { return m_locked; }
         virtual void lock(){ m_locked = true; }
         virtual void unlock(){ m_locked = false; }
 
         // 書き込み可能/不可能
-        const bool is_writeable() const { return m_writeable; }
+        bool is_writeable() const { return m_writeable; }
         void set_writeable( const bool writeable ){ m_writeable = writeable; }
 
         // ポップアップ時に全ての領域を表示できないならカーソルの上に表示
-        const bool get_popup_upside() const { return m_popup_upside; }
+        bool get_popup_upside() const { return m_popup_upside; }
         void set_popup_upside( const bool upside ){ m_popup_upside = upside; }
 
         // view 上にマウスポインタがあれば true
-        const bool is_mouse_on_view();
+        bool is_mouse_on_view();
 
         // 各view個別のコマンド
-        virtual const bool set_command( const std::string& command,
-                                        const std::string& arg1 = std::string(),
-                                        const std::string& arg2 = std::string()
-            ){ return true; }
+        virtual bool set_command( const std::string& command,
+                                  const std::string& arg1 = {},
+                                  const std::string& arg2 = {} ) { return true; }
 
         // コピー用のURL
         virtual const std::string url_for_copy(){ return m_url; }
@@ -223,47 +222,47 @@ namespace SKELETON
         virtual const std::string& get_status(){ return m_status; }
 
         // クライアント領域の幅、高さ
-        virtual const int width_client(){ return m_width_client; }
-        virtual const int height_client(){ return m_height_client; }
+        virtual int width_client(){ return m_width_client; }
+        virtual int height_client(){ return m_height_client; }
         void set_width_client( int val ){ m_width_client = val; }
         void set_height_client( int val ){ m_height_client = val; }
 
         // オートリロード可能か
-        const bool get_enable_autoreload() const { return m_enable_autoreload; }
+        bool get_enable_autoreload() const { return m_enable_autoreload; }
 
         // オートリロードのモード設定
         void set_autoreload_mode( int mode, int sec );
 
         // 現在のオートリロードのモード取得
-        const int get_autoreload_mode() const { return m_autoreload_mode; }
+        int get_autoreload_mode() const { return m_autoreload_mode; }
 
         // ロード時にキャッシュを削除してからviewを再読み込みする
-        const bool get_reget() const{ return m_reget; }
+        bool get_reget() const{ return m_reget; }
         void set_reget( const bool reget ){ m_reget = reget; }
 
         // アイコンのID取得
-        virtual const int get_icon( const std::string& iconname ){ return -1; }
+        virtual int get_icon( const std::string& iconname ){ return -1; }
 
         // ロード中
-        virtual const bool is_loading() const { return false; }
+        virtual bool is_loading() const { return false; }
 
         // 更新した
-        virtual const bool is_updated(){ return false;}
+        virtual bool is_updated(){ return false;}
 
         // 更新チェックして更新可能か
-        virtual const bool is_check_update(){ return false;}
+        virtual bool is_check_update(){ return false;}
 
         // 古いデータか
-        virtual const bool is_old(){ return false;}
+        virtual bool is_old(){ return false;}
 
         // 壊れているか
-        virtual const bool is_broken(){ return false; }
+        virtual bool is_broken(){ return false; }
 
         // ラベルやステータスバーの色
         const std::string get_color();
 
         // キーを押した
-        virtual const bool slot_key_press( GdkEventKey* event ){ return false; }
+        virtual bool slot_key_press( GdkEventKey* event ){ return false; }
 
         // クロック入力
         // clock_in()はビューがアクティブのときに呼び出される
@@ -286,7 +285,7 @@ namespace SKELETON
         virtual void delete_view(){}
         virtual void set_favorite(){}
         virtual void update_item( const std::string& url, const std::string& id ){}
-        virtual const bool operate_view( const int ) = 0;
+        virtual bool operate_view( const int ) = 0;
         virtual void goto_top(){}
         virtual void goto_bottom(){}
         virtual void goto_num( const int num_to, const int num_from ){}

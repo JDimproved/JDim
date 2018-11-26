@@ -36,11 +36,11 @@ namespace ARTICLE
         // SKELETON::View の関数のオーバロード
 
         const std::string url_for_copy() override; // コピーやURLバー表示用のURL
-        const bool set_command( const std::string& command,
-                                const std::string& arg1 = {},
-                                const std::string& arg2 = {} ) override;
+        bool set_command( const std::string& command,
+                          const std::string& arg1 = {},
+                          const std::string& arg2 = {} ) override;
 
-        const bool is_loading() const override { return m_loading; }
+        bool is_loading() const override { return m_loading; }
 
         void focus_view() override;
         void show_view() override;
@@ -51,8 +51,8 @@ namespace ARTICLE
         // 検索
         void exec_search() override;
         void operate_search( const std::string& controlid ) override;
-        const bool get_enable_bm() const{ return m_enable_bm; }
-        const bool get_bm() const { return m_bm; }
+        bool get_enable_bm() const { return m_enable_bm; }
+        bool get_bm() const { return m_bm; }
         void set_bm( const bool set ){ m_bm = set; }
 
       protected:

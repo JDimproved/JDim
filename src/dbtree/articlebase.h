@@ -82,7 +82,7 @@ namespace DBTREE
         bool m_abone_global; // 全体レベルでのあぼーんを有効にする
 
         // 「スレ」がスレ一覧でブックマークされているか
-        bool m_bookmarked_thread;          
+        bool m_bookmarked_thread;
 
         // 「レス」のブックマーク
         std::vector< char > m_vec_bookmark; // ブックマーク判定キャッシュ
@@ -94,7 +94,7 @@ namespace DBTREE
         bool m_cached;
 
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
-        bool m_read_info; 
+        bool m_read_info;
 
         // true ならunlock_impl()がコールバックされたときに情報保存
         bool m_save_info;
@@ -114,19 +114,19 @@ namespace DBTREE
         void set_is_924( const bool is924 ){ m_924 = is924; }
 
         // dat落ちしたスレをロードするか
-        virtual const bool is_load_olddat(){ return false; }
+        virtual bool is_load_olddat(){ return false; }
 
       public:
 
         ArticleBase( const std::string& datbase, const std::string& id, bool cached );
         ~ArticleBase();
 
-        const bool empty();
+        bool empty();
 
         const std::string& get_url() const { return m_url; }
 
         // ID がこのスレのものかどうか
-        virtual const bool equal( const std::string& datbase, const std::string& id );
+        virtual bool equal( const std::string& datbase, const std::string& id );
 
         // 移転があったときなどにdatファイルのベースアドレスを更新
         void update_datbase( const std::string& datbase );
@@ -141,19 +141,19 @@ namespace DBTREE
         const std::string& get_id() const { return m_id; }
         const std::string& get_key() const { return m_key; }
         const std::string& get_subject() const { return m_subject; }
-        const int get_number() const { return m_number; }
-        const int get_number_diff() const { return m_number_diff; }
-        const int get_number_new() const { return m_number_new; }
-        const int get_number_load() const { return m_number_load; }
-        const int get_number_seen() const{  return m_number_seen; }
+        int get_number() const { return m_number; }
+        int get_number_diff() const { return m_number_diff; }
+        int get_number_new() const { return m_number_new; }
+        int get_number_load() const { return m_number_load; }
+        int get_number_seen() const{  return m_number_seen; }
 
         void set_number_max( const int number ){ m_number_max = number; }
 
         // スレ速度
-        const int get_speed();
+        int get_speed();
 
         // キャッシュにあるdatファイルのサイズ
-        const size_t get_lng_dat();
+        size_t get_lng_dat();
 
         // nodetree の number 番のレスのヘッダノードのポインタを返す
         NODE* res_header( int number );
@@ -209,7 +209,7 @@ namespace DBTREE
         const std::list< int > get_res_query( const std::string& query, const bool mode_or );
 
         // number番のレスの文字列を返す
-        // ref == true なら先頭に ">" を付ける        
+        // ref == true なら先頭に ">" を付ける
         const std::string get_res_str( int number, bool ref = false );
 
         // number　番のレスの生文字列を返す
@@ -218,12 +218,12 @@ namespace DBTREE
         // 書き込み時の名前とメアド
         const std::string& get_write_name() const { return m_write_name; }
         void set_write_name( const std::string& str ){ m_save_info = true; m_write_name = str; }
-        const bool get_write_fixname() const { return m_write_fixname; }
+        bool get_write_fixname() const { return m_write_fixname; }
         void set_write_fixname( bool set ){ m_save_info = true;  m_write_fixname = set; }
 
         const std::string& get_write_mail() const { return m_write_mail; }
         void set_write_mail( const std::string& str ){ m_save_info = true;  m_write_mail = str; }
-        const bool get_write_fixmail() const { return m_write_fixmail; }
+        bool get_write_fixmail() const { return m_write_fixmail; }
         void set_write_fixmail( bool set ){ m_save_info = true; m_write_fixmail = set; }
 
         // 書き込みメッセージ作成
@@ -232,7 +232,7 @@ namespace DBTREE
 
         // bbscgi のURL
         virtual const std::string url_bbscgi() { return std::string(); }
-        
+
         // subbbscgi のURL
         virtual const std::string url_subbbscgi() { return std::string(); }
 
@@ -248,13 +248,13 @@ namespace DBTREE
         void reset_write_date(){ m_write_time_date = std::string(); }
 
         // 書き込み数
-        const int get_num_posted();
+        int get_num_posted();
 
         // 自分の書き込みか
-        const bool is_posted( const int number );
+        bool is_posted( const int number );
 
         // 自分の書き込みにレスしたか
-        const bool is_refer_posted( const int number );
+        bool is_refer_posted( const int number );
 
         // 書き込みマークセット
         void set_posted( const int number, const bool set );
@@ -273,19 +273,19 @@ namespace DBTREE
         void set_date_modified( const std::string& date ){ m_date_modified = date; }
 
         // スレが立ってからの経過時間( 時間 )
-        const int get_hour();
+        int get_hour();
 
         // http コード
-        const int get_code() const { return m_code; }
+        int get_code() const { return m_code; }
         const std::string& get_str_code() const { return m_str_code; }
 
         // エラーメッセージ
         const std::string& get_ext_err() const { return m_ext_err; }
 
         // DAT落ちかどうかなどの状態 ( global.hで定義 )
-        const int get_status() const{ return m_status; }
+        int get_status() const { return m_status; }
         void set_status( const int status ){ m_status = status; }
-        
+
         void set_subject( const std::string& subject );
         void set_number( const int number, const bool is_online );
         void set_number_load( const int number_load );
@@ -300,17 +300,17 @@ namespace DBTREE
         bool save_dat( const std::string& path_to );
 
         // HDDにキャッシュされているか
-        const bool is_cached() const { return m_cached; }
+        bool is_cached() const { return m_cached; }
         void set_cached( const bool set ){ m_cached = set; }
 
         // キャッシュがarticlebaseに読み込まれている(nodetree!=NULL)か
-        const bool is_cache_read() const { return ( m_nodetree ); }
+        bool is_cache_read() const { return ( m_nodetree ); }
 
         // キャッシュがあって、かつ新着の読み込みが可能
-        const bool enable_load();
+        bool enable_load();
 
         // キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
-        const bool is_finished();
+        bool is_finished();
 
         // あぼーん情報
         const std::list< std::string >& get_abone_list_id(){ return m_list_abone_id; }
@@ -320,22 +320,22 @@ namespace DBTREE
         const std::vector< char >& get_abone_vec_res(){ return m_vec_abone_res; }
 
         // 透明
-        const bool get_abone_transparent();
+        bool get_abone_transparent();
 
         // 連鎖
-        const bool get_abone_chain();
+        bool get_abone_chain();
 
         // ageあぼーん
-        const bool get_abone_age() const { return m_abone_age; }
+        bool get_abone_age() const { return m_abone_age; }
 
         // 板レベルでのあぼーん
-        const bool get_abone_board() const { return m_abone_board; }
+        bool get_abone_board() const { return m_abone_board; }
 
         // 全体レベルでのあぼーん
-        const bool get_abone_global() const { return m_abone_global; }        
+        bool get_abone_global() const { return m_abone_global; }
 
         // number番のレスがあぼーんされているか
-        const bool get_abone( int number );
+        bool get_abone( int number );
 
         // 全レスのあぼーん状態の更新
         void update_abone();
@@ -364,11 +364,11 @@ namespace DBTREE
 
         // 「スレ」のブックマーク
         void set_bookmarked_thread( const bool bookmarked );
-        const bool is_bookmarked_thread() const { return m_bookmarked_thread; }
+        bool is_bookmarked_thread() const { return m_bookmarked_thread; }
 
         // 「レス」のブックマーク
-        const int get_num_bookmark();
-        const bool is_bookmarked( const int number );
+        int get_num_bookmark();
+        bool is_bookmarked( const int number );
         void set_bookmark( const int number, const bool set );
 
         // 情報ファイル読み込み
@@ -378,8 +378,8 @@ namespace DBTREE
         // キャッシュがあって、force = true の時は強制書き込み
         virtual void save_info( const bool force );
 
-        const bool is_loading() const; // ロード中か
-        const bool is_checking_update();  // 更新チェック中か
+        bool is_loading() const; // ロード中か
+        bool is_checking_update();  // 更新チェック中か
 
         // スレッドのロード停止
         void stop_load();
@@ -399,12 +399,12 @@ namespace DBTREE
         void copy_article_info( const std::string& url_src );
 
         // スレッド924か
-        const bool is_924() const{ return m_924; }
+        bool is_924() const { return m_924; }
 
       private:
 
         // 更新チェック可能
-        virtual const bool enable_check_update(){ return true; }
+        virtual bool enable_check_update() { return true; }
 
         // NodeTree作成
         // もしNodeTreeが作られていなかったら作成

@@ -180,7 +180,7 @@ void ImageAreaBase::load_image_thread()
 }
 
 
-const bool ImageAreaBase::create_imgloader( const bool pixbufonly, std::string& errmsg )
+bool ImageAreaBase::create_imgloader( const bool pixbufonly, std::string& errmsg )
 {
     m_imgloader = JDLIB::ImgLoader::get_loader( m_img->get_cache_path() );
     bool ret = m_imgloader->load( pixbufonly );

@@ -62,7 +62,7 @@ namespace MESSAGE
 
       private:
 
-        const bool delete_message( SKELETON::View * view );
+        bool delete_message( SKELETON::View * view );
 
         // 復元をしない
         void restore( const bool only_locked ) override {}

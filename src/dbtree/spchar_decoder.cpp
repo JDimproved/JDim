@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 
-const bool check_spchar( const char* n_in, const char* spchar )
+bool check_spchar( const char* n_in, const char* spchar )
 {
     int i = 0;
     while( spchar[ i ] != '\0' ){
@@ -37,7 +37,7 @@ const bool check_spchar( const char* n_in, const char* spchar )
 //
 // 戻り値 : node.h で定義したノード番号
 //
-const int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
+int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
 {
     int ret = DBTREE::NODE_TEXT;
     n_in = n_out = 0;
@@ -86,7 +86,7 @@ const int decode_char_number( const char* in_char, int& n_in,  char* out_char, i
 //
 // 戻り値 : node.h で定義したノード番号
 //
-const int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
+int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
 {
     // 1文字目が&以外の場合は出力しない
     if( in_char[ 0 ] != '&' ){

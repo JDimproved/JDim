@@ -342,7 +342,7 @@ void JDWindow::set_win_pos()
 
 
 // hide 中
-const bool JDWindow::is_hide()
+bool JDWindow::is_hide()
 {
     return ( m_mode == JDWIN_HIDE );
 }

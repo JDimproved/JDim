@@ -70,10 +70,10 @@ namespace SKELETON
         void set_spacing( int space );
 
         // hide 中
-        const bool is_hide();
+        bool is_hide();
 
         // 起動中
-        const bool is_booting() const { return m_boot; }
+        bool is_booting() const { return m_boot; }
 
         void pack_remove_start( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
         void pack_remove_end( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
@@ -105,29 +105,29 @@ namespace SKELETON
 
         virtual void switch_admin(){}
 
-        virtual const int get_x_win() = 0;
-        virtual const int get_y_win() = 0;
+        virtual int get_x_win() = 0;
+        virtual int get_y_win() = 0;
         virtual void set_x_win( const int x ) = 0;
         virtual void set_y_win( const int y ) = 0;
 
-        virtual const int get_width_win() = 0;
-        virtual const int get_height_win() = 0;
+        virtual int get_width_win() = 0;
+        virtual int get_height_win() = 0;
         virtual void set_width_win( const int width ) = 0;
         virtual void set_height_win( const int height ) = 0;
 
-        virtual const bool is_focus_win() = 0;
+        virtual bool is_focus_win() = 0;
         virtual void set_focus_win( const bool set ) = 0;
 
-        virtual const bool is_maximized_win() = 0;
+        virtual bool is_maximized_win() = 0;
         virtual void set_maximized_win( const bool set ) = 0;
 
-        virtual const bool is_iconified_win() = 0;
+        virtual bool is_iconified_win() = 0;
         virtual void set_iconified_win( const bool set ) = 0;
 
-        virtual const bool is_full_win() = 0;
+        virtual bool is_full_win() = 0;
         virtual void set_full_win( const bool set ) = 0;
 
-        virtual const bool is_shown_win() = 0;
+        virtual bool is_shown_win() = 0;
         virtual void set_shown_win( const bool set ) = 0;
 
         bool on_focus_in_event( GdkEventFocus* event ) override;

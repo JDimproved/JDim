@@ -129,7 +129,7 @@ void HistorySubMenu::restore_history()
 
 
 // 履歴を開く
-const bool HistorySubMenu::open_history( const int i )
+bool HistorySubMenu::open_history( const int i )
 {
     bool ret = false;
     CORE::DATA_INFO_LIST info_list;

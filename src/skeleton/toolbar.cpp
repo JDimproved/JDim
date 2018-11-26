@@ -88,7 +88,7 @@ void ToolBar::set_url( const std::string& url )
 }
 
 
-const bool ToolBar::is_empty()
+bool ToolBar::is_empty()
 {
     return ( ! m_buttonbar.get_children().size() );
 }

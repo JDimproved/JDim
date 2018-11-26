@@ -61,7 +61,7 @@ void MouseKeyConf::save_conf( const std::string& savefile )
 
 
 // 操作からID取得
-const int MouseKeyConf::get_id( const int mode,
+int MouseKeyConf::get_id( const int mode,
                           const guint motion, const bool ctrl, const bool shift, const bool alt,
                           const bool dblclick, const bool trpclick )
 {
@@ -86,7 +86,7 @@ const int MouseKeyConf::get_id( const int mode,
 
 // ID から操作を取得
 // (注意) リストの一番上にあるものを出力
-const bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick, bool& trpclick )
+bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick, bool& trpclick )
 {
     std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
@@ -109,7 +109,7 @@ const bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bo
 
 
 // ID が割り当てられているかチェック
-const bool MouseKeyConf::alloted( const int id,
+bool MouseKeyConf::alloted( const int id,
                             const guint motion, const bool ctrl, const bool shift, const bool alt,
                             const bool dblclick, const bool trpclick )
 {
@@ -232,7 +232,7 @@ void MouseKeyConf::set_one_motion( const std::string& name, const std::string& s
 
 // 指定したIDの操作を全て削除
 // 削除したら true を返す
-const bool MouseKeyConf::remove_motions( const int id )
+bool MouseKeyConf::remove_motions( const int id )
 {
     bool ret = false;
 
