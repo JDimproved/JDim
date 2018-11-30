@@ -38,60 +38,60 @@ namespace IMAGE
         ImageAdmin( const std::string& url );
         ~ImageAdmin();
 
-        virtual void save_session();
+        void save_session() override;
 
         Gtk::HBox& tab() { return m_tab; }
-        virtual Gtk::Widget* get_widget() { return &m_view; }
+        Gtk::Widget* get_widget() override { return &m_view; }
 
-        virtual bool empty();
-        virtual void clock_in();
+        bool empty() override;
+        void clock_in() override;
 
         // タブの数
-        virtual int get_tab_nums();
+        int get_tab_nums() override;
 
         // 含まれているページのURLのリスト取得
-        virtual const std::list< std::string > get_URLs();
+        const std::list< std::string > get_URLs() override;
 
         // 現在表示してるページ番号
-        virtual int get_current_page();
+        int get_current_page() override;
 
       protected:
 
-        virtual void command_local( const COMMAND_ARGS& command );
+        void command_local( const COMMAND_ARGS& command ) override;
 
-        virtual void restore( const bool only_locked );
-        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
+        void restore( const bool only_locked ) override;
+        COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ) override;
 
-        virtual void switch_admin();
-        virtual void open_view( const COMMAND_ARGS& command );
-        virtual void tab_left( const bool updated );
-        virtual void tab_right( const bool updatd );
-        virtual void tab_head();
-        virtual void tab_tail();
-        virtual void redraw_view( const std::string& url );
-        virtual void redraw_current_view();
-        virtual void close_view( const std::string& url );
-        virtual void close_other_views( const std::string& url );
-        virtual void restore_lasttab();
-        virtual void focus_view( int page );
-        virtual void focus_current_view();
-        virtual void open_window();
-        virtual void close_window();
+        void switch_admin() override;
+        void open_view( const COMMAND_ARGS& command ) override;
+        void tab_left( const bool updated ) override;
+        void tab_right( const bool updatd ) override;
+        void tab_head() override;
+        void tab_tail() override;
+        void redraw_view( const std::string& url ) override;
+        void redraw_current_view() override;
+        void close_view( const std::string& url ) override;
+        void close_other_views( const std::string& url ) override;
+        void restore_lasttab() override;
+        void focus_view( int page ) override;
+        void focus_current_view() override;
+        void open_window() override;
+        void close_window() override;
 
-        virtual SKELETON::View* get_view( const std::string& url );
-        virtual SKELETON::View* get_current_view();
+        SKELETON::View* get_view( const std::string& url ) override;
+        SKELETON::View* get_current_view() override;
 
         // ページがロックされているかリストで取得
-        virtual std::list< bool > get_locked();
+        std::list< bool > get_locked() override;
 
         // タブのロック/アンロック
-        virtual const bool is_lockable( const int page );
-        virtual const bool is_locked( const int page );
-        virtual void lock( const int page );
-        virtual void unlock( const int page );
+        const bool is_lockable( const int page ) override;
+        const bool is_locked( const int page ) override;
+        void lock( const int page ) override;
+        void unlock( const int page ) override;
 
         // タブの D&D 処理は SKELETON::Admin とは違うロジックでおこなう
-        virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ){}
+        void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ) override {}
 
       private:
 

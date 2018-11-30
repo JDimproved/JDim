@@ -117,14 +117,14 @@ namespace DBIMG
         void download_img( const std::string refurl, const bool mosaic, const int waitsec );
 
         // ロード停止
-        virtual void stop_load();
+        void stop_load() override;
 
         const bool save( Gtk::Window* parent, const std::string& path_to );
         
       private:
 
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
 
         // ロード待ち状態セット/リセット
         const bool set_wait( const std::string& refurl, const bool mosaic, const int waitsec );

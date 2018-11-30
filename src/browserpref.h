@@ -25,7 +25,8 @@ namespace CORE
         Gtk::Entry m_entry_browser;
 
         // OK押した
-        virtual void slot_ok_clicked(){
+        void slot_ok_clicked() override
+        {
             CONFIG::set_browsercombo_id( m_combo.get_active_row_number() );
             CONFIG::set_command_openurl( MISC::remove_space( m_entry_browser.get_text() ) );
         }

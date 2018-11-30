@@ -19,20 +19,20 @@ namespace DBTREE
         ~ArticleLocal();
 
         // ID がこのスレのものかどうか
-        virtual const bool equal( const std::string& datbase, const std::string& id );
+        const bool equal( const std::string& datbase, const std::string& id ) override;
 
         // キャッシュの削除をしない
-        virtual void delete_cache( const bool cache_only ){}
+        void delete_cache( const bool cache_only ) override {}
 
         // 情報ファイルを保存しない
-        virtual void save_info( const bool force ){}
+        void save_info( const bool force ) override {}
 
         // ダウンロードしない
-        virtual void download_dat( const bool check_update ){}
+        void download_dat( const bool check_update ) override {}
 
       private:
         
-        virtual NodeTreeBase* create_nodetree();
+        NodeTreeBase* create_nodetree() override;
     };
 }
 

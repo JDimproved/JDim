@@ -30,7 +30,7 @@ namespace XML
         // 何も無い状態からノードツリーを作る場合
         Document();
 
-        virtual ~Document(){};
+        ~Document() noexcept {}
 
         // このクラスは代入可能
         Document& operator=( const Document& document );

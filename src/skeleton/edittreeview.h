@@ -86,9 +86,9 @@ namespace SKELETON
 
         EditTreeView( const std::string& url, const std::string& dndtarget, EditColumns& columns );
 
-        virtual ~EditTreeView();
+        ~EditTreeView();
 
-        virtual void clock_in();
+        void clock_in() override;
 
         SIG_DROPPED_FROM_OTHER sig_dropped_from_other(){ return m_sig_dropped_from_other; }
 
@@ -167,7 +167,7 @@ namespace SKELETON
 
         // 選択した行をまとめて削除
         // force = true なら m_editable が false でも削除
-        virtual void delete_selected_rows( const bool force );
+        void delete_selected_rows( const bool force ) override;
 
         void undo();
         void redo();
@@ -190,15 +190,15 @@ namespace SKELETON
 
       protected:
 
-        virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
-        virtual void on_drag_leave( const Glib::RefPtr<Gdk::DragContext>& context, guint time );
-        virtual bool on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
-        virtual void on_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
-                                       Gtk::SelectionData& selection_data, guint info, guint time );
-        virtual void on_drag_data_received( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y,
-                                            const Gtk::SelectionData& selection_data, guint info, guint time );
-        virtual void on_drag_data_delete( const Glib::RefPtr<Gdk::DragContext>& context );
-        virtual void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context );
+        bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time ) override;
+        void on_drag_leave( const Glib::RefPtr< Gdk::DragContext >& context, guint time ) override;
+        bool on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time ) override;
+        void on_drag_data_get( const Glib::RefPtr< Gdk::DragContext >& context,
+                               Gtk::SelectionData& selection_data, guint info, guint time ) override;
+        void on_drag_data_received( const Glib::RefPtr< Gdk::DragContext >& context, int x, int y,
+                                    const Gtk::SelectionData& selection_data, guint info, guint time ) override;
+        void on_drag_data_delete( const Glib::RefPtr<Gdk::DragContext>& context ) override;
+        void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context ) override;
 
       private:
 

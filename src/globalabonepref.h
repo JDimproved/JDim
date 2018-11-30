@@ -23,7 +23,8 @@ namespace CORE
         Gtk::Label m_label_warning;
 
         // OK押した
-        virtual void slot_ok_clicked(){
+        void slot_ok_clicked() override
+        {
 
             // 全体あぼーん再設定
             std::list< std::string > list_name = MISC::get_lines( m_edit_name.get_text() );
@@ -75,7 +76,7 @@ namespace CORE
             show_all_children();
         }
 
-        virtual ~GlobalAbonePref(){}
+        ~GlobalAbonePref() noexcept {}
     };
 
 }

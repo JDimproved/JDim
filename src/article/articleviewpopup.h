@@ -19,16 +19,16 @@ namespace ARTICLE
 
       public:
         ArticleViewPopup( const std::string& url, bool show_abone );
-        virtual ~ArticleViewPopup();
+        ~ArticleViewPopup();
 
-        virtual void stop(){}
+        void stop() override {}
 
       protected:
         void show_instruct_popup();
         const bool show_abone() const { return m_show_abone; }
 
       private:
-        virtual DrawAreaBase* create_drawarea();
+        DrawAreaBase* create_drawarea() override;
     };
 
     /////////////////////////////////////////////////////////////////////////
@@ -41,9 +41,9 @@ namespace ARTICLE
 
       public:
         ArticleViewPopupHTML( const std::string& url, const std::string& html ): ArticleViewPopup( url, false ), m_html( html ){}
-        virtual ~ArticleViewPopupHTML(){}
+        ~ArticleViewPopupHTML() noexcept {}
 
-        virtual void show_view(){ append_html( m_html ); }
+        void show_view() override { append_html( m_html ); }
     };
 
 
@@ -59,9 +59,10 @@ namespace ARTICLE
       public:
         ArticleViewPopupRes( const std::string& url, const std::string& num, bool show_title, bool show_abone )
         : ArticleViewPopup( url, show_abone ), m_str_num( num ), m_show_title( show_title ){}
-        virtual ~ArticleViewPopupRes(){}
+        ~ArticleViewPopupRes() noexcept {}
 
-        virtual void show_view(){
+        void show_view() override
+        {
             show_instruct_popup();
             show_res( m_str_num, m_show_title );
         }
@@ -78,9 +79,10 @@ namespace ARTICLE
 
       public:
         ArticleViewPopupName( const std::string& url, const std::string& name ): ArticleViewPopup( url, false ), m_str_name( name ){}
-        virtual ~ArticleViewPopupName(){}
+        ~ArticleViewPopupName() noexcept {}
 
-        virtual void show_view(){
+        void show_view() override
+        {
             show_instruct_popup();
             show_name( m_str_name, false );
         }
@@ -97,9 +99,10 @@ namespace ARTICLE
 
       public:
         ArticleViewPopupID( const std::string& url, const std::string& id ): ArticleViewPopup( url, false ), m_str_id( id ) {}
-        virtual ~ArticleViewPopupID(){}
+        ~ArticleViewPopupID() noexcept {}
 
-        virtual void show_view(){
+        void show_view() override
+        {
             show_instruct_popup();
             show_id( m_str_id, false );
         }
@@ -116,9 +119,10 @@ namespace ARTICLE
 
       public:
         ArticleViewPopupRefer( const std::string& url, const std::string& num ): ArticleViewPopup( url, false ), m_str_num( num ){}
-        virtual ~ArticleViewPopupRefer(){}
+        ~ArticleViewPopupRefer() noexcept {}
 
-        virtual void show_view(){
+        void show_view() override
+        {
             show_instruct_popup();
             show_refer( atol( m_str_num.c_str() ) );
         }
@@ -135,9 +139,10 @@ namespace ARTICLE
       public:
         ArticleViewPopupDrawout( const std::string& url, const std::string& query, bool mode_or )
         : ArticleViewPopup( url, false ), m_query( query ), m_mode_or( mode_or ){}
-        virtual ~ArticleViewPopupDrawout(){}
+        ~ArticleViewPopupDrawout() noexcept {}
 
-        virtual void show_view(){
+        void show_view() override
+        {
             show_instruct_popup();
             drawout_keywords( m_query, m_mode_or, false );
         }
@@ -151,9 +156,10 @@ namespace ARTICLE
     {
       public:
       ArticleViewPopupBM( const std::string& url ) : ArticleViewPopup( url, false ){}
-        virtual ~ArticleViewPopupBM(){}
+        ~ArticleViewPopupBM() noexcept {}
 
-        virtual void show_view(){
+        void show_view() override
+        {
             show_instruct_popup();
             show_bm();
         }

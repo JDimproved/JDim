@@ -26,14 +26,14 @@ namespace ARTICLE
       public:
 
         SearchToolBar();
-        virtual ~SearchToolBar(){}
+        ~SearchToolBar() noexcept {}
 
         // タブが切り替わった時に呼び出される( Viewの情報を取得する )
-        virtual void set_view( SKELETON::View * view );
+        void set_view( SKELETON::View * view ) override;
 
       protected:
 
-        virtual void pack_buttons();
+        void pack_buttons() override;
 
       private:
 

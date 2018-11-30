@@ -14,15 +14,15 @@ namespace CORE
       public:
 
         MsgItemPref( Gtk::Window* parent, const std::string& url );
-        virtual ~MsgItemPref(){}
+        ~MsgItemPref() noexcept {}
 
       private:
 
         // OK押した
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         // デフォルトボタン
-        virtual void slot_default();
+        void slot_default() override;
     };
 }
 

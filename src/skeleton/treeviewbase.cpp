@@ -19,7 +19,7 @@ JDTreeViewBase::JDTreeViewBase()
 }
 
 
-JDTreeViewBase::~JDTreeViewBase()
+JDTreeViewBase::~JDTreeViewBase() noexcept
 {}
 
 

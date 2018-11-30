@@ -87,7 +87,7 @@ namespace BBSLIST
       protected:
 
         // Viewが所属するAdminクラス
-        virtual SKELETON::Admin* get_admin();
+        SKELETON::Admin* get_admin() override;
 
         // treeviewのD&Dによる編集を可能にする
         void set_editable( const bool editable );
@@ -106,7 +106,7 @@ namespace BBSLIST
         const bool& get_ready_tree() const{ return m_ready_tree; }
         void set_open_only_onedir( const bool set ){ m_open_only_onedir = set; }
 
-        virtual void activate_act_before_popupmenu( const std::string& url );
+        void activate_act_before_popupmenu( const std::string& url ) override;
 
         // tree <-> XML( DOM )変換
         void tree2xml( const std::string& root_name );
@@ -182,49 +182,48 @@ namespace BBSLIST
       public:
 
         BBSListViewBase( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
-        virtual ~BBSListViewBase();
+        ~BBSListViewBase();
 
         //
         // SKELETON::View の関数のオーバロード
         //
 
-        virtual void save_session();
+        void save_session() override;
 
         // 親ウィンドウをセット
-        virtual void set_parent_win( Gtk::Window* parent_win );
+        void set_parent_win( Gtk::Window* parent_win ) override;
 
-        virtual const std::string url_for_copy(){ return std::string(); }
+        const std::string url_for_copy() override { return {}; }
 
-        virtual const bool set_command( const std::string& command,
-                                        const std::string& arg1 = std::string(),
-                                        const std::string& arg2 = std::string()
-            );
+        const bool set_command( const std::string& command,
+                                const std::string& arg1 = {},
+                                const std::string& arg2 = {} ) override;
 
-        virtual void clock_in();
+        void clock_in() override;
 
         // キーを押した
-        virtual const bool slot_key_press( GdkEventKey* event );
+        const bool slot_key_press( GdkEventKey* event ) override;
 
-        virtual void stop();
-        virtual void redraw_view();
-        virtual void relayout();  // 色やフォントなどの変更
-        virtual void focus_view();
-        virtual void focus_out();
-        virtual void close_view();
-        virtual void delete_view();
+        void stop() override;
+        void redraw_view() override;
+        void relayout() override;  // 色やフォントなどの変更
+        void focus_view() override;
+        void focus_out() override;
+        void close_view() override;
+        void delete_view() override;
 
         // ツリー内の全ての項目をURLを新しいアドレスに変更 ( id は未使用 )
-        virtual void update_item( const std::string& url, const std::string& id );
+        void update_item( const std::string& url, const std::string& id ) override;
 
-        virtual const bool operate_view( const int control );
-        virtual void goto_top();
-        virtual void goto_bottom();
+        const bool operate_view( const int control ) override;
+        void goto_top() override;
+        void goto_bottom() override;
 
         // 検索
-        virtual void exec_search();
-        virtual void up_search();
-        virtual void down_search();
-        virtual void operate_search( const std::string& controlid );
+        void exec_search() override;
+        void up_search() override;
+        void down_search() override;
+        void operate_search( const std::string& controlid ) override;
 
         // 挿入先ダイアログを表示してアイテム追加
         // あらかじめ共有バッファに追加するデータをセットしておくこと

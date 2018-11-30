@@ -125,8 +125,8 @@ namespace CORE
         PasswdFramep2 m_frame_p2;
 
         // OK押した
-        virtual void slot_ok_clicked(){
-
+        void slot_ok_clicked() override
+        {
             // 2ch
             CORE::get_login2ch()->set_username( MISC::remove_space( m_frame_2ch.entry_id.get_text() ) );
             CORE::get_login2ch()->set_passwd( MISC::remove_space( m_frame_2ch.entry_passwd.get_text() ) );
@@ -176,7 +176,7 @@ namespace CORE
             show_all_children();
         }
 
-        virtual ~PasswdPref(){}
+        ~PasswdPref() noexcept {}
     };
 
 }

@@ -23,7 +23,7 @@ namespace SKELETON
       protected:
 
       // ポップアップメニュー表示
-      virtual void show_popupmenu();
+      void show_popupmenu() override;
     };
 }
 

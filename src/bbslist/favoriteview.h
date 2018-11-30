@@ -15,16 +15,16 @@ namespace BBSLIST
       public:
 
         FavoriteListView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
-        virtual ~FavoriteListView();
+        ~FavoriteListView();
 
-        virtual void show_view();
+        void show_view() override;
 
       protected:
 
         // xml保存
-        virtual void save_xml();
+        void save_xml() override;
 
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        Gtk::Menu* get_popupmenu( const std::string& url ) override;
     };
 }
 

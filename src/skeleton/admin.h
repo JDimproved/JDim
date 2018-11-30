@@ -59,7 +59,7 @@ namespace SKELETON
     public:
 
         Admin( const std::string& url );
-        virtual ~Admin();
+        ~Admin();
 
         virtual void save_session();
 
@@ -155,7 +155,7 @@ namespace SKELETON
         // immediately = true のときディスパッチャを呼ばずにすぐさま実行
         void set_command_impl( const bool immediately, const COMMAND_ARGS& command_arg );
 
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
 
         // admin共通コマンド実行
         virtual void exec_command();

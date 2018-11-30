@@ -35,30 +35,29 @@ namespace ARTICLE
 
         // SKELETON::View の関数のオーバロード
 
-        virtual const std::string url_for_copy(); // コピーやURLバー表示用のURL
-        virtual const bool set_command( const std::string& command,
-                                        const std::string& arg1 = std::string(),
-                                        const std::string& arg2 = std::string()
-            );
+        const std::string url_for_copy() override; // コピーやURLバー表示用のURL
+        const bool set_command( const std::string& command,
+                                const std::string& arg1 = {},
+                                const std::string& arg2 = {} ) override;
 
-        virtual const bool is_loading() const { return m_loading; }
+        const bool is_loading() const override { return m_loading; }
 
-        virtual void focus_view();
-        virtual void show_view();
-        virtual void relayout();
-        virtual void reload();
-        virtual void stop();
+        void focus_view() override;
+        void show_view() override;
+        void relayout() override;
+        void reload() override;
+        void stop() override;
 
         // 検索
-        virtual void exec_search();
-        virtual void operate_search( const std::string& controlid );
+        void exec_search() override;
+        void operate_search( const std::string& controlid ) override;
         const bool get_enable_bm() const{ return m_enable_bm; }
         const bool get_bm() const { return m_bm; }
         void set_bm( const bool set ){ m_bm = set; }
 
       protected:
 
-        virtual void slot_push_write(){} // 書き込みキャンセル
+        virtual void slot_push_write() {} // 書き込みキャンセル
 
       private:
 
@@ -76,7 +75,7 @@ namespace ARTICLE
 
         void slot_search_fin( const std::string& id );
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 }
 

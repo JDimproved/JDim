@@ -26,13 +26,13 @@ namespace DBTREE
 
       protected:
 
-        virtual char* process_raw_lines( char* rawlines );
+        char* process_raw_lines( char* rawlines ) override;
 
-        virtual void create_loaderdata( JDLIB::LOADERDATA& data );
+        void create_loaderdata( JDLIB::LOADERDATA& data ) override;
 
       private:
 
-        virtual void receive_finish();
+        void receive_finish() override;
     };
 }
 

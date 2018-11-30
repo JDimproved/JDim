@@ -18,13 +18,13 @@ namespace ARTICLE
         ArticleViewPreview( const std::string& url );
         ~ArticleViewPreview();
 
-        virtual const bool operate_view( const int control );
+        const bool operate_view( const int control ) override;
 
       private:
 
-        virtual bool slot_button_press( std::string url, int res_number, GdkEventButton* event );
+        bool slot_button_press( std::string url, int res_number, GdkEventButton* event ) override;
 
-        virtual void goto_num( const int num_to, const int num_from ){}
+        void goto_num( const int num_to, const int num_from ) override {}
     };
 }
 

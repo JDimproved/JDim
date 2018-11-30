@@ -14,16 +14,16 @@ namespace CORE
       public:
 
         ArticleItemMenuPref( Gtk::Window* parent, const std::string& url );
-        virtual ~ArticleItemMenuPref(){}
+        ~ArticleItemMenuPref() noexcept {}
 
       private:
 
         // OKボタン
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
 
         // デフォルトボタン
-        virtual void slot_default();
+        void slot_default() override;
     };
 }
 

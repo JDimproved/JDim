@@ -33,7 +33,7 @@ TabSwitchButton::TabSwitchButton( DragableNoteBook* parent )
 }
 
 
-TabSwitchButton::~TabSwitchButton()
+TabSwitchButton::~TabSwitchButton() noexcept
 {}
 
 

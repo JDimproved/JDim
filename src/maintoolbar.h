@@ -41,11 +41,11 @@ namespace CORE
       public:
 
         MainToolBar(); 
-        virtual ~MainToolBar(){}
+        ~MainToolBar() noexcept {}
 
       protected:
 
-        virtual void pack_buttons();
+        void pack_buttons() override;
     };
 }
 

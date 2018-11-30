@@ -43,7 +43,7 @@ namespace ARTICLE
       private:
         void stop();
         void wait();
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
     };
 }
 

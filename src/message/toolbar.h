@@ -28,7 +28,7 @@ namespace MESSAGE
       public:
 
         MessageToolBarBase();
-        virtual ~MessageToolBarBase(){}
+        ~MessageToolBarBase() noexcept {}
 
         // previewボタンのトグル
         void set_active_previewbutton( const bool active );
@@ -59,7 +59,7 @@ namespace MESSAGE
       public:
 
         MessageToolBar();
-        virtual ~MessageToolBar(){}
+        ~MessageToolBar() noexcept {}
 
         void show_entry_new_subject( bool show );
         std::string get_new_subject();
@@ -67,7 +67,7 @@ namespace MESSAGE
 
       protected:
 
-        virtual void pack_buttons();
+        void pack_buttons() override;
 
       private:
 
@@ -83,11 +83,11 @@ namespace MESSAGE
       public:
 
         MessageToolBarPreview();
-        virtual ~MessageToolBarPreview(){}
+        ~MessageToolBarPreview() noexcept {}
 
       protected:
 
-        virtual void pack_buttons();
+        void pack_buttons() override;
     };
 }
 

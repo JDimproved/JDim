@@ -78,7 +78,7 @@ namespace SKELETON
       public:
 
         Loadable();
-        virtual ~Loadable();
+        ~Loadable();
 
         // HTTPコードなどの完全クリア
         void clear_load_data();
@@ -139,7 +139,7 @@ namespace SKELETON
         virtual void receive_finish(){};
 
         void delete_loader();
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
 
         const int get_loader_code();
         const std::string get_loader_str_code();

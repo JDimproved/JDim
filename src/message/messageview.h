@@ -12,13 +12,13 @@ namespace MESSAGE
     {
       public:
         MessageViewMain( const std::string& url, const std::string& msg );
-        virtual ~MessageViewMain();
+        ~MessageViewMain();
 
-        virtual void reload();
+        void reload() override;
 
       private:
-        virtual void write_impl( const std::string& msg );
-        virtual const std::string create_message();
+        void write_impl( const std::string& msg ) override;
+        const std::string create_message() override;
     };
 
 
@@ -27,17 +27,16 @@ namespace MESSAGE
     {
       public:
         MessageViewNew( const std::string& url, const std::string& msg );
-        virtual ~MessageViewNew(){}
+        ~MessageViewNew() noexcept {}
 
-        virtual void reload();
+        void reload() override;
 
       private:
-        virtual void write_impl( const std::string& msg );
-        virtual const std::string create_message();
+        void write_impl( const std::string& msg ) override;
+        const std::string create_message() override;
     };
 
 }
 
-    
 
 #endif

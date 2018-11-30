@@ -16,23 +16,23 @@ namespace BBSLIST
     {
       public:
         BBSListViewMain( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
-        virtual ~BBSListViewMain();
+        ~BBSListViewMain();
 
-        virtual void show_view();
-        virtual void update_view();
-        virtual void delete_view();
-        virtual void show_preference();
+        void show_view() override;
+        void update_view() override;
+        void delete_view() override;
+        void show_preference() override;
 
       protected:
 
         // xml保存
-        virtual void save_xml();
+        void save_xml() override;
 
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        Gtk::Menu* get_popupmenu( const std::string& url ) override;
 
       private:
 
-        virtual void delete_view_impl();
+        void delete_view_impl() override;
     };
 }
 

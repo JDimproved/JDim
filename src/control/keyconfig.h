@@ -17,9 +17,9 @@ namespace CONTROL
       public:
 
         KeyConfig();
-        virtual ~KeyConfig();
+        ~KeyConfig() noexcept;
 
-        virtual void load_conf();
+        void load_conf() override;
 
         // editviewの操作をemacs風にする
         const bool is_emacs_mode();
@@ -34,7 +34,8 @@ namespace CONTROL
       private:
 
         // ひとつの操作をデータベースに登録
-        virtual void set_one_motion_impl( const int id, const int mode, const std::string& name, const std::string& str_motion );
+        void set_one_motion_impl( const int id, const int mode,
+                                  const std::string& name, const std::string& str_motion ) override;
     };
 }
 

@@ -14,11 +14,11 @@ namespace ARTICLE
       public:
 
         ArticleToolBarSimple();
-        virtual ~ArticleToolBarSimple(){}
+        ~ArticleToolBarSimple() noexcept {}
 
       protected:
 
-        virtual void pack_buttons();
+        void pack_buttons() override;
     };
 }
 

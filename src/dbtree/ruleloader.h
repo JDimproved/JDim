@@ -28,15 +28,15 @@ namespace DBTREE
 
       protected:
 
-        virtual const std::string get_url();
-        virtual const std::string get_path();
-        virtual const std::string get_charset();
+        const std::string get_url() override;
+        const std::string get_path() override;
+        const std::string get_charset() override;
 
         // ロード用データ作成
-        virtual void create_loaderdata( JDLIB::LOADERDATA& data );
+        void create_loaderdata( JDLIB::LOADERDATA& data ) override;
 
         // ロード後に呼び出される
-        virtual void parse_data();
+        void parse_data() override;
     };
 }
 

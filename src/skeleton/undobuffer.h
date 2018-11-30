@@ -56,7 +56,7 @@ namespace SKELETON
       public:
 
         UNDO_BUFFER();
-        virtual ~UNDO_BUFFER(){}
+        virtual ~UNDO_BUFFER() noexcept {}
 
         SIG_UNDO sig_undo(){ return m_sig_undo; }
         SIG_REDO sig_redo(){ return m_sig_redo; }

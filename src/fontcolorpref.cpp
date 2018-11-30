@@ -111,7 +111,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
 }
 
 
-FontColorPref::~FontColorPref()
+FontColorPref::~FontColorPref() noexcept
 {}
 
 

@@ -73,7 +73,7 @@ namespace CORE
       public:
 
         Search_Manager();
-        virtual ~Search_Manager();
+        ~Search_Manager();
 
         SIG_SEARCH_FIN sig_search_fin(){ return m_sig_search_fin; }
 
@@ -109,7 +109,7 @@ namespace CORE
         static void* launcher( void* );
         void wait();
         void thread_search();
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
         void search_fin();
         void search_fin_title();
     };

@@ -38,9 +38,9 @@ namespace CONTROL
 
       protected:
 
-        virtual InputDiag* create_inputdiag();
-        virtual const std::string get_default_motions( const int id );
-        virtual const std::vector< int > check_conflict( const int mode, const std::string& str_motion );
+        InputDiag* create_inputdiag() override;
+        const std::string get_default_motions( const int id ) override;
+        const std::vector< int > check_conflict( const int mode, const std::string& str_motion ) override;
     };
 
 
@@ -58,15 +58,15 @@ namespace CONTROL
 
       protected:
 
-        virtual MouseKeyDiag* create_setting_diag( const int id, const std::string& str_motions );
-        virtual const std::string get_str_motions( const int id );
-        virtual const std::string get_default_motions( const int id );
-        virtual void set_motions( const int id, const std::string& str_motions );
-        virtual const bool remove_motions( const int id );
+        MouseKeyDiag* create_setting_diag( const int id, const std::string& str_motions ) override;
+        const std::string get_str_motions( const int id ) override;
+        const std::string get_default_motions( const int id ) override;
+        void set_motions( const int id, const std::string& str_motions ) override;
+        const bool remove_motions( const int id ) override;
 
       private:
 
-        virtual void slot_cancel_clicked();
+        void slot_cancel_clicked() override;
     };
 
 }

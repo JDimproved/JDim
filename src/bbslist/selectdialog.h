@@ -34,19 +34,19 @@ namespace BBSLIST
       public:
 
         SelectListDialog( Gtk::Window* parent, const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore );
-        virtual ~SelectListDialog();
+        ~SelectListDialog();
 
         const std::string get_name();
         const std::string get_path();
 
       protected:
 
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
       private:
 
         void slot_show_tree();
-        virtual void timeout();
+        void timeout() override;
     };
 }
 

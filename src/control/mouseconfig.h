@@ -16,20 +16,21 @@ namespace CONTROL
       public:
 
         MouseConfig();
-        virtual ~MouseConfig();
+        ~MouseConfig() noexcept;
 
-        virtual void load_conf();
+        void load_conf() override;
 
         // 操作文字列取得
-        virtual const std::string get_str_motions( const int id );
+        const std::string get_str_motions( const int id ) override;
 
         // IDからデフォルトの操作文字列取得
-        virtual const std::string get_default_motions( const int id );
+        const std::string get_default_motions( const int id ) override;
 
       private:
 
         // ひとつの操作をデータベースに登録
-        virtual void set_one_motion_impl( const int id, const int mode, const std::string& name, const std::string& str_motion );
+        void set_one_motion_impl( const int id, const int mode,
+                                  const std::string& name, const std::string& str_motion ) override;
     };
 }
 

@@ -96,7 +96,8 @@ namespace DBIMG
         ImgAboneFrame m_frame_abone;
 
         // OK押した
-        virtual void slot_ok_clicked(){
+        void slot_ok_clicked() override
+        {
             CONFIG::set_del_img_day( m_frame_cache.get_spin().get_value_as_int() );
             CONFIG::set_del_imgabone_day( m_frame_abone.get_spin().get_value_as_int() );
         }
@@ -118,7 +119,7 @@ namespace DBIMG
             show_all_children();
         }
 
-        virtual ~DelImgDiag(){}
+        ~DelImgDiag() noexcept {}
     };
 
 }

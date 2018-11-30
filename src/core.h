@@ -112,7 +112,7 @@ namespace CORE
     public:
 
         Core( JDWinMain& win_main );
-        virtual ~Core();
+        ~Core();
 
         Gtk::Widget* get_toplevel();
 
@@ -169,7 +169,7 @@ namespace CORE
         void toggle_sidebar();
         void slot_show_hide_leftpane( int mode );
 
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
 
         // coreが自前でするコマンド処理
         void exec_command();

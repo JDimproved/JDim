@@ -122,19 +122,19 @@ namespace SKELETON
 
       protected:
 
-        virtual bool on_expose_event( GdkEventExpose* event );
-        virtual void on_size_allocate( Gtk::Allocation& allocation );
+        bool on_expose_event( GdkEventExpose* event ) override;
+        void on_size_allocate( Gtk::Allocation& allocation ) override;
 
         // signal_button_press_event と signal_button_release_event は emit されない
         // ときがあるので自前でemitする
-        virtual bool on_button_press_event( GdkEventButton* event );
-        virtual bool on_button_release_event( GdkEventButton* event );
+        bool on_button_press_event( GdkEventButton* event ) override;
+        bool on_button_release_event( GdkEventButton* event ) override;
 
-        virtual bool on_motion_notify_event( GdkEventMotion* event );
-        virtual bool on_leave_notify_event( GdkEventCrossing* event );
-        virtual bool on_scroll_event( GdkEventScroll* event );
+        bool on_motion_notify_event( GdkEventMotion* event ) override;
+        bool on_leave_notify_event( GdkEventCrossing* event ) override;
+        bool on_scroll_event( GdkEventScroll* event ) override;
 
-        virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time);
+        bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time) override;
     };
 }
 

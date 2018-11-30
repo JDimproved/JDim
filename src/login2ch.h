@@ -21,15 +21,15 @@ namespace CORE
       public:
 
         Login2ch();
-        virtual ~Login2ch();
+        ~Login2ch();
 
-        virtual void start_login();
-        virtual void logout();
+        void start_login() override;
+        void logout() override;
 
       private:
 
-        virtual void receive_data( const char* , size_t );
-        virtual void receive_finish();
+        void receive_data( const char* , size_t ) override;
+        void receive_finish() override;
     };
 
 

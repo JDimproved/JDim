@@ -31,16 +31,16 @@ namespace SKELETON
       public:
 
         AAMenu( Gtk::Window& parent );
-        virtual ~AAMenu();
+        ~AAMenu();
 
         // 選択されたらemitされる
         SIG_AAMENU_SELECTED sig_selected() { return m_sig_selected; }
 
       protected:
 
-        virtual void on_map();
-        virtual void on_hide();
-        virtual bool on_key_press_event (GdkEventKey* event);
+        void on_map() override;
+        void on_hide() override;
+        bool on_key_press_event (GdkEventKey* event) override;
 
       private:
 

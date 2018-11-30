@@ -26,7 +26,7 @@ namespace CONTROL
       public:
 
         MouseKeyConf();
-        virtual ~MouseKeyConf();
+        virtual ~MouseKeyConf() noexcept;
 
         // 設定ファイル読み込み 
         virtual void load_conf() = 0;

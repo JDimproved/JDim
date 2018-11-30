@@ -62,8 +62,8 @@ namespace MESSAGE
         void emit_sigfin();
         void slot_response( int id );
 
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
     };
     
 }

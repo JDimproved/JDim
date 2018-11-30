@@ -32,11 +32,11 @@ namespace IMAGE
       public:
 
         ImageAreaIcon( const std::string& url );
-        virtual ~ImageAreaIcon();
+        ~ImageAreaIcon();
 
-        virtual void show_image();
+        void show_image() override;
 
-        virtual void load_image_thread();
+        void load_image_thread() override;
 
       private:
 
@@ -45,7 +45,7 @@ namespace IMAGE
 
         void show_indicator( bool loading );
 
-        virtual void set_image();
+        void set_image() override;
     };
 }
 

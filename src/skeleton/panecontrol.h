@@ -56,7 +56,7 @@ namespace SKELETON
       public:
 
         PaneControl( Gtk::Paned& paned, int fixmode );
-        virtual ~PaneControl();
+        virtual ~PaneControl() noexcept;
 
         SIG_PANE_MODECHANGED& sig_pane_modechanged() { return m_sig_pane_modechanged; }
 
@@ -100,13 +100,14 @@ namespace SKELETON
       public:
 
         HPaneControl( Gtk::Paned& paned, int fixmode ) : PaneControl( paned, fixmode ) {}
-        ~HPaneControl(){}
+        ~HPaneControl() noexcept {}
 
       protected:
 
-        virtual int get_size(){ return get_paned().get_width(); }
+        int get_size() override { return get_paned().get_width(); }
 
-        virtual bool is_separater_clicked( GdkEventButton* event ){
+        bool is_separater_clicked( GdkEventButton* event ) override
+        {
             if( is_on_paned() && event->type == GDK_BUTTON_PRESS && event->button == 1
                 && event->x >= 0 && event->x <= 8 ) return true;
             return false;
@@ -121,13 +122,14 @@ namespace SKELETON
       public:
 
         VPaneControl( Gtk::Paned& paned, int fixmode ) : PaneControl( paned, fixmode ) {}
-        ~VPaneControl(){}
+        ~VPaneControl() noexcept {}
 
       protected:
 
-        virtual int get_size(){ return get_paned().get_height(); }
+        int get_size() override { return get_paned().get_height(); }
 
-        virtual bool is_separater_clicked( GdkEventButton* event ){
+        bool is_separater_clicked( GdkEventButton* event ) override
+        {
             if( is_on_paned() && event->type == GDK_BUTTON_PRESS && event->button == 1
                 && event->y >= 0 && event->y <= 8 ) return true;
             return false;
