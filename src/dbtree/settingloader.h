@@ -19,7 +19,6 @@ namespace DBTREE
 {
     class SettingLoader : public SKELETON::TextLoader
     {
-        bool m_parsed;
         std::string m_url_boadbase;
 
         // デフォルト名無し

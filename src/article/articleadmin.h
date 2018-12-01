@@ -10,7 +10,6 @@
 
 #include "sign.h"
 
-#include <list>
 #include <string>
 #include <set>
 

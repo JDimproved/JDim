@@ -2166,7 +2166,10 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 // 改行ノード作成
                 create_node_br();
 
-                while( *pos != '>' ) ++pos; ++pos;
+                while( *pos != '>' ) {
+                    ++pos;
+                }
+                ++pos;
 
                 if( *pos == ' ' ){
 

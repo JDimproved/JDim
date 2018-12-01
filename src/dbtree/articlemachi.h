@@ -5,7 +5,7 @@
 //
 
 #ifndef _ARTICLEMACHI_H
-#define _ARTICLEMACHI_H_H
+#define _ARTICLEMACHI_H
 
 #include "articlebase.h"
 

@@ -30,7 +30,7 @@ DomList& DomList::operator =( const std::list< Dom* >& list )
 // 添字によるアクセス
 Dom* DomList::operator []( const unsigned int n )
 {
-    if( ! this || m_list.empty() || n > m_list.size() ) return 0;
+    if( m_list.empty() || n > m_list.size() ) return 0;
 
     size_t count = 0;
     std::list< Dom* >::iterator it = m_list.begin();
@@ -125,7 +125,7 @@ std::list< Dom* >::iterator DomList::insert( std::list< Dom* >::iterator it, Dom
 
 std::list< Dom* >::iterator DomList::erase( std::list< Dom* >::iterator it )
 {
-    return erase( it );
+    return m_list.erase( it );
 }
 
 void DomList::clear()

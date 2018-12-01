@@ -126,7 +126,7 @@ const std::string ArticleViewBase::url_for_copy()
 }
 
 
-JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& ArticleViewBase::get_article()
+const JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& ArticleViewBase::get_article() const noexcept
 {
     assert( m_article );
     return  m_article;

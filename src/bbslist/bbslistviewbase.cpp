@@ -738,7 +738,6 @@ const bool BBSListViewBase::operate_view( const int control )
     if( CONTROL::operate_common( control, get_url(), BBSLIST::get_admin() ) ) return true;
 
     Gtk::TreePath path = m_treeview.get_current_path();
-    Gtk::TreeModel::Row row;
     bool open_tab = false;
 
 #ifdef _DEBUG
@@ -826,7 +825,7 @@ const bool BBSListViewBase::operate_view( const int control )
 
         case CONTROL::Left:
 
-            if( row = m_treeview.get_row( path ) ){
+            if( const Gtk::TreeModel::Row row = m_treeview.get_row( path ) ) {
 
                 if( ( path2type( path ) != TYPE_DIR || ! m_treeview.row_expanded( path ) ) && row.parent() ){
                     path = GET_PATH( row.parent() );

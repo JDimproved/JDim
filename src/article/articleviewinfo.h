@@ -30,7 +30,7 @@ namespace ARTICLE
         virtual bool slot_button_press( std::string url, int res_number, GdkEventButton* event ){ return true; }
 
         // ポップアップ表示キャンセル
-        virtual void slot_on_url( std::string url, int res_number ){}
+        virtual void slot_on_url( std::string url, std::string imgurl, int res_number ) {}
 
         virtual DrawAreaBase* create_drawarea();
     };

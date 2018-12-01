@@ -1,6 +1,6 @@
 // License GPL2
 
-#ifndef _ENVIRINMENT_H
+#ifndef _ENVIRONMENT_H
 #define _ENVIRONMENT_H
 
 #include <string>

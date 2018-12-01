@@ -1071,7 +1071,7 @@ void ArticleBase::unlock_impl()
 //
 // ロード中か
 //
-const bool ArticleBase::is_loading()
+const bool ArticleBase::is_loading() const
 {
     if( ! m_nodetree ) return false;
     return m_nodetree->is_loading();

@@ -84,7 +84,7 @@ namespace SKELETON
         void clear_load_data();
 
         // ロード中かどうか
-        const bool is_loading();
+        const bool is_loading() const;
 
         const int get_code() const { return m_code; }
         void set_code( int code ){ m_code = code; }

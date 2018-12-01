@@ -41,7 +41,7 @@ namespace ARTICLE
                                         const std::string& arg2 = std::string()
             );
 
-        virtual const bool is_loading(){ return m_loading; }
+        virtual const bool is_loading() const { return m_loading; }
 
         virtual void focus_view();
         virtual void show_view();

@@ -24,14 +24,15 @@ namespace DBTREE
         virtual const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ); 
         virtual const std::string url_readcgi( const std::string& url, int num_from, int num_to );
 
-        virtual void download_subject( const std::string& url_update_view );
+        virtual void download_subject( const std::string& url_update_view, const bool );
 
         // 板情報の読み書きをキャンセル
         virtual void read_info(){}
         virtual void save_info(){}
 
         // キャッシュサーチをキャンセル
-        virtual void search_cache( std::list< ArticleBase* >& list_article, const std::string& query, const bool mode_or, const bool& stop ){}
+        virtual void search_cache( std::vector< ArticleBase* >&, const std::string&,
+                                   const bool, const bool, const bool& ) {}
 
         // datファイルのインポート
         virtual const std::string import_dat( const std::string& filename );

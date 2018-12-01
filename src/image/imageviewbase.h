@@ -14,8 +14,6 @@
 
 #include <gtkmm.h>
 
-#include <list>
-
 
 namespace SKELETON
 {
