@@ -1322,6 +1322,7 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
     
     // バッファが '\n' で終わるように調整
     const char* pos = data + size;
+    if( *pos == '\n' && pos != data ) --pos;
     if( *pos == '\0' ) --pos; // '\0' を除く
     while( *pos != '\n' && pos != data ) --pos;
 
