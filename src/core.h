@@ -221,7 +221,7 @@ namespace CORE
         void hide_imagetab();
 
         // 板にdatファイルをインポートする
-        void import_dat( const std::string& url_board, const std::list< std::string > list_files );
+        void import_dat( const std::string& url_board, const std::vector< std::string >& list_files );
 
         // サイドバー更新チェック
         // open : 更新があったらタブで開く

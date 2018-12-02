@@ -1087,12 +1087,11 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_menubar->set_size_request( 0 );
 
     // 履歴メニュー追加
-    Gtk::Menu_Helpers::MenuList& items = m_menubar->items();
-    Gtk::Menu_Helpers::MenuList::iterator it_item = items.begin();
-    ++it_item; ++it_item;
-    (*it_item).signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_historymenu ) );
+    const auto items = m_menubar->get_children();
+    auto item = dynamic_cast< Gtk::MenuItem* >( *std::next( items.begin(), 2 ) );
+    item->signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_historymenu ) );
 
-    Gtk::Menu* submenu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
+    Gtk::Menu* submenu = item->get_submenu();
 
     submenu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
 
@@ -1114,13 +1113,10 @@ void Core::run( const bool init, const bool skip_setupdiag )
     submenu->show_all_children();
 
     // メニューにショートカットキーやマウスジェスチャを表示
-    items = m_menubar->items();
-    it_item = items.begin();
-    for( ; it_item != items.end(); ++it_item ){
-        submenu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
-        CONTROL::set_menu_motion( submenu );
-
-        ( *it_item ).signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
+    for( auto&& widget : items ) {
+        auto item = dynamic_cast< Gtk::MenuItem* >( widget );
+        CONTROL::set_menu_motion( item->get_submenu() );
+        item->signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
     }
 
     // ツールバー作成
@@ -2569,7 +2565,7 @@ void Core::set_command( const COMMAND_ARGS& command )
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
         }
 
-        std::list< std::string > list_files;
+        std::vector< std::string > list_files;
 
         // ダイアログを開いてファイルのリストを取得
         if( command.arg2.empty() ){
@@ -4271,7 +4267,7 @@ void Core::hide_imagetab()
 //
 // 板にdatファイルをインポートする
 //
-void Core::import_dat( const std::string& url_board, const std::list< std::string > list_files )
+void Core::import_dat( const std::string& url_board, const std::vector< std::string >& list_files )
 {
     if( ! list_files.size() ) return;
 
@@ -4285,10 +4281,7 @@ void Core::import_dat( const std::string& url_board, const std::list< std::strin
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
 
-    std::list< std::string >::const_iterator it = list_files.begin();
-    for(; it != list_files.end(); ++it ){
-
-        const std::string& filename = ( *it );
+    for( const auto& filename : list_files ) {
 
 #ifdef _DEBUG
         std::cout << filename << std::endl;

@@ -142,13 +142,12 @@ void CONTROL::set_menu_motion( Gtk::Menu* menu )
 {
     if( !menu ) return;
 
-    Gtk::Menu_Helpers::MenuList& items = menu->items();
-    Gtk::Menu_Helpers::MenuList::iterator it_item = items.begin();
-    for( ; it_item != items.end(); ++it_item ){
+    menu->foreach( []( Gtk::Widget& w ) {
+        auto* const item = dynamic_cast< Gtk::MenuItem* >( &w );
 
         // menuitemの中の名前を読み込んで ID を取得し、CONTROL::Noneでなかったら
         // ラベルを置き換える
-        Gtk::Label* label = dynamic_cast< Gtk::Label* >( (*it_item).get_child() );
+        auto* const label = dynamic_cast< Gtk::Label* >( item->get_child() );
         if( label ){
 #ifdef _DEBUG
             std::cout << label->get_text() << std::endl;
@@ -159,20 +158,20 @@ void CONTROL::set_menu_motion( Gtk::Menu* menu )
                 std::string str_label = CONTROL::get_label_with_mnemonic( id );
                 std::string str_motions = CONTROL::get_str_motions( id );
 
-                ( *it_item ).remove();
+                item->remove();
                 Gtk::Label *label = Gtk::manage( new Gtk::Label( str_label + ( str_motions.empty() ? "" : "  " ), true ) );
                 Gtk::Label *label_motion = Gtk::manage( new Gtk::Label( str_motions ) );
                 Gtk::HBox *box = Gtk::manage( new Gtk::HBox() );
 
                 box->pack_start( *label, Gtk::PACK_SHRINK );
                 box->pack_end( *label_motion, Gtk::PACK_SHRINK );
-                (*it_item).add( *box );
+                item->add( *box );
                 box->show_all();
             }
         }
 
-        if( (*it_item).has_submenu() ) CONTROL::set_menu_motion( (*it_item).get_submenu() );
-    }
+        if( item->has_submenu() ) CONTROL::set_menu_motion( item->get_submenu() );
+    } );
 }
 
 

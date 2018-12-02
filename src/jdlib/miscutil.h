@@ -257,7 +257,7 @@ namespace MISC
 
     // pathセパレータを / に置き換える
     const std::string recover_path( const std::string& str );
-    const std::list< std::string > recover_path( const std::list< std::string >& list_str );
+    std::vector< std::string > recover_path( std::vector< std::string >&& list_str );
 
     // 文字列(utf-8)に全角英数字が含まれるか判定する
     const bool has_widechar( const char* str );
