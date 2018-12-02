@@ -509,4 +509,18 @@ AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
        fi ])
 
 
+dnl
+dnl checking xinput extension
+dnl
+AC_MSG_CHECKING(for --enable-xinput-extension)
+AC_ARG_ENABLE(xinput-extension,
+  [AS_HELP_STRING([--disable-xinput-extension],
+                  [disable XInput extension (only applies to --with-gtkmm3) [default=no]])],
+  [], [enable_xinput_extension=yes])
+AC_MSG_RESULT($enable_xinput_extension)
+
+AS_IF([test "x$enable_xinput_extension" = xyes],
+      [AC_DEFINE(ENABLE_XINPUT_EXTENSION, 1, [Enable XInput extension (only applies to WITH_GTKMM_3_0)])])
+
+
 AC_OUTPUT(Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/history/Makefile src/config/Makefile src/icons/Makefile src/sound/Makefile src/xml/Makefile src/control/Makefile )

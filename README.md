@@ -167,6 +167,7 @@ GTK3版はGTK2版同様のルック・アンド・フィールになるように
 # シェルからJDimを起動する場合
 GDK_CORE_DEVICE_EVENTS=1 ./src/jdim
 ```
+または./configureに `--disable-xinput-extension` を追加してビルドすると環境変数の設定を自動で行うようになります。
 
 #### GTK2版から変更/追加された部分
 * 書き込みビューの配色にGTKテーマを使う設定が追加された。

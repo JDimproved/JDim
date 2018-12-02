@@ -500,6 +500,13 @@ int main( int argc, char **argv )
 #endif
 #endif
 
+#if defined(WITH_GTKMM_3_0) && !defined(ENABLE_XINPUT_EXTENSION)
+    // 板一覧やスレ一覧でマウスホイールによるスクロールが動作しないことがあるため
+    // 環境変数を設定してXInputの拡張機能を無効にする
+    // https://developer.gnome.org/gtk3/stable/gtk-x11.html
+    Glib::setenv( "GDK_CORE_DEVICE_EVENTS", "1" );
+#endif
+
     Gtk::Main m( &argc, &argv );
 
     // XSMPによるセッション管理
