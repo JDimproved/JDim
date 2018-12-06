@@ -5,7 +5,6 @@
 
 #include "imageareabase.h"
 
-#include "jdlib/jdmutex.h"
 #include "jdlib/miscmsg.h"
 
 #include "dbimg/imginterface.h"
@@ -13,14 +12,16 @@
 
 #include "config/globalconf.h"
 
+#include <mutex>
+
 //
 // スレッドのランチャ
 //
-static JDLIB::StaticMutex imgarea_launcher_mutex = JDLIB_STATIC_MUTEX_INIT;
+static std::mutex imgarea_launcher_mutex;
 
 void* imgarea_launcher( void* dat )
 {
-    JDLIB::LockGuard lock( imgarea_launcher_mutex );
+    std::lock_guard< std::mutex > lock( imgarea_launcher_mutex );
 
 #ifdef _DEBUG
     std::cout << "start imgarea_launcher" << std::endl;

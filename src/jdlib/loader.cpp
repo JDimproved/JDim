@@ -29,8 +29,9 @@
 
 #include "httpcode.h"
 
-#include <sstream>
 #include <cstring>
+#include <mutex>
+#include <sstream>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -43,8 +44,6 @@
 #include <signal.h>
 
 #include <glibmm.h>
-
-#include "jdmutex.h"
 
 #ifdef _WIN32
 // _soc : SOCKET (unsigned int)
@@ -85,8 +84,8 @@ namespace JDLIB
 }
 
 
-static JDLIB::StaticMutex mutex_token = JDLIB_STATIC_MUTEX_INIT;
-static JDLIB::StaticMutex mutex_queue = JDLIB_STATIC_MUTEX_INIT;
+static std::mutex mutex_token;
+static std::mutex mutex_queue;
 std::list< JDLIB::Loader* > queue_loader; // スレッド起動待ちの Loader のキュー
 int token_loader = 0;
 std::vector< JDLIB::Loader* > vec_loader( MAX_LOADER );
@@ -96,7 +95,7 @@ bool disable_pop = false;
 // トークン取得
 bool JDLIB::get_token( JDLIB::Loader* loader )
 {
-    JDLIB::LockGuard lock( mutex_token );
+    std::lock_guard< std::mutex > lock( mutex_token );
 
 #ifdef _DEBUG
     std::cout << "JDLIB::get_token : url = " << loader->data().url << " token = " << token_loader << std::endl;
@@ -130,7 +129,7 @@ bool JDLIB::get_token( JDLIB::Loader* loader )
 //　トークン返す
 void JDLIB::return_token( JDLIB::Loader* loader )
 {
-    JDLIB::LockGuard lock( mutex_token );
+    std::lock_guard< std::mutex > lock( mutex_token );
 
     --token_loader;
     assert( token_loader >= 0 );
@@ -147,7 +146,7 @@ void JDLIB::return_token( JDLIB::Loader* loader )
 // スレッド起動待ちキューに Loader を登録
 void JDLIB::push_loader_queue( JDLIB::Loader* loader )
 {
-    JDLIB::LockGuard lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( ! loader ) return;
 
@@ -168,7 +167,7 @@ void JDLIB::push_loader_queue( JDLIB::Loader* loader )
 // キューから Loader を取り除いたらtrueを返す
 bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
 {
-    JDLIB::LockGuard lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( ! queue_loader.size() ) return false;
     if( std::find( queue_loader.begin(), queue_loader.end(), loader ) == queue_loader.end() ) return false;
@@ -186,7 +185,7 @@ bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
 // キューに登録されたスレッドを起動する
 void JDLIB::pop_loader_queue()
 {
-    JDLIB::LockGuard lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( disable_pop ) return;
     if( ! queue_loader.size() ) return;
@@ -217,7 +216,7 @@ void JDLIB::pop_loader_queue()
 //
 void JDLIB::disable_pop_loader_queue()
 {
-    JDLIB::LockGuard lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
 #ifdef _DEBUG
     std::cout << "JDLIB::disable_pop_loader_queue\n";
