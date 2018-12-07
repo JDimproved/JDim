@@ -13,16 +13,20 @@
 // svn 版の時は JDVERSION_SVN をdefineする
 //#define JDVERSION_SVN
 
+// gitのリポジトリを使ってビルドしているときはリビジョンから日付を取得する
+// リビジョンが参照できない場合はJDDATE_FALLBACKを使う
+// SEE ALSO: ENVIRONMENT::get_jdversion()
+
 #define MAJORVERSION 2
 #define MINORVERSION 8
 #define MICROVERSION 9
-#define JDDATE    "180424"
+#define JDDATE_FALLBACK    "180424"
 #define JDTAG     ""
 
 //---------------------------------
 
 #define JDVERSION ( MAJORVERSION * 100 + MINORVERSION * 10 + MICROVERSION )
-#define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE ) )
+#define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE_FALLBACK ) )
 
 //---------------------------------
 
@@ -76,7 +80,7 @@
 #define JDRC_VERSION_FMT(a,b,c,d,e) #a "." #b "." #c "-" d e
 #endif
 #define JDRC_VERSION_STR JDRC_VERSION_EXP( \
-            MAJORVERSION, MINORVERSION, MICROVERSION, JDTAG, JDDATE)
+            MAJORVERSION, MINORVERSION, MICROVERSION, JDTAG, JDDATE_FALLBACK)
 
 #define JDRC_FILEVERSION        JDRC_VERSION_STR
 #define JDRC_PRODUCTVERSION     JDRC_FILEVERSION
