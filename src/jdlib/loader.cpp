@@ -53,13 +53,10 @@
 #define SOC_ISVALID(_soc) ( (_soc) >= 0 )
 #endif
 
-enum
-{
-    MAX_LOADER = 10, // 最大スレッド数
-    MAX_LOADER_SAMEHOST = 2, // 同一ホストに対して実行できる最大スレッド数
-    LNG_BUF_MIN = 1 * 1024, // 読み込みバッファの最小値 (byte)
-    TIMEOUT_MIN = 1 // タイムアウトの最小値 (秒)
-};
+constexpr int MAX_LOADER = 10; // 最大スレッド数
+constexpr int MAX_LOADER_SAMEHOST = 2; // 同一ホストに対して実行できる最大スレッド数
+constexpr size_t LNG_BUF_MIN = 1 * 1024; // 読み込みバッファの最小値 (byte)
+constexpr long TIMEOUT_MIN = 1; // タイムアウトの最小値 (秒)
 
 
 #ifdef _WIN32

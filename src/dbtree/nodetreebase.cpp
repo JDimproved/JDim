@@ -41,21 +41,18 @@
 #endif
 
 
-enum
-{
-    SECTION_NUM = 5,
-    LNG_RES = 16,
-    LNG_ID = 256,
-    LNG_LINK = 256,
-    MAX_ANCINFO = 64,
-    RANGE_REF = 20,
-    MAX_LINK_DIGIT = 4,  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
+constexpr size_t SECTION_NUM = 5;
+constexpr size_t LNG_RES = 16;
+constexpr int LNG_ID = 256;
+constexpr size_t LNG_LINK = 256;
+constexpr size_t MAX_ANCINFO = 64;
+constexpr int RANGE_REF = 20;
+constexpr size_t MAX_LINK_DIGIT = 4;  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
 
-    MAXSISE_OF_LINES = 512 * 1024,   // ロード時に１回の呼び出しで読み込まれる最大データサイズ
-    SIZE_OF_HEAP = MAXSISE_OF_LINES + 64,
+constexpr size_t MAXSISE_OF_LINES = 512 * 1024;  // ロード時に１回の呼び出しで読み込まれる最大データサイズ
+constexpr size_t SIZE_OF_HEAP = MAXSISE_OF_LINES + 64;
 
-    INITIAL_RES_BUFSIZE = 128,  // レスの文字列を返すときの初期バッファサイズ
-};
+constexpr size_t INITIAL_RES_BUFSIZE = 128;  // レスの文字列を返すときの初期バッファサイズ
 
 
 // レジュームのモード
@@ -1556,7 +1553,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     const char* pos = datline;
     if( *pos == '\0' || *pos == '\n' ) return datline;
 
-    int i;
+    size_t i;
     NODE* header = create_node_header();
     m_vec_header[ m_id_header ] =  header;
 

@@ -31,10 +31,7 @@ namespace DBTREE
         LINK_NUM
     };
 
-    enum
-    {
-        RESUME_CHKSIZE = 64
-    };
+    constexpr size_t RESUME_CHKSIZE = 64;
 
     //ノードツリーのベースクラス
     class NodeTreeBase : public SKELETON::Loadable
