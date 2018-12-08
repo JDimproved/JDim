@@ -1458,6 +1458,7 @@ bool BoardViewBase::operate_view( const int control )
             // スレを開く
         case CONTROL::OpenArticleTab:
             open_tab = true;
+            // fallthrough
         case CONTROL::OpenArticle:
             if( ! path.empty() ) open_row( path, open_tab, false );
             break;
@@ -2887,6 +2888,7 @@ void BoardViewBase::slot_save_dat()
                             // 名前変更
                         case Gtk::RESPONSE_YES:
                             if( ! art->save_dat( path_to ) ) continue;
+                            // fallthrough
 
                         default:
                             copy_file = false;

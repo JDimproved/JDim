@@ -951,6 +951,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
                 case DBTREE::NODE_IDNUM: // 発言数ノード
 
                     if( ! set_num_id( layout ) ) break;
+                    // fallthrough
 
                 case DBTREE::NODE_TEXT: // テキスト
                 case DBTREE::NODE_LINK: // リンク
@@ -995,7 +996,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
                     y += 2; // 水平線1px + 余白1px
 
-                    // フォールスルー
+                    // fallthrough
 
                     //////////////////////////////////////////
 
@@ -2094,6 +2095,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const CLIPINFO& ci )
                     else node->color_text = COLOR_IMG_ERR;
                 }
             }
+            // fallthrough
 
 
             //////////////////////////////////////////
