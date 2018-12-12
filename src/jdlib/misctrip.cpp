@@ -80,7 +80,7 @@ const std::string create_sha1( const std::string& key )
         sha1 << digest[n];
 
 #ifdef _DEBUG
-        std::cout << std::hex << (unsigned int)digest[n];
+        std::cout << std::hex << (unsigned int)digest[n] << std::dec;
 #endif
     }
 

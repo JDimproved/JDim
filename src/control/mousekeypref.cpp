@@ -69,7 +69,7 @@ bool InputDiag::on_key_press_event( GdkEventKey* event )
         if( CONTROL::is_ascii( key ) ) shift = false;
 
 #ifdef _DEBUG
-        std::cout << "InputDiag::on_key_press_event key = " << std::hex << key;
+        std::cout << "InputDiag::on_key_press_event key = " << std::hex << key << std::dec;
         if( ctrl ) std::cout << " ctrl";
         if( shift ) std::cout << " shift";
         if( alt ) std::cout << " alt";

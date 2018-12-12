@@ -86,7 +86,7 @@ const int Control::key_press( const GdkEventKey* event )
     if( CONTROL::is_ascii( key ) && ( key < 'A' || key > 'Z' ) ) shift = false;
 
 #ifdef _DEBUG
-    std::cout << "Control::key_press key = " << std::hex << key;
+    std::cout << "Control::key_press key = " << std::hex << key << std::dec;
     if( ctrl ) std::cout << " ctrl";
     if( shift ) std::cout << " shift";
     if( alt ) std::cout << " alt";
