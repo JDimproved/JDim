@@ -101,7 +101,7 @@ namespace XML
 
         // プロパティを扱うアクセッサ
         int nodeType();
-        const std::string nodeName();
+        std::string nodeName();
         std::string nodeValue();
         void nodeValue( const std::string& value );
 

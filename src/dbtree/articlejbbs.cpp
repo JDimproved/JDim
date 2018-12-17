@@ -31,7 +31,7 @@ ArticleJBBS::~ArticleJBBS()
 {}
 
 
-const std::string ArticleJBBS::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
+std::string ArticleJBBS::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
 {
     if( msg.empty() ) return std::string();
 
@@ -70,7 +70,7 @@ const std::string ArticleJBBS::create_write_message( const std::string& name, co
 // (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/1234567/"
 //
 //
-const std::string ArticleJBBS::url_bbscgi()
+std::string ArticleJBBS::url_bbscgi()
 {
     return DBTREE::url_bbscgibase( get_url() ) + DBTREE::board_id( get_url() ) + "/" + get_key() + "/";
 }
@@ -81,7 +81,7 @@ const std::string ArticleJBBS::url_bbscgi()
 //
 // (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/1234567/"
 //
-const std::string ArticleJBBS::url_subbbscgi()
+std::string ArticleJBBS::url_subbbscgi()
 {
     return DBTREE::url_subbbscgibase( get_url() ) + DBTREE::board_id( get_url() ) + "/" + get_key() + "/";
 }

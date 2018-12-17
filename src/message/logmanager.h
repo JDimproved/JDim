@@ -40,7 +40,7 @@ namespace MESSAGE
                    const std::string& subject,  const std::string& msg, const std::string& name, const std::string& mail );
 
         //　書き込みログ取得
-        const std::string get_post_log( const int num );
+        std::string get_post_log( const int num );
 
         // ログファイル( log/postlog-* ) の最大数
         int get_max_num_of_log();

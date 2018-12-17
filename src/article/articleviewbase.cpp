@@ -120,7 +120,7 @@ SKELETON::Admin* ArticleViewBase::get_admin()
 //
 // メインウィンドウのURLバーなどの表示用にも使う
 //
-const std::string ArticleViewBase::url_for_copy()
+std::string ArticleViewBase::url_for_copy()
 {
     return DBTREE::url_readcgi( m_url_article, 0, 0 );
 }
@@ -470,7 +470,7 @@ void ArticleViewBase::setup_action()
 //
 // 通常の右クリックメニューの作成
 //
-const std::string ArticleViewBase::create_context_menu()
+std::string ArticleViewBase::create_context_menu()
 {
     std::list< int > list_menu;
 
@@ -1600,7 +1600,7 @@ void ArticleViewBase::slot_setup_abone_all()
 //
 // 荒らし報告用のURLリストをHTML形式で取得
 //
-const std::string ArticleViewBase::get_html_url4report( const std::list< int >& list_resnum )
+std::string ArticleViewBase::get_html_url4report( const std::list< int >& list_resnum )
 {
     std::string html;
 

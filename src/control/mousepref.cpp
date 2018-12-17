@@ -36,7 +36,7 @@ InputDiag* MouseDiag::create_inputdiag()
 }
 
 
-const std::string MouseDiag::get_default_motions( const int id )
+std::string MouseDiag::get_default_motions( const int id )
 {
     return CONTROL::get_default_mousemotions( id );
 }
@@ -118,13 +118,13 @@ MouseKeyDiag* MousePref::create_setting_diag( const int id, const std::string& s
 }
 
 
-const std::string MousePref::get_str_motions( const int id )
+std::string MousePref::get_str_motions( const int id )
 {
     return CONTROL::get_str_mousemotions( id );
 }
 
 
-const std::string MousePref::get_default_motions( const int id )
+std::string MousePref::get_default_motions( const int id )
 {
     return CONTROL::get_default_mousemotions( id );
 }

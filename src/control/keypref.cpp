@@ -42,7 +42,7 @@ InputDiag* KeyDiag::create_inputdiag()
 }
 
 
-const std::string KeyDiag::get_default_motions( const int id )
+std::string KeyDiag::get_default_motions( const int id )
 {
     return CONTROL::get_default_keymotions( id );
 }
@@ -237,13 +237,13 @@ MouseKeyDiag* KeyPref::create_setting_diag( const int id, const std::string& str
 }
 
 
-const std::string KeyPref::get_str_motions( const int id )
+std::string KeyPref::get_str_motions( const int id )
 {
     return CONTROL::get_str_keymotions( id );
 }
 
 
-const std::string KeyPref::get_default_motions( const int id )
+std::string KeyPref::get_default_motions( const int id )
 {
     return CONTROL::get_default_keymotions( id );
 }

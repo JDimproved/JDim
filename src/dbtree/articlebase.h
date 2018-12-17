@@ -132,7 +132,7 @@ namespace DBTREE
         void update_datbase( const std::string& datbase );
 
         // 移転する前のオリジナルのURL
-        const std::string get_org_url();
+        std::string get_org_url();
 
         // 移転する前のオリジナルのホスト名
         const std::string& get_org_host() const { return m_org_host; }
@@ -159,7 +159,7 @@ namespace DBTREE
         NODE* res_header( int number );
 
         // number番のレスの発言者の名前
-        const std::string get_name( int number );
+        std::string get_name( int number );
 
         // number番の名前の重複数( = 発言数 )
         int get_num_name( int number );
@@ -169,10 +169,10 @@ namespace DBTREE
 
         // number番のレスの時刻を文字列で取得
         // 内部で regex　を使っているので遅い
-        const std::string get_time_str( int number );
+        std::string get_time_str( int number );
 
         // number番のレスの発言者ID( スレIDではなくて名前の横のID )
-        const std::string get_id_name( int number );
+        std::string get_id_name( int number );
 
         // 指定した発言者ID の重複数( = 発言数 )
         // (注) 下の get_num_id_name( int number )と違って検索するので遅い
@@ -210,10 +210,10 @@ namespace DBTREE
 
         // number番のレスの文字列を返す
         // ref == true なら先頭に ">" を付ける
-        const std::string get_res_str( int number, bool ref = false );
+        std::string get_res_str( int number, bool ref = false );
 
         // number　番のレスの生文字列を返す
-        const std::string get_raw_res_str( int number );
+        std::string get_raw_res_str( int number );
 
         // 書き込み時の名前とメアド
         const std::string& get_write_name() const { return m_write_name; }
@@ -227,17 +227,17 @@ namespace DBTREE
         void set_write_fixmail( bool set ){ m_save_info = true; m_write_fixmail = set; }
 
         // 書き込みメッセージ作成
-        virtual const std::string create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
-        { return std::string(); }
+        virtual std::string create_write_message( const std::string& name, const std::string& mail,
+                                                  const std::string& msg ) { return {}; }
 
         // bbscgi のURL
-        virtual const std::string url_bbscgi() { return std::string(); }
+        virtual std::string url_bbscgi() { return std::string(); }
 
         // subbbscgi のURL
-        virtual const std::string url_subbbscgi() { return std::string(); }
+        virtual std::string url_subbbscgi() { return std::string(); }
 
         // 最終アクセス時間
-        const std::string get_access_time_str();
+        std::string get_access_time_str();
         const time_t& get_access_time() const { return m_access_time.tv_sec; } // 秒
         const std::string& get_access_date(); // string型
         void reset_access_date(){ m_access_date = std::string(); }

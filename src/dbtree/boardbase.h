@@ -237,7 +237,7 @@ namespace DBTREE
         void send_update_board();
 
         // クッキー:HAP
-        virtual const std::string get_hap(){ return std::string(); }
+        virtual std::string get_hap(){ return std::string(); }
         virtual void set_hap( const std::string& hap ){}
 
         // クッキー:HAPの更新 (クッキーをセットした時に実行)
@@ -302,23 +302,23 @@ namespace DBTREE
         virtual const std::string& get_agent_w(); // 書き込み用
 
         // ダウンロード時のプロキシ
-        virtual const std::string get_proxy_host();
+        virtual std::string get_proxy_host();
         virtual int get_proxy_port();
-        virtual const std::string get_proxy_basicauth();
+        virtual std::string get_proxy_basicauth();
 
         // 書き込み時のプロキシ
-        virtual const std::string get_proxy_host_w();
+        virtual std::string get_proxy_host_w();
         virtual int get_proxy_port_w();
-        virtual const std::string get_proxy_basicauth_w();
+        virtual std::string get_proxy_basicauth_w();
 
         // ローカルルール
-        virtual const std::string localrule();
+        virtual std::string localrule();
 
         // SETTING.TXT
-        virtual const std::string settingtxt();
+        virtual std::string settingtxt();
 
         // 書き込みの時のデフォルト名
-        virtual const std::string default_noname();
+        virtual std::string default_noname();
 
         // 最大改行数/2
         virtual int line_number();
@@ -327,10 +327,10 @@ namespace DBTREE
         virtual int message_count();
 
         // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
-        virtual const std::string get_unicode();
+        virtual std::string get_unicode();
 
         // 書き込み用クッキー
-        virtual const std::string cookie_for_write();
+        virtual std::string cookie_for_write();
         const std::list< std::string >& list_cookies_for_write() { return m_list_cookies_for_write; }
         void set_list_cookies_for_write( const std::list< std::string >& list_cookies );
         void reset_list_cookies_for_write(){ m_list_cookies_for_write.clear(); }
@@ -345,7 +345,7 @@ namespace DBTREE
         virtual void analyze_keyword_for_write( const std::string& html ){}
 
         // 書き込み時のリファラ
-        virtual const std::string get_write_referer(){ return url_boardbase(); }
+        virtual std::string get_write_referer(){ return url_boardbase(); }
 
         // basic認証
         const std::string& get_basicauth() const { return m_basicauth; }
@@ -356,50 +356,50 @@ namespace DBTREE
         // もしurlが移転前の旧ホストのものだったら対応するarticlebaseクラスに旧ホスト名を知らせる
         // (例) url =  "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345/12-15"のとき、
         // "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15, num_str = "12-15"
-        virtual const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ); 
+        virtual std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ); 
 
         // スレの url を read.cgi型のurlに変換
         // url がスレッドのURLで無い時はempty()が返る
         // num_from と num_to が 0 で無い時はスレ番号を付ける
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15 のとき
         // "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345/12-15"
-        virtual const std::string url_readcgi( const std::string& url, int num_from, int num_to );
+        virtual std::string url_readcgi( const std::string& url, int num_from, int num_to );
 
         // subject.txt の URLを取得
         // (例) "http://www.hoge2ch.net/hogeboard/subject.txt"
-        const std::string url_subject();
+        std::string url_subject();
 
         // ルートアドレス
         // (例) "http://www.hoge2ch.net/hogeboard/" なら "http://www.hoge2ch.net/"
-        const std::string url_root();
+        std::string url_root();
 
         // 板のベースアドレス
         // (例) "http://www.hoge2ch.net/hogeboard/"
-        const std::string url_boardbase();
+        std::string url_boardbase();
 
         // dat ファイルのURLのベースアドレスを返す
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat" なら "http://www.hoge2ch.net/hogeboard/dat/"
-        const std::string url_datbase();
+        std::string url_datbase();
 
         // dat ファイルのURLのパスを返す
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat" なら "/hogeboard/dat/"
-        virtual const std::string url_datpath();
+        virtual std::string url_datpath();
 
         // read.cgi のURLのベースアドレスを返す
         // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345" なら "http://www.hoge2ch.net/test/read.cgi/hogeboard/"
-        const std::string url_readcgibase();        
+        std::string url_readcgibase();
 
         // read.cgi のURLのパスを返す
         // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345" なら "/test/read.cgi/hogeboard/"
-        const std::string url_readcgipath();
+        std::string url_readcgipath();
 
         // bbscgi のURLのベースアドレス
         // (例) "http://www.hoge2ch.net/test/bbs.cgi/" ( 最後に '/' がつく )
-        const std::string url_bbscgibase();
-        
+        std::string url_bbscgibase();
+
         // subbbscgi のURLのベースアドレス
         // (例) "http://www.hoge2ch.net/test/subbbs.cgi/"  ( 最後に '/' がつく )
-        const std::string url_subbbscgibase();
+        std::string url_subbbscgibase();
 
         // article クラスのポインタ取得
         ArticleBase* get_article_fromURL( const std::string& url );
@@ -410,17 +410,17 @@ namespace DBTREE
         virtual void download_subject( const std::string& url_update_view, const bool read_from_cache );
 
         // 新スレ作成用のメッセージ変換
-        virtual const std::string create_newarticle_message( const std::string& subject,
-                                                             const std::string& name, const std::string& mail, const std::string& msg )
+        virtual std::string create_newarticle_message( const std::string& subject, const std::string& name,
+                                                       const std::string& mail, const std::string& msg )
         {
-            return std::string();
+            return {};
         }
 
         // 新スレ作成用のbbscgi のURL
-        virtual const std::string url_bbscgi_new() { return std::string(); }
+        virtual std::string url_bbscgi_new() { return {}; }
         
         // 新スレ作成用のsubbbscgi のURL
-        virtual const std::string url_subbbscgi_new() { return std::string(); }
+        virtual std::string url_subbbscgi_new() { return {}; }
 
         // 配下の全articlebaseクラスのあぼーん状態の更新
         void update_abone_all_article();
@@ -546,7 +546,7 @@ namespace DBTREE
 
         // datファイルのインポート
         // 成功したらdat型のurlを返す
-        virtual const std::string import_dat( const std::string& filename );
+        virtual std::string import_dat( const std::string& filename );
 
         // 更新可能状態にしてお気に入りやスレ一覧のタブのアイコンに更新マークを表示
         // update == true の時に表示。falseなら戻す

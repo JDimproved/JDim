@@ -21,8 +21,8 @@ namespace DBTREE
         // url がこの板のものかどうか
         bool equal( const std::string& url ) override;
 
-        const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ) override;
-        const std::string url_readcgi( const std::string& url, int num_from, int num_to ) override;
+        std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ) override;
+        std::string url_readcgi( const std::string& url, int num_from, int num_to ) override;
 
         void download_subject( const std::string& url_update_view, const bool ) override;
 
@@ -35,7 +35,7 @@ namespace DBTREE
                            const bool& ) override {}
 
         // datファイルのインポート
-        const std::string import_dat( const std::string& filename ) override;
+        std::string import_dat( const std::string& filename ) override;
 
       private:
 

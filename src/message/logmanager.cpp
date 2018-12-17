@@ -361,7 +361,7 @@ void Log_Manager::save( const std::string& url,
 //
 //　書き込みログ取得
 //
-const std::string Log_Manager::get_post_log( const int num )
+std::string Log_Manager::get_post_log( const int num )
 {
     std::string path = CACHE::path_postlog();
 

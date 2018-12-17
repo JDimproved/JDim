@@ -113,12 +113,12 @@ void SelectListDialog::slot_ok_clicked()
 }
 
 
-const std::string SelectListDialog::get_name()
+std::string SelectListDialog::get_name()
 {
     return m_label_name.get_text();
 }
 
-const std::string SelectListDialog::get_path()
+std::string SelectListDialog::get_path()
 {
     std::string path;
     if( m_selectview ) path = m_selectview->get_current_path().to_string();

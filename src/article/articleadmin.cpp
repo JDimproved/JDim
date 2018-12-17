@@ -362,7 +362,7 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
 }
 
 
-const std::string ArticleAdmin::command_to_url( const COMMAND_ARGS& command )
+std::string ArticleAdmin::command_to_url( const COMMAND_ARGS& command )
 {
     std::string url;
 

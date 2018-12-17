@@ -1315,7 +1315,7 @@ void Root::load_movetable()
 //
 // 移転した時は移転後のURLを返す
 //
-const std::string Root::is_board_moved( const std::string& url ) // 簡易版
+std::string Root::is_board_moved( const std::string& url ) // 簡易版
 {
     std::string old_root;
     std::string old_path_board;
@@ -1325,13 +1325,12 @@ const std::string Root::is_board_moved( const std::string& url ) // 簡易版
 }
 
 
-const std::string Root::is_board_moved( const std::string& url,
-                                        std::string& old_root,
-                                        std::string& old_path_board,
-                                        std::string& new_root,
-                                        std::string& new_path_board,
-                                        const int count
-    )
+std::string Root::is_board_moved( const std::string& url,
+                                  std::string& old_root,
+                                  std::string& old_path_board,
+                                  std::string& new_root,
+                                  std::string& new_path_board,
+                                  const int count )
 {
     const int max_count = 50;
 

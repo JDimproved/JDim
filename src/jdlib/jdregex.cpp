@@ -227,7 +227,7 @@ bool Regex::exec( const std::string reg, const std::string& target,
 }
 
 
-const std::string Regex::str( const size_t num )
+std::string Regex::str( const size_t num )
 {
     if( m_results.size() > num  ) return m_results[ num ];
 

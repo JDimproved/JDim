@@ -27,8 +27,8 @@ namespace CORE
 
         UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Glib::ustring& cmd );
 
-        const Glib::ustring get_name() { return m_entry_name.get_text(); }
-        const Glib::ustring get_cmd() { return m_entry_cmd.get_text(); }
+        Glib::ustring get_name() { return m_entry_name.get_text(); }
+        Glib::ustring get_cmd() { return m_entry_cmd.get_text(); }
 
       private:
         void slot_show_manual();

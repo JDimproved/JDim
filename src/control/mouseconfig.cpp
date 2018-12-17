@@ -105,7 +105,7 @@ void MouseConfig::set_one_motion_impl( const int id, const int mode, const std::
 
 
 // 操作文字列取得
-const std::string MouseConfig::get_str_motions( const int id_ )
+std::string MouseConfig::get_str_motions( const int id_ )
 {
     int id = id_;
 
@@ -117,7 +117,7 @@ const std::string MouseConfig::get_str_motions( const int id_ )
 
 
 // IDからデフォルトの操作文字列取得
-const std::string MouseConfig::get_default_motions( const int id_ )
+std::string MouseConfig::get_default_motions( const int id_ )
 {
     int id = id_;
     if( id == CONTROL::CancelMosaic ) id = CONTROL::CancelMosaicButton;

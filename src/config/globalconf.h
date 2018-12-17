@@ -88,13 +88,13 @@ namespace CONFIG
     bool get_aafont_enabled();
 
     // レスを参照するときに前に付ける文字
-    const std::string get_ref_prefix();
+    std::string get_ref_prefix();
 
     // 参照文字( ref_prefix ) の後のスペースの数
     int ref_prefix_space();
 
     // レスにアスキーアートがあると判定する正規表現
-    const std::string get_regex_res_aa();
+    std::string get_regex_res_aa();
     void set_regex_res_aa( const std::string& regex );
 
     // JD ホームページのアドレス
@@ -339,10 +339,10 @@ namespace CONFIG
     bool get_open_one_favorite();
 
     // デフォルトの書き込み名
-    const std::string get_write_name();
+    std::string get_write_name();
 
     // デフォルトのメールアドレス
-    const std::string get_write_mail();
+    std::string get_write_mail();
 
     // 書き込み時に書き込み確認ダイアログを出すかどうか
     bool get_always_write_ok();

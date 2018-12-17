@@ -28,13 +28,13 @@
 // ローカル関数の宣言
 
 // SHA1を計算
-const std::string create_sha1( const std::string& key );
+std::string create_sha1( const std::string& key );
 
 // トリップを計算(新方式)
-const std::string create_trip_newtype( const std::string& key );
+std::string create_trip_newtype( const std::string& key );
 
 // トリップを計算(従来方式)
-const std::string create_trip_conventional( const std::string& key );
+std::string create_trip_conventional( const std::string& key );
 /*--------------------------------------------------------------------*/
 
 
@@ -45,7 +45,7 @@ const std::string create_trip_conventional( const std::string& key );
 // param1: 元となる文字列
 // return: SHA1文字列
 /*--------------------------------------------------------------------*/
-const std::string create_sha1( const std::string& key )
+std::string create_sha1( const std::string& key )
 {
     if( key.empty() ) return std::string();
 
@@ -97,7 +97,7 @@ const std::string create_sha1( const std::string& key )
 // param1: 元となる文字列
 // return: トリップ文字列
 /*--------------------------------------------------------------------*/
-const std::string create_trip_newtype( const std::string& key )
+std::string create_trip_newtype( const std::string& key )
 {
     if( key.empty() ) return std::string();
 
@@ -190,7 +190,7 @@ const std::string create_trip_newtype( const std::string& key )
 // param1: 元となる文字列
 // return: トリップ文字列
 /*--------------------------------------------------------------------*/
-const std::string create_trip_conventional( const std::string& key )
+std::string create_trip_conventional( const std::string& key )
 {
     if( key.empty() ) return std::string();
 
@@ -241,7 +241,7 @@ const std::string create_trip_conventional( const std::string& key )
 // param2: 書き込む掲示板の文字コード
 // return: トリップ文字列
 /*--------------------------------------------------------------------*/
-const std::string MISC::get_trip( const std::string& str, const std::string& charset )
+std::string MISC::get_trip( const std::string& str, const std::string& charset )
 {
     if( str.empty() ) return std::string();
 

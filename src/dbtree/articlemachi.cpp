@@ -34,7 +34,7 @@ ArticleMachi::~ArticleMachi() noexcept
 {}
 
 
-const std::string ArticleMachi::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
+std::string ArticleMachi::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
 {
     if( msg.empty() ) return std::string();
 
@@ -66,7 +66,7 @@ const std::string ArticleMachi::create_write_message( const std::string& name, c
 // (例) "http://www.machi.to/bbs/write.cgi"
 //
 //
-const std::string ArticleMachi::url_bbscgi()
+std::string ArticleMachi::url_bbscgi()
 {
     std::string cgibase = DBTREE::url_bbscgibase( get_url() );
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
@@ -78,7 +78,7 @@ const std::string ArticleMachi::url_bbscgi()
 //
 // (例) "http://www.machi.to/bbs/write.cgi"
 //
-const std::string ArticleMachi::url_subbbscgi()
+std::string ArticleMachi::url_subbbscgi()
 {
     std::string cgibase = DBTREE::url_subbbscgibase( get_url() );
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く

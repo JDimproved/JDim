@@ -104,7 +104,7 @@ namespace BOARD
         ~BoardViewBase();
 
         const std::string& get_url_board() const { return m_url_board; }
-        const std::string url_for_copy() override;
+        std::string url_for_copy() override;
 
         // 行数
         int get_row_size();
@@ -214,12 +214,12 @@ namespace BOARD
         void setup_action();
 
         // 通常の右クリックメニューの作成
-        const std::string create_context_menu();
+        std::string create_context_menu();
         const char* get_menu_item( const int item );
 
         // 次スレ移行処理に使用する前スレのアドレス
         // BOARD::BoardViewNext と BoardViewBase::open_row()を参照せよ
-        virtual const std::string get_url_pre_article(){ return std::string(); }
+        virtual std::string get_url_pre_article(){ return std::string(); }
 
         void update_columns();
 
@@ -278,17 +278,17 @@ namespace BOARD
 
         bool open_row( Gtk::TreePath& path, const bool tab, const bool reget );
         void open_selected_rows( const bool reget );
-        const std::string path2daturl( const Gtk::TreePath& path );
-        const std::string path2url_board( const Gtk::TreePath& path );
+        std::string path2daturl( const Gtk::TreePath& path );
+        std::string path2url_board( const Gtk::TreePath& path );
 
         // 検索
         bool drawout( const bool force_reset );
 
         void update_row_common( const Gtk::TreeModel::Row& row );
-        const std::string get_subject_from_path( Gtk::TreePath& path );
+        std::string get_subject_from_path( Gtk::TreePath& path ); // XXX: 実装がない
 
         template < typename ColumnType >
-        const std::string get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column );
+        std::string get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column );
 
         void set_article_to_buffer();
         void set_board_to_buffer();

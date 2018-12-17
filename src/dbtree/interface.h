@@ -36,37 +36,36 @@ namespace DBTREE
     ArticleBase* get_article( const std::string& url );
 
     // urlの変換関係
-    const std::string url_subject( const std::string& url ); // 板の subject.txt の URL
-    const std::string url_root( const std::string& url );
-    const std::string url_boardbase( const std::string& url );
-    const std::string url_datbase( const std::string& url );
+    std::string url_subject( const std::string& url ); // 板の subject.txt の URL
+    std::string url_root( const std::string& url );
+    std::string url_boardbase( const std::string& url );
+    std::string url_datbase( const std::string& url );
 
     // dat型のurlに変換
-    const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str );
+    std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str );
 
     // dat型のurlに変換(簡易版)
-    const std::string url_dat( const std::string& url );
+    std::string url_dat( const std::string& url );
 
     // read.cgi型のurlに変換
-    const std::string url_readcgi( const std::string& url, int num_from, int num_to );
+    std::string url_readcgi( const std::string& url, int num_from, int num_to );
 
-    const std::string url_bbscgibase( const std::string& url );
-    const std::string url_subbbscgibase( const std::string& url );
-    const std::string url_bbscgi( const std::string& url );
-    const std::string url_subbbscgi( const std::string& url );
-    const std::string url_bbscgi_new( const std::string& url );
-    const std::string url_subbbscgi_new( const std::string& url );
+    std::string url_bbscgibase( const std::string& url );
+    std::string url_subbbscgibase( const std::string& url );
+    std::string url_bbscgi( const std::string& url );
+    std::string url_subbbscgi( const std::string& url );
+    std::string url_bbscgi_new( const std::string& url );
+    std::string url_subbbscgi_new( const std::string& url );
 
     // 板が移転したかチェックする
     // 移転した時は移転後のURLを返す
-    const std::string is_board_moved( const std::string& url );
+    std::string is_board_moved( const std::string& url );
 
-    const std::string is_board_moved( const std::string& url,
-                                        std::string& old_root,
-                                        std::string& old_path_board,
-                                        std::string& new_root,
-                                        std::string& new_path_board
-        );
+    std::string is_board_moved( const std::string& url,
+                                std::string& old_root,
+                                std::string& old_path_board,
+                                std::string& new_root,
+                                std::string& new_path_board );
 
     // 板移転
     bool move_board( const std::string& url_old, const std::string& url_new );
@@ -87,34 +86,34 @@ namespace DBTREE
     bool remove_etc( const std::string& url, const std::string& name );
     void save_etc();
     void download_bbsmenu();
-    const std::string get_date_modified(); // bbsmenuの更新時間( 文字列 )
+    std::string get_date_modified(); // bbsmenuの更新時間( 文字列 )
     time_t get_time_modified(); // bbsmenuの更新時間( time_t )
 
     // board 系
-    const std::string board_path( const std::string& url );
-    const std::string board_id( const std::string& url );
+    std::string board_path( const std::string& url );
+    std::string board_id( const std::string& url );
     time_t board_time_modified( const std::string& url ); // 板の更新時間( time_t )
-    const std::string board_date_modified( const std::string& url ); // 板の更新時間( 文字列 )
+    std::string board_date_modified( const std::string& url ); // 板の更新時間( 文字列 )
     void board_set_date_modified( const std::string& url, const std::string& date ); // 板の更新時間( 文字列 )をセット
     const std::string& board_get_modified_localrule( const std::string& url );
     void board_set_modified_localrule( const std::string& url, const std::string& modified );
     const std::string& board_get_modified_setting( const std::string& url );
     void board_set_modified_setting( const std::string& url, const std::string& modified );
-    const std::string board_name( const std::string& url );
-    const std::string board_subjecttxt( const std::string& url );
-    const std::string board_charset( const std::string& url );
-    const std::string board_cookie_for_write( const std::string& url );
+    std::string board_name( const std::string& url );
+    std::string board_subjecttxt( const std::string& url );
+    std::string board_charset( const std::string& url );
+    std::string board_cookie_for_write( const std::string& url );
     const std::list< std::string >& board_list_cookies_for_write( const std::string& url );
     void board_set_list_cookies_for_write( const std::string& url, const std::list< std::string>& list_cookies );
     void board_reset_list_cookies_for_write( const std::string& url );
-    const std::string board_keyword_for_write( const std::string& url );
+    std::string board_keyword_for_write( const std::string& url );
     void board_set_keyword_for_write( const std::string& url, const std::string& keyword );
     void board_analyze_keyword_for_write( const std::string& url, const std::string& html );
-    const std::string board_basicauth( const std::string& url );
-    const std::string board_ext( const std::string& url );
+    std::string board_basicauth( const std::string& url );
+    std::string board_ext( const std::string& url );
     int board_status( const std::string& url );
     int board_code( const std::string& url );
-    const std::string board_str_code( const std::string& url );
+    std::string board_str_code( const std::string& url );
     void board_save_info( const std::string& url );
     void board_download_subject( const std::string& url, const std::string& url_update_view );
     void board_read_subject_from_cache( const std::string& url );
@@ -168,7 +167,7 @@ namespace DBTREE
 
     // datファイルのインポート
     // 成功したらdat型のurlを返す
-    const std::string board_import_dat( const std::string& url, const std::string& filename );
+    std::string board_import_dat( const std::string& url, const std::string& filename );
 
     // 各板に属する全スレの書き込み履歴のリセット
     void board_clear_all_post_history( const std::string& url );
@@ -200,22 +199,22 @@ namespace DBTREE
 
     // article 系
     bool article_is_cached( const std::string& url ); // キャッシュにあるかどうか
-    const std::string article_id( const std::string& url ); // 拡張子込み "12345.dat" みたいに
-    const std::string article_key( const std::string& url ); // idから拡張子を取ったもの。書き込み用
-    const std::string article_org_host( const std::string& url ); // 移転する前のオリジナルのURL
+    std::string article_id( const std::string& url ); // 拡張子込み "12345.dat" みたいに
+    std::string article_key( const std::string& url ); // idから拡張子を取ったもの。書き込み用
+    std::string article_org_host( const std::string& url ); // 移転する前のオリジナルのURL
     time_t article_since_time( const std::string& url );
-    const std::string article_since_date( const std::string& url );
+    std::string article_since_date( const std::string& url );
     time_t article_time_modified( const std::string& url ); // スレの更新時間( time_t )
-    const std::string article_date_modified( const std::string& url ); // スレの更新時間( 文字列 )
+    std::string article_date_modified( const std::string& url ); // スレの更新時間( 文字列 )
     void article_set_date_modified( const std::string& url, const std::string& date ); // スレの更新時間( 文字列 )をセット
     int article_hour( const std::string& url );
     time_t article_write_time( const std::string& url );
-    const std::string article_write_date( const std::string& url );
+    std::string article_write_date( const std::string& url );
     int article_status( const std::string& url );
     int article_code( const std::string& url );
-    const std::string article_str_code( const std::string& url );
-    const std::string article_ext_err( const std::string& url );
-    const std::string article_subject( const std::string& url );
+    std::string article_str_code( const std::string& url );
+    std::string article_ext_err( const std::string& url );
+    std::string article_subject( const std::string& url );
     int article_number( const std::string& url );
     int article_number_load( const std::string& url );
     int article_number_seen( const std::string& url );
@@ -250,25 +249,25 @@ namespace DBTREE
     const std::string& get_agent_w( const std::string& url ); // 書き込み用
 
     // 読み込み用プロキシ
-    const std::string get_proxy_host( const std::string& url );
+    std::string get_proxy_host( const std::string& url );
     int get_proxy_port( const std::string& url );
-    const std::string get_proxy_basicauth( const std::string& url );
+    std::string get_proxy_basicauth( const std::string& url );
 
     // 書き込み用プロキシ
-    const std::string get_proxy_host_w( const std::string& url );
+    std::string get_proxy_host_w( const std::string& url );
     int get_proxy_port_w( const std::string& url );
-    const std::string get_proxy_basicauth_w( const std::string& url );
+    std::string get_proxy_basicauth_w( const std::string& url );
 
     // ローカルルール
-    const std::string localrule( const std::string& url );
+    std::string localrule( const std::string& url );
 
     // setting.txt
-    const std::string settingtxt( const std::string& url );
+    std::string settingtxt( const std::string& url );
 
     // 書き込み関係
 
     // デフォルトの名無し名
-    const std::string default_noname( const std::string& url );
+    std::string default_noname( const std::string& url );
 
     // 最大改行数/2
     int line_number( const std::string& url );
@@ -277,7 +276,7 @@ namespace DBTREE
     int message_count( const std::string& url );
 
     // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
-    const std::string get_unicode( const std::string& url );
+    std::string get_unicode( const std::string& url );
 
     // 書き込み時の名前とメール
     const std::string& write_name( const std::string& url );
@@ -291,13 +290,14 @@ namespace DBTREE
     void set_write_fixmail( const std::string& url, bool set );
 
     // ポストするメッセージの作成
-    const std::string create_write_message( const std::string& url,
-                                            const std::string& name, const std::string& mail, const std::string& msg );
-    const std::string create_newarticle_message( const std::string& url, const std::string& subject,
-                                                 const std::string& name, const std::string& mail, const std::string& msg );
+    std::string create_write_message( const std::string& url, const std::string& name, const std::string& mail,
+                                      const std::string& msg );
+    std::string create_newarticle_message( const std::string& url, const std::string& subject,
+                                           const std::string& name, const std::string& mail,
+                                           const std::string& msg );
 
     // 書き込み時のリファラ
-    const std::string get_write_referer( const std::string& url );
+    std::string get_write_referer( const std::string& url );
 
     // あぼーん関係
 

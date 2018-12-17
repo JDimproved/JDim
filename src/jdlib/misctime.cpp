@@ -27,7 +27,7 @@
 //
 // gettimeofday()の秒を文字列で取得
 //
-const std::string MISC::get_sec_str()
+std::string MISC::get_sec_str()
 {
 	std::ostringstream sec_str;
 
@@ -44,7 +44,7 @@ const std::string MISC::get_sec_str()
 //
 // timeval を str に変換
 //
-const std::string MISC::timevaltostr( const struct timeval& tv )
+std::string MISC::timevaltostr( const struct timeval& tv )
 {
     std::ostringstream sstr;
     sstr << ( tv.tv_sec >> 16 ) << " " << ( tv.tv_sec & 0xffff ) << " " << tv.tv_usec;
@@ -126,7 +126,7 @@ time_t MISC::datetotime( const std::string& date )
 //
 // time_t を月日の文字列に変換
 //
-const std::string MISC::timettostr( const time_t& time_from, const int mode )
+std::string MISC::timettostr( const time_t& time_from, const int mode )
 {
     const int lng = 64;
     struct tm tm_tmp;

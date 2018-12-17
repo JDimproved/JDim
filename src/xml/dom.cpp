@@ -535,7 +535,7 @@ int Dom::nodeType()
     return m_nodeType;
 }
 
-const std::string Dom::nodeName()
+std::string Dom::nodeName()
 {
     return m_nodeName;
 }

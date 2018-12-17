@@ -143,7 +143,7 @@ void ConfLoader::update( const std::string& name, const double value )
 // string 型
 //
 // dflt はデフォルト値, デフォルト引数 maxlength = 0
-const std::string ConfLoader::get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength )
+std::string ConfLoader::get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength )
 {
     if( name.empty() ) return std::string();
 

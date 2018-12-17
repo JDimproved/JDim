@@ -29,11 +29,11 @@ namespace CORE
         int get_size(){ return m_vec_label.size(); }
         int get_historysize(){ return m_history.size(); }
 
-        const std::string get_label( const int id );
-        const std::string get_aa( const int id );
+        std::string get_label( const int id );
+        std::string get_aa( const int id );
 
         // ショートカットキー取得
-        const std::string id2shortcut( const int id );
+        std::string id2shortcut( const int id );
 
         // ショートカットからid取得
         int shortcut2id( const char key );

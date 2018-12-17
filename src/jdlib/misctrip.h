@@ -10,7 +10,7 @@
 namespace MISC
 {
     // トリップを取得 (SHA1等の新方式対応)
-    const std::string get_trip( const std::string& str, const std::string& charset );
+    std::string get_trip( const std::string& str, const std::string& charset );
 }
 
 #endif

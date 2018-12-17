@@ -291,12 +291,11 @@ bool Usrcmd_Manager::show_replacetextdiag( std::string& texti, const std::string
 // コマンド置換
 // cmdの$URLをurl, $LINKをlink, $TEXT*をtext, $NUMBERをnumberで置き換えて出力
 // text は UTF-8 であること
-const std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
-                                               const std::string& url,
-                                               const std::string& link,
-                                               const std::string& text,
-                                               const int number
-    )
+std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
+                                         const std::string& url,
+                                         const std::string& link,
+                                         const std::string& text,
+                                         const int number )
 {
     std::string cmd_out = cmd;
     const std::string oldhostl = DBTREE::article_org_host( link );
@@ -490,7 +489,7 @@ bool Usrcmd_Manager::is_hide( int num, const std::string& url )
 //
 // ユーザコマンドの登録とメニュー作成
 //
-const std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group )
+std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group )
 {
     int dirno = 0;
     int cmdno = 0;
@@ -499,8 +498,8 @@ const std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionG
 }
 
 // ユーザコマンドの登録とメニュー作成(再帰用)
-const std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group,
-                                                      XML::Dom* dom, int& dirno, int& cmdno )
+std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group,
+                                                XML::Dom* dom, int& dirno, int& cmdno )
 {
     std::string menu;
     if( ! dom ) return menu;

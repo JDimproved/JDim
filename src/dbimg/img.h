@@ -62,7 +62,7 @@ namespace DBIMG
         void clear();
 
         const std::string& url() const { return m_url; }
-        const std::string get_cache_path();
+        std::string get_cache_path();
 
         bool is_wait() const { return m_wait; }
 

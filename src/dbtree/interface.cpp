@@ -60,39 +60,39 @@ DBTREE::ArticleBase* DBTREE::get_article( const std::string& url )
 
 //////////////////////////////////////
 
-const std::string DBTREE::url_subject( const std::string& url )
+std::string DBTREE::url_subject( const std::string& url )
 {
     return DBTREE::get_board( url )->url_subject();
 }
 
 
-const std::string DBTREE::url_root( const std::string& url )
+std::string DBTREE::url_root( const std::string& url )
 {
     return DBTREE::get_board( url )->url_root();
 }
 
 
-const std::string DBTREE::url_boardbase( const std::string& url )
+std::string DBTREE::url_boardbase( const std::string& url )
 {
     return DBTREE::get_board( url )->url_boardbase();
 }
 
 
-const std::string DBTREE::url_datbase( const std::string& url )
+std::string DBTREE::url_datbase( const std::string& url )
 {
     return DBTREE::get_board( url )->url_datbase();
 }
 
 
 // urlをdat型のurlに変換
-const std::string DBTREE::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
+std::string DBTREE::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {
     return DBTREE::get_board( url )->url_dat( url, num_from, num_to, num_str );
 }
 
 
 // urlをdat型のurlに変換(簡易版)
-const std::string DBTREE::url_dat( const std::string& url )
+std::string DBTREE::url_dat( const std::string& url )
 {
     int num_from, num_to;
     std::string num_str;
@@ -101,56 +101,55 @@ const std::string DBTREE::url_dat( const std::string& url )
 
 
 // url を read.cgi型のurlに変換
-const std::string DBTREE::url_readcgi( const std::string& url, int num_from, int num_to )
+std::string DBTREE::url_readcgi( const std::string& url, int num_from, int num_to )
 {
     return DBTREE::get_board( url )->url_readcgi( url, num_from, num_to );
 }
 
 
-const std::string DBTREE::url_bbscgibase( const std::string& url )
+std::string DBTREE::url_bbscgibase( const std::string& url )
 {
     return DBTREE::get_board( url )->url_bbscgibase();
 }
 
-const std::string DBTREE::url_subbbscgibase( const std::string& url )
+std::string DBTREE::url_subbbscgibase( const std::string& url )
 {
     return DBTREE::get_board( url )->url_subbbscgibase();
 }
 
 
-const std::string DBTREE::url_bbscgi( const std::string& url )
+std::string DBTREE::url_bbscgi( const std::string& url )
 {
     return DBTREE::get_article( url )->url_bbscgi();
 }
 
-const std::string DBTREE::url_subbbscgi( const std::string& url )
+std::string DBTREE::url_subbbscgi( const std::string& url )
 {
     return DBTREE::get_article( url )->url_subbbscgi();
 }
 
-const std::string DBTREE::url_bbscgi_new( const std::string& url )
+std::string DBTREE::url_bbscgi_new( const std::string& url )
 {
     return DBTREE::get_board( url )->url_bbscgi_new();
 }
 
-const std::string DBTREE::url_subbbscgi_new( const std::string& url )
+std::string DBTREE::url_subbbscgi_new( const std::string& url )
 {
     return DBTREE::get_board( url )->url_subbbscgi_new();
 }
 
 
 // 簡易版
-const std::string  DBTREE::is_board_moved( const std::string& url )
+std::string DBTREE::is_board_moved( const std::string& url )
 {
     return get_root()->is_board_moved( url );
 }
 
-const std::string  DBTREE::is_board_moved( const std::string& url,
-                                        std::string& old_root,
-                                        std::string& old_path_board,
-                                        std::string& new_root,
-                                        std::string& new_path_board
-    )
+std::string DBTREE::is_board_moved( const std::string& url,
+                                    std::string& old_root,
+                                    std::string& old_path_board,
+                                    std::string& new_root,
+                                    std::string& new_path_board )
 {
     return get_root()->is_board_moved( url, old_root, old_path_board, new_root, new_path_board );
 }
@@ -218,7 +217,7 @@ void DBTREE::download_bbsmenu()
 
 
 // bbsmenuの更新時間( 文字列 )
-const std::string DBTREE::get_date_modified()
+std::string DBTREE::get_date_modified()
 {
     return get_root()->get_date_modified();
 }
@@ -231,13 +230,13 @@ time_t DBTREE::get_time_modified()
 }
 
 
-const std::string DBTREE::board_path( const std::string& url )
+std::string DBTREE::board_path( const std::string& url )
 {
     return DBTREE::get_board( url )->get_path_board();
 }
 
 
-const std::string DBTREE::board_id( const std::string& url )
+std::string DBTREE::board_id( const std::string& url )
 {
     return DBTREE::get_board( url )->get_id();
 }
@@ -249,7 +248,7 @@ time_t DBTREE::board_time_modified( const std::string& url )
 }
 
 // 板の更新時間( 文字列 )
-const std::string DBTREE::board_date_modified( const std::string& url )
+std::string DBTREE::board_date_modified( const std::string& url )
 {
     return DBTREE::get_board( url )->get_date_modified();
 }
@@ -281,25 +280,25 @@ void DBTREE::board_set_modified_setting( const std::string& url, const std::stri
 }
 
 
-const std::string DBTREE::board_name( const std::string& url )
+std::string DBTREE::board_name( const std::string& url )
 {
     return DBTREE::get_board( url )->get_name();
 }
 
 
-const std::string DBTREE::board_subjecttxt( const std::string& url )
+std::string DBTREE::board_subjecttxt( const std::string& url )
 {
     return DBTREE::get_board( url )->get_subjecttxt();
 }
 
 
-const std::string DBTREE::board_charset( const std::string& url )
+std::string DBTREE::board_charset( const std::string& url )
 {
     return DBTREE::get_board( url )->get_charset();
 }
 
 
-const std::string DBTREE::board_cookie_for_write( const std::string& url )
+std::string DBTREE::board_cookie_for_write( const std::string& url )
 {
     return DBTREE::get_board( url )->cookie_for_write();
 }
@@ -321,7 +320,7 @@ void DBTREE::board_reset_list_cookies_for_write( const std::string& url )
     DBTREE::get_board( url )->reset_list_cookies_for_write();
 }
 
-const std::string DBTREE::board_keyword_for_write( const std::string& url )
+std::string DBTREE::board_keyword_for_write( const std::string& url )
 {
     return DBTREE::get_board( url )->get_keyword_for_write();
 }
@@ -339,13 +338,13 @@ void DBTREE::board_analyze_keyword_for_write( const std::string& url, const std:
 }
 
 
-const std::string DBTREE::board_basicauth( const std::string& url )
+std::string DBTREE::board_basicauth( const std::string& url )
 {
     return DBTREE::get_board( url )->get_basicauth();
 }
 
 
-const std::string DBTREE::board_ext( const std::string& url )
+std::string DBTREE::board_ext( const std::string& url )
 {
     return DBTREE::get_board( url )->get_ext();
 }
@@ -363,7 +362,7 @@ int DBTREE::board_code( const std::string& url )
 }
 
 
-const std::string DBTREE::board_str_code( const std::string& url )
+std::string DBTREE::board_str_code( const std::string& url )
 {
     return DBTREE::get_board( url )->get_str_code();
 }
@@ -626,7 +625,7 @@ const std::list< std::string > DBTREE::board_get_check_update_articles( const st
 }
 
 // datファイルのインポート
-const std::string DBTREE::board_import_dat( const std::string& url, const std::string& filename )
+std::string DBTREE::board_import_dat( const std::string& url, const std::string& filename )
 {
     return DBTREE::get_board( url )->import_dat( filename );
 }
@@ -785,21 +784,21 @@ bool DBTREE::article_is_cached( const std::string& url )
 
 
 // 拡張子付き
-const std::string DBTREE::article_id( const std::string& url )
+std::string DBTREE::article_id( const std::string& url )
 {
     return DBTREE::get_article( url )->get_id();
 }
 
 
 // idから拡張子を取ったもの
-const std::string DBTREE::article_key( const std::string& url )
+std::string DBTREE::article_key( const std::string& url )
 {
     return DBTREE::get_article( url )->get_key();
 }
 
 
 // 移転する前のオリジナルのURL
-const std::string DBTREE::article_org_host( const std::string& url )
+std::string DBTREE::article_org_host( const std::string& url )
 {
     return DBTREE::get_article( url )->get_org_host();
 }
@@ -811,7 +810,7 @@ time_t DBTREE::article_since_time( const std::string& url )
 }
 
 
-const std::string DBTREE::article_since_date( const std::string& url )
+std::string DBTREE::article_since_date( const std::string& url )
 {
     return DBTREE::get_article( url )->get_since_date();
 }
@@ -825,7 +824,7 @@ time_t DBTREE::article_time_modified( const std::string& url )
 
 
 // スレの更新時間( 文字列 )
-const std::string DBTREE::article_date_modified( const std::string& url )
+std::string DBTREE::article_date_modified( const std::string& url )
 {
     return DBTREE::get_article( url )->get_date_modified();
 }
@@ -849,7 +848,7 @@ time_t DBTREE::article_write_time( const std::string& url )
 }
 
 // 最終書き込み時刻(文字列)
-const std::string DBTREE::article_write_date( const std::string& url )
+std::string DBTREE::article_write_date( const std::string& url )
 {
     return DBTREE::get_article( url )->get_write_date();
 }
@@ -866,17 +865,17 @@ int DBTREE::article_code( const std::string& url )
     return DBTREE::get_article( url )->get_code();
 }
 
-const std::string DBTREE::article_str_code( const std::string& url )
+std::string DBTREE::article_str_code( const std::string& url )
 {
     return DBTREE::get_article( url )->get_str_code();
 }
 
-const std::string DBTREE::article_ext_err( const std::string& url )
+std::string DBTREE::article_ext_err( const std::string& url )
 {
     return DBTREE::get_article( url )->get_ext_err();
 }
 
-const std::string DBTREE::article_subject( const std::string& url )
+std::string DBTREE::article_subject( const std::string& url )
 {
     return DBTREE::get_article( url )->get_subject();
 }
@@ -965,7 +964,7 @@ const std::string& DBTREE::get_agent_w( const std::string& url )
 }
 
     
-const std::string DBTREE::get_proxy_host( const std::string& url )
+std::string DBTREE::get_proxy_host( const std::string& url )
 {
     return DBTREE::get_board( url )->get_proxy_host();
 }
@@ -975,12 +974,12 @@ int DBTREE::get_proxy_port( const std::string& url )
     return DBTREE::get_board( url )->get_proxy_port();
 }
 
-const std::string DBTREE::get_proxy_basicauth( const std::string& url )
+std::string DBTREE::get_proxy_basicauth( const std::string& url )
 {
     return DBTREE::get_board( url )->get_proxy_basicauth();
 }
 
-const std::string DBTREE::get_proxy_host_w( const std::string& url )
+std::string DBTREE::get_proxy_host_w( const std::string& url )
 {
     return DBTREE::get_board( url )->get_proxy_host_w();
 }
@@ -990,25 +989,25 @@ int DBTREE::get_proxy_port_w( const std::string& url )
     return DBTREE::get_board( url )->get_proxy_port_w();
 }
 
-const std::string DBTREE::get_proxy_basicauth_w( const std::string& url )
+std::string DBTREE::get_proxy_basicauth_w( const std::string& url )
 {
     return DBTREE::get_board( url )->get_proxy_basicauth_w();
 }
 
 
-const std::string DBTREE::localrule( const std::string& url )
+std::string DBTREE::localrule( const std::string& url )
 {
     return DBTREE::get_board( url )->localrule();
 }
 
 
-const std::string DBTREE::settingtxt( const std::string& url )
+std::string DBTREE::settingtxt( const std::string& url )
 {
     return DBTREE::get_board( url )->settingtxt();
 }
 
 
-const std::string DBTREE::default_noname( const std::string& url )
+std::string DBTREE::default_noname( const std::string& url )
 {
     return DBTREE::get_board( url )->default_noname();
 }
@@ -1024,7 +1023,7 @@ int DBTREE::message_count( const std::string& url )
 }
 
 // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
-const std::string DBTREE::get_unicode( const std::string& url )
+std::string DBTREE::get_unicode( const std::string& url )
 {
     return DBTREE::get_board( url )->get_unicode();
 }
@@ -1070,21 +1069,22 @@ void DBTREE::set_write_fixmail( const std::string& url, bool set )
 }
 
 
-const std::string DBTREE::create_write_message( const std::string& url,
-                                        const std::string& name, const std::string& mail, const std::string& msg )
+std::string DBTREE::create_write_message( const std::string& url, const std::string& name, const std::string& mail,
+                                          const std::string& msg )
 {
     return DBTREE::get_article( url )->create_write_message( name, mail, msg );
 }
 
 
-const std::string DBTREE::create_newarticle_message( const std::string& url, const std::string& subject,
-                                                     const std::string& name, const std::string& mail, const std::string& msg )
+std::string DBTREE::create_newarticle_message( const std::string& url, const std::string& subject,
+                                               const std::string& name, const std::string& mail,
+                                               const std::string& msg )
 {
     return DBTREE::get_board( url )->create_newarticle_message( subject, name, mail, msg );
 }
 
 
-const std::string DBTREE::get_write_referer( const std::string& url )
+std::string DBTREE::get_write_referer( const std::string& url )
 {
     return DBTREE::get_board( url )->get_write_referer();
 }

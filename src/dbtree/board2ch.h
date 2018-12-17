@@ -29,30 +29,30 @@ namespace DBTREE
         const std::string& get_agent_w() override; // 書き込み用
 
         // 読み込み用プロキシ
-        const std::string get_proxy_host() override;
+        std::string get_proxy_host() override;
         int get_proxy_port() override;
-        const std::string get_proxy_basicauth() override;
+        std::string get_proxy_basicauth() override;
 
         // 書き込み用プロキシ
-        const std::string get_proxy_host_w() override;
+        std::string get_proxy_host_w() override;
         int get_proxy_port_w() override;
-        const std::string get_proxy_basicauth_w() override;
+        std::string get_proxy_basicauth_w() override;
 
         // 書き込み用クッキー
-        const std::string cookie_for_write() override;
+        std::string cookie_for_write() override;
 
         // 書き込み時のリファラ
-        const std::string get_write_referer() override;
+        std::string get_write_referer() override;
 
         // 新スレ作成用のメッセージ変換
-        const std::string create_newarticle_message( const std::string& subject, const std::string& name,
-                                                     const std::string& mail, const std::string& msg ) override;
+        std::string create_newarticle_message( const std::string& subject, const std::string& name,
+                                               const std::string& mail, const std::string& msg ) override;
 
         // 新スレ作成用のbbscgi のURL
-        const std::string url_bbscgi_new() override;
+        std::string url_bbscgi_new() override;
         
         // 新スレ作成用のsubbbscgi のURL
-        const std::string url_subbbscgi_new() override;
+        std::string url_subbbscgi_new() override;
 
         // datの最大サイズ(Kバイト)
         int get_max_dat_lng() const override { return DEFAULT_MAX_DAT_LNG; }
@@ -60,7 +60,7 @@ namespace DBTREE
       protected:
 
         // クッキー:HAP
-        const std::string get_hap() override;
+        std::string get_hap() override;
         void set_hap( const std::string& hap ) override;
 
         // クッキー:HAPの更新 (クッキーをセットした時に実行)

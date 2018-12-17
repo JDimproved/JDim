@@ -41,7 +41,7 @@ namespace BBSLIST
         void get_threads( const std::string& url, const int dirid, std::vector< std::string >& list_url );
 
         // サイドバーの指定したidのディレクトリの名前を取得
-        const std::string get_dirname( const std::string& url, const int dirid );
+        std::string get_dirname( const std::string& url, const int dirid );
 
       protected:
 

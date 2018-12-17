@@ -102,7 +102,7 @@ namespace ARTICLE
 
         void save_session() override {}
 
-        const std::string url_for_copy() override; // コピーやURLバー表示用のURL
+        std::string url_for_copy() override; // コピーやURLバー表示用のURL
         int width_client() override;
         int height_client() override;
         int get_icon( const std::string& iconname ) override;
@@ -246,7 +246,7 @@ namespace ARTICLE
         void setup_action();
 
         // 通常の右クリックメニューの作成
-        const std::string create_context_menu();
+        std::string create_context_menu();
         const char* get_menu_item( const int item );
 
         virtual void exec_reload();
@@ -255,7 +255,7 @@ namespace ARTICLE
         void exec_delete();
 
         // 荒らし報告用のURLリストをHTML形式で取得
-        const std::string get_html_url4report( const std::list< int >& list_resnum );
+        std::string get_html_url4report( const std::list< int >& list_resnum );
         
         // drawarea の signal を受け取る slots
         virtual bool slot_button_press( std::string url, int res_number, GdkEventButton* event );

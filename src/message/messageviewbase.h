@@ -96,7 +96,7 @@ namespace MESSAGE
         Gtk::Window* get_parent_win() override;
 
         // コピー用のURL
-        const std::string url_for_copy() override;
+        std::string url_for_copy() override;
 
         // コマンド
         bool set_command( const std::string& command,
@@ -157,7 +157,7 @@ namespace MESSAGE
         void slot_switch_page( GtkNotebookPage*, guint page );
         void slot_text_changed();
 
-        virtual const std::string create_message() = 0;
+        virtual std::string create_message() = 0;
 
         void show_status();
 
@@ -167,7 +167,7 @@ namespace MESSAGE
         SKELETON::Admin* get_admin() override;
 
         void set_message( const std::string& msg );
-        const Glib::ustring get_message();
+        Glib::ustring get_message();
 
         SKELETON::CompletionEntry& get_entry_name(){ return m_entry_name; }
         SKELETON::CompletionEntry& get_entry_mail(){ return m_entry_mail; }

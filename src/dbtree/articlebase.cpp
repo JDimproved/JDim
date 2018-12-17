@@ -137,7 +137,7 @@ bool ArticleBase::equal( const std::string& datbase, const std::string& id )
 //
 // 移転する前のオリジナルのURL
 //
-const std::string ArticleBase::get_org_url()
+std::string ArticleBase::get_org_url()
 {
     std::string newhost = MISC::get_hostname( m_url );
     return m_org_host + m_url.substr( newhost.length() );
@@ -185,7 +185,7 @@ NODE* ArticleBase::res_header( int number )
 //
 // number番の名前
 //
-const std::string ArticleBase::get_name( int number )
+std::string ArticleBase::get_name( int number )
 {
     return get_nodetree()->get_name( number );
 }
@@ -213,7 +213,7 @@ std::list< int > ArticleBase::get_res_name( const std::string& name )
 // number番のレスの時刻を文字列で取得
 // 内部で regex　を使っているので遅い
 //
-const std::string ArticleBase::get_time_str( int number )
+std::string ArticleBase::get_time_str( int number )
 {
     return get_nodetree()->get_time_str( number );
 }
@@ -222,7 +222,7 @@ const std::string ArticleBase::get_time_str( int number )
 //
 // number番の発言者ID
 //
-const std::string ArticleBase::get_id_name( int number )
+std::string ArticleBase::get_id_name( int number )
 {
     return get_nodetree()->get_id_name( number );
 }
@@ -334,7 +334,7 @@ const std::list< int > ArticleBase::get_res_query( const std::string& query, con
 // number番のレスの文字列を返す
 // ref == true なら先頭に ">" を付ける        
 //
-const std::string ArticleBase::get_res_str( int number, bool ref )
+std::string ArticleBase::get_res_str( int number, bool ref )
 {
     return get_nodetree()->get_res_str( number, ref );
 }
@@ -343,7 +343,7 @@ const std::string ArticleBase::get_res_str( int number, bool ref )
 //
 // number　番のレスの生文字列を返す
 //
-const std::string ArticleBase::get_raw_res_str( int number )
+std::string ArticleBase::get_raw_res_str( int number )
 {
     return get_nodetree()->get_raw_res_str( number );
 }
@@ -424,7 +424,7 @@ void ArticleBase::set_org_host( const std::string& host )
 //
 // access_time を 文字列に変換して返す
 //
-const std::string ArticleBase::get_access_time_str()
+std::string ArticleBase::get_access_time_str()
 {
     return MISC::timevaltostr( m_access_time );
 }

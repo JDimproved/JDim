@@ -41,7 +41,7 @@ Article2chCompati::~Article2chCompati() noexcept
 
 
 // 書き込みメッセージ変換
-const std::string Article2chCompati::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
+std::string Article2chCompati::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
 {
     if( msg.empty() ) return std::string();
 
@@ -73,7 +73,7 @@ const std::string Article2chCompati::create_write_message( const std::string& na
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-const std::string Article2chCompati::url_bbscgi()
+std::string Article2chCompati::url_bbscgi()
 {
     std::string cgibase = DBTREE::url_bbscgibase( get_url() );
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
@@ -86,7 +86,7 @@ const std::string Article2chCompati::url_bbscgi()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-const std::string Article2chCompati::url_subbbscgi()
+std::string Article2chCompati::url_subbbscgi()
 {
     std::string cgibase = DBTREE::url_subbbscgibase( get_url() );
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く

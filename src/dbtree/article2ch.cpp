@@ -31,7 +31,7 @@ Article2ch::~Article2ch() noexcept
 
 
 // 書き込みメッセージ変換
-const std::string Article2ch::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
+std::string Article2ch::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
 {
     if( msg.empty() ) return std::string();
 
@@ -82,7 +82,7 @@ const std::string Article2ch::create_write_message( const std::string& name, con
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-const std::string Article2ch::url_bbscgi()
+std::string Article2ch::url_bbscgi()
 {
     if( CORE::get_loginp2()->login_now() ) return CONFIG::get_url_loginp2() + "post.php";
 
@@ -96,7 +96,7 @@ const std::string Article2ch::url_bbscgi()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-const std::string Article2ch::url_subbbscgi()
+std::string Article2ch::url_subbbscgi()
 {
     if( CORE::get_loginp2()->login_now() ) return CONFIG::get_url_loginp2() + "post.php";
 

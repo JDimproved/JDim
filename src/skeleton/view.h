@@ -210,7 +210,7 @@ namespace SKELETON
                                   const std::string& arg2 = {} ) { return true; }
 
         // コピー用のURL
-        virtual const std::string url_for_copy(){ return m_url; }
+        virtual std::string url_for_copy(){ return m_url; }
 
         // ツールバーのラベルに表示する文字列
         const std::string& get_label(){ return m_label; }
@@ -259,7 +259,7 @@ namespace SKELETON
         virtual bool is_broken(){ return false; }
 
         // ラベルやステータスバーの色
-        const std::string get_color();
+        std::string get_color();
 
         // キーを押した
         virtual bool slot_key_press( GdkEventKey* event ){ return false; }

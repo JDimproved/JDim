@@ -54,17 +54,16 @@ namespace CORE
         // コマンド置換
         // cmdの$URLをurl, $LINKをlink, $TEXT*をtext, $NUMBERをnumberで置き換えて出力
         // text は UTF-8 であること
-        const std::string replace_cmd( const std::string& cmd,
-                                       const std::string& url,
-                                       const std::string& link,
-                                       const std::string& text,
-                                       const int number
-            );
+        std::string replace_cmd( const std::string& cmd,
+                                 const std::string& url,
+                                 const std::string& link,
+                                 const std::string& text,
+                                 const int number );
 
         // ユーザコマンドメニューの作成
-        const std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group );
-        const std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group,
-                                              XML::Dom* dom, int& dirno, int& cmdno );
+        std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group );
+        std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group,
+                                        XML::Dom* dom, int& dirno, int& cmdno );
 
         Glib::RefPtr< Gtk::Action > get_action( Glib::RefPtr< Gtk::ActionGroup >& action_group, const int num );
 

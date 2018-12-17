@@ -141,22 +141,22 @@ namespace BBSLIST
         int row2type( const Gtk::TreeModel::Row& row );
 
         // row -> name 変換
-        const Glib::ustring row2name( const Gtk::TreeModel::Row& row );
+        Glib::ustring row2name( const Gtk::TreeModel::Row& row );
 
         // row -> url 変換
         // 板の場合は boardbase
         // スレの場合は dat 型のアドレスを返す
-        const Glib::ustring row2url( const Gtk::TreeModel::Row& row );
+        Glib::ustring row2url( const Gtk::TreeModel::Row& row );
 
         // row -> dirid 変換
         size_t row2dirid( const Gtk::TreeModel::Row& row );
 
         // path からその行の名前を取得
-        const Glib::ustring path2name( const Gtk::TreePath& path );
+        Glib::ustring path2name( const Gtk::TreePath& path );
 
         // path からその行のURLを取得
-        const Glib::ustring path2rawurl( const Gtk::TreePath& path );
-        const Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
+        Glib::ustring path2rawurl( const Gtk::TreePath& path );
+        Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
 
         // url で指定した項目を削除
         void remove_item( const std::string& url );
@@ -193,7 +193,7 @@ namespace BBSLIST
         // 親ウィンドウをセット
         void set_parent_win( Gtk::Window* parent_win ) override;
 
-        const std::string url_for_copy() override { return {}; }
+        std::string url_for_copy() override { return {}; }
 
         bool set_command( const std::string& command,
                           const std::string& arg1 = {},
@@ -241,7 +241,7 @@ namespace BBSLIST
         void get_threads( const size_t dirid, std::vector< std::string >& list_url );
 
         // 指定したidのディレクトリの名前を取得
-        const std::string get_dirname( const int dirid );
+        std::string get_dirname( const int dirid );
 
         // selectdialogで使う
         Gtk::TreePath get_current_path() { return m_treeview.get_current_path(); }

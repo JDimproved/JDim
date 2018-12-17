@@ -280,7 +280,7 @@ namespace ARTICLE
         void select_all(); 
 
         // 範囲選択中の文字列
-        const std::string str_selection(); 
+        std::string str_selection();
         const std::string& str_pre_selection() const { return m_selection.str_pre; }  // 一つ前の選択文字列
 
         // 範囲選択を開始したレス番号

@@ -592,7 +592,7 @@ int DrawAreaBase::get_current_res_num()
 
 
 // 範囲選択中の文字列
-const std::string DrawAreaBase::str_selection()
+std::string DrawAreaBase::str_selection()
 {
     if( ! m_selection.select ) return std::string();
 

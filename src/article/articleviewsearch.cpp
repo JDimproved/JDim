@@ -117,7 +117,7 @@ void ArticleViewSearch::set_toolbar_from_url()
 // queryが変化したときにurlを更新しないと再起動したときのrestoreで
 // 古いqueryのままになる
 //
-const std::string ArticleViewSearch::get_new_url()
+std::string ArticleViewSearch::get_new_url()
 {
     std::string url_tmp = m_url_board;
 
@@ -186,7 +186,7 @@ void ArticleViewSearch::regex_escape()
 //
 // メインウィンドウのURLバーなどの表示用にも使う
 //
-const std::string ArticleViewSearch::url_for_copy()
+std::string ArticleViewSearch::url_for_copy()
 {
     if( m_searchmode == CORE::SEARCHMODE_TITLE ) return m_url_title;
 

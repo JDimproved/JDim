@@ -40,7 +40,7 @@ bool BoardLocal::equal( const std::string& url )
 
 
 // そのまま出力
-const std::string BoardLocal::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
+std::string BoardLocal::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {
     num_from = 0;
     num_to = 0;
@@ -51,7 +51,7 @@ const std::string BoardLocal::url_dat( const std::string& url, int& num_from, in
 
 
 // そのまま出力
-const std::string BoardLocal::url_readcgi( const std::string& url, int num_from, int num_to )
+std::string BoardLocal::url_readcgi( const std::string& url, int num_from, int num_to )
 {
     JDLIB::Regex regex;
     const size_t offset = 0;
@@ -101,7 +101,7 @@ ArticleBase* BoardLocal::append_article( const std::string& datbase, const std::
 
 
 // datファイルのインポート
-const std::string BoardLocal::import_dat( const std::string& filename )
+std::string BoardLocal::import_dat( const std::string& filename )
 {
     if( empty() ) return FALSE;
     if( CACHE::file_exists( filename ) != CACHE::EXIST_FILE ) return std::string();

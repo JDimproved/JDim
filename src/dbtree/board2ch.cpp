@@ -52,7 +52,7 @@ const std::string& Board2ch::get_agent_w()
 
 
 // 読み込み用プロキシ
-const std::string Board2ch::get_proxy_host()
+std::string Board2ch::get_proxy_host()
 {
     const int mode = get_mode_local_proxy();
 
@@ -75,7 +75,7 @@ int Board2ch::get_proxy_port()
     return 0;
 }
 
-const std::string Board2ch::get_proxy_basicauth()
+std::string Board2ch::get_proxy_basicauth()
 {
     const int mode = get_mode_local_proxy();
 
@@ -87,7 +87,7 @@ const std::string Board2ch::get_proxy_basicauth()
 
 
 // 書き込み用プロキシ
-const std::string Board2ch::get_proxy_host_w()
+std::string Board2ch::get_proxy_host_w()
 {
     if( CORE::get_loginp2()->login_now() ){
 
@@ -118,7 +118,7 @@ int Board2ch::get_proxy_port_w()
 }
 
 
-const std::string Board2ch::get_proxy_basicauth_w()
+std::string Board2ch::get_proxy_basicauth_w()
 {
     if( CORE::get_loginp2()->login_now() ) return CONFIG::get_proxy_basicauth_for_data();
 
@@ -132,7 +132,7 @@ const std::string Board2ch::get_proxy_basicauth_w()
 
 
 //書き込み用クッキー作成
-const std::string Board2ch::cookie_for_write()
+std::string Board2ch::cookie_for_write()
 {
 #ifdef _DEBUG
     std::cout << "Board2ch::cookie_for_write\n";
@@ -161,7 +161,7 @@ const std::string Board2ch::cookie_for_write()
 }
 
 
-const std::string Board2ch::get_write_referer()
+std::string Board2ch::get_write_referer()
 {
     // p2ログインの場合はとりあえず空文字
     if( CORE::get_loginp2()->login_now() ) return std::string();
@@ -171,8 +171,8 @@ const std::string Board2ch::get_write_referer()
 
 
 // 新スレ作成時の書き込みメッセージ作成
-const std::string Board2ch::create_newarticle_message( const std::string& subject,
-                                                       const std::string& name, const std::string& mail, const std::string& msg )
+std::string Board2ch::create_newarticle_message( const std::string& subject, const std::string& name,
+                                                 const std::string& mail, const std::string& msg )
 {
     if( subject.empty() ) return std::string();
     if( msg.empty() ) return std::string();
@@ -225,7 +225,7 @@ const std::string Board2ch::create_newarticle_message( const std::string& subjec
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-const std::string Board2ch::url_bbscgi_new()
+std::string Board2ch::url_bbscgi_new()
 {
     if( CORE::get_loginp2()->login_now() ) return CONFIG::get_url_loginp2() + "post.php";
 
@@ -238,7 +238,7 @@ const std::string Board2ch::url_bbscgi_new()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-const std::string Board2ch::url_subbbscgi_new()
+std::string Board2ch::url_subbbscgi_new()
 {
     if( CORE::get_loginp2()->login_now() ) return CONFIG::get_url_loginp2() + "post.php";
 
@@ -271,7 +271,7 @@ ArticleBase* Board2ch::append_article( const std::string& datbase, const std::st
 
 
 // 2chのクッキー:HAP
-const std::string Board2ch::get_hap()
+std::string Board2ch::get_hap()
 {
     if( ! CONFIG::get_use_cookie_hap() ) return std::string();
 

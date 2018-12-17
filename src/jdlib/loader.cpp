@@ -1105,7 +1105,7 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, const int po
 //
 // 送信メッセージ作成
 //
-const std::string Loader::create_msg_send()
+std::string Loader::create_msg_send()
 {
     bool post_msg = ( !m_data.str_post.empty() && !m_data.head );
     bool use_proxy = ( ! m_data.host_proxy.empty() );

@@ -137,11 +137,11 @@ void CONFIG::reset_fonts(){ get_confitem()->reset_fonts(); }
 bool CONFIG::get_aafont_enabled(){ return get_confitem()->aafont_enabled; }
 
 
-const std::string CONFIG::get_ref_prefix(){ return get_confitem()->ref_prefix + get_confitem()->ref_prefix_space_str; }
+std::string CONFIG::get_ref_prefix(){ return get_confitem()->ref_prefix + get_confitem()->ref_prefix_space_str; }
 int CONFIG::ref_prefix_space(){ return get_confitem()->ref_prefix_space; }
 
 // レスにアスキーアートがあると判定する正規表現
-const std::string CONFIG::get_regex_res_aa(){
+std::string CONFIG::get_regex_res_aa(){
     std::string str = get_confitem()->regex_res_aa;
     int size = str.size();
 
@@ -329,10 +329,10 @@ bool CONFIG::get_open_one_category(){ return get_confitem()->open_one_category; 
 bool CONFIG::get_open_one_favorite(){ return get_confitem()->open_one_favorite; }
 
 // デフォルトの書き込み名
-const std::string CONFIG::get_write_name(){ return get_confitem()->write_name; }
+std::string CONFIG::get_write_name(){ return get_confitem()->write_name; }
 
 // デフォルトのメールアドレス
-const std::string CONFIG::get_write_mail(){ return get_confitem()->write_mail; }
+std::string CONFIG::get_write_mail(){ return get_confitem()->write_mail; }
 
 bool CONFIG::get_always_write_ok() { return get_confitem()->always_write_ok; }
 void CONFIG::set_always_write_ok( const bool write_ok ){ get_confitem()->always_write_ok = write_ok; }

@@ -140,7 +140,7 @@ const std::vector< int >  MouseKeyConf::check_conflict( const int mode, const st
 
 
 // IDから操作文字列取得
-const std::string MouseKeyConf::get_str_motions( const int id )
+std::string MouseKeyConf::get_str_motions( const int id )
 {
     std::string motions;
 
@@ -158,7 +158,7 @@ const std::string MouseKeyConf::get_str_motions( const int id )
 
 
 // IDからデフォルトの操作文字列取得
-const std::string MouseKeyConf::get_default_motions( const int id )
+std::string MouseKeyConf::get_default_motions( const int id )
 {
     std::map< int, std::string >::iterator it = m_map_default_motions.find( id );
     if( it != m_map_default_motions.end() ) return ( *it ).second;
