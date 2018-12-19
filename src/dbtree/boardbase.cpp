@@ -1847,7 +1847,7 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
                               const std::string& query,
                               const bool mode_or, // 今のところ無視
                               const bool bm,
-                              const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
+                              const bool stop // 呼出元のスレッドで true にセットすると検索を停止する
     )
 {
 #ifdef _DEBUG

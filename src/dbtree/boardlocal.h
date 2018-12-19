@@ -32,7 +32,7 @@ namespace DBTREE
 
         // キャッシュサーチをキャンセル
         void search_cache( std::vector< ArticleBase* >&, const std::string&, const bool, const bool,
-                           const bool& ) override {}
+                           const bool ) override {}
 
         // datファイルのインポート
         std::string import_dat( const std::string& filename ) override;

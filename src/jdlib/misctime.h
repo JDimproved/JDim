@@ -37,7 +37,7 @@ namespace MISC
 
     // time_t を月日の文字列に変換
     // (例) mode == TIME_NORMAL なら 1135785252 -> 2005/12/29 0:54
-    std::string timettostr( const time_t& time_from, const int mode );
+    std::string timettostr( const time_t time_from, const int mode );
 
     // 実行時間測定用
     void start_measurement( const int id );

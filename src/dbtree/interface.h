@@ -193,9 +193,9 @@ namespace DBTREE
     // query が空の時はキャッシュにあるログを全てヒットさせる
     // bm がtrueの時、しおりが付いている(スレ一覧でしおりを付けた or レスに一つでもしおりが付いている)スレのみを対象に検索する
     void search_cache_all( std::vector< DBTREE::ArticleBase* >& list_article,
-                           const std::string& query, const bool mode_or, const bool bm, const bool& stop );
+                           const std::string& query, const bool mode_or, const bool bm, const bool stop );
     void search_cache( const std::string& url, std::vector< DBTREE::ArticleBase* >& list_article,
-                       const std::string& query, const bool mode_or, const bool bm, const bool& stop );
+                       const std::string& query, const bool mode_or, const bool bm, const bool stop );
 
     // article 系
     bool article_is_cached( const std::string& url ); // キャッシュにあるかどうか

@@ -573,13 +573,13 @@ void DBTREE::read_boardinfo_all()
 }
 
 void DBTREE::search_cache_all( std::vector< DBTREE::ArticleBase* >& list_article,
-                               const std::string& query, const bool mode_or, const bool bm, const bool& stop )
+                               const std::string& query, const bool mode_or, const bool bm, const bool stop )
 {
     DBTREE::get_root()->search_cache( list_article, query, mode_or, bm, stop );
 }
 
 void DBTREE::search_cache( const std::string& url, std::vector< DBTREE::ArticleBase* >& list_article, const std::string& query,
-                           const bool mode_or, const bool bm, const bool& stop )
+                           const bool mode_or, const bool bm, const bool stop )
 {
     DBTREE::get_board( url )->search_cache( list_article, query, mode_or, bm, stop );
 }

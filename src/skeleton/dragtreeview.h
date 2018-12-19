@@ -93,7 +93,7 @@ namespace SKELETON
         // ツールチップ表示
         // set_tooltip_min_width()で指定した幅よりもツールチップが広い場合は表示
         void set_str_tooltip( const std::string& str );
-        void set_tooltip_min_width( const int& min_width );
+        void set_tooltip_min_width( const int min_width );
         void hide_tooltip();
         void show_tooltip();
 

@@ -126,7 +126,7 @@ time_t MISC::datetotime( const std::string& date )
 //
 // time_t を月日の文字列に変換
 //
-std::string MISC::timettostr( const time_t& time_from, const int mode )
+std::string MISC::timettostr( const time_t time_from, const int mode )
 {
     const int lng = 64;
     struct tm tm_tmp;

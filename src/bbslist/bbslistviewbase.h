@@ -103,7 +103,7 @@ namespace BBSLIST
 
         Glib::RefPtr< Gtk::TreeStore >& get_treestore() { return m_treestore; }
         SKELETON::EditTreeView& get_treeview() { return  m_treeview; }
-        const bool& get_ready_tree() const{ return m_ready_tree; }
+        bool get_ready_tree() const { return m_ready_tree; }
         void set_open_only_onedir( const bool set ){ m_open_only_onedir = set; }
 
         void activate_act_before_popupmenu( const std::string& url ) override;

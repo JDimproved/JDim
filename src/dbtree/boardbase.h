@@ -496,7 +496,7 @@ namespace DBTREE
 
         // 最終書き込み時間
         void update_writetime();
-        const time_t& get_write_time() const { return m_write_time.tv_sec; } // 秒
+        time_t get_write_time() const { return m_write_time.tv_sec; } // 秒
         time_t get_write_pass(); // 経過時間(秒)
         time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
         void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
@@ -541,7 +541,7 @@ namespace DBTREE
                                    const std::string& query,
                                    const bool mode_or, // 今のところ無視
                                    const bool bm,
-                                   const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
+                                   const bool stop // 呼出元のスレッドで true にセットすると検索を停止する
             );
 
         // datファイルのインポート

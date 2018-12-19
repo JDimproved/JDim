@@ -26,7 +26,7 @@ std::set< std::string > Dom::m_static_html_elements;
 
 
 // コンストラクタ
-Dom::Dom( const int& type, const std::string& name, const bool html )
+Dom::Dom( const int type, const std::string& name, const bool html )
     : m_html( html ),
       m_nodeType( type ),
       m_nodeName( name ),
@@ -914,7 +914,7 @@ bool Dom::setAttribute( const std::string& name, const std::string& value )
 //
 // 属性：setAttribute( int )
 //
-bool Dom::setAttribute( const std::string& name, const int& value )
+bool Dom::setAttribute( const std::string& name, const int value )
 {
     if( name.empty()
      || m_nodeType != NODE_TYPE_ELEMENT ) return false;

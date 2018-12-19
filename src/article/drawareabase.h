@@ -251,8 +251,8 @@ namespace ARTICLE
         ~DrawAreaBase();
 
         const std::string& get_url() const { return m_url; }
-        const int& width_client() const { return m_width_client; }
-        const int& height_client() const { return m_height_client; }
+        int width_client() const { return m_width_client; }
+        int height_client() const { return m_height_client; }
 
         void clock_in();
         void clock_in_smooth_scroll();
