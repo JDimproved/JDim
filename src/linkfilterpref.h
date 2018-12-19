@@ -78,9 +78,9 @@ namespace CORE
         void append_rows();
         void append_row( const std::string& url, const std::string& cmd );
 
-        const Gtk::TreeModel::iterator get_selected_row();
-        const Gtk::TreeModel::iterator get_top_row();
-        const Gtk::TreeModel::iterator get_bottom_row();
+        Gtk::TreeModel::iterator get_selected_row();
+        Gtk::TreeModel::iterator get_top_row();
+        Gtk::TreeModel::iterator get_bottom_row();
 
         void select_row( const Gtk::TreeModel::iterator& row );
 

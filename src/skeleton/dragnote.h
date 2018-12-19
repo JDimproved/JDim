@@ -177,7 +177,7 @@ namespace SKELETON
 #if !GTKMM_CHECK_VERSION(3,0,0)
         // DragableNoteBook を構成している各Notebookの高さ
         // 及びタブの高さと位置を取得 ( 枠の描画用 )
-        const Alloc_NoteBook get_alloc_notebook();
+        Alloc_NoteBook get_alloc_notebook();
 #endif
 
         // ツールバー取得

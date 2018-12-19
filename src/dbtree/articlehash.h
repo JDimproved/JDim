@@ -41,7 +41,7 @@ namespace DBTREE
 
         ArticleBase* find( const std::string& datbase, const std::string& id );
 
-        const ArticleHashIterator begin();
+        ArticleHashIterator begin();
         size_t end() const { return size(); }
 
       private:

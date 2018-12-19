@@ -1817,7 +1817,7 @@ void BoardViewBase::update_item_all()
 //
 // 行を作って内容をセット
 //
-const Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const int id )
+Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const int id )
 {
     Gtk::TreeModel::Row row = *( m_liststore->prepend() ); // append より prepend の方が速いらしい
 

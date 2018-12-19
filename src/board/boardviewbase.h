@@ -201,7 +201,7 @@ namespace BOARD
         void set_load_subject_txt( const bool load ){ m_load_subject_txt = load; }
 
         // 行を作って内容をセット
-        const Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art, const int id );
+        Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art, const int id );
 
         // デフォルトのソート状態
         virtual int get_default_sort_column();

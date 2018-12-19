@@ -145,7 +145,7 @@ void LinkFilterPref::append_row( const std::string& url, const std::string& cmd 
 }
 
 
-const Gtk::TreeModel::iterator LinkFilterPref::get_selected_row()
+Gtk::TreeModel::iterator LinkFilterPref::get_selected_row()
 {
     Gtk::TreeModel::iterator row;
 
@@ -157,7 +157,7 @@ const Gtk::TreeModel::iterator LinkFilterPref::get_selected_row()
 }
 
 
-const Gtk::TreeModel::iterator LinkFilterPref::get_top_row()
+Gtk::TreeModel::iterator LinkFilterPref::get_top_row()
 {
     Gtk::TreeModel::iterator row;
 
@@ -169,7 +169,7 @@ const Gtk::TreeModel::iterator LinkFilterPref::get_top_row()
 }
 
 
-const Gtk::TreeModel::iterator LinkFilterPref::get_bottom_row()
+Gtk::TreeModel::iterator LinkFilterPref::get_bottom_row()
 {
     Gtk::TreeModel::iterator row;
 

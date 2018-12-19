@@ -82,7 +82,7 @@ ArticleBase* ArticleHash::find( const std::string& datbase, const std::string& i
 }
 
 
-const ArticleHashIterator ArticleHash::begin()
+ArticleHashIterator ArticleHash::begin()
 {
     m_it_hash = m_min_hash;
     m_it_pos = 0;
