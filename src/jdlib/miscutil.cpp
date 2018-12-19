@@ -21,7 +21,7 @@
 //
 // str を "\n" ごとに区切ってlistにして出力
 //
-const std::list< std::string > MISC::get_lines( const std::string& str ){
+std::list< std::string > MISC::get_lines( const std::string& str ){
         
     std::list< std::string > lines;
     size_t i = 0, i2 = 0, r = 0;
@@ -44,7 +44,7 @@ const std::list< std::string > MISC::get_lines( const std::string& str ){
 //
 // emacs lisp のリスト型を要素ごとにlistにして出力
 //
-const std::list< std::string > MISC::get_elisp_lists( const std::string& str )
+std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 {
 #ifdef _DEBUG
     std::cout << "MISC::get_elisp_lists\n";
@@ -109,7 +109,7 @@ const std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 //
 // strを空白または "" 単位で区切って list で出力
 //
-const std::list< std::string > MISC::split_line( const std::string& str )
+std::list< std::string > MISC::split_line( const std::string& str )
 {
     std::string str_space = "　";
     size_t lng_space = str_space.length();
@@ -176,7 +176,7 @@ const std::list< std::string > MISC::split_line( const std::string& str )
 
 
 // strを delimで区切って list で出力
-const std::list< std::string > MISC::StringTokenizer( const std::string& str, const char delim )
+std::list< std::string > MISC::StringTokenizer( const std::string& str, const char delim )
 {
     std::list< std::string > list_str;
 
@@ -198,7 +198,7 @@ const std::list< std::string > MISC::StringTokenizer( const std::string& str, co
 //
 // list_inから空白行を除いてリストを返す
 //
-const std::list< std::string > MISC::remove_nullline_from_list( const std::list< std::string >& list_in )
+std::list< std::string > MISC::remove_nullline_from_list( const std::list< std::string >& list_in )
 {
     std::list< std::string > list_ret;
     std::list< std::string >::const_iterator it;    
@@ -214,7 +214,7 @@ const std::list< std::string > MISC::remove_nullline_from_list( const std::list<
 //
 // list_inの各行から前後の空白を除いてリストを返す
 //
-const std::list< std::string > MISC::remove_space_from_list( const std::list< std::string >& list_in )
+std::list< std::string > MISC::remove_space_from_list( const std::list< std::string >& list_in )
 {
     std::list< std::string > list_ret;
     std::list< std::string >::const_iterator it;    
@@ -230,7 +230,7 @@ const std::list< std::string > MISC::remove_space_from_list( const std::list< st
 //
 // list_inからコメント行(#)を除いてリストを返す
 //
-const std::list< std::string > MISC::remove_commentline_from_list( const std::list< std::string >& list_in )
+std::list< std::string > MISC::remove_commentline_from_list( const std::list< std::string >& list_in )
 {
     const char commentchr = '#';
 
@@ -253,7 +253,7 @@ const std::list< std::string > MISC::remove_commentline_from_list( const std::li
 //
 // (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
 //
-const std::list< std::string > MISC::strtolist( const std::string& str_in )
+std::list< std::string > MISC::strtolist( const std::string& str_in )
 {
     std::list< std::string > list_tmp;
     std::list< std::string > list_ret;
@@ -451,7 +451,7 @@ std::string MISC::replace_str( const std::string& str, const std::string& str1, 
 //
 // list_inから str1 を str2 に置き換えてリストを返す
 //
-const std::list< std::string > MISC::replace_str_list( const std::list< std::string >& list_in,
+std::list< std::string > MISC::replace_str_list( const std::list< std::string >& list_in,
                                                  const std::string& str1, const std::string& str2 )
 {
     std::list< std::string > list_out;
@@ -1552,7 +1552,7 @@ std::string MISC::toupper_str( const std::string& str )
 //
 // list 内のアイテムを全部大文字化
 //
-const std::list< std::string > MISC::toupper_list( const std::list< std::string >& list_str )
+std::list< std::string > MISC::toupper_list( const std::list< std::string >& list_str )
 {
     std::list< std::string > list_out;
     std::list< std::string >::const_iterator it = list_str.begin();

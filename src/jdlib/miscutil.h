@@ -44,30 +44,30 @@ namespace MISC
      };
 
     // str を "\n" ごとに区切ってlistにして出力
-    const std::list< std::string > get_lines( const std::string& str );
+    std::list< std::string > get_lines( const std::string& str );
 
     // strを空白または "" 単位で区切って list で出力
-    const std::list< std::string > split_line( const std::string& str );
+    std::list< std::string > split_line( const std::string& str );
 
     // strを delimで区切って list で出力
-    const std::list< std::string > StringTokenizer( const std::string& str, const char delim );
+    std::list< std::string > StringTokenizer( const std::string& str, const char delim );
 
     // emacs lisp のリスト型を要素ごとにlistにして出力
-    const std::list< std::string > get_elisp_lists( const std::string& str );
+    std::list< std::string > get_elisp_lists( const std::string& str );
 
     // list_inから空白行を除いてリストを返す
-    const std::list< std::string > remove_nullline_from_list( const std::list< std::string >& list_in );
+    std::list< std::string > remove_nullline_from_list( const std::list< std::string >& list_in );
 
     // list_inの各行から前後の空白を除いてリストを返す
-    const std::list< std::string > remove_space_from_list( const std::list< std::string >& list_in );
+    std::list< std::string > remove_space_from_list( const std::list< std::string >& list_in );
 
     // list_inからコメント行(#)を除いてリストを返す
-    const std::list< std::string > remove_commentline_from_list( const std::list< std::string >& list_in );
+    std::list< std::string > remove_commentline_from_list( const std::list< std::string >& list_in );
 
     // 空白と""で区切られた str_in の文字列をリストにして出力
     // \"は " に置換される
     // (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
-    const std::list< std::string > strtolist( const std::string& str_in );
+    std::list< std::string > strtolist( const std::string& str_in );
 
     // list_in の文字列リストを空白と""で区切ってストリングにして出力
     // "は \" に置換される
@@ -96,7 +96,8 @@ namespace MISC
     std::string replace_str( const std::string& str, const std::string& str1, const std::string& str2 );
 
     // list_inから str1 を str2 に置き換えてリストを返す
-    const std::list< std::string > replace_str_list( const std::list< std::string >& list_in, const std::string& str1, const std::string& str2 );
+    std::list< std::string > replace_str_list( const std::list< std::string >& list_in,
+                                               const std::string& str1, const std::string& str2 );
 
     // str_in に含まれる改行文字を replace に置き換え
     std::string replace_newlines_to_str( const std::string& str_in, const std::string& replace );
@@ -237,7 +238,7 @@ namespace MISC
     std::string toupper_str( const std::string& str );
 
     // list 内のアイテムを全部大文字化
-    const std::list< std::string > toupper_list( const std::list< std::string >& list_str );
+    std::list< std::string > toupper_list( const std::list< std::string >& list_str );
     
     //str を小文字化
     std::string tolower_str( const std::string& str );

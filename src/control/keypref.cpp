@@ -48,7 +48,7 @@ std::string KeyDiag::get_default_motions( const int id )
 }
 
 
-const std::vector< int > KeyDiag::check_conflict( const int mode, const std::string& str_motion )
+std::vector< int > KeyDiag::check_conflict( const int mode, const std::string& str_motion )
 {
     return CONTROL::check_key_conflict( mode, str_motion );
 }

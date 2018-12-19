@@ -42,7 +42,7 @@ std::string MouseDiag::get_default_motions( const int id )
 }
 
 
-const std::vector< int > MouseDiag::check_conflict( const int mode, const std::string& str_motion )
+std::vector< int > MouseDiag::check_conflict( const int mode, const std::string& str_motion )
 {
     return CONTROL::check_mouse_conflict( mode, str_motion );
 }

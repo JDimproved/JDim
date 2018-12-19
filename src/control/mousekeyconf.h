@@ -57,7 +57,7 @@ namespace CONTROL
 
         // 同じモード内でモーションが重複していないかチェック
         // 戻り値 : コントロールID
-        const std::vector< int > check_conflict( const int mode, const std::string& str_motion );
+        std::vector< int > check_conflict( const int mode, const std::string& str_motion );
 
         // スペースで区切られた複数の操作をデータベースに登録
         void set_motions( const int id, const std::string& str_motions );

@@ -181,7 +181,7 @@ int ImageAdmin::get_tab_nums()
 //
 // 含まれているページのURLのリスト取得
 //
-const std::list< std::string > ImageAdmin::get_URLs()
+std::list< std::string > ImageAdmin::get_URLs()
 {
     std::list< std::string > urls;
     m_iconbox.foreach( [&urls]( Gtk::Widget& w ) {

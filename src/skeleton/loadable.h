@@ -145,7 +145,7 @@ namespace SKELETON
         std::string get_loader_str_code();
         std::string get_loader_contenttype();
         std::string get_loader_modified();
-        const std::list< std::string > get_loader_cookies();
+        std::list< std::string > get_loader_cookies();
         std::string get_loader_location();
         size_t get_loader_length();
     };

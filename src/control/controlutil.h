@@ -92,7 +92,7 @@ namespace CONTROL
     bool remove_keymotions( const int id );
 
     // キーボード操作が重複していないか
-    const std::vector< int > check_key_conflict( const int mode, const std::string& str_motion );
+    std::vector< int > check_key_conflict( const int mode, const std::string& str_motion );
 
     // editviewの操作をemacs風にする
     bool is_emacs_mode();
@@ -126,7 +126,7 @@ namespace CONTROL
     bool remove_mousemotions( const int id );
 
     // マウスジェスチャが重複していないか
-    const std::vector< int > check_mouse_conflict( const int mode, const std::string& str_motion );
+    std::vector< int > check_mouse_conflict( const int mode, const std::string& str_motion );
 
 
     ///////////////////////
@@ -149,7 +149,7 @@ namespace CONTROL
     bool remove_buttonmotions( const int id );
 
     // ボタンが重複していないか
-    const std::vector< int > check_button_conflict( const int mode, const std::string& str_motion );
+    std::vector< int > check_button_conflict( const int mode, const std::string& str_motion );
 
 
     ///////////////////////

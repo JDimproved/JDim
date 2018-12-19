@@ -86,7 +86,7 @@ namespace SKELETON
         virtual int get_tab_nums();
 
         // 含まれているページのURLのリスト取得
-        virtual const std::list< std::string > get_URLs();
+        virtual std::list< std::string > get_URLs();
 
         // Core からのクロック入力。
         // Coreでタイマーをひとつ動かして全体の同期を取るようにしているので

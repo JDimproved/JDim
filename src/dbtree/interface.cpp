@@ -619,7 +619,7 @@ void DBTREE::board_show_updateicon( const std::string& url, const bool update )
     DBTREE::get_board( url )->show_updateicon( update );
 }
 
-const std::list< std::string > DBTREE::board_get_check_update_articles( const std::string& url )
+std::list< std::string > DBTREE::board_get_check_update_articles( const std::string& url )
 {
     return DBTREE::get_board( url )->get_check_update_articles();
 }

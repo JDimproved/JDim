@@ -41,7 +41,7 @@ namespace CONTROL
 
         InputDiag* create_inputdiag() override;
         std::string get_default_motions( const int id ) override;
-        const std::vector< int > check_conflict( const int mode, const std::string& str_motion ) override;
+        std::vector< int > check_conflict( const int mode, const std::string& str_motion ) override;
     };
 
 

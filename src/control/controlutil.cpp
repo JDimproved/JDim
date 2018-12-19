@@ -768,7 +768,7 @@ bool CONTROL::remove_keymotions( const int id )
 
 
 // キーボード操作が重複していないか
-const std::vector< int > CONTROL::check_key_conflict( const int mode, const std::string& str_motion )
+std::vector< int > CONTROL::check_key_conflict( const int mode, const std::string& str_motion )
 {
     return CONTROL::get_keyconfig()->check_conflict( mode, str_motion );
 }
@@ -877,7 +877,7 @@ bool CONTROL::remove_mousemotions( const int id )
 
 
 // マウスジェスチャが重複していないか
-const std::vector< int > CONTROL::check_mouse_conflict( const int mode, const std::string& str_motion )
+std::vector< int > CONTROL::check_mouse_conflict( const int mode, const std::string& str_motion )
 {
     const std::string motion = convert_mouse_motions_reverse( str_motion );
     return CONTROL::get_mouseconfig()->check_conflict( mode, motion );
@@ -930,7 +930,7 @@ bool CONTROL::remove_buttonmotions( const int id )
 
 
     // ボタンが重複していないか
-const std::vector< int > CONTROL::check_button_conflict( const int mode, const std::string& str_motion )
+std::vector< int > CONTROL::check_button_conflict( const int mode, const std::string& str_motion )
 {
     return CONTROL::get_buttonconfig()->check_conflict( mode, str_motion );
 }

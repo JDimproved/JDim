@@ -42,11 +42,10 @@ std::string ButtonDiag::get_default_motions( const int id )
 }
 
 
-const std::vector< int > ButtonDiag::check_conflict( const int mode, const std::string& str_motion )
+std::vector< int > ButtonDiag::check_conflict( const int mode, const std::string& str_motion )
 {
     // 衝突判定をしない
-    std::vector< int > vec_ids;
-    return vec_ids;
+    return {};
 }
 
 

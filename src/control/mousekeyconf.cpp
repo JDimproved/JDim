@@ -124,7 +124,7 @@ bool MouseKeyConf::alloted( const int id,
 
 
 // 同じモード内でモーションが重複していないかチェック
-const std::vector< int >  MouseKeyConf::check_conflict( const int mode, const std::string& str_motion )
+std::vector< int > MouseKeyConf::check_conflict( const int mode, const std::string& str_motion )
 {
     std::vector< int > vec_ids;
 

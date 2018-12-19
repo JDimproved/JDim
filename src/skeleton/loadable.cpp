@@ -236,7 +236,7 @@ std::string Loadable::get_loader_modified()
 }
 
 
-const std::list< std::string > Loadable::get_loader_cookies()
+std::list< std::string > Loadable::get_loader_cookies()
 {
     if( ! m_loader ) return std::list< std::string >();
 

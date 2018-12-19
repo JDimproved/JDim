@@ -554,7 +554,7 @@ namespace DBTREE
 
         // 板の更新チェック時に、更新チェックを行うスレのアドレスのリスト
         // キャッシュが存在し、かつdat落ちしていないで新着数が0のスレを速度の順でソートして返す
-        const std::list< std::string > get_check_update_articles();
+        std::list< std::string > get_check_update_articles();
 
       private:
 

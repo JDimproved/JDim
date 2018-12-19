@@ -118,7 +118,7 @@ namespace CONTROL
 
         virtual InputDiag* create_inputdiag() = 0;
         virtual std::string get_default_motions( const int id ) = 0;
-        virtual const std::vector< int > check_conflict( const int mode, const std::string& str_motion ) = 0;
+        virtual std::vector< int > check_conflict( const int mode, const std::string& str_motion ) = 0;
 
       private:
 

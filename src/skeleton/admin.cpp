@@ -324,7 +324,7 @@ int Admin::get_tab_nums()
 //
 // 含まれているページのURLのリスト取得
 //
-const std::list<std::string> Admin::get_URLs()
+std::list<std::string> Admin::get_URLs()
 {
     std::list<std::string> urls;
     

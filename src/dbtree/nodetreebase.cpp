@@ -547,7 +547,7 @@ std::list< ANCINFO* > NodeTreeBase::get_res_anchors( const int number )
 //
 // mode_or == true なら OR抽出
 //
-const std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bool mode_or )
+std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bool mode_or )
 {
     std::list< int > list_resnum;
     if( query.empty() ) return list_resnum;

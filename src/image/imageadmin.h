@@ -50,7 +50,7 @@ namespace IMAGE
         int get_tab_nums() override;
 
         // 含まれているページのURLのリスト取得
-        const std::list< std::string > get_URLs() override;
+        std::list< std::string > get_URLs() override;
 
         // 現在表示してるページ番号
         int get_current_page() override;
