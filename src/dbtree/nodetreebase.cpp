@@ -2540,9 +2540,9 @@ const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
             // utf-8で"＞"
             else if( ( unsigned char )( *pos ) == 0xef && ( unsigned char ) ( *( pos + 1 ) ) == 0xbc
                      && ( unsigned char ) ( *( pos + 2 ) ) == 0x9e ){
-                tmp_out[ lng_out++ ] = 0xef;
-                tmp_out[ lng_out++ ] = 0xbc;
-                tmp_out[ lng_out++ ] = 0x9e;
+                tmp_out[ lng_out++ ] = static_cast< char >( 0xef );
+                tmp_out[ lng_out++ ] = static_cast< char >( 0xbc );
+                tmp_out[ lng_out++ ] = static_cast< char >( 0x9e );
                 pos += 3;
             }
             else if( i == 0 ) return false;
@@ -2567,9 +2567,9 @@ const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
         else if( ( unsigned char )( *pos ) == 0xe3 && ( unsigned char ) ( *( pos + 1 ) ) == 0x80
                  && ( unsigned char ) ( *( pos + 2 ) ) == 0x81 ){
 
-            tmp_out[ lng_out++ ] = 0xe3;
-            tmp_out[ lng_out++ ] = 0x80;
-            tmp_out[ lng_out++ ] = 0x81;
+            tmp_out[ lng_out++ ] = static_cast< char >( 0xe3 );
+            tmp_out[ lng_out++ ] = static_cast< char >( 0x80 );
+            tmp_out[ lng_out++ ] = static_cast< char >( 0x81 );
 
             str_link[ 0 ] = ',';
             ++str_link;

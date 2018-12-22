@@ -217,4 +217,4 @@ MsgOverwriteDiag::MsgOverwriteDiag( Gtk::Window* parent )
     add_button( "上書き", OVERWRITE_YES );
     add_button( "すべていいえ", OVERWRITE_NO_ALL );
     add_button( "すべて上書き", OVERWRITE_YES_ALL );
-};
+}

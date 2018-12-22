@@ -59,8 +59,8 @@ namespace JDLIB
         char* m_buf;
 
         // zlib 用のバッファ
-        unsigned long m_lng_buf_zlib_in; 
-        unsigned long m_lng_buf_zlib_out;; 
+        unsigned long m_lng_buf_zlib_in;
+        unsigned long m_lng_buf_zlib_out;
         Bytef* m_buf_zlib_in;
         Bytef* m_buf_zlib_out;
 

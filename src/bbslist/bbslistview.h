@@ -34,7 +34,7 @@ namespace BBSLIST
 
         virtual void delete_view_impl();
     };
-};
+}
 
 
 #endif

@@ -15,7 +15,7 @@ namespace Gtk
 {
     class Menu;
     class MenuItem;
-};
+}
 
 
 namespace HISTORY

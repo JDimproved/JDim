@@ -21,7 +21,7 @@
 namespace SKELETON
 {
     class Admin;
-};
+}
 
 
 #define SUBDIR_ETCLIST "外部板"
@@ -323,7 +323,7 @@ namespace BBSLIST
         // ツリーの編集ウィンドウが閉じた
         void slot_hide_editlistwin();
     };
-};
+}
 
 
 #endif

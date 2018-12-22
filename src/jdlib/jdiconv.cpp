@@ -145,8 +145,8 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                     if( ( code0 >= 0x81 && code0 <=0x9F )
                         || ( code0 >= 0xe0 && code0 <=0xef ) ){
 
-                        *m_buf_in_tmp = 0x81;
-                        *(m_buf_in_tmp+1) = 0xa0;
+                        *m_buf_in_tmp = static_cast< char >( 0x81 );
+                        *(m_buf_in_tmp+1) = static_cast< char >( 0xa0 );
 
 #ifdef _DEBUG_ICONV
                         snprintf( str_tmp, 256, "iconv 0x%x%x -> □ (0x81a0) ", code0, code1 );

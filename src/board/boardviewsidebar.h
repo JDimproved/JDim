@@ -51,6 +51,6 @@ namespace BOARD
         virtual void save_column_width(){} // 保存しない
     };
 
-};
+}
 
 #endif

@@ -220,7 +220,7 @@ std::string ENVIRONMENT::get_jdversion()
     jd_version << MAJORVERSION << "."
                 << MINORVERSION << "."
                 << MICROVERSION << "-"
-                << JDTAG << get_git_revision(GIT_DATE, GIT_HASH, GIT_DIRTY, JDDATE);
+                << JDTAG << get_git_revision(GIT_DATE, GIT_HASH, GIT_DIRTY, JDDATE_FALLBACK);
 #endif // JDVERSION_SVN
 
     return jd_version.str();
