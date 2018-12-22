@@ -11,6 +11,10 @@
 
 #include <gtkmm.h>
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+#include "command.h"
+#endif
+
 namespace SKELETON
 {
     enum
@@ -39,6 +43,12 @@ namespace SKELETON
         // draw_frame == true なら枠を描画する
         PopupWinBase( bool draw_frame ) : Gtk::Window( Gtk::WINDOW_POPUP ), m_draw_frame( draw_frame ){
             if( m_draw_frame ) set_border_width( 1 );
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+            if ( auto main_window = CORE::get_mainwindow() ) {
+                set_transient_for( *main_window );
+            }
+#endif
         }
         ~PopupWinBase() noexcept {}
 
