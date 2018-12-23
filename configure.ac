@@ -70,7 +70,7 @@ dnl ユーザー設定
 dnl
 
 dnl 追加コンパイルオプション
-CXXFLAGS="-ggdb -Wall -pedantic-errors $CXXFLAGS"
+CXXFLAGS="-ggdb -Wall -pedantic $CXXFLAGS"
 
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
