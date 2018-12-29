@@ -14,15 +14,15 @@ namespace CORE
       public:
 
         BoardItemColumnPref( Gtk::Window* parent, const std::string& url );
-        virtual ~BoardItemColumnPref(){}
+        ~BoardItemColumnPref() noexcept {}
 
       private:
 
         // OK押した
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         // デフォルトボタン
-        virtual void slot_default();
+        void slot_default() override;
     };
 
     class BoardItemPref : public SKELETON::SelectItemPref
@@ -30,15 +30,15 @@ namespace CORE
       public:
 
         BoardItemPref( Gtk::Window* parent, const std::string& url );
-        virtual ~BoardItemPref(){}
+        ~BoardItemPref() noexcept {}
 
       private:
 
         // OK押した
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         // デフォルトボタン
-        virtual void slot_default();
+        void slot_default() override;
     };
 }
 

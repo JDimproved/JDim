@@ -28,19 +28,19 @@ namespace BOARD
       public:
 
         BoardViewNext( const std::string& url, const std::string& url_pre_article );
-        virtual ~BoardViewNext();
+        ~BoardViewNext();
 
-        virtual void reload();
-        virtual void update_view();
-        virtual void update_boardname();
+        void reload() override;
+        void update_view() override;
+        void update_boardname() override;
 
       protected:
 
         // デフォルトのソート状態
-        virtual const int get_default_sort_column();
-        virtual const int get_default_view_sort_mode();
-        virtual const int get_default_view_sort_pre_column();
-        virtual const int get_default_view_sort_pre_mode();
+        const int get_default_sort_column() override;
+        const int get_default_view_sort_mode() override;
+        const int get_default_view_sort_pre_column() override;
+        const int get_default_view_sort_pre_mode() override;
 
       private:
 
@@ -49,15 +49,15 @@ namespace BOARD
 
         // 次スレ移行処理に使用する前スレのアドレス
         // 次スレ移行処理に使用する。BoardViewBase::open_row()を参照せよ
-        virtual const std::string get_url_pre_article(){ return m_url_pre_article; }
+        const std::string get_url_pre_article() override { return m_url_pre_article; }
 
-        virtual void slot_abone_thread();
+        void slot_abone_thread() override;
 
         // ソート列やソートモードの保存
-        virtual void save_sort_columns(){} // 保存しない
+        void save_sort_columns() override {} // 保存しない
 
         // 列幅の保存
-        virtual void save_column_width(){} // 保存しない
+        void save_column_width() override {} // 保存しない
     };
 
 }

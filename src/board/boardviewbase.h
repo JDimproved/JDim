@@ -101,68 +101,67 @@ namespace BOARD
     public:
 
         BoardViewBase( const std::string& url, const bool show_col_board );
-        virtual ~BoardViewBase();
+        ~BoardViewBase();
 
         const std::string& get_url_board() const { return m_url_board; }
-        virtual const std::string url_for_copy();
+        const std::string url_for_copy() override;
 
         // 行数
         const int get_row_size();
 
         // SKELETON::View の関数のオーバロード
 
-        virtual void save_session(){}
+        void save_session() override {}
 
-        virtual void update_url( const std::string& url_old, const std::string& url_new );
+        void update_url( const std::string& url_old, const std::string& url_new ) override;
 
-        virtual const int get_icon( const std::string& iconname );
-        virtual const bool is_loading() const { return m_loading; }
-        virtual const bool set_command( const std::string& command,
-                                        const std::string& arg1 = std::string(),
-                                        const std::string& arg2 = std::string()
-            );
+        const int get_icon( const std::string& iconname ) override;
+        const bool is_loading() const override { return m_loading; }
+        const bool set_command( const std::string& command,
+                                const std::string& arg1 = {},
+                                const std::string& arg2 = {} ) override;
 
-        virtual void clock_in();
+        void clock_in() override;
 
         // キーを押した        
-        virtual const bool slot_key_press( GdkEventKey* event );
+        const bool slot_key_press( GdkEventKey* event ) override;
 
-        virtual void write();
-        virtual void stop();
-        virtual void show_view();
-        virtual void redraw_scrollbar();
-        virtual void relayout();
-        virtual void focus_view();
-        virtual void focus_out();
-        virtual void close_view();
-        virtual void delete_view();
-        virtual void set_favorite();
+        void write() override;
+        void stop() override;
+        void show_view() override;
+        void redraw_scrollbar() override;
+        void relayout() override;
+        void focus_view() override;
+        void focus_out() override;
+        void close_view() override;
+        void delete_view() override;
+        void set_favorite() override;
 
 
         // 特定の行だけの表示内容更新
         // url : subject.txt のアドレス
         // id : DAT の ID(拡張子付き)
         // もし ID が empty() なら全ての行の表示内容を更新する
-        virtual void update_item( const std::string& url, const std::string& id );
+        void update_item( const std::string& url, const std::string& id ) override;
 
-        virtual const bool operate_view( const int control );
-        virtual void goto_top();
-        virtual void goto_bottom();
-        virtual void goto_num( const int num_to, const int num_from );
-        virtual void scroll_left();
-        virtual void scroll_right();
-        virtual void show_preference();
+        const bool operate_view( const int control ) override;
+        void goto_top() override;
+        void goto_bottom() override;
+        void goto_num( const int num_to, const int num_from ) override;
+        void scroll_left() override;
+        void scroll_right() override;
+        void show_preference() override;
 
         // 進む、戻る
-        virtual void back_viewhistory( const int count );
-        virtual void forward_viewhistory( const int count );
+        void back_viewhistory( const int count ) override;
+        void forward_viewhistory( const int count ) override;
 
         // 検索
-        virtual void exec_search();
-        virtual void up_search();
-        virtual void down_search();
-        virtual void operate_search( const std::string& controlid );
-        virtual void set_search_query( const std::string& query );
+        void exec_search() override;
+        void up_search() override;
+        void down_search() override;
+        void operate_search( const std::string& controlid ) override;
+        void set_search_query( const std::string& query ) override;
         void clear_highlight();
 
         void row_up();
@@ -181,13 +180,13 @@ namespace BOARD
         SKELETON::DragTreeView& get_treeview(){ return m_treeview; }
 
         // Viewが所属するAdminクラス
-        virtual SKELETON::Admin* get_admin();
+        SKELETON::Admin* get_admin() override;
 
         // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
-        virtual void activate_act_before_popupmenu( const std::string& url );
+        void activate_act_before_popupmenu( const std::string& url ) override;
 
         // ポップアップメニュー取得
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        Gtk::Menu* get_popupmenu( const std::string& url ) override;
 
         // view更新
         void update_view_impl( const std::vector< DBTREE::ArticleBase* >& list_article, const bool loading_fin );

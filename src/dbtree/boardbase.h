@@ -246,7 +246,7 @@ namespace DBTREE
       public:
 
         BoardBase( const std::string& root, const std::string& path_board, const std::string& name );
-        virtual ~BoardBase();
+        ~BoardBase();
         bool empty();
 
         // 状態 ( global.hで定義 )
@@ -567,8 +567,8 @@ namespace DBTREE
         virtual const bool is_valid( const std::string& filename ){ return false; }
 
         virtual void create_loaderdata( JDLIB::LOADERDATA& data );
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
 
         // url_boardbase をロードして移転したかどうか解析開始
         bool start_checkking_if_board_moved();

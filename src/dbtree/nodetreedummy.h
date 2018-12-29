@@ -16,10 +16,10 @@ namespace DBTREE
       public:
 
         NodeTreeDummy( const std::string& url );
-        virtual ~NodeTreeDummy();
+        ~NodeTreeDummy();
 
         // ダウンロードしない
-        virtual void download_dat( const bool check_update ){}
+        void download_dat( const bool check_update ) override {}
     };
 }
 

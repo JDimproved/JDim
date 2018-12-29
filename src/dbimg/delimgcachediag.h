@@ -35,11 +35,11 @@ namespace DBIMG
 
       protected:
 
-        virtual bool on_expose_event( GdkEventExpose* event );
+        bool on_expose_event( GdkEventExpose* event ) override;
 
       private:
 
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
         void wait();
         void slot_cancel_clicked();
         time_t get_days( const std::string& path );

@@ -140,7 +140,7 @@ namespace DBTREE
       public:
 
         NodeTreeBase( const std::string& url, const std::string& date_modified );
-        virtual ~NodeTreeBase();
+        ~NodeTreeBase();
 
         bool empty();
         void update_url( const std::string& url );
@@ -279,8 +279,8 @@ namespace DBTREE
             return rawlines;
         }
 
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
 
       private:
 

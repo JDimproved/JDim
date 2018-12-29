@@ -66,7 +66,7 @@ ConfigItems::ConfigItems()
     fontname.resize( FONT_NUM );
 }
 
-ConfigItems::~ConfigItems()
+ConfigItems::~ConfigItems() noexcept
 {}
 
 // 設定読み込み

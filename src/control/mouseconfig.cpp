@@ -24,7 +24,7 @@ MouseConfig::MouseConfig()
 
 
 
-MouseConfig::~MouseConfig()
+MouseConfig::~MouseConfig() noexcept
 {}
 
 

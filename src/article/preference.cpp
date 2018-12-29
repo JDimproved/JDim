@@ -212,7 +212,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     if( command == "show_abone" ) m_notebook.set_current_page( page_abone );
 }
 
-Preferences::~Preferences()
+Preferences::~Preferences() noexcept
 {}
 
 

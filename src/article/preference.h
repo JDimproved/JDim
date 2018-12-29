@@ -64,10 +64,10 @@ namespace ARTICLE
       public:
 
         Preferences( Gtk::Window* parent, const std::string& url, const std::string command );
-        virtual ~Preferences();
+        ~Preferences() noexcept;
 
       private:
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
         void slot_clear_modified();
         void slot_clear_post_history();
     };

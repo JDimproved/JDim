@@ -42,7 +42,7 @@ namespace SKELETON
 
         MenuButton( const bool show_arrow , const int id );
 
-      virtual ~MenuButton();
+      ~MenuButton();
 
       Gtk::Widget* get_label_widget(){ return m_label; }
 

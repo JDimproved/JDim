@@ -49,7 +49,7 @@ namespace IMAGE
         // 1 -> INTERP_BILINEAR
         // 3 -> INTERP_HYPER
         ImageAreaBase( const std::string& url, const int interptype );
-        virtual ~ImageAreaBase();
+        ~ImageAreaBase();
 
         void stop();
         void wait();
@@ -84,7 +84,7 @@ namespace IMAGE
 
     private:
 
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
         virtual void set_image();
         void set_mosaic( Glib::RefPtr< Gdk::Pixbuf > pixbuf );
     };

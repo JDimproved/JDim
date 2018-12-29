@@ -15,10 +15,10 @@ namespace SKELETON
     class JDToolbar : public Gtk::Toolbar
     {
     public:
-        JDToolbar(){}
+        JDToolbar() noexcept {}
 
     protected:
-        virtual bool on_expose_event( GdkEventExpose* event );
+        bool on_expose_event( GdkEventExpose* event ) override;
     };
 }
 

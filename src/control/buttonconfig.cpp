@@ -23,7 +23,7 @@ ButtonConfig::ButtonConfig()
 {}
 
 
-ButtonConfig::~ButtonConfig()
+ButtonConfig::~ButtonConfig() noexcept
 {}
 
 

@@ -56,7 +56,7 @@ namespace SKELETON
       public:
 
         JDWindow( const bool fold_when_focusout, const bool need_mginfo = true );
-        virtual ~JDWindow();
+        ~JDWindow();
 
         Gtk::HBox& get_statbar(){ return  m_statbar; }
 
@@ -130,12 +130,12 @@ namespace SKELETON
         virtual const bool is_shown_win() = 0;
         virtual void set_shown_win( const bool set ) = 0;
 
-        virtual bool on_focus_in_event( GdkEventFocus* event );
-        virtual bool on_focus_out_event( GdkEventFocus* event );
-        virtual bool on_delete_event( GdkEventAny* event );
-        virtual bool on_window_state_event( GdkEventWindowState* event );
-        virtual bool on_configure_event( GdkEventConfigure* event );
-        virtual bool on_key_press_event( GdkEventKey* event );
+        bool on_focus_in_event( GdkEventFocus* event ) override;
+        bool on_focus_out_event( GdkEventFocus* event ) override;
+        bool on_delete_event( GdkEventAny* event ) override;
+        bool on_window_state_event( GdkEventWindowState* event ) override;
+        bool on_configure_event( GdkEventConfigure* event ) override;
+        bool on_key_press_event( GdkEventKey* event ) override;
 
       private:
 

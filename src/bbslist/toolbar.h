@@ -28,14 +28,14 @@ namespace BBSLIST
       public:
 
         BBSListToolBar();
-        virtual ~BBSListToolBar(){}
+        ~BBSListToolBar() noexcept {}
 
         // タブが切り替わった時にDragableNoteBookから呼び出される( Viewの情報を取得する )
-        virtual void set_view( SKELETON::View * view );
+        void set_view( SKELETON::View * view ) override;
 
       protected:
 
-        virtual void pack_buttons();
+        void pack_buttons() override;
 
       private:
 
@@ -57,11 +57,11 @@ namespace BBSLIST
       public:
 
         EditListToolBar();
-        virtual ~EditListToolBar(){}
+        ~EditListToolBar() noexcept {}
 
       protected:
 
-        virtual void pack_buttons();
+        void pack_buttons() override;
     };
 
 

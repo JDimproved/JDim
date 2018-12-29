@@ -14,15 +14,15 @@ namespace CORE
       public:
 
         SidebarItemPref( Gtk::Window* parent, const std::string& url  );
-        virtual ~SidebarItemPref(){}
+        ~SidebarItemPref() noexcept {}
 
       private:
 
         // OK押した
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         // デフォルトボタン
-        virtual void slot_default();
+        void slot_default() override;
     };
 }
 

@@ -25,7 +25,7 @@ Article2ch::Article2ch( const std::string& datbase, const std::string& id, bool 
 {}
 
 
-Article2ch::~Article2ch()
+Article2ch::~Article2ch() noexcept
 {}
 
 

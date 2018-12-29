@@ -29,10 +29,10 @@ namespace DBTREE
 
       protected:
 
-        virtual void clear();
-        virtual void init_loading();
-        virtual void create_loaderdata( JDLIB::LOADERDATA& data );
-        virtual const char* raw2dat( char* rawlines, int& byte );
+        void clear() override;
+        void init_loading() override;
+        void create_loaderdata( JDLIB::LOADERDATA& data ) override;
+        const char* raw2dat( char* rawlines, int& byte ) override;
     };
 }
 

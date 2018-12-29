@@ -26,7 +26,7 @@ namespace CORE
     public:
 
         Linkfilter_Manager();
-        virtual ~Linkfilter_Manager(){}
+        virtual ~Linkfilter_Manager() noexcept {}
 
         std::vector< LinkFilterItem >& get_list(){ return  m_list_cmd; }
         void save_xml();

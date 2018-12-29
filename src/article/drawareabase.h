@@ -227,7 +227,7 @@ namespace ARTICLE
         SIG_LEAVE_URL sig_leave_url(){ return m_sig_leave_url; }
 
         DrawAreaBase( const std::string& url );
-        virtual ~DrawAreaBase();
+        ~DrawAreaBase();
 
         const std::string& get_url() const { return m_url; }
         const int& width_client() const { return m_width_client; }

@@ -155,8 +155,8 @@ namespace DBTREE
 
         // bbsmenuのダウンロード用関数
         void clear();
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
         void bbsmenu2xml( const std::string& menu );
 
         // XML に含まれる板情報を取り出してデータベースを更新

@@ -22,14 +22,14 @@ namespace ARTICLE
         ~ArticleViewRes();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
+        void relayout() override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 
 
@@ -46,14 +46,14 @@ namespace ARTICLE
         ~ArticleViewName();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
+        void relayout() override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 
 
@@ -70,14 +70,14 @@ namespace ARTICLE
         ~ArticleViewID();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
+        void relayout() override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 
 
@@ -94,14 +94,14 @@ namespace ARTICLE
         ~ArticleViewBM();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
+        void relayout() override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 
 
@@ -119,14 +119,14 @@ namespace ARTICLE
         ~ArticleViewPost();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
+        void relayout() override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 
 
@@ -142,14 +142,14 @@ namespace ARTICLE
         ~ArticleViewURL();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
+        void relayout() override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 
 
@@ -166,14 +166,14 @@ namespace ARTICLE
         ~ArticleViewRefer();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
+        void relayout() override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 
 
@@ -192,14 +192,14 @@ namespace ARTICLE
         ~ArticleViewDrawout();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
+        void relayout() override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 
     /////////////////////////////////////////////////////////////////////////
@@ -215,17 +215,17 @@ namespace ARTICLE
         ~ArticleViewPostlog();
 
         // SKELETON::View の関数のオーバロード
-        virtual void relayout();
-        virtual void stop(){} // キャンセル
+        void relayout() override;
+        void stop() override {} // キャンセル
 
         // 検索
-        virtual void operate_search( const std::string& controlid );
+        void operate_search( const std::string& controlid ) override;
 
-        virtual void show_view();
-        virtual void reload();
+        void show_view() override;
+        void reload() override;
 
       private:
-        virtual void exec_reload();
+        void exec_reload() override;
     };
 }
 

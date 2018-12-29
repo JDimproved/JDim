@@ -24,7 +24,7 @@ namespace SKELETON
 
       protected:
 
-        virtual bool on_expose_event( GdkEventExpose* event );
+        bool on_expose_event( GdkEventExpose* event ) override;
     };
 }
 

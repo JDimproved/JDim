@@ -51,7 +51,7 @@ namespace IMAGE
       protected:
 
         // Viewが所属するAdminクラス
-        virtual SKELETON::Admin* get_admin();
+        SKELETON::Admin* get_admin() override;
 
         JDLIB::ConstPtr< DBIMG::Img >& get_img(){ return  m_img;}
 
@@ -62,7 +62,7 @@ namespace IMAGE
         const bool is_wait() const{ return m_wait; }
         void set_wait( const bool wait ){ m_wait = wait; }
 
-        const bool is_loading() const{ return m_loading; }
+        const bool is_loading() const override { return m_loading; }
         void set_loading( const bool loading ){ m_loading = loading; }
 
         Gtk::EventBox& get_event(){ return  m_event; }
@@ -70,7 +70,7 @@ namespace IMAGE
       public:
 
         ImageViewBase( const std::string& url, const std::string& arg1 = std::string(), const std::string& arg2 = std::string() );
-        virtual ~ImageViewBase();
+        ~ImageViewBase();
 
         const bool is_under_mouse() const { return m_under_mouse; }
 
@@ -78,34 +78,33 @@ namespace IMAGE
         // SKELETON::View の関数のオーバロード
         //
 
-        virtual void save_session(){}
+        void save_session() override {}
 
         // 親ウィンドウを取得
-        virtual Gtk::Window* get_parent_win();
+        Gtk::Window* get_parent_win() override;
 
         // キーを押した
-        virtual const bool slot_key_press( GdkEventKey* event );
+        const bool slot_key_press( GdkEventKey* event ) override;
 
         // コマンド
-        virtual const bool set_command( const std::string& command,
-                                        const std::string& arg1 = std::string(),
-                                        const std::string& arg2 = std::string()
-            );
+        const bool set_command( const std::string& command,
+                                const std::string& arg1 = {},
+                                const std::string& arg2 = {} ) override;
 
-        virtual void reload();
-        virtual void stop();
-        virtual void redraw_view();
-        virtual void close_view();
-        virtual void delete_view();
-        virtual const bool operate_view( const int control );
-        virtual void show_preference();
+        void reload() override;
+        void stop() override;
+        void redraw_view() override;
+        void close_view() override;
+        void delete_view() override;
+        const bool operate_view( const int control ) override;
+        void show_preference() override;
 
       protected:
 
         void setup_common();
         void set_image_to_buffer();
 
-        virtual void activate_act_before_popupmenu( const std::string& url );
+        void activate_act_before_popupmenu( const std::string& url ) override;
 
         void delete_view_impl( const bool show_diag );
         void slot_cancel_mosaic();

@@ -37,14 +37,14 @@ namespace DBTREE
 
       protected:
 
-        virtual void clear();
-        virtual void init_loading();
-        virtual void create_loaderdata( JDLIB::LOADERDATA& data );
-        virtual char* process_raw_lines( char* rawlines );
-        virtual const char* raw2dat( char* rawlines, int& byte );
+        void clear() override;
+        void init_loading() override;
+        void create_loaderdata( JDLIB::LOADERDATA& data ) override;
+        char* process_raw_lines( char* rawlines ) override;
+        const char* raw2dat( char* rawlines, int& byte ) override;
 
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
     };
 }
 

@@ -119,7 +119,7 @@ namespace DBTREE
       public:
 
         ArticleBase( const std::string& datbase, const std::string& id, bool cached );
-        virtual ~ArticleBase();
+        ~ArticleBase();
 
         const bool empty();
 
@@ -416,7 +416,7 @@ namespace DBTREE
 
         void slot_node_updated();
         void slot_load_finished();
-        virtual void unlock_impl();
+        void unlock_impl() override;
 
         // お気に入りのアイコンとスレビューのタブのアイコンに更新マークを表示
         // update == true の時に表示。falseなら戻す

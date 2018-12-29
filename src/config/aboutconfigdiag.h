@@ -23,7 +23,7 @@ namespace CONFIG
         AboutConfigDiagStr( Gtk::Window* parent, std::string* value, const std::string& defaultval );
 
       protected:
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         void slot_default();
     };
@@ -46,7 +46,7 @@ namespace CONFIG
         AboutConfigDiagInt( Gtk::Window* parent, int* value, const int defaultval );
 
       protected:
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         void slot_default();
     };
@@ -71,7 +71,7 @@ namespace CONFIG
         AboutConfigDiagBool( Gtk::Window* parent, bool* value, const bool defaultval );
 
       protected:
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         void slot_default();
     };

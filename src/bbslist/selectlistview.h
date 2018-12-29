@@ -23,21 +23,21 @@ namespace BBSLIST
       public:
 
         SelectListView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
-        virtual ~SelectListView(){}
+        ~SelectListView() noexcept {}
 
         SIG_CLOSE_DIALOG sig_close_dialog() { return m_sig_close_dialog; }
         SIG_FOCUS_ENTRY_SEARCH sig_focus_entry_search() { return m_sig_focus_entry_search; }
 
-        virtual void save_xml(){}
+        void save_xml() override {}
 
-        virtual void close_view();
-        virtual const bool operate_view( const int control );
+        void close_view() override;
+        const bool operate_view( const int control ) override;
 
       private:
 
-        virtual const bool open_row( Gtk::TreePath& path, const bool tab );
-        virtual void switch_rightview(){} // boardに移動しないようにキャンセル
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        const bool open_row( Gtk::TreePath& path, const bool tab ) override;
+        void switch_rightview() override {} // boardに移動しないようにキャンセル
+        Gtk::Menu* get_popupmenu( const std::string& url ) override;
     };
 
 }

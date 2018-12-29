@@ -19,11 +19,12 @@ TreeColumns::TreeColumns()
     : SKELETON::EditColumns()
 {}
 
-TreeColumns::~TreeColumns()
+TreeColumns::~TreeColumns() noexcept
 {}
 
 void TreeColumns::setup_row( Gtk::TreeModel::Row& row,
-                             const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type, const size_t dirid )
+                             const Glib::ustring url, const Glib::ustring name, const Glib::ustring data,
+                             const int type, const size_t dirid )
 {
     SKELETON::EditColumns::setup_row( row, url, name, data, type, dirid );
 

@@ -32,7 +32,7 @@ namespace IMAGE
         Preferences( Gtk::Window* parent, const std::string& url );
 
       private:
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
         void slot_open_ref();
     };
 

@@ -340,7 +340,7 @@ public:
         set_flags( Gtk::NO_WINDOW );
 #endif
     }
-    virtual ~DummyWidget(){}
+    ~DummyWidget() noexcept {}
 };
 
 

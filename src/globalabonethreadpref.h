@@ -36,7 +36,8 @@ namespace CORE
         SKELETON::SpinButton m_spin_hour;
 
         // OK押した
-        virtual void slot_ok_clicked(){
+        void slot_ok_clicked() override
+        {
 
             // 全体あぼーん再設定
 
@@ -119,7 +120,7 @@ namespace CORE
             show_all_children();
         }
 
-        virtual ~GlobalAboneThreadPref(){}
+        ~GlobalAboneThreadPref() noexcept {}
     };
 
 }

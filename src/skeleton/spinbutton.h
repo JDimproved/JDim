@@ -24,7 +24,8 @@ namespace SKELETON
       protected:
 
 #if !GTKMM_CHECK_VERSION(2,5,0)
-        virtual void on_spinbutton_digits_changed(){
+        void on_spinbutton_digits_changed() override
+        {
             const size_t size = 256;
             char str[ size ];
             snprintf( str, size, "%d", (int)get_value() );
@@ -43,7 +44,8 @@ namespace SKELETON
       protected:
 
 #if !GTKMM_CHECK_VERSION(2,5,0)
-        virtual void on_spinbutton_digits_changed(){
+        void on_spinbutton_digits_changed() override
+        {
             const size_t size = 256;
             char str[ size ];
             snprintf( str, size, "%4.3lf", get_value() );

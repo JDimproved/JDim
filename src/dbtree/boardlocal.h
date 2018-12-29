@@ -16,35 +16,35 @@ namespace DBTREE
       public:
 
         BoardLocal( const std::string& root, const std::string& path_board, const std::string& name );
-        virtual ~BoardLocal();
+        ~BoardLocal() noexcept;
 
         // url がこの板のものかどうか
-        virtual bool equal( const std::string& url );
+        bool equal( const std::string& url ) override;
 
-        virtual const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ); 
-        virtual const std::string url_readcgi( const std::string& url, int num_from, int num_to );
+        const std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ) override;
+        const std::string url_readcgi( const std::string& url, int num_from, int num_to ) override;
 
-        virtual void download_subject( const std::string& url_update_view, const bool );
+        void download_subject( const std::string& url_update_view, const bool ) override;
 
         // 板情報の読み書きをキャンセル
-        virtual void read_info(){}
-        virtual void save_info(){}
+        void read_info() override {}
+        void save_info() override {}
 
         // キャッシュサーチをキャンセル
-        virtual void search_cache( std::vector< ArticleBase* >&, const std::string&,
-                                   const bool, const bool, const bool& ) {}
+        void search_cache( std::vector< ArticleBase* >&, const std::string&, const bool, const bool,
+                           const bool& ) override {}
 
         // datファイルのインポート
-        virtual const std::string import_dat( const std::string& filename );
+        const std::string import_dat( const std::string& filename ) override;
 
       private:
 
-        virtual ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached );
+        ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
 
-        virtual void append_all_article_in_cache(){}
+        void append_all_article_in_cache() override {}
 
-        virtual void load_rule_setting(){}
-        virtual void download_rule_setting(){}
+        void load_rule_setting() override {}
+        void download_rule_setting() override {}
     };
 }
 

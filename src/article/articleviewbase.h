@@ -92,7 +92,7 @@ namespace ARTICLE
     public:
 
         ArticleViewBase( const std::string& url, const std::string& url_article );
-        virtual ~ArticleViewBase();
+        ~ArticleViewBase();
 
         const std::string& url_article() const { return m_url_article; }
 
@@ -100,47 +100,46 @@ namespace ARTICLE
 
         // SKELETON::View の関数のオーバロード
 
-        virtual void save_session(){}        
+        void save_session() override {}
 
-        virtual const std::string url_for_copy(); // コピーやURLバー表示用のURL
-        virtual const int width_client();
-        virtual const int height_client();
-        virtual const int get_icon( const std::string& iconname );
-        virtual const bool set_command( const std::string& command,
-                                        const std::string& arg1 = std::string(),
-                                        const std::string& arg2 = std::string()
-            );
+        const std::string url_for_copy() override; // コピーやURLバー表示用のURL
+        const int width_client() override;
+        const int height_client() override;
+        const int get_icon( const std::string& iconname ) override;
+        const bool set_command( const std::string& command,
+                                const std::string& arg1 = {},
+                                const std::string& arg2 = {} ) override;
 
-        virtual void clock_in();
+        void clock_in() override;
         void clock_in_smooth_scroll();
 
         // キーを押した
-        virtual const bool slot_key_press( GdkEventKey* event );
+        const bool slot_key_press( GdkEventKey* event ) override;
 
-        virtual void write();
-        virtual void reload();
-        virtual void stop();
-        virtual void redraw_view();
-        virtual void focus_view();
-        virtual void focus_out();
-        virtual void close_view();
-        virtual void delete_view();
-        virtual void set_favorite();
-        virtual const bool operate_view( const int control );
-        virtual void goto_top();
-        virtual void goto_bottom();
-        virtual void goto_num( const int num_to, const int num_from );
-        virtual void show_preference();
+        void write() override;
+        void reload() override;
+        void stop() override;
+        void redraw_view() override;
+        void focus_view() override;
+        void focus_out() override;
+        void close_view() override;
+        void delete_view() override;
+        void set_favorite() override;
+        const bool operate_view( const int control ) override;
+        void goto_top() override;
+        void goto_bottom() override;
+        void goto_num( const int num_to, const int num_from ) override;
+        void show_preference() override;
 
         // 進む、戻る
-        virtual void back_viewhistory( const int count );
-        virtual void forward_viewhistory( const int count );
+        void back_viewhistory( const int count ) override;
+        void forward_viewhistory( const int count ) override;
  
         // 検索
-        virtual void exec_search();
-        virtual void up_search();
-        virtual void down_search();
-        virtual void operate_search( const std::string& controlid );
+        void exec_search() override;
+        void up_search() override;
+        void down_search() override;
+        void operate_search( const std::string& controlid ) override;
         void clear_highlight();  // ハイライト解除
 
         // 記事削除 & 再オープン
@@ -157,15 +156,15 @@ namespace ARTICLE
     protected:
 
         // Viewが所属するAdminクラス
-        virtual SKELETON::Admin* get_admin();
+        SKELETON::Admin* get_admin() override;
 
         const JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article() const noexcept;
 
         // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
-        virtual void activate_act_before_popupmenu( const std::string& url );
+        void activate_act_before_popupmenu( const std::string& url ) override;
 
         // ポップアップメニュー取得
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        Gtk::Menu* get_popupmenu( const std::string& url ) override;
 
         // レスポップアップを隠す
         void hide_popup( const bool force = false );
@@ -237,12 +236,12 @@ namespace ARTICLE
         // 実況用
         void set_enable_live( const bool enable ){ m_enable_live = enable; }
         void set_live( const bool live );
-        virtual void live_start(){}
-        virtual void live_stop(){}
+        virtual void live_start() {}
+        virtual void live_stop() {}
 
     private:
 
-        virtual DrawAreaBase* create_drawarea();        
+        virtual DrawAreaBase* create_drawarea();
 
         void setup_action();
 

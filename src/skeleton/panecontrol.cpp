@@ -25,7 +25,7 @@ PaneControl::PaneControl( Gtk::Paned& paned, int fixmode )
 }
 
 
-PaneControl::~PaneControl()
+PaneControl::~PaneControl() noexcept
 {}
 
 

@@ -164,7 +164,7 @@ namespace SKELETON
         SIG_RESIZE_POPUP sig_resize_popup(){ return m_sig_resize_popup; }
         
         View( const std::string& url, const std::string& arg1 = std::string(), const std::string& arg2 = std::string() );
-        virtual ~View(){}
+        ~View() noexcept {}
 
         virtual void save_session() = 0;
 

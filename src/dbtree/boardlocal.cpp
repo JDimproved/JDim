@@ -24,7 +24,7 @@ BoardLocal::BoardLocal( const std::string& root, const std::string& path_board, 
 }
 
 
-BoardLocal::~BoardLocal()
+BoardLocal::~BoardLocal() noexcept
 {}
 
 

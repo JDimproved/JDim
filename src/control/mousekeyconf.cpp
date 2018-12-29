@@ -21,7 +21,7 @@ MouseKeyConf::MouseKeyConf()
 
 
 
-MouseKeyConf::~MouseKeyConf()
+MouseKeyConf::~MouseKeyConf() noexcept
 {}
 
 

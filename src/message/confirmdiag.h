@@ -23,7 +23,7 @@ namespace MESSAGE
 
       private:
 
-        virtual void slot_switch_page( GtkNotebookPage*, guint page );
+        void slot_switch_page( GtkNotebookPage*, guint page ) override;
     };
 }
 

@@ -78,7 +78,7 @@ namespace SKELETON
       public:
 
         ToolBar( Admin* admin );
-        virtual ~ToolBar(){}
+        ~ToolBar() noexcept {}
 
         void set_url( const std::string& url );
         const std::string& get_url() { return m_url; }

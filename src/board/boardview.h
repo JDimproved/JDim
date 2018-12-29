@@ -14,19 +14,19 @@ namespace BOARD
       public:
 
         BoardView( const std::string& url );
-        virtual ~BoardView();
+        ~BoardView();
 
         // SKELETON::View の関数のオーバロード
 
-        virtual void save_session();
+        void save_session() override;
 
-        virtual const bool is_updated();
-        virtual const bool is_check_update();
+        const bool is_updated() override;
+        const bool is_check_update() override;
 
-        virtual void reload();
-        virtual void show_view();
-        virtual void update_view();
-        virtual void update_boardname();
+        void reload() override;
+        void show_view() override;
+        void update_view() override;
+        void update_boardname() override;
     };
 }
 

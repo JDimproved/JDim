@@ -36,35 +36,35 @@ namespace ARTICLE
         ArticleViewMain( const std::string& url );
         ~ArticleViewMain();
 
-        virtual void clock_in();
-        virtual void clock_in_always();
+        void clock_in() override;
+        void clock_in_always() override;
 
-        virtual void goto_num( const int num_to, const int num_from );
+        void goto_num( const int num_to, const int num_from ) override;
 
         // SKELETON::View の関数のオーバロード
 
-        virtual void save_session();
+        void save_session() override;
 
-        virtual const bool is_loading() const;
-        virtual const bool is_updated();
-        virtual const bool is_check_update();
-        virtual const bool is_old();
-        virtual const bool is_broken();
+        const bool is_loading() const override;
+        const bool is_updated() override;
+        const bool is_check_update() override;
+        const bool is_old() override;
+        const bool is_broken() override;
 
-        virtual void show_view();
-        virtual void update_view();
-        virtual void update_finish();
-        virtual void relayout();
+        void show_view() override;
+        void update_view() override;
+        void update_finish() override;
+        void relayout() override;
 
       protected:
 
         // 実況
-        virtual void live_start();
-        virtual void live_stop();
+        void live_start() override;
+        void live_stop() override;
 
       private:
 
-        virtual void exec_reload();
+        void exec_reload() override;
 
         // ステータスに表示する文字列作成
         void create_status_message();

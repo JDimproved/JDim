@@ -39,7 +39,7 @@ namespace CORE
       public:
 
         Urlreplace_Manager();
-        virtual ~Urlreplace_Manager(){}
+        virtual ~Urlreplace_Manager() noexcept {}
 
         // URLを任意の正規表現で変換する
         const bool exec( std::string &url );

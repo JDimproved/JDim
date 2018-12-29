@@ -114,7 +114,7 @@ namespace SKELETON
         SIG_DRAG_DATA_GET sig_drag_data_get() { return m_sig_drag_data_get; }
 
         DragableNoteBook();
-        virtual ~DragableNoteBook();
+        ~DragableNoteBook();
 
         void clock_in();
         void focus_out();
@@ -168,7 +168,7 @@ namespace SKELETON
 
       private:
 
-        virtual bool on_expose_event( GdkEventExpose* event );
+        bool on_expose_event( GdkEventExpose* event ) override;
 
         // DragableNoteBook を構成している各Notebookの高さ
         // 及びタブの高さと位置を取得 ( 枠の描画用 )

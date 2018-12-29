@@ -25,7 +25,7 @@ KeyConfig::KeyConfig()
 {}
 
 
-KeyConfig::~KeyConfig()
+KeyConfig::~KeyConfig() noexcept
 {}
 
 

@@ -143,7 +143,7 @@ namespace BOARD
 
       public:
         Preferences( Gtk::Window* parent, const std::string& url, const std::string command );
-        virtual ~Preferences();
+        ~Preferences();
 
       private:
         void slot_clear_modified();
@@ -154,8 +154,8 @@ namespace BOARD
         void slot_check_live();
         void slot_remove_old_title();
         void slot_switch_page( GtkNotebookPage*, guint page );
-        virtual void slot_ok_clicked();
-        virtual void timeout();
+        void slot_ok_clicked() override;
+        void timeout() override;
     };
 
 }

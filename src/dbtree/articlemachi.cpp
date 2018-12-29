@@ -30,7 +30,7 @@ ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, 
 }
 
 
-ArticleMachi::~ArticleMachi()
+ArticleMachi::~ArticleMachi() noexcept
 {}
 
 

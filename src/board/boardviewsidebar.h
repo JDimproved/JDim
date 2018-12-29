@@ -23,32 +23,32 @@ namespace BOARD
       public:
 
         BoardViewSidebar( const std::string& url, const bool set_history );
-        virtual ~BoardViewSidebar();
+        ~BoardViewSidebar();
 
-        virtual void stop(){}
-        virtual void reload();
-        virtual void show_view();
-        virtual void update_boardname();
+        void stop() override {}
+        void reload() override;
+        void show_view() override;
+        void update_boardname() override;
 
-        virtual void update_item( const std::string& url, const std::string& id );
+        void update_item( const std::string& url, const std::string& id ) override;
 
       protected:
 
         // デフォルトのソート状態
-        virtual const int get_default_sort_column();
-        virtual const int get_default_view_sort_mode();
-        virtual const int get_default_view_sort_pre_column();
-        virtual const int get_default_view_sort_pre_mode();
+        const int get_default_sort_column() override;
+        const int get_default_view_sort_mode() override;
+        const int get_default_view_sort_pre_column() override;
+        const int get_default_view_sort_pre_mode() override;
 
       private:
 
-        virtual void slot_abone_thread();
+        void slot_abone_thread() override;
 
         // ソート列やソートモードの保存
-        virtual void save_sort_columns(){} // 保存しない
+        void save_sort_columns() override {} // 保存しない
 
         // 列幅の保存
-        virtual void save_column_width(){} // 保存しない
+        void save_column_width() override {} // 保存しない
     };
 
 }
