@@ -155,6 +155,9 @@ DrawAreaBase::~DrawAreaBase()
     std::cout << "DrawAreaBase::~DrawAreaBase " << m_url << std::endl;;
 #endif
 
+#if GTKMM_CHECK_VERSION(3,14,0)
+    cancel_deceleration();
+#endif
     if( m_layout_tree ) delete m_layout_tree;
     m_layout_tree = NULL;
     clear();
@@ -211,8 +214,12 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_view.signal_expose_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_expose_event ));
 #endif
     m_view.signal_scroll_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_scroll_event ));
+#if GTKMM_CHECK_VERSION(3,14,0)
+    setup_event_controller();
+#else
     m_view.signal_button_press_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_button_press_event ));
     m_view.signal_button_release_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_button_release_event ));
+#endif
     m_view.signal_motion_notify_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_motion_notify_event ));
     m_view.signal_key_press_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_press_event ));
     m_view.signal_key_release_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_release_event ));
@@ -5306,6 +5313,11 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 
                 set_selection( caret_left, caret_right );
                 redraw_force = true;
+#if GTKMM_CHECK_VERSION(3,14,0)
+                // GtkGestureMultiPressは指を離す度にreleasedが発行される
+                // ダブルクリックの途中でfalseに戻らないように設定する
+                m_drugging = true;
+#endif
             }
         }
     }
@@ -5636,3 +5648,217 @@ bool DrawAreaBase::slot_key_release_event( GdkEventKey* event )
 }
 
 
+
+#if GTKMM_CHECK_VERSION(3,14,0)
+void DrawAreaBase::setup_event_controller()
+{
+    m_view.add_events( Gdk::TOUCH_MASK );
+
+    m_gesture_multipress = Gtk::GestureMultiPress::create( m_view );
+    // 既存のシグナルハンドラに処理を委譲するので0を指定してどのボタンもリッスンする
+    m_gesture_multipress->set_button( 0 );
+    m_gesture_multipress->set_exclusive( true );
+    m_gesture_multipress->set_touch_only( false );
+    m_gesture_multipress->signal_pressed().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_multipress_pressed ) );
+    m_gesture_multipress->signal_released().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_multipress_released ) );
+
+    m_gesture_pan = Gtk::GesturePan::create( m_view, Gtk::ORIENTATION_VERTICAL );
+    m_gesture_pan->set_touch_only( true );
+    m_gesture_pan->signal_drag_begin().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_pan_begin ) );
+    m_gesture_pan->signal_drag_update().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_pan_update ) );
+    m_gesture_pan->signal_end().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_gesture_end ) );
+
+    m_gesture_swipe = Gtk::GestureSwipe::create( m_view );
+    m_gesture_pan->group( m_gesture_swipe );
+    m_gesture_swipe->set_touch_only( true );
+    m_gesture_swipe->signal_swipe().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_swipe ) );
+}
+
+
+//
+// イベント構造体を取得してslot_button_(press|release)_eventに処理を委譲する
+//
+void DrawAreaBase::slot_multipress_pressed( int n_press, double, double )
+{
+    GdkEventSequence* const sequence = m_gesture_multipress->get_current_sequence();
+    const GdkEvent* const event = m_gesture_multipress->get_last_event( sequence );
+    if( !event || event->type != GDK_BUTTON_PRESS ) return;
+
+    const unsigned int n_points = m_gesture_multipress->property_n_points();
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::slot_multipress_pressed "
+              << "n_press = " << n_press << ", event = " << event->type << ", n_points = " << n_points
+              << std::endl;
+#endif
+
+    const auto device = m_gesture_multipress->get_device();
+    GdkEventButton button_event = event->button;
+    if( n_press == 2 ) {
+        button_event.type = GDK_DOUBLE_BUTTON_PRESS;
+    }
+    else if( n_press == 3 && ( device && device->get_source() != Gdk::SOURCE_TOUCHSCREEN ) ) {
+        button_event.type = GDK_TRIPLE_BUTTON_PRESS;
+    }
+    if( n_points == 2 ) {
+        // 2本指タップは右ボタンクリックとして扱う
+        button_event.button = GDK_BUTTON_SECONDARY;
+    }
+    slot_button_press_event( &button_event );
+}
+
+void DrawAreaBase::slot_multipress_released( int n_press, double, double )
+{
+    static_cast< void >( n_press );
+
+    GdkEventSequence* const sequence = m_gesture_multipress->get_current_sequence();
+    const GdkEvent* const event = m_gesture_multipress->get_last_event( sequence );
+    if( !event || event->type != GDK_BUTTON_RELEASE ) return;
+
+    const unsigned int n_points = m_gesture_multipress->property_n_points();
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::slot_multipress_released "
+              << "n_press = " << n_press << ", event = " << event->type << ", n_points = " << n_points
+              << std::endl;
+#endif
+
+    GdkEventButton button_event = event->button;
+    if( n_points == 2 ) {
+        button_event.button = GDK_BUTTON_SECONDARY;
+    }
+    slot_button_release_event( &button_event );
+}
+
+
+void DrawAreaBase::slot_pan_begin( double start_x, double start_y )
+{
+    static_cast< void >( start_x );
+
+    cancel_deceleration();
+
+    Gtk::EventSequenceState state;
+    if ( !m_vscrbar ) {
+        state = Gtk::EVENT_SEQUENCE_DENIED;
+    }
+    else { // capture_button_press == true
+        const auto adjust = m_vscrbar->get_adjustment();
+        m_drag_start_y = adjust->get_value();
+
+        state = Gtk::EVENT_SEQUENCE_CLAIMED;
+    }
+
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::slot_pan_begin y = " << m_drag_start_y << std::endl;
+#endif
+
+    GdkEventSequence* const sequence = m_gesture_pan->get_current_sequence();
+    m_gesture_pan->set_sequence_state( sequence, state );
+}
+
+void DrawAreaBase::slot_pan_update( double offset_x, double offset_y )
+{
+    assert( m_vscrbar );
+    static_cast< void >( offset_x );
+
+    GdkEventSequence* const sequence = m_gesture_pan->get_last_updated_sequence();
+    if( m_gesture_pan->get_sequence_state( sequence ) != Gtk::EVENT_SEQUENCE_CLAIMED ) return;
+
+    const double y = m_drag_start_y - offset_y;
+    const auto adjust = m_vscrbar->get_adjustment();
+
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::slot_pan_update y = " << y << std::endl;
+#endif
+
+    if( y <= 0 ) return;
+    if( y >= adjust->get_upper() - adjust->get_page_size() ) return;
+
+    // パンの最中は必ずスクロール処理を実施する
+    m_wait_scroll = 0;
+
+    m_scrollinfo.reset();
+    m_scrollinfo.y = static_cast< int >( y );
+    m_scrollinfo.mode = SCROLL_TO_Y;
+
+    exec_scroll();
+}
+
+void DrawAreaBase::slot_gesture_end( GdkEventSequence* sequence )
+{
+    if( !m_gesture_pan->handles_sequence( sequence ) ) {
+        m_gesture_pan->set_state( Gtk::EVENT_SEQUENCE_DENIED );
+    }
+}
+
+
+
+namespace
+{
+    constexpr double kDecelerationFriction = 4.0; // スクロール速度の係数
+    constexpr double kDecelerationRatio = 0.000001; // 経過時間を切り下げて減速をゆるやかにする
+    constexpr double kInitialDyScale = 0.01; // pixcels/secからpixcels/frameに換算する係数
+}
+
+//
+// 慣性スクロールを実行する (指を離した後も減速しながらスクロールする)
+//
+void DrawAreaBase::slot_swipe( double velocity_x, double velocity_y )
+{
+    if( !m_vscrbar ) return;
+
+    static_cast< void >( velocity_x );
+
+    GdkEventSequence* const sequence = m_gesture_swipe->get_last_updated_sequence();
+    if( m_gesture_swipe->get_sequence_state( sequence ) != Gtk::EVENT_SEQUENCE_CLAIMED ) return;
+
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::slot_swipe vx = " << velocity_x << ", vy = " << velocity_y << std::endl;
+#endif
+    GdkFrameClock* const borrowed_clock = gtk_widget_get_frame_clock( GTK_WIDGET( this->gobj() ) );
+    m_deceleration.last_time = gdk_frame_clock_get_frame_time( borrowed_clock );
+    m_deceleration.elapsed = 0.0;
+    m_deceleration.initial_dy = velocity_y * kInitialDyScale;
+    m_deceleration.id = gtk_widget_add_tick_callback( GTK_WIDGET( this->gobj() ),
+                                                      &DrawAreaBase::deceleration_tick_cb, nullptr, nullptr );
+}
+
+gboolean DrawAreaBase::deceleration_tick_cb( GtkWidget* cwidget, GdkFrameClock* clock, gpointer )
+{
+    Gtk::Widget* const widget = Glib::wrap( cwidget );
+    return dynamic_cast< DrawAreaBase* >( widget )->deceleration_tick_impl( clock );
+}
+
+gboolean DrawAreaBase::deceleration_tick_impl( GdkFrameClock* clock )
+{
+    const gint64 current_time = gdk_frame_clock_get_frame_time( clock );
+    m_deceleration.elapsed += ( current_time - m_deceleration.last_time ) * kDecelerationRatio;
+    m_deceleration.last_time = current_time;
+    const double exp_part = std::exp( -kDecelerationFriction * m_deceleration.elapsed );
+    const double dy = -kDecelerationFriction * exp_part * m_deceleration.initial_dy;
+
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::deceleration_tick_impl dy = " << dy << std::endl;
+#endif
+    if( std::fabs( dy ) < 1.0 ) {
+        cancel_deceleration();
+        return G_SOURCE_REMOVE;
+    }
+
+    // 減速中は必ずスクロール処理を実施する
+    m_wait_scroll = 0;
+
+    m_scrollinfo.reset();
+    m_scrollinfo.dy = static_cast< int >( dy );
+    m_scrollinfo.mode = SCROLL_NORMAL;
+
+    exec_scroll();
+    return G_SOURCE_CONTINUE;
+}
+
+void DrawAreaBase::cancel_deceleration()
+{
+    if( m_deceleration.id ) {
+        gtk_widget_remove_tick_callback( GTK_WIDGET( this->gobj() ), m_deceleration.id );
+        m_deceleration.id = 0;
+    }
+}
+#endif // GTKMM_CHECK_VERSION(3,14,0)
