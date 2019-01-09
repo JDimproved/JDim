@@ -461,7 +461,7 @@ void History_Manager::delete_viewhistory( const std::string& url )
 //
 // 現在表示中のViewのURL( url_old) を新しいURL( url_new )に変更
 //
-const bool History_Manager::replace_current_url_viewhistory( const std::string& url_old, const std::string& url_new )
+bool History_Manager::replace_current_url_viewhistory( const std::string& url_old, const std::string& url_new )
 {
 #ifdef _DEBUG
     std::cout << "History_Manager::replace_current_url_viewhistory\n"
@@ -498,7 +498,7 @@ void History_Manager::replace_url_viewhistory( const std::string& url_old, const
 //
 // View履歴タイトル更新
 //
-const bool History_Manager::replace_current_title_viewhistory( const std::string& url, const std::string& title )
+bool History_Manager::replace_current_title_viewhistory( const std::string& url, const std::string& title )
 {
 #ifdef _DEBUG
     std::cout << "History_Manager::replace_current_title_viewhistory\n"
@@ -540,7 +540,7 @@ std::vector< ViewHistoryItem* >& History_Manager::get_items_forward_viewhistory(
 //
 // View履歴追加
 //
-const bool History_Manager::append_viewhistory( const std::string& url_current, const std::string& url_append )
+bool History_Manager::append_viewhistory( const std::string& url_current, const std::string& url_append )
 {
 #ifdef _DEBUG
     std::cout << "History_Manager::append_viewhistory" << std::endl
@@ -559,7 +559,7 @@ const bool History_Manager::append_viewhistory( const std::string& url_current, 
 //
 // View履歴「戻る」可能
 //
-const bool History_Manager::can_back_viewhistory( const std::string& url, const int count )
+bool History_Manager::can_back_viewhistory( const std::string& url, const int count )
 {
     ViewHistory* history = get_viewhistory( url );
     if( ! history ) return false;
@@ -571,7 +571,7 @@ const bool History_Manager::can_back_viewhistory( const std::string& url, const 
 //
 // View履歴「進む」可能
 //
-const bool History_Manager::can_forward_viewhistory( const std::string& url, const int count )
+bool History_Manager::can_forward_viewhistory( const std::string& url, const int count )
 {
     ViewHistory* history = get_viewhistory( url );
     if( ! history ) return false;

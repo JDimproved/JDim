@@ -29,7 +29,7 @@ namespace DBIMG
         void set_clock_in( Img* img );
         void reset_clock_in( Img* img );
         void remove_clock_in();
-        const int get_wait_size(){ return m_list_wait.size(); }
+        int get_wait_size(){ return m_list_wait.size(); }
 
         // Imgクラス取得(無ければ作成)
         Img* get_img( const std::string& url );
@@ -39,7 +39,7 @@ namespace DBIMG
 
         // 画像データの先頭のシグネチャを見て画像のタイプを取得
         // 画像ではない場合は T_NOIMG を返す
-        const int get_image_type( const unsigned char *sign );
+        int get_image_type( const unsigned char *sign );
 
         // 拡張子から画像タイプを取得
         // 画像ではない場合は T_UNKNOWN を返す

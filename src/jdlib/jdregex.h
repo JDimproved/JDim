@@ -44,14 +44,14 @@ namespace JDLIB
         // newline :  . に改行をマッチさせない
         // usemigemo : migemo使用 (コンパイルオプションで指定する必要あり)
         // wchar : 全角半角の区別をしない
-        const bool compile( const std::string reg
-                            , const bool icase, const bool newline, const bool usemigemo, const bool wchar );
+        bool compile( const std::string reg, const bool icase, const bool newline, const bool usemigemo,
+                      const bool wchar );
 
-        const bool exec( const std::string& target, const size_t offset );
-        const bool exec( const std::string reg, const std::string& target, const size_t offset
-                         , const bool icase, const bool newline, const bool usemigemo, const bool wchar );
+        bool exec( const std::string& target, const size_t offset );
+        bool exec( const std::string reg, const std::string& target, const size_t offset, const bool icase,
+                   const bool newline, const bool usemigemo, const bool wchar );
 
-        const int pos( const size_t num );
+        int pos( const size_t num );
         const std::string str( const size_t num );
     };
 }

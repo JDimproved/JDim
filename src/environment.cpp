@@ -512,7 +512,7 @@ std::string ENVIRONMENT::get_distname()
 // WM 判定
 // TODO: 環境変数で判定できない場合の判定方法を考える
 //
-const int ENVIRONMENT::get_wm()
+int ENVIRONMENT::get_wm()
 {
     if( window_manager != WM_UNKNOWN ) return window_manager;
 

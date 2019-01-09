@@ -7,7 +7,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #undef DELETE // conflict with Gtk::Stock::DELETE
-#include "jdmutex.h"
+#include <mutex>
 #endif
 
 namespace JDLIB
@@ -19,7 +19,7 @@ namespace JDLIB
         Glib::RefPtr<Glib::MainContext> m_context;
         UINT_PTR m_identifer;
         
-        static JDLIB::StaticMutex s_lock;
+        static std::mutex s_lock;
         static std::map< UINT_PTR, Timeout* > s_timeouts;
 #else
         sigc::connection m_connection;

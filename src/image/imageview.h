@@ -42,7 +42,7 @@ namespace IMAGE
         void scroll_left() override;
         void scroll_right() override;
 
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
 
       protected:
 

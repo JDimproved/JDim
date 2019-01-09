@@ -241,19 +241,19 @@ namespace ARTICLE
         void set_enable_draw( const bool enable ){ m_enable_draw = enable; }
 
         // フォントID( fontid.h にある ID を指定)
-        const int get_fontid() const { return m_fontid; }
+        int get_fontid() const { return m_fontid; }
         void set_fontid( int id ){ m_fontid = id; m_defaultfontid = id; }
 
         // 新着セパレータのあるレス番号の取得とセット
-        const int get_separator_new();
+        int get_separator_new();
         void set_separator_new( int num );
         void hide_separator_new();
 
         // セパレータが画面に表示されているか
-        const bool is_separator_on_screen();
+        bool is_separator_on_screen();
 
         // 現在のポインタの下にあるレス番号取得
-        const int get_current_res_num();
+        int get_current_res_num();
 
         // 全選択
         void select_all(); 
@@ -263,16 +263,16 @@ namespace ARTICLE
         const std::string& str_pre_selection() const { return m_selection.str_pre; }  // 一つ前の選択文字列
 
         // 範囲選択を開始したレス番号
-        const int get_selection_resnum_from();
+        int get_selection_resnum_from();
 
         // 範囲選択を終了したレス番号
-        const int get_selection_resnum_to();
+        int get_selection_resnum_to();
 
         // 範囲選択に含まれる画像URLのリスト
         const std::vector< URLINFO >& get_selection_imgurls() const { return m_selection.imgurls; }
 
-        const int get_seen_current() const { return m_seen_current; } // 現在見ているレスの番号
-        const int get_goto_num_reserve() const { return m_goto_num_reserve; } // 初期化時のジャンプ予約(レス番号)
+        int get_seen_current() const { return m_seen_current; } // 現在見ているレスの番号
+        int get_goto_num_reserve() const { return m_goto_num_reserve; } // 初期化時のジャンプ予約(レス番号)
 
         int max_number();   // 表示されている最後のレスの番号
 
@@ -301,7 +301,7 @@ namespace ARTICLE
         void redraw_view();
 
         // スクロール方向指定
-        const bool set_scroll( const int control );
+        bool set_scroll( const int control );
 
         // マウスホイールの処理
         void wheelscroll( GdkEventScroll* event );
@@ -317,8 +317,8 @@ namespace ARTICLE
         void goto_back();
 
         // 検索
-        const int search( const std::list< std::string >& list_query, const bool reverse );
-        const int search_move( const bool reverse );
+        int search( const std::list< std::string >& list_query, const bool reverse );
+        int search_move( const bool reverse );
         void clear_highlight();
 
         // 実況モード
@@ -330,14 +330,14 @@ namespace ARTICLE
 
         // リアライズしたか
         // Gtk::Widget::is_realized() はうまく動作しない
-        const bool is_drawarea_realized(){ return static_cast<bool>(m_window); }
+        bool is_drawarea_realized(){ return static_cast<bool>(m_window); }
 
         // 文字色のID( colorid.h にある ID を指定)
-        const int get_colorid_text() const{ return m_colorid_text; }
+        int get_colorid_text() const{ return m_colorid_text; }
         void set_colorid_text( int id ){ m_colorid_text = id; }
 
         // 背景色のID( colorid.h にある ID を指定)
-        const int get_colorid_back();
+        int get_colorid_back();
         void set_colorid_back( int id ){ m_colorid_back = id; }
 
         // 共通セットアップ
@@ -348,7 +348,7 @@ namespace ARTICLE
 
         // レイアウト処理
         virtual bool exec_layout();
-        const bool exec_layout_impl( const bool is_popup, const int offset_y );
+        bool exec_layout_impl( const bool is_popup, const int offset_y );
 
         // DrawAreaに枠を描画する
         void set_draw_frame( bool draw_frame ){ m_draw_frame = draw_frame; }
@@ -378,23 +378,23 @@ namespace ARTICLE
                                   const bool init_popupwin, const int mrg_right, const int mrg_bottom );
 
         // 文字の幅などの情報
-        const int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );
+        int get_width_of_one_char( const char* str, int& byte, char& pre_char, bool& wide_mode, const int mode );
         bool set_init_wide_mode( const char* str, const int pos_start, const int pos_to );
         bool is_wrapped( const int x, const int border, const char* str );
 
         // スクリーン描画
         // y から height の高さ分だけ描画する
         // height == 0 ならスクロールした分だけ描画( y は無視 )
-        const bool draw_screen( const int y, const int height );
+        bool draw_screen( const int y, const int height );
         void exec_draw_screen( const int y_redraw, const int height_redraw );
 
         bool draw_one_node( LAYOUT* layout, const CLIPINFO& ci );
         void draw_div( LAYOUT* layout_div, const CLIPINFO& ci );
-        const bool get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from, size_t& byte_to );
+        bool get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from, size_t& byte_to );
         void draw_one_text_node( LAYOUT* layout, const CLIPINFO& ci );
         void draw_string( LAYOUT* node, const CLIPINFO& ci,
                           const int color, const int color_back, const int byte_from, const int byte_to );
-        const bool draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci );
+        bool draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci );
         void set_node_font( LAYOUT* layout );
 
         // drawarea がリサイズ実行
@@ -413,21 +413,21 @@ namespace ARTICLE
                                  const int x, const int y,
                                  int& pos, int& width_line, int& char_width, int& byte_char );
         LAYOUT* set_caret( CARET_POSITION& caret_pos, int x, int y );
-        const bool set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  const int x, const int y, const bool triple );
+        bool set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION& caret_right,  const int x, const int y, const bool triple );
 
         // 範囲選択関係
-        const bool set_selection( const CARET_POSITION& caret_left, const CARET_POSITION& caret_right );
-        const bool set_selection( const CARET_POSITION& caret_pos );
-        const bool set_selection( const CARET_POSITION& caret_pos, RECTANGLE* rect );
-        const bool set_selection_str();
-        const bool is_caret_on_selection( const CARET_POSITION& caret_pos );
+        bool set_selection( const CARET_POSITION& caret_left, const CARET_POSITION& caret_right );
+        bool set_selection( const CARET_POSITION& caret_pos );
+        bool set_selection( const CARET_POSITION& caret_pos, RECTANGLE* rect );
+        bool set_selection_str();
+        bool is_caret_on_selection( const CARET_POSITION& caret_pos );
         std::string get_selection_as_url( const CARET_POSITION& caret_pos );
 
         // マウスが動いた時の処理
         bool motion_mouse();
 
         // 現在のポインターの下のノードからカーソルのタイプを決定する
-        const Gdk::CursorType get_cursor_type();
+        Gdk::CursorType get_cursor_type();
 
         // カーソルの形状の変更
         void change_cursor( const Gdk::CursorType type );
@@ -450,7 +450,7 @@ namespace ARTICLE
         bool slot_button_release_event( GdkEventButton* event );
         bool slot_motion_notify_event( GdkEventMotion* event );
 
-        const bool slot_key_press_event( GdkEventKey* event );
+        bool slot_key_press_event( GdkEventKey* event );
         bool slot_key_release_event( GdkEventKey* event );
     };
 

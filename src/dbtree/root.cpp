@@ -740,7 +740,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 //
 // (明示的に)板移転
 //
-const bool Root::move_board( const std::string& url_old, const std::string& url_new, const bool etc )
+bool Root::move_board( const std::string& url_old, const std::string& url_new, const bool etc )
 {
     if( url_old == url_new ) return false;
 
@@ -1543,7 +1543,7 @@ void Root::save_movetable()
 //
 // 2ch型のURLかどうか
 //
-const bool Root::is_2ch( const std::string& url )
+bool Root::is_2ch( const std::string& url )
 {
     const std::string hostname = MISC::get_hostname( url );
 
@@ -1559,7 +1559,7 @@ const bool Root::is_2ch( const std::string& url )
 //
 // JBBS型のURLかどうか
 //
-const bool Root::is_JBBS( const std::string& url )
+bool Root::is_JBBS( const std::string& url )
 {
     const std::string hostname = MISC::get_hostname( url );
 
@@ -1574,7 +1574,7 @@ const bool Root::is_JBBS( const std::string& url )
 //
 // まち型のURLかどうか
 //
-const bool Root::is_machi( const std::string& url )
+bool Root::is_machi( const std::string& url )
 {
     const std::string hostname = MISC::get_hostname( url );
 
@@ -1587,7 +1587,7 @@ const bool Root::is_machi( const std::string& url )
 //
 // vipサービスのURLか
 //
-const bool Root::is_vip2ch( const std::string& url )
+bool Root::is_vip2ch( const std::string& url )
 {
     const std::string hostname = MISC::get_hostname( url );
 
@@ -1600,7 +1600,7 @@ const bool Root::is_vip2ch( const std::string& url )
 //
 // ローカルファイルか
 //
-const bool Root::is_local( const std::string& url )
+bool Root::is_local( const std::string& url )
 {
     if( url.find( "file://" ) != std::string::npos ) return true;
 

@@ -9,10 +9,7 @@
 #include <string>
 #include <vector>
 
-enum
-{
-    MAX_MENU_SIZE = 20
-};
+constexpr size_t MAX_MENU_SIZE = 20;
 
 namespace SKELETON
 {

@@ -123,7 +123,7 @@ void Linkfilter_Manager::save_xml()
 //
 // 実行したら true を返す
 //
-const bool Linkfilter_Manager::exec( const std::string& url, const std::string& link, const std::string& selection )
+bool Linkfilter_Manager::exec( const std::string& url, const std::string& link, const std::string& selection )
 {
     if( ! m_list_cmd.size() ) return false;
 

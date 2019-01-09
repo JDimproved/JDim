@@ -85,8 +85,8 @@ namespace IMAGE
         std::list< bool > get_locked() override;
 
         // タブのロック/アンロック
-        const bool is_lockable( const int page ) override;
-        const bool is_locked( const int page ) override;
+        bool is_lockable( const int page ) override;
+        bool is_locked( const int page ) override;
         void lock( const int page ) override;
         void unlock( const int page ) override;
 

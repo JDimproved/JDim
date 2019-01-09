@@ -160,7 +160,7 @@ void ButtonConfig::set_one_motion_impl( const int id, const int mode, const std:
 
 
 // タブで開くボタンを入れ替えているか
-const bool ButtonConfig::is_toggled_tab_button()
+bool ButtonConfig::is_toggled_tab_button()
 {
     const bool ret =  ( get_str_motions( CONTROL::OpenBoardButton ).find( "Mid" ) != std::string::npos
                         && get_str_motions( CONTROL::OpenBoardTabButton ).find( "Left" ) != std::string::npos
@@ -207,7 +207,7 @@ void ButtonConfig::toggle_tab_button( const bool toggle )
 
 
 // ポップアップ表示の時にクリックでワープするか
-const bool ButtonConfig::is_popup_warpmode()
+bool ButtonConfig::is_popup_warpmode()
 {
     return ( get_str_motions( CONTROL::PopupWarpButton).find( "Left" ) != std::string::npos );
 }

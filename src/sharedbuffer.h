@@ -14,7 +14,7 @@
 
 namespace CORE
 {
-    const int SBUF_size();
+    int SBUF_size();
     void SBUF_clear_info();
     void SBUF_set_list( const CORE::DATA_INFO_LIST& list_info );
     CORE::DATA_INFO_LIST& SBUF_list_info();

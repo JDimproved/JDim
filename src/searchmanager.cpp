@@ -67,8 +67,8 @@ Search_Manager::~Search_Manager()
 // bm  : trueの時、しおりが付いている(スレ一覧でしおりを付けた or レスに一つでもしおりが付いている)スレのみを対象に検索する
 // calc_data : 検索終了時に m_list_data を求める
 //
-const bool Search_Manager::search( const std::string& id, const int searchmode, const std::string& url,
-                                   const std::string& query, const bool mode_or, const bool bm, const bool calc_data )
+bool Search_Manager::search( const std::string& id, const int searchmode, const std::string& url,
+                             const std::string& query, const bool mode_or, const bool bm, const bool calc_data )
 {
 #ifdef _DEBUG
     std::cout << "Search_Manager::search url = " << url << " query = " << query << std::endl;
@@ -213,7 +213,7 @@ void Search_Manager::wait()
 //
 // スレタイ検索
 //
-const bool Search_Manager::search_title( const std::string& id, const std::string& query )
+bool Search_Manager::search_title( const std::string& id, const std::string& query )
 {
     if( m_searching ) return false;
     if( m_searchloader && m_searchloader->is_loading() ) return false;

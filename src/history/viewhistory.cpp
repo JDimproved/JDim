@@ -203,7 +203,7 @@ std::vector< ViewHistoryItem* >& ViewHistory::get_items_forward( const int count
 //
 // 「戻る」可能
 //
-const bool ViewHistory::can_back( const int count )
+bool ViewHistory::can_back( const int count )
 {
     if( count <= 0 ) return false;
 
@@ -221,7 +221,7 @@ const bool ViewHistory::can_back( const int count )
 //
 // 「進む」可能
 //
-const bool ViewHistory::can_forward( const int count )
+bool ViewHistory::can_forward( const int count )
 {
     if( count <= 0 ) return false;
 

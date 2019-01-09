@@ -26,7 +26,7 @@ JDTreeViewBase::~JDTreeViewBase() noexcept
 //
 // 行数
 //
-const int JDTreeViewBase::get_row_size()
+int JDTreeViewBase::get_row_size()
 {
     if( ! get_model() ) return 0;
 
@@ -198,7 +198,7 @@ void JDTreeViewBase::goto_bottom()
 //
 // 選択行を上へ移動
 //
-const bool JDTreeViewBase::row_up()
+bool JDTreeViewBase::row_up()
 {
     Gtk::TreePath path = get_current_path();
     if( !get_row( path ) ) return false;
@@ -215,7 +215,7 @@ const bool JDTreeViewBase::row_up()
 //
 // 選択行を下へ移動
 //
-const bool JDTreeViewBase::row_down()
+bool JDTreeViewBase::row_down()
 {
     Gtk::TreePath path = get_current_path();
     if( !get_row( path ) ) return false;
@@ -359,7 +359,7 @@ void JDTreeViewBase::expand_parents( const Gtk::TreePath& path )
 //
 // pathが開かれているか
 //
-const bool JDTreeViewBase::is_expand( const Gtk::TreePath& path )
+bool JDTreeViewBase::is_expand( const Gtk::TreePath& path )
 {
     Gtk::TreePath parent( path );
 

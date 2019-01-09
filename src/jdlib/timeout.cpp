@@ -14,7 +14,7 @@ using namespace JDLIB;
 
 #ifdef _WIN32
 // static
-JDLIB::StaticMutex Timeout::s_lock = JDLIB_STATIC_MUTEX_INIT;
+std::mutex Timeout::s_lock;
 std::map< UINT_PTR, Timeout* > Timeout::s_timeouts;
 #endif
 
@@ -38,7 +38,7 @@ Timeout::~Timeout()
 {
 #ifdef _WIN32
     if( m_identifer != 0 ){
-        JDLIB::LockGuard lock( s_lock );
+        std::lock_guard< std::mutex > lock( s_lock );
         KillTimer( NULL, m_identifer );
         s_timeouts.erase( m_identifer );
         m_identifer = 0;
@@ -53,7 +53,7 @@ Timeout* Timeout::connect( const sigc::slot< bool > slot_timeout, unsigned int i
 {
     Timeout* timeout = new Timeout( slot_timeout );
 #ifdef _WIN32
-    JDLIB::LockGuard lock( s_lock );
+    std::lock_guard< std::mutex > lock( s_lock );
     // use global windows timer
     UINT_PTR ident = SetTimer( NULL, 0, interval, slot_timeout_win32 );
     if( ident != 0 ) {

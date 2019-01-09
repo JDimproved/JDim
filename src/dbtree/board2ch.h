@@ -30,12 +30,12 @@ namespace DBTREE
 
         // 読み込み用プロキシ
         const std::string get_proxy_host() override;
-        const int get_proxy_port() override;
+        int get_proxy_port() override;
         const std::string get_proxy_basicauth() override;
 
         // 書き込み用プロキシ
         const std::string get_proxy_host_w() override;
-        const int get_proxy_port_w() override;
+        int get_proxy_port_w() override;
         const std::string get_proxy_basicauth_w() override;
 
         // 書き込み用クッキー
@@ -55,7 +55,7 @@ namespace DBTREE
         const std::string url_subbbscgi_new() override;
 
         // datの最大サイズ(Kバイト)
-        const int get_max_dat_lng() const override { return DEFAULT_MAX_DAT_LNG; }
+        int get_max_dat_lng() const override { return DEFAULT_MAX_DAT_LNG; }
 
       protected:
 
@@ -69,7 +69,7 @@ namespace DBTREE
       private:
 
         // デフォルト最大レス数
-        const int get_default_number_max_res() override { return DEFAULT_NUMBER_MAX_2CH; }
+        int get_default_number_max_res() override { return DEFAULT_NUMBER_MAX_2CH; }
 
         ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
     };

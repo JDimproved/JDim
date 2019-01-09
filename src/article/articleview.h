@@ -45,11 +45,11 @@ namespace ARTICLE
 
         void save_session() override;
 
-        const bool is_loading() const override;
-        const bool is_updated() override;
-        const bool is_check_update() override;
-        const bool is_old() override;
-        const bool is_broken() override;
+        bool is_loading() const override;
+        bool is_updated() override;
+        bool is_check_update() override;
+        bool is_old() override;
+        bool is_broken() override;
 
         void show_view() override;
         void update_view() override;

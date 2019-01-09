@@ -135,10 +135,10 @@ namespace BBSLIST
         void replace_thread( const std::string& url, const std::string& url_new );
 
         // path からその行のタイプを取得
-        const int path2type( const Gtk::TreePath& path );
+        int path2type( const Gtk::TreePath& path );
 
         // row からタイプを取得
-        const int row2type( const Gtk::TreeModel::Row& row );
+        int row2type( const Gtk::TreeModel::Row& row );
 
         // row -> name 変換
         const Glib::ustring row2name( const Gtk::TreeModel::Row& row );
@@ -149,7 +149,7 @@ namespace BBSLIST
         const Glib::ustring row2url( const Gtk::TreeModel::Row& row );
 
         // row -> dirid 変換
-        const size_t row2dirid( const Gtk::TreeModel::Row& row );
+        size_t row2dirid( const Gtk::TreeModel::Row& row );
 
         // path からその行の名前を取得
         const Glib::ustring path2name( const Gtk::TreePath& path );
@@ -195,14 +195,14 @@ namespace BBSLIST
 
         const std::string url_for_copy() override { return {}; }
 
-        const bool set_command( const std::string& command,
-                                const std::string& arg1 = {},
-                                const std::string& arg2 = {} ) override;
+        bool set_command( const std::string& command,
+                          const std::string& arg1 = {},
+                          const std::string& arg2 = {} ) override;
 
         void clock_in() override;
 
         // キーを押した
-        const bool slot_key_press( GdkEventKey* event ) override;
+        bool slot_key_press( GdkEventKey* event ) override;
 
         void stop() override;
         void redraw_view() override;
@@ -215,7 +215,7 @@ namespace BBSLIST
         // ツリー内の全ての項目をURLを新しいアドレスに変更 ( id は未使用 )
         void update_item( const std::string& url, const std::string& id ) override;
 
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
         void goto_top() override;
         void goto_bottom() override;
 
@@ -312,7 +312,7 @@ namespace BBSLIST
         // D&D 関係
         void slot_drag_drop( Gtk::TreeModel::Path path, const bool after );
 
-        virtual const bool open_row( Gtk::TreePath& path, const bool tab );
+        virtual bool open_row( Gtk::TreePath& path, const bool tab );
         virtual void switch_rightview();
         void open_selected_rows();
         void checkupdate_selected_rows( const bool open );

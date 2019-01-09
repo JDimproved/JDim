@@ -76,26 +76,26 @@ namespace HISTORY
         void delete_viewhistory( const std::string& url );
 
         // 現在表示中のViewのURL( url_old) を新しいURL( url_new )に変更
-        const bool replace_current_url_viewhistory( const std::string& url_old, const std::string& url_new ); 
+        bool replace_current_url_viewhistory( const std::string& url_old, const std::string& url_new ); 
 
         // 履歴全体で url_old を url_new に変更
         void replace_url_viewhistory( const std::string& url_old, const std::string& url_new ); 
 
         // タイトル更新
-        const bool replace_current_title_viewhistory( const std::string& url, const std::string& title );
+        bool replace_current_title_viewhistory( const std::string& url, const std::string& title );
 
         // item の取得
         std::vector< ViewHistoryItem* >& get_items_back_viewhistory( const std::string& url, const int count );
         std::vector< ViewHistoryItem* >& get_items_forward_viewhistory( const std::string& url, const int count );
 
         // 追加
-        const bool append_viewhistory( const std::string& url_current, const std::string& url_append );
+        bool append_viewhistory( const std::string& url_current, const std::string& url_append );
 
         // 戻る / 進む
         // exec = true のときは履歴の位置を変更する
         // false の時はURLの取得のみ
-        const bool can_back_viewhistory( const std::string& url, const int count );
-        const bool can_forward_viewhistory( const std::string& url, const int count );
+        bool can_back_viewhistory( const std::string& url, const int count );
+        bool can_forward_viewhistory( const std::string& url, const int count );
         const ViewHistoryItem* back_viewhistory( const std::string& url, const int count, const bool exec ); 
         const ViewHistoryItem* forward_viewhistory( const std::string& url, const int count, const bool exec );
 

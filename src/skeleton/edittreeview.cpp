@@ -59,7 +59,7 @@ const std::string get_uptodate_url( const std::string& url_org, const int type )
 //
 // 行の最新状態を取得
 //
-const int get_uptodate_type( const std::string& url, const int type_org )
+int get_uptodate_type( const std::string& url, const int type_org )
 {
     int type = type_org;
 
@@ -90,7 +90,7 @@ class compare_path
     SKELETON::EditColumns& m_columns;
     int m_mode;
 
-    const int type_to_order( const int type )
+    int type_to_order( const int type )
     {
         int order[]={
 
@@ -560,7 +560,7 @@ const Gtk::TreePath EditTreeView::dirid_to_path( const size_t dirid )
 }
 
 
-const size_t EditTreeView::path_to_dirid( const Gtk::TreePath path )
+size_t EditTreeView::path_to_dirid( const Gtk::TreePath path )
 {
     Gtk::TreeModel::Row row = get_row( Gtk::TreePath( path ) );
     if( row ) return row[ m_columns.m_dirid ];
@@ -936,7 +936,7 @@ void EditTreeView::draw_underline( const Gtk::TreePath& path, const bool draw )
 //
 // path は ディレクトリか
 //
-const bool EditTreeView::is_dir( Gtk::TreeModel::iterator& it )
+bool EditTreeView::is_dir( Gtk::TreeModel::iterator& it )
 {
     const Gtk::TreeRow row = ( *it );
     if( ! row ) return false;
@@ -946,7 +946,7 @@ const bool EditTreeView::is_dir( Gtk::TreeModel::iterator& it )
     return false;
 }
 
-const bool EditTreeView::is_dir( const Gtk::TreePath& path )
+bool EditTreeView::is_dir( const Gtk::TreePath& path )
 {
     if( path.size() <= 0 ) return false;
     Gtk::TreeModel::iterator it = get_model()->get_iter( path );
@@ -991,7 +991,7 @@ void EditTreeView::next_dir()
 //
 // 指定したアドレスの行が含まれているか
 //
-const bool EditTreeView::exist_row( const std::string& url, const int type )
+bool EditTreeView::exist_row( const std::string& url, const int type )
 {
     if( url.empty() ) return false;
 

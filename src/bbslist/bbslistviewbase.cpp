@@ -551,7 +551,7 @@ void BBSListViewBase::set_parent_win( Gtk::Window* parent_win )
 //
 // コマンド
 //
-const bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
+bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "append_item" ) append_item();
     else if( command == "append_history" ) append_history();
@@ -733,7 +733,7 @@ void BBSListViewBase::update_item( const std::string& url, const std::string& id
 //
 // viewの操作
 //
-const bool BBSListViewBase::operate_view( const int control )
+bool BBSListViewBase::operate_view( const int control )
 {
     if( CONTROL::operate_common( control, get_url(), BBSLIST::get_admin() ) ) return true;
 
@@ -1204,7 +1204,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 // キーを押した
 //
-const bool BBSListViewBase::slot_key_press( GdkEventKey* event )
+bool BBSListViewBase::slot_key_press( GdkEventKey* event )
 {
     // 行の名前を編集中なら何もしない
     if( m_treeview.is_renaming_row() ) return false;
@@ -1886,7 +1886,7 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 //
 // 選択した行を開く
 //
-const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
+bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 {
     if( ! m_treeview.get_row( path ) ) return false;
 
@@ -1909,6 +1909,7 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
         case TYPE_THREAD_OLD:
             toggle_articleicon( url ); // break;しない
+            // fallthrough
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
             CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab, str_mode );
@@ -2146,7 +2147,7 @@ const Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
 //
 // path -> type 変換
 //
-const int BBSListViewBase::path2type( const Gtk::TreePath& path )
+int BBSListViewBase::path2type( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return TYPE_UNKNOWN;
@@ -2157,7 +2158,7 @@ const int BBSListViewBase::path2type( const Gtk::TreePath& path )
 //
 // row -> type 変換
 //
-const int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
+int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return TYPE_UNKNOWN;
     return row[ m_columns.m_type ];
@@ -2177,7 +2178,7 @@ const Glib::ustring BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
 //
 // row -> dirid 変換
 //
-const size_t BBSListViewBase::row2dirid( const Gtk::TreeModel::Row& row )
+size_t BBSListViewBase::row2dirid( const Gtk::TreeModel::Row& row )
 {
     if( !row ) return 0;
     return row[ m_columns.m_dirid ];

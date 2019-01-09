@@ -17,7 +17,7 @@ namespace ARTICLE
     // width_wide : 全角モードでの幅
     // mode   : fontid.h で定義されているフォントのID
     // 戻り値 : 登録されていればtrue
-    const bool get_width_of_char( const char* utfstr, int& byte, const char pre_char, int& width, int& width_wide, const int mode );
+    bool get_width_of_char( const char* utfstr, int& byte, const char pre_char, int& width, int& width_wide, const int mode );
 
     // 文字幅を登録する関数
     // width == -1 はフォント幅の取得に失敗した場合

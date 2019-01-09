@@ -59,12 +59,12 @@ bool MessageWin::on_delete_event( GdkEventAny* event )
 }
 
 
-const int MessageWin::get_x_win()
+int MessageWin::get_x_win()
 {
     return SESSION::get_x_win_mes();
 }
 
-const int MessageWin::get_y_win()
+int MessageWin::get_y_win()
 {
     return SESSION::get_y_win_mes();
 }
@@ -79,12 +79,12 @@ void MessageWin::set_y_win( const int y )
     SESSION::set_y_win_mes( y );
 }
 
-const int MessageWin::get_width_win()
+int MessageWin::get_width_win()
 {
     return SESSION::get_width_win_mes();
 }
 
-const int MessageWin::get_height_win()
+int MessageWin::get_height_win()
 {
     return SESSION::get_height_win_mes();
 }
@@ -99,7 +99,7 @@ void MessageWin::set_height_win( const int height )
     SESSION::set_height_win_mes( height );
 }
 
-const bool MessageWin::is_focus_win()
+bool MessageWin::is_focus_win()
 {
     return SESSION::is_focus_win_mes();
 }
@@ -110,7 +110,7 @@ void MessageWin::set_focus_win( const bool set )
 }
 
 
-const bool MessageWin::is_maximized_win()
+bool MessageWin::is_maximized_win()
 {
     return SESSION::is_maximized_win_mes();
 }
@@ -121,7 +121,7 @@ void MessageWin::set_maximized_win( const bool set )
 }
 
 
-const bool MessageWin::is_iconified_win()
+bool MessageWin::is_iconified_win()
 {
     return SESSION::is_iconified_win_mes();
 }
@@ -132,7 +132,7 @@ void MessageWin::set_iconified_win( const bool set )
 }
 
 
-const bool MessageWin::is_shown_win()
+bool MessageWin::is_shown_win()
 {
     return SESSION::is_shown_win_mes();
 }

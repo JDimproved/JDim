@@ -25,7 +25,7 @@ namespace ARTICLE
 
       protected:
         void show_instruct_popup();
-        const bool show_abone() const { return m_show_abone; }
+        bool show_abone() const { return m_show_abone; }
 
       private:
         DrawAreaBase* create_drawarea() override;

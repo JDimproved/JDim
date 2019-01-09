@@ -131,15 +131,15 @@ namespace SKELETON
       private:
 
         // ポップアップが表示されているか
-        const bool is_popup_shown() const { return ( m_popup_win && m_popup_shown ); }
+        bool is_popup_shown() const { return ( m_popup_win && m_popup_shown ); }
 
         // ポップアップ削除
         void delete_popup();
 
         // ポップアップが表示されていてかつマウスがその上にあるか
-        const bool is_mouse_on_popup();
+        bool is_mouse_on_popup();
 
-        const bool slot_popup_leave_notify_event( GdkEventCrossing* event );
+        bool slot_popup_leave_notify_event( GdkEventCrossing* event );
         void slot_selection_changed();
    };
 }

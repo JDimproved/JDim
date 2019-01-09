@@ -175,14 +175,14 @@ void ArticleViewMain::goto_num( const int num_to, const int num_from )
 
 
 // ロード中
-const bool ArticleViewMain::is_loading() const
+bool ArticleViewMain::is_loading() const
 {
     return get_article()->is_loading();
 }
 
 
 // 更新した
-const bool ArticleViewMain::is_updated()
+bool ArticleViewMain::is_updated()
 {
 
 #ifdef _DEBUG
@@ -194,7 +194,7 @@ const bool ArticleViewMain::is_updated()
 
 
 // 更新チェックして更新可能か
-const bool ArticleViewMain::is_check_update()
+bool ArticleViewMain::is_check_update()
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::is_check_update " << url_article() << " " << ( get_article()->get_status() & STATUS_UPDATE ) << std::endl;
@@ -204,13 +204,13 @@ const bool ArticleViewMain::is_check_update()
 }
 
 // 古いデータか
-const bool ArticleViewMain::is_old()
+bool ArticleViewMain::is_old()
 {
     return ( get_article()->get_status() & STATUS_OLD );
 }
 
 // 壊れているか
-const bool ArticleViewMain::is_broken()
+bool ArticleViewMain::is_broken()
 {
     return ( get_article()->get_status() & STATUS_BROKEN );
 }

@@ -20,8 +20,8 @@ namespace BOARD
 
         void save_session() override;
 
-        const bool is_updated() override;
-        const bool is_check_update() override;
+        bool is_updated() override;
+        bool is_check_update() override;
 
         void reload() override;
         void show_view() override;

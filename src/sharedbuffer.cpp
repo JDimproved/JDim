@@ -6,7 +6,7 @@ using namespace CORE;
 
 CORE::DATA_INFO_LIST shared_infolist;
 
-const int CORE::SBUF_size()
+int CORE::SBUF_size()
 {
     return shared_infolist.size();
 }

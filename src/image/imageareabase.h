@@ -57,11 +57,11 @@ namespace IMAGE
         const std::string& get_url() const{ return m_url;}
         const std::string& get_errmsg() const{ return m_errmsg;}        
 
-        const bool is_ready() const { return m_ready; }
-        const bool is_loading(){ return m_thread.is_running(); }
+        bool is_ready() const { return m_ready; }
+        bool is_loading(){ return m_thread.is_running(); }
 
-        const int get_width() const { return m_width; }
-        const int get_height() const { return m_height; }
+        int get_width() const { return m_width; }
+        int get_height() const { return m_height; }
 
         virtual void show_image() = 0;
 
@@ -80,7 +80,7 @@ namespace IMAGE
 
         void load_image();
 
-        const bool create_imgloader( const bool pixbufonly, std::string& errmsg );
+        bool create_imgloader( const bool pixbufonly, std::string& errmsg );
 
     private:
 

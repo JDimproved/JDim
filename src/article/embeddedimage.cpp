@@ -7,7 +7,6 @@
 #include "articleadmin.h"
 
 #include "jdlib/imgloader.h"
-#include "jdlib/jdmutex.h"
 #include "jdlib/miscmsg.h"
 
 #include "dbimg/imginterface.h"
@@ -17,10 +16,12 @@
 
 #include "message/messageadmin.h"
 
+#include <mutex>
+
 //
 // スレッドのランチャ
 //
-static JDLIB::StaticMutex eimg_launcher_mutex = JDLIB_STATIC_MUTEX_INIT;
+static std::mutex eimg_launcher_mutex;
 int redraw_counter = 0; // 0 になったとき再描画する
 
 void* eimg_launcher( void* dat )
@@ -29,7 +30,7 @@ void* eimg_launcher( void* dat )
 
     // 遅いCPUの場合は同時に画像をリサイズしようとすると固まった様になるので
     // mutexをかけて同時にリサイズしないようにする
-    JDLIB::LockGuard lock( eimg_launcher_mutex );
+    std::lock_guard< std::mutex > lock( eimg_launcher_mutex );
 
 #ifdef _DEBUG
     std::cout << "start eimg_launcher" << std::endl;

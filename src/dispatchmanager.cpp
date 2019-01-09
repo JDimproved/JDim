@@ -5,11 +5,12 @@
 
 #include "dispatchmanager.h"
 
-#include "jdlib/jdmutex.h"
 #include "skeleton/dispatchable.h"
 
+#include <mutex>
 
-static JDLIB::StaticMutex dispatch_mutex = JDLIB_STATIC_MUTEX_INIT;
+
+static std::mutex dispatch_mutex;
 CORE::DispatchManager* instance_dispmanager = NULL;
 
 
@@ -52,7 +53,7 @@ DispatchManager::~DispatchManager()
 
 void DispatchManager::add( SKELETON::Dispatchable* child )
 {
-    JDLIB::LockGuard lock( dispatch_mutex );
+    std::lock_guard< std::mutex > lock( dispatch_mutex );
 
     // 既にlistに登録されていたらキャンセルする
     std::list< SKELETON::Dispatchable* >::iterator it = m_children.begin();
@@ -76,7 +77,7 @@ void DispatchManager::add( SKELETON::Dispatchable* child )
 
 void DispatchManager::remove( SKELETON::Dispatchable* child )
 {
-    JDLIB::LockGuard lock( dispatch_mutex );
+    std::lock_guard< std::mutex > lock( dispatch_mutex );
 
     size_t size = m_children.size();
     if( ! size  ) return;
@@ -92,7 +93,7 @@ void DispatchManager::remove( SKELETON::Dispatchable* child )
 
 void DispatchManager::slot_dispatch()
 {
-    JDLIB::UniqueLock lock( dispatch_mutex );
+    std::unique_lock< std::mutex > lock( dispatch_mutex );
 
     const size_t size = m_children.size();
     if( ! size  ) return;
@@ -102,7 +103,7 @@ void DispatchManager::slot_dispatch()
     // child->callback_dispatch()の中で再び Dispatchable::add()が呼び出されると
     // キャンセルされてしまうので callback_dispatch() を呼び出す前にremoveする
     m_children.remove( child );
-    JDLIB::unique_unlock( lock );
+    lock.unlock();
 
     if( child ) child->callback_dispatch();
 

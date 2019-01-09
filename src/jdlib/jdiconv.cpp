@@ -107,7 +107,6 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
         std::cout << "m_byte_left_in = " << m_byte_left_in << std::endl;
         std::cout << "byte_left_out = " << byte_left_out << std::endl;
 #endif
-        assert( byte_left_out >= 0 );
 
         //　エラー
         if( ret == -1 ){

@@ -80,7 +80,7 @@ Log_Manager::~Log_Manager()
 
 
 
-const bool Log_Manager::has_items( const std::string& url, const bool newthread )
+bool Log_Manager::has_items( const std::string& url, const bool newthread )
 {
     if( ! m_logitems.size() ) return false;
 
@@ -170,7 +170,7 @@ void Log_Manager::remove_items( const std::string& url )
 //
 // headsize > 0 の時は先頭の headsize 文字だけを比較
 //
-const bool Log_Manager::check_write( const std::string& url, const bool newthread, const char* msg_in, const size_t headsize )
+bool Log_Manager::check_write( const std::string& url, const bool newthread, const char* msg_in, const size_t headsize )
 {
     if( ! m_logitems.size() ) return false;
 
@@ -376,7 +376,7 @@ const std::string Log_Manager::get_post_log( const int num )
 //
 // ログファイル( log/postlog-* ) の最大数
 //
-const int Log_Manager::get_max_num_of_log()
+int Log_Manager::get_max_num_of_log()
 {
 #ifdef _DEBUG
     std::cout << "Log_Manager::get_max_num_of_log\n";

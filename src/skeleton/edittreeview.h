@@ -97,7 +97,7 @@ namespace SKELETON
 
         void set_undo_buffer( UNDO_BUFFER* undo_buffer ){ m_undo_buffer = undo_buffer; }
 
-        const bool is_updated() const { return m_updated; };
+        bool is_updated() const { return m_updated; };
         void set_updated( const bool set ){ m_updated = set; }
 
         // treestoreのセット
@@ -117,15 +117,15 @@ namespace SKELETON
         void set_editable_view( const bool editable );
 
         // 指定した path のタイプは ディレクトリか
-        const bool is_dir( Gtk::TreeModel::iterator& it );
-        const bool is_dir( const Gtk::TreePath& path );
+        bool is_dir( Gtk::TreeModel::iterator& it );
+        bool is_dir( const Gtk::TreePath& path );
 
         // 次のディレクトリに移動
         void prev_dir();
         void next_dir();
 
         // 指定したアドレスの行が含まれているか
-        const bool exist_row( const std::string& url, const int type );
+        bool exist_row( const std::string& url, const int type );
 
         // ディレクトリ内を全選択
         void select_all_dir( Gtk::TreePath path_dir );
@@ -135,14 +135,14 @@ namespace SKELETON
 
         // ディレクトリIDとパスを相互変換
         const Gtk::TreePath dirid_to_path( const size_t dirid );
-        const size_t path_to_dirid( const Gtk::TreePath path );
+        size_t path_to_dirid( const Gtk::TreePath path );
 
         // コメント挿入
         const Gtk::TreePath create_newcomment( const Gtk::TreePath& path );
 
         // pathで指定した行の名前の変更
         void rename_row( const Gtk::TreePath& path );
-        const bool is_renaming_row(){ return m_ren_text->property_editable(); }
+        bool is_renaming_row(){ return m_ren_text->property_editable(); }
 
         // list_info を path_dest 以下に追加
         //
@@ -286,7 +286,7 @@ namespace SKELETON
 
         void operator ++ ();
 
-        const bool end() const { return m_end; }
+        bool end() const { return m_end; }
     };
 }
 

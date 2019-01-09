@@ -23,10 +23,7 @@
 using namespace DBTREE;
 
 
-enum
-{
-    BUF_SIZE_200 = 256
-};
+constexpr size_t BUF_SIZE_200 = 256;
 
 
 NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_modified )

@@ -136,7 +136,7 @@ void MousePref::set_motions( const int id, const std::string& str_motions )
 }
 
 
-const bool MousePref::remove_motions( const int id )
+bool MousePref::remove_motions( const int id )
 {
     return CONTROL::remove_mousemotions( id );
 }

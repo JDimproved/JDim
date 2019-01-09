@@ -196,7 +196,7 @@ void DragTreeView::hide_tooltip()
 //
 // ポップアップが表示されていてかつマウスがその上にあるか
 //
-const bool DragTreeView::is_mouse_on_popup()
+bool DragTreeView::is_mouse_on_popup()
 {
     if( ! is_popup_shown() ) return false;
     if( ! m_popup_win->view() ) return false;
@@ -231,7 +231,7 @@ void DragTreeView::show_popup( const std::string& url, View* view )
 //
 // popup windowの外にポインタが出た
 //
-const bool DragTreeView::slot_popup_leave_notify_event( GdkEventCrossing* event )
+bool DragTreeView::slot_popup_leave_notify_event( GdkEventCrossing* event )
 {
 #ifdef _DEBUG
     std::cout << "DragTreeView::slot_popup_leave_notify_event\n";

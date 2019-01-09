@@ -43,39 +43,39 @@ namespace CONTROL
         m_trpclick( trpclick )
         {}
 
-        const int get_id() const { return m_id; }
-        const int get_mode() const{ return m_mode; }
+        int get_id() const { return m_id; }
+        int get_mode() const { return m_mode; }
         const std::string& get_name() const { return m_name; }
         const std::string& get_str_motion() const { return m_str_motion; }
-        const gint get_motion() const{ return m_motion; }
-        const bool get_ctrl() const { return m_ctrl; }
-        const bool get_shift() const { return m_shift; }
-        const bool get_alt() const { return m_alt; }
-        const bool get_dblclick() const { return m_dblclick; }
-        const bool get_trpclick() const { return m_trpclick; }
+        gint get_motion() const { return m_motion; }
+        bool get_ctrl() const { return m_ctrl; }
+        bool get_shift() const { return m_shift; }
+        bool get_alt() const { return m_alt; }
+        bool get_dblclick() const { return m_dblclick; }
+        bool get_trpclick() const { return m_trpclick; }
 
         // モード無視
-        const int equal( const std::string& str_motion )
+        int equal( const std::string& str_motion )
         {
             if( str_motion == m_str_motion ) return m_id;
             return CONTROL::None;
         }
 
         // モード無視
-        const int equal( const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool trpclick )
+        int equal( const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool trpclick )
         {
             if( motion == m_motion && ctrl == m_ctrl && shift == m_shift && alt == m_alt && dblclick == m_dblclick && trpclick == m_trpclick ) return m_id;
             return CONTROL::None;
         }
 
-        const int is_activated( const int mode, const std::string& str_motion )
+        int is_activated( const int mode, const std::string& str_motion )
         {
             if( mode == m_mode ) return equal( str_motion );
             return CONTROL::None;
         }
 
-        const int is_activated( const int mode,
-                          const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool trpclick )
+        int is_activated( const int mode, const guint motion, const bool ctrl, const bool shift, const bool alt,
+                          const bool dblclick, const bool trpclick )
         {
             if( mode == m_mode ) return equal( motion, ctrl, shift, alt, dblclick, trpclick );
             return CONTROL::None;

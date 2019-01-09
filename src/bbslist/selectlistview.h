@@ -31,11 +31,11 @@ namespace BBSLIST
         void save_xml() override {}
 
         void close_view() override;
-        const bool operate_view( const int control ) override;
+        bool operate_view( const int control ) override;
 
       private:
 
-        const bool open_row( Gtk::TreePath& path, const bool tab ) override;
+        bool open_row( Gtk::TreePath& path, const bool tab ) override;
         void switch_rightview() override {} // boardに移動しないようにキャンセル
         Gtk::Menu* get_popupmenu( const std::string& url ) override;
     };

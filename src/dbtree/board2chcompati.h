@@ -47,13 +47,13 @@ namespace DBTREE
         // SETTING.TXT 
         const std::string settingtxt() override;
         const std::string default_noname() override;
-        const int line_number() override;
-        const int message_count() override;
+        int line_number() override;
+        int message_count() override;
         const std::string get_unicode() override;
 
       private:
 
-        const bool is_valid( const std::string& filename ) override;
+        bool is_valid( const std::string& filename ) override;
 
         ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
         void parse_subject( const char* str_subject_txt ) override;
@@ -63,7 +63,7 @@ namespace DBTREE
         void download_rule_setting() override;
 
         // レス数であぼーん(グローバル)
-        const int get_abone_number_global() override;
+        int get_abone_number_global() override;
     };
 }
 

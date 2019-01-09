@@ -137,12 +137,12 @@ void ImageAreaIcon::load_image_thread()
 
 //
 // インジケータ幅、高さ
-const int ImageAreaIcon::width_indicator()
+int ImageAreaIcon::width_indicator()
 {
     return MAX( 1, get_width()/4 );
 }
 
-const int ImageAreaIcon::height_indicator()
+int ImageAreaIcon::height_indicator()
 {
     return MAX( 1, get_height()/4 );
 }

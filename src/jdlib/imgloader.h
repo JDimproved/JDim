@@ -9,7 +9,7 @@
 
 #include <gtkmm.h>
 
-#include "jdmutex.h"
+#include <mutex>
 
 namespace JDLIB
 {
@@ -26,7 +26,7 @@ namespace JDLIB
     class ImgLoader : public Glib::Object
     {
         Glib::RefPtr< Gdk::PixbufLoader > m_loader;
-        JDLIB::Mutex m_loader_lock;
+        std::mutex m_loader_lock;
         
         std::string m_file;
         std::string m_errmsg;
@@ -47,7 +47,7 @@ namespace JDLIB
         
         void request_stop();
         
-        const bool load( const bool pixbufonly = false );
+        bool load( const bool pixbufonly = false );
         Glib::RefPtr<Gdk::Pixbuf> get_pixbuf( const bool pixbufonly = false );
         Glib::RefPtr<Gdk::PixbufAnimation> get_animation();
         
@@ -55,7 +55,7 @@ namespace JDLIB
         
     private:
         ImgLoader( const std::string& file );
-        const bool load_imgfile( const int loadlevel );
+        bool load_imgfile( const int loadlevel );
         
         void slot_size_prepared( int w, int h );
         void slot_area_updated(int x, int y, int w, int h );
@@ -66,7 +66,7 @@ namespace JDLIB
         std::list< Glib::RefPtr< ImgLoader > > m_cache;
         
     public:
-        JDLIB::Mutex m_provider_lock; // ImgProvider操作時の必須ロック
+        std::mutex m_provider_lock; // ImgProvider操作時の必須ロック
         
     public:
         virtual ~ImgProvider() noexcept {}

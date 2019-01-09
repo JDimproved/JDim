@@ -770,7 +770,7 @@ size_t CACHE::save_rawdata( const std::string& path, const char* data, size_t n,
 }
 
 
-const int CACHE::file_exists( const std::string& path )
+int CACHE::file_exists( const std::string& path )
 {
     struct stat buf_stat;
 
@@ -815,7 +815,7 @@ time_t CACHE::get_filemtime( const std::string& path )
 }
 
 
-const bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
+bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
 {
 #ifdef _DEBUG
     std::cout << "CACHE::set_filemtime path = " << path

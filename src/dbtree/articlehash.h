@@ -35,23 +35,23 @@ namespace DBTREE
         ArticleHash();
         virtual ~ArticleHash();
 
-        const size_t size() const { return m_size; }
+        size_t size() const { return m_size; }
 
         void push( ArticleBase* article );
 
         ArticleBase* find( const std::string& datbase, const std::string& id );
 
         const ArticleHashIterator begin();
-        const size_t end() const{ return size(); }
+        size_t end() const { return size(); }
 
       private:
 
-        const int get_hash( const std::string& id );
+        int get_hash( const std::string& id );
 
         // iterator 用関数
         ArticleBase* it_get();
         void it_inc();
-        const size_t it_size() const { return m_it_size; }
+        size_t it_size() const { return m_it_size; }
     };
 
 

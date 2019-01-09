@@ -231,7 +231,7 @@ namespace DBTREE
         void set_charset( const std::string& str ){ m_charset = str; }
 
         // articleがスレあぼーんされているか
-        const bool is_abone_thread( ArticleBase* article );
+        bool is_abone_thread( ArticleBase* article );
 
         // m_url_update_views に登録されている view に update_board コマンドを送る
         void send_update_board();
@@ -250,7 +250,7 @@ namespace DBTREE
         bool empty();
 
         // 状態 ( global.hで定義 )
-        const int get_status() const{ return m_status; }
+        int get_status() const { return m_status; }
 
         // boardviewに表示するスレッドのリストを取得
         std::vector< ArticleBase* >& get_list_subject(){ return m_list_subject; }
@@ -264,22 +264,22 @@ namespace DBTREE
         void set_modified_setting( const std::string& modified ){ m_modified_setting = modified; }
 
         // boardviewでソートする列番号とソート順
-        const int get_view_sort_column() const { return m_view_sort_column; }
+        int get_view_sort_column() const { return m_view_sort_column; }
         void set_view_sort_column( int column ){ m_view_sort_column = column; }
-        const int get_view_sort_mode() const { return m_view_sort_mode; }
+        int get_view_sort_mode() const { return m_view_sort_mode; }
         void set_view_sort_mode( int mode ){ m_view_sort_mode = mode; }
 
-        const int get_view_sort_pre_column() const { return m_view_sort_pre_column; }
+        int get_view_sort_pre_column() const { return m_view_sort_pre_column; }
         void set_view_sort_pre_column( int column ) { m_view_sort_pre_column = column; }
-        const int get_view_sort_pre_mode() const { return m_view_sort_pre_mode; }
+        int get_view_sort_pre_mode() const { return m_view_sort_pre_mode; }
         void set_view_sort_pre_mode( int mode ){ m_view_sort_pre_mode = mode; }
 
         // 名無し書き込み不可
-        const bool get_check_noname() const { return m_check_noname; }
+        bool get_check_noname() const { return m_check_noname; }
         void set_check_noname( const bool check ){ m_check_noname = check; }
 
         // 過去ログも表示する
-        const bool get_show_oldlog() const { return m_show_oldlog; }
+        bool get_show_oldlog() const { return m_show_oldlog; }
         void set_show_oldlog( const bool show ){ m_show_oldlog = show; }
 
         // url がこの板のものかどうか
@@ -303,12 +303,12 @@ namespace DBTREE
 
         // ダウンロード時のプロキシ
         virtual const std::string get_proxy_host();
-        virtual const int get_proxy_port();
+        virtual int get_proxy_port();
         virtual const std::string get_proxy_basicauth();
 
         // 書き込み時のプロキシ
         virtual const std::string get_proxy_host_w();
-        virtual const int get_proxy_port_w();
+        virtual int get_proxy_port_w();
         virtual const std::string get_proxy_basicauth_w();
 
         // ローカルルール
@@ -321,10 +321,10 @@ namespace DBTREE
         virtual const std::string default_noname();
 
         // 最大改行数/2
-        virtual const int line_number();
+        virtual int line_number();
 
         // 最大書き込みバイト数
-        virtual const int message_count();
+        virtual int message_count();
 
         // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
         virtual const std::string get_unicode();
@@ -447,8 +447,8 @@ namespace DBTREE
         const std::list< std::string >& get_abone_list_thread_remove(){ return m_list_abone_thread_remove; }
         const std::list< std::string >& get_abone_list_word_thread(){ return m_list_abone_word_thread; }
         const std::list< std::string >& get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
-        const int get_abone_number_thread(){ return m_abone_number_thread; }
-        const int get_abone_hour_thread(){ return m_abone_hour_thread; }
+        int get_abone_number_thread(){ return m_abone_number_thread; }
+        int get_abone_hour_thread(){ return m_abone_hour_thread; }
 
         // subject.txtのロード後にdat落ちしたスレッドをスレあぼーんのリストから取り除く
         void remove_old_abone_thread();
@@ -469,18 +469,18 @@ namespace DBTREE
             );
 
         // ローカルプロキシ設定
-        const int get_mode_local_proxy() const { return m_mode_local_proxy; }
+        int get_mode_local_proxy() const { return m_mode_local_proxy; }
         const std::string& get_local_proxy() const { return m_local_proxy; }
-        const int get_local_proxy_port() const { return m_local_proxy_port; }
+        int get_local_proxy_port() const { return m_local_proxy_port; }
         const std::string& get_local_proxy_basicauth() const { return m_local_proxy_basicauth; }
 
         void set_mode_local_proxy( int mode ){ m_mode_local_proxy = mode; }
         void set_local_proxy( const std::string& proxy );
         void set_local_proxy_port( int port ){ m_local_proxy_port = port; }
 
-        const int get_mode_local_proxy_w() const { return m_mode_local_proxy_w; }
+        int get_mode_local_proxy_w() const { return m_mode_local_proxy_w; }
         const std::string& get_local_proxy_w() const { return m_local_proxy_w; }
-        const int get_local_proxy_port_w() const { return m_local_proxy_port_w; }
+        int get_local_proxy_port_w() const { return m_local_proxy_port_w; }
         const std::string& get_local_proxy_basicauth_w() const { return m_local_proxy_basicauth_w; }
 
         void set_mode_local_proxy_w( int mode ){ m_mode_local_proxy_w = mode; }
@@ -497,8 +497,8 @@ namespace DBTREE
         // 最終書き込み時間
         void update_writetime();
         const time_t& get_write_time() const { return m_write_time.tv_sec; } // 秒
-        const time_t get_write_pass(); // 経過時間(秒)
-        const time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
+        time_t get_write_pass(); // 経過時間(秒)
+        time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
         void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
         time_t get_write_leftsec(); // 書き込み可能までの残り秒
 
@@ -511,18 +511,18 @@ namespace DBTREE
         void reset_all_access_date();
 
         // 実況の秒数
-        const time_t get_live_sec() const{ return m_live_sec; }
+        time_t get_live_sec() const{ return m_live_sec; }
         void set_live_sec( time_t sec ){ m_live_sec = sec; }
 
         // 最終アクセス時刻
-        const time_t get_last_access_time() const{ return m_last_access_time; }
+        time_t get_last_access_time() const{ return m_last_access_time; }
 
         // 最大レス数
-        const int get_number_max_res() const{ return m_number_max_res; }
+        int get_number_max_res() const { return m_number_max_res; }
         void set_number_max_res( const int number );
 
         // datの最大サイズ(Kバイト)
-        virtual const int get_max_dat_lng() const { return 0; }
+        virtual int get_max_dat_lng() const { return 0; }
 
         // 板情報の取得
         virtual void read_info();
@@ -561,10 +561,10 @@ namespace DBTREE
         void clear();
 
         // デフォルト最大レス数( 0 : 未設定 )
-        virtual const int get_default_number_max_res(){ return 0; }
+        virtual int get_default_number_max_res() { return 0; }
 
         // キャッシュのファイル名が正しいかどうか
-        virtual const bool is_valid( const std::string& filename ){ return false; }
+        virtual bool is_valid( const std::string& filename ) { return false; }
 
         virtual void create_loaderdata( JDLIB::LOADERDATA& data );
         void receive_data( const char* data, size_t size ) override;
@@ -592,7 +592,7 @@ namespace DBTREE
 
         // レス数であぼーん(グローバル)
         // 2ch以外の板ではキャンセルする
-        virtual const int get_abone_number_global(){ return 0; }
+        virtual int get_abone_number_global() { return 0; }
     };
 }
 

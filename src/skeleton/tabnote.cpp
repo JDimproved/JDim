@@ -105,7 +105,7 @@ struct _GtkNotebookPage
 
 
 // 描画本体
-const bool TabNotebook::paint( GdkEventExpose* event )
+bool TabNotebook::paint( GdkEventExpose* event )
 {
     GtkNotebook *notebook = gobj();
     if( ! notebook || ! notebook->cur_page || ! GTK_WIDGET_VISIBLE( notebook->cur_page->child ) ) return true;
@@ -292,7 +292,7 @@ void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook
 
 
 // タブ描画領域の位置、幅、高さを取得
-const gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle )
+gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle )
 {
     GtkNotebookPage* visible_page = NULL;
     GList* children = notebook->children;
@@ -472,7 +472,7 @@ SKELETON::TabLabel* TabNotebook::get_tablabel( int page )
 // タブ上では無いときは-1を返す
 // マウスがタブの右側にある場合はページ数( get_n_pages() )を返す
 //
-const int TabNotebook::get_page_under_mouse()
+int TabNotebook::get_page_under_mouse()
 {
     int x, y;
     Gdk::Rectangle rect = get_allocation();

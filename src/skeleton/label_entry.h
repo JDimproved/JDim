@@ -39,7 +39,7 @@ namespace SKELETON
         const Glib::ustring get_text();
 
         void grab_focus();
-        const bool has_grab();
+        bool has_grab();
 
       private:
 

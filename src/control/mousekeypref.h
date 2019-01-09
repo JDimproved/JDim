@@ -46,7 +46,7 @@ namespace CONTROL
 
       protected:
 
-        const int get_id() const { return m_id; }
+        int get_id() const { return m_id; }
 
         const std::string get_key_label();
         const std::string get_mouse_label();
@@ -109,12 +109,12 @@ namespace CONTROL
 
       protected:
 
-        const int get_id() const { return m_id; }
-        const int get_controlmode() const { return m_controlmode; }
-        const int get_count() const { return m_liststore->children().size(); }
+        int get_id() const { return m_id; }
+        int get_controlmode() const { return m_controlmode; }
+        int get_count() const { return m_liststore->children().size(); }
 
-        const int get_single() const { return m_single; }
-        const void set_single( bool single ){ m_single = single; }
+        int get_single() const { return m_single; }
+        void set_single( bool single ){ m_single = single; }
 
         virtual InputDiag* create_inputdiag() = 0;
         virtual const std::string get_default_motions( const int id ) = 0;
@@ -194,7 +194,7 @@ namespace CONTROL
         virtual const std::string get_str_motions( const int id ) = 0;
         virtual const std::string get_default_motions( const int id ) = 0;
         virtual void set_motions( const int id, const std::string& str_motions ) = 0;
-        virtual const bool remove_motions( const int id ) = 0;
+        virtual bool remove_motions( const int id ) = 0;
 
       private:
 

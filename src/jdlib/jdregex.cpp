@@ -52,7 +52,7 @@ void Regex::dispose()
 // newline :  . に改行をマッチさせない
 // usemigemo : migemo使用 (コンパイルオプションで指定する必要あり)
 // wchar : 全角半角の区別をしない
-const bool Regex::compile( const std::string reg, const bool icase, const bool newline, const bool use_migemo, const bool wchar )
+bool Regex::compile( const std::string reg, const bool icase, const bool newline, const bool use_migemo, const bool wchar )
 {
 #ifdef _DEBUG
     if( wchar ){
@@ -122,7 +122,7 @@ const bool Regex::compile( const std::string reg, const bool icase, const bool n
 }
 
 
-const bool Regex::exec( const std::string& target, const size_t offset )
+bool Regex::exec( const std::string& target, const size_t offset )
 {
     regmatch_t pmatch[ REGEX_MAX_NMATCH ];
 
@@ -211,8 +211,8 @@ const bool Regex::exec( const std::string& target, const size_t offset )
 // newline :  . に改行をマッチさせない
 // usemigemo : migemo使用 (コンパイルオプションで指定する必要あり)
 // wchar : 全角半角の区別をしない
-const bool Regex::exec( const std::string reg, const std::string& target,
-                        const size_t offset, const bool icase, const bool newline, const bool use_migemo, const bool wchar )
+bool Regex::exec( const std::string reg, const std::string& target,
+                  const size_t offset, const bool icase, const bool newline, const bool use_migemo, const bool wchar )
 {
     if ( ! compile(reg, icase, newline, use_migemo, wchar ) ) return false;
 
@@ -235,7 +235,7 @@ const std::string Regex::str( const size_t num )
 }
 
 
-const int Regex::pos( const size_t num )
+int Regex::pos( const size_t num )
 {
     if( m_results.size() > num ) return m_pos[ num ];
 

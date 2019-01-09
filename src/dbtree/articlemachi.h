@@ -33,7 +33,7 @@ namespace DBTREE
       private:
         
         // offlawモードなら更新チェック可能
-        const bool enable_check_update() override;
+        bool enable_check_update() override;
 
         NodeTreeBase* create_nodetree() override;
     };

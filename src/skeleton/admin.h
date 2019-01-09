@@ -71,10 +71,10 @@ namespace SKELETON
         virtual Gtk::Window* get_win();
 
         // 起動中
-        const bool is_booting();
+        bool is_booting();
 
         // フォーカスされているか
-        virtual const bool has_focus() const { return m_focus; }
+        virtual bool has_focus() const { return m_focus; }
 
         // タブの数
         virtual int get_tab_nums();
@@ -114,7 +114,7 @@ namespace SKELETON
             );
 
         // コマンドがセットされているか
-        const bool has_commands() const { return ( m_list_command.size() ); }
+        bool has_commands() const { return m_list_command.size(); }
 
         // 現在表示してるページ番号およびURL
         // 表示ページを指定したいときは "set_page" コマンドを使う
@@ -122,10 +122,10 @@ namespace SKELETON
         const std::string get_current_url();
 
         // urlで指定されるタブがロックされているか
-        const bool is_locked( const std::string& url );
+        bool is_locked( const std::string& url );
 
         // urlで指定されるタブが存在するか
-        const bool exist_tab( const std::string& url );
+        bool exist_tab( const std::string& url );
 
         // 指定したページに表示切替え
         void set_current_page( const int page );
@@ -138,7 +138,7 @@ namespace SKELETON
     protected:
 
         void set_use_viewhistory( const bool use ){ m_use_viewhistory = use; }
-        const bool get_use_viewhistory() const { return m_use_viewhistory; }
+        bool get_use_viewhistory() const { return m_use_viewhistory; }
 
         void set_use_switchhistory( const bool use ){ m_use_switchhistory = use; }
 
@@ -301,8 +301,8 @@ namespace SKELETON
         virtual std::list< bool > get_locked();
 
         // タブのロック/アンロック
-        virtual const bool is_lockable( const int page );
-        virtual const bool is_locked( const int page );
+        virtual bool is_lockable( const int page );
+        virtual bool is_locked( const int page );
         virtual void lock( const int page );
         virtual void unlock( const int page );
 
@@ -327,7 +327,7 @@ namespace SKELETON
 
         void slot_popupmenu_deactivate();
 
-        const bool back_forward_viewhistory( const std::string& url, const bool back, const int count );
+        bool back_forward_viewhistory( const std::string& url, const bool back, const int count );
 
         // 移転などでviewのurlを更新
         void update_url( const std::string& url_old, const std::string& url_new );

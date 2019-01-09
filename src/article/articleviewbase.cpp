@@ -685,7 +685,7 @@ const char* ArticleViewBase::get_menu_item( const int item )
 //
 // クライアント領域幅
 //
-const int ArticleViewBase::width_client()
+int ArticleViewBase::width_client()
 {
 #ifdef _DEBUG
     if( m_drawarea ) std::cout << "ArticleViewBase::width_client : " << m_drawarea->width_client() << std::endl;
@@ -700,7 +700,7 @@ const int ArticleViewBase::width_client()
 //
 // クライアント領高さ
 //
-const int ArticleViewBase::height_client()
+int ArticleViewBase::height_client()
 {
 #ifdef _DEBUG
     if( m_drawarea ) std::cout << "ArticleViewBase::height_client : " << m_drawarea->height_client() << std::endl;
@@ -713,7 +713,7 @@ const int ArticleViewBase::height_client()
 
 
 // アイコンのID取得
-const int ArticleViewBase::get_icon( const std::string& iconname )
+int ArticleViewBase::get_icon( const std::string& iconname )
 {
     int id = ICON::NONE;
 
@@ -735,7 +735,7 @@ const int ArticleViewBase::get_icon( const std::string& iconname )
 //
 // コマンド
 //
-const bool ArticleViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
+bool ArticleViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::set_command " << get_url() << std::endl
@@ -1006,7 +1006,7 @@ void ArticleViewBase::delete_open_view()
 
 
 // 実況可能か
-const bool ArticleViewBase::get_enable_live()
+bool ArticleViewBase::get_enable_live()
 {
     return ( m_enable_live && DBTREE::board_get_live_sec( m_url_article ) );
 }
@@ -1040,7 +1040,7 @@ void ArticleViewBase::warp_pointer_to_popup()
 //
 // viewの操作
 //
-const bool ArticleViewBase::operate_view( const int control )
+bool ArticleViewBase::operate_view( const int control )
 {
     assert( m_drawarea );
 
@@ -2088,7 +2088,7 @@ bool ArticleViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 // drawareaのキープレスイベント
 //
-const bool ArticleViewBase::slot_key_press( GdkEventKey* event )
+bool ArticleViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_key_press\n";
@@ -2807,7 +2807,7 @@ void ArticleViewBase::open_image( const std::string& url, const int res_number,
 //
 // ポップアップが表示されているか
 //
-const bool ArticleViewBase::is_popup_shown() const
+bool ArticleViewBase::is_popup_shown() const
 {
     return ( m_popup_win && m_popup_shown );
 }
@@ -2816,7 +2816,7 @@ const bool ArticleViewBase::is_popup_shown() const
 //
 // ポップアップが表示されていてかつマウスがその上にあるか
 //
-const bool ArticleViewBase::is_mouse_on_popup()
+bool ArticleViewBase::is_mouse_on_popup()
 {
     if( ! is_popup_shown() ) return false;
     return m_popup_win->view()->is_mouse_on_view();

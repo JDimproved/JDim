@@ -29,8 +29,9 @@
 
 #include "httpcode.h"
 
-#include <sstream>
 #include <cstring>
+#include <mutex>
+#include <sstream>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -44,8 +45,6 @@
 
 #include <glibmm.h>
 
-#include "jdmutex.h"
-
 #ifdef _WIN32
 // _soc : SOCKET (unsigned int)
 #define SOC_ISVALID(_soc) ( (_soc) != INVALID_SOCKET )
@@ -54,13 +53,10 @@
 #define SOC_ISVALID(_soc) ( (_soc) >= 0 )
 #endif
 
-enum
-{
-    MAX_LOADER = 10, // 最大スレッド数
-    MAX_LOADER_SAMEHOST = 2, // 同一ホストに対して実行できる最大スレッド数
-    LNG_BUF_MIN = 1 * 1024, // 読み込みバッファの最小値 (byte)
-    TIMEOUT_MIN = 1 // タイムアウトの最小値 (秒)
-};
+constexpr int MAX_LOADER = 10; // 最大スレッド数
+constexpr int MAX_LOADER_SAMEHOST = 2; // 同一ホストに対して実行できる最大スレッド数
+constexpr size_t LNG_BUF_MIN = 1 * 1024; // 読み込みバッファの最小値 (byte)
+constexpr long TIMEOUT_MIN = 1; // タイムアウトの最小値 (秒)
 
 
 #ifdef _WIN32
@@ -76,17 +72,17 @@ bool initialized_loader = false;
 
 namespace JDLIB
 {
-    const bool get_token( JDLIB::Loader* loader );
+    bool get_token( JDLIB::Loader* loader );
     void return_token( JDLIB::Loader* loader );
 
     void push_loader_queue( JDLIB::Loader* loader );
-    const bool remove_loader_queue( JDLIB::Loader* loader );
+    bool remove_loader_queue( JDLIB::Loader* loader );
     void pop_loader_queue();
 }
 
 
-static JDLIB::StaticMutex mutex_token = JDLIB_STATIC_MUTEX_INIT;
-static JDLIB::StaticMutex mutex_queue = JDLIB_STATIC_MUTEX_INIT;
+static std::mutex mutex_token;
+static std::mutex mutex_queue;
 std::list< JDLIB::Loader* > queue_loader; // スレッド起動待ちの Loader のキュー
 int token_loader = 0;
 std::vector< JDLIB::Loader* > vec_loader( MAX_LOADER );
@@ -94,9 +90,9 @@ bool disable_pop = false;
 
 
 // トークン取得
-const bool JDLIB::get_token( JDLIB::Loader* loader )
+bool JDLIB::get_token( JDLIB::Loader* loader )
 {
-    JDLIB::LockGuard lock( mutex_token );
+    std::lock_guard< std::mutex > lock( mutex_token );
 
 #ifdef _DEBUG
     std::cout << "JDLIB::get_token : url = " << loader->data().url << " token = " << token_loader << std::endl;
@@ -130,7 +126,7 @@ const bool JDLIB::get_token( JDLIB::Loader* loader )
 //　トークン返す
 void JDLIB::return_token( JDLIB::Loader* loader )
 {
-    JDLIB::LockGuard lock( mutex_token );
+    std::lock_guard< std::mutex > lock( mutex_token );
 
     --token_loader;
     assert( token_loader >= 0 );
@@ -147,7 +143,7 @@ void JDLIB::return_token( JDLIB::Loader* loader )
 // スレッド起動待ちキューに Loader を登録
 void JDLIB::push_loader_queue( JDLIB::Loader* loader )
 {
-    JDLIB::LockGuard lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( ! loader ) return;
 
@@ -166,9 +162,9 @@ void JDLIB::push_loader_queue( JDLIB::Loader* loader )
 
 
 // キューから Loader を取り除いたらtrueを返す
-const bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
+bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
 {
-    JDLIB::LockGuard lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( ! queue_loader.size() ) return false;
     if( std::find( queue_loader.begin(), queue_loader.end(), loader ) == queue_loader.end() ) return false;
@@ -186,7 +182,7 @@ const bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
 // キューに登録されたスレッドを起動する
 void JDLIB::pop_loader_queue()
 {
-    JDLIB::LockGuard lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( disable_pop ) return;
     if( ! queue_loader.size() ) return;
@@ -217,7 +213,7 @@ void JDLIB::pop_loader_queue()
 //
 void JDLIB::disable_pop_loader_queue()
 {
-    JDLIB::LockGuard lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
 #ifdef _DEBUG
     std::cout << "JDLIB::disable_pop_loader_queue\n";
@@ -565,7 +561,7 @@ void* Loader::launcher( void* dat )
 }
 
 
-const bool Loader::send_connect( const int soc, std::string& errmsg )
+bool Loader::send_connect( const int soc, std::string& errmsg )
 {
     std::string authority;
     std::string msg_send;
@@ -1183,7 +1179,7 @@ const std::string Loader::create_msg_send()
 // buf : ヘッダが取り除かれたデータ
 // readsize: 出力データサイズ
 //
-const int Loader::receive_header( char* buf, size_t& read_size )
+int Loader::receive_header( char* buf, size_t& read_size )
 {
 #ifdef _DEBUG
     std::cout << "Loader::receive_header : read_size = " << read_size << std::endl;
@@ -1686,7 +1682,7 @@ bool Loader::unzip( char* buf, size_t& read_size )
 //
 // sent, recv待ち
 //
-const bool Loader::wait_recv_send( const int fd, const bool recv )
+bool Loader::wait_recv_send( const int fd, const bool recv )
 {
     if( !fd ) return true;
 

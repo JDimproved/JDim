@@ -70,7 +70,8 @@ dnl ユーザー設定
 dnl
 
 dnl 追加コンパイルオプション
-CXXFLAGS="-ggdb -Wall -pedantic $CXXFLAGS"
+dnl -Wextraで有効になる-Wunused-parameterは修正方法の検討が必要なので暫定的に無効
+CXXFLAGS="-ggdb -Wall -Wextra -Wno-unused-parameter -pedantic $CXXFLAGS"
 
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------

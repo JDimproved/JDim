@@ -50,11 +50,11 @@ namespace JDLIB
 
         const std::string& get_errmsg(){ return m_errmsg; }
 
-        const bool connect( const int soc, const char* host );
-        const bool close();
+        bool connect( const int soc, const char* host );
+        bool close();
 
-        const int write( const char* buf, const size_t bufsize );
-        const int read( char* buf, const size_t bufsize );
+        int write( const char* buf, const size_t bufsize );
+        int read( char* buf, const size_t bufsize );
     };
 
     void init_ssl();

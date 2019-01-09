@@ -46,7 +46,7 @@ namespace SKELETON
         ~JDTreeViewBase() noexcept;
 
         // 行数
-        const int get_row_size();
+        int get_row_size();
 
         // カーソル解除
         void unset_cursor(){ get_selection()->unselect_all(); }
@@ -75,8 +75,8 @@ namespace SKELETON
         // 選択行の移動
         void goto_top();
         void goto_bottom();
-        const bool row_up();
-        const bool row_down();
+        bool row_up();
+        bool row_down();
         void page_up();
         void page_down();
 
@@ -91,7 +91,7 @@ namespace SKELETON
         void expand_parents( const Gtk::TreePath& path );
 
         // pathが開かれているか
-        const bool is_expand( const Gtk::TreePath& path );
+        bool is_expand( const Gtk::TreePath& path );
 
         // 行のセルの高さ
         int get_row_height();

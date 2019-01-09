@@ -38,7 +38,7 @@ BoardJBBS::BoardJBBS( const std::string& root, const std::string& path_board, co
 //
 // キャッシュのファイル名が正しいか
 //
-const bool BoardJBBS::is_valid( const std::string& filename )
+bool BoardJBBS::is_valid( const std::string& filename )
 {
     if( filename.length() != 10 ) return false;
 

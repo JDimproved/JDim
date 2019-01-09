@@ -279,7 +279,7 @@ void DragableNoteBook::set_scrollable( bool scrollable )
 }
 
 
-const int DragableNoteBook::get_n_pages()
+int DragableNoteBook::get_n_pages()
 {
     return m_notebook_view.get_n_pages();
 }
@@ -291,13 +291,13 @@ Gtk::Widget* DragableNoteBook::get_nth_page( int page_num )
 }
 
 
-const int DragableNoteBook::page_num( const Gtk::Widget& child )
+int DragableNoteBook::page_num( const Gtk::Widget& child )
 {
     return m_notebook_view.page_num( child );
 }
 
 
-const int DragableNoteBook::get_current_page()
+int DragableNoteBook::get_current_page()
 {
     return m_notebook_view.get_current_page();
 }
@@ -473,7 +473,7 @@ void DragableNoteBook::set_current_toolbar( const int id_toolbar, SKELETON::View
 }
 
 
-const int DragableNoteBook::get_current_toolbar()
+int DragableNoteBook::get_current_toolbar()
 {
     return m_notebook_toolbar.get_current_page();
 }
@@ -516,7 +516,7 @@ void DragableNoteBook::update_toolbar_button()
 //
 // タブのアイコンを取得する
 //
-const int DragableNoteBook::get_tabicon( const int page )
+int DragableNoteBook::get_tabicon( const int page )
 {
     SKELETON::TabLabel* tablabel = m_notebook_tab.get_tablabel( page );
     if( tablabel ) return tablabel->get_id_icon();

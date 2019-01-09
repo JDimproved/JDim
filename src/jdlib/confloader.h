@@ -34,8 +34,8 @@ namespace JDLIB
         // もしstr_confがemptyの時はfileから読み込む
         ConfLoader( const std::string& file, std::string str_conf );
 
-        const bool empty();
-        const bool is_broken(){ return m_broken; }
+        bool empty();
+        bool is_broken(){ return m_broken; }
 
         // 保存
         void save();
@@ -49,9 +49,9 @@ namespace JDLIB
 
         // 値取得
         const std::string get_option_str( const std::string& name, const std::string& dflt, const size_t maxlength = 0 );
-        const bool get_option_bool( const std::string& name, const bool dflt );
-        const int get_option_int( const std::string& name, const int dflt, const int min, const int max );
-        const double get_option_double( const std::string& name, const double dflt, const double min , const double max );
+        bool get_option_bool( const std::string& name, const bool dflt );
+        int get_option_int( const std::string& name, const int dflt, const int min, const int max );
+        double get_option_double( const std::string& name, const double dflt, const double min , const double max );
     };
 }
 

@@ -60,7 +60,7 @@ namespace CONTROL
         const std::string get_str_motions( const int id ) override;
         const std::string get_default_motions( const int id ) override;
         void set_motions( const int id, const std::string& str_motions ) override;
-        const bool remove_motions( const int id ) override;
+        bool remove_motions( const int id ) override;
 
       private:
 

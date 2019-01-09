@@ -83,7 +83,7 @@ void LabelEntry::grab_focus()
 }
 
 
-const bool LabelEntry::has_grab()
+bool LabelEntry::has_grab()
 {
     if( m_editable ) return m_entry.has_grab();
     return false;

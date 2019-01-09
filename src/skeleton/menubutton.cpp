@@ -68,7 +68,7 @@ void MenuButton::setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOpti
     // メニュー項目作成
     Glib::RefPtr< Gtk::ActionGroup > actiongroup = Gtk::ActionGroup::create();
     Glib::RefPtr< Gtk::AccelGroup > agroup  = CORE::get_mainwindow()->get_accel_group();
-    for( int i = 0 ; i < MAX_MENU_SIZE; ++i ){
+    for( size_t i = 0 ; i < MAX_MENU_SIZE; ++i ){
         Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "menu" + MISC::itostr( i ), "dummy" );
         action->set_accel_group( agroup );
         Gtk::MenuItem* item = Gtk::manage( action->create_menu_item() );
@@ -117,8 +117,8 @@ void MenuButton::append_menu( std::vector< std::string >& items )
 
     // 新しくメニューを作成して項目追加
     m_popupmenu = Gtk::manage( new Gtk::Menu() );
-    const int size = MIN( items.size(), MAX_MENU_SIZE );
-    for( int i = 0 ; i < size; ++i ){
+    const size_t size = MIN( items.size(), MAX_MENU_SIZE );
+    for( size_t i = 0 ; i < size; ++i ){
 
         Gtk::MenuItem* item = NULL;
 
