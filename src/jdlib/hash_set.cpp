@@ -5,11 +5,6 @@
 
 #include "hash_set.h"
 
-#include "dbtree/interface.h"
-
-#include <cstdlib>
-
-
 using namespace JDLIB;
 
 
@@ -79,9 +74,7 @@ hash_set_thread::hash_set_thread()
 
 int hash_set_thread::get_key( const std::string& url )
 {
-
-    const int lng = DBTREE::url_datbase( url ).length();
-    const int key = atoi(  url.substr( lng < (int) url.length() ? lng : 0  ).c_str() ) % size();
+    const int key = std::hash<std::string>()(url) % size();
 
 #ifdef _DEBUG
     std::cout << "hash_set_thread::get_key url = " << url << " key = " << key << std::endl;
