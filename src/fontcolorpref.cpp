@@ -20,7 +20,7 @@
 
 #define WARNING_STRICTCHAR "スレビューのフォント幅の近似計算を厳密に行います\n\nレイアウトが崩れにくくなるかわりにパフォーマンスが著しく低下します。通常は設定しないでください"
 
-#define WARNING_GTKRC_TREE "gtkrc 関係の設定はJDの再起動後に有効になります"
+#define WARNING_GTKRC_TREE "gtkrc 関係の設定はJDimの再起動後に有効になります"
 
 using namespace CORE;
 

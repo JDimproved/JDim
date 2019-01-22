@@ -95,6 +95,8 @@ namespace CONFIG
 
     // JD ホームページのアドレス
     const std::string& get_url_jdhp();
+    // JDim ホームページのアドレス
+    const std::string& get_url_jdimhp();
 
     // 2chの認証サーバのアドレス
     const std::string& get_url_login2ch();

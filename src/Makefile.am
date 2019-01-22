@@ -1,8 +1,8 @@
 SUBDIRS = dbtree dbimg bbslist board article image message jdlib skeleton history config icons sound xml control
 
-bin_PROGRAMS = jd
+bin_PROGRAMS = jdim
 
-jd_LDADD = \
+jdim_LDADD = \
 	./dbimg/libdbimg.a \
 	./bbslist/libbbslist.a \
 	./board/libboard.a \
@@ -21,7 +21,7 @@ jd_LDADD = \
 	@LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@ @X11_LIBS@
 
 
-jd_SOURCES = \
+jdim_SOURCES = \
 	main.cpp \
 	winmain.cpp \
 	core.cpp \
@@ -70,7 +70,7 @@ jd_SOURCES = \
 	environment.cpp
 
 if MAKE_WINDRES
-jd_SOURCES += jd_windres.rc
+jdim_SOURCES += jd_windres.rc
 endif
 
 

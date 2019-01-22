@@ -133,7 +133,7 @@ namespace CONTROL
         { "CheckUpdateRoot", ITEM_NAME_CHECK_UPDATE_ROOT },
         { "CheckUpdateOpenRoot", ITEM_NAME_CHECK_UPDATE_OPEN_ROOT },
 
-        { "QuitJD", "JD終了" },
+        { "QuitJD", "JDim終了" },
         { "MaximizeMainWin", "最大化 / 最大化解除" },
         { "IconifyMainWin", "最小化" },
         { "FullScreen", "全画面表示" },

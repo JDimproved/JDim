@@ -179,6 +179,9 @@ namespace CONFIG
         // JD ホームページのアドレス
         std::string url_jdhp;
 
+        // JDim ホームページのアドレス
+        std::string url_jdimhp;
+
         // 2chの認証サーバのアドレス
         std::string url_login2ch;
 

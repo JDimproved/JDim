@@ -1,10 +1,10 @@
 [Desktop Entry]
-Exec=jd
+Exec=jdim
 Icon=jd
 Terminal=false
 Type=Application
-Name=JD 2ch browser
-Name[ja]=2ch ブラウザ JD
-Comment=JD is a 2ch browser based on gtkmm2.
-Comment[ja]=gtkmm2 を利用した 2ch ブラウザ
+Name=JDim 2ch browser
+Name[ja]=2ch ブラウザ JDim
+Comment=JDim is a 2ch browser based on gtkmm.
+Comment[ja]=gtkmm を利用した 2ch ブラウザ
 Categories=Network;

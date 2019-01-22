@@ -42,7 +42,7 @@
 %define         migemo_dict   %{_datadir}/cmigemo/utf-8/migemo-dict
 ##########################################
 
-Name:           jd
+Name:           jdim
 Version:        %{main_ver}
 Release:        %{rel}
 Summary:        A 2ch browser
@@ -66,7 +66,7 @@ Requires:       %{fontpackage}
 
 
 %description
-JD is a 2ch browser based on gtkmm2.
+JDim is a 2ch browser based on gtkmm.
 
 %prep
 %setup -q -n %{name}-%{main_ver}-%{strtag}

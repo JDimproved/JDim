@@ -201,7 +201,10 @@ namespace CONFIG
 #define CONF_X_2CH_UA "Navigator for 2ch 1.7.5"
 
 // JD ホームページのアドレス
-#define CONF_URL_JDHP "http://jd4linux.sourceforge.jp/"
+#define CONF_URL_JDHP "https://jd4linux.osdn.jp/"
+
+// JDim ホームページのアドレス
+#define CONF_URL_JDIMHP "https://github.com/JDimproved/JDim"
 
 // 2chの認証サーバのアドレス
 #define CONF_LOGIN2CH "https://2chv.tora3.net/futen.cgi"

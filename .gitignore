@@ -1,5 +1,5 @@
 buildinfo.h
-src/jd
+src/jdim
 src/**/*.a
 src/icons/*.h
 !src/icons/iconmanager.h

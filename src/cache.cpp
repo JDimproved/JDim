@@ -70,7 +70,7 @@ std::string CACHE::path_session()
 // ロックファイル
 std::string CACHE::path_lock()
 {
-    const std::string jd_lock = MISC::getenv_limited( "JD_LOCK", MAX_SAFE_PATH );
+    const std::string jd_lock = MISC::getenv_limited( "JDIM_LOCK", MAX_SAFE_PATH );
     if( ! jd_lock.empty() ) return jd_lock;
 
     return CACHE::path_root() + "JDLOCK";
@@ -89,7 +89,7 @@ std::string CACHE::path_root()
 {
     if( root_path.empty() ){
 
-        const std::string jd_cache = MISC::getenv_limited( "JD_CACHE", MAX_SAFE_PATH );
+        const std::string jd_cache = MISC::getenv_limited( "JDIM_CACHE", MAX_SAFE_PATH );
         root_path = jd_cache.empty() ? "~/.jd/" : jd_cache;
 
         if( root_path[ root_path.length() -1 ] != '/' ) root_path = root_path + "/";

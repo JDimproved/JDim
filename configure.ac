@@ -1,8 +1,8 @@
 dnl
-dnl JD用 configure.ac
+dnl JDim用 configure.ac
 dnl
 AC_PREREQ(2.50)
-AC_INIT(jd, 1.0)
+AC_INIT(jdim, 1.0)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
 

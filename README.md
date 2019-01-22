@@ -135,18 +135,18 @@ $ jdim http://pc99.2ch.net/test/read.cgi/linux/1234567890/
 $ jdim ./12345.dat
 ```
 
-環境変数 `JD_CACHE` でキャッシュディレクトリの位置を変更・指定することが可能。
+環境変数 `JDIM_CACHE` でキャッシュディレクトリの位置を変更・指定することが可能。
 指定しなければ `~/.jd` がキャッシュディレクトリになる。
 
 ```sh
-$ JD_CACHE=~/.mycache jdim
+$ JDIM_CACHE=~/.mycache jdim
 ```
 
-環境変数 `JD_LOCK` でロックファイルの位置を変更・指定することが可能。
+環境変数 `JDIM_LOCK` でロックファイルの位置を変更・指定することが可能。
 指定しなければ `~/.jd/JDLOCK` がロックファイルになる。
 
 ```sh
-$ JD_LOCK=~/mylock jdim
+$ JDIM_LOCK=~/mylock jdim
 ```
 
 ### コマンドライン オプション
@@ -205,7 +205,7 @@ fork元の JD:
 
 ## ライセンス
 
-JDim 及びfork元の JD は GPLv2 の下で公開されています。
+JDim は GPLv2 の下で公開されています。
 [GNU General Public License, version 2][lisence]
 
 [lisence]: https://github.com/JDimproved/JDim/blob/master/COPYING
