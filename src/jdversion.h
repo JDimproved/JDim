@@ -17,15 +17,16 @@
 // リビジョンが参照できない場合はJDDATE_FALLBACKを使う
 // SEE ALSO: ENVIRONMENT::get_jdversion()
 
-#define MAJORVERSION 2
-#define MINORVERSION 8
-#define MICROVERSION 9
-#define JDDATE_FALLBACK    "180424"
+#define MAJORVERSION 0
+#define MINORVERSION 1
+#define MICROVERSION 0
+#define JDDATE_FALLBACK    "20190122"
 #define JDTAG     ""
 
 //---------------------------------
 
-#define JDVERSION ( MAJORVERSION * 100 + MINORVERSION * 10 + MICROVERSION )
+// FIXME: オンラインマニュアルはfork元のURLを参照している
+#define JDVERSION ( 289 )
 #define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE_FALLBACK ) )
 
 //---------------------------------
