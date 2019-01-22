@@ -30,8 +30,10 @@
 
 //---------------------------------
 
-#define JDCOMMENT "JD は gtkmm/GTK+2 を用いた2chブラウザです。"
-#define JDCOPYRIGHT "(c) 2006-2015 JD project"
+#define JDCOMMENT "JDim (JD improved) は gtkmm/GTK+ を用いた2chブラウザです。"
+#define JDCOPYRIGHT "(c) 2006-2015 JD project" "\n" \
+                    "(c) 2017-2019 yama-natuki" "\n" \
+                    "(c) 2019 JDimproved project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/"

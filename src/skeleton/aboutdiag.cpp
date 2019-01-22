@@ -96,6 +96,7 @@ void AboutDiag::init()
     // コピーライト
     if( ! get_copyright().empty() )
     {
+        m_label_copyright.set_justify( Gtk::JUSTIFY_CENTER );
         m_vbox_info.pack_start( m_label_copyright, Gtk::PACK_SHRINK );
     }
     // Webサイト
