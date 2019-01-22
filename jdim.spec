@@ -49,7 +49,7 @@ Summary:        A 2ch browser
 
 Group:          Applications/Internet
 License:        GPLv2
-URL:            http://jd4linux.sourceforge.jp/
+URL:            http://jd4linux.osdn.jp/
 Source0:        http://downloads.sourceforge.jp/jd4linux/%{repoid}/%{name}-%{main_ver}-%{strtag}.tgz
 #Source0:	%{name}-%{main_ver}-%{strtag}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
