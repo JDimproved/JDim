@@ -42,14 +42,14 @@
 %define         migemo_dict   %{_datadir}/cmigemo/utf-8/migemo-dict
 ##########################################
 
-Name:           jd
+Name:           jdim
 Version:        %{main_ver}
 Release:        %{rel}
 Summary:        A 2ch browser
 
 Group:          Applications/Internet
 License:        GPLv2
-URL:            http://jd4linux.sourceforge.jp/
+URL:            http://jd4linux.osdn.jp/
 Source0:        http://downloads.sourceforge.jp/jd4linux/%{repoid}/%{name}-%{main_ver}-%{strtag}.tgz
 #Source0:	%{name}-%{main_ver}-%{strtag}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -66,7 +66,7 @@ Requires:       %{fontpackage}
 
 
 %description
-JD is a 2ch browser based on gtkmm2.
+JDim is a 2ch browser based on gtkmm.
 
 %prep
 %setup -q -n %{name}-%{main_ver}-%{strtag}

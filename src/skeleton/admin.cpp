@@ -1651,7 +1651,7 @@ void Admin::update_finish( const std::string& url )
 //
 void Admin::set_title( const std::string& url, const std::string& title, const bool force )
 {
-    if( m_win ) m_win->set_title( "JD - " + title );
+    if( m_win ) m_win->set_title( "JDim - " + title );
     else{
 
         SKELETON::View* view = get_current_view();

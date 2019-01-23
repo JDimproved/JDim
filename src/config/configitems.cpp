@@ -255,6 +255,9 @@ bool ConfigItems::load( const bool restore )
     // JD ホームページのアドレス
     url_jdhp = cf.get_option_str( "url_jdhp", CONF_URL_JDHP );
 
+    // JDim ホームページのアドレス
+    url_jdimhp = cf.get_option_str( "url_jdimhp", CONF_URL_JDIMHP );
+
     // 2chの認証サーバのアドレス
     url_login2ch = cf.get_option_str( "url_login2ch", CONF_LOGIN2CH );
 
@@ -663,6 +666,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "restore_image", restore_image );
     cf.update( "manage_winpos", manage_winpos );
     cf.update( "url_jdhp", url_jdhp );
+    cf.update( "url_jdimhp", url_jdimhp );
     cf.update( "url_login2ch", url_login2ch );
     cf.update( "url_loginp2", url_loginp2 );
     cf.update( "url_loginbe", url_loginbe );

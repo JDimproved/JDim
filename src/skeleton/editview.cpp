@@ -463,8 +463,8 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
     Gtk::MenuItem* menuitem = Gtk::manage( new Gtk::SeparatorMenuItem() );
     menu->prepend( *menuitem );
 
-    // JDの動作環境を記入
-    menuitem = Gtk::manage( new Gtk::MenuItem( "JDの動作環境を記入" ) );
+    // JDimの動作環境を記入
+    menuitem = Gtk::manage( new Gtk::MenuItem( "JDimの動作環境を記入" ) );
     menuitem->signal_activate().connect( sigc::mem_fun( *this, &EditTextView::slot_write_jdinfo ) );
     menu->prepend( *menuitem );
 

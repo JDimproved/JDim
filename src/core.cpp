@@ -759,18 +759,18 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // help
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
-    m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板(_B)" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
+    m_action_group->add( Gtk::Action::create( "Bbs", "JD サポート掲示板(_B)" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ(_L)" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     Gtk::AccelKey jdhelpKey = CONTROL::get_accelkey( CONTROL::JDHelp );
     if( jdhelpKey.is_null() ){
-        m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
+        m_action_group->add( Gtk::Action::create( "Manual", "JD オンラインマニュアル(_M)..." ),
                              sigc::mem_fun( *this, &Core::slot_show_manual ) );
     }else{
-        m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
+        m_action_group->add( Gtk::Action::create( "Manual", "JD オンラインマニュアル(_M)..." ),
                              jdhelpKey,
                              sigc::mem_fun( *this, &Core::slot_show_manual ) );
     }
-    m_action_group->add( Gtk::Action::create( "About", "JDについて(_A)..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
+    m_action_group->add( Gtk::Action::create( "About", "JDimについて(_A)..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
 
     m_ui_manager = Gtk::UIManager::create();    
@@ -1361,8 +1361,8 @@ void Core::set_maintitle()
 
     std::string title;
 
-    if( m_title.empty() ) title = "JD - " + ENVIRONMENT::get_jdversion();
-    else title = "JD - " + m_title;
+    if( m_title.empty() ) title = "JDim - " + ENVIRONMENT::get_jdversion();
+    else title = "JDim - " + m_title;
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
@@ -1822,7 +1822,7 @@ void Core::toggle_draw_toolbarback()
 
     CONFIG::set_draw_toolbarback( ! CONFIG::get_draw_toolbarback() );
 
-    SKELETON::MsgDiag mdiag( NULL, "正しく表示させるためにはJDを再起動してください。" );
+    SKELETON::MsgDiag mdiag( NULL, "正しく表示させるためにはJDimを再起動してください。" );
     mdiag.run();
 }
 

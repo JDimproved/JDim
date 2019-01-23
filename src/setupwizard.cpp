@@ -20,8 +20,10 @@ enum
 };
 
 PageStart::PageStart() : Gtk::VBox(),
-                         m_label( "１/５．JD セットアップ開始", Gtk::ALIGN_START ),
-                         m_label2( "JDセットアップウィザードへようこそ\n\nこのウィザードでネットワークとフォント等の設定をおこないます\n\n設定を始めるには［次へ］を押してください", Gtk::ALIGN_START )
+                         m_label( "１/５．JDim セットアップ開始", Gtk::ALIGN_START ),
+                         m_label2( "JDimセットアップウィザードへようこそ\n\n"
+                                   "このウィザードでネットワークとフォント等の設定をおこないます\n\n"
+                                   "設定を始めるには［次へ］を押してください", Gtk::ALIGN_START )
 {
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
     m_hbox_label.set_spacing( SPACING_SIZE );
@@ -222,8 +224,10 @@ void PagePane::slot_v3pane()
 
 
 PageEnd::PageEnd() : Gtk::VBox(),
-                     m_label( "５/５．JD セットアップ完了", Gtk::ALIGN_START ),
-                     m_label2( "その他の設定は起動後に設定及び表示メニューからおこなって下さい\n\n完了を押すとJDを起動して板一覧のリストをロードします\n板一覧が表示されるまでしばらくお待ち下さい" , Gtk::ALIGN_START )
+                     m_label( "５/５．JDim セットアップ完了", Gtk::ALIGN_START ),
+                     m_label2( "その他の設定は起動後に設定及び表示メニューからおこなって下さい\n\n"
+                               "完了を押すとJDimを起動して板一覧のリストをロードします\n"
+                               "板一覧が表示されるまでしばらくお待ち下さい" , Gtk::ALIGN_START )
 {
     m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
     m_hbox_label.set_spacing( SPACING_SIZE );
@@ -242,7 +246,7 @@ PageEnd::PageEnd() : Gtk::VBox(),
 SetupWizard::SetupWizard()
     : Gtk::Dialog(), m_back( "<< 戻る(_B)", true ), m_next( "次へ(_N) >>", true )
 {
-    set_title( "JD セットアップウィザード" );
+    set_title( "JDim セットアップウィザード" );
     set_keep_above( true );
     set_resizable( false );
 

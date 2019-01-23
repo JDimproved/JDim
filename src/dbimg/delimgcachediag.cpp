@@ -28,7 +28,7 @@ DelImgCacheDiag::DelImgCacheDiag()
     add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL )
     ->signal_clicked().connect( sigc::mem_fun(*this, &DelImgCacheDiag::slot_cancel_clicked ) );
 
-    set_title( "JD 画像キャッシュ削除中" );
+    set_title( "JDim 画像キャッシュ削除中" );
 
     const int mrg = 8;
     get_vbox()->set_spacing( mrg );

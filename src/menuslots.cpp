@@ -1296,6 +1296,6 @@ void Core::slot_show_manual()
 //
 void Core::slot_show_about()
 {
-    SKELETON::AboutDiag about( "JDについて" );
+    SKELETON::AboutDiag about( "JDimについて" );
     about.run();
 }

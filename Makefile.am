@@ -1,21 +1,21 @@
 SUBDIRS = src 
 
 desktopdir= $(datadir)/applications
-dist_desktop_DATA = jd.desktop
+dist_desktop_DATA = jdim.desktop
 
 icondir = $(datadir)/pixmaps
 dist_icon_DATA = jd.png
 
-EXTRA_DIST = AUTHORS TODO README configure jd.spec
+EXTRA_DIST = AUTHORS TODO README configure jdim.spec
 
-jd_BUILDINFO_HEADER = buildinfo.h
-jd_CONFIGURE_ARGS = @ac_configure_args@
+jdim_BUILDINFO_HEADER = buildinfo.h
+jdim_CONFIGURE_ARGS = @ac_configure_args@
 
-all: $(jd_BUILDINFO_HEADER)
+all: $(jdim_BUILDINFO_HEADER)
 
-.PHONY: $(jd_BUILDINFO_HEADER)
+.PHONY: $(jdim_BUILDINFO_HEADER)
 
-$(jd_BUILDINFO_HEADER):
+$(jdim_BUILDINFO_HEADER):
 	@-rm -f $@.new
 
 	@echo '/* This file is generated from Makefile by make. */' >> $@.new
@@ -40,9 +40,9 @@ $(jd_BUILDINFO_HEADER):
 	    echo "#define CXX_INFO \"$${CXX_INFO}\"" >> $@.new; \
 	fi
 
-	@if test -n "$(jd_CONFIGURE_ARGS)"; \
+	@if test -n "$(jdim_CONFIGURE_ARGS)"; \
 	then \
-	    echo "#define CONFIGURE_ARGS \"$(jd_CONFIGURE_ARGS)\"" >> $@.new; \
+	    echo "#define CONFIGURE_ARGS \"$(jdim_CONFIGURE_ARGS)\"" >> $@.new; \
 	fi
 
 	@echo '' >> $@.new

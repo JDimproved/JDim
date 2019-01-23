@@ -153,6 +153,7 @@ void CONFIG::set_regex_res_aa( const std::string& regex ){
 }
 
 const std::string& CONFIG::get_url_jdhp() { return get_confitem()->url_jdhp; }
+const std::string& CONFIG::get_url_jdimhp() { return get_confitem()->url_jdimhp; }
 
 // 2chの認証サーバのアドレス
 const std::string& CONFIG::get_url_login2ch() { return get_confitem()->url_login2ch; }

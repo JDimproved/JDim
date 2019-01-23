@@ -302,7 +302,7 @@ void usage( const int status )
     // -h, --help で表示するメッセージ
     std::stringstream help_message;
     help_message <<
-    "Usage: jd [OPTION] [URL,FILE]\n"
+    "Usage: jdim [OPTION] [URL,FILE]\n"
     "\n"
     "-h, --help\n"
     "        Display this information\n"
@@ -431,7 +431,7 @@ int main( int argc, char **argv )
                 break;
 
             case 'V': // バージョンと完全なconfigureオプションを表示
-                std::cout << "JD " << ENVIRONMENT::get_jdversion() << ", " <<
+                std::cout << "JDim " << ENVIRONMENT::get_jdversion() << "\n" <<
                 ENVIRONMENT::get_jdcopyright() << "\n"
                 "configure: " << ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_FULL ) << std::endl;
                 exit( 0 );
@@ -520,7 +520,7 @@ int main( int argc, char **argv )
 #endif
 
     // gnomeセッションマネージャとつないでログアウト時に"save_yourself"シグナルをもらう
-    gnome_init( "jd", "1.0", argc, argv );
+    gnome_init( "jdim", "1.0", argc, argv );
     GnomeClient *client_gnome = gnome_master_client();
     if( client_gnome ) gtk_signal_connect( GTK_OBJECT( client_gnome ), "save_yourself", GTK_SIGNAL_FUNC( save_yourself_gnome ), NULL );
     else MISC::ERRMSG( "failed to connect to gnome session manager" );
