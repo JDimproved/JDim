@@ -14,6 +14,8 @@ namespace ENVIRONMENT
         WM_XFCE,
         WM_KDE,
         WM_LXDE,
+        WM_MATE,
+        WM_CINNAMON,
         WM_UNKNOWN
     };
 
