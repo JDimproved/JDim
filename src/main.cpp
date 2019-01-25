@@ -431,7 +431,7 @@ int main( int argc, char **argv )
                 break;
 
             case 'V': // バージョンと完全なconfigureオプションを表示
-                std::cout << "JDim " << ENVIRONMENT::get_jdversion() << "\n" <<
+                std::cout << ENVIRONMENT::get_progname() << " " << ENVIRONMENT::get_jdversion() << "\n" <<
                 ENVIRONMENT::get_jdcopyright() << "\n"
                 "configure: " << ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_FULL ) << std::endl;
                 exit( 0 );
