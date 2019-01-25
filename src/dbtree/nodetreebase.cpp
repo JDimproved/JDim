@@ -1704,7 +1704,8 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
 
             // </b>の前までパース
             if( i != pos ){
-                digitlink = true;
+                // デフォルト名無しと同じときはアンカーを作らない
+                digitlink = ( strncmp( m_default_noname.data(), str + pos, i - pos ) != 0 );
                 parse_html( str + pos, i - pos, color_name, digitlink, bold, ahref );
             }
             if( i >= lng ) break;
