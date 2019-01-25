@@ -6,10 +6,11 @@
 
 #include "usrcmdpref.h"
 #include "usrcmdmanager.h"
+
 #include "command.h"
-#include "type.h"
-#include "jdversion.h"
 #include "dndmanager.h"
+#include "environment.h"
+#include "type.h"
 
 #include "control/controlid.h"
 #include "control/controlutil.h"
@@ -58,7 +59,7 @@ UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Gl
 
 void UsrCmdDiag::slot_show_manual()
 {
-    CORE::core_set_command( "open_url_browser", JDHELPCMD );
+    CORE::core_set_command( "open_url_browser", ENVIRONMENT::get_jdhelpcmd() );
 }
 
 ///////////////////////////////////////////

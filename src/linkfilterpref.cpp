@@ -15,7 +15,7 @@
 #include "control/controlid.h"
 
 #include "command.h"
-#include "jdversion.h"
+#include "environment.h"
 
 using namespace CORE;
 
@@ -53,7 +53,7 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
 
 void LinkFilterDiag::slot_show_manual()
 {
-    CORE::core_set_command( "open_url_browser", JDHELPCMD );
+    CORE::core_set_command( "open_url_browser", ENVIRONMENT::get_jdhelpcmd() );
 }
 
 
