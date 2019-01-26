@@ -70,7 +70,7 @@ sudo apt-get install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev lib
 ### ビルド
 
 ```sh
-git clone -b test --depth 1 https://github.com/JDimproved/JDim.git jdim
+git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 cd jdim
 autoreconf -i
 ./configure
