@@ -7,13 +7,14 @@
 
 #include "boardviewbase.h"
 
-#include "jdlib/hash_set.h"
+#include <string>
+#include <unordered_set>
 
 namespace BOARD
 {
     class BoardViewLog : public BOARD::BoardViewBase
     {
-        JDLIB::hash_set_thread m_set_thread;
+        std::unordered_set< std::string > m_set_thread;
 
       public:
 

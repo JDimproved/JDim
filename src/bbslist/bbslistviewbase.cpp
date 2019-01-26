@@ -2421,7 +2421,7 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
     if( m_treestore->children().empty() ) return;
 
     // ツリーの中に無い場合は処理しない
-    if( ! m_set_thread.find_if( url ) ) return;
+    if( m_set_thread.find( url ) == m_set_thread.end() ) return;
 
     bool erase = true;
     int type = TYPE_THREAD;
@@ -2519,7 +2519,7 @@ void BBSListViewBase::select_item( const std::string& url )
 
     std::string url_item( url );
 
-    if( m_set_thread.find_if( url_item )
+    if( m_set_thread.find( url_item ) != m_set_thread.end()
             || m_set_image.find( url_item ) != m_set_image.end()){
         // スレまたは画像の場合
     }
@@ -2923,7 +2923,7 @@ void BBSListViewBase::append_history()
 
     // ツリーにアイテムが含まれている場合は削除
     // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
-    if( ( ( *it_info ).type == TYPE_THREAD && m_set_thread.find_if( ( *it_info ).url ) )
+    if( ( ( *it_info ).type == TYPE_THREAD && m_set_thread.find( ( *it_info ).url ) != m_set_thread.end() )
         || ( ( ( *it_info ).type == TYPE_BOARD || ( *it_info ).type == TYPE_VBOARD )  && m_set_board.find( ( *it_info ).url ) != m_set_board.end() )
         || ( ( *it_info ).type == TYPE_IMAGE && m_set_image.find( ( *it_info ).url ) != m_set_image.end() )
         ){

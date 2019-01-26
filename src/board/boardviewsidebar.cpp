@@ -73,14 +73,18 @@ void BoardViewSidebar::show_view()
 
     std::vector< DBTREE::ArticleBase* > list_article;
     m_set_thread.clear();
-    for( size_t i = 0; i < list_url.size(); ++i ){
+    const size_t size = list_url.size();
+    list_article.reserve( size );
+    m_set_thread.reserve( size );
 
-        DBTREE::ArticleBase* art = DBTREE::get_article( list_url[ i ] );
-        if( art ){
-            list_article.push_back( art );
-            m_set_thread.insert( art->get_url() );
+    for( const std::string& url : list_url ) {
+        DBTREE::ArticleBase* const art = DBTREE::get_article( url );
+        const std::string& article_url = art->get_url();
+        list_article.push_back( art );
+        m_set_thread.insert( article_url );
 
-            if( SESSION::is_online() ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( art->get_url() ), false );
+        if( SESSION::is_online() ) {
+            CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( article_url ), false );
         }
     }
     
@@ -134,7 +138,7 @@ void BoardViewSidebar::update_item( const std::string& url, const std::string& i
 {
     const std::string url_dat = DBTREE::url_datbase( url ) + id;
 
-    if( id.empty() || m_set_thread.find_if( url_dat ) ){
+    if( id.empty() || m_set_thread.find( url_dat ) != m_set_thread.end() ){
 
 #ifdef _DEBUG
         std::cout << "BoardViewSidebar::update_item " << get_url() << std::endl
