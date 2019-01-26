@@ -27,6 +27,7 @@
 #include <windows.h>
 #endif
 
+std::string ENVIRONMENT::get_progname() { return "JDim"; }
 std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
 std::string ENVIRONMENT::get_jdcopyright(){ return std::string( JDCOPYRIGHT ); }
 std::string ENVIRONMENT::get_jdbbs(){ return std::string( JDBBS ); }
@@ -602,6 +603,8 @@ std::string ENVIRONMENT::get_jdinfo()
 {
     std::stringstream jd_info;
 
+    const std::string progname = get_progname();
+
     // バージョンを取得(jdversion.h)
     const std::string version = get_jdversion();
 
@@ -620,7 +623,7 @@ std::string ENVIRONMENT::get_jdinfo()
     else if( lang != "ja_JP.utf8" && lang != "ja_JP.UTF-8" ) other.append( "LANG = " + lang );
 
     jd_info <<
-    "[バージョン] " << version << "\n" <<
+    "[バージョン] " << progname << " " << version << "\n" <<
 //#ifdef SVN_REPOSITORY
 //    "[リポジトリ ] " << SVN_REPOSITORY << "\n" <<
 //#endif

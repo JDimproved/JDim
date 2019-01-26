@@ -25,6 +25,7 @@ namespace ENVIRONMENT
 		CONFIGURE_FULL
     };
 
+    std::string get_progname();
     std::string get_jdcomments();
     std::string get_jdcopyright();
 	std::string get_jdbbs();
