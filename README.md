@@ -40,7 +40,7 @@ WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定�
 
 #### Redhat系
 ```sh
-dnf install gtkmm24-devel gnutls-devel libSM-devel libtool automake git
+dnf install gtkmm24-devel gnutls-devel libgcrypt-devel libSM-devel libtool automake autoconf-archive git
 ```
 
 #### Debian系
@@ -68,6 +68,10 @@ sudo apt-get install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev lib
 ```
 
 ### ビルド
+
+GTK2版が利用できます。GTK3版については[Issues][issues]を見てください。
+
+[issues]: https://github.com/JDimproved/JDim/issues
 
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
