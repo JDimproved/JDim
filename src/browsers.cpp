@@ -54,5 +54,5 @@ namespace CORE
         return name;
     }
 
-    const int get_browser_number(){ return BROWSER_NUM; }
+    int get_browser_number(){ return BROWSER_NUM; }
 }

@@ -27,13 +27,13 @@ namespace CORE
     public:
 
         Usrcmd_Manager();
-        virtual ~Usrcmd_Manager(){}
+        virtual ~Usrcmd_Manager() noexcept {}
 
         XML::Document& xml_document() { return m_document; }
         void analyze_xml();
         void save_xml();
 
-        const int get_size() const { return m_size; }
+        int get_size() const { return m_size; }
 
         // 実行
         void exec( const int comnum, // コマンド番号
@@ -77,11 +77,11 @@ namespace CORE
 
         void txt2xml();
 
-        const bool show_replacetextdiag( std::string& texti, const std::string& title );
+        bool show_replacetextdiag( std::string& texti, const std::string& title );
         void set_cmd( const std::string& cmd );
 
-        const bool is_sensitive( int num, const std::string& link, const std::string& selection );
-        const bool is_hide( int num, const std::string& url );
+        bool is_sensitive( int num, const std::string& link, const std::string& selection );
+        bool is_hide( int num, const std::string& url );
     };
 
     ///////////////////////////////////////

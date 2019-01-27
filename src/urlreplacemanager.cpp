@@ -137,7 +137,7 @@ void Urlreplace_Manager::conf2list( const std::string& conf )
 //
 // URLを任意の正規表現で変換する
 //
-const bool Urlreplace_Manager::exec( std::string &url )
+bool Urlreplace_Manager::exec( std::string &url )
 {
     if( m_list_cmd.empty() ) return false;
 
@@ -171,7 +171,7 @@ const bool Urlreplace_Manager::exec( std::string &url )
 //
 // URLからリファラを求める
 //
-const bool Urlreplace_Manager::referer( const std::string &url, std::string &referer )
+bool Urlreplace_Manager::referer( const std::string &url, std::string &referer )
 {
     if( m_list_cmd.empty() ) return false;
 
@@ -207,7 +207,7 @@ const bool Urlreplace_Manager::referer( const std::string &url, std::string &ref
 //
 // URLの画像コントロールを取得する (URLキャッシュ)
 //
-const int Urlreplace_Manager::get_imgctrl( const std::string &url )
+int Urlreplace_Manager::get_imgctrl( const std::string &url )
 {
     if( m_list_cmd.empty() ) return IMGCTRL_NONE;
 
@@ -225,7 +225,7 @@ const int Urlreplace_Manager::get_imgctrl( const std::string &url )
 //
 // URLの画像コントロールを取得する
 //
-const int Urlreplace_Manager::get_imgctrl_impl( const std::string &url )
+int Urlreplace_Manager::get_imgctrl_impl( const std::string &url )
 {
     int imgctrl = IMGCTRL_NONE;
 

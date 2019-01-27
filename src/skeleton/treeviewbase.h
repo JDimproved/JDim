@@ -43,10 +43,10 @@ namespace SKELETON
         SIG_MOTION_NOTIFY& sig_motion_notify() { return m_sig_motion_notify; }
 
         JDTreeViewBase();
-        virtual ~JDTreeViewBase();
+        ~JDTreeViewBase() noexcept;
 
         // 行数
-        const int get_row_size();
+        int get_row_size();
 
         // カーソル解除
         void unset_cursor(){ get_selection()->unselect_all(); }
@@ -75,8 +75,8 @@ namespace SKELETON
         // 選択行の移動
         void goto_top();
         void goto_bottom();
-        const bool row_up();
-        const bool row_down();
+        bool row_up();
+        bool row_down();
         void page_up();
         void page_down();
 
@@ -91,7 +91,7 @@ namespace SKELETON
         void expand_parents( const Gtk::TreePath& path );
 
         // pathが開かれているか
-        const bool is_expand( const Gtk::TreePath& path );
+        bool is_expand( const Gtk::TreePath& path );
 
         // 行のセルの高さ
         int get_row_height();
@@ -99,13 +99,13 @@ namespace SKELETON
 
       protected:
 
-        virtual bool on_key_press_event( GdkEventKey* event );
-        virtual bool on_key_release_event( GdkEventKey* event );
+        bool on_key_press_event( GdkEventKey* event ) override;
+        bool on_key_release_event( GdkEventKey* event ) override;
 
-        virtual bool on_scroll_event( GdkEventScroll* event );
-        virtual bool on_button_press_event( GdkEventButton* event );
-        virtual bool on_button_release_event( GdkEventButton* event );
-        virtual bool on_motion_notify_event( GdkEventMotion* event );
+        bool on_scroll_event( GdkEventScroll* event ) override;
+        bool on_button_press_event( GdkEventButton* event ) override;
+        bool on_button_release_event( GdkEventButton* event ) override;
+        bool on_motion_notify_event( GdkEventMotion* event ) override;
    };
 }
 

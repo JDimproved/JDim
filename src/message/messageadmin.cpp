@@ -370,7 +370,7 @@ void MessageAdmin::show_toolbar()
 //
 // 破棄する場合はtrueが戻る
 //
-const bool MessageAdmin::delete_message( SKELETON::View * view )
+bool MessageAdmin::delete_message( SKELETON::View * view )
 {
     if( ! CONFIG::get_show_savemsgdiag() ) return true;
 

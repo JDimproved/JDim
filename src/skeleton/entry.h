@@ -33,7 +33,7 @@ namespace SKELETON
         SIG_OPERATE signal_operate(){ return m_sig_operate; }
 
         JDEntry() : Gtk::Entry(){}
-        virtual ~JDEntry(){}
+        ~JDEntry() noexcept {}
 
         // CONTROL::Control のモード設定( controlid.h 参照 )
         // キー入力をフックして JDEntry::on_key_release_event() で SIG_OPERATE をemitする
@@ -42,11 +42,11 @@ namespace SKELETON
       protected:
 
         // マウスクリックのフック
-        virtual bool on_button_press_event( GdkEventButton* event );
+        bool on_button_press_event( GdkEventButton* event ) override;
 
         // キー入力のフック
-        virtual bool on_key_press_event( GdkEventKey* event );
-        virtual bool on_key_release_event( GdkEventKey* event );
+        bool on_key_press_event( GdkEventKey* event ) override;
+        bool on_key_release_event( GdkEventKey* event ) override;
     };
 }
 

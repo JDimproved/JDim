@@ -160,7 +160,7 @@ void View::reset_keyjump_counter()
 
 
 // 数字入力ジャンプ用に sig_key_press() から呼び出す
-const bool View::release_keyjump_key( int key )
+bool View::release_keyjump_key( int key )
 {
     // キーパッド対応
     if( key >= GDK_KP_0 && key <= GDK_KP_9 ) key = key - GDK_KP_0 + GDK_0;
@@ -180,7 +180,7 @@ const bool View::release_keyjump_key( int key )
 
 
 // view 上にマウスポインタがあれば true
-const bool View::is_mouse_on_view()
+bool View::is_mouse_on_view()
 {
     bool ret = false;
 

@@ -77,7 +77,9 @@ namespace SKELETON
 
         Gtk::HBox m_hbox_tab;
         TabSwitchButton m_bt_tabswitch; // タブの切り替えボタン
+#if !GTKMM_CHECK_VERSION(2,12,0)
         Gtk::Tooltips m_tooltip_tabswitch;
+#endif
 
         bool m_show_tabs;
         bool m_show_toolbar;
@@ -112,7 +114,7 @@ namespace SKELETON
         SIG_DRAG_DATA_GET sig_drag_data_get() { return m_sig_drag_data_get; }
 
         DragableNoteBook();
-        virtual ~DragableNoteBook();
+        ~DragableNoteBook();
 
         void clock_in();
         void focus_out();
@@ -120,13 +122,13 @@ namespace SKELETON
         // 枠描画
         void draw_box( Gtk::Widget* widget, GdkEventExpose* event );
 
-        const bool get_show_tabs() const{ return m_show_tabs; }
+        bool get_show_tabs() const { return m_show_tabs; }
         void set_show_tabs( bool show_tabs );
         void set_scrollable( bool scrollable );
-        const int get_n_pages();
+        int get_n_pages();
         Gtk::Widget* get_nth_page( int page_num );
-        const int page_num( const Gtk::Widget& child );
-        const int get_current_page();
+        int page_num( const Gtk::Widget& child );
+        int get_current_page();
         void set_current_page( int page_num );
 
         int append_page( const std::string& url, Gtk::Widget& child );
@@ -139,7 +141,7 @@ namespace SKELETON
         void hide_toolbar();
         void append_toolbar( Gtk::Widget& toolbar );
         void set_current_toolbar( const int id_toolbar, SKELETON::View* view );
-        const int get_current_toolbar();
+        int get_current_toolbar();
         void focus_toolbar_search(); // ツールバー内の検索entryにフォーカスを移す
         void update_toolbar_url( std::string& url_old, std::string& url_new );
         void update_toolbar_button();
@@ -149,7 +151,7 @@ namespace SKELETON
         void set_tab_fulltext( const std::string& str, const int page );
 
         // タブのアイコン取得/セット
-        const int get_tabicon( const int page );
+        int get_tabicon( const int page );
         void set_tabicon( const std::string& iconname, const int page, const int icon );
 
         // ドラッグ可/不可切り替え(デフォルト false );
@@ -166,7 +168,7 @@ namespace SKELETON
 
       private:
 
-        virtual bool on_expose_event( GdkEventExpose* event );
+        bool on_expose_event( GdkEventExpose* event ) override;
 
         // DragableNoteBook を構成している各Notebookの高さ
         // 及びタブの高さと位置を取得 ( 枠の描画用 )

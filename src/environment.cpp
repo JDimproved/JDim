@@ -27,6 +27,7 @@
 #include <windows.h>
 #endif
 
+std::string ENVIRONMENT::get_progname() { return "JDim"; }
 std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
 std::string ENVIRONMENT::get_jdcopyright(){ return std::string( JDCOPYRIGHT ); }
 std::string ENVIRONMENT::get_jdbbs(){ return std::string( JDBBS ); }
@@ -128,6 +129,78 @@ std::string get_svn_revision( const char* rev = NULL )
     return svn_revision;
 }
 
+//
+// GITリビジョンとして表示する文字列を返す
+// リビジョンが得られなかった場合（tarballのソース等）は、fallbackの日付を返す
+// git_dirtyは、まだcommitされてない変更があるかどうか
+//
+std::string get_git_revision (const char *git_date, const char *git_hash, const int git_dirty, const char *fallback_date)
+{
+	std::string git_revision = "";
+
+	// ハッシュ省略表記はgit 2.11から長さを自動で調整するようになった
+	// ビルドメタデータが表記揺れするのは紛らわしいので固定長にする
+	constexpr const size_t fixed_hash_length = 10;
+	size_t string_length;
+	size_t n;
+
+	bool date_valid = false;
+	if (git_date)
+	{
+		date_valid = true;
+		string_length = strlen(git_date);
+		if (string_length < 8) date_valid = false;
+		if (date_valid)
+		{
+			for (n = 0; n < string_length; n++)
+			{
+				if (! isdigit(git_date[n]))
+				{
+					date_valid = false;
+					break;
+				}
+			}
+		}
+		if (git_date[0] < '1') date_valid = false;
+	}
+
+	bool hash_valid = false;
+	if (git_hash)
+	{
+		hash_valid = true;
+		string_length = strlen(git_hash);
+		if (string_length != fixed_hash_length) hash_valid = false;
+		if (hash_valid)
+		{
+			for (n = 0; n < fixed_hash_length; n++)
+			{
+				if (! isgraph(git_hash[n]))
+				{
+					hash_valid = false;
+					break;
+				}
+			}
+		}
+	}
+
+
+	if (date_valid && hash_valid)
+	{
+		git_revision.append( std::string(git_date) + "(git:");
+		git_revision.append( std::string(git_hash), 0, fixed_hash_length);
+		if (git_dirty)
+		{
+			git_revision.append(":M");
+		}
+		git_revision.append(")");
+	}
+	else {
+		git_revision.append( std::string(fallback_date) );
+	}
+
+	return git_revision;
+}
+
 
 //
 // JDのバージョンを取得
@@ -148,7 +221,7 @@ std::string ENVIRONMENT::get_jdversion()
     jd_version << MAJORVERSION << "."
                 << MINORVERSION << "."
                 << MICROVERSION << "-"
-                << JDTAG << JDDATE;
+                << JDTAG << get_git_revision(GIT_DATE, GIT_HASH, GIT_DIRTY, JDDATE_FALLBACK);
 #endif // JDVERSION_SVN
 
     return jd_version.str();
@@ -440,7 +513,7 @@ std::string ENVIRONMENT::get_distname()
 // WM 判定
 // TODO: 環境変数で判定できない場合の判定方法を考える
 //
-const int ENVIRONMENT::get_wm()
+int ENVIRONMENT::get_wm()
 {
     if( window_manager != WM_UNKNOWN ) return window_manager;
 
@@ -530,6 +603,8 @@ std::string ENVIRONMENT::get_jdinfo()
 {
     std::stringstream jd_info;
 
+    const std::string progname = get_progname();
+
     // バージョンを取得(jdversion.h)
     const std::string version = get_jdversion();
 
@@ -548,7 +623,7 @@ std::string ENVIRONMENT::get_jdinfo()
     else if( lang != "ja_JP.utf8" && lang != "ja_JP.UTF-8" ) other.append( "LANG = " + lang );
 
     jd_info <<
-    "[バージョン] " << version << "\n" <<
+    "[バージョン] " << progname << " " << version << "\n" <<
 //#ifdef SVN_REPOSITORY
 //    "[リポジトリ ] " << SVN_REPOSITORY << "\n" <<
 //#endif

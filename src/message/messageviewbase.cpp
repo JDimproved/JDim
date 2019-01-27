@@ -255,7 +255,7 @@ const Glib::ustring MessageViewBase::get_message()
 // ロード中
 //
 // virtual
-const bool MessageViewBase::is_loading()
+bool MessageViewBase::is_loading() const
 {
     if( ! m_post ) return false;
 
@@ -266,7 +266,7 @@ const bool MessageViewBase::is_loading()
 //
 // コマンド
 //
-const bool MessageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
+bool MessageViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "empty" ) return get_message().empty();
 
@@ -407,16 +407,23 @@ void MessageViewBase::set_mail()
 void MessageViewBase::pack_widget()
 {
     // 書き込みビュー
-    m_label_name.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
-    m_label_mail.set_alignment( Gtk::ALIGN_LEFT, Gtk::ALIGN_CENTER );
+    m_label_name.set_alignment( Gtk::ALIGN_START, Gtk::ALIGN_CENTER );
+    m_label_mail.set_alignment( Gtk::ALIGN_START, Gtk::ALIGN_CENTER );
     m_label_name.set_text( " 名前 " );
     m_label_mail.set_text( " メール " );
 
     m_check_fixname.set_label( "固定" );
     m_check_fixmail.set_label( "固定" );
 
-    m_tooltip.set_tip( m_check_fixname, "チェックすると名前欄を保存して固定にする" );
-    m_tooltip.set_tip( m_check_fixmail, "チェックするとメール欄を保存して固定にする" );
+    constexpr const char* name_tip = "チェックすると名前欄を保存して固定にする";
+    constexpr const char* mail_tip = "チェックするとメール欄を保存して固定にする";
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_check_fixname.set_tooltip_text( name_tip );
+    m_check_fixmail.set_tooltip_text( mail_tip );
+#else
+    m_tooltip.set_tip( m_check_fixname, name_tip );
+    m_tooltip.set_tip( m_check_fixmail, mail_tip );
+#endif
 
     set_name();
     set_mail();
@@ -525,7 +532,7 @@ void MessageViewBase::focus_view()
 //
 // viewの操作
 //
-const bool MessageViewBase::operate_view( const int control )
+bool MessageViewBase::operate_view( const int control )
 {
     if( control == CONTROL::None ) return false;
 
@@ -658,12 +665,12 @@ void MessageViewBase::write()
 //
 void MessageViewBase::insert_draft()
 {
-    const std::list< std::string > list_files = CACHE::open_load_diag( MESSAGE::get_admin()->get_win(),
-                                                                       SESSION::get_dir_draft(), CACHE::FILE_TYPE_TEXT, false );
+    const auto list_files = CACHE::open_load_diag( MESSAGE::get_admin()->get_win(),
+                                                   SESSION::get_dir_draft(), CACHE::FILE_TYPE_TEXT, false );
 
     if( list_files.size() )
     {
-        const std::string open_path = *list_files.begin();
+        const std::string& open_path = list_files.front();
         std::string draft;
 
         SESSION::set_dir_draft( MISC::get_dir( open_path ) );
@@ -690,7 +697,7 @@ void MessageViewBase::toggle_preview()
 //
 // テキストビューでキーを押した
 //
-const bool MessageViewBase::slot_key_press( GdkEventKey* event )
+bool MessageViewBase::slot_key_press( GdkEventKey* event )
 {
 #ifdef _DEBUG_KEY
     guint key = event->keyval;

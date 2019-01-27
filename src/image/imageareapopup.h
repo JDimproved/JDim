@@ -16,9 +16,9 @@ namespace IMAGE
       public:
 
         ImageAreaPopup( const std::string& url );
-        virtual ~ImageAreaPopup();
+        ~ImageAreaPopup();
         
-        virtual void show_image();
+        void show_image() override;
     };
 }
 

@@ -55,7 +55,7 @@ const std::string MISC::timevaltostr( const struct timeval& tv )
 //
 // 時刻を紀元からの経過秒に直す
 //
-const time_t MISC::datetotime( const std::string& date )
+time_t MISC::datetotime( const std::string& date )
 {
     if( date.empty() ) return 0;
 
@@ -222,7 +222,7 @@ void MISC::start_measurement( const int id )
     gettimeofday( &tv_measurement[ id ], NULL );
 }
 
-const int MISC::measurement( const int id )
+int MISC::measurement( const int id )
 {
     if( id >= (int)tv_measurement.size() ) return 0;
 

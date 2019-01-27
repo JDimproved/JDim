@@ -51,7 +51,7 @@ CompletionEntry::CompletionEntry( const int mode )
 }
 
 
-CompletionEntry::~CompletionEntry()
+CompletionEntry::~CompletionEntry() noexcept
 {}
 
 
@@ -185,7 +185,10 @@ void CompletionEntry::slot_entry_button_press( GdkEventButton* event )
 #endif
 
     if( m_show_popup ) hide_popup();
-    else if( m_focused ) show_popup( m_entry.get_text().empty() );
+    // 右クリックならコンテキストメニューを優先して補完候補は表示しない
+    else if( m_focused && event->button != 3 ) {
+        show_popup( m_entry.get_text().empty() );
+    }
 
     m_focused = true;
 }
@@ -262,7 +265,7 @@ bool CompletionEntry::slot_entry_focus_out( GdkEventFocus* )
 bool CompletionEntry::slot_treeview_motion( GdkEventMotion* )
 {
     Gtk::TreeModel::Path path = m_treeview.get_path_under_mouse();
-    if( path.get_depth() > 0 ) m_treeview.set_cursor( path );
+    if( path.size() > 0 ) m_treeview.set_cursor( path );
 
     return true;
 }

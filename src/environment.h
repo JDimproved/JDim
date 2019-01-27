@@ -1,6 +1,6 @@
 // License GPL2
 
-#ifndef _ENVIRINMENT_H
+#ifndef _ENVIRONMENT_H
 #define _ENVIRONMENT_H
 
 #include <string>
@@ -25,6 +25,7 @@ namespace ENVIRONMENT
 		CONFIGURE_FULL
     };
 
+    std::string get_progname();
     std::string get_jdcomments();
     std::string get_jdcopyright();
 	std::string get_jdbbs();
@@ -36,7 +37,7 @@ namespace ENVIRONMENT
 
     std::string get_jdversion();
     std::string get_distname();
-    const int get_wm();
+    int get_wm();
     std::string get_wm_str();
 	std::string get_gtkmm_version();
 	std::string get_glibmm_version();

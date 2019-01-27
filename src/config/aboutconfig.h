@@ -60,14 +60,14 @@ namespace CONFIG
       public:
 
         AboutConfig( Gtk::Window* parent );
-        virtual ~AboutConfig(){}
+        ~AboutConfig() noexcept {}
 
       private:
 
         void pack_widgets();
 
-        virtual void slot_ok_clicked();
-        virtual void slot_cancel_clicked();
+        void slot_ok_clicked() override;
+        void slot_cancel_clicked() override;
 
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
 

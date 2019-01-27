@@ -19,13 +19,13 @@ namespace CORE
       public:
 
         OpenURLDialog( const std::string& url );
-        virtual ~OpenURLDialog(){}
+        ~OpenURLDialog() noexcept {}
 
       protected:
 
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
     };
-};
+}
 
 
 #endif

@@ -29,8 +29,9 @@
 
 #include "httpcode.h"
 
-#include <sstream>
 #include <cstring>
+#include <mutex>
+#include <sstream>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -52,13 +53,10 @@
 #define SOC_ISVALID(_soc) ( (_soc) >= 0 )
 #endif
 
-enum
-{
-    MAX_LOADER = 10, // 最大スレッド数
-    MAX_LOADER_SAMEHOST = 2, // 同一ホストに対して実行できる最大スレッド数
-    LNG_BUF_MIN = 1 * 1024, // 読み込みバッファの最小値 (byte)
-    TIMEOUT_MIN = 1 // タイムアウトの最小値 (秒)
-};
+constexpr int MAX_LOADER = 10; // 最大スレッド数
+constexpr int MAX_LOADER_SAMEHOST = 2; // 同一ホストに対して実行できる最大スレッド数
+constexpr size_t LNG_BUF_MIN = 1 * 1024; // 読み込みバッファの最小値 (byte)
+constexpr long TIMEOUT_MIN = 1; // タイムアウトの最小値 (秒)
 
 
 #ifdef _WIN32
@@ -74,17 +72,17 @@ bool initialized_loader = false;
 
 namespace JDLIB
 {
-    const bool get_token( JDLIB::Loader* loader );
+    bool get_token( JDLIB::Loader* loader );
     void return_token( JDLIB::Loader* loader );
 
     void push_loader_queue( JDLIB::Loader* loader );
-    const bool remove_loader_queue( JDLIB::Loader* loader );
+    bool remove_loader_queue( JDLIB::Loader* loader );
     void pop_loader_queue();
 }
 
 
-Glib::StaticMutex mutex_token = GLIBMM_STATIC_MUTEX_INIT;
-Glib::StaticMutex mutex_queue = GLIBMM_STATIC_MUTEX_INIT;
+static std::mutex mutex_token;
+static std::mutex mutex_queue;
 std::list< JDLIB::Loader* > queue_loader; // スレッド起動待ちの Loader のキュー
 int token_loader = 0;
 std::vector< JDLIB::Loader* > vec_loader( MAX_LOADER );
@@ -92,9 +90,9 @@ bool disable_pop = false;
 
 
 // トークン取得
-const bool JDLIB::get_token( JDLIB::Loader* loader )
+bool JDLIB::get_token( JDLIB::Loader* loader )
 {
-    Glib::Mutex::Lock lock( mutex_token );
+    std::lock_guard< std::mutex > lock( mutex_token );
 
 #ifdef _DEBUG
     std::cout << "JDLIB::get_token : url = " << loader->data().url << " token = " << token_loader << std::endl;
@@ -128,7 +126,7 @@ const bool JDLIB::get_token( JDLIB::Loader* loader )
 //　トークン返す
 void JDLIB::return_token( JDLIB::Loader* loader )
 {
-    Glib::Mutex::Lock lock( mutex_token );
+    std::lock_guard< std::mutex > lock( mutex_token );
 
     --token_loader;
     assert( token_loader >= 0 );
@@ -145,7 +143,7 @@ void JDLIB::return_token( JDLIB::Loader* loader )
 // スレッド起動待ちキューに Loader を登録
 void JDLIB::push_loader_queue( JDLIB::Loader* loader )
 {
-    Glib::Mutex::Lock lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( ! loader ) return;
 
@@ -164,9 +162,9 @@ void JDLIB::push_loader_queue( JDLIB::Loader* loader )
 
 
 // キューから Loader を取り除いたらtrueを返す
-const bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
+bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
 {
-    Glib::Mutex::Lock lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( ! queue_loader.size() ) return false;
     if( std::find( queue_loader.begin(), queue_loader.end(), loader ) == queue_loader.end() ) return false;
@@ -184,7 +182,7 @@ const bool JDLIB::remove_loader_queue( JDLIB::Loader* loader )
 // キューに登録されたスレッドを起動する
 void JDLIB::pop_loader_queue()
 {
-    Glib::Mutex::Lock lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
     if( disable_pop ) return;
     if( ! queue_loader.size() ) return;
@@ -215,7 +213,7 @@ void JDLIB::pop_loader_queue()
 //
 void JDLIB::disable_pop_loader_queue()
 {
-    Glib::Mutex::Lock lock( mutex_queue );
+    std::lock_guard< std::mutex > lock( mutex_queue );
 
 #ifdef _DEBUG
     std::cout << "JDLIB::disable_pop_loader_queue\n";
@@ -441,12 +439,11 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     else{
 
         // http
-        if( m_data.protocol.find( "http://" ) != std::string::npos ) m_data.port = 80;
+        if( m_data.protocol.find( "http://" ) != std::string::npos )
+            m_data.port = data_in.use_ssl ? 443 : 80;
 
         // https
         else if( m_data.protocol.find( "https://" ) != std::string::npos ){
-            m_data.use_ssl = true;
-            m_data.async = false;
             m_data.port = 443;
         }
 
@@ -460,11 +457,17 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
         }
     }
 
-    // 明示的にssl使用指定
-    if( data_in.use_ssl ){
+    // ssl使用指定
+    // HACK: don't use SSL to access 2ch via a scraping proxy
+    if( data_in.use_ssl
+        || ( m_data.protocol.find( "https://" ) != std::string::npos
+             && m_data.host.find( ".2ch.net" ) == std::string::npos
+             && m_data.host.find( ".5ch.net" ) == std::string::npos
+             && m_data.host.find( ".bbspink.com" ) == std::string::npos
+           )
+      ){
         m_data.use_ssl = true;
         m_data.async = false;
-        m_data.port = 443;
     }
 
     // プロキシ
@@ -557,6 +560,87 @@ void* Loader::launcher( void* dat )
     return 0;
 }
 
+
+bool Loader::send_connect( const int soc, std::string& errmsg )
+{
+    std::string authority;
+    std::string msg_send;
+
+    authority = m_data.host + ":" + std::to_string( m_data.port );
+    msg_send = "CONNECT " + authority + " HTTP/1.1\r\nHost: " + authority + "\r\n\r\n";
+    size_t send_size = strlen( msg_send.data() );
+    while( send_size > 0 && !m_stop ){
+        if( ! wait_recv_send( soc, false ) ){
+            m_data.code = HTTP_TIMEOUT;
+            errmsg = "send timeout";
+            return false;
+        }
+
+#ifdef _WIN32
+        ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
+        int lastError = WSAGetLastError();
+#else
+#ifdef MSG_NOSIGNAL
+        ssize_t tmpsize = send( soc, msg_send.data(), send_size, MSG_NOSIGNAL );
+#else
+        // SolarisにはMSG_NOSIGNALが無いのでSIGPIPEをIGNOREする (FreeBSD4.11Rにもなかった)
+        signal( SIGPIPE , SIG_IGN ); /* シグナルを無視する */
+        ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
+        signal(SIGPIPE,SIG_DFL); /* 念のため戻す */
+#endif // MSG_NOSIGNAL
+#endif // _WIN32
+
+#ifdef _WIN32
+        if( tmpsize == 0
+            || ( tmpsize < 0 && !( lastError == WSAEWOULDBLOCK || errno == WSAEINTR ) ) ){
+#else
+        if( tmpsize == 0
+            || ( tmpsize < 0 && !( errno == EWOULDBLOCK || errno == EINTR ) ) ){
+#endif
+
+            m_data.code = HTTP_ERR;
+            errmsg = "send failed : " + m_data.url;
+            return false;
+        }
+
+        if( tmpsize > 0 ) send_size -= tmpsize;
+    }
+
+    char rbuf[256];
+    size_t read_size = 0;
+    while( read_size < sizeof(rbuf) && !m_stop ){
+
+        ssize_t tmpsize;
+
+        if( !wait_recv_send( soc, true ) ){
+            m_data.code = HTTP_TIMEOUT;
+            errmsg = "CONNECT: read timeout in";
+            return false;
+        }
+
+        tmpsize = recv( soc, rbuf + read_size, sizeof(rbuf) - read_size, 0 );
+        if( tmpsize < 0 && errno != EINTR ){
+            m_data.code = HTTP_ERR;
+            errmsg = "CONNECT: recv() failed";
+            return false;
+        }
+
+        if( tmpsize == 0 ) break;
+        if( tmpsize > 0 ){
+            read_size += tmpsize;
+
+            const int ret = receive_header( rbuf, read_size );
+            if( ret == HTTP_ERR ){
+
+                m_data.code = HTTP_ERR;
+                errmsg = "CONNECT: invalid header : " + m_data.url;
+                return false;
+            }
+            else if( ret == HTTP_OK ) return true;
+        }
+    }
+    return false;
+}
 
 //
 // 実際の処理部
@@ -683,8 +767,12 @@ void Loader::run_main()
     // ssl 初期化とコネクト
     if( m_data.use_ssl ){
 
+        if ( use_proxy ) {
+            if ( ! send_connect( soc, errmsg ) )
+                goto EXIT_LOADING;
+        }
         ssl = new JDLIB::JDSSL();
-        if( ! ssl->connect( soc ) ){
+        if( ! ssl->connect( soc, m_data.host.c_str() ) ){
             m_data.code = HTTP_ERR;
             errmsg = ssl->get_errmsg() + " : " + m_data.url;
             goto EXIT_LOADING;
@@ -878,7 +966,7 @@ void Loader::run_main()
                 errmsg = "skip_chunk() failed : " + m_data.url;
                 goto EXIT_LOADING;
             }
-            if( ! read_size ) continue;
+            if( ! read_size ) break;
         }
 
         // 圧縮されていない時はそのままコールバック呼び出し
@@ -1091,7 +1179,7 @@ const std::string Loader::create_msg_send()
 // buf : ヘッダが取り除かれたデータ
 // readsize: 出力データサイズ
 //
-const int Loader::receive_header( char* buf, size_t& read_size )
+int Loader::receive_header( char* buf, size_t& read_size )
 {
 #ifdef _DEBUG
     std::cout << "Loader::receive_header : read_size = " << read_size << std::endl;
@@ -1341,19 +1429,25 @@ bool Loader::skip_chunk( char* buf, size_t& read_size )
             if( m_lng_leftdata == 0 ) m_status_chunk = 2;
         }
 
-        // データ部→サイズ部切り替え中( "\r" と "\n" の間でサーバからの入力が分かれる時がある)
-        if( m_status_chunk == 2 ){
+        // データ部→サイズ部切り替え中("\r"の前)
+        if( m_status_chunk == 2 && pos_chunk != read_size ){
 
-            unsigned char c = buf[ pos_chunk ];
-            if( c != '\r' && c != '\n' ){
+            if( buf[ pos_chunk++ ] != '\r' ){
                 MISC::ERRMSG( "broken chunked data." );
                 return false;
             }
 
-            // \r\nが来たらサイズ部に戻る
-            if( c == '\r' ) ++pos_chunk; else break;      
-            if( buf[ pos_chunk ] == '\n' ) ++pos_chunk; else break;
-            
+            m_status_chunk = 3;
+        }
+
+        // データ部→サイズ部切り替え中("\n"の前: "\r" と "\n" の間でサーバからの入力が分かれる時がある)
+        if( m_status_chunk == 3 && pos_chunk != read_size ){
+
+            if( buf[ pos_chunk++ ] != '\n' ){
+                MISC::ERRMSG( "broken chunked data." );
+                return false;
+            }
+
 #ifdef _DEBUG_CHUNKED
             std::cout << "[[ skip_chunk : data chunk finished. ]]\n";
 #endif
@@ -1588,7 +1682,7 @@ bool Loader::unzip( char* buf, size_t& read_size )
 //
 // sent, recv待ち
 //
-const bool Loader::wait_recv_send( const int fd, const bool recv )
+bool Loader::wait_recv_send( const int fd, const bool recv )
 {
     if( !fd ) return true;
 

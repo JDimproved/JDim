@@ -15,14 +15,14 @@
 #include "control/controlid.h"
 
 #include "command.h"
-#include "jdversion.h"
+#include "environment.h"
 
 using namespace CORE;
 
 LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, const std::string& cmd )
     : SKELETON::PrefDiag( parent, "" ),
-      m_label_url( "アドレス", Gtk::ALIGN_LEFT ),
-      m_label_cmd( "実行するコマンド", Gtk::ALIGN_LEFT ),
+      m_label_url( "アドレス", Gtk::ALIGN_START ),
+      m_label_cmd( "実行するコマンド", Gtk::ALIGN_START ),
       m_button_manual( "オンラインマニュアルの置換文字一覧を表示" )
 {
     resize( 640, 1 );
@@ -53,7 +53,7 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
 
 void LinkFilterDiag::slot_show_manual()
 {
-    CORE::core_set_command( "open_url_browser", JDHELPCMD );
+    CORE::core_set_command( "open_url_browser", ENVIRONMENT::get_jdhelpcmd() );
 }
 
 
@@ -149,7 +149,7 @@ const Gtk::TreeModel::iterator LinkFilterPref::get_selected_row()
 {
     Gtk::TreeModel::iterator row;
 
-    std::list< Gtk::TreeModel::Path > paths = m_treeview.get_selection()->get_selected_rows();
+    std::vector< Gtk::TreeModel::Path > paths = m_treeview.get_selection()->get_selected_rows();
     if( ! paths.size() ) return row;
 
     row = *( m_liststore->get_iter( *paths.begin() ) );

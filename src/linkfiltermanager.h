@@ -26,14 +26,14 @@ namespace CORE
     public:
 
         Linkfilter_Manager();
-        virtual ~Linkfilter_Manager(){}
+        virtual ~Linkfilter_Manager() noexcept {}
 
         std::vector< LinkFilterItem >& get_list(){ return  m_list_cmd; }
         void save_xml();
 
         // 実行
         // 実行したら true を返す
-        const bool exec( const std::string& url, const std::string& link, const std::string& selection );
+        bool exec( const std::string& url, const std::string& link, const std::string& selection );
 
       private:
 

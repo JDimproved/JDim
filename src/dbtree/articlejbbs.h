@@ -21,20 +21,21 @@ namespace DBTREE
         ~ArticleJBBS();
 
         // 書き込みメッセージ変換
-        virtual const std::string create_write_message( const std::string& name, const std::string& mail, const std::string& msg );
+        const std::string create_write_message( const std::string& name, const std::string& mail,
+                                                const std::string& msg ) override;
 
         // bbscgi のURL
-        virtual const std::string url_bbscgi();
+        const std::string url_bbscgi() override;
         
         // subbbscgi のURL
-        virtual const std::string url_subbbscgi();
+        const std::string url_subbbscgi() override;
 
       private:
         
         // 更新チェック不可能
-        virtual const bool enable_check_update(){ return false; }
+        bool enable_check_update() override { return false; }
 
-        virtual NodeTreeBase* create_nodetree();
+        NodeTreeBase* create_nodetree() override;
     };
 }
 

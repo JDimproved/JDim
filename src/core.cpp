@@ -759,18 +759,18 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // help
     m_action_group->add( Gtk::Action::create( "Menu_Help", "ヘルプ(_H)" ) );    
-    m_action_group->add( Gtk::Action::create( "Bbs", "サポート掲示板(_B)" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
+    m_action_group->add( Gtk::Action::create( "Bbs", "JD サポート掲示板(_B)" ), sigc::mem_fun( *this, &Core::slot_show_bbs ) );
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ(_L)" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     Gtk::AccelKey jdhelpKey = CONTROL::get_accelkey( CONTROL::JDHelp );
     if( jdhelpKey.is_null() ){
-        m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
+        m_action_group->add( Gtk::Action::create( "Manual", "JD オンラインマニュアル(_M)..." ),
                              sigc::mem_fun( *this, &Core::slot_show_manual ) );
     }else{
-        m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
+        m_action_group->add( Gtk::Action::create( "Manual", "JD オンラインマニュアル(_M)..." ),
                              jdhelpKey,
                              sigc::mem_fun( *this, &Core::slot_show_manual ) );
     }
-    m_action_group->add( Gtk::Action::create( "About", "JDについて(_A)..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
+    m_action_group->add( Gtk::Action::create( "About", "JDimについて(_A)..." ), sigc::mem_fun( *this, &Core::slot_show_about ) );
     
 
     m_ui_manager = Gtk::UIManager::create();    
@@ -1087,12 +1087,11 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_menubar->set_size_request( 0 );
 
     // 履歴メニュー追加
-    Gtk::Menu_Helpers::MenuList& items = m_menubar->items();
-    Gtk::Menu_Helpers::MenuList::iterator it_item = items.begin();
-    ++it_item; ++it_item;
-    (*it_item).signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_historymenu ) );
+    const auto items = m_menubar->get_children();
+    auto item = dynamic_cast< Gtk::MenuItem* >( *std::next( items.begin(), 2 ) );
+    item->signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_historymenu ) );
 
-    Gtk::Menu* submenu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
+    Gtk::Menu* submenu = item->get_submenu();
 
     submenu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
 
@@ -1114,13 +1113,10 @@ void Core::run( const bool init, const bool skip_setupdiag )
     submenu->show_all_children();
 
     // メニューにショートカットキーやマウスジェスチャを表示
-    items = m_menubar->items();
-    it_item = items.begin();
-    for( ; it_item != items.end(); ++it_item ){
-        submenu = dynamic_cast< Gtk::Menu* >( (*it_item).get_submenu() );
-        CONTROL::set_menu_motion( submenu );
-
-        ( *it_item ).signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
+    for( auto&& widget : items ) {
+        auto item = dynamic_cast< Gtk::MenuItem* >( widget );
+        CONTROL::set_menu_motion( item->get_submenu() );
+        item->signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
     }
 
     // ツールバー作成
@@ -1365,8 +1361,8 @@ void Core::set_maintitle()
 
     std::string title;
 
-    if( m_title.empty() ) title = "JD - " + ENVIRONMENT::get_jdversion();
-    else title = "JD - " + m_title;
+    if( m_title.empty() ) title = "JDim - " + ENVIRONMENT::get_jdversion();
+    else title = "JDim - " + m_title;
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
@@ -1719,11 +1715,19 @@ bool Core::open_color_diag( std::string title, int id )
     Gdk::Color color( CONFIG::get_color( id ) );
 
     Gtk::ColorSelectionDialog diag( title );
+#if GTKMM_CHECK_VERSION(2,14,0)
+    diag.get_color_selection()->set_current_color( color );
+#else
     diag.get_colorsel()->set_current_color( color );
+#endif
     diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
-
-        CONFIG::set_color( id, MISC::color_to_str( diag.get_colorsel()->get_current_color() ) );
+#if GTKMM_CHECK_VERSION(2,14,0)
+        Gtk::ColorSelection* sel = diag.get_color_selection();
+#else
+        Gtk::ColorSelection* sel = diag.get_colorsel();
+#endif
+        CONFIG::set_color( id, MISC::color_to_str( sel->get_current_color() ) );
         return true;
     }
 
@@ -1818,7 +1822,7 @@ void Core::toggle_draw_toolbarback()
 
     CONFIG::set_draw_toolbarback( ! CONFIG::get_draw_toolbarback() );
 
-    SKELETON::MsgDiag mdiag( NULL, "正しく表示させるためにはJDを再起動してください。" );
+    SKELETON::MsgDiag mdiag( NULL, "正しく表示させるためにはJDimを再起動してください。" );
     mdiag.run();
 }
 
@@ -2561,7 +2565,7 @@ void Core::set_command( const COMMAND_ARGS& command )
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
         }
 
-        std::list< std::string > list_files;
+        std::vector< std::string > list_files;
 
         // ダイアログを開いてファイルのリストを取得
         if( command.arg2.empty() ){
@@ -4263,7 +4267,7 @@ void Core::hide_imagetab()
 //
 // 板にdatファイルをインポートする
 //
-void Core::import_dat( const std::string& url_board, const std::list< std::string > list_files )
+void Core::import_dat( const std::string& url_board, const std::vector< std::string >& list_files )
 {
     if( ! list_files.size() ) return;
 
@@ -4277,10 +4281,7 @@ void Core::import_dat( const std::string& url_board, const std::list< std::strin
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
 
-    std::list< std::string >::const_iterator it = list_files.begin();
-    for(; it != list_files.end(); ++it ){
-
-        const std::string& filename = ( *it );
+    for( const auto& filename : list_files ) {
 
 #ifdef _DEBUG
         std::cout << filename << std::endl;

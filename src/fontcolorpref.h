@@ -37,8 +37,10 @@ namespace CORE
     {
         Gtk::Notebook m_notebook;
 
+#if !GTKMM_CHECK_VERSION(2,12,0)
         // ツールチップ
         Gtk::Tooltips m_tooltips;
+#endif
 
         // フォントの設定
         std::vector< int > m_font_tbl;
@@ -83,7 +85,7 @@ namespace CORE
       public:
 
         FontColorPref( Gtk::Window* parent, const std::string& url );
-        ~FontColorPref();
+        ~FontColorPref() noexcept;
 
       private:
 
@@ -108,9 +110,9 @@ namespace CORE
         void slot_reset_all_colors();
 
         // OK,cancel,apply が押された
-        virtual void slot_ok_clicked();
-        virtual void slot_apply_clicked();
-        virtual void slot_cancel_clicked();
+        void slot_ok_clicked() override;
+        void slot_apply_clicked() override;
+        void slot_cancel_clicked() override;
     };
 }
 

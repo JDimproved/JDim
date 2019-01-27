@@ -58,7 +58,7 @@ DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget
     get_selection()->signal_changed().connect( sigc::mem_fun( *this, &DragTreeView::slot_selection_changed ) );
 
     // D&D 設定
-    std::list< Gtk::TargetEntry > targets;
+    std::vector< Gtk::TargetEntry > targets;
     targets.push_back( Gtk::TargetEntry( get_dndtarget(), Gtk::TARGET_SAME_APP, 0 ) );
 
     // ドラッグ開始ボタン設定
@@ -89,7 +89,7 @@ DragTreeView::~DragTreeView()
 //
 void DragTreeView::set_enable_drop_uri_list()
 {
-    std::list< Gtk::TargetEntry > targets_drop;
+    std::vector< Gtk::TargetEntry > targets_drop;
     targets_drop.push_back( Gtk::TargetEntry( "text/uri-list" ) );
 
     // ドロップされると on_drag_data_received() が呼び出される
@@ -196,7 +196,7 @@ void DragTreeView::hide_tooltip()
 //
 // ポップアップが表示されていてかつマウスがその上にあるか
 //
-const bool DragTreeView::is_mouse_on_popup()
+bool DragTreeView::is_mouse_on_popup()
 {
     if( ! is_popup_shown() ) return false;
     if( ! m_popup_win->view() ) return false;
@@ -231,7 +231,7 @@ void DragTreeView::show_popup( const std::string& url, View* view )
 //
 // popup windowの外にポインタが出た
 //
-const bool DragTreeView::slot_popup_leave_notify_event( GdkEventCrossing* event )
+bool DragTreeView::slot_popup_leave_notify_event( GdkEventCrossing* event )
 {
 #ifdef _DEBUG
     std::cout << "DragTreeView::slot_popup_leave_notify_event\n";
@@ -499,7 +499,7 @@ bool DragTreeView::on_scroll_event( GdkEventScroll* event )
 //
 void DragTreeView::wheelscroll( GdkEventScroll* event )
 {
-    Gtk::Adjustment *adj = get_vadjustment();
+    auto adj = get_vadjustment();
     double val = adj->get_value();
 
     int scr_inc = get_row_height() * CONFIG::get_tree_scroll_size();

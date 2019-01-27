@@ -66,7 +66,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     // ステータスバー
 #if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_size_request( 0, -1 );
-    m_label_stat.set_alignment( Gtk::ALIGN_LEFT );
+    m_label_stat.set_alignment( Gtk::ALIGN_START );
     m_label_stat.set_selectable( true );
     m_label_stat.set_single_line_mode( true );
 
@@ -81,7 +81,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     }
 
     m_mginfo.set_width_chars( MGINFO_CHARS );
-    m_mginfo.set_alignment( Gtk::ALIGN_LEFT );
+    m_mginfo.set_alignment( Gtk::ALIGN_START );
 #else
     if( need_mginfo ) m_statbar.pack_start( m_mginfo );
 #endif
@@ -342,7 +342,7 @@ void JDWindow::set_win_pos()
 
 
 // hide 中
-const bool JDWindow::is_hide()
+bool JDWindow::is_hide()
 {
     return ( m_mode == JDWIN_HIDE );
 }
@@ -383,7 +383,11 @@ void JDWindow::set_status( const std::string& stat )
 
 #if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( stat );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_label_stat_ebox.set_tooltip_text( stat );
+#else
     m_tooltip.set_tip( m_label_stat_ebox, stat );
+#endif
 #else
     m_statbar.push( stat );
 #endif
@@ -419,7 +423,14 @@ void JDWindow::restore_status()
 // マウスジェスチャ表示
 void JDWindow::set_mginfo( const std::string& mginfo )
 {
-    if( m_mginfo.is_realized() ) m_mginfo.set_text( mginfo );
+#if GTKMM_CHECK_VERSION(2,20,0)
+    const bool realized = m_mginfo.get_realized();
+#else
+    const bool realized = m_mginfo.is_realized();
+#endif
+    if( realized ) {
+        m_mginfo.set_text( mginfo );
+    }
 }
 
 

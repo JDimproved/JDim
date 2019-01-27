@@ -12,14 +12,16 @@
 
 #include "config/globalconf.h"
 
+#include <mutex>
+
 //
 // スレッドのランチャ
 //
-Glib::StaticMutex imgarea_launcher_mutex = GLIBMM_STATIC_MUTEX_INIT;
+static std::mutex imgarea_launcher_mutex;
 
 void* imgarea_launcher( void* dat )
 {
-    Glib::Mutex::Lock lock( imgarea_launcher_mutex);
+    std::lock_guard< std::mutex > lock( imgarea_launcher_mutex );
 
 #ifdef _DEBUG
     std::cout << "start imgarea_launcher" << std::endl;
@@ -179,7 +181,7 @@ void ImageAreaBase::load_image_thread()
 }
 
 
-const bool ImageAreaBase::create_imgloader( const bool pixbufonly, std::string& errmsg )
+bool ImageAreaBase::create_imgloader( const bool pixbufonly, std::string& errmsg )
 {
     m_imgloader = JDLIB::ImgLoader::get_loader( m_img->get_cache_path() );
     bool ret = m_imgloader->load( pixbufonly );
@@ -227,7 +229,7 @@ void ImageAreaBase::set_image()
             set( m_imgloader->get_animation() );
         }
     }
-    m_imgloader.clear();
+    m_imgloader.reset();
 
     set_ready( true );
 }

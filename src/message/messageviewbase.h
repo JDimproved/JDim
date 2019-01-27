@@ -3,6 +3,8 @@
 #ifndef _MESSAGEVIEWBASE_H
 #define _MESSAGEVIEWBASE_H
 
+#include "gtkmmversion.h"
+
 #include "skeleton/view.h"
 #include "skeleton/imgbutton.h"
 #include "skeleton/compentry.h"
@@ -30,7 +32,9 @@ namespace MESSAGE
     {
         Post* m_post;
 
+#if !GTKMM_CHECK_VERSION(2,12,0)
         Gtk::Tooltips m_tooltip;
+#endif
 
         Gtk::Notebook m_notebook;
         SKELETON::View* m_preview;
@@ -75,43 +79,42 @@ namespace MESSAGE
       public:
 
         MessageViewBase( const std::string& url );
-        virtual ~MessageViewBase();
+        ~MessageViewBase();
 
         //
         // SKELETON::View の関数のオーバロード
         //
 
-        virtual void save_session(){}
+        void save_session() override {}
 
         // 親ウィンドウを取得
-        virtual Gtk::Window* get_parent_win();
+        Gtk::Window* get_parent_win() override;
 
         // コピー用のURL
-        virtual const std::string url_for_copy();
+        const std::string url_for_copy() override;
 
         // コマンド
-        virtual const bool set_command( const std::string& command,
-                                        const std::string& arg1 = std::string(),
-                                        const std::string& arg2 = std::string()
-            );
+        bool set_command( const std::string& command,
+                          const std::string& arg1 = {},
+                          const std::string& arg2 = {} ) override;
 
         // ロード中
-        virtual const bool is_loading();
+        bool is_loading() const override;
 
         // 規制中や行数や文字列がオーバーして書き込めない
-        virtual const bool is_broken(){ return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }
+        bool is_broken() override { return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }
 
         // キーを押した        
-        virtual const bool slot_key_press( GdkEventKey* event );
+        bool slot_key_press( GdkEventKey* event ) override;
 
-        virtual void clock_in();
-        virtual void write();
-        virtual void reload(){}
-        virtual void relayout();
-        virtual void close_view();
-        virtual void redraw_view();
-        virtual void focus_view();
-        virtual const bool operate_view( const int control );
+        void clock_in() override;
+        void write() override;
+        void reload() override {}
+        void relayout() override;
+        void close_view() override;
+        void redraw_view() override;
+        void focus_view() override;
+        bool operate_view( const int control ) override;
 
       private:
 
@@ -156,7 +159,7 @@ namespace MESSAGE
       protected:
 
         // Viewが所属するAdminクラス
-        virtual SKELETON::Admin* get_admin();
+        SKELETON::Admin* get_admin() override;
 
         void set_message( const std::string& msg );
         const Glib::ustring get_message();

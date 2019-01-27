@@ -35,12 +35,12 @@ namespace CORE
       public:
 
         LivePref( Gtk::Window* parent, const std::string& url );
-        virtual ~LivePref(){}
+        ~LivePref() noexcept {}
 
       private:
 
         // OK押した
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         void slot_reset();
     };

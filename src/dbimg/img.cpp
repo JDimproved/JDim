@@ -136,7 +136,7 @@ void Img::clear()
 //
 // ロード待ち状態セット/リセット
 //
-const bool Img::set_wait( const std::string& refurl, const bool mosaic, const int waitsec )
+bool Img::set_wait( const std::string& refurl, const bool mosaic, const int waitsec )
 {
     if( waitsec && ! m_wait ){
 
@@ -179,14 +179,14 @@ void Img::reset_wait()
 
 
 // スレ埋め込み画像の高さ、幅
-const int Img::get_width_emb()
+int Img::get_width_emb()
 {
     if( ! m_width_emb ) set_embedded_size();
 
     return m_width_emb;
 }
 
-const int Img::get_height_emb()
+int Img::get_height_emb()
 {
     if( ! m_height_emb ) set_embedded_size();
 
@@ -195,14 +195,14 @@ const int Img::get_height_emb()
 
 
 // モザイク処理時に縮小するサイズ
-const int Img::get_width_mosaic()
+int Img::get_width_mosaic()
 {
     if( ! m_width_mosaic ) set_mosaic_size();
 
     return m_width_mosaic;
 }
 
-const int Img::get_height_mosaic()
+int Img::get_height_mosaic()
 {
     if( ! m_height_mosaic ) set_mosaic_size();
 
@@ -210,7 +210,7 @@ const int Img::get_height_mosaic()
 }
 
 
-const bool Img::is_cached()
+bool Img::is_cached()
 {
     if( is_loading() ) return false;
     if( is_wait() ) return false;
@@ -338,7 +338,7 @@ void Img::stop_load()
 //
 // path_to はデフォルトのファイル名
 //
-const bool Img::save( Gtk::Window* parent, const std::string& path_to )
+bool Img::save( Gtk::Window* parent, const std::string& path_to )
 {
     if( ! is_cached() ) return false;
 
@@ -422,7 +422,7 @@ void Img::set_protect( bool protect )
 
 
 // 拡張子が偽装されているか
-const bool Img::is_fake()
+bool Img::is_fake()
 {
     if( ! is_cached() ) return false;
     if( m_imgctrl & CORE::IMGCTRL_GENUINE ) return false;

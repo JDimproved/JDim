@@ -30,7 +30,7 @@ ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, 
 }
 
 
-ArticleMachi::~ArticleMachi()
+ArticleMachi::~ArticleMachi() noexcept
 {}
 
 
@@ -87,7 +87,7 @@ const std::string ArticleMachi::url_subbbscgi()
 
 
 // offlawモードなら更新チェック可能
-const bool ArticleMachi::enable_check_update()
+bool ArticleMachi::enable_check_update()
 {
     return CONFIG::get_use_machi_offlaw();
 }

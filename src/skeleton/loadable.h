@@ -78,16 +78,16 @@ namespace SKELETON
       public:
 
         Loadable();
-        virtual ~Loadable();
+        ~Loadable();
 
         // HTTPコードなどの完全クリア
         void clear_load_data();
 
         // ロード中かどうか
-        const bool is_loading();
+        bool is_loading() const;
 
-        const int get_code() const { return m_code; }
-        void set_code( int code ){ m_code = code; }
+        int get_code() const { return m_code; }
+        void set_code( int code ) { m_code = code; }
 
         const std::string& get_str_code() const { return m_str_code; }
         void set_str_code( const std::string& str_code ){ m_str_code = str_code; }
@@ -97,14 +97,14 @@ namespace SKELETON
         const std::list< std::string >& cookies() { return m_cookies; }
         const std::string& location() const { return m_location; }
 
-        const size_t total_length() const { return m_total_length; }
+        size_t total_length() const { return m_total_length; }
         void set_total_length( int length ){ m_total_length = length; }
 
-        const size_t current_length() const { return m_current_length; }
+        size_t current_length() const { return m_current_length; }
         void set_current_length( int length ){ m_current_length = length; }
 
         // 更新時刻関係
-        const time_t get_time_modified();
+        time_t get_time_modified();
         const std::string& get_date_modified() const { return m_date_modified; }
         void set_date_modified( const std::string& date ){ m_date_modified = date; }
 
@@ -139,15 +139,15 @@ namespace SKELETON
         virtual void receive_finish(){};
 
         void delete_loader();
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
 
-        const int get_loader_code();
+        int get_loader_code();
         const std::string get_loader_str_code();
         const std::string get_loader_contenttype();
         const std::string get_loader_modified();
         const std::list< std::string > get_loader_cookies();
         const std::string get_loader_location();
-        const size_t get_loader_length();
+        size_t get_loader_length();
     };
 }
 

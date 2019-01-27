@@ -122,7 +122,7 @@ Img* ImgRoot::search_img( const std::string& url )
 // 画像データの先頭のシグネチャを見て画像のタイプを取得
 // 画像ではない場合は T_NOIMG を返す
 //
-const int ImgRoot::get_image_type( const unsigned char *sign )
+int ImgRoot::get_image_type( const unsigned char *sign )
 {
     int type = T_NOIMG;
 

@@ -73,7 +73,7 @@ Board2chCompati::~Board2chCompati()
 //
 // キャッシュのファイル名が正しいか
 //
-const bool Board2chCompati::is_valid( const std::string& filename )
+bool Board2chCompati::is_valid( const std::string& filename )
 {
     if( filename.find( get_ext() ) == std::string::npos ) return false;
     if( filename.length() - filename.rfind( get_ext() ) != get_ext().length() ) return false;
@@ -520,7 +520,7 @@ const std::string Board2chCompati::default_noname()
 }
 
 
-const int Board2chCompati::line_number()
+int Board2chCompati::line_number()
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->line_number();
@@ -529,7 +529,7 @@ const int Board2chCompati::line_number()
 }
 
 
-const int Board2chCompati::message_count()
+int Board2chCompati::message_count()
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->message_count();
@@ -588,7 +588,7 @@ void Board2chCompati::download_rule_setting()
 //
 // レス数であぼーん(グローバル)
 //
-const int Board2chCompati::get_abone_number_global()
+int Board2chCompati::get_abone_number_global()
 {
     return CONFIG::get_abone_number_thread();
 }

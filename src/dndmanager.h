@@ -27,9 +27,9 @@ namespace CORE
       public:
 
         DND_Manager():m_dnd( false ){}
-        virtual ~DND_Manager(){}
+        virtual ~DND_Manager() noexcept {}
 
-        const bool now_dnd() const{ return m_dnd; }
+        bool now_dnd() const { return m_dnd; }
 
         // DnD 開始
         void begin(){ m_dnd = true; }
@@ -46,7 +46,7 @@ namespace CORE
 
     void DND_Begin();
     void DND_End();
-    const bool DND_Now_dnd();
+    bool DND_Now_dnd();
 }
 
 

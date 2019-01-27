@@ -154,7 +154,7 @@ namespace CORE
 
       public:
         SetupWizard();
-        virtual ~SetupWizard();
+        ~SetupWizard();
 
       private:
         void slot_switch_page( GtkNotebookPage* notebookpage, guint page );

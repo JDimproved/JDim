@@ -350,7 +350,7 @@ void ImageViewPopup::close_view()
 //
 // viewの操作
 //
-const bool ImageViewPopup::operate_view( const int control )
+bool ImageViewPopup::operate_view( const int control )
 {
 #ifdef _DEBUG
     std::cout << "ImageViewPopup::operate_view control = " << control << std::endl;

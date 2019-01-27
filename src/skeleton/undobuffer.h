@@ -56,7 +56,7 @@ namespace SKELETON
       public:
 
         UNDO_BUFFER();
-        virtual ~UNDO_BUFFER(){}
+        virtual ~UNDO_BUFFER() noexcept {}
 
         SIG_UNDO sig_undo(){ return m_sig_undo; }
         SIG_REDO sig_redo(){ return m_sig_redo; }
@@ -64,8 +64,8 @@ namespace SKELETON
 
         UNDO_DATA& get_undo_data(){ return m_vec_undo[ m_pos ]; }
 
-        const bool get_enable_undo() const { return ( m_pos ); }
-        const bool get_enable_redo() const { return ( m_pos < m_max ); }
+        bool get_enable_undo() const { return ( m_pos ); }
+        bool get_enable_redo() const { return ( m_pos < m_max ); }
 
         void undo();
         void redo();

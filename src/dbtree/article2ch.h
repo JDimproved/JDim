@@ -16,25 +16,26 @@ namespace DBTREE
       public:
 
         Article2ch( const std::string& datbase, const std::string& id, bool cached );
-        ~Article2ch();
+        ~Article2ch() noexcept;
 
         // 書き込みメッセージ変換
-        virtual const std::string create_write_message( const std::string& name, const std::string& mail, const std::string& msg );
+        const std::string create_write_message( const std::string& name, const std::string& mail,
+                                                const std::string& msg ) override;
 
         // bbscgi のURL
-        virtual const std::string url_bbscgi();
+        const std::string url_bbscgi() override;
         
         // subbbscgi のURL
-        virtual const std::string url_subbbscgi();
+        const std::string url_subbbscgi() override;
 
       protected:
 
         // dat落ちしたスレをロードするか
-        virtual const bool is_load_olddat();
+        bool is_load_olddat() override;
 
       private:
         
-        virtual NodeTreeBase* create_nodetree();
+        NodeTreeBase* create_nodetree() override;
     };
 }
 

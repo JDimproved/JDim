@@ -41,21 +41,18 @@
 #endif
 
 
-enum
-{
-    SECTION_NUM = 5,
-    LNG_RES = 16,
-    LNG_ID = 256,
-    LNG_LINK = 256,
-    MAX_ANCINFO = 64,
-    RANGE_REF = 20,
-    MAX_LINK_DIGIT = 4,  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
+constexpr size_t SECTION_NUM = 5;
+constexpr size_t LNG_RES = 16;
+constexpr int LNG_ID = 256;
+constexpr size_t LNG_LINK = 256;
+constexpr size_t MAX_ANCINFO = 64;
+constexpr int RANGE_REF = 20;
+constexpr size_t MAX_LINK_DIGIT = 4;  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
 
-    MAXSISE_OF_LINES = 512 * 1024,   // ロード時に１回の呼び出しで読み込まれる最大データサイズ
-    SIZE_OF_HEAP = MAXSISE_OF_LINES + 64,
+constexpr size_t MAXSISE_OF_LINES = 512 * 1024;  // ロード時に１回の呼び出しで読み込まれる最大データサイズ
+constexpr size_t SIZE_OF_HEAP = MAXSISE_OF_LINES + 64;
 
-    INITIAL_RES_BUFSIZE = 128,  // レスの文字列を返すときの初期バッファサイズ
-};
+constexpr size_t INITIAL_RES_BUFSIZE = 128;  // レスの文字列を返すときの初期バッファサイズ
 
 
 // レジュームのモード
@@ -201,7 +198,7 @@ void NodeTreeBase::clear()
 //
 // ロード中は m_id_header 番のレスはまだ処理中なので m_id_header -1 を返す
 //
-const int NodeTreeBase::get_res_number()
+int NodeTreeBase::get_res_number()
 {
     if( is_loading() ) return m_id_header -1;
     
@@ -225,7 +222,7 @@ NODE* NodeTreeBase::res_header( int number )
 //
 // 下の get_num_id_name( int number ) と違って検索するので遅い
 //
-const int NodeTreeBase::get_num_id_name( const std::string& id )
+int NodeTreeBase::get_num_id_name( const std::string& id )
 {
     if( id.empty() ) return 0;
 
@@ -253,7 +250,7 @@ const int NodeTreeBase::get_num_id_name( const std::string& id )
 //
 // number番の ID の重複数
 //
-const int NodeTreeBase::get_num_id_name( const int number )
+int NodeTreeBase::get_num_id_name( const int number )
 {
     NODE* head = res_header( number );
     if( ! head ) return 0;
@@ -1322,6 +1319,7 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
     
     // バッファが '\n' で終わるように調整
     const char* pos = data + size;
+    if( *pos == '\n' && pos != data ) --pos;
     if( *pos == '\0' ) --pos; // '\0' を除く
     while( *pos != '\n' && pos != data ) --pos;
 
@@ -1555,7 +1553,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     const char* pos = datline;
     if( *pos == '\0' || *pos == '\n' ) return datline;
 
-    int i;
+    size_t i;
     NODE* header = create_node_header();
     m_vec_header[ m_id_header ] =  header;
 
@@ -1706,7 +1704,8 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
 
             // </b>の前までパース
             if( i != pos ){
-                digitlink = true;
+                // デフォルト名無しと同じときはアンカーを作らない
+                digitlink = ( strncmp( m_default_noname.data(), str + pos, i - pos ) != 0 );
                 parse_html( str + pos, i - pos, color_name, digitlink, bold, ahref );
             }
             if( i >= lng ) break;
@@ -2165,7 +2164,10 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 // 改行ノード作成
                 create_node_br();
 
-                while( *pos != '>' ) ++pos; ++pos;
+                while( *pos != '>' ) {
+                    ++pos;
+                }
+                ++pos;
 
                 if( *pos == ' ' ){
 
@@ -2515,8 +2517,8 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
 //
 // 戻り値 : アンカーが現れれば true
 //
-const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
-                                       int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo )
+bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
+                                 int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo )
 {
     char tmp_out[ 64 ];
     int lng_out = 0;
@@ -2536,9 +2538,9 @@ const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
             // utf-8で"＞"
             else if( ( unsigned char )( *pos ) == 0xef && ( unsigned char ) ( *( pos + 1 ) ) == 0xbc
                      && ( unsigned char ) ( *( pos + 2 ) ) == 0x9e ){
-                tmp_out[ lng_out++ ] = 0xef;
-                tmp_out[ lng_out++ ] = 0xbc;
-                tmp_out[ lng_out++ ] = 0x9e;
+                tmp_out[ lng_out++ ] = static_cast< char >( 0xef );
+                tmp_out[ lng_out++ ] = static_cast< char >( 0xbc );
+                tmp_out[ lng_out++ ] = static_cast< char >( 0x9e );
                 pos += 3;
             }
             else if( i == 0 ) return false;
@@ -2563,9 +2565,9 @@ const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
         else if( ( unsigned char )( *pos ) == 0xe3 && ( unsigned char ) ( *( pos + 1 ) ) == 0x80
                  && ( unsigned char ) ( *( pos + 2 ) ) == 0x81 ){
 
-            tmp_out[ lng_out++ ] = 0xe3;
-            tmp_out[ lng_out++ ] = 0x80;
-            tmp_out[ lng_out++ ] = 0x81;
+            tmp_out[ lng_out++ ] = static_cast< char >( 0xe3 );
+            tmp_out[ lng_out++ ] = static_cast< char >( 0x80 );
+            tmp_out[ lng_out++ ] = static_cast< char >( 0x81 );
 
             str_link[ 0 ] = ',';
             ++str_link;
@@ -2679,7 +2681,7 @@ const bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 //
 // 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
 //
-const int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos )
+int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos )
 {
     // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
     const bool loose_url = CONFIG::get_loose_url();
@@ -2904,7 +2906,7 @@ void NodeTreeBase::update_abone( const int from_number, const int to_number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_res( const int number )
+bool NodeTreeBase::check_abone_res( const int number )
 {
     if( ! m_vec_abone_res.size() ) return false;
     if( ! m_vec_abone_res[ number ] ) return false;
@@ -2923,7 +2925,7 @@ const bool NodeTreeBase::check_abone_res( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_id( const int number )
+bool NodeTreeBase::check_abone_id( const int number )
 {
     const bool check_id = ! m_list_abone_id.empty();
     const bool check_id_board = ! m_list_abone_id_board.empty();
@@ -2973,7 +2975,7 @@ const bool NodeTreeBase::check_abone_id( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_name( const int number )
+bool NodeTreeBase::check_abone_name( const int number )
 {
     const bool check_name = ! m_list_abone_name.empty();
     const bool check_name_board = ! m_list_abone_name_board.empty();
@@ -3032,7 +3034,7 @@ const bool NodeTreeBase::check_abone_name( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_mail( const int number )
+bool NodeTreeBase::check_abone_mail( const int number )
 {
     if( ! m_abone_age ) return false;
 
@@ -3055,7 +3057,7 @@ const bool NodeTreeBase::check_abone_mail( const int number )
 //
 // あぼーんの時はtrueを返す
 //
-const bool NodeTreeBase::check_abone_word( const int number )
+bool NodeTreeBase::check_abone_word( const int number )
 {
     const bool check_word = ! m_list_abone_word.empty();
     const bool check_regex = ! m_list_abone_regex.empty();
@@ -3166,7 +3168,7 @@ const bool NodeTreeBase::check_abone_word( const int number )
 //
 // あぼーんしているレスにアンカーを張っているときはtrueを返す
 //
-const bool NodeTreeBase::check_abone_chain( const int number )
+bool NodeTreeBase::check_abone_chain( const int number )
 {
     if( !m_abone_chain ) return false;
 
@@ -3578,35 +3580,26 @@ void NodeTreeBase::check_fontid( const int number )
 //
 bool NodeTreeBase::remove_imenu( char* str_link )
 {
-    const int lng_http = 7; // = strlen( "http://" );
+    char *p = str_link;
 
-    if(
-      ! (
-        ( str_link[ lng_http ] == 'i' && str_link[ lng_http + 1 ] == 'm' )
-        || ( str_link[ lng_http ] == 'n' && str_link[ lng_http + 1 ] == 'u' )
-        || ( str_link[ lng_http ] == 'p' && str_link[ lng_http + 1 ] == 'i' )
-      )
-    ) return false;
+    if ( memcmp( p, "http", strlen( "http" ) ) != 0 ) return false;
+    p += strlen( "http" );
+    if ( *p == 's' ) p++;
+    if ( memcmp( p, "://", strlen( "://" ) ) != 0 ) return false;
+    p += strlen( "://" );
 
-    if( memcmp( str_link, "http://ime.nu/", 14 ) == 0
-        || memcmp( str_link, "http://ime.st/", 14 ) == 0
-        || memcmp( str_link, "http://nun.nu/", 14 ) == 0
-        || memcmp( str_link, "http://pinktower.com/", 21 ) == 0 )
-    {
-		int linklen = strlen( str_link );
-		int cutsize = 0; 
-
-		if( str_link[ lng_http ] == 'p' ) cutsize = 14; // = strlen( "pinktower.com/" )
-		else cutsize =  7; // = strlen( "ime.nu/" )
-
-        // "http://ime.nu/"等、URLがそれだけだった場合は削除しない
-        if( linklen == lng_http + cutsize ) return false;
-
-		memmove( str_link + lng_http, str_link + lng_http + cutsize, linklen + 1 - ( lng_http + cutsize ) );
-
-		return true;
-	}
-
+    const char *cut_sites[] = { "ime.nu/", "ime.st/", "nun.nu/", "pinktower.com/", 0 };
+    const char **q = cut_sites;
+    while ( *q ) {
+        size_t cs_len = strlen( *q );
+        if ( memcmp( p, *q, cs_len ) == 0 ) {
+            // "http://ime.nu/"等、URLがそれだけだった場合は削除しない
+            if ( p[cs_len] == '\0' ) return false;
+            memmove( p, p + cs_len, strlen( p + cs_len ) + 1 );
+            return true;
+        }
+        q ++;
+    }
     return false;
 }
 
@@ -3640,7 +3633,7 @@ int NodeTreeBase::convert_amp( char* text, const int n )
 
 
 // 自分の書き込みにレスしたか
-const bool NodeTreeBase::is_refer_posted( const int number )
+bool NodeTreeBase::is_refer_posted( const int number )
 {
     if( ! m_vec_refer_posted.size() ) return false;
     if( m_vec_refer_posted.size() <= ( size_t )number ) return false;

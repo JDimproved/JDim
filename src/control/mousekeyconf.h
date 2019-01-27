@@ -26,7 +26,7 @@ namespace CONTROL
       public:
 
         MouseKeyConf();
-        virtual ~MouseKeyConf();
+        virtual ~MouseKeyConf() noexcept;
 
         // 設定ファイル読み込み 
         virtual void load_conf() = 0;
@@ -35,17 +35,17 @@ namespace CONTROL
         void save_conf( const std::string& savefile );
 
         // 操作からID取得
-        const int get_id( const int mode,
+        int get_id( const int mode,
                     const guint motion, const bool ctrl, const bool shift, const bool alt,
                     const bool dblclick, const bool trpclick );
 
         // ID から操作を取得
         // (注意) リストの一番上にあるものを出力
-        const bool get_motion( const int id,
+        bool get_motion( const int id,
                          guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick, bool& trpclick );
 
         // ID が割り当てられているかチェック
-        const bool alloted( const int id,
+        bool alloted( const int id,
                       const guint motion, const bool ctrl, const bool shift, const bool alt,
                       const bool dblclick, const bool trpclick );
 
@@ -63,7 +63,7 @@ namespace CONTROL
         void set_motions( const int id, const std::string& str_motions );
 
         // 指定したIDの操作を全て削除
-        const bool remove_motions( const int id );
+        bool remove_motions( const int id );
 
       protected:
 

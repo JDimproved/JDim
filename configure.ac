@@ -1,8 +1,8 @@
 dnl
-dnl JD用 configure.ac
+dnl JDim用 configure.ac
 dnl
 AC_PREREQ(2.50)
-AC_INIT(jd, 1.0)
+AC_INIT(jdim, 1.0)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
 
@@ -15,12 +15,15 @@ AC_PROG_CXXCPP
 AC_PROG_LIBTOOL
 AC_LANG_CPLUSPLUS
 
+AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])
+
 dnl
 dnl buildinfo.h
 dnl
 AC_DEFINE(HAVE_BUILDINFO_H, 1, Define to 1 if you have the 'buildinfo.h' header file.)
 AC_PATH_PROG(SVN, svn)
 AC_PATH_PROG(SVNVERSION, svnversion)
+AC_PATH_PROG(GIT, git)
 AC_PATH_PROG(XSUM, md5sum, [cksum])
 AC_SUBST(ac_configure_args)
 
@@ -67,7 +70,8 @@ dnl ユーザー設定
 dnl
 
 dnl 追加コンパイルオプション
-CXXFLAGS="$CXXFLAGS -ggdb -Wall"
+dnl -Wextraで有効になる-Wunused-parameterは修正方法の検討が必要なので暫定的に無効
+CXXFLAGS="-ggdb -Wall -Wextra -Wno-unused-parameter -pedantic $CXXFLAGS"
 
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
@@ -387,11 +391,35 @@ AC_ARG_WITH(pcre,[ --with-pcre    (enable PCRE)],
 dnl
 dnl checking gthread
 dnl
-AC_ARG_WITH(gthread,[ --with-gthread    (use gthread instead of pthread)],
-       [ if test "$withval" ;then
-               echo "use gthread"
-               AC_DEFINE(USE_GTHREAD, , "use gthread")
-       fi ])
+AC_MSG_CHECKING(for --with-gthread)
+AC_ARG_WITH(gthread,
+  AS_HELP_STRING([--with-gthread],
+                 [use gthread instead of pthread [default=no]]),
+  [with_gthread="$withval"],
+  [with_gthread=no])
+AC_MSG_RESULT($with_gthread)
+
+
+dnl
+dnl checking std::thread
+dnl
+AC_MSG_CHECKING(for --with-stdthread)
+AC_ARG_WITH(stdthread,
+  AS_HELP_STRING([--with-stdthread],
+                 [use std::thread instead of pthread [default=no]]),
+  [with_stdthread="$withval"],
+  [with_stdthread=no])
+AC_MSG_RESULT($with_stdthread)
+
+
+AS_IF(
+  [test "x$with_gthread" = xyes -a "x$with_stdthread" = xyes],
+  [AC_MSG_ERROR([cannot configure both gthread and stdthread.])],
+  [test "x$with_gthread" = xyes],
+  [AC_DEFINE(USE_GTHREAD, , [use gthread instead of pthread])],
+  [test "x$with_stdthread" = xyes],
+  [AC_DEFINE(WITH_STD_THREAD, 1, [Use std::thread instead of pthread])]
+)
 
 
 dnl

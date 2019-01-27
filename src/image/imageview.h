@@ -33,31 +33,31 @@ namespace IMAGE
 
       public:
         ImageViewMain( const std::string& url );
-        virtual ~ImageViewMain();
+        ~ImageViewMain();
 
-        virtual void clock_in();
-        virtual void show_view();
-        virtual void scroll_up();
-        virtual void scroll_down();
-        virtual void scroll_left();
-        virtual void scroll_right();
+        void clock_in() override;
+        void show_view() override;
+        void scroll_up() override;
+        void scroll_down() override;
+        void scroll_left() override;
+        void scroll_right() override;
 
-        virtual const bool operate_view( const int control );
+        bool operate_view( const int control ) override;
 
       protected:
 
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        Gtk::Menu* get_popupmenu( const std::string& url ) override;
 
-        virtual bool slot_button_press( GdkEventButton* event );
-        virtual bool slot_motion_notify( GdkEventMotion* event );
+        bool slot_button_press( GdkEventButton* event ) override;
+        bool slot_motion_notify( GdkEventMotion* event ) override;
 
       private:
 
         void set_status_local( const std::string& status ){ m_status_local = status; }
         const std::string& get_status_local(){ return m_status_local; }
 
-        virtual void show_status();
-        virtual void update_status();
+        void show_status() override;
+        void update_status() override;
         void add_tab_number();
 
         void show_instruct_diag();

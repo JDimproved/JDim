@@ -21,7 +21,7 @@
 
   ・autoconf
   ・automake
-  ・g++
+  ・g++ (C++11 mode)
   ・gnutls
   ・gtkmm
   ・libtool
@@ -36,20 +36,20 @@
   ・oniguruma (--with-oniguruma)
   ・libpcre (--with-pcre)
 
-  OSやディストリビューション別の解説は"OS/ディストリビューション別インストール方法 [http://sourceforge.jp/projects/jd4linux/wiki/OS%2f%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95]"(wiki) を参照。
+  OSやディストリビューション別の解説は"OS/ディストリビューション別インストール方法 [https://ja.osdn.net/projects/jd4linux/wiki/OS%2f%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95]"(wiki) を参照。
 
 * make 方法( rpmbuild の場合 )
 
     1. rpmbuild -tb 〜.tgz でrpmファイルが出来るのであとは rpm -Uvh 〜.rpm
     2. ライブラリが足りないといわれたら yum install 〜-devel
-    3. 起動はメニューから起動するか、端末で jd と打ち込んでエンターを押す。
+    3. 起動はメニューから起動するか、端末で jdim と打ち込んでエンターを押す。
 
 * make 方法( configure + make の場合 )
 
     1. autoreconf -i ( 又は ./autogen.sh )
     2. ./configure
     3. make
-    4. (お好みで) strip src/jd
+    4. (お好みで) strip src/jdim
 
 * configureオプション
 
@@ -75,7 +75,7 @@
 
     --with-alsa
 
-       ALSAによる効果音再生機能を有効にする。詳しくは"http://jd4linux.sourceforge.jp/manual/"の項を参照すること。
+       ALSAによる効果音再生機能を有効にする。詳しくは"https://jd4linux.osdn.jp/manual/"の項を参照すること。
 
     --with-xdgopen
 
@@ -93,14 +93,14 @@
 
        正規表現ライブラリとしてPOSIX regex の代わりにPCREを使用する。PCREはBSDライセンスなのでJDをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。UTF-8が有効な ( --enable-utf オプションを用いて make する ) PCRE 6.5 以降が必要となる。Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
 
-    --with-gthread
+    --with-[gthread|stdthread]
 
-       pthreadの代わりにgthreadを使用する。
+       pthreadの代わりにgthreadまたはstd::threadを使用する。
 
 * メモ
 
   最近のディストリビューションの場合は autogen.sh よりも autoreconf -i の方を推奨。
 
-  実行するには直接 src/jd を起動するか手動で /usr/bin あたりに src/jd を cp する。
+  実行するには直接 src/jdim を起動するか手動で /usr/bin あたりに src/jdim を cp する。
 
   以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。

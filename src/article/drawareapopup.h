@@ -20,10 +20,10 @@ namespace ARTICLE
       protected:
 
         // レイアウト実行
-        virtual bool exec_layout();
+        bool exec_layout() override;
 
         // リサイズした
-        virtual bool slot_configure_event( GdkEventConfigure* event );
+        bool slot_configure_event( GdkEventConfigure* event ) override;
     };
 }
 

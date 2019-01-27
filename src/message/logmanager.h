@@ -23,14 +23,14 @@ namespace MESSAGE
         Log_Manager();
         virtual ~Log_Manager();
 
-        const int size() const { return m_logitems.size(); }
-        const bool has_items( const std::string& url, const bool newthread );
+        int size() const { return m_logitems.size(); }
+        bool has_items( const std::string& url, const bool newthread );
         void remove_items( const std::string& url );
 
         // messageが自分の書き込んだものかチェックする
         // newthread == true の時は新スレの>>1のチェック
         // headsize > 0 の時は先頭の headsize 文字だけを比較
-        const bool check_write( const std::string& url, const bool newthread, const char* msg_in, const size_t headsize );
+        bool check_write( const std::string& url, const bool newthread, const char* msg_in, const size_t headsize );
 
         // 自分の書き込みの判定用データの保存
         void push_logitem( const std::string& url, const bool newthread, const std::string& msg );
@@ -43,7 +43,7 @@ namespace MESSAGE
         const std::string get_post_log( const int num );
 
         // ログファイル( log/postlog-* ) の最大数
-        const int get_max_num_of_log();
+        int get_max_num_of_log();
 
         // ログ削除
         void clear_post_log();

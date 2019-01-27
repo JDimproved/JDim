@@ -36,13 +36,13 @@ namespace SKELETON
         PopupWinBase( bool draw_frame ) : Gtk::Window( Gtk::WINDOW_POPUP ), m_draw_frame( draw_frame ){
             if( m_draw_frame ) set_border_width( 1 );
         }
-        virtual ~PopupWinBase(){}
+        ~PopupWinBase() noexcept {}
 
         SIG_CONFIGURED_POPUP sig_configured(){ return m_sig_configured; }
 
       protected:
 
-        virtual void on_realize()
+        void on_realize() override
         {
             Gtk::Window::on_realize();
 
@@ -50,7 +50,7 @@ namespace SKELETON
             m_gc = Gdk::GC::create( window );    
         }
 
-        virtual bool on_expose_event( GdkEventExpose* event )
+        bool on_expose_event( GdkEventExpose* event ) override
         {
             bool ret = Gtk::Window::on_expose_event( event );
 
@@ -63,7 +63,7 @@ namespace SKELETON
             return ret;
         }
 
-        virtual bool on_configure_event( GdkEventConfigure* event )
+        bool on_configure_event( GdkEventConfigure* event ) override
         {
             bool ret = Gtk::Window::on_configure_event( event );
             m_sig_configured.emit( get_width(), get_height() );

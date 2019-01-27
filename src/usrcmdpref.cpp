@@ -6,10 +6,11 @@
 
 #include "usrcmdpref.h"
 #include "usrcmdmanager.h"
+
 #include "command.h"
-#include "type.h"
-#include "jdversion.h"
 #include "dndmanager.h"
+#include "environment.h"
+#include "type.h"
 
 #include "control/controlid.h"
 #include "control/controlutil.h"
@@ -25,8 +26,8 @@ using namespace CORE;
 
 UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Glib::ustring& cmd )
     : SKELETON::PrefDiag( parent, "" ),
-      m_label_name( "コマンド名", Gtk::ALIGN_LEFT ),
-      m_label_cmd( "実行するコマンド", Gtk::ALIGN_LEFT ),
+      m_label_name( "コマンド名", Gtk::ALIGN_START ),
+      m_label_cmd( "実行するコマンド", Gtk::ALIGN_START ),
       m_button_manual( "オンラインマニュアルの置換文字一覧を表示" )
 {
     resize( 640, 1 );
@@ -58,7 +59,7 @@ UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Gl
 
 void UsrCmdDiag::slot_show_manual()
 {
-    CORE::core_set_command( "open_url_browser", JDHELPCMD );
+    CORE::core_set_command( "open_url_browser", ENVIRONMENT::get_jdhelpcmd() );
 }
 
 ///////////////////////////////////////////

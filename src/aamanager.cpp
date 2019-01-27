@@ -262,7 +262,7 @@ const std::string AAManager::id2shortcut( const int id )
 
 
 // ショートカットからid取得
-const int AAManager::shortcut2id( const char key )
+int AAManager::shortcut2id( const char key )
 {
     if( key == '\0' ) return -1;
 
@@ -300,7 +300,7 @@ void AAManager::append_history( const int id )
 
 
 // num 番目の履歴をIDに変換
-const int AAManager::history2id( const int num )
+int AAManager::history2id( const int num )
 {
     if( num < 0 || num >= get_historysize() ) return -1;
 

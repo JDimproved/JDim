@@ -32,7 +32,7 @@ namespace BBSLIST
         BBSListAdmin( const std::string& url );
         ~BBSListAdmin();
 
-        virtual void save_session();
+        void save_session() override;
         
         // 履歴を DATA_INFO_LIST 型で取得
         void get_history( const std::string& url, CORE::DATA_INFO_LIST& info_list );
@@ -45,28 +45,28 @@ namespace BBSLIST
 
       protected:
 
-        SKELETON::View* create_view( const COMMAND_ARGS& command );
+        SKELETON::View* create_view( const COMMAND_ARGS& command ) override;
 
         // ツールバー
-        virtual void show_toolbar();
-        virtual void toggle_toolbar();
+        void show_toolbar() override;
+        void toggle_toolbar() override;
 
-        virtual void command_local( const COMMAND_ARGS& command );
+        void command_local( const COMMAND_ARGS& command ) override;
 
-        virtual void restore( const bool only_locked );
-        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock );
+        void restore( const bool only_locked ) override;
+        COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ) override;
 
-        virtual void switch_admin();
+        void switch_admin() override;
 
         // bbslistはクローズしない
-        virtual void close_view( const std::string& url ){}
-        virtual void close_all_view( const std::string& url ){}
+        void close_view( const std::string& url ) override {}
+        void close_all_view( const std::string& url ) override {}
 
         // タブの D&D 処理をしない
-        virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ){}
+        void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ) override {}
 
         // タブメニュー表示キャンセル
-        virtual void slot_tab_menu( int page, int x, int y ){}
+        void slot_tab_menu( int page, int x, int y ) override {}
     };
 
     

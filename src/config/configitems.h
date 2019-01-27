@@ -179,6 +179,9 @@ namespace CONFIG
         // JD ホームページのアドレス
         std::string url_jdhp;
 
+        // JDim ホームページのアドレス
+        std::string url_jdimhp;
+
         // 2chの認証サーバのアドレス
         std::string url_login2ch;
 
@@ -528,10 +531,10 @@ namespace CONFIG
 
 
         ConfigItems();
-        virtual ~ConfigItems();
+        virtual ~ConfigItems() noexcept;
 
         // 設定読み込み
-        const bool load( const bool restore = false );
+        bool load( const bool restore = false );
 
         // 保存
         void save();

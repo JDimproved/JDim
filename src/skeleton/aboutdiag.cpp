@@ -36,7 +36,7 @@ AboutDiag::AboutDiag( const Glib::ustring& title )
     set_logo( ICON::get_icon( ICON::JD96 ) );
     set_version( ENVIRONMENT::get_jdversion() );
     set_comments( ENVIRONMENT::get_jdcomments() );
-    set_website( CONFIG::get_url_jdhp() );
+    set_website( CONFIG::get_url_jdimhp() );
     set_copyright( ENVIRONMENT::get_jdcopyright() );
     set_license( ENVIRONMENT::get_jdlicense() );
     set_environment_list();
@@ -96,6 +96,7 @@ void AboutDiag::init()
     // コピーライト
     if( ! get_copyright().empty() )
     {
+        m_label_copyright.set_justify( Gtk::JUSTIFY_CENTER );
         m_vbox_info.pack_start( m_label_copyright, Gtk::PACK_SHRINK );
     }
     // Webサイト
@@ -283,7 +284,7 @@ void AboutDiag::set_environment_list()
     m_treeview_environment.append_column( "内容", column_value );
 
     row = *( liststore->append() );
-    row[ column_name ] = "JDのバージョン";
+    row[ column_name ] = "JDimのバージョン";
     row[ column_value ] = ENVIRONMENT::get_jdversion();
 
     row = *( liststore->append() );

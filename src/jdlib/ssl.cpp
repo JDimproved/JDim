@@ -10,6 +10,8 @@ using namespace JDLIB;
 
 #ifdef USE_GNUTLS
 
+#include <cstring>
+
 // gnutls 使用
 
 void JDLIB::init_ssl()
@@ -51,7 +53,7 @@ JDSSL::~JDSSL()
 }
 
 
-const bool JDSSL::connect( const int soc )
+bool JDSSL::connect( const int soc, const char *host )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::connect(gnutls)\n";
@@ -84,6 +86,7 @@ const bool JDSSL::connect( const int soc )
     gnutls_transport_set_ptr( m_session, (gnutls_transport_ptr_t)(long) soc );
     gnutls_certificate_allocate_credentials( &m_cred );
     gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
+    gnutls_server_name_set( m_session, GNUTLS_NAME_DNS, host, strlen( host ) );
 
     while ( ( ret = gnutls_handshake( m_session ) ) != GNUTLS_E_SUCCESS )
     {
@@ -102,7 +105,7 @@ const bool JDSSL::connect( const int soc )
 }
 
 
-const bool JDSSL::close()
+bool JDSSL::close()
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::close(gnutlsl)\n";
@@ -122,7 +125,7 @@ const bool JDSSL::close()
 }
 
 
-const int JDSSL::write( const char* buf, const size_t bufsize )
+int JDSSL::write( const char* buf, const size_t bufsize )
 {
     int tmpsize = gnutls_record_send( m_session, buf, bufsize );
     if( tmpsize < 0 ) m_errmsg = "gnutls_record_send failed";
@@ -131,7 +134,7 @@ const int JDSSL::write( const char* buf, const size_t bufsize )
 }
 
 
-const int JDSSL::read( char* buf, const size_t bufsize )
+int JDSSL::read( char* buf, const size_t bufsize )
 {
     int tmpsize = gnutls_record_recv( m_session, buf, bufsize );
     if( tmpsize < 0 ) m_errmsg = "gnutls_record_recv failed";
@@ -178,7 +181,7 @@ JDSSL::~JDSSL()
 }
 
 
-const bool JDSSL::connect( const int soc )
+bool JDSSL::connect( const int soc, const char *host )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::connect(openssl)\n";
@@ -206,6 +209,7 @@ const bool JDSSL::connect( const int soc )
         return false;
     }
 
+    SSL_set_tlsext_host_name( m_ssl, host ) ;
     if( SSL_connect( m_ssl ) != 1 ){
         m_errmsg = "SSL_connect failed";
         return false;
@@ -219,7 +223,7 @@ const bool JDSSL::connect( const int soc )
 }
 
 
-const bool JDSSL::close()
+bool JDSSL::close()
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::close(openssl)\n";
@@ -239,7 +243,7 @@ const bool JDSSL::close()
 }
 
 
-const int JDSSL::write( const char* buf, const size_t bufsize )
+int JDSSL::write( const char* buf, const size_t bufsize )
 {
     int tmpsize = SSL_write( m_ssl, buf, bufsize );
     if( tmpsize < 0 ) m_errmsg = "SSL_write failed";
@@ -248,7 +252,7 @@ const int JDSSL::write( const char* buf, const size_t bufsize )
 }
 
 
-const int JDSSL::read( char* buf, const size_t bufsize )
+int JDSSL::read( char* buf, const size_t bufsize )
 {
     int tmpsize = SSL_read( m_ssl, buf, bufsize );
     if( tmpsize < 0 ) m_errmsg = "SSL_read failed";

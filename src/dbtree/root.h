@@ -84,7 +84,7 @@ namespace DBTREE
         const XML::Document& xml_document() const { return m_xml_document; }
 
         // 板移転
-        const bool move_board( const std::string& url_old, const std::string& url_new, const bool etc );
+        bool move_board( const std::string& url_old, const std::string& url_new, const bool etc );
 
         // 外部板情報取得
         const std::list< DBTREE::ETCBOARDINFO >& get_etcboards() const { return m_etcboards; }
@@ -155,8 +155,8 @@ namespace DBTREE
 
         // bbsmenuのダウンロード用関数
         void clear();
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
         void bbsmenu2xml( const std::string& menu );
 
         // XML に含まれる板情報を取り出してデータベースを更新
@@ -197,11 +197,11 @@ namespace DBTREE
         void load_movetable();
 
         // urlのタイプ判定
-        const bool is_2ch( const std::string& url );
-        const bool is_JBBS( const std::string& url );
-        const bool is_machi( const std::string& url );
-        const bool is_vip2ch( const std::string& url );
-        const bool is_local( const std::string& url );
+        bool is_2ch( const std::string& url );
+        bool is_JBBS( const std::string& url );
+        bool is_machi( const std::string& url );
+        bool is_vip2ch( const std::string& url );
+        bool is_local( const std::string& url );
     };
 }
 

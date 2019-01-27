@@ -61,7 +61,7 @@ namespace SKELETON
         SIG_BUTTON_PRESS sig_button_press() { return m_sig_button_press; }
 
         EditTextView();
-        virtual ~EditTextView();
+        ~EditTextView();
 
         void insert_str( const std::string& str, bool use_br );
 
@@ -83,12 +83,12 @@ namespace SKELETON
 
       protected:
 
-        virtual bool on_button_press_event( GdkEventButton* event );
+        bool on_button_press_event( GdkEventButton* event ) override;
 
-        virtual bool on_key_press_event( GdkEventKey* event );
-        virtual bool on_key_release_event( GdkEventKey* event );
+        bool on_key_press_event( GdkEventKey* event ) override;
+        bool on_key_release_event( GdkEventKey* event ) override;
 
-        virtual void on_populate_popup( Gtk::Menu* menu );
+        void on_populate_popup( Gtk::Menu* menu ) override;
 
         void slot_buffer_changed();
 
@@ -131,7 +131,7 @@ namespace SKELETON
 
             show_all_children();
         }
-        virtual ~EditView(){}
+        ~EditView() noexcept {}
 
         SIG_BUTTON_PRESS sig_button_press(){ return m_textview.sig_button_press(); }
         SIG_KEY_PRESS sig_key_press(){ return m_textview.sig_key_press(); }

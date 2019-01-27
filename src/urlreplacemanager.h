@@ -39,21 +39,21 @@ namespace CORE
       public:
 
         Urlreplace_Manager();
-        virtual ~Urlreplace_Manager(){}
+        virtual ~Urlreplace_Manager() noexcept {}
 
         // URLを任意の正規表現で変換する
-        const bool exec( std::string &url );
+        bool exec( std::string &url );
 
         // URLからリファラを求める
-        const bool referer( const std::string &url, std::string &referer );
+        bool referer( const std::string &url, std::string &referer );
 
         // URLの画像コントロールを取得する
-        const int get_imgctrl( const std::string &url );
+        int get_imgctrl( const std::string &url );
 
       private:
 
         void conf2list( const std::string& conf );
-        const int get_imgctrl_impl( const std::string &url );
+        int get_imgctrl_impl( const std::string &url );
 
         // 置換文字列を変換
         void replace( JDLIB::Regex &regex, std::string &str );

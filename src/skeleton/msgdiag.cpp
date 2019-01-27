@@ -10,8 +10,10 @@
 #include "dispatchmanager.h"
 #include "global.h"
 
+#if !GTKMM_CHECK_VERSION(2,22,0)
 #include <gtk/gtkmessagedialog.h>
 #include <gtk/gtklabel.h>
+#endif
 
 using namespace SKELETON;
 
@@ -37,12 +39,20 @@ MsgDiag::MsgDiag( Gtk::Window* parent,
     if( parent ) set_transient_for( *parent );
     else set_transient_for( *CORE::get_mainwindow() );
 
+#if GTKMM_CHECK_VERSION(2,22,0)
+    const std::vector< Gtk::Widget* > area = get_message_area()->get_children();
+    Gtk::Label* const primary_label = dynamic_cast< Gtk::Label* >( area.front() );
+    if( primary_label ) {
+        primary_label->set_can_focus( false );
+    }
+#else
     // tab でラベルにフォーカスが移らないようにする ( messagedialog.ccg をハックした )
     Gtk::Widget* wdt = Glib::wrap( gobj()->label );
     if( wdt ){
         Gtk::Label* label = dynamic_cast< Gtk::Label* >( wdt );
         if( label ) label->property_can_focus() = false;
     }
+#endif // GTKMM_CHECK_VERSION(2,22,0)
 }
 
 
@@ -67,7 +77,12 @@ void MsgDiag::add_default_button( Gtk::Widget* button, const int id )
     add_action_widget( *button, id );
     button->show();
 
+#if GTKMM_CHECK_VERSION(2,18,0)
+    button->set_can_default( true );
+#else
     button->set_flags( Gtk::CAN_DEFAULT );
+#endif
+
     button->grab_default();
     button->grab_focus();
 }
@@ -202,4 +217,4 @@ MsgOverwriteDiag::MsgOverwriteDiag( Gtk::Window* parent )
     add_button( "上書き", OVERWRITE_YES );
     add_button( "すべていいえ", OVERWRITE_NO_ALL );
     add_button( "すべて上書き", OVERWRITE_YES_ALL );
-};
+}

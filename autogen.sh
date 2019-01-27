@@ -44,7 +44,7 @@ done
 fi
 
 if test -z "$AM_POSTFIX" ; then
-if ! which automake > /dev/null 2&1 ; then
+if ! which automake > /dev/null 2>&1 ; then
 	echo 'you need automake (1.8.3+ recommended) to generate the Makefile'
 	exit 1
 fi

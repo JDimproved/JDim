@@ -17,21 +17,21 @@ namespace IMAGE
 
       public:
         ImageViewIcon( const std::string& url );
-        virtual ~ImageViewIcon();
+        ~ImageViewIcon();
 
-        virtual void clock_in();
-        virtual void focus_view();
-        virtual void focus_out();
-        virtual void show_view();
+        void clock_in() override;
+        void focus_view() override;
+        void focus_out() override;
+        void show_view() override;
 
       protected:
 
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
-        virtual bool slot_scroll_event( GdkEventScroll* event );
+        Gtk::Menu* get_popupmenu( const std::string& url ) override;
+        bool slot_scroll_event( GdkEventScroll* event ) override;
 
       private:
 
-        virtual void switch_icon();
+        void switch_icon() override;
 
         void slot_drag_begin( const Glib::RefPtr<Gdk::DragContext>& context );
         void slot_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,

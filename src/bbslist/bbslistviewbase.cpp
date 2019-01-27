@@ -551,7 +551,7 @@ void BBSListViewBase::set_parent_win( Gtk::Window* parent_win )
 //
 // コマンド
 //
-const bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
+bool BBSListViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "append_item" ) append_item();
     else if( command == "append_history" ) append_history();
@@ -590,7 +590,7 @@ void BBSListViewBase::clock_in()
     // 初期化直後など、まだスクロールバーが表示されてない時があるので表示されるまでジャンプしない
     if( m_jump_y != -1 ){
 
-        Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
+        auto adjust = m_treeview.get_vadjustment();
         if( adjust && adjust->get_upper() > m_jump_y ){
 
 #ifdef _DEBUG
@@ -733,12 +733,11 @@ void BBSListViewBase::update_item( const std::string& url, const std::string& id
 //
 // viewの操作
 //
-const bool BBSListViewBase::operate_view( const int control )
+bool BBSListViewBase::operate_view( const int control )
 {
     if( CONTROL::operate_common( control, get_url(), BBSLIST::get_admin() ) ) return true;
 
     Gtk::TreePath path = m_treeview.get_current_path();
-    Gtk::TreeModel::Row row;
     bool open_tab = false;
 
 #ifdef _DEBUG
@@ -826,7 +825,7 @@ const bool BBSListViewBase::operate_view( const int control )
 
         case CONTROL::Left:
 
-            if( row = m_treeview.get_row( path ) ){
+            if( const Gtk::TreeModel::Row row = m_treeview.get_row( path ) ) {
 
                 if( ( path2type( path ) != TYPE_DIR || ! m_treeview.row_expanded( path ) ) && row.parent() ){
                     path = GET_PATH( row.parent() );
@@ -1205,7 +1204,7 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 // キーを押した
 //
-const bool BBSListViewBase::slot_key_press( GdkEventKey* event )
+bool BBSListViewBase::slot_key_press( GdkEventKey* event )
 {
     // 行の名前を編集中なら何もしない
     if( m_treeview.is_renaming_row() ) return false;
@@ -1471,7 +1470,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         }
 
         // http が無ければ付ける
-        if( url.find( "http://" ) != 0 ) url = "http://" + url;
+        if( url.find( "http://" ) != 0 && url.find( "https://" ) != 0 ) url = "http://" + url;
 
         // .htmlを取り除く
         JDLIB::Regex regex;
@@ -1490,7 +1489,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         url += "/";
 
         // boardid 取得
-        if( ! regex.exec( "(http://.*)/([^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
+        if( ! regex.exec( "(https?://.*)/([^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
             SKELETON::MsgDiag mdiag( get_parent_win(), "アドレスが不正な形式になっています", false, Gtk::MESSAGE_ERROR );
             mdiag.run();
             mdiag.hide();
@@ -1859,7 +1858,7 @@ void BBSListViewBase::slot_row_exp( const Gtk::TreeModel::iterator&, const Gtk::
 
     // 他のフォルダを全て閉じる
     if( m_open_only_onedir
-        && path.get_depth() == 1  // 子フォルダの時は閉じない
+        && path.size() == 1  // 子フォルダの時は閉じない
         ){
         m_expanding = true;
         m_treeview.collapse_all();
@@ -1887,7 +1886,7 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 //
 // 選択した行を開く
 //
-const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
+bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 {
     if( ! m_treeview.get_row( path ) ) return false;
 
@@ -1910,6 +1909,7 @@ const bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
         case TYPE_THREAD_OLD:
             toggle_articleicon( url ); // break;しない
+            // fallthrough
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
             CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab, str_mode );
@@ -2147,7 +2147,7 @@ const Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
 //
 // path -> type 変換
 //
-const int BBSListViewBase::path2type( const Gtk::TreePath& path )
+int BBSListViewBase::path2type( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return TYPE_UNKNOWN;
@@ -2158,7 +2158,7 @@ const int BBSListViewBase::path2type( const Gtk::TreePath& path )
 //
 // row -> type 変換
 //
-const int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
+int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return TYPE_UNKNOWN;
     return row[ m_columns.m_type ];
@@ -2178,7 +2178,7 @@ const Glib::ustring BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
 //
 // row -> dirid 変換
 //
-const size_t BBSListViewBase::row2dirid( const Gtk::TreeModel::Row& row )
+size_t BBSListViewBase::row2dirid( const Gtk::TreeModel::Row& row )
 {
     if( !row ) return 0;
     return row[ m_columns.m_dirid ];
@@ -2246,7 +2246,7 @@ void BBSListViewBase::tree2xml( const std::string& root_name )
 
     // 座標
     int y = 0;
-    Gtk::Adjustment* adjust = m_treeview.get_vadjustment();
+    const auto adjust = m_treeview.get_vadjustment();
     if( adjust )
     {
         if( m_jump_y != -1 && adjust->get_upper() > m_jump_y ) y = m_jump_y;
@@ -2779,7 +2779,7 @@ void BBSListViewBase::exec_search()
             // 先頭にいるときは最後に戻る
             if( path == GET_PATH( *( m_treestore->children().begin() ) ) ){
 
-                path = GET_PATH( *( m_treestore->children().rbegin() ) );
+                path = GET_PATH( *( std::prev( m_treestore->children().end() ) ) );
                 Gtk::TreePath path_tmp = path;
                 while( m_treeview.get_row( path_tmp ) ){
                     path = path_tmp;
@@ -2954,13 +2954,17 @@ void BBSListViewBase::append_history()
     m_treeview.append_one_row( ( *it_info ).url, ( *it_info ).name, ( *it_info ).type, ( *it_info ).dirid, ( *it_info ).data, path, before, subdir );
 
     // サイズが越えていたら最後を削除
-    while( ( int )m_treestore->children().size() > CONFIG::get_historyview_size() ){
-
-        Gtk::TreeModel::Row row = *( m_treestore->children().rbegin() );
-        m_treestore->erase( row );
+    const Gtk::TreeNodeChildren children = m_treestore->children();
+    const int history_size = CONFIG::get_historyview_size();
+    if( static_cast< int >( children.size() ) > history_size ) {
+        const auto end = children.end();
+        auto it = std::next( children.begin(), history_size );
+        while( it != end ) {
+            it = m_treestore->erase( *it );
 #ifdef _DEBUG
-        std::cout << "erase bottom\n";
+            std::cout << "erase bottom\n";
 #endif
+        }
     }
 
     goto_top();

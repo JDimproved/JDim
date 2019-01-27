@@ -23,16 +23,16 @@ namespace JDLIB
         simple_hash_set( const int hash_size );
         virtual ~simple_hash_set();
 
-        const int size() const { return m_hash_size; }
+        int size() const { return m_hash_size; }
 
         void clear();
         void insert( const std::string& item );
         void erase( const std::string& item );
-        const bool find_if( const std::string& item );
+        bool find_if( const std::string& item );
 
       private:
 
-        virtual const int get_key( const std::string& item ) = 0;
+        virtual int get_key( const std::string& item ) = 0;
     };
 
 
@@ -48,7 +48,7 @@ namespace JDLIB
 
       private:
 
-        virtual const int get_key( const std::string& url );
+        virtual int get_key( const std::string& url );
     };
 }
 

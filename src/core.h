@@ -112,7 +112,7 @@ namespace CORE
     public:
 
         Core( JDWinMain& win_main );
-        virtual ~Core();
+        ~Core();
 
         Gtk::Widget* get_toplevel();
 
@@ -169,7 +169,7 @@ namespace CORE
         void toggle_sidebar();
         void slot_show_hide_leftpane( int mode );
 
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
 
         // coreが自前でするコマンド処理
         void exec_command();
@@ -221,7 +221,7 @@ namespace CORE
         void hide_imagetab();
 
         // 板にdatファイルをインポートする
-        void import_dat( const std::string& url_board, const std::list< std::string > list_files );
+        void import_dat( const std::string& url_board, const std::vector< std::string >& list_files );
 
         // サイドバー更新チェック
         // open : 更新があったらタブで開く

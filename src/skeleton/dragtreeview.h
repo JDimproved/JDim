@@ -62,7 +62,7 @@ namespace SKELETON
         // use_usr_fontcolor が true の時はフォントや色を指定する
         DragTreeView( const std::string& url, const std::string& dndtarget,
                       const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even );
-        virtual ~DragTreeView();
+        ~DragTreeView();
 
         virtual void clock_in();
 
@@ -114,32 +114,32 @@ namespace SKELETON
         // drag_source_set() でセットしたボタン以外でドラッグしたときは on_drag_motion()
         // ではなくて普通に on_motion_notify_event() が呼ばれるのに注意
         //
-        virtual bool on_button_press_event( GdkEventButton* event );
-        virtual bool on_button_release_event( GdkEventButton* event );
-        virtual void on_drag_begin( const Glib::RefPtr< Gdk::DragContext>& context );
-        virtual void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context );
+        bool on_button_press_event( GdkEventButton* event ) override;
+        bool on_button_release_event( GdkEventButton* event ) override;
+        void on_drag_begin( const Glib::RefPtr< Gdk::DragContext>& context ) override;
+        void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context ) override;
 
-        virtual void on_drag_data_received( const Glib::RefPtr< Gdk::DragContext >& context, int x, int y, 
-                                            const Gtk::SelectionData& selection, guint info, guint time );
+        void on_drag_data_received( const Glib::RefPtr< Gdk::DragContext >& context, int x, int y,
+                                    const Gtk::SelectionData& selection, guint info, guint time ) override;
 
-        virtual bool on_key_press_event( GdkEventKey* event );
+        bool on_key_press_event( GdkEventKey* event ) override;
 
-        virtual bool on_motion_notify_event( GdkEventMotion* event );
-        virtual bool on_scroll_event( GdkEventScroll* event );
-        virtual bool on_leave_notify_event( GdkEventCrossing* event );
+        bool on_motion_notify_event( GdkEventMotion* event ) override;
+        bool on_scroll_event( GdkEventScroll* event ) override;
+        bool on_leave_notify_event( GdkEventCrossing* event ) override;
 
       private:
 
         // ポップアップが表示されているか
-        const bool is_popup_shown() const { return ( m_popup_win && m_popup_shown ); }
+        bool is_popup_shown() const { return ( m_popup_win && m_popup_shown ); }
 
         // ポップアップ削除
         void delete_popup();
 
         // ポップアップが表示されていてかつマウスがその上にあるか
-        const bool is_mouse_on_popup();
+        bool is_mouse_on_popup();
 
-        const bool slot_popup_leave_notify_event( GdkEventCrossing* event );
+        bool slot_popup_leave_notify_event( GdkEventCrossing* event );
         void slot_selection_changed();
    };
 }

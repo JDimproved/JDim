@@ -29,7 +29,7 @@ static bool strict_of_char = false;
 
 enum
 {
-    UCS2_MAX = 65536
+    UCS2_MAX = 1114111
 };
 
 
@@ -69,7 +69,7 @@ void ARTICLE::init_font()
 // mode   : fontid.h で定義されているフォントのID
 // 戻り値 : 登録されていればtrue
 // 
-const bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_char, int& width, int& width_wide, const int mode )
+bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_char, int& width, int& width_wide, const int mode )
 {
     byte = 0;
     width = 0;

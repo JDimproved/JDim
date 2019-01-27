@@ -31,10 +31,7 @@ namespace DBTREE
         LINK_NUM
     };
 
-    enum
-    {
-        RESUME_CHKSIZE = 64
-    };
+    constexpr size_t RESUME_CHKSIZE = 64;
 
     //ノードツリーのベースクラス
     class NodeTreeBase : public SKELETON::Loadable
@@ -134,13 +131,13 @@ namespace DBTREE
 
         void set_resume( const bool resume );
         void set_broken( const bool broken ) { m_broken = broken; }
-        const int id_header() const { return m_id_header; }
+        int id_header() const { return m_id_header; }
         void set_ext_err( const std::string& ext_err ){ m_ext_err = ext_err; }
 
       public:
 
         NodeTreeBase( const std::string& url, const std::string& date_modified );
-        virtual ~NodeTreeBase();
+        ~NodeTreeBase();
 
         bool empty();
         void update_url( const std::string& url );
@@ -153,11 +150,11 @@ namespace DBTREE
 
         const std::string& get_url() const { return m_url; }
         const std::string& get_subject() const { return m_subject; }
-        const int get_res_number();
-        const size_t get_lng_dat() const { return m_lng_dat; }
-        const bool is_broken() const{ return m_broken; }
+        int get_res_number();
+        size_t get_lng_dat() const { return m_lng_dat; }
+        bool is_broken() const{ return m_broken; }
         const std::string& get_ext_err() const { return m_ext_err; }
-        const bool is_checking_update() const { return m_check_update; }
+        bool is_checking_update() const { return m_check_update; }
 
         // number番のレスのヘッダノードのポインタを返す
         NODE* res_header( int number );
@@ -180,10 +177,10 @@ namespace DBTREE
 
         // 指定したID の重複数( = 発言数 )
         // 下のget_num_id_name( int number )と違って検索するので遅い
-        const int get_num_id_name( const std::string& id );
+        int get_num_id_name( const std::string& id );
 
         // number番のID の重複数( = 発言数 )
-        const int get_num_id_name( const int number );
+        int get_num_id_name( const int number );
 
         // 指定した発言者IDを持つレス番号をリストにして取得
         std::list< int > get_res_id_name( const std::string& id_name );
@@ -252,7 +249,7 @@ namespace DBTREE
         const std::vector< char >& get_vec_posted(){ return m_vec_posted; }
 
         // 自分の書き込みにレスしたか
-        const bool is_refer_posted( const int number );
+        bool is_refer_posted( const int number );
 
         // 書き込みマークセット
         void set_posted( const int number, const bool set );
@@ -279,8 +276,8 @@ namespace DBTREE
             return rawlines;
         }
 
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
 
       private:
 
@@ -323,9 +320,9 @@ namespace DBTREE
         // m_buffer_write に作成した文字列をセットする
         void parse_write( const char* str, const int lng, const int max_lng_write );
 
-        const bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
-        const int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link );
-        const int check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos );
+        bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
+        int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link );
+        int check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos );
 
         // レジューム時のチェックデータをキャッシュ
         void set_resume_data( const char* data, size_t length );
@@ -337,12 +334,12 @@ namespace DBTREE
         void update_abone( const int from_number, const int to_number );
 
         // あぼーんチェック
-        const bool check_abone_res( const int number );
-        const bool check_abone_id( const int number );
-        const bool check_abone_name( const int number );
-        const bool check_abone_mail( const int number );
-        const bool check_abone_word( const int number );
-        const bool check_abone_chain( const int number );
+        bool check_abone_res( const int number );
+        bool check_abone_id( const int number );
+        bool check_abone_name( const int number );
+        bool check_abone_mail( const int number );
+        bool check_abone_word( const int number );
+        bool check_abone_chain( const int number );
 
 
         // number番のレスに含まれるレスアンカーをリストにして取得
@@ -394,7 +391,7 @@ namespace DBTREE
     // リンクが現れたかチェックして文字列を取得する関数
     //   (引数の値は、check_link_impl()を見ること)
     //
-    inline const int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link )
+    inline int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link )
     {
         // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
         int delim_pos = 0;

@@ -14,7 +14,8 @@ noinst_HEADERS = \
 	controlutil.h \
 	mousekeyconf.h mousekeyitem.h keyconfig.h mouseconfig.h buttonconfig.h \
 	mousekeypref.h keypref.h mousepref.h buttonpref.h \
-	defaultconf.h
+	defaultconf.h \
+	get_config.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 AM_CPPFLAGS = -I$(top_srcdir)/src

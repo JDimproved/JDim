@@ -29,7 +29,7 @@ namespace SKELETON
 
         bool m_enable_slot;
 
-#if !GTKMM_CHECK_VERSION(2,13,0)
+#if !GTKMM_CHECK_VERSION(2,12,0)
         Gtk::Tooltips m_tooltip;
 #endif
 
@@ -78,12 +78,12 @@ namespace SKELETON
       public:
 
         ToolBar( Admin* admin );
-        virtual ~ToolBar(){}
+        ~ToolBar() noexcept {}
 
         void set_url( const std::string& url );
         const std::string& get_url() { return m_url; }
 
-        const bool is_empty();
+        bool is_empty();
 
         // タブが切り替わった時にDragableNoteBookから呼び出される( Viewの情報を取得する )
         virtual void set_view( SKELETON::View * view );

@@ -129,7 +129,7 @@ namespace ARTICLE
 
         LAYOUT* top_header() const { return m_root_header->next_header; }
         const LAYOUT* last_header() const { return m_last_header; }
-        const int max_res_number() const { return m_max_res_number; }
+        int max_res_number() const { return m_max_res_number; }
         const LAYOUT* get_separator() const{ return m_separator_header; }
 
         // nodetreeのノード構造をコピーし、ツリーの一番最後に加える
@@ -153,7 +153,7 @@ namespace ARTICLE
         void set_separator_new( int num ){ m_separator_new_reserve = num; }
         void move_separator();
         void hide_separator();
-        const int get_separator_new() const { return m_separator_new; }
+        int get_separator_new() const { return m_separator_new; }
 
       private:
         

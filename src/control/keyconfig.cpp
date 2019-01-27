@@ -25,7 +25,7 @@ KeyConfig::KeyConfig()
 {}
 
 
-KeyConfig::~KeyConfig()
+KeyConfig::~KeyConfig() noexcept
 {}
 
 
@@ -261,7 +261,7 @@ void KeyConfig::set_one_motion_impl( const int id, const int mode, const std::st
 
 
 // editviewの操作をemacs風か
-const bool KeyConfig::is_emacs_mode()
+bool KeyConfig::is_emacs_mode()
 {
     return ( get_str_motions( CONTROL::UpEdit ).find( "Ctrl+p" ) != std::string::npos );
 }
@@ -314,7 +314,7 @@ void KeyConfig::toggle_emacs_mode()
 
 
 // タブで開くキーを入れ替えているか
-const bool KeyConfig::is_toggled_tab_key()
+bool KeyConfig::is_toggled_tab_key()
 {
     const bool ret = ( get_str_motions( CONTROL::OpenBoard ).find( "Ctrl+Space" ) != std::string::npos
                        && get_str_motions( CONTROL::OpenBoardTab ).find( "Space" ) != std::string::npos

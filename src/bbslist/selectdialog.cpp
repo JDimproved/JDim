@@ -48,12 +48,12 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
     Glib::ustring name;
 
     name = "お気に入りの先頭に追加";
-    m_combo_dirs.append_text( name );
+    m_combo_dirs.append( name );
     if( ! active_row && name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
     m_vec_path.push_back( "-1" );
 
     name = "お気に入りの最後に追加";
-    m_combo_dirs.append_text( name );
+    m_combo_dirs.append( name );
     if( ! active_row && name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
     m_vec_path.push_back( "" );
 
@@ -67,7 +67,7 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
         if( type == TYPE_DIR ){
 
             name = row[ columns.m_name ];
-            m_combo_dirs.append_text( name );
+            m_combo_dirs.append( name );
             if( ! active_row && name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
 
             Gtk::TreePath path = m_treestore->get_path( row );

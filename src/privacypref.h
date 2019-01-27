@@ -36,7 +36,7 @@ namespace CORE
         }
 
         // OK押した
-        virtual void slot_ok_clicked()
+        void slot_ok_clicked() override
         {
             if( m_bt_board.get_active() ) CORE::core_set_command( "clear_board" );
             if( m_bt_thread.get_active() ) CORE::core_set_command( "clear_thread" );
@@ -78,7 +78,7 @@ namespace CORE
             show_all_children();
         }
 
-        virtual ~PrivacyPref(){}
+        ~PrivacyPref() noexcept {}
     };
 
 }

@@ -37,7 +37,7 @@ namespace CORE
       public:
 
         CheckUpdate_Manager();
-        virtual ~CheckUpdate_Manager();
+        virtual ~CheckUpdate_Manager() noexcept;
 
         void run();
         void stop();

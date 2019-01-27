@@ -123,7 +123,7 @@ void MISC::tfidf_calc_vec_tfifd( VEC_TFIDF& vec_tfidf, const Glib::ustring& docu
 //
 // 相関計算
 //
-const double MISC::tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_TFIDF& vec_tfidf2 )
+double MISC::tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_TFIDF& vec_tfidf2 )
 {
     const int n = vec_tfidf1.size();
 
@@ -202,8 +202,8 @@ void MISC::tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
 
 
 // str1 と str2 間のレーベンシュタイン距離
-const double MISC::leven( std::vector< std::vector< int > >& dist,
-                          const Glib::ustring& str1, const Glib::ustring& str2 )
+double MISC::leven( std::vector< std::vector< int > >& dist,
+                    const Glib::ustring& str1, const Glib::ustring& str2 )
 {
     const size_t maxlng = dist.size() -1;
     const size_t lng1 = MIN( maxlng, str1.length() );

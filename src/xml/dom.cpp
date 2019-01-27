@@ -39,6 +39,7 @@ Dom::Dom( const int& type, const std::string& name, const bool html )
         m_static_html_elements.insert( "br" );
         m_static_html_elements.insert( "hr" );
         m_static_html_elements.insert( "img" );
+        m_static_html_elements.insert( "input" );
         m_static_html_elements.insert( "link" );
         m_static_html_elements.insert( "meta" );
     }
@@ -188,7 +189,7 @@ void Dom::parse( const std::string& str )
                     current_pos = close_tag_gt_pos + 1;
 
                     // タグの中身を取り出す
-                    const std::string close_tag = str.substr( close_tag_lt_pos + 1, close_tag_gt_pos - close_tag_lt_pos - 1 );
+                    const std::string close_tag = MISC::tolower_str( str.substr( close_tag_lt_pos + 1, close_tag_gt_pos - close_tag_lt_pos - 1 ) );
 
                     // タグ構造が壊れてる場合
                     if( close_tag.empty() ) continue;
@@ -199,10 +200,10 @@ void Dom::parse( const std::string& str )
                     }
 
                     // 空要素でない同名の開始タグを見つけたらカウントを増やす
-                    if( close_tag.compare( 0, element_name.length(), element_name ) == 0 
+                    if( close_tag.compare( 0, name.length(), name ) == 0
                      && close_tag.compare( close_tag.length() - 1, 1, "/" ) != 0 ) ++count;
                     // 終了タグを見つけたらカウントを減らす
-                    else if( close_tag.compare( 0, element_name.length() + 1, "/" + element_name ) == 0 ) --count;
+                    else if( close_tag.compare( 0, name.length() + 1, "/" + name ) == 0 ) --count;
 
                     // 終了タグを見つける必要数が 0 になったらループを抜ける
                     if( count <= 0 ) break;
@@ -343,8 +344,6 @@ std::map< std::string, std::string > Dom::create_attribute( const std::string& s
 //
 std::string Dom::get_xml( const int n )
 {
-    if( ! this ) return std::string();
-
     std::stringstream xml;
 
     // インデント
@@ -436,7 +435,7 @@ std::string Dom::get_xml( const int n )
 //
 void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns& columns )
 {
-    if( ! this || children.empty() ) return;
+    if( children.empty() ) return;
 
     // Gtk::TreeModel::Children を走査
     Gtk::TreeModel::iterator it = children.begin();
@@ -488,8 +487,6 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                              std::list< Gtk::TreePath >& list_path_expand,
                              const Gtk::TreeModel::Row& parent )
 {
-    if( ! this ) return;
-
     // ノードの子要素を走査
     std::list< Dom* >::iterator it = m_childNodes.begin();
     while( it != m_childNodes.end() )
@@ -533,30 +530,24 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
 //
 // プロパティを扱うアクセッサ
 //
-const int Dom::nodeType()
+int Dom::nodeType()
 {
-    if( ! this ) return NODE_TYPE_UNKNOWN;
-    
     return m_nodeType;
 }
 
 const std::string Dom::nodeName()
 {
-    if( ! this ) return std::string();
-
     return m_nodeName;
 }
 
 std::string Dom::nodeValue()
 {
-    if( ! this ) return std::string();
-
     return m_nodeValue;
 }
 
 void Dom::nodeValue( const std::string& value )
 {
-    if( this ) m_nodeValue = value;
+    m_nodeValue = value;
 }
 
 
@@ -566,8 +557,6 @@ void Dom::nodeValue( const std::string& value )
 Dom* Dom::getElementById( const std::string& id )
 {
     Dom* node = 0;
-
-    if( ! this ) return node;
 
     std::list< Dom* >::iterator it = m_childNodes.begin();
     while( it != m_childNodes.end() )
@@ -594,8 +583,6 @@ DomList Dom::getElementsByTagName( const std::string& name )
 {
     DomList domlist;
 
-    if( ! this ) return domlist;
-
     std::list< Dom* >::iterator it = m_childNodes.begin();
     while( it != m_childNodes.end() )
     {
@@ -619,8 +606,6 @@ DomList Dom::getElementsByTagName( const std::string& name )
 //
 Dom* Dom::ownerDocument()
 {
-    if( ! this ) return 0;
-
     Dom* parent = m_parentNode;
 
     while( parent )
@@ -638,25 +623,21 @@ Dom* Dom::ownerDocument()
 //
 Dom* Dom::parentNode()
 {
-    if( ! this ) return 0;
-
     return m_parentNode;
 }
 
 void Dom::parentNode( Dom* parent )
 {
-    if( this ) m_parentNode = parent;
+    m_parentNode = parent;
 }
 
 
 //
 // ノード：hasChildNodes
 //
-const bool Dom::hasChildNodes()
+bool Dom::hasChildNodes()
 {
-    if( this ) return ! m_childNodes.empty();
-
-    return false;
+    return ! m_childNodes.empty();
 }
 
 
@@ -668,7 +649,7 @@ DomList Dom::childNodes()
     DomList result;
 
     // DomList に std::list< Dom* > を代入している
-    if( this ) result = m_childNodes;
+    result = m_childNodes;
 
     return result;
 }
@@ -684,7 +665,7 @@ void Dom::copy_childNodes( const Dom& dom )
     DomList children;
     children = dom.m_childNodes;
 
-    if( this && children.size() ){
+    if( children.size() ){
 
         std::list< Dom* >::iterator it = children.begin();
         while( it != children.end() )
@@ -708,7 +689,7 @@ void Dom::copy_childNodes( const Dom& dom )
 //
 Dom* Dom::firstChild()
 {
-    if( ! this || m_childNodes.empty() ) return 0;
+    if( m_childNodes.empty() ) return 0;
 
     return m_childNodes.front();
 }
@@ -719,7 +700,7 @@ Dom* Dom::firstChild()
 //
 Dom* Dom::lastChild()
 {
-    if( ! this || m_childNodes.empty() ) return 0;
+    if( m_childNodes.empty() ) return 0;
 
     return m_childNodes.back();
 }
@@ -732,7 +713,6 @@ Dom* Dom::appendChild( const int node_type, const std::string& node_name )
 {
     Dom* node = 0;
     
-    if( this )
     {
         node = new Dom( node_type, node_name, m_html );
 
@@ -750,7 +730,7 @@ Dom* Dom::appendChild( const int node_type, const std::string& node_name )
 //
 bool Dom::removeChild( Dom* node )
 {
-    if( ! this || ! node ) return false;
+    if( ! node ) return false;
 
     m_childNodes.remove( node );
 
@@ -766,8 +746,6 @@ bool Dom::removeChild( Dom* node )
 Dom* Dom::replaceChild( const int node_type, const std::string& node_name, Dom* oldNode )
 {
     Dom* newNode = 0;
-
-    if( ! this && ! oldNode ) return newNode;
 
     newNode = new Dom( node_type, node_name );
 
@@ -797,8 +775,6 @@ Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* 
 {
     Dom* newNode = 0;
 
-    if( ! this && ! insNode ) return newNode;
-
     newNode = new Dom( node_type, node_name );
 
     std::list< Dom* >::iterator it = m_childNodes.begin();
@@ -824,8 +800,6 @@ Dom* Dom::previousSibling()
 {
     Dom* previous = 0;
 
-    if( ! this ) return previous;
-
     DomList brothers = m_parentNode->childNodes();
 
     std::list< Dom* >::iterator it = brothers.begin();
@@ -850,8 +824,6 @@ Dom* Dom::nextSibling()
 {
     Dom* next = 0;
 
-    if( ! this ) return next;
-
     DomList brothers = m_parentNode->childNodes();
 
     std::list< Dom* >::iterator it = brothers.begin();
@@ -875,36 +847,30 @@ Dom* Dom::nextSibling()
 //
 std::map< std::string, std::string > Dom::attributes()
 {
-    std::map< std::string, std::string > result;
-
-    if( this ) result = m_attributes;
-
-    return result;
+    return m_attributes;
 }
 
 void Dom::attributes( const std::map< std::string, std::string > attributes )
 {
-    if( this && ! attributes.empty() ) m_attributes = attributes;
+    if( ! attributes.empty() ) m_attributes = attributes;
 }
 
 
 //
 // 属性：hasAttributes()
 //
-const bool Dom::hasAttributes()
+bool Dom::hasAttributes()
 {
-    if( this ) return ! m_attributes.empty();
-
-    return false;
+    return ! m_attributes.empty();
 }
 
 
 //
 // 属性：hasAttribute()
 //
-const bool Dom::hasAttribute( const std::string& name )
+bool Dom::hasAttribute( const std::string& name )
 {
-    if( ! this || name.empty() ) return false;
+    if( name.empty() ) return false;
 
     return m_attributes.find( name ) != m_attributes.end();
 }
@@ -917,7 +883,7 @@ std::string Dom::getAttribute( const std::string& name )
 {
     std::string value;
 
-    if( ! this || name.empty() ) return value;
+    if( name.empty() ) return value;
 
     std::map< std::string, std::string >::iterator it = m_attributes.find( name );
 
@@ -932,8 +898,7 @@ std::string Dom::getAttribute( const std::string& name )
 //
 bool Dom::setAttribute( const std::string& name, const std::string& value )
 {
-    if( ! this
-     || name.empty()
+    if( name.empty()
      || value.empty()
      || m_nodeType != NODE_TYPE_ELEMENT ) return false;
 
@@ -951,8 +916,7 @@ bool Dom::setAttribute( const std::string& name, const std::string& value )
 //
 bool Dom::setAttribute( const std::string& name, const int& value )
 {
-    if( ! this
-     || name.empty()
+    if( name.empty()
      || m_nodeType != NODE_TYPE_ELEMENT ) return false;
 
     // 属性名は小文字に統一
@@ -971,7 +935,7 @@ bool Dom::removeAttribute( const std::string& name )
 {
     bool result = false;
 
-    if( ! this || name.empty() ) return result;
+    if( name.empty() ) return result;
 
     std::map< std::string, std::string >::iterator it = m_attributes.find( name );
 

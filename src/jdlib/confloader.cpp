@@ -57,7 +57,7 @@ ConfLoader::ConfLoader( const std::string& file, std::string str_conf )
 
 
 
-const bool ConfLoader::empty()
+bool ConfLoader::empty()
 {
     return !( m_data.size() );
 }
@@ -172,7 +172,7 @@ const std::string ConfLoader::get_option_str( const std::string& name, const std
 //
 // bool型
 //
-const bool ConfLoader::get_option_bool( const std::string& name, const bool dflt )
+bool ConfLoader::get_option_bool( const std::string& name, const bool dflt )
 {
     std::string val_str = get_option_str( name, std::string() );
 
@@ -198,7 +198,7 @@ const bool ConfLoader::get_option_bool( const std::string& name, const bool dflt
 //
 // int 型
 //
-const int ConfLoader::get_option_int( const std::string& name, const int dflt, const int min, const int max )
+int ConfLoader::get_option_int( const std::string& name, const int dflt, const int min, const int max )
 {
     std::string val_str = get_option_str( name, std::string() );
 
@@ -222,7 +222,7 @@ const int ConfLoader::get_option_int( const std::string& name, const int dflt, c
 //
 // double 型
 //
-const double ConfLoader::get_option_double( const std::string& name, const double dflt, const double min, const double max )
+double ConfLoader::get_option_double( const std::string& name, const double dflt, const double min, const double max )
 {
     std::string val_str = get_option_str( name, std::string() );
 

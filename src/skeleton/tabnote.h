@@ -90,7 +90,7 @@ namespace SKELETON
         // マウスの下にあるタブの番号を取得
         // タブ上では無いときは-1を返す
         // マウスがタブの右側にある場合はページ数の値を返す
-        const int get_page_under_mouse();
+        int get_page_under_mouse();
 
         // タブの高さ、幅、位置を取得 ( 描画用 )
         void get_alloc_tab( Alloc_NoteBook& alloc );
@@ -98,7 +98,7 @@ namespace SKELETON
       private:
 
         // gtknotebook.c ( Revision 19311, 2008-01-06 ) を参考にして作成した描画関係の関数
-        const bool paint( GdkEventExpose* event );
+        bool paint( GdkEventExpose* event );
 
         void draw_tab( const GtkNotebook *notebook,
                        const GtkNotebookPage *page,
@@ -114,7 +114,7 @@ namespace SKELETON
                          const int nbarrow );
 
         void get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle, const gboolean before );
-        const gboolean get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle );
+        gboolean get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle );
 
 
         // 各タブのサイズと座標を取得
@@ -122,19 +122,19 @@ namespace SKELETON
 
       protected:
 
-        virtual bool on_expose_event( GdkEventExpose* event );
-        virtual void on_size_allocate( Gtk::Allocation& allocation );
+        bool on_expose_event( GdkEventExpose* event ) override;
+        void on_size_allocate( Gtk::Allocation& allocation ) override;
 
         // signal_button_press_event と signal_button_release_event は emit されない
         // ときがあるので自前でemitする
-        virtual bool on_button_press_event( GdkEventButton* event );
-        virtual bool on_button_release_event( GdkEventButton* event );
+        bool on_button_press_event( GdkEventButton* event ) override;
+        bool on_button_release_event( GdkEventButton* event ) override;
 
-        virtual bool on_motion_notify_event( GdkEventMotion* event );
-        virtual bool on_leave_notify_event( GdkEventCrossing* event );
-        virtual bool on_scroll_event( GdkEventScroll* event );
+        bool on_motion_notify_event( GdkEventMotion* event ) override;
+        bool on_leave_notify_event( GdkEventCrossing* event ) override;
+        bool on_scroll_event( GdkEventScroll* event ) override;
 
-        virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time);
+        bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time) override;
     };
 }
 

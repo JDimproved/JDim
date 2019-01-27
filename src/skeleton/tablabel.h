@@ -46,7 +46,7 @@ namespace SKELETON
       public:
 
         TabLabel( const std::string& url );
-        virtual ~TabLabel();
+        ~TabLabel();
 
         SIG_TAB_MOTION_EVENT sig_tab_motion_event(){ return  m_sig_tab_motion_event; }
         SIG_TAB_LEAVE_EVENT sig_tab_leave_event(){ return m_sig_tab_leave_event; }
@@ -55,10 +55,10 @@ namespace SKELETON
         SIG_TAB_DRAG_DATA_GET sig_tab_drag_data_get() { return m_sig_tab_drag_data_get; }
         SIG_TAB_DRAG_END sig_tab_drag_end() { return m_sig_tab_drag_end; }
 
-        const int get_tab_x() const { return m_x; }
-        const int get_tab_y() const { return m_y; }
-        const int get_tab_width() const { return m_width; }
-        const int get_tab_height() const { return m_height; }
+        int get_tab_x() const { return m_x; }
+        int get_tab_y() const { return m_y; }
+        int get_tab_width() const { return m_width; }
+        int get_tab_height() const { return m_height; }
 
         void set_tab_x( const int x ){ m_x = x; }
         void set_tab_y( const int y ){ m_y = y; }
@@ -73,7 +73,7 @@ namespace SKELETON
         void set_dragable( bool dragable, int button );
 
         // 本体の横幅 - ラベルの横幅
-        const int get_label_margin();
+        int get_label_margin();
 
         // カットしていない全体の文字列
         const std::string& get_fulltext() const { return m_fulltext; }
@@ -81,20 +81,20 @@ namespace SKELETON
 
         // アイコンセット
         void set_id_icon( const int id );
-        const int get_id_icon() const { return m_id_icon; }
+        int get_id_icon() const { return m_id_icon; }
 
         // タブの文字列の文字数をlngにセット
         void resize_tab( const unsigned int lng );
 
       private:
 
-        virtual bool on_motion_notify_event( GdkEventMotion* event );
-        virtual bool on_leave_notify_event( GdkEventCrossing* event );
+        bool on_motion_notify_event( GdkEventMotion* event ) override;
+        bool on_leave_notify_event( GdkEventCrossing* event ) override;
 
-        virtual void on_drag_begin( const Glib::RefPtr< Gdk::DragContext>& context );
-        virtual void on_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
-                                       Gtk::SelectionData& selection_data, guint info, guint time );
-        virtual void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context );
+        void on_drag_begin( const Glib::RefPtr< Gdk::DragContext >& context ) override;
+        void on_drag_data_get( const Glib::RefPtr< Gdk::DragContext >& context,
+                               Gtk::SelectionData& selection_data, guint info, guint time ) override;
+        void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context ) override;
     }; 
 }
 

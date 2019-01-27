@@ -86,9 +86,9 @@ namespace SKELETON
 
         EditTreeView( const std::string& url, const std::string& dndtarget, EditColumns& columns );
 
-        virtual ~EditTreeView();
+        ~EditTreeView();
 
-        virtual void clock_in();
+        void clock_in() override;
 
         SIG_DROPPED_FROM_OTHER sig_dropped_from_other(){ return m_sig_dropped_from_other; }
 
@@ -97,7 +97,7 @@ namespace SKELETON
 
         void set_undo_buffer( UNDO_BUFFER* undo_buffer ){ m_undo_buffer = undo_buffer; }
 
-        const bool is_updated() const { return m_updated; };
+        bool is_updated() const { return m_updated; };
         void set_updated( const bool set ){ m_updated = set; }
 
         // treestoreのセット
@@ -117,15 +117,15 @@ namespace SKELETON
         void set_editable_view( const bool editable );
 
         // 指定した path のタイプは ディレクトリか
-        const bool is_dir( Gtk::TreeModel::iterator& it );
-        const bool is_dir( const Gtk::TreePath& path );
+        bool is_dir( Gtk::TreeModel::iterator& it );
+        bool is_dir( const Gtk::TreePath& path );
 
         // 次のディレクトリに移動
         void prev_dir();
         void next_dir();
 
         // 指定したアドレスの行が含まれているか
-        const bool exist_row( const std::string& url, const int type );
+        bool exist_row( const std::string& url, const int type );
 
         // ディレクトリ内を全選択
         void select_all_dir( Gtk::TreePath path_dir );
@@ -135,14 +135,14 @@ namespace SKELETON
 
         // ディレクトリIDとパスを相互変換
         const Gtk::TreePath dirid_to_path( const size_t dirid );
-        const size_t path_to_dirid( const Gtk::TreePath path );
+        size_t path_to_dirid( const Gtk::TreePath path );
 
         // コメント挿入
         const Gtk::TreePath create_newcomment( const Gtk::TreePath& path );
 
         // pathで指定した行の名前の変更
         void rename_row( const Gtk::TreePath& path );
-        const bool is_renaming_row(){ return m_ren_text->property_editable(); }
+        bool is_renaming_row(){ return m_ren_text->property_editable(); }
 
         // list_info を path_dest 以下に追加
         //
@@ -167,7 +167,7 @@ namespace SKELETON
 
         // 選択した行をまとめて削除
         // force = true なら m_editable が false でも削除
-        virtual void delete_selected_rows( const bool force );
+        void delete_selected_rows( const bool force ) override;
 
         void undo();
         void redo();
@@ -190,15 +190,15 @@ namespace SKELETON
 
       protected:
 
-        virtual bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
-        virtual void on_drag_leave( const Glib::RefPtr<Gdk::DragContext>& context, guint time );
-        virtual bool on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time );
-        virtual void on_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
-                                       Gtk::SelectionData& selection_data, guint info, guint time );
-        virtual void on_drag_data_received( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y,
-                                            const Gtk::SelectionData& selection_data, guint info, guint time );
-        virtual void on_drag_data_delete( const Glib::RefPtr<Gdk::DragContext>& context );
-        virtual void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context );
+        bool on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time ) override;
+        void on_drag_leave( const Glib::RefPtr< Gdk::DragContext >& context, guint time ) override;
+        bool on_drag_drop( const Glib::RefPtr<Gdk::DragContext>& context, int x, int y, guint time ) override;
+        void on_drag_data_get( const Glib::RefPtr< Gdk::DragContext >& context,
+                               Gtk::SelectionData& selection_data, guint info, guint time ) override;
+        void on_drag_data_received( const Glib::RefPtr< Gdk::DragContext >& context, int x, int y,
+                                    const Gtk::SelectionData& selection_data, guint info, guint time ) override;
+        void on_drag_data_delete( const Glib::RefPtr<Gdk::DragContext>& context ) override;
+        void on_drag_end( const Glib::RefPtr< Gdk::DragContext>& context ) override;
 
       private:
 
@@ -270,7 +270,7 @@ namespace SKELETON
     {
         EditTreeView& m_treeview;
         EditColumns& m_columns;
-        int m_depth;
+        Gtk::TreePath::size_type m_depth;
         bool m_end;
 
         Gtk::TreePath m_path;
@@ -286,7 +286,7 @@ namespace SKELETON
 
         void operator ++ ();
 
-        const bool end() const { return m_end; }
+        bool end() const { return m_end; }
     };
 }
 

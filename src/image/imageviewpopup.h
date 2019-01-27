@@ -23,28 +23,28 @@ namespace IMAGE
       public:
 
         ImageViewPopup( const std::string& url );
-        virtual ~ImageViewPopup();
+        ~ImageViewPopup();
 
-        virtual void clock_in();
+        void clock_in() override;
 
         // 親ウィンドウは無し
-        virtual Gtk::Window* get_parent_win(){ return NULL; }
+        Gtk::Window* get_parent_win() override { return nullptr; }
 
-        virtual void stop();
-        virtual void show_view();
-        virtual void close_view();
-        virtual const bool operate_view( const int control );
+        void stop() override;
+        void show_view() override;
+        void close_view() override;
+        bool operate_view( const int control ) override;
 
       protected:
 
-        virtual Gtk::Menu* get_popupmenu( const std::string& url );
+        Gtk::Menu* get_popupmenu( const std::string& url ) override;
 
       private:
 
         void show_view_impl();
 
         // クリックした時の処理
-        virtual void clicked();
+        void clicked() override;
 
         void update_label();
         void set_label( const std::string& status );

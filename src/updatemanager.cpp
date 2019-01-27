@@ -44,7 +44,7 @@ CheckUpdate_Manager::CheckUpdate_Manager()
 }
 
 
-CheckUpdate_Manager::~CheckUpdate_Manager()
+CheckUpdate_Manager::~CheckUpdate_Manager() noexcept
 {
     assert( ! m_list_item.size() );
 }

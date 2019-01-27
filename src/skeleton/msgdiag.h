@@ -33,7 +33,7 @@ namespace SKELETON
                  Gtk::ButtonsType buttons = Gtk::BUTTONS_OK,
                  bool modal = false);
 
-        virtual ~MsgDiag(){}
+        ~MsgDiag() noexcept {}
 
         void add_default_button( const Gtk::StockID& stock_id, const int id );
         void add_default_button( const Glib::ustring& label, const int id );

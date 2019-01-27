@@ -25,22 +25,22 @@ namespace CONTROL
 
 
     // keysymはアスキー文字か
-    const bool is_ascii( const guint keysym );
+    bool is_ascii( const guint keysym );
 
     // メニューにショートカットキーやマウスジェスチャを表示
     void set_menu_motion( Gtk::Menu* menu );
 
     // IDからモードを取得
     // 例えば id == CONTROL::Up の時は CONTROL::COMMONMOTION を返す
-    const int get_mode( const int id );
+    int get_mode( const int id );
 
     // 操作モードIDからモード名取得
     // 例えば mode == CONTROL::MODE_COMMON の時は "共通" を返す
     const std::string get_mode_label( const int mode );
-    
+
     // キー名からkeysymを取得
     // 例えば keyname == "Space" の時は GDK_space を返す
-    const guint get_keysym( const std::string& keyname );
+    guint get_keysym( const std::string& keyname );
 
     // keysymからキー名を取得
     // 例えば keysym == GDK_space の時は "Space"  を返す
@@ -48,7 +48,7 @@ namespace CONTROL
 
     // 操作名からID取得
     // 例えば name == "Up" の時は CONTROL::Up を返す
-    const int get_id( const std::string& name );
+    int get_id( const std::string& name );
 
     // IDから操作名取得
     // 例えば id == CONTROL::Up の時は "Up" を返す
@@ -69,7 +69,7 @@ namespace CONTROL
     const std::string get_label_motions( const int id );
 
     // 共通操作
-    const bool operate_common( const int control, const std::string& url, SKELETON::Admin* admin );
+    bool operate_common( const int control, const std::string& url, SKELETON::Admin* admin );
 
 
     ///////////////////////
@@ -89,18 +89,18 @@ namespace CONTROL
     void set_keymotions( const int id, const std::string& str_motions );
 
     // 指定したIDのキーボード操作を全て削除
-    const bool remove_keymotions( const int id );
+    bool remove_keymotions( const int id );
 
     // キーボード操作が重複していないか
     const std::vector< int > check_key_conflict( const int mode, const std::string& str_motion );
 
     // editviewの操作をemacs風にする
-    const bool is_emacs_mode();
+    bool is_emacs_mode();
     void toggle_emacs_mode();
 
     // 「タブで開く」キーを入れ替える
-    const bool is_toggled_tab_key();
-    void toggle_tab_key( const bool toggle ); 
+    bool is_toggled_tab_key();
+    void toggle_tab_key( const bool toggle );
 
     // Gtk アクセラレーションキーを取得
     Gtk::AccelKey get_accelkey( const int id );
@@ -123,7 +123,7 @@ namespace CONTROL
     void set_mousemotions( const int id, const std::string& str_motions );
 
     // 指定したIDのマウスジェスチャを全て削除
-    const bool remove_mousemotions( const int id );
+    bool remove_mousemotions( const int id );
 
     // マウスジェスチャが重複していないか
     const std::vector< int > check_mouse_conflict( const int mode, const std::string& str_motion );
@@ -146,7 +146,7 @@ namespace CONTROL
     void set_buttonmotions( const int id, const std::string& str_motions );
 
     // 指定したIDのボタン設定を全て削除
-    const bool remove_buttonmotions( const int id );
+    bool remove_buttonmotions( const int id );
 
     // ボタンが重複していないか
     const std::vector< int > check_button_conflict( const int mode, const std::string& str_motion );
@@ -156,11 +156,11 @@ namespace CONTROL
 
 
     // タブで開くボタンを入れ替える
-    const bool is_toggled_tab_button(); 
+    bool is_toggled_tab_button();
     void toggle_tab_button( const bool toggle );
 
     // ポップアップ表示の時にクリックでワープ
-    const bool is_popup_warpmode(); 
+    bool is_popup_warpmode();
     void toggle_popup_warpmode();
 }
 

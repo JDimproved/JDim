@@ -18,7 +18,8 @@ noinst_HEADERS = \
 	post.h \
 	toolbar.h \
 	logmanager.h \
-	confirmdiag.h
+	confirmdiag.h \
+	logitem.h
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@
 AM_CPPFLAGS = -I$(top_srcdir)/src

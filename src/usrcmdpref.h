@@ -61,10 +61,10 @@ namespace CORE
 
       private:
 
-        virtual void timeout();
+        void timeout() override;
 
         // OK押した
-        virtual void slot_ok_clicked();
+        void slot_ok_clicked() override;
 
         bool slot_button_press( GdkEventButton* event );
         bool slot_button_release( GdkEventButton* event );

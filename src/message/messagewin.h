@@ -14,38 +14,38 @@ namespace MESSAGE
       public:
 
         MessageWin();
-        virtual ~MessageWin();
+        ~MessageWin();
 
       protected:
 
-        virtual void switch_admin();
+        void switch_admin() override;
 
-        virtual const int get_x_win();
-        virtual const int get_y_win();
-        virtual void set_x_win( const int x );
-        virtual void set_y_win( const int y );
+        int get_x_win() override;
+        int get_y_win() override;
+        void set_x_win( const int x ) override;
+        void set_y_win( const int y ) override;
 
-        virtual const int get_width_win();
-        virtual const int get_height_win();
-        virtual void set_width_win( const int width );
-        virtual void set_height_win( const int height );
+        int get_width_win() override;
+        int get_height_win() override;
+        void set_width_win( const int width ) override;
+        void set_height_win( const int height ) override;
 
-        virtual const bool is_focus_win();
-        virtual void set_focus_win( const bool set );
+        bool is_focus_win() override;
+        void set_focus_win( const bool set ) override;
 
-        virtual const bool is_maximized_win();
-        virtual void set_maximized_win( const bool set );
+        bool is_maximized_win() override;
+        void set_maximized_win( const bool set ) override;
 
-        virtual const bool is_iconified_win();
-        virtual void set_iconified_win( const bool set );
+        bool is_iconified_win() override;
+        void set_iconified_win( const bool set ) override;
 
-        virtual const bool is_full_win(){ return false; }
-        virtual void set_full_win( const bool set ){}
+        bool is_full_win() override { return false; }
+        void set_full_win( const bool ) override {}
 
-        virtual const bool is_shown_win();
-        virtual void set_shown_win( const bool set );
+        bool is_shown_win() override;
+        void set_shown_win( const bool set ) override;
 
-        virtual bool on_delete_event( GdkEventAny* event );
+        bool on_delete_event( GdkEventAny* event ) override;
     };
 }
 

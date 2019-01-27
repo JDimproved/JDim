@@ -1,21 +1,21 @@
 SUBDIRS = src 
 
 desktopdir= $(datadir)/applications
-desktop_DATA = jd.desktop
+dist_desktop_DATA = jdim.desktop
 
 icondir = $(datadir)/pixmaps
-icon_DATA = jd.png
+dist_icon_DATA = jd.png
 
-EXTRA_DIST = AUTHORS TODO README configure 
+EXTRA_DIST = AUTHORS TODO README configure jdim.spec
 
-jd_BUILDINFO_HEADER = buildinfo.h
-jd_CONFIGURE_ARGS = @ac_configure_args@
+jdim_BUILDINFO_HEADER = buildinfo.h
+jdim_CONFIGURE_ARGS = @ac_configure_args@
 
-all: $(jd_BUILDINFO_HEADER)
+all: $(jdim_BUILDINFO_HEADER)
 
-.PHONY: $(jd_BUILDINFO_HEADER)
+.PHONY: $(jdim_BUILDINFO_HEADER)
 
-$(jd_BUILDINFO_HEADER):
+$(jdim_BUILDINFO_HEADER):
 	@-rm -f $@.new
 
 	@echo '/* This file is generated from Makefile by make. */' >> $@.new
@@ -40,9 +40,9 @@ $(jd_BUILDINFO_HEADER):
 	    echo "#define CXX_INFO \"$${CXX_INFO}\"" >> $@.new; \
 	fi
 
-	@if test -n "$(jd_CONFIGURE_ARGS)"; \
+	@if test -n "$(jdim_CONFIGURE_ARGS)"; \
 	then \
-	    echo "#define CONFIGURE_ARGS \"$(jd_CONFIGURE_ARGS)\"" >> $@.new; \
+	    echo "#define CONFIGURE_ARGS \"$(jdim_CONFIGURE_ARGS)\"" >> $@.new; \
 	fi
 
 	@echo '' >> $@.new
@@ -67,6 +67,36 @@ $(jd_BUILDINFO_HEADER):
 	        echo "#define SVN_REVISION \"$${SVN_REVISION}\"" >> $@.new; \
 	    fi \
 	fi
+
+	@echo '' >> $@.new
+	@echo '// Version information of GIT.' >> $@.new
+
+	@GIT_HASH="" ; \
+	GIT_DATE="" ; \
+	GIT_DIRTY=0; \
+	GIT_STATUS="" ; \
+	if test -n "$(GIT)" ; \
+	then \
+		GIT_HASH=`LANG=C.utf8 "$(GIT)" log --pretty=format:%h --abbrev=10 -n 1 2>/dev/null`; \
+		GIT_DATE=`LANG=C.utf8 "$(GIT)" log --pretty=format:%ad --date=format:%Y%m%d -n 1 2>/dev/null`; \
+		GIT_STATUS="`LANG=C.utf8 "$(GIT)" status -uno -s 2>/dev/null | head -n 1`" ; \
+		if test -n "$${GIT_HASH}" ; \
+		then \
+			echo "GIT: Hash = \"$${GIT_HASH}\"" ; \
+		fi ; \
+		if test -n "$${GIT_DATE}" ; \
+		then \
+			echo "GIT: Date = \"$${GIT_DATE}\"" ; \
+		fi ; \
+		if test -n "$${GIT_STATUS}" ; \
+		then \
+			echo "GIT: There are changes not committed yet." ; \
+			GIT_DIRTY=1 ; \
+		fi \
+	fi ; \
+	echo "#define GIT_HASH \"$${GIT_HASH}\"" >> $@.new ; \
+	echo "#define GIT_DATE \"$${GIT_DATE}\"" >> $@.new ; \
+	echo "#define GIT_DIRTY $${GIT_DIRTY}" >> $@.new
 
 	@echo '' >> $@.new
 	@echo '#endif' >> $@.new

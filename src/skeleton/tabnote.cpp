@@ -105,7 +105,7 @@ struct _GtkNotebookPage
 
 
 // 描画本体
-const bool TabNotebook::paint( GdkEventExpose* event )
+bool TabNotebook::paint( GdkEventExpose* event )
 {
     GtkNotebook *notebook = gobj();
     if( ! notebook || ! notebook->cur_page || ! GTK_WIDGET_VISIBLE( notebook->cur_page->child ) ) return true;
@@ -292,7 +292,7 @@ void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook
 
 
 // タブ描画領域の位置、幅、高さを取得
-const gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle )
+gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle )
 {
     GtkNotebookPage* visible_page = NULL;
     GList* children = notebook->children;
@@ -332,8 +332,15 @@ const gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, 
 class DummyWidget : public Gtk::Widget
 {
 public:
-    DummyWidget() : Gtk::Widget(){ set_flags(Gtk::NO_WINDOW); }
-    virtual ~DummyWidget(){}
+    DummyWidget() : Gtk::Widget()
+    {
+#if GTKMM_CHECK_VERSION(2,18,0)
+        set_has_window( false );
+#else
+        set_flags( Gtk::NO_WINDOW );
+#endif
+    }
+    ~DummyWidget() noexcept {}
 };
 
 
@@ -358,7 +365,7 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
     // ドロップ側に設定する
     drag_source_unset();
     drag_dest_unset();
-    std::list< Gtk::TargetEntry > targets;
+    std::vector< Gtk::TargetEntry > targets;
     targets.push_back( Gtk::TargetEntry( DNDTARGET_TAB, Gtk::TARGET_SAME_APP, 0 ) );
     drag_dest_set( targets, Gtk::DEST_DEFAULT_MOTION | Gtk::DEST_DEFAULT_DROP );
 
@@ -465,7 +472,7 @@ SKELETON::TabLabel* TabNotebook::get_tablabel( int page )
 // タブ上では無いときは-1を返す
 // マウスがタブの右側にある場合はページ数( get_n_pages() )を返す
 //
-const int TabNotebook::get_page_under_mouse()
+int TabNotebook::get_page_under_mouse()
 {
     int x, y;
     Gdk::Rectangle rect = get_allocation();
@@ -570,7 +577,12 @@ void TabNotebook::calc_tabsize()
             int tab_w = -1;
             int tab_h = -1;
 
-            if( tab->is_mapped() && page ){
+#if GTKMM_CHECK_VERSION(2,20,0)
+            const bool mapped = tab->get_mapped();
+#else
+            const bool mapped = tab->is_mapped();
+#endif
+            if( mapped && page ) {
 
                 tab_x = page->allocation.x;
                 tab_y = page->allocation.y;

@@ -25,7 +25,7 @@ Article2ch::Article2ch( const std::string& datbase, const std::string& id, bool 
 {}
 
 
-Article2ch::~Article2ch()
+Article2ch::~Article2ch() noexcept
 {}
 
 
@@ -115,7 +115,7 @@ NodeTreeBase* Article2ch::create_nodetree()
 //
 // dat落ちしたスレをロードするか
 //
-const bool Article2ch::is_load_olddat()
+bool Article2ch::is_load_olddat()
 {
     // 2chにログインしている場合
     // または、offlaw2を使う設定の場合 ( bbspinkを除く )

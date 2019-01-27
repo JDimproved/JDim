@@ -5,7 +5,7 @@
 //
 
 #ifndef _ARTICLEMACHI_H
-#define _ARTICLEMACHI_H_H
+#define _ARTICLEMACHI_H
 
 #include "articlebase.h"
 
@@ -18,23 +18,24 @@ namespace DBTREE
       public:
 
         ArticleMachi( const std::string& datbase, const std::string& id, bool cached );
-        ~ArticleMachi();
+        ~ArticleMachi() noexcept;
 
         // 書き込みメッセージ変換
-        virtual const std::string create_write_message( const std::string& name, const std::string& mail, const std::string& msg );
+        const std::string create_write_message( const std::string& name, const std::string& mail,
+                                                const std::string& msg ) override;
 
         // bbscgi のURL
-        virtual const std::string url_bbscgi();
+        const std::string url_bbscgi() override;
         
         // subbbscgi のURL
-        virtual const std::string url_subbbscgi();
+        const std::string url_subbbscgi() override;
 
       private:
         
         // offlawモードなら更新チェック可能
-        virtual const bool enable_check_update();
+        bool enable_check_update() override;
 
-        virtual NodeTreeBase* create_nodetree();
+        NodeTreeBase* create_nodetree() override;
     };
 }
 

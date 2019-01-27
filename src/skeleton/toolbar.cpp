@@ -29,7 +29,6 @@
 
 #include <gtk/gtk.h>  // gtk_separator_tool_item_set_draw
 #include <gtk/gtkbutton.h>
-#include <list>
 
 using namespace SKELETON;
 
@@ -89,7 +88,7 @@ void ToolBar::set_url( const std::string& url )
 }
 
 
-const bool ToolBar::is_empty()
+bool ToolBar::is_empty()
 {
     return ( ! m_buttonbar.get_children().size() );
 }
@@ -206,8 +205,8 @@ void ToolBar::update_button()
 // ボタンのアンパック
 void ToolBar::unpack_buttons()
 {
-    std::list< Gtk::Widget* > lists = m_buttonbar.get_children();
-    std::list< Gtk::Widget* >::iterator it = lists.begin();
+    std::vector< Gtk::Widget* > lists = m_buttonbar.get_children();
+    std::vector< Gtk::Widget* >::iterator it = lists.begin();
     for( ; it != lists.end(); ++it ){
         m_buttonbar.remove( *(*it) );
         if( dynamic_cast< Gtk::SeparatorToolItem* >( *it ) ) delete *it;
@@ -219,8 +218,8 @@ void ToolBar::unpack_search_buttons()
 {
     if( ! m_searchbar ) return;
 
-    std::list< Gtk::Widget* > lists = m_searchbar->get_children();
-    std::list< Gtk::Widget* >::iterator it = lists.begin();
+    std::vector< Gtk::Widget* > lists = m_searchbar->get_children();
+    std::vector< Gtk::Widget* >::iterator it = lists.begin();
     for( ; it != lists.end(); ++it ){
         m_searchbar->remove( *(*it) );
         if( dynamic_cast< Gtk::SeparatorToolItem* >( *it ) ) delete *it;
@@ -230,15 +229,15 @@ void ToolBar::unpack_search_buttons()
 // ボタンのrelief指定
 void ToolBar::set_relief()
 {
-    std::list< Gtk::Widget* > lists_toolbar = get_children();
-    std::list< Gtk::Widget* >::iterator it_toolbar = lists_toolbar.begin();
+    std::vector< Gtk::Widget* > lists_toolbar = get_children();
+    std::vector< Gtk::Widget* >::iterator it_toolbar = lists_toolbar.begin();
     for( ; it_toolbar != lists_toolbar.end(); ++it_toolbar ){
 
         Gtk::Toolbar* toolbar = dynamic_cast< Gtk::Toolbar* >( *it_toolbar );
         if( ! toolbar ) continue;
 
-        std::list< Gtk::Widget* > lists = toolbar->get_children();
-        std::list< Gtk::Widget* >::iterator it = lists.begin();
+        std::vector< Gtk::Widget* > lists = toolbar->get_children();
+        std::vector< Gtk::Widget* >::iterator it = lists.begin();
         for( ; it != lists.end(); ++it ){
 
             Gtk::Button* button = NULL;
@@ -299,8 +298,12 @@ Gtk::ToolItem* ToolBar::get_label()
         m_ebox_label = Gtk::manage( new Gtk::EventBox );
         m_label = Gtk::manage( new Gtk::Label );
 
+#if GTKMM_CHECK_VERSION(2,6,0)
+        m_label->set_ellipsize( Pango::ELLIPSIZE_END );
+#else
         m_label->set_size_request( 0, 0 );
-        m_label->set_alignment( Gtk::ALIGN_LEFT );
+#endif
+        m_label->set_alignment( Gtk::ALIGN_START );
         m_label->set_selectable( true );
 
         m_ebox_label->add( *m_label );
@@ -624,7 +627,7 @@ Gtk::ToolItem* ToolBar::get_button_board()
     if( ! m_button_board ){
 
         m_label_board = Gtk::manage( new Gtk::Label );
-        m_label_board->set_alignment( Gtk::ALIGN_LEFT );
+        m_label_board->set_alignment( Gtk::ALIGN_START );
 
         m_button_board = Gtk::manage( new SKELETON::ToolMenuButton( CONTROL::get_label( CONTROL::OpenParentBoard ), false, true, *m_label_board ) );
 

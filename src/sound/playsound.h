@@ -56,9 +56,9 @@ namespace SOUND
       public:
 
         Play_Sound();
-        virtual ~Play_Sound();
+        ~Play_Sound();
 
-        const bool is_playing() const { return m_playing; }
+        bool is_playing() const { return m_playing; }
 
         void play( const std::string& wavfile );
         void stop();
@@ -68,7 +68,7 @@ namespace SOUND
         void wait();
         static void* launcher( void* );
         void play_wavfile();
-        virtual void callback_dispatch();
+        void callback_dispatch() override;
 
     };
 

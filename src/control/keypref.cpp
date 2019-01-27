@@ -260,7 +260,7 @@ void KeyPref::set_motions( const int id, const std::string& str_motions )
 }
 
 
-const bool KeyPref::remove_motions( const int id )
+bool KeyPref::remove_motions( const int id )
 {
     return CONTROL::remove_keymotions( id );
 }

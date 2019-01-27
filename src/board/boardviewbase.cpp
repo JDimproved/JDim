@@ -37,7 +37,6 @@
 
 #include "icons/iconmanager.h"
 
-#include <gtk/gtk.h> // m_liststore->gobj()->sort_column_id = -2
 #include <sstream>
 
 using namespace BOARD;
@@ -124,7 +123,8 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
       m_cancel_openrow_counter( 0 )
 {
     // 次スレ検索ビューのようにURLの途中に http が入っている場合は取り除く
-    const size_t pos = url.rfind( "http://" );
+    size_t pos = url.rfind( "http://" );
+    if( pos == std::string::npos || pos == 0 ) pos = url.rfind( "https://" );
     if( pos != std::string::npos && pos != 0 ) m_url_board = DBTREE::url_subject( url.substr( 0, pos ) );
     else m_url_board = DBTREE::url_subject( url );
 
@@ -219,7 +219,7 @@ void BoardViewBase::update_url( const std::string& url_old, const std::string& u
 
 
 // アイコンのID取得
-const int BoardViewBase::get_icon( const std::string& iconname )
+int BoardViewBase::get_icon( const std::string& iconname )
 {
     int id = ICON::NONE;
 
@@ -294,7 +294,7 @@ void BoardViewBase::setup_action()
     // その他
     action_group()->add( Gtk::Action::create( "Etc_Menu", ITEM_NAME_ETC "(_O)" ) );
 
-    ui_manager().clear();
+    ui_manager().reset();
     ui_manager() = Gtk::UIManager::create();
     ui_manager()->insert_action_group( action_group() );
 
@@ -487,7 +487,7 @@ const char* BoardViewBase::get_menu_item( const int item )
 //
 // 行数
 //
-const int BoardViewBase::get_row_size()
+int BoardViewBase::get_row_size()
 {
     return m_treeview.get_row_size();
 }
@@ -502,7 +502,8 @@ const int BoardViewBase::get_row_size()
 //
 void BoardViewBase::unsorted_column()
 {
-    m_liststore->gobj()->sort_column_id = -2;
+    m_liststore->set_sort_column( Gtk::TreeSortable::DEFAULT_UNSORTED_COLUMN_ID,
+                                  Gtk::SortType::SORT_ASCENDING );
 }
 
 
@@ -672,7 +673,7 @@ void BoardViewBase::update_columns()
                 break;
         }
 
-        Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+        Gtk::CellRenderer *cell = column->get_first_cell();
 
         // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
         if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardViewBase::slot_cell_data ) );
@@ -710,7 +711,7 @@ void BoardViewBase::update_columns()
 //
 // 失敗の時は-1を変えす
 //
-const int BoardViewBase::get_title_id( const int col )
+int BoardViewBase::get_title_id( const int col )
 {
     Gtk::TreeView::Column* column = m_treeview.get_column( col );
     if( ! column ) return -1;
@@ -892,22 +893,22 @@ void BoardViewBase::restore_sort()
 //
 // デフォルトのソート状態
 //
-const int BoardViewBase::get_default_sort_column()
+int BoardViewBase::get_default_sort_column()
 {
     return DBTREE::board_view_sort_column( get_url_board() );
 }
 
-const int BoardViewBase::get_default_view_sort_mode()
+int BoardViewBase::get_default_view_sort_mode()
 {
     return DBTREE::board_view_sort_mode( get_url_board() );
 }
 
-const int BoardViewBase::get_default_view_sort_pre_column()
+int BoardViewBase::get_default_view_sort_pre_column()
 {
     return DBTREE::board_view_sort_pre_column( get_url_board() );
 }
 
-const int BoardViewBase::get_default_view_sort_pre_mode()
+int BoardViewBase::get_default_view_sort_pre_mode()
 {
     return DBTREE::board_view_sort_pre_mode( get_url_board() );
 }
@@ -968,7 +969,7 @@ void BoardViewBase::slot_col_clicked( const int col )
 //
 // row_a が上か　row_b　が上かを返す。同じ状態なら 0
 //
-const int BoardViewBase::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+int BoardViewBase::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
 {
     const bool draw_a = row_a[ m_columns.m_col_drawbg ];
     const bool draw_b = row_b[ m_columns.m_col_drawbg ];
@@ -985,7 +986,7 @@ const int BoardViewBase::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeMo
 //
 // row_a が上か　row_b　が上かを返す。同じなら 0
 //
-const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
 {
     int num_a = 0, num_b = 0;
     int ret = 0;
@@ -1136,7 +1137,7 @@ const int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::Tr
 //
 // ソート関数
 //
-const int BoardViewBase::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
+int BoardViewBase::slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b )
 {
     Gtk::TreeModel::Row row_a = *( a );
     Gtk::TreeModel::Row row_b = *( b );
@@ -1159,7 +1160,7 @@ const int BoardViewBase::slot_compare_row( const Gtk::TreeModel::iterator& a, co
 //
 // コマンド
 //
-const bool BoardViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
+bool BoardViewBase::set_command( const std::string& command, const std::string& arg1, const std::string& arg2 )
 {
     if( command == "update_columns" ) update_columns();
 
@@ -1401,7 +1402,7 @@ void BoardViewBase::slot_delete_logs()
 //
 // viewの操作
 //
-const bool BoardViewBase::operate_view( const int control )
+bool BoardViewBase::operate_view( const int control )
 {
     if( CONTROL::operate_common( control, get_url(), BOARD::get_admin() ) ) return true;
 
@@ -1457,6 +1458,7 @@ const bool BoardViewBase::operate_view( const int control )
             // スレを開く
         case CONTROL::OpenArticleTab:
             open_tab = true;
+            // fallthrough
         case CONTROL::OpenArticle:
             if( ! path.empty() ) open_row( path, open_tab, false );
             break;
@@ -1623,7 +1625,7 @@ void BoardViewBase::goto_num( const int num, const int )
 //
 void BoardViewBase::scroll_left()
 {
-    Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
+    auto hadjust = m_scrwin.get_hadjustment();
     if( !hadjust ) return;
     hadjust->set_value( MAX( 0,  hadjust->get_value() - hadjust->get_step_increment() ) );
 }
@@ -1634,7 +1636,7 @@ void BoardViewBase::scroll_left()
 //
 void BoardViewBase::scroll_right()
 {
-    Gtk::Adjustment*  hadjust = m_scrwin.get_hadjustment();
+    auto hadjust = m_scrwin.get_hadjustment();
     if( !hadjust ) return;
     hadjust->set_value(  MIN( hadjust->get_upper() - hadjust->get_page_size(),
                               hadjust->get_value() + hadjust->get_step_increment() ) );
@@ -2005,7 +2007,7 @@ void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
 //
 // マウスボタン押した
 //
-const bool BoardViewBase::slot_button_press( GdkEventButton* event )
+bool BoardViewBase::slot_button_press( GdkEventButton* event )
 {
 #ifdef _DEBUG
     std::cout << "BoardViewBase::slot_button_press\n";
@@ -2041,7 +2043,7 @@ const bool BoardViewBase::slot_button_press( GdkEventButton* event )
 //
 // マウスボタン離した
 //
-const bool BoardViewBase::slot_button_release( GdkEventButton* event )
+bool BoardViewBase::slot_button_release( GdkEventButton* event )
 {
     if( ! m_clicked ) return true;
     m_clicked = false;
@@ -2120,7 +2122,7 @@ const bool BoardViewBase::slot_button_release( GdkEventButton* event )
 //
 // マウス動かした
 //
-const bool BoardViewBase::slot_motion_notify( GdkEventMotion* event )
+bool BoardViewBase::slot_motion_notify( GdkEventMotion* event )
 {
     /// マウスジェスチャ
     get_control().MG_motion( event );
@@ -2155,7 +2157,7 @@ const bool BoardViewBase::slot_motion_notify( GdkEventMotion* event )
 //
 // キー入力
 //
-const bool BoardViewBase::slot_key_press( GdkEventKey* event )
+bool BoardViewBase::slot_key_press( GdkEventKey* event )
 {
     m_pressed_key = get_control().key_press( event );
 
@@ -2178,7 +2180,7 @@ const bool BoardViewBase::slot_key_press( GdkEventKey* event )
 //
 // キーリリースイベント
 //
-const bool BoardViewBase::slot_key_release( GdkEventKey* event )
+bool BoardViewBase::slot_key_release( GdkEventKey* event )
 {
     const int key = get_control().key_press( event );
 
@@ -2200,7 +2202,7 @@ const bool BoardViewBase::slot_key_release( GdkEventKey* event )
 //
 // マウスホイールイベント
 //
-const bool BoardViewBase::slot_scroll_event( GdkEventScroll* event )
+bool BoardViewBase::slot_scroll_event( GdkEventScroll* event )
 {
     // ホイールマウスジェスチャ
     const int control = get_control().MG_wheel_scroll( event );
@@ -2416,7 +2418,7 @@ void BoardViewBase::slot_open_browser()
 //
 // 記事を開く
 //
-const bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab, const bool reget )
+bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab, const bool reget )
 {
     std::string str_tab = "false";
     if( tab ) str_tab = "opentab";
@@ -2553,7 +2555,7 @@ const std::string BoardViewBase::path2url_board( const Gtk::TreePath& path )
 //
 // 抽出
 //
-const bool BoardViewBase::drawout( const bool force_reset )
+bool BoardViewBase::drawout( const bool force_reset )
 {
     int hit = 0;
     bool reset = false;
@@ -2647,7 +2649,9 @@ void BoardViewBase::exec_search()
     Gtk::TreePath path = m_treeview.get_current_path();;
     if( path.empty() ){
         if( m_search_invert ) path = GET_PATH( *( m_liststore->children().begin() ) );
-        else GET_PATH( *( m_liststore->children().rbegin() ) );
+        else {
+            GET_PATH( *( std::prev( m_liststore->children().end() ) ) );
+        }
     }
 
     Gtk::TreePath path_start = path;
@@ -2674,7 +2678,7 @@ void BoardViewBase::exec_search()
             // 前へ
             if( ! path.prev() ){
                 // 一番後へ
-                path =  GET_PATH( *( m_liststore->children().rbegin() ) );
+                path = GET_PATH( *( std::prev( m_liststore->children().end() ) ) );
             }
         }
 
@@ -2884,6 +2888,7 @@ void BoardViewBase::slot_save_dat()
                             // 名前変更
                         case Gtk::RESPONSE_YES:
                             if( ! art->save_dat( path_to ) ) continue;
+                            // fallthrough
 
                         default:
                             copy_file = false;

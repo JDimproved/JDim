@@ -45,7 +45,9 @@ namespace SKELETON
         Gtk::Label m_label_stat;
         Gtk::EventBox m_label_stat_ebox;
         Gtk::EventBox m_mginfo_ebox;
+#if !GTKMM_CHECK_VERSION(2,12,0)
         Gtk::Tooltips m_tooltip;
+#endif
 #else
         Gtk::Statusbar m_statbar;
 #endif
@@ -54,7 +56,7 @@ namespace SKELETON
       public:
 
         JDWindow( const bool fold_when_focusout, const bool need_mginfo = true );
-        virtual ~JDWindow();
+        ~JDWindow();
 
         Gtk::HBox& get_statbar(){ return  m_statbar; }
 
@@ -68,10 +70,10 @@ namespace SKELETON
         void set_spacing( int space );
 
         // hide 中
-        const bool is_hide();
+        bool is_hide();
 
         // 起動中
-        const bool is_booting() const { return m_boot; }
+        bool is_booting() const { return m_boot; }
 
         void pack_remove_start( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
         void pack_remove_end( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
@@ -103,37 +105,37 @@ namespace SKELETON
 
         virtual void switch_admin(){}
 
-        virtual const int get_x_win() = 0;
-        virtual const int get_y_win() = 0;
+        virtual int get_x_win() = 0;
+        virtual int get_y_win() = 0;
         virtual void set_x_win( const int x ) = 0;
         virtual void set_y_win( const int y ) = 0;
 
-        virtual const int get_width_win() = 0;
-        virtual const int get_height_win() = 0;
+        virtual int get_width_win() = 0;
+        virtual int get_height_win() = 0;
         virtual void set_width_win( const int width ) = 0;
         virtual void set_height_win( const int height ) = 0;
 
-        virtual const bool is_focus_win() = 0;
+        virtual bool is_focus_win() = 0;
         virtual void set_focus_win( const bool set ) = 0;
 
-        virtual const bool is_maximized_win() = 0;
+        virtual bool is_maximized_win() = 0;
         virtual void set_maximized_win( const bool set ) = 0;
 
-        virtual const bool is_iconified_win() = 0;
+        virtual bool is_iconified_win() = 0;
         virtual void set_iconified_win( const bool set ) = 0;
 
-        virtual const bool is_full_win() = 0;
+        virtual bool is_full_win() = 0;
         virtual void set_full_win( const bool set ) = 0;
 
-        virtual const bool is_shown_win() = 0;
+        virtual bool is_shown_win() = 0;
         virtual void set_shown_win( const bool set ) = 0;
 
-        virtual bool on_focus_in_event( GdkEventFocus* event );
-        virtual bool on_focus_out_event( GdkEventFocus* event );
-        virtual bool on_delete_event( GdkEventAny* event );
-        virtual bool on_window_state_event( GdkEventWindowState* event );
-        virtual bool on_configure_event( GdkEventConfigure* event );
-        virtual bool on_key_press_event( GdkEventKey* event );
+        bool on_focus_in_event( GdkEventFocus* event ) override;
+        bool on_focus_out_event( GdkEventFocus* event ) override;
+        bool on_delete_event( GdkEventAny* event ) override;
+        bool on_window_state_event( GdkEventWindowState* event ) override;
+        bool on_configure_event( GdkEventConfigure* event ) override;
+        bool on_key_press_event( GdkEventKey* event ) override;
 
       private:
 

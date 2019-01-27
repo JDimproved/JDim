@@ -55,7 +55,7 @@ bool  BoardMachi::equal( const std::string& url )
 //
 // キャッシュのファイル名が正しいか
 //
-const bool BoardMachi::is_valid( const std::string& filename )
+bool BoardMachi::is_valid( const std::string& filename )
 {
     if( filename.length() != 10 ) return false;
 
@@ -131,7 +131,7 @@ const std::string BoardMachi::url_dat( const std::string& url, int& num_from, in
     // dat 型
     // LAST, START, END を考慮する
     const std::string datpath = MISC::replace_str( url_datpath(), "?", "\\?" );
-    const std::string query_dat = "^ *(http://.+" + datpath  + ")([1234567890]+" + get_ext() + ")(&LAST=[1234567890]+)?(&START=([1234567890])+)?(&END=([1234567890])+)? *$";
+    const std::string query_dat = "^ *(https?://.+" + datpath  + ")([1234567890]+" + get_ext() + ")(&LAST=[1234567890]+)?(&START=([1234567890])+)?(&END=([1234567890])+)? *$";
 
 #ifdef _DEBUG
     std::cout << "query_dat = " << query_dat << std::endl;

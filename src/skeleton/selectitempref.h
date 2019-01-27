@@ -80,7 +80,7 @@ namespace SKELETON
       public:
 
         SelectItemPref( Gtk::Window* parent, const std::string& url );
-        virtual ~SelectItemPref(){}
+        ~SelectItemPref() noexcept {}
 
       private:
 
@@ -119,10 +119,10 @@ namespace SKELETON
         void erase_hidden( const std::string& name );
 
         // KeyPressのフック
-        virtual bool on_key_press_event( GdkEventKey* event );
+        bool on_key_press_event( GdkEventKey* event ) override;
 
         // KeyReleaseのフック
-        virtual bool on_key_release_event( GdkEventKey* event );
+        bool on_key_release_event( GdkEventKey* event ) override;
 
         // 最上位へ移動
         void slot_top();
@@ -146,7 +146,7 @@ namespace SKELETON
         virtual void slot_default() = 0;
 
         // 適用ボタン
-        void slot_apply_clicked(){ slot_ok_clicked(); }
+        void slot_apply_clicked() override { slot_ok_clicked(); }
     };
 }
 

@@ -64,50 +64,50 @@ namespace DBIMG
         const std::string& url() const { return m_url; }
         const std::string get_cache_path();
 
-        const bool is_wait() const{ return m_wait; }
+        bool is_wait() const { return m_wait; }
 
-        const int get_imgctrl() const { return m_imgctrl; }
+        int get_imgctrl() const { return m_imgctrl; }
 
-        const int get_type() const { return m_type; }
+        int get_type() const { return m_type; }
         void set_type( const int type ){ m_type = type; }
 
         // 高さ、幅
-        const int get_width() const { return m_width; }
-        const int get_height() const { return m_height; }
+        int get_width() const { return m_width; }
+        int get_height() const { return m_height; }
 
         // スレ埋め込み画像の高さ、幅
-        const int get_width_emb();
-        const int get_height_emb();
+        int get_width_emb();
+        int get_height_emb();
 
         // モザイク処理時に縮小するサイズ
-        const int get_width_mosaic();
-        const int get_height_mosaic();
+        int get_width_mosaic();
+        int get_height_mosaic();
 
-        const bool is_cached();
+        bool is_cached();
 
-        const bool get_abone() const { return m_abone; }
+        bool get_abone() const { return m_abone; }
         void set_abone( bool abone );
 
-        const bool get_mosaic() const { return m_mosaic; }
+        bool get_mosaic() const { return m_mosaic; }
         void set_mosaic( const bool mosaic );
 
         void show_large_img();
 
-        const bool is_zoom_to_fit() const { return m_zoom_to_fit; }
+        bool is_zoom_to_fit() const { return m_zoom_to_fit; }
         void set_zoom_to_fit( bool fit ) { m_zoom_to_fit = fit; }
 
         // 表示倍率
         // ファイルサイズ(byte)は JDLIB::Loadable::total_length() で取得
-        const int get_size() const { return m_size; }
+        int get_size() const { return m_size; }
         void set_size( int size ) { m_size = size; }
 
         const std::string& get_refurl() const { return m_refurl; }
 
-        const bool is_protected() const { return m_protect; }
+        bool is_protected() const { return m_protect; }
         void set_protect( bool protect );
 
         // 拡張子が偽装されているか
-        const bool is_fake(); 
+        bool is_fake();
 
         // ロード開始
         // receive_data()　と receive_finish() がコールバックされる
@@ -117,17 +117,17 @@ namespace DBIMG
         void download_img( const std::string refurl, const bool mosaic, const int waitsec );
 
         // ロード停止
-        virtual void stop_load();
+        void stop_load() override;
 
-        const bool save( Gtk::Window* parent, const std::string& path_to );
+        bool save( Gtk::Window* parent, const std::string& path_to );
         
       private:
 
-        virtual void receive_data( const char* data, size_t size );
-        virtual void receive_finish();
+        void receive_data( const char* data, size_t size ) override;
+        void receive_finish() override;
 
         // ロード待ち状態セット/リセット
-        const bool set_wait( const std::string& refurl, const bool mosaic, const int waitsec );
+        bool set_wait( const std::string& refurl, const bool mosaic, const int waitsec );
         void reset_wait();
 
         // 埋め込み画像のサイズを計算

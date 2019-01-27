@@ -57,8 +57,8 @@ namespace CORE
         ProxyFrame m_frame_data;
 
         // OK押した
-        virtual void slot_ok_clicked(){
-
+        void slot_ok_clicked() override
+        {
             // 2ch
             if( m_frame_2ch.ckbt.get_active() ) CONFIG::set_use_proxy_for2ch( true );
             else CONFIG::set_use_proxy_for2ch( false );
@@ -132,7 +132,7 @@ namespace CORE
             show_all_children();
         }
 
-        virtual ~ProxyPref(){}
+        ~ProxyPref() noexcept {}
     };
 
 }

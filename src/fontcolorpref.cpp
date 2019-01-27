@@ -20,7 +20,7 @@
 
 #define WARNING_STRICTCHAR "スレビューのフォント幅の近似計算を厳密に行います\n\nレイアウトが崩れにくくなるかわりにパフォーマンスが著しく低下します。通常は設定しないでください"
 
-#define WARNING_GTKRC_TREE "gtkrc 関係の設定はJDの再起動後に有効になります"
+#define WARNING_GTKRC_TREE "gtkrc 関係の設定はJDimの再起動後に有効になります"
 
 using namespace CORE;
 
@@ -98,15 +98,20 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
 
     m_combo_font.set_active( 0 );
     m_fontbutton.set_font_name( CONFIG::get_fontname( m_font_tbl[ 0 ] ) );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_event_font.set_tooltip_text( m_tooltips_font[ 0 ] );
+    m_fontbutton.set_tooltip_text( m_tooltips_font[ 0 ] );
+#else
     m_tooltips.set_tip( m_event_font, m_tooltips_font[ 0 ] );
     m_tooltips.set_tip( m_fontbutton, m_tooltips_font[ 0 ] );
+#endif
 
     set_title( "フォントと色の詳細設定" );
     show_all_children();
 }
 
 
-FontColorPref::~FontColorPref()
+FontColorPref::~FontColorPref() noexcept
 {}
 
 
@@ -128,7 +133,11 @@ void FontColorPref::pack_widget()
 
     m_checkbutton_font.add_label( "スレビューでフォント幅の近似計算を厳密に行う(_S)", true ),
     m_checkbutton_font.set_active( CONFIG::get_strict_char_width() );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_checkbutton_font.set_tooltip_text( WARNING_STRICTCHAR );
+#else
     m_tooltips.set_tip( m_checkbutton_font, WARNING_STRICTCHAR );
+#endif
     m_hbox_checkbutton.pack_start( m_checkbutton_font, Gtk::PACK_SHRINK );
     m_vbox_font.pack_start( m_hbox_checkbutton, Gtk::PACK_SHRINK, mrg/2 );
 
@@ -143,7 +152,12 @@ void FontColorPref::pack_widget()
     m_hbox_space.set_spacing ( mrg );
     m_hbox_space.pack_start( m_label_space, Gtk::PACK_SHRINK );
     m_hbox_space.pack_start( m_spin_space, Gtk::PACK_SHRINK );
-    m_tooltips.set_tip( m_spin_space, "スレビューにおいて行の高さを調節します( 標準は 1 )" );
+    constexpr const char* ss_tip = "スレビューにおいて行の高さを調節します( 標準は 1 )";
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_spin_space.set_tooltip_text( ss_tip );
+#else
+    m_tooltips.set_tip( m_spin_space, ss_tip );
+#endif
     m_vbox_font.pack_start( m_hbox_space, Gtk::PACK_SHRINK, mrg/2 );
 
     set_activate_entry( m_spin_space );
@@ -159,14 +173,25 @@ void FontColorPref::pack_widget()
     m_hbox_ubar.pack_start( m_label_ubar, Gtk::PACK_SHRINK );
     m_hbox_ubar.pack_start( m_spin_ubar, Gtk::PACK_SHRINK );
     m_vbox_font.pack_start( m_hbox_ubar, Gtk::PACK_SHRINK, mrg/2 );
-    m_tooltips.set_tip( m_spin_ubar, "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )" );
+    constexpr const char* su_tip = "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )";
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_spin_ubar.set_tooltip_text( su_tip );
+#else
+    m_tooltips.set_tip( m_spin_ubar, su_tip );
+#endif
 
     set_activate_entry( m_spin_ubar );
 
     // AAレスと判定する正規表現
     m_label_aafont.set_text( CONFIG::get_regex_res_aa() );
     m_vbox_font.pack_start( m_label_aafont, Gtk::PACK_SHRINK, mrg/2 );
-    m_tooltips.set_tip( m_label_aafont, "この正規表現に一致したレスは、アスキーアートフォントで表示します( 次に開いたスレから有効 )" );
+    constexpr const char* la_tip =
+        "この正規表現に一致したレスは、アスキーアートフォントで表示します( 次に開いたスレから有効 )";
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_label_aafont.set_tooltip_text( la_tip );
+#else
+    m_tooltips.set_tip( m_label_aafont, la_tip );
+#endif
 
     set_activate_entry( m_label_aafont );
 
@@ -202,12 +227,12 @@ void FontColorPref::pack_widget()
     column->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
     column->set_resizable( true );
     m_treeview_color.append_column( *column );
-    Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+    Gtk::CellRenderer *cell = column->get_first_cell();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &FontColorPref::slot_cell_data_name ) );
 
     column = Gtk::manage( new Gtk::TreeViewColumn( "色", m_columns_color.m_col_color ) );
     m_treeview_color.append_column( *column );
-    cell = column->get_first_cell_renderer();
+    cell = column->get_first_cell();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &FontColorPref::slot_cell_data_color ) );
 
     m_bt_change_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_change_color ) );
@@ -298,7 +323,7 @@ void FontColorPref::set_font_settings( const std::string& name, const int fontid
 {
     if( ! name.empty() && fontid < FONT_NUM )
     {
-        m_combo_font.append_text( name );
+        m_combo_font.append( name );
         m_font_tbl.push_back( fontid );
         m_tooltips_font.push_back( tooltip );
     }
@@ -312,8 +337,13 @@ void FontColorPref::slot_combo_font_changed()
 {
     const int num = m_combo_font.get_active_row_number();
     m_fontbutton.set_font_name( CONFIG::get_fontname( m_font_tbl[ num ] ) );
+#if GTKMM_CHECK_VERSION(2,12,0)
+    m_event_font.set_tooltip_text( m_tooltips_font[ num ] );
+    m_fontbutton.set_tooltip_text( m_tooltips_font[ num ] );
+#else
     m_tooltips.set_tip( m_event_font, m_tooltips_font[ num ] );
     m_tooltips.set_tip( m_fontbutton, m_tooltips_font[ num ] );
+#endif
 }
 
 
@@ -439,11 +469,11 @@ void FontColorPref::slot_change_color()
 {
     Gtk::TreeModel::Path path;
     Gtk::TreeRow row;
-    
-    std::list< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
+
+    std::vector< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
     if( selection_path.empty() ) return;
 
-    std::list< Gtk::TreePath >::iterator it = selection_path.begin();
+    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
 
     int colorid = COLOR_NONE;
     if( selection_path.size() == 1 ){
@@ -454,7 +484,14 @@ void FontColorPref::slot_change_color()
     }
 
     Gtk::ColorSelectionDialog colordiag;
-    if( colorid != COLOR_NONE ) colordiag.get_colorsel()->set_current_color( Gdk::Color( CONFIG::get_color( colorid ) ) );
+    if( colorid != COLOR_NONE ) {
+#if GTKMM_CHECK_VERSION(2,14,0)
+        Gtk::ColorSelection* sel = colordiag.get_color_selection();
+#else
+        Gtk::ColorSelection* sel = colordiag.get_colorsel();
+#endif
+        sel->set_current_color( Gdk::Color( CONFIG::get_color( colorid ) ) );
+    }
     colordiag.set_transient_for( *CORE::get_mainwindow() );
     const int ret = colordiag.run();
 
@@ -466,8 +503,14 @@ void FontColorPref::slot_change_color()
             if( ! row ) continue;
 
             colorid = row[ m_columns_color.m_col_colorid ];
-            if( colorid != COLOR_NONE )
-                CONFIG::set_color( colorid , MISC::color_to_str( colordiag.get_colorsel()->get_current_color() ) );
+            if( colorid != COLOR_NONE ) {
+#if GTKMM_CHECK_VERSION(2,14,0)
+                Gtk::ColorSelection* sel = colordiag.get_color_selection();
+#else
+                Gtk::ColorSelection* sel = colordiag.get_colorsel();
+#endif
+                CONFIG::set_color( colorid, MISC::color_to_str( sel->get_current_color() ) );
+            }
         }
     }
 }
@@ -478,10 +521,10 @@ void FontColorPref::slot_change_color()
 //
 void FontColorPref::slot_reset_color()
 {
-    std::list< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
+    std::vector< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
     if( selection_path.empty() ) return;
 
-    std::list< Gtk::TreePath >::iterator it = selection_path.begin();
+    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
 
     for( ; it != selection_path.end(); ++it ){
 

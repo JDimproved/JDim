@@ -27,7 +27,7 @@ const std::list< std::string > MISC::get_lines( const std::string& str ){
     size_t i = 0, i2 = 0, r = 0;
     while ( ( i2 = str.find( "\n", i ) ) != std::string::npos ){
         r = 0;
-        if( str[ i2 - 1 ] == '\r' ) r = 1;
+        if( (i2 >= 1) && (str[ i2 - 1 ] == '\r') ) r = 1;
         if( i2 - i > 0 ){
             lines.push_back( str.substr( i, i2 - i - r ) );
         }
@@ -136,7 +136,7 @@ const std::list< std::string > MISC::split_line( const std::string& str )
 
         // " から始まる ( \"は除く )
         dquote = false;
-        if( str[ i ] == '\"' && str[ i -1 ] != '\\' ){
+        if( str[ i ] == '\"' && (i < 1 || str[ i -1 ] != '\\') ){
             dquote = true;
             ++i;
         }
@@ -184,7 +184,7 @@ const std::list< std::string > MISC::StringTokenizer( const std::string& str, co
     for(;;){
 
         while( i2 < lng && str[ i2++ ] != delim );
-        int tmp = ( str[ i2-1 ] == delim || str[ i2 -1 ] == '\n' ) ? 1 : 0;
+        int tmp = ( i2 >= 1 && ( str[ i2-1 ] == delim || str[ i2 -1 ] == '\n' ) ) ? 1 : 0;
         if( i2 - i ) list_str.push_back( str.substr( i, i2 - i - tmp ) );
         if( i2 >= lng ) break;
         i = i2;
@@ -324,7 +324,8 @@ const std::string MISC::remove_space( const std::string& str )
         if( str[ i2 ] == ' ' ) --i2;
 
         // 全角
-        else if( str[ i2 - lng_space +1 ] == str_space[ 0 ] &&
+        else if( i2 +1 >= lng_space &&
+                 str[ i2 - lng_space +1 ] == str_space[ 0 ] &&
                  str[ i2 - lng_space +2 ] == str_space[ 1 ] &&
                  ( lng_space == 2 || str[ i2 - lng_space +3 ] == str_space[ 2 ] ) ) i2 -= lng_space;
         else break;
@@ -508,7 +509,7 @@ const std::string MISC::recover_quot( const std::string& str )
 //
 // str 中に含まれている str2 の 数を返す
 //
-const int MISC::count_str( const std::string& str, const std::string& str2  )
+int MISC::count_str( const std::string& str, const std::string& str2  )
 {
     int count = 0;
     size_t found, pos = 0;
@@ -526,7 +527,7 @@ const int MISC::count_str( const std::string& str, const std::string& str2  )
 //
 // str 中に含まれている chr の 数を返す
 //
-const int MISC::count_chr( const std::string& str, const char chr )
+int MISC::count_chr( const std::string& str, const char chr )
 {
     int count = 0;
     const int size = str.size();
@@ -549,7 +550,7 @@ const int MISC::count_chr( const std::string& str, const char chr )
 //
 // 戻り値: 数値
 //
-const int MISC::str_to_uint( const char* str, size_t& dig, size_t& n )
+int MISC::str_to_uint( const char* str, size_t& dig, size_t& n )
 {
     int out = 0;
     dig = 0;
@@ -643,7 +644,7 @@ const std::string MISC::intlisttostr( const std::list< int >& list_num )
 // 出力 : char_out 
 // 戻り値: 変換に成功した chr_in のバイト数
 //
-const size_t MISC::chrtobin( const char* chr_in, char* chr_out )
+size_t MISC::chrtobin( const char* chr_in, char* chr_out )
 {
     if( ! chr_in ) return 0;
 
@@ -704,7 +705,7 @@ const std::string MISC::cut_str( const std::string& str, const unsigned int maxs
 
 #define REGEX_METACHARS ".+*?^$|{}[]()\\"
 
-const bool MISC::has_regex_metachar( const std::string& str, const bool escape )
+bool MISC::has_regex_metachar( const std::string& str, const bool escape )
 {
     const char metachars[] = REGEX_METACHARS;
     const size_t str_length = str.length();
@@ -947,7 +948,7 @@ const std::string MISC::html_unescape( const std::string& str )
 // 戻り値 : スキームタイプ
 // length    : "http://"等の文字数
 //
-const int MISC::is_url_scheme_impl( const char* str_in, int* length )
+int MISC::is_url_scheme_impl( const char* str_in, int* length )
 {
     int scheme = SCHEME_NONE;
     int len = 0;
@@ -1029,7 +1030,7 @@ static const char s_url_char[ 128 ] = {
 //      p  q  r  s  t  u  v  w  x  y  z  {  |  }  ~
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 2, 0, 1, 0,
 };
-const bool MISC::is_url_char( const char* str_in, const bool loose_url )
+bool MISC::is_url_char( const char* str_in, const bool loose_url )
 {
     unsigned char c = (unsigned char)(*str_in);
 
@@ -1059,8 +1060,7 @@ const std::string MISC::url_decode( const std::string& url )
 
     const size_t url_length = url.length();
 
-    char decoded[ url_length + 1 ];
-    memset( decoded, 0, sizeof( decoded ) );
+    std::vector< char > decoded( url_length + 1, '\0' );
 
     unsigned int a, b;
     for( a = 0, b = a; a < url_length; ++a, ++b )
@@ -1092,7 +1092,7 @@ const std::string MISC::url_decode( const std::string& url )
         }
     }
 
-    return std::string( decoded );
+    return decoded.data();
 }
 
 
@@ -1123,7 +1123,7 @@ const std::string MISC::url_encode( const char* str, const size_t n )
             ( c != '@' ) &&
             ( c != '_' )){
 
-            snprintf( str_tmp, tmplng , "\%%%02x", c );
+            snprintf( str_tmp, tmplng , "%%%02x", c );
         }
         else {
             str_tmp[ 0 ] = c;
@@ -1259,7 +1259,7 @@ const std::string MISC::Iconv( const std::string& str, const std::string& coding
 //
 // 例 : &#9999; なら 戻り値 = 4、 offset = 2
 //
-const int MISC::spchar_number_ln( const char* in_char, int& offset )
+int MISC::spchar_number_ln( const char* in_char, int& offset )
 {
     int lng = 0;
     offset = 2;
@@ -1274,20 +1274,20 @@ const int MISC::spchar_number_ln( const char* in_char, int& offset )
     // 10 進数
     if( offset == 2 ){
 
-        // 最大5桁 (&#65536;)
-        for( lng = 0; lng <= 5; lng++ ){
+        // 最大7桁 (&#1114111;)
+        for( lng = 0; lng <= 7; lng++ ){
             if( in_char[ offset + lng ] < '0' || in_char[ offset + lng ] > '9' ) break;
         }
         
         // 桁数チェック
-        if( lng == 0 || lng == 6 ) return -1;
+        if( lng == 0 || lng == 8 ) return -1;
     }
 
     // 16 進数
     else{
 
-        // 最大4桁 (&#xFFFF;)
-        for( lng = 0; lng <= 4; lng++ ){
+        // 最大6桁 (&#x10FFFF;)
+        for( lng = 0; lng <= 6; lng++ ){
             if(
                 ! (
                     ( in_char[ offset + lng ] >= '0' && in_char[ offset + lng ] <= '9' )
@@ -1298,7 +1298,7 @@ const int MISC::spchar_number_ln( const char* in_char, int& offset )
         }
         
         // 桁数チェック
-        if( lng == 0 || lng == 5 ) return -1;
+        if( lng == 0 || lng == 7 ) return -1;
     }
 
     return lng;
@@ -1316,7 +1316,7 @@ const int MISC::spchar_number_ln( const char* in_char, int& offset )
 //
 // 戻り値 : 「&#数字;」の中の数字(int型)
 //
-const int MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
+int MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
 {
     char str_num[ 16 ];
 
@@ -1382,7 +1382,7 @@ const std::string MISC::decode_spchar_number( const std::string& str )
 //
 // 戻り値 : ucs2
 //
-const int MISC::utf8toucs2( const char* utfstr, int& byte )
+int MISC::utf8toucs2( const char* utfstr, int& byte )
 {
     int ucs2 = 0;
     byte = 0;
@@ -1435,22 +1435,22 @@ const int MISC::utf8toucs2( const char* utfstr, int& byte )
 //
 // 戻り値 : バイト数
 //
-const int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
+int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
 {
     int byte = 0;
 
-    if( ucs2 < 0x7f ){ // ascii
+    if( ucs2 <= 0x7f ){ // ascii
         byte = 1;
         utfstr[ 0 ] = ucs2;
     }
 
-    else if( ucs2 < 0x07ff ){
+    else if( ucs2 <= 0x07ff ){
         byte = 2;
         utfstr[ 0 ] = ( 0xc0 ) + ( ucs2 >> 6 );
         utfstr[ 1 ] = ( 0x80 ) + ( ucs2 & 0x3f );
     }
 
-    else if( ucs2 < 0xffff){
+    else if( ucs2 <= 0xffff){
         byte = 3;
         utfstr[ 0 ] = ( 0xe0 ) + ( ucs2 >> 12 );
         utfstr[ 1 ] = ( 0x80 ) + ( ( ucs2 >>6 ) & 0x3f );
@@ -1473,7 +1473,7 @@ const int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
 //
 // ucs2 の種類
 //
-const int MISC::get_ucs2mode( const int ucs2 )
+int MISC::get_ucs2mode( const int ucs2 )
 {
     if( ucs2 >= 0x0000 && ucs2 <= 0x007f ) return UCS2MODE_BASIC_LATIN;
     if( ucs2 >= 0x3040 && ucs2 <= 0x309f ) return UCS2MODE_HIRA;
@@ -1640,15 +1640,13 @@ const std::string MISC::getenv_limited( const char *name, const size_t size )
 {
     if( ! name || ! getenv( name ) ) return std::string();
 
-    char env[ size + 1 ];
-    env[ size ] = '\0';
-
-    strncpy( env, getenv( name ), size );
+    std::vector< char > env( size + 1, '\0' );
+    strncpy( env.data(), getenv( name ), size );
 
 #ifdef _WIN32
-    return recover_path( Glib::locale_to_utf8( std::string( env ) ) );
+    return recover_path( Glib::locale_to_utf8( std::string( env.data() ) );
 #else
-    return std::string( env );
+    return env.data();
 #endif
 }
 
@@ -1670,11 +1668,11 @@ const std::string MISC::recover_path( const std::string& str )
 #endif
 }
 
-const std::list< std::string > MISC::recover_path( const std::list< std::string >& list_str )
+std::vector< std::string > MISC::recover_path( std::vector< std::string >&& list_str )
 {
 #ifdef _WIN32
-    std::list< std::string > list_ret;
-    std::list< std::string >::const_iterator it = list_str.begin();
+    std::vector< std::string > list_ret;
+    std::vector< std::string >::const_iterator it = list_str.begin();
     for( ; it != list_str.end() ; ++it )
         list_ret.push_back( MISC::recover_path( *it ) );
     return list_ret;
@@ -1688,7 +1686,7 @@ const std::list< std::string > MISC::recover_path( const std::list< std::string 
 //
 // 文字列(utf-8)に全角英数字が含まれるか判定する
 //
-const bool MISC::has_widechar( const char* str )
+bool MISC::has_widechar( const char* str )
 {
     while( *str != '\0' ){
 

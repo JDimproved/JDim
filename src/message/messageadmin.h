@@ -42,9 +42,9 @@ namespace MESSAGE
       public:
 
         MessageAdmin( const std::string& url );
-        virtual ~MessageAdmin();
+        ~MessageAdmin();
 
-        virtual void save_session(){}
+        void save_session() override {}
 
         void show_entry_new_subject( bool show );
         std::string get_new_subject();
@@ -53,34 +53,35 @@ namespace MESSAGE
 
       protected:
 
-        virtual void set_status( const std::string& url, const std::string& stat, const bool force );
+        void set_status( const std::string& url, const std::string& stat, const bool force ) override;
 
         // ツールバー
-        virtual void show_toolbar();
+        void show_toolbar() override;
 
-        virtual void command_local( const COMMAND_ARGS& command );
+        void command_local( const COMMAND_ARGS& command ) override;
 
       private:
 
-        const bool delete_message( SKELETON::View * view );
+        bool delete_message( SKELETON::View * view );
 
         // 復元をしない
-        virtual void restore( const bool only_locked ){}
-        virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ){
+        void restore( const bool only_locked ) override {}
+        COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ) override
+        {
             COMMAND_ARGS ret;
             return ret;
         }
 
-        virtual void open_view( const COMMAND_ARGS& command );
-        virtual void switch_admin();
-        virtual void tab_left( const bool updated );
-        virtual void tab_right( const bool updated );
-        virtual void close_view( const std::string& url );
-        virtual void open_window();
-        virtual void close_window();
+        void open_view( const COMMAND_ARGS& command ) override;
+        void switch_admin() override;
+        void tab_left( const bool updated ) override;
+        void tab_right( const bool updated ) override;
+        void close_view( const std::string& url ) override;
+        void open_window() override;
+        void close_window() override;
 
         // タブの D&D 処理をしない
-        virtual void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ){}
+        void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ) override {}
     };
     
     MESSAGE::MessageAdmin* get_admin();

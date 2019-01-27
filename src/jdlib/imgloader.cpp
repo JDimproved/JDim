@@ -43,7 +43,7 @@ ImgLoader::~ImgLoader()
 Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 {
     ImgProvider& provider = ImgProvider::get_provider();
-    Glib::Mutex::Lock lock( provider.m_provider_lock );
+    std::lock_guard< std::mutex > lock( provider.m_provider_lock );
     Glib::RefPtr< ImgLoader > loader = provider.get_loader( file );
     if( ! loader ) {
         loader = Glib::RefPtr< ImgLoader >( new ImgLoader( file ) );
@@ -58,7 +58,7 @@ Glib::RefPtr< ImgLoader > ImgLoader::get_loader( const std::string& file )
 // 画像サイズ取得
 bool ImgLoader::get_size( int& width, int& height )
 {
-    Glib::Mutex::Lock lock( m_loader_lock );
+    std::lock_guard< std::mutex > lock( m_loader_lock );
     bool ret = load_imgfile( LOADLEVEL_SIZEONLY );
     width = m_width;
     height = m_height;
@@ -68,7 +68,7 @@ bool ImgLoader::get_size( int& width, int& height )
 Glib::RefPtr< Gdk::Pixbuf > ImgLoader::get_pixbuf( const bool pixbufonly )
 {
     Glib::RefPtr< Gdk::Pixbuf > ret;
-    Glib::Mutex::Lock lock( m_loader_lock );
+    std::lock_guard< std::mutex > lock( m_loader_lock );
     if( load_imgfile( pixbufonly ? LOADLEVEL_PIXBUFONLY : LOADLEVEL_NORMAL ) ) {
         ret = m_loader->get_pixbuf();
     }
@@ -78,7 +78,7 @@ Glib::RefPtr< Gdk::Pixbuf > ImgLoader::get_pixbuf( const bool pixbufonly )
 Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 {
     Glib::RefPtr< Gdk::PixbufAnimation > ret;
-    Glib::Mutex::Lock lock( m_loader_lock );
+    std::lock_guard< std::mutex > lock( m_loader_lock );
     if( load_imgfile( LOADLEVEL_NORMAL ) ) {
         ret = m_loader->get_animation();
     }
@@ -87,9 +87,9 @@ Glib::RefPtr< Gdk::PixbufAnimation > ImgLoader::get_animation()
 
 // 画像読み込み
 // 動画でpixbufonly = true の時はアニメーションさせない
-const bool ImgLoader::load( const bool pixbufonly )
+bool ImgLoader::load( const bool pixbufonly )
 {
-    Glib::Mutex::Lock lock( m_loader_lock );
+    std::lock_guard< std::mutex > lock( m_loader_lock );
     return load_imgfile( pixbufonly ? LOADLEVEL_PIXBUFONLY : LOADLEVEL_NORMAL );
 }
 
@@ -97,7 +97,7 @@ const bool ImgLoader::load( const bool pixbufonly )
 /* create PixbufLoader ************************************/
 
 // private, NOT thread safe
-const bool ImgLoader::load_imgfile( const int loadlevel )
+bool ImgLoader::load_imgfile( const int loadlevel )
 {
     if( m_loader ) {
         // キャッシュに読み込んだデータが十分かどうか
@@ -181,7 +181,7 @@ const bool ImgLoader::load_imgfile( const int loadlevel )
 #endif
         if( ! m_stop ){
             m_errmsg = err.what();
-            m_loader.clear();
+            m_loader.reset();
             ret = false;
         }
     }

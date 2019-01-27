@@ -8,6 +8,7 @@
 #include <glib.h>
 #include <string>
 #include <list>
+#include <vector>
 #include <ctime>
 
 #ifdef _WIN32
@@ -201,10 +202,10 @@ namespace CACHE
     size_t save_rawdata( const std::string& path, const char* data, const size_t n, const bool append = false );
 
     // ファイル情報
-    const int file_exists( const std::string& path );
+    int file_exists( const std::string& path );
     size_t get_filesize( const std::string& path );
     time_t get_filemtime( const std::string& path );
-    const bool set_filemtime( const std::string& path, const time_t mtime );
+    bool set_filemtime( const std::string& path, const time_t mtime );
 
     // ファイル操作
     bool jdmkdir( const std::string& path );
@@ -222,7 +223,7 @@ namespace CACHE
     // open_path はデフォルトの参照先
     // multi == true なら複数選択可能
     // 戻り値は選択されたファイルのpathのリスト
-    const std::list< std::string > open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type, const bool multi );
+    std::vector< std::string > open_load_diag( Gtk::Window* parent, const std::string& open_path, const int type, const bool multi );
 
     // 保存ファイル選択ダイアログを表示する
     std::string open_save_diag( Gtk::Window* parent, const std::string& dir, const std::string& name, const int type );

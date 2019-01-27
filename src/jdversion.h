@@ -13,21 +13,28 @@
 // svn 版の時は JDVERSION_SVN をdefineする
 //#define JDVERSION_SVN
 
-#define MAJORVERSION 2
-#define MINORVERSION 8
-#define MICROVERSION 9
-#define JDDATE    "150226"
+// gitのリポジトリを使ってビルドしているときはリビジョンから日付を取得する
+// リビジョンが参照できない場合はJDDATE_FALLBACKを使う
+// SEE ALSO: ENVIRONMENT::get_jdversion()
+
+#define MAJORVERSION 0
+#define MINORVERSION 1
+#define MICROVERSION 0
+#define JDDATE_FALLBACK    "20190122"
 #define JDTAG     ""
 
 //---------------------------------
 
-#define JDVERSION ( MAJORVERSION * 100 + MINORVERSION * 10 + MICROVERSION )
-#define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE ) )
+// FIXME: オンラインマニュアルはfork元のURLを参照している
+#define JDVERSION ( 289 )
+#define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE_FALLBACK ) )
 
 //---------------------------------
 
-#define JDCOMMENT "JD は gtkmm/GTK+2 を用いた2chブラウザです。"
-#define JDCOPYRIGHT "(c) 2006-2015 JD project"
+#define JDCOMMENT "JDim (JD improved) は gtkmm/GTK+ を用いた2chブラウザです。"
+#define JDCOPYRIGHT "(c) 2006-2015 JD project" "\n" \
+                    "(c) 2017-2019 yama-natuki" "\n" \
+                    "(c) 2019 JDimproved project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/"
@@ -76,7 +83,7 @@
 #define JDRC_VERSION_FMT(a,b,c,d,e) #a "." #b "." #c "-" d e
 #endif
 #define JDRC_VERSION_STR JDRC_VERSION_EXP( \
-            MAJORVERSION, MINORVERSION, MICROVERSION, JDTAG, JDDATE)
+            MAJORVERSION, MINORVERSION, MICROVERSION, JDTAG, JDDATE_FALLBACK)
 
 #define JDRC_FILEVERSION        JDRC_VERSION_STR
 #define JDRC_PRODUCTVERSION     JDRC_FILEVERSION

@@ -22,56 +22,56 @@ namespace DBTREE
       public:
 
         Board2ch( const std::string& root, const std::string& path_board,const std::string& name );
-        virtual ~Board2ch();
+        ~Board2ch() noexcept;
 
         // ユーザーエージェント
-        virtual const std::string& get_agent(); // ダウンロード用
-        virtual const std::string& get_agent_w(); // 書き込み用
+        const std::string& get_agent() override; // ダウンロード用
+        const std::string& get_agent_w() override; // 書き込み用
 
         // 読み込み用プロキシ
-        virtual const std::string get_proxy_host();
-        virtual const int get_proxy_port();
-        virtual const std::string get_proxy_basicauth();
+        const std::string get_proxy_host() override;
+        int get_proxy_port() override;
+        const std::string get_proxy_basicauth() override;
 
         // 書き込み用プロキシ
-        virtual const std::string get_proxy_host_w();
-        virtual const int get_proxy_port_w();
-        virtual const std::string get_proxy_basicauth_w();
+        const std::string get_proxy_host_w() override;
+        int get_proxy_port_w() override;
+        const std::string get_proxy_basicauth_w() override;
 
         // 書き込み用クッキー
-        virtual const std::string cookie_for_write();
+        const std::string cookie_for_write() override;
 
         // 書き込み時のリファラ
-        virtual const std::string get_write_referer();
+        const std::string get_write_referer() override;
 
         // 新スレ作成用のメッセージ変換
-        virtual const std::string create_newarticle_message( const std::string& subject,
-                                                             const std::string& name, const std::string& mail, const std::string& msg );
+        const std::string create_newarticle_message( const std::string& subject, const std::string& name,
+                                                     const std::string& mail, const std::string& msg ) override;
 
         // 新スレ作成用のbbscgi のURL
-        virtual const std::string url_bbscgi_new();
+        const std::string url_bbscgi_new() override;
         
         // 新スレ作成用のsubbbscgi のURL
-        virtual const std::string url_subbbscgi_new();
+        const std::string url_subbbscgi_new() override;
 
         // datの最大サイズ(Kバイト)
-        virtual const int get_max_dat_lng() const { return DEFAULT_MAX_DAT_LNG; }
+        int get_max_dat_lng() const override { return DEFAULT_MAX_DAT_LNG; }
 
       protected:
 
         // クッキー:HAP
-        virtual const std::string get_hap();
-        virtual void set_hap( const std::string& hap );
+        const std::string get_hap() override;
+        void set_hap( const std::string& hap ) override;
 
         // クッキー:HAPの更新 (クッキーをセットした時に実行)
-        virtual void update_hap();
+        void update_hap() override;
 
       private:
 
         // デフォルト最大レス数
-        virtual const int get_default_number_max_res() { return DEFAULT_NUMBER_MAX_2CH; }
+        int get_default_number_max_res() override { return DEFAULT_NUMBER_MAX_2CH; }
 
-        virtual ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached );
+        ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
     };
 }
 

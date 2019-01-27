@@ -46,7 +46,7 @@ AboutConfig::AboutConfig( Gtk::Window* parent )
 //
 void AboutConfig::pack_widgets()
 {
-    m_label.set_text( "動作保証外です。高度な設定を変更するとJDが誤作動する場合があります。" );
+    m_label.set_text( "動作保証外です。高度な設定を変更するとJDimが誤作動する場合があります。" );
 
     m_liststore = Gtk::ListStore::create( m_columns );
     m_treeview.set_model( m_liststore );
@@ -58,12 +58,12 @@ void AboutConfig::pack_widgets()
     column->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
     column->set_resizable( true );
     m_treeview.append_column( *column );
-    Gtk::CellRenderer *cell = column->get_first_cell_renderer();
+    Gtk::CellRenderer *cell = column->get_first_cell();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &AboutConfig::slot_cell_data ) );
 
     column = Gtk::manage( new Gtk::TreeViewColumn( "値", m_columns.m_col_value ) );
     m_treeview.append_column( *column );
-    cell = column->get_first_cell_renderer();
+    cell = column->get_first_cell();
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &AboutConfig::slot_cell_data ) );
 
     m_scrollwin.add( m_treeview );
@@ -85,7 +85,7 @@ void AboutConfig::pack_widgets()
 //
 void AboutConfig::slot_ok_clicked()
 {
-    SKELETON::MsgDiag mdiag( NULL, "一部の設定はJDを再起動しない限り有効になりません。JDを再起動してください。" );
+    SKELETON::MsgDiag mdiag( NULL, "一部の設定はJDimを再起動しない限り有効になりません。JDimを再起動してください。" );
     mdiag.run();
 }
 
@@ -118,7 +118,7 @@ void AboutConfig::append_rows()
 {
     // ネットワーク
     append_row( "■ ネットワーク" );
-    append_row(	"JD ホームページのアドレス", get_confitem()->url_jdhp, CONF_URL_JDHP );
+    append_row(	"JDim ホームページのアドレス", get_confitem()->url_jdimhp, CONF_URL_JDIMHP );
     append_row(	"板一覧を取得するサーバ", get_confitem()->url_bbsmenu, CONF_URL_BBSMENU );
     append_row( "2chログイン認証サーバのアドレス", get_confitem()->url_login2ch, CONF_LOGIN2CH );
     append_row( "p2ログイン認証サーバのアドレス", get_confitem()->url_loginp2, CONF_LOGINP2 );

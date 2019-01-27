@@ -33,15 +33,15 @@ namespace CORE
 
       protected:
 
-        virtual const std::string get_url();
-        virtual const std::string get_path(){ return std::string(); }
-        virtual const std::string get_charset(){ return m_charset; }
+        const std::string get_url() override;
+        const std::string get_path() override { return {}; }
+        const std::string get_charset() override { return m_charset; }
 
         // ロード用データ作成
-        virtual void create_loaderdata( JDLIB::LOADERDATA& data );
+        void create_loaderdata( JDLIB::LOADERDATA& data ) override;
 
         // ロード後に呼び出される
-        virtual void parse_data();
+        void parse_data() override;
     };
 }
 

@@ -174,7 +174,7 @@ std::string dir_select_favorite;
 
 
 // ツールバー等の項目名 -> ID 変換
-const int SESSION::parse_item( const std::string& item_name )
+int SESSION::parse_item( const std::string& item_name )
 {
     int item = ITEM_END;
 
@@ -712,16 +712,16 @@ void SESSION::save_session()
 }
 
 // ブート中
-const bool SESSION::is_booting(){ return booting; }
+bool SESSION::is_booting(){ return booting; }
 void SESSION::set_booting( const bool boot ){ booting = boot; }
 
 // 終了中
-const bool SESSION::is_quitting(){ return quitting; }
+bool SESSION::is_quitting(){ return quitting; }
 void SESSION::set_quitting( const bool quit ){ quitting = quit; }
 
 // 入れ替えなどのタブ操作中
 // ビューの再描画などを禁止する
-const bool SESSION::is_tab_operating( const std::string& url_admin )
+bool SESSION::is_tab_operating( const std::string& url_admin )
 {
     if( url_admin == URL_ARTICLEADMIN ) return tab_operating_article;
     if( url_admin == URL_IMAGEADMIN ) return tab_operating_image;
@@ -735,105 +735,105 @@ void SESSION::set_tab_operating( const std::string& url_admin, const bool operat
     if( url_admin == URL_IMAGEADMIN ) tab_operating_image = operating;
 }
 
-const int SESSION::get_mode_pane() { return mode_pane; }
+int SESSION::get_mode_pane() { return mode_pane; }
 void SESSION::set_mode_pane( const int mode ){ mode_pane = mode; }
 
-const bool SESSION::is_online(){ return mode_online; }
+bool SESSION::is_online(){ return mode_online; }
 void SESSION::set_online( const bool mode ){ mode_online = mode; }
 
-const bool SESSION::login2ch(){ return mode_login2ch; }
+bool SESSION::login2ch(){ return mode_login2ch; }
 void SESSION::set_login2ch( const bool login ){ mode_login2ch = login; }
 
-const bool SESSION::loginbe(){ return mode_loginbe; }
+bool SESSION::loginbe(){ return mode_loginbe; }
 void SESSION::set_loginbe( const bool login ){ mode_loginbe = login; }
 
-const bool SESSION::loginp2(){ return mode_loginp2; }
+bool SESSION::loginp2(){ return mode_loginp2; }
 void SESSION::set_loginp2( const bool login ){ mode_loginp2 = login; }
 
-const bool SESSION::show_sidebar(){ return win_show_sidebar; }
+bool SESSION::show_sidebar(){ return win_show_sidebar; }
 
-const bool SESSION::show_menubar(){ return win_show_menubar; }
+bool SESSION::show_menubar(){ return win_show_menubar; }
 void SESSION::set_show_menubar( const bool show ){ win_show_menubar = show; }
 
-const bool SESSION::get_show_main_toolbar(){ return show_main_toolbar; }
+bool SESSION::get_show_main_toolbar(){ return show_main_toolbar; }
 void SESSION::set_show_main_toolbar( const bool show ){ show_main_toolbar = show; }
-const int SESSION::get_toolbar_pos(){ return win_toolbar_pos; }
+int SESSION::get_toolbar_pos(){ return win_toolbar_pos; }
 void SESSION::set_toolbar_pos( const int pos ){ win_toolbar_pos = pos; }
 
-const bool SESSION::get_show_bbslist_toolbar(){ return show_bbslist_toolbar; }
+bool SESSION::get_show_bbslist_toolbar(){ return show_bbslist_toolbar; }
 void SESSION::set_show_bbslist_toolbar( const bool show ){ show_bbslist_toolbar = show; }
 
-const bool SESSION::get_show_board_toolbar(){ return show_board_toolbar; }
+bool SESSION::get_show_board_toolbar(){ return show_board_toolbar; }
 void SESSION::set_show_board_toolbar( const bool show ){ show_board_toolbar = show; }
 
-const bool SESSION::get_show_article_toolbar(){ return show_article_toolbar; }
+bool SESSION::get_show_article_toolbar(){ return show_article_toolbar; }
 void SESSION::set_show_article_toolbar( const bool show ){ show_article_toolbar = show; }
 
-const bool SESSION::get_show_board_tab(){ return show_board_tab; }
+bool SESSION::get_show_board_tab(){ return show_board_tab; }
 void SESSION::set_show_board_tab( const bool show ){ show_board_tab = show; }
 
-const bool SESSION::get_show_article_tab(){ return show_article_tab; }
+bool SESSION::get_show_article_tab(){ return show_article_tab; }
 void SESSION::set_show_article_tab( const bool show ){ show_article_tab = show; }
 
-const bool SESSION::get_show_main_statbar(){ return show_main_statbar; }
+bool SESSION::get_show_main_statbar(){ return show_main_statbar; }
 void SESSION::set_show_main_statbar( const bool show ){ show_main_statbar = show; }
 
-const int SESSION::focused_admin(){ return win_focused_admin; }
+int SESSION::focused_admin(){ return win_focused_admin; }
 void SESSION::set_focused_admin( const int admin ){ win_focused_admin = admin; }
-const int SESSION::focused_admin_sidebar(){ return win_focused_admin_sidebar; }
+int SESSION::focused_admin_sidebar(){ return win_focused_admin_sidebar; }
 void SESSION::set_focused_admin_sidebar( const int admin ){ win_focused_admin_sidebar = admin; }
 
 
 // 各windowの座標
-const int SESSION::get_x_win_main(){ return x_win_main; }
-const int SESSION::get_y_win_main(){ return y_win_main; }
+int SESSION::get_x_win_main(){ return x_win_main; }
+int SESSION::get_y_win_main(){ return y_win_main; }
 void SESSION::set_x_win_main( const int x ){ x_win_main = x; }
 void SESSION::set_y_win_main( const int y ){ y_win_main = y; }
 
-const int SESSION::get_x_win_img(){ return x_win_img; }
-const int SESSION::get_y_win_img(){ return y_win_img; }
+int SESSION::get_x_win_img(){ return x_win_img; }
+int SESSION::get_y_win_img(){ return y_win_img; }
 void SESSION::set_x_win_img( const int x ){ x_win_img = x; }
 void SESSION::set_y_win_img( const int y ){ y_win_img = y; }
 
-const int SESSION::get_x_win_mes(){ return x_win_mes; }
-const int SESSION::get_y_win_mes(){ return y_win_mes; }
+int SESSION::get_x_win_mes(){ return x_win_mes; }
+int SESSION::get_y_win_mes(){ return y_win_mes; }
 void SESSION::set_x_win_mes( const int x ){ x_win_mes = x; }
 void SESSION::set_y_win_mes( const int y ){ y_win_mes = y; }
 
 
 // 各windowのサイズ
-const int SESSION::get_width_win_main(){ return width_win_main; }
-const int SESSION::get_height_win_main(){ return height_win_main; }
+int SESSION::get_width_win_main(){ return width_win_main; }
+int SESSION::get_height_win_main(){ return height_win_main; }
 void SESSION::set_width_win_main( const int width ){ width_win_main = width; }
 void SESSION::set_height_win_main( const int height ){ height_win_main = height; }
 
-const int SESSION::get_width_win_img(){ return width_win_img; }
-const int SESSION::get_height_win_img(){ return height_win_img; }
+int SESSION::get_width_win_img(){ return width_win_img; }
+int SESSION::get_height_win_img(){ return height_win_img; }
 void SESSION::set_width_win_img( const int width ){ width_win_img = width; }
 void SESSION::set_height_win_img( const int height ){ height_win_img = height; }
 
-const int SESSION::get_width_win_mes(){ return width_win_mes; }
-const int SESSION::get_height_win_mes(){ return height_win_mes; }
+int SESSION::get_width_win_mes(){ return width_win_mes; }
+int SESSION::get_height_win_mes(){ return height_win_mes; }
 void SESSION::set_width_win_mes( const int width ){ width_win_mes = width; }
 void SESSION::set_height_win_mes( const int height ){ height_win_mes = height; }
 
 
 // 各window がフォーカスされているか
-const bool SESSION::is_focus_win_main(){ return focus_win_main; }
+bool SESSION::is_focus_win_main(){ return focus_win_main; }
 void SESSION::set_focus_win_main( const bool set ){ focus_win_main = set; }
 
-const bool SESSION::is_focus_win_img(){ return focus_win_img; }
+bool SESSION::is_focus_win_img(){ return focus_win_img; }
 void SESSION::set_focus_win_img( const bool set ){ focus_win_img = set; }
 
-const bool SESSION::is_focus_win_mes(){ return focus_win_mes; }
+bool SESSION::is_focus_win_mes(){ return focus_win_mes; }
 void SESSION::set_focus_win_mes( const bool set ){ focus_win_mes = set; }
 
 
 // 各window が最大化されているか
-const bool SESSION::is_maximized_win_main(){ return maximized_win_main; }
+bool SESSION::is_maximized_win_main(){ return maximized_win_main; }
 void SESSION::set_maximized_win_main( const bool set ){ maximized_win_main = set; }
 
-const bool SESSION::is_maximized_win_img(){ return maximized_win_img; }
+bool SESSION::is_maximized_win_img(){ return maximized_win_img; }
 void SESSION::set_maximized_win_img( const bool set ){ maximized_win_img = set; }
 
 bool SESSION::is_maximized_win_mes(){ return maximized_win_mes; }
@@ -841,44 +841,44 @@ void SESSION::set_maximized_win_mes( const bool set ){ maximized_win_mes = set; 
 
 
 // 各window が最小化されているか
-const bool SESSION::is_iconified_win_main(){ return iconified_win_main; }
+bool SESSION::is_iconified_win_main(){ return iconified_win_main; }
 void SESSION::set_iconified_win_main( const bool set ){ iconified_win_main = set; }
 
-const bool SESSION::is_iconified_win_img(){ return iconified_win_img; }
+bool SESSION::is_iconified_win_img(){ return iconified_win_img; }
 void SESSION::set_iconified_win_img( const bool set ){ iconified_win_img = set; }
 
-const bool SESSION::is_iconified_win_mes(){ return iconified_win_mes; }
+bool SESSION::is_iconified_win_mes(){ return iconified_win_mes; }
 void SESSION::set_iconified_win_mes( const bool set ){ iconified_win_mes = set; }
 
 
 // 各window が画面に表示されているか
-const bool SESSION::is_shown_win_main(){ return shown_win_main; }
+bool SESSION::is_shown_win_main(){ return shown_win_main; }
 void SESSION::set_shown_win_main( const bool set ){ shown_win_main = set; }
 
-const bool SESSION::is_shown_win_img(){ return shown_win_img; }
+bool SESSION::is_shown_win_img(){ return shown_win_img; }
 void SESSION::set_shown_win_img( const bool set ){ shown_win_img = set; }
 
-const bool SESSION::is_shown_win_mes(){ return shown_win_mes; }
+bool SESSION::is_shown_win_mes(){ return shown_win_mes; }
 void SESSION::set_shown_win_mes( const bool set ){ shown_win_mes = set; }
 
 
 // windowがフルスクリーンか
-const bool SESSION::is_full_win_main(){ return full_win_main; }
+bool SESSION::is_full_win_main(){ return full_win_main; }
 void SESSION::set_full_win_main( const bool set ){ full_win_main = set; }
 
 
 // ダイアログ表示中
-const bool SESSION::is_dialog_shown(){ return dialog_shown; }
+bool SESSION::is_dialog_shown(){ return dialog_shown; }
 void SESSION::set_dialog_shown( const bool set ){ dialog_shown = set; }
 
 void SESSION::set_show_sidebar( const bool showurl ){ win_show_sidebar = showurl; }
 
 
 // メインウィンドウのペインの敷居の位置
-const int SESSION::hpane_main_pos(){ return win_hpane_main_pos; }
-const int SESSION::vpane_main_pos(){ return win_vpane_main_pos; }
-const int SESSION::hpane_main_r_pos(){ return win_hpane_main_r_pos; }
-const int SESSION::vpane_main_mes_pos(){ return win_vpane_main_mes_pos; }
+int SESSION::hpane_main_pos(){ return win_hpane_main_pos; }
+int SESSION::vpane_main_pos(){ return win_vpane_main_pos; }
+int SESSION::hpane_main_r_pos(){ return win_hpane_main_r_pos; }
+int SESSION::vpane_main_mes_pos(){ return win_vpane_main_mes_pos; }
 
 void SESSION::set_hpane_main_pos( const int pos ){ win_hpane_main_pos = pos; }
 void SESSION::set_vpane_main_pos( const int pos ){ win_vpane_main_pos = pos; }
@@ -886,16 +886,16 @@ void SESSION::set_hpane_main_r_pos( const int pos ){ win_hpane_main_r_pos = pos;
 void SESSION::set_vpane_main_mes_pos( const int pos ){ win_vpane_main_mes_pos = pos; }
 
 // メインnotebookのページ番号
-const int SESSION::notebook_main_page(){ return win_notebook_main_page; }
+int SESSION::notebook_main_page(){ return win_notebook_main_page; }
 void SESSION::set_notebook_main_page( const int page ){ win_notebook_main_page = page; }
 
 // bbslistの開いてるページ番号
-const int SESSION::bbslist_page(){ return win_bbslist_page; }
+int SESSION::bbslist_page(){ return win_bbslist_page; }
 void SESSION::set_bbslist_page( const int page ){ win_bbslist_page = page; }
 
 
 // 前回閉じたときに開いていたboardのページ番号とURL
-const int SESSION::board_page(){ return win_board_page; }
+int SESSION::board_page(){ return win_board_page; }
 void SESSION::set_board_page( const int page ){ win_board_page = page; }
 const std::list< std::string >& SESSION::get_board_URLs(){ return board_urls; }
 void SESSION::set_board_URLs( const std::list< std::string >& urls ){ board_urls = urls; }
@@ -909,7 +909,7 @@ const std::list< std::string >& SESSION::get_board_switchhistory(){ return board
 void SESSION::set_board_switchhistory( const std::list< std::string >& hist ){ board_switchhistory = hist; }
 
 // 前回閉じたときに開いていたスレタブのページ番号とURL
-const int SESSION::article_page(){ return win_article_page; }
+int SESSION::article_page(){ return win_article_page; }
 void SESSION::set_article_page( const int page ){ win_article_page = page; }
 const std::list< std::string >& SESSION::get_article_URLs(){ return article_urls; }
 void SESSION::set_article_URLs( const std::list< std::string >& urls ){ article_urls = urls; }
@@ -923,7 +923,7 @@ const std::list< std::string >& SESSION::get_article_switchhistory(){ return art
 void SESSION::set_article_switchhistory( const std::list< std::string >& hist ){ article_switchhistory = hist; }
 
 // 前回閉じたときに開いていたimageのページ番号とURL
-const int SESSION::image_page(){ return win_image_page; }
+int SESSION::image_page(){ return win_image_page; }
 void SESSION::set_image_page( const int page ){ win_image_page = page; }
 const std::list< std::string >& SESSION::image_URLs(){ return image_urls; }
 void SESSION::set_image_URLs( const std::list< std::string >& urls ){ image_urls = urls; }
@@ -947,7 +947,7 @@ void SESSION::set_items_sidebar_toolbar_str( const std::string& items_str )
     items_sidebar_toolbar_str = items_str;
     items_sidebar_toolbar = parse_items( items_sidebar_toolbar_str );
 }
-const int SESSION::get_item_sidebar_toolbar( const int num ){ return items_sidebar_toolbar[ num ]; }
+int SESSION::get_item_sidebar_toolbar( const int num ){ return items_sidebar_toolbar[ num ]; }
 
 // メインツールバーの項目
 const std::string& SESSION::get_items_main_toolbar_str(){ return items_main_toolbar_str; }
@@ -968,7 +968,7 @@ void SESSION::set_items_main_toolbar_str( const std::string& items_str )
     items_main_toolbar_str = items_str;
     items_main_toolbar = parse_items( items_main_toolbar_str );
 }
-const int SESSION::get_item_main_toolbar( const int num ){ return items_main_toolbar[ num ]; }
+int SESSION::get_item_main_toolbar( const int num ){ return items_main_toolbar[ num ]; }
 
 // スレビューのツールバーの項目
 const std::string& SESSION::get_items_article_toolbar_str(){ return items_article_toolbar_str; }
@@ -990,7 +990,7 @@ void SESSION::set_items_article_toolbar_str( const std::string& items_str )
     items_article_toolbar_str = items_str;
     items_article_toolbar = parse_items( items_article_toolbar_str );
 }
-const int SESSION::get_item_article_toolbar( const int num ){ return items_article_toolbar[ num ]; }
+int SESSION::get_item_article_toolbar( const int num ){ return items_article_toolbar[ num ]; }
 
 // 検索ビューのツールバーの項目
 const std::string& SESSION::get_items_search_toolbar_str(){ return items_search_toolbar_str; }
@@ -1008,7 +1008,7 @@ void SESSION::set_items_search_toolbar_str( const std::string& items_str )
     items_search_toolbar_str = items_str;
     items_search_toolbar = parse_items( items_search_toolbar_str );
 }
-const int SESSION::get_item_search_toolbar( const int num ){ return items_search_toolbar[ num ]; }
+int SESSION::get_item_search_toolbar( const int num ){ return items_search_toolbar[ num ]; }
 
 // スレ一覧のツールバー項目
 const std::string& SESSION::get_items_board_toolbar_str(){ return items_board_toolbar_str; }
@@ -1030,7 +1030,7 @@ void SESSION::set_items_board_toolbar_str( const std::string& items_str )
     items_board_toolbar_str = items_str;
     items_board_toolbar = parse_items( items_board_toolbar_str );
 }
-const int SESSION::get_item_board_toolbar( const int num ){ return items_board_toolbar[ num ]; }
+int SESSION::get_item_board_toolbar( const int num ){ return items_board_toolbar[ num ]; }
 
 // 書き込みビューのツールバー項目
 const std::string& SESSION::get_items_msg_toolbar_str(){ return items_msg_toolbar_str; }
@@ -1050,7 +1050,7 @@ void SESSION::set_items_msg_toolbar_str( const std::string& items_str )
     items_msg_toolbar_str = items_str;
     items_msg_toolbar = parse_items( items_msg_toolbar_str );
 }
-const int SESSION::get_item_msg_toolbar( const int num ){ return items_msg_toolbar[ num ]; }
+int SESSION::get_item_msg_toolbar( const int num ){ return items_msg_toolbar[ num ]; }
 
 // スレ一覧の列項目
 const std::string& SESSION::get_items_board_col_str(){ return items_board_col_str; }
@@ -1072,7 +1072,7 @@ void SESSION::set_items_board_col_str( const std::string& items_str )
     items_board_col_str = items_str;
     items_board_col = parse_items( items_board_col_str );
 }
-const int SESSION::get_item_board_col( const int num ){ return items_board_col[ num ]; }
+int SESSION::get_item_board_col( const int num ){ return items_board_col[ num ]; }
 
 // スレ一覧のコンテキストメニュー項目
 const std::string& SESSION::get_items_board_menu_str(){ return items_board_menu_str; }
@@ -1101,7 +1101,7 @@ void SESSION::set_items_board_menu_str( const std::string& items_str )
     items_board_menu_str = items_str;
     items_board_menu = parse_items( items_board_menu_str );
 }
-const int SESSION::get_item_board_menu( const int num ){ return items_board_menu[ num ]; }
+int SESSION::get_item_board_menu( const int num ){ return items_board_menu[ num ]; }
 
 
 // スレビューのコンテキストメニュー項目
@@ -1131,36 +1131,36 @@ void SESSION::set_items_article_menu_str( const std::string& items_str )
     items_article_menu_str = items_str;
     items_article_menu = parse_items( items_article_menu_str );
 }
-const int SESSION::get_item_article_menu( const int num ){ return items_article_menu[ num ]; }
+int SESSION::get_item_article_menu( const int num ){ return items_article_menu[ num ]; }
 
 // board ビューの列幅
-const int SESSION::col_mark(){ return board_col_mark; }
-const int SESSION::col_id(){ return board_col_id; }
-const int SESSION::col_board(){ return board_col_board; }
-const int SESSION::col_subject(){ return board_col_subject; }
-const int SESSION::col_number(){ return board_col_number; }
-const int SESSION::col_load(){ return board_col_load; }
-const int SESSION::col_new(){ return board_col_new; }
-const int SESSION::col_since(){ return board_col_since; }
-const int SESSION::col_write(){ return board_col_write; }
-const int SESSION::col_access(){ return board_col_access; }
-const int SESSION::col_speed(){ return board_col_speed; }
-const int SESSION::col_diff(){ return board_col_diff; }
+int SESSION::col_mark(){ return board_col_mark; }
+int SESSION::col_id(){ return board_col_id; }
+int SESSION::col_board(){ return board_col_board; }
+int SESSION::col_subject(){ return board_col_subject; }
+int SESSION::col_number(){ return board_col_number; }
+int SESSION::col_load(){ return board_col_load; }
+int SESSION::col_new(){ return board_col_new; }
+int SESSION::col_since(){ return board_col_since; }
+int SESSION::col_write(){ return board_col_write; }
+int SESSION::col_access(){ return board_col_access; }
+int SESSION::col_speed(){ return board_col_speed; }
+int SESSION::col_diff(){ return board_col_diff; }
 
 // スレ一覧の since の表示モード
-const int SESSION::get_col_since_time() { return board_col_since_time; }
+int SESSION::get_col_since_time() { return board_col_since_time; }
 void SESSION::set_col_since_time( const int mode ){ board_col_since_time = mode; }
 
 // スレ一覧の 最終書込 の表示モード
-const int SESSION::get_col_write_time() { return board_col_write_time; }
+int SESSION::get_col_write_time() { return board_col_write_time; }
 void SESSION::set_col_write_time( const int mode ){ board_col_write_time = mode; }
 
 // スレ一覧の 最終取得 の表示モード
-const int SESSION::get_col_access_time() { return board_col_access_time; }
+int SESSION::get_col_access_time() { return board_col_access_time; }
 void SESSION::set_col_access_time( const int mode ){ board_col_access_time = mode; }
 
 // 現在開いているサイドバーのページ
-const int SESSION::get_sidebar_current_page()
+int SESSION::get_sidebar_current_page()
 {
     return BBSLIST::get_admin()->get_current_page();
 }
@@ -1209,16 +1209,16 @@ const std::string SESSION::get_article_current_url()
 
 
 // 埋め込みimage使用
-const bool SESSION::get_embedded_img(){ return embedded_img; }
+bool SESSION::get_embedded_img(){ return embedded_img; }
 void SESSION::set_embedded_img( const bool set ){ embedded_img = set; }
 
 
 // 埋め込みmessageを使用
-const bool SESSION::get_embedded_mes(){ return embedded_mes; }
+bool SESSION::get_embedded_mes(){ return embedded_mes; }
 void SESSION::set_embedded_mes( const bool set ){ embedded_mes = set; }
 
 // 書き込み後にmessageを閉じる
-const bool SESSION::get_close_mes(){ return close_mes; }
+bool SESSION::get_close_mes(){ return close_mes; }
 void SESSION::set_close_mes( const bool set ){ close_mes = set; }
 
 
@@ -1236,7 +1236,7 @@ void SESSION::set_dir_draft( const std::string& dir ){ dir_draft = dir; }
 
 
 // ポップアップメニュー表示中
-const bool SESSION::is_popupmenu_shown(){ return popupmenu_shown; }
+bool SESSION::is_popupmenu_shown(){ return popupmenu_shown; }
 void SESSION::set_popupmenu_shown( const bool shown ){ popupmenu_shown = shown; }
 
 
@@ -1277,7 +1277,7 @@ void SESSION::remove_delete_list( const std::string& url )
 
 
 // 実況実行中のスレか
-const bool SESSION::is_live( const std::string& url )
+bool SESSION::is_live( const std::string& url )
 {
 #ifdef _DEBUG
     std::cout << "SESSION::is_live live_urls == " << live_urls.size() << " url = " << url << std::endl;
@@ -1320,7 +1320,7 @@ void SESSION::remove_live( const std::string& url )
 
 
 // 画像のfitモード
-const int SESSION::get_img_fit_mode()
+int SESSION::get_img_fit_mode()
 {
     return img_fit_mode;
 }
