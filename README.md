@@ -7,7 +7,10 @@
 * [概要](#概要)
 * [動作プラットフォーム](#動作プラットフォーム)
 * [導入方法](#導入方法)
+  * [事前準備](#事前準備)
+  * [ビルド](#ビルド)
 * [通常の起動](#通常の起動)
+  * [コマンドライン オプション](#コマンドライン-オプション)
 * [多重起動について](#多重起動について)
 * [著作権](#著作権)
 * [ライセンス](#ライセンス)
@@ -33,6 +36,12 @@ WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定�
 
 
 ## 導入方法
+
+ソースコードからGTK2版 JDimをビルドします。
+GTK3版については[Issues][issues]を見てください。
+
+[issues]: https://github.com/JDimproved/JDim/issues
+
 
 ### 事前準備
 
@@ -67,11 +76,8 @@ sudo apt-get install build-essential automake autoconf-archive git libtool
 sudo apt-get install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
 ```
 
+
 ### ビルド
-
-GTK2版が利用できます。GTK3版については[Issues][issues]を見てください。
-
-[issues]: https://github.com/JDimproved/JDim/issues
 
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
