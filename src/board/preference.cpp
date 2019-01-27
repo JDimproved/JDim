@@ -273,7 +273,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
     m_edit_regex.set_text( str_regex );
 
-    m_label_warning.set_text( "ここでのあぼーん設定は「" +  DBTREE::board_name( get_url() ) + "」板の全スレに適用されます。\n\n設定のし過ぎは板内の全スレの表示速度を低下させます。\n\n設定のし過ぎに気を付けてください。\n\nなおNG IDはJDを再起動するとリセットされます。" );
+    m_label_warning.set_text(
+        "ここでのあぼーん設定は「" +  DBTREE::board_name( get_url() ) + "」板の全スレに適用されます。\n\n"
+        "設定のし過ぎは板内の全スレの表示速度を低下させます。\n\n設定のし過ぎに気を付けてください。\n\n"
+        "なおNG IDはJDimを再起動するとリセットされます。" );
 
     m_notebook_abone.append_page( m_label_warning, "注意" );
     m_notebook_abone.append_page( m_edit_id, "NG ID" );
@@ -425,7 +428,10 @@ void Preferences::slot_check_live()
 {
     if( m_check_live.get_active() ){
         m_spin_live.set_sensitive( true );
-        SKELETON::MsgDiag mdiag( NULL, "実況を許された板以外では実況しないようにして下さい。\n\n実況状態のまま閉じたスレはJD終了時に削除されます。詳しくはマニュアルの実況の項目を参照して下さい。",
+        SKELETON::MsgDiag mdiag( nullptr,
+                                 "実況を許された板以外では実況しないようにして下さい。\n\n"
+                                 "実況状態のまま閉じたスレはJDim終了時に削除されます。"
+                                 "詳しくはマニュアルの実況の項目を参照して下さい。",
                                  false, Gtk::MESSAGE_WARNING );
         mdiag.run();
     }

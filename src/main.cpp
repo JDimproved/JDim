@@ -73,9 +73,11 @@ void restore_bkup( const bool no_restore_bkup )
 
         if( ! no_restore_bkup ){
 
-            Gtk::MessageDialog* mdiag
-            = new Gtk::MessageDialog( "前回の起動時に正しくJDが終了されませんでした。\n\n板リストとお気に入りをバックアップファイルから復元しますか？\nいいえを押すとバックアップファイルを削除します。",
-                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog(
+                "前回の起動時に正しくJDimが終了されませんでした。\n\n"
+                "板リストとお気に入りをバックアップファイルから復元しますか？\n"
+                "いいえを押すとバックアップファイルを削除します。",
+                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             if( mdiag->run() == Gtk::RESPONSE_YES ) restore = true;
             delete mdiag;
         }
@@ -537,7 +539,8 @@ int main( int argc, char **argv )
         int exists = CACHE::file_exists( CACHE::path_conf() );
         if( exists == CACHE::EXIST_FILE || exists == CACHE::EXIST_DIR ){
 
-            std::string msg = "JDの設定ファイル(" + CACHE::path_conf() + ")は存在しますが読み込むことが出来ませんでした。\n\n起動しますか？";
+            std::string msg = "JDimの設定ファイル(" + CACHE::path_conf()
+                              + ")は存在しますが読み込むことが出来ませんでした。\n\n起動しますか？";
             Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg,
                                                                 false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             int ret = mdiag->run();
@@ -581,7 +584,7 @@ int main( int argc, char **argv )
         // マルチモードでなく、メインプロセスでもない場合は問い合わせる
         else if( ! multi_mode && ! iomonitor.is_main_process() )
         {
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDは既に起動しています。起動しますか？",
+            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDimは既に起動しています。起動しますか？",
                                                                 false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             int ret = mdiag->run();
             delete mdiag;
