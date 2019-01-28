@@ -694,7 +694,8 @@ void Core::slot_toggle_use_machi_offlaw()
 
     if( CONFIG::get_use_machi_offlaw() ){
 
-        SKELETON::MsgDiag mdiag( NULL, "offlaw.cgiを使用すると以下の問題が生じるので注意して下さい。\n\n(1) リモートホストが表示されません\n\n(2) バージョン2.3.0以前のJDではofflaw.cgiで取得したログは読めません" );
+        SKELETON::MsgDiag mdiag(
+            nullptr, "offlaw.cgiを使用するとリモートホストが表示されない問題が生じるので注意して下さい。" );
         mdiag.run();
     }
 }

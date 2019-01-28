@@ -7,8 +7,13 @@
 * [概要](#概要)
 * [動作プラットフォーム](#動作プラットフォーム)
 * [導入方法](#導入方法)
+  * [事前準備](#事前準備)
+  * [ビルド](#ビルド)
 * [通常の起動](#通常の起動)
+  * [コマンドライン オプション](#コマンドライン-オプション)
 * [多重起動について](#多重起動について)
+* [JDとの互換性](#JDとの互換性)
+  * [JDから移行する](#JDから移行する)
 * [著作権](#著作権)
 * [ライセンス](#ライセンス)
 * [連絡先](#連絡先)
@@ -33,6 +38,12 @@ WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定�
 
 
 ## 導入方法
+
+ソースコードからGTK2版 JDimをビルドします。
+GTK3版については[Issues][issues]を見てください。
+
+[issues]: https://github.com/JDimproved/JDim/issues
+
 
 ### 事前準備
 
@@ -67,11 +78,8 @@ sudo apt-get install build-essential automake autoconf-archive git libtool
 sudo apt-get install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
 ```
 
+
 ### ビルド
-
-GTK2版が利用できます。GTK3版については[Issues][issues]を見てください。
-
-[issues]: https://github.com/JDimproved/JDim/issues
 
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
@@ -168,7 +176,7 @@ $ JDIM_LOCK=~/mylock jdim
 
 ## 多重起動について
 
-JDはメインプロセス/サブプロセスという関係で動作する。
+JDimはメインプロセス/サブプロセスという関係で動作する。
 
 * メインプロセス: 指令を受け取る事が出来るプロセス
 * サブプロセス: 指令を出す事が出来るプロセス
@@ -193,6 +201,23 @@ JDはメインプロセス/サブプロセスという関係で動作する。
   ```
 
 注: サブプロセスを残したままメインプロセスを終了していた場合は次に起動したプロセスがメインプロセスとなる。
+
+
+## JDとの互換性
+
+JDimの環境設定はJDからフォーマットを継承しているので後方互換性があります。
+また、ユーザーインタフェースの変更は今のところありません。
+JDimで追加された不具合や機能の修正については[Pull requests][pr-merged]を見てください。
+
+[pr-merged]: https://github.com/JDimproved/JDim/pulls?q=is%3Apr+is%3Amerged
+
+
+### JDから移行する
+
+* デフォルトのキャッシュディレクトリ(`~/.jd`)を使用している場合はデータや設定をそのままJDimで使うことができます。
+* 環境変数`JD_CACHE`でキャッシュディレクトリを設定している場合はかわりに`JDIM_CACHE`を使用してください。
+* JDとJDimを併存させる(データや設定を共有しない)ためには環境変数によるキャッシュディレクトリの設定が必要です。
+  ([通常の起動](#通常の起動)を参照)
 
 
 ## 著作権
