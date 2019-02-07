@@ -107,6 +107,9 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
 #endif
 
     set_title( "フォントと色の詳細設定" );
+#if GTKMM_CHECK_VERSION(3,0,0)
+    set_default_size_ratio( 0.5 );
+#endif
     show_all_children();
 }
 
@@ -243,6 +246,12 @@ void FontColorPref::pack_widget()
     m_hbox_change_color.pack_end( m_bt_change_color , Gtk::PACK_SHRINK );
     m_vbox_color.pack_start( m_hbox_change_color, Gtk::PACK_SHRINK );
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+    m_chk_use_gtktheme_message.add_label( "書き込みビューの配色設定に GTKテーマ を用いる(_W)", true );
+    m_chk_use_gtktheme_message.set_active( CONFIG::get_use_message_gtktheme() );
+    m_vbox_color.pack_start( m_chk_use_gtktheme_message, Gtk::PACK_SHRINK );
+#endif
+
     m_chk_use_gtkrc_tree.add_label( "ツリービューの背景色設定に gtkrc を用いる(_T)", true ),
     m_chk_use_gtkrc_tree.set_active( CONFIG::get_use_tree_gtkrc() );
     m_chk_use_gtkrc_tree.signal_toggled().connect( sigc::mem_fun( *this, &FontColorPref::slot_chk_use_gtkrc_toggled ) );
@@ -279,6 +288,9 @@ void FontColorPref::slot_ok_clicked()
 
     CONFIG::set_strict_char_width( m_checkbutton_font.property_active() );
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+    CONFIG::set_use_message_gtktheme( m_chk_use_gtktheme_message.property_active() );
+#endif
     CONFIG::set_use_tree_gtkrc( m_chk_use_gtkrc_tree.property_active() );
     CONFIG::set_use_select_gtkrc( m_chk_use_gtkrc_selection.property_active() );
 
@@ -361,11 +373,13 @@ void FontColorPref::slot_checkbutton_font_toggled()
 
 void FontColorPref::slot_chk_use_gtkrc_toggled()
 {
+#if !GTKMM_CHECK_VERSION(3,0,0)
     if( m_chk_use_gtkrc_tree.property_active() )
     {
         SKELETON::MsgDiag mdiag( NULL, WARNING_GTKRC_TREE );
         mdiag.run();
     }
+#endif
 }
 
 
@@ -547,11 +561,16 @@ void FontColorPref::slot_reset_color()
 //
 void FontColorPref::slot_reset_all_colors()
 {
+#if !GTKMM_CHECK_VERSION(3,0,0)
     if( m_chk_use_gtkrc_tree.property_active() )
     {
         SKELETON::MsgDiag mdiag( NULL, WARNING_GTKRC_TREE );
         mdiag.run();
     }
+#endif
+#if GTKMM_CHECK_VERSION(3,0,0)
+    m_chk_use_gtktheme_message.set_active( CONFIG::CONF_USE_MESSAGE_GTKTHEME );
+#endif
     m_chk_use_gtkrc_tree.set_active( CONFIG::CONF_USE_TREE_GTKRC );
     m_chk_use_gtkrc_selection.set_active( CONFIG::CONF_USE_SELECT_GTKRC );
 

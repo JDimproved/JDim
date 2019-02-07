@@ -18,6 +18,8 @@
 
 using namespace SKELETON;
 
+#if !GTKMM_CHECK_VERSION(3,0,0)
+
 //////////////////////////////////////////
 //
 // gtknotebook.c( Revision 19311, 2008-01-06 ) より引用
@@ -98,6 +100,8 @@ struct _GtkNotebookPage
   gulong notify_visible_handler;
 };
 
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
+
 
 //////////////////////////////////////////
 //
@@ -105,6 +109,7 @@ struct _GtkNotebookPage
 
 
 // 描画本体
+#if !GTKMM_CHECK_VERSION(3,0,0)
 bool TabNotebook::paint( GdkEventExpose* event )
 {
     GtkNotebook *notebook = gobj();
@@ -169,9 +174,11 @@ bool TabNotebook::paint( GdkEventExpose* event )
 
     return true;
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 // タブ描画
+#if !GTKMM_CHECK_VERSION(3,0,0)
 void TabNotebook::draw_tab( const GtkNotebook *notebook,
                             const GtkNotebookPage *page,
                             GdkRectangle *area,
@@ -211,9 +218,11 @@ void TabNotebook::draw_tab( const GtkNotebook *notebook,
             );
     }
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 // 矢印(スクロール)マークの描画
+#if !GTKMM_CHECK_VERSION(3,0,0)
 void TabNotebook::draw_arrow( GtkWidget *widget,
                               const GtkNotebook *notebook,
                               const Gdk::Rectangle& rect,
@@ -264,10 +273,12 @@ void TabNotebook::draw_arrow( GtkWidget *widget,
                               arrow_rect.height
         );
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 // 矢印マークの位置、幅、高さを取得
 // before : true ならタブの左側に表示される矢印
+#if !GTKMM_CHECK_VERSION(3,0,0)
 void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle, const gboolean before )
 {
     GdkRectangle event_window_pos;
@@ -289,9 +300,11 @@ void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook
         rectangle->y = event_window_pos.y + ( event_window_pos.height - rectangle->height ) / 2;
     }
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 // タブ描画領域の位置、幅、高さを取得
+#if !GTKMM_CHECK_VERSION(3,0,0)
 gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle )
 {
     GtkNotebookPage* visible_page = NULL;
@@ -321,6 +334,7 @@ gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, const 
 
     return FALSE;
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 
@@ -360,6 +374,7 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
 
     add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
+    add_events( Gdk::SCROLL_MASK );
 
     // DnD設定
     // ドロップ側に設定する
@@ -369,11 +384,22 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
     targets.push_back( Gtk::TargetEntry( DNDTARGET_TAB, Gtk::TARGET_SAME_APP, 0 ) );
     drag_dest_set( targets, Gtk::DEST_DEFAULT_MOTION | Gtk::DEST_DEFAULT_DROP );
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+#if GTKMM_CHECK_VERSION(3,12,0)
+    m_tab_mrg = get_margin_start();
+#else
+    m_tab_mrg = get_margin_left();
+#endif
+    if( m_tab_mrg <= 0 ) {
+        m_tab_mrg = get_style_context()->get_margin().get_left();
+    }
+#else
     Glib::RefPtr< Gtk::RcStyle > rcst = get_modifier_style();
     Glib::RefPtr< Gtk::Style > st = get_style();
 
     m_tab_mrg = rcst->get_xthickness() * 2;
     if( m_tab_mrg <= 0 ) m_tab_mrg = st->get_xthickness() * 2;
+#endif // GTKMM_CHECK_VERSION(3,0,0)
 
     m_pre_width = get_width();
 }
@@ -563,6 +589,60 @@ void TabNotebook::calc_tabsize()
     std::cout << "TabNotebook::calc_tabsize\n";
 #endif
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+    // gtk3は実装の詳細がバージョンによって異なるためタブの代わりにラベルの領域を取得する
+    const int n_pages = get_n_pages();
+    // ラベルの領域とタブの領域のオフセットを概算する
+    // GTKテーマが変更されるとオフセットが変わる可能性があるので毎回計算する
+    // XXX: この修正はラベルの左右の余白の大きさが同じであることを前提とする
+    int offset = 0;
+
+    if( n_pages > 1 ) {
+        const auto* tab1 = get_tablabel( 0 );
+        for( int i = 1; i < n_pages; ++i ) {
+            const auto* const tab2 = get_tablabel( i );
+            if( tab1 && tab2 && tab1->get_mapped() && tab2->get_mapped() ) {
+                const auto alloc1 = tab1->get_allocation();
+                const auto alloc2 = tab2->get_allocation();
+                offset = alloc2.get_x() - ( alloc1.get_x() + alloc1.get_width() );
+#ifdef _DEBUG
+                std::cout << "computed offset = " << offset << std::endl;
+#endif
+                break;
+            }
+            tab1 = tab2;
+        }
+    }
+
+    for( int i = 0; i < n_pages; ++i ) {
+        auto* const tab_label = get_tablabel( i );
+        if( tab_label ) {
+            int tab_x = -1;
+            int tab_y = -1;
+            int tab_w = -1;
+            int tab_h = -1;
+
+            if( tab_label->get_mapped() ) {
+                Gdk::Rectangle rect = tab_label->get_allocation();
+
+                tab_x = rect.get_x() - ( offset / 2 );
+                tab_y = rect.get_y();
+                tab_w = rect.get_width() + offset;
+                tab_h = rect.get_height();
+
+                m_tab_mrg = 0;
+            }
+
+#ifdef _DEBUG
+            std::cout << "page = " << i << " x = " << tab_x << " w = " << tab_w << " mrg = " << m_tab_mrg << std::endl;
+#endif
+            tab_label->set_tab_x( tab_x );
+            tab_label->set_tab_y( tab_y );
+            tab_label->set_tab_width( tab_w );
+            tab_label->set_tab_height( tab_h );
+        }
+    }
+#else // !GTKMM_CHECK_VERSION(3,0,0)
     GtkNotebook *notebook = gobj();
     GList * children = notebook->children;
 
@@ -602,6 +682,7 @@ void TabNotebook::calc_tabsize()
             tab->set_tab_height( tab_h );
         }
     }
+#endif // GTKMM_CHECK_VERSION(3,0,0)
 }
 
 
@@ -748,6 +829,7 @@ bool TabNotebook::adjust_tabwidth()
 //
 // タブの高さ、幅、位置を取得 ( 描画用 )
 //
+#if !GTKMM_CHECK_VERSION(3,0,0)
 void TabNotebook::get_alloc_tab( Alloc_NoteBook& alloc )
 {
     alloc.x_tab = 0;
@@ -767,15 +849,18 @@ void TabNotebook::get_alloc_tab( Alloc_NoteBook& alloc )
         alloc.height_tab = notebook->cur_page->allocation.height;
     }
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 //
 // 描画イベント
 //
+#if !GTKMM_CHECK_VERSION(3,0,0)
 bool TabNotebook::on_expose_event( GdkEventExpose* event )
 {
     return paint( event );
 }
+#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 

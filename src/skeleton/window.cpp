@@ -46,6 +46,10 @@ enum
 
 using namespace SKELETON;
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+constexpr const char* JDWindow::s_css_stat_label;
+#endif
+
 // メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
@@ -94,6 +98,18 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     m_gtkwindow = GTK_WINDOW( gobj() );
     gpointer parent_class = g_type_class_peek_parent( G_OBJECT_GET_CLASS( gobj() ) );
     m_grand_parent_class = g_type_class_peek_parent( parent_class );
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+    auto context = m_label_stat.get_style_context();
+    context->add_class( s_css_stat_label );
+    context->add_provider( m_stat_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
+
+    if( need_mginfo ) {
+        context = m_mginfo.get_style_context();
+        context->add_class( s_css_stat_label );
+        context->add_provider( m_stat_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
+    }
+#endif // GTKMM_CHECK_VERSION(3,0,0)
 }
 
 
@@ -437,12 +453,31 @@ void JDWindow::set_mginfo( const std::string& mginfo )
 // ステータスの色を変える
 void JDWindow::set_status_color( const std::string& color )
 {
-#if GTKMM_CHECK_VERSION(2,5,0)
-
 #ifdef _DEBUG
     std::cout << "JDWindow::set_status_color " << color << std::endl;
 #endif
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+    Glib::ustring css;
+    if( color.empty() ) {
+        // テキスト部分が上手く配色されないGTKテーマがあるので明示的に設定する
+        css = Glib::ustring::compose( u8".%1:not(:selected) { color: unset; }", s_css_stat_label );
+    }
+    else {
+        css = Glib::ustring::compose(
+            u8".%1:not(:selected), %1:active:not(:selected) { color: white; background-color: %2; }",
+            s_css_stat_label, Gdk::RGBA( color ).to_string() );
+    }
+    try {
+        m_stat_provider->load_from_data( css );
+    }
+    catch( Gtk::CssProviderError& err ) {
+#ifdef _DEBUG
+        std::cout << "ERROR:JDWindow::set_status_color fail " << err.what() << std::endl;
+#endif
+    }
+
+#elif GTKMM_CHECK_VERSION(2,5,0)
     if( color.empty() ){
 
         if( m_label_stat_ebox.get_visible_window() ){

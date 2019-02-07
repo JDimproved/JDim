@@ -28,7 +28,11 @@ void Tooltip::modify_font_label( const std::string& fontname )
 {
     Pango::FontDescription pfd( fontname );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
+#if GTKMM_CHECK_VERSION(3,0,0)
+    m_label.override_font( pfd );
+#else
     m_label.modify_font( pfd );
+#endif
 }
 
 
@@ -76,8 +80,12 @@ void Tooltip::show_tooltip()
 #endif
 
     int x_mouse, y_mouse;
+#if GTKMM_CHECK_VERSION(3,0,0)
+    Gdk::Display::get_default()->get_device_manager()->get_client_pointer()->get_position( x_mouse, y_mouse );
+#else
     Gdk::ModifierType mod;
     Gdk::Display::get_default()->get_pointer( x_mouse, y_mouse,  mod );
+#endif
 
     // 一度画面外にshow()して幅を確定してから、もし m_min_width よりも
     // 幅が大きければマウスの位置に移動する

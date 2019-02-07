@@ -1,6 +1,7 @@
 // AA 選択ポップアップメニュークラス
 
 //#define _DEBUG
+#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "aamenu.h"
@@ -14,6 +15,10 @@
 #include "aamanager.h"
 #include "cache.h"
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+#include <gdk/gdkkeysyms-compat.h>
+#endif
+
 using namespace SKELETON;
 
 AAMenu::AAMenu( Gtk::Window& parent )
@@ -25,9 +30,17 @@ AAMenu::AAMenu( Gtk::Window& parent )
 
     Pango::FontDescription pfd( CONFIG::get_fontname( FONT_MESSAGE ) );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
+#if GTKMM_CHECK_VERSION(3,0,0)
+    m_textview.override_font( pfd );
+    m_textview.override_color( Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_SELECTION ) ),
+                               Gtk::STATE_FLAG_NORMAL );
+    m_textview.override_background_color( Gdk::RGBA( CONFIG::get_color( COLOR_BACK_SELECTION ) ),
+                                          Gtk::STATE_FLAG_NORMAL );
+#else
     m_textview.modify_font( pfd );
     m_textview.modify_text( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_CHAR_SELECTION ) ) );
     m_textview.modify_base( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_BACK_SELECTION ) ) );
+#endif
 
     m_popup.sig_configured().connect( sigc::mem_fun( *this, &AAMenu::slot_configured_popup ) );
     m_popup.add( m_textview );

@@ -3,6 +3,8 @@
 #ifndef _EDITVIEW_H
 #define _EDITVIEW_H
 
+#include "gtkmmversion.h"
+
 #include <gtkmm.h>
 
 #include "control/control.h"
@@ -121,6 +123,10 @@ namespace SKELETON
     class EditView : public Gtk::ScrolledWindow
     {
         EditTextView m_textview;
+#if GTKMM_CHECK_VERSION(3,0,0)
+        static constexpr const char* s_css_classname = u8"jd-editview";
+        Glib::RefPtr< Gtk::CssProvider > m_provider = Gtk::CssProvider::create();
+#endif
 
     public:
 
@@ -128,6 +134,11 @@ namespace SKELETON
             set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
 
             add( m_textview );
+#if GTKMM_CHECK_VERSION(3,0,0)
+            auto context = m_textview.get_style_context();
+            context->add_class( s_css_classname );
+            context->add_provider( m_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
+#endif
 
             show_all_children();
         }
@@ -150,15 +161,28 @@ namespace SKELETON
 
         void set_wrap_mode( Gtk::WrapMode wrap_mode ){ m_textview.set_wrap_mode( wrap_mode ); }
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+        const char* get_css_classname() const noexcept { return s_css_classname; }
+        // EditTextViewのスタイルを更新する
+        void update_style( const Glib::ustring& custom_css );
+#else
         void modify_text( Gtk::StateType state, const Gdk::Color& color ){ m_textview.modify_text( state, color ); }
         void modify_base( Gtk::StateType state, const Gdk::Color& color ){ m_textview.modify_base( state, color ); }
+#endif
 
         void insert_str( const std::string& str, bool use_br ){ m_textview.insert_str( str, use_br ); }
 
         void set_editable( bool editable ){ m_textview.set_editable( editable ); }
         void set_accepts_tab( bool accept ){ m_textview.set_accepts_tab( accept ); }
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+        void modify_font( const Pango::FontDescription& font_desc )
+        {
+            m_textview.override_font( font_desc );
+        }
+#else
         void modify_font( const Pango::FontDescription& font_desc ){ m_textview.modify_font( font_desc ); }
+#endif
 
         void focus_view(){ m_textview.grab_focus(); }
 

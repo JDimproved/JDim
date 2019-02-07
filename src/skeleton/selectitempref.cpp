@@ -1,6 +1,7 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
+#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "selectitempref.h"
@@ -10,6 +11,10 @@
 
 #include "global.h"
 #include "session.h"
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+#include <gdk/gdkkeysyms-compat.h>
+#endif
 
 using namespace SKELETON;
 

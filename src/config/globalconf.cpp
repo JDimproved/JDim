@@ -88,6 +88,9 @@ void CONFIG::set_color( const int id, const std::string& color )
 
 void CONFIG::reset_colors(){ get_confitem()->reset_colors(); }
 
+bool CONFIG::get_use_message_gtktheme() { return get_confitem()->use_message_gtktheme; }
+void CONFIG::set_use_message_gtktheme( const bool use ) { get_confitem()->use_message_gtktheme = use; }
+
 bool CONFIG::get_use_tree_gtkrc(){ return get_confitem()->use_tree_gtkrc; }
 void CONFIG::set_use_tree_gtkrc( const bool use ){ get_confitem()->use_tree_gtkrc = use; }
 

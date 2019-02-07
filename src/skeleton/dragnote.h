@@ -119,8 +119,10 @@ namespace SKELETON
         void clock_in();
         void focus_out();
 
+#if !GTKMM_CHECK_VERSION(3,0,0)
         // 枠描画
         void draw_box( Gtk::Widget* widget, GdkEventExpose* event );
+#endif
 
         bool get_show_tabs() const { return m_show_tabs; }
         void set_show_tabs( bool show_tabs );
@@ -168,11 +170,15 @@ namespace SKELETON
 
       private:
 
+#if !GTKMM_CHECK_VERSION(3,0,0)
         bool on_expose_event( GdkEventExpose* event ) override;
+#endif
 
+#if !GTKMM_CHECK_VERSION(3,0,0)
         // DragableNoteBook を構成している各Notebookの高さ
         // 及びタブの高さと位置を取得 ( 枠の描画用 )
         const Alloc_NoteBook get_alloc_notebook();
+#endif
 
         // ツールバー取得
         SKELETON::ToolBar* get_toolbar( int page );

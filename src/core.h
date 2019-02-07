@@ -7,6 +7,8 @@
 #ifndef _CORE_H
 #define _CORE_H
 
+#include "gtkmmversion.h"
+
 #include <gtkmm.h>
 #include <list>
 #include <string>
@@ -21,6 +23,10 @@
 #include "command_args.h"
 
 class JDWinMain;
+
+#if GTKMM_CHECK_VERSION(3,0,0)
+using GtkNotebookPage = Gtk::Widget;
+#endif
 
 
 namespace BOARD
@@ -141,8 +147,10 @@ namespace CORE
 
         void set_maintitle();
 
+#if !GTKMM_CHECK_VERSION(3,0,0)
         void slot_realize();
         void slot_style_changed( Glib::RefPtr< Gtk::Style > );
+#endif
 
         void slot_activate_menubar();
         void slot_activate_historymenu();

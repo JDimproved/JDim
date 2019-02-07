@@ -9,6 +9,7 @@
 * [導入方法](#導入方法)
   * [事前準備](#事前準備)
   * [ビルド](#ビルド)
+  * [GTK3版について](#GTK3版について)
 * [通常の起動](#通常の起動)
   * [コマンドライン オプション](#コマンドライン-オプション)
 * [多重起動について](#多重起動について)
@@ -39,19 +40,23 @@ WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定�
 
 ## 導入方法
 
-ソースコードからGTK2版 JDimをビルドします。
-GTK3版については[Issues][issues]を見てください。
-
-[issues]: https://github.com/JDimproved/JDim/issues
+ソースコードからJDimをビルドします。**デフォルトの設定ではGTK2版がビルド**されますのでご注意ください。
+詳細は [INSTALL](./INSTALL) にも書いてあります。
 
 
 ### 事前準備
 
-一度だけやればいい。
+ツールチェーンとライブラリをインストールします。一度インストールすれば次回から事前準備はいりません。
 
 #### Redhat系
+*GTK2版*
 ```sh
 dnf install gtkmm24-devel gnutls-devel libgcrypt-devel libSM-devel libtool automake autoconf-archive git
+```
+
+*GTK3版* - `gtkmm24-devel` のかわりに `gtkmm30-devel` をインストールします。
+```sh
+dnf install gtkmm30-devel gnutls-devel libgcrypt-devel libSM-devel libtool automake autoconf-archive git
 ```
 
 #### Debian系
@@ -72,15 +77,22 @@ sudo apt-get install build-essential automake autoconf-archive git
 sudo apt-get install build-essential automake autoconf-archive git libtool
 ```
 
-必要なライブラリを入れる。(抜けがあるかも)
+必要なライブラリを入れます。(抜けがあるかも)
 
+*GTK2版*
 ```sh
 sudo apt-get install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
+```
+
+*GTK3版* - `libgtkmm-2.4-dev` のかわりに `libgtkmm-3.0-dev` をインストールします。
+```sh
+sudo apt-get install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
 ```
 
 
 ### ビルド
 
+*GTK2版 (デフォルト)*
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 cd jdim
@@ -89,12 +101,30 @@ autoreconf -i
 make
 ```
 
-実行するには直接 src/jdim を起動するか手動で /usr/bin あたりに src/jdim を cp する。
+*GTK3版* - ./configure にオプション `--with-gtkmm3` を追加します。
+```sh
+git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
+cd jdim
+autoreconf -i
+./configure --with-gtkmm3
+make
+```
+
+実行するには直接 src/jdim を起動するか手動で /usr/bin あたりに src/jdim を cp します。
+
+#### Arch Linux
+GTK3版のビルドファイルはAURで公開されています。(Thanks to @naniwaKun.)  
+https://aur.archlinux.org/packages/jdim-git/
+
+AUR Helper [yay](https://github.com/Jguer/yay) でインストール
+```sh
+yay -S jdim-git
+```
 
 
 ### 参考
 
-詳しいインストールの方法は [本家のwiki](https://ja.osdn.net/projects/jd4linux/wiki/OS%2f%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95) を参照。
+詳しいインストールの方法は [本家のwiki](https://ja.osdn.net/projects/jd4linux/wiki/OS%2f%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95) を参照してください。
 
 
 ### Tips
@@ -126,36 +156,61 @@ make
   3. `make CXXFLAGS+="-std=c++11"` でビルドする。
 
 
+### GTK3版について
+
+GTK3版はGTK2版同様のルック・アンド・フィールになるように実装していますが、
+技術的な問題やテスト不足から完全な再現はできていません。
+もしお気づきの点などがございましたらご指摘いただけると幸いです。
+
+#### マウスホイール操作
+板一覧やスレ一覧でマウスホイールによるスクロールが動作しないことがあります。
+環境変数 `GDK_CORE_DEVICE_EVENTS=1` を設定してjdimを起動するとマウスホイール機能が使えます。
+```sh
+# シェルからJDimを起動する場合
+GDK_CORE_DEVICE_EVENTS=1 ./src/jdim
+```
+
+#### GTK2版から変更/追加された部分
+* 書き込みビューの配色にGTKテーマを使う設定が追加された。
+  1. メニューバーの`設定(C) > フォントと色(F) > 詳細設定(R)...`からフォントと色の詳細設定を開く
+  2. `色の設定`タブにある`書き込みビューの配色設定に GTKテーマ を用いる(W)`をチェックして適用する
+
+#### GTK3版の既知の問題
+* マウスホイールでタブを切り替える機能が動作しない環境がある。(gtk 3.20以上?)
+* タブのドラッグ・アンド・ドロップの矢印ポップアップの背景が透過しない環境がある。
+  (アルファチャンネルが利用できない環境)
+
+
 ## 通常の起動
 
-使い方は以下のとおり。
+使い方は以下のとおりです。
 
 ```sh
 $ jdim [OPTION] [URL,FILE]
 ```
 
-引数にURLを付けて起動する事も出来るので、他のアプリケーションから外部コマンドとしてURLを開く事などが出来る。
-(JDimが扱う事の出来るURLでない場合は設定されているWebブラウザに渡される)
+引数にURLを付けて起動する事も出来るので、他のアプリケーションから外部コマンドとしてURLを開く事などが出来ます。
+(JDimが扱う事の出来るURLでない場合は設定されているWebブラウザに渡されます)
 
 ```sh
 $ jdim http://pc99.2ch.net/test/read.cgi/linux/1234567890/
 ```
 
-ローカルにあるdatファイルを指定して、一時的にスレビュー表示させることも出来る。
+ローカルにあるdatファイルを指定して、一時的にスレビュー表示させることも出来ます。
 
 ```sh
 $ jdim ./12345.dat
 ```
 
-環境変数 `JDIM_CACHE` でキャッシュディレクトリの位置を変更・指定することが可能。
-指定しなければ `~/.jd` がキャッシュディレクトリになる。
+環境変数 `JDIM_CACHE` でキャッシュディレクトリの位置を変更・指定することが可能です。
+指定しなければ `~/.jd` がキャッシュディレクトリになります。
 
 ```sh
 $ JDIM_CACHE=~/.mycache jdim
 ```
 
-環境変数 `JDIM_LOCK` でロックファイルの位置を変更・指定することが可能。
-指定しなければ `~/.jd/JDLOCK` がロックファイルになる。
+環境変数 `JDIM_LOCK` でロックファイルの位置を変更・指定することが可能です。
+指定しなければ `~/.jd/JDLOCK` がロックファイルになります。
 
 ```sh
 $ JDIM_LOCK=~/mylock jdim
@@ -176,16 +231,16 @@ $ JDIM_LOCK=~/mylock jdim
 
 ## 多重起動について
 
-JDimはメインプロセス/サブプロセスという関係で動作する。
+JDimはメインプロセス/サブプロセスという関係で動作します。
 
 * メインプロセス: 指令を受け取る事が出来るプロセス
 * サブプロセス: 指令を出す事が出来るプロセス
 
-通常は最初に起動した物がメインプロセスとなり、メインプロセスは1つだけ存在する事が出来る。
-メインプロセスが存在する状態で起動したプロセスはサブプロセスとして扱われ、複数存在させる事も可能。
-なお、指令を受け取るのはメインプロセスのみなので、指令を出す側のサブプロセスでURLは開かれない。
+通常は最初に起動した物がメインプロセスとなり、メインプロセスは1つだけ存在する事が出来ます。
+メインプロセスが存在する状態で起動したプロセスはサブプロセスとして扱われ、複数存在させる事も可能です。
+なお、指令を受け取るのはメインプロセスのみなので、指令を出す側のサブプロセスでURLは開かれません。
 
-以下のコマンドを使い分ける事でサブプロセスの起動のしかたをコントロール出来る。
+以下のコマンドを使い分ける事でサブプロセスの起動のしかたをコントロール出来ます。
 
 * a. 起動するかどうか確認してサブプロセスを起動
   ```sh
@@ -200,7 +255,7 @@ JDimはメインプロセス/サブプロセスという関係で動作する。
   $ jdim -m http://pc99.2ch.net/test/read.cgi/linux/1234567890/
   ```
 
-注: サブプロセスを残したままメインプロセスを終了していた場合は次に起動したプロセスがメインプロセスとなる。
+注: サブプロセスを残したままメインプロセスを終了していた場合は次に起動したプロセスがメインプロセスとなります。
 
 
 ## JDとの互換性

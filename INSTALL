@@ -6,6 +6,7 @@
   必須環境
 
   ・gtkmm-2.4.8 以上
+  ・gtkmm-3.0.0 以上 (GTK3版)
   ・zlib-1.2 以上
   ・gnutls-1.2 以上
 
@@ -13,6 +14,7 @@
 
   ・Linux Kernel 2.6以上
   ・gtkmm-2.8以上 ( 2.6より低いとレイアウトが一部崩れる、2.8より低いとスレ一覧表示が遅い )
+  ・gtkmm-3.18.0 以上
   ・UTF-8環境 ( EUC環境では LANG="ja_JP.UTF-8" を指定する必要がある )
 
 * makeに必要なツール、ライブラリ
@@ -31,7 +33,7 @@
   オプション
 
   ・alsa-lib (--with-alsa)
-  ・libgnomeui (--with-sessionlib=gnomeui)
+  ・libgnomeui (--with-sessionlib=gnomeui) (GTK2版)
   ・openssl (--with-openssl)
   ・oniguruma (--with-oniguruma)
   ・libpcre (--with-pcre)
@@ -55,7 +57,8 @@
 
     --with-sessionlib=[xsmp|gnomeui|no]
 
-       GNOMEUIを使ってセッション管理をするには「gnomeui」を、セッション管理を無効にするには「no」を選択。デフォルトでは XSMPを使用する。
+       GNOMEUIを使ってセッション管理をするには「gnomeui」を。セッション管理を無効にするには「no」を選択。
+       デフォルトでは XSMPを使用する。「gnomeui」はGTK2版のみ利用できる。
 
     --with-pangolayout
 
@@ -101,6 +104,10 @@
     --with-[gthread|stdthread]
 
        pthreadの代わりにgthreadまたはstd::threadを使用する。
+
+    --with-gtkmm3
+
+       gtkmm2のかわりにgtkmm3を使用する。
 
 * メモ
 

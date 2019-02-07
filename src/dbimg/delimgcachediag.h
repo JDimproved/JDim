@@ -35,7 +35,11 @@ namespace DBIMG
 
       protected:
 
+#if GTKMM_CHECK_VERSION(3,0,0)
+        bool on_draw( const Cairo::RefPtr< Cairo::Context >& cr ) override;
+#else
         bool on_expose_event( GdkEventExpose* event ) override;
+#endif
 
       private:
 
@@ -43,6 +47,7 @@ namespace DBIMG
         void wait();
         void slot_cancel_clicked();
         time_t get_days( const std::string& path );
+        void launch_thread();
     };
 }
 
