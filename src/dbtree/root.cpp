@@ -559,7 +559,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
     else if( is_JBBS( url ) ){
 
         if( regex.exec( "(https?://[^/]*)/(.*)/(index2?\\.html?)?$" , url, offset, icase, newline, usemigemo, wchar ) ){
-            root = "http://jbbs.shitaraba.net";
+            root = regex.str( 1 );
             path_board = "/" + regex.str( 2 );
 
             type = TYPE_BOARD_JBBS;
