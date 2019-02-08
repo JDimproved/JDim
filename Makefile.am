@@ -1,4 +1,4 @@
-SUBDIRS = src 
+SUBDIRS = src test
 
 desktopdir= $(datadir)/applications
 dist_desktop_DATA = jdim.desktop
@@ -13,7 +13,10 @@ jdim_CONFIGURE_ARGS = @ac_configure_args@
 
 all: $(jdim_BUILDINFO_HEADER)
 
-.PHONY: $(jdim_BUILDINFO_HEADER)
+test: all
+	$(MAKE) -C $@ $(MAKECMDGOALS)
+
+.PHONY: test $(jdim_BUILDINFO_HEADER)
 
 $(jdim_BUILDINFO_HEADER):
 	@-rm -f $@.new
