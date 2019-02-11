@@ -59,15 +59,12 @@ dnf install gtkmm24-devel gnutls-devel libgcrypt-devel libSM-devel libtool autom
 dnf install gtkmm30-devel gnutls-devel libgcrypt-devel libSM-devel libtool automake autoconf-archive git
 ```
 
-#### Debian系
+#### Debian
 ```sh
-sudo apt-get build-dep jd
-```
-
-開発環境が入っていない場合は、
-
-```sh
-sudo apt-get install build-essential automake autoconf-archive git
+sudo apt-get install libc6-dev make gcc g++ （開発環境の導入）
+sudo vi /etc/apt/sources.list (エディタは何でも良い。deb-src行でstretch-backports以降を有効にする）
+sudo apt update
+sudo apt-get build-dep jdim
 ```
 
 #### Ubuntu 18.04
