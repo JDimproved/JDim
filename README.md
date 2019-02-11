@@ -62,7 +62,7 @@ dnf install gtkmm30-devel gnutls-devel libgcrypt-devel libSM-devel libtool autom
 #### Debian
 ```sh
 sudo apt install libc6-dev make gcc g++ （開発環境の導入）
-sudo vi /etc/apt/sources.list (エディタは何でも良い。deb-src行でstretch-backports以降を有効にする）
+sudo vi /etc/apt/sources.list (エディタは何でも良い。deb-src行でstretch-backportsあるいはbuster以降を有効にする）
 sudo apt update
 sudo apt build-dep jdim
 ```
