@@ -547,7 +547,7 @@ std::list< ANCINFO* > NodeTreeBase::get_res_anchors( const int number )
 //
 // mode_or == true なら OR抽出
 //
-const std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bool mode_or )
+std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bool mode_or )
 {
     std::list< int > list_resnum;
     if( query.empty() ) return list_resnum;
@@ -626,7 +626,7 @@ else if( node->text ) str_res += node->text; \
 node = node->next_node; \
 } }while(0) \
         
-const std::string NodeTreeBase::get_res_str( int number, bool ref )
+std::string NodeTreeBase::get_res_str( int number, bool ref )
 {
     std::string str_res;
 
@@ -667,7 +667,7 @@ const std::string NodeTreeBase::get_res_str( int number, bool ref )
 //
 // number　番のレスの生文字列を返す
 //
-const std::string NodeTreeBase::get_raw_res_str( int number )
+std::string NodeTreeBase::get_raw_res_str( int number )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::get_raw_res_str : num = " << number << std::endl;
@@ -714,7 +714,7 @@ const std::string NodeTreeBase::get_raw_res_str( int number )
 //
 // number番を書いた人の名前を取得
 //
-const std::string NodeTreeBase::get_name( int number )
+std::string NodeTreeBase::get_name( int number )
 {
     NODE* head = res_header( number );
     if( ! head ) return std::string();
@@ -762,7 +762,7 @@ std::list< int > NodeTreeBase::get_res_name( const std::string& name )
 // number番のレスの時刻を文字列で取得
 // 内部で regex　を使っているので遅い
 //
-const std::string NodeTreeBase::get_time_str( int number )
+std::string NodeTreeBase::get_time_str( int number )
 {
     std::string res_str = get_res_str( number );
     if( res_str.empty() ) return std::string();
@@ -786,7 +786,7 @@ const std::string NodeTreeBase::get_time_str( int number )
 //
 // number番の ID 取得
 //
-const std::string NodeTreeBase::get_id_name( int number )
+std::string NodeTreeBase::get_id_name( int number )
 {
     NODE* head = res_header( number );
     if( ! head ) return std::string();

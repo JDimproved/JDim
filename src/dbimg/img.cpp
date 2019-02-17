@@ -239,7 +239,7 @@ void Img::set_abone( bool abone )
 }
 
 
-const std::string Img::get_cache_path()
+std::string Img::get_cache_path()
 {
     if( m_protect ) return CACHE::path_img_protect( m_url );
 

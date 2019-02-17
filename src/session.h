@@ -301,62 +301,62 @@ namespace SESSION
     int get_sidebar_current_page();
 
     // 現在開いているサイドバーのurl
-    const std::string get_sidebar_current_url();
+    std::string get_sidebar_current_url();
 
     // ツールバー等の項目名 -> ID 変換
     int parse_item( const std::string& item_name );
 
     // サイドバーのツールバー項目
     const std::string& get_items_sidebar_toolbar_str();
-    const std::string get_items_sidebar_toolbar_default_str();
+    std::string get_items_sidebar_toolbar_default_str();
     void set_items_sidebar_toolbar_str( const std::string& items );
     int get_item_sidebar_toolbar( const int num );
 
     // メインツールバーの項目
     const std::string& get_items_main_toolbar_str();
-    const std::string get_items_main_toolbar_default_str();
+    std::string get_items_main_toolbar_default_str();
     void set_items_main_toolbar_str( const std::string& items_str );
     int get_item_main_toolbar( const int num );
 
     // スレビューのツールバーの項目
     const std::string& get_items_article_toolbar_str();
-    const std::string get_items_article_toolbar_default_str();
+    std::string get_items_article_toolbar_default_str();
     void set_items_article_toolbar_str( const std::string& items_str );
     int get_item_article_toolbar( const int num );
 
     // 検索ビューのツールバーの項目
     const std::string& get_items_search_toolbar_str();
-    const std::string get_items_search_toolbar_default_str();
+    std::string get_items_search_toolbar_default_str();
     void set_items_search_toolbar_str( const std::string& items_str );
     int get_item_search_toolbar( const int num );
 
     // スレ一覧のツールバー項目
     const std::string& get_items_board_toolbar_str();
-    const std::string get_items_board_toolbar_default_str();
+    std::string get_items_board_toolbar_default_str();
     void set_items_board_toolbar_str( const std::string& items );
     int get_item_board_toolbar( const int num );
 
     // 書き込みビューのツールバー項目
     const std::string& get_items_msg_toolbar_str();
-    const std::string get_items_msg_toolbar_default_str();
+    std::string get_items_msg_toolbar_default_str();
     void set_items_msg_toolbar_str( const std::string& items );
     int get_item_msg_toolbar( const int num );
 
     // スレ一覧の列項目
     const std::string& get_items_board_col_str();
-    const std::string get_items_board_col_default_str();
+    std::string get_items_board_col_default_str();
     void set_items_board_col_str( const std::string& items );
     int get_item_board_col( const int num );
 
     // スレ一覧のコンテキストメニュー項目
     const std::string& get_items_board_menu_str();
-    const std::string get_items_board_menu_default_str();
+    std::string get_items_board_menu_default_str();
     void set_items_board_menu_str( const std::string& items_str );
     int get_item_board_menu( const int num );
 
     // スレビューのコンテキストメニュー項目
     const std::string& get_items_article_menu_str();
-    const std::string get_items_article_menu_default_str();
+    std::string get_items_article_menu_default_str();
     void set_items_article_menu_str( const std::string& items_str );
     int get_item_article_menu( const int num );
 
@@ -402,7 +402,7 @@ namespace SESSION
     ARTICLE::DrawAreaBase* get_base_drawarea();
 
     // 現在開いているarticle のurl
-    const std::string get_article_current_url();
+    std::string get_article_current_url();
 
 
     // 埋め込みimage使用
@@ -460,7 +460,7 @@ namespace SESSION
     void get_sidebar_threads( const std::string& url, const int dirid, std::vector< std::string >& list_url );
 
     // サイドバーの指定したidのディレクトリの名前を取得
-    const std::string get_sidebar_dirname( const std::string& url, const int dirid );
+    std::string get_sidebar_dirname( const std::string& url, const int dirid );
 }
 
 

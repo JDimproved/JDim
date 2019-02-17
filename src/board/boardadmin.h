@@ -44,7 +44,7 @@ namespace BOARD
 
         void restore( const bool only_locked ) override;
         COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ) override;
-        const std::string command_to_url( const COMMAND_ARGS& command ) override;
+        std::string command_to_url( const COMMAND_ARGS& command ) override;
 
         void switch_admin() override;
 

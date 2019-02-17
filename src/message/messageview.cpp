@@ -48,7 +48,7 @@ MessageViewMain::~MessageViewMain()
 //
 // ポストするメッセージ作成
 //
-const std::string MessageViewMain::create_message()
+std::string MessageViewMain::create_message()
 {
     if( ! get_text_message() ) return std::string();
 
@@ -161,7 +161,7 @@ void MessageViewMain::reload()
 //
 // ポストするメッセージ作成
 //
-const std::string MessageViewNew::create_message()
+std::string MessageViewNew::create_message()
 {
     if( ! get_text_message() ) return std::string();
 

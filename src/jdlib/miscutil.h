@@ -44,68 +44,69 @@ namespace MISC
      };
 
     // str を "\n" ごとに区切ってlistにして出力
-    const std::list< std::string > get_lines( const std::string& str );
+    std::list< std::string > get_lines( const std::string& str );
 
     // strを空白または "" 単位で区切って list で出力
-    const std::list< std::string > split_line( const std::string& str );
+    std::list< std::string > split_line( const std::string& str );
 
     // strを delimで区切って list で出力
-    const std::list< std::string > StringTokenizer( const std::string& str, const char delim );
+    std::list< std::string > StringTokenizer( const std::string& str, const char delim );
 
     // emacs lisp のリスト型を要素ごとにlistにして出力
-    const std::list< std::string > get_elisp_lists( const std::string& str );
+    std::list< std::string > get_elisp_lists( const std::string& str );
 
     // list_inから空白行を除いてリストを返す
-    const std::list< std::string > remove_nullline_from_list( const std::list< std::string >& list_in );
+    std::list< std::string > remove_nullline_from_list( const std::list< std::string >& list_in );
 
     // list_inの各行から前後の空白を除いてリストを返す
-    const std::list< std::string > remove_space_from_list( const std::list< std::string >& list_in );
+    std::list< std::string > remove_space_from_list( const std::list< std::string >& list_in );
 
     // list_inからコメント行(#)を除いてリストを返す
-    const std::list< std::string > remove_commentline_from_list( const std::list< std::string >& list_in );
+    std::list< std::string > remove_commentline_from_list( const std::list< std::string >& list_in );
 
     // 空白と""で区切られた str_in の文字列をリストにして出力
     // \"は " に置換される
     // (例)  "aaa" "bbb" "\"ccc\""  → aaa と bbb と "ccc"
-    const std::list< std::string > strtolist( const std::string& str_in );
+    std::list< std::string > strtolist( const std::string& str_in );
 
     // list_in の文字列リストを空白と""で区切ってストリングにして出力
     // "は \" に置換される
     // (例)  "aaa" "bbb" "\"ccc\""
-    const std::string listtostr( const std::list< std::string >& list_in );
+    std::string listtostr( const std::list< std::string >& list_in );
 
     // strの前後の空白削除
-    const std::string remove_space( const std::string& str );
+    std::string remove_space( const std::string& str );
 
     // str前後の改行、タブ、スペースを削除
-    const std::string remove_spaces( const std::string& str );
+    std::string remove_spaces( const std::string& str );
 
     // str1からstr2で示された文字列を除く
-    const std::string remove_str( const std::string& str1, const std::string& str2 );
+    std::string remove_str( const std::string& str1, const std::string& str2 );
 
     // start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
-    const std::string remove_str( const std::string& str, const std::string& start, const std::string& end );
+    std::string remove_str( const std::string& str, const std::string& start, const std::string& end );
 
     // 正規表現を使ってstr1からqueryで示された文字列を除く
-    const std::string remove_str_regex( const std::string& str1, const std::string& query );
+    std::string remove_str_regex( const std::string& str1, const std::string& query );
 
     // str1, str2 に囲まれた文字列を切り出す
-    const std::string cut_str( const std::string& str, const std::string& str1, const std::string& str2 );
+    std::string cut_str( const std::string& str, const std::string& str1, const std::string& str2 );
 
     // str1 を str2 に置き換え
-    const std::string replace_str( const std::string& str, const std::string& str1, const std::string& str2 );
+    std::string replace_str( const std::string& str, const std::string& str1, const std::string& str2 );
 
     // list_inから str1 を str2 に置き換えてリストを返す
-    const std::list< std::string > replace_str_list( const std::list< std::string >& list_in, const std::string& str1, const std::string& str2 );
+    std::list< std::string > replace_str_list( const std::list< std::string >& list_in,
+                                               const std::string& str1, const std::string& str2 );
 
     // str_in に含まれる改行文字を replace に置き換え
-    const std::string replace_newlines_to_str( const std::string& str_in, const std::string& replace );
+    std::string replace_newlines_to_str( const std::string& str_in, const std::string& replace );
 
     // " を \" に置き換え
-    const std::string replace_quot( const std::string& str );
+    std::string replace_quot( const std::string& str );
 
     // \" を " に置き換え
-    const std::string recover_quot( const std::string& str );
+    std::string recover_quot( const std::string& str );
 
     // str 中に含まれている str2 の 数を返す
     int count_str( const std::string& str, const std::string& str2 );
@@ -123,10 +124,10 @@ namespace MISC
     int str_to_uint( const char* str, size_t& dig, size_t& n );
 
     // 数字　-> 文字変換
-    const std::string itostr( const int n );
+    std::string itostr( const int n );
 
     // listで指定した数字を文字に変換
-    const std::string intlisttostr( const std::list< int >& list_num );
+    std::string intlisttostr( const std::list< int >& list_num );
 
     // 16進数表記文字をバイナリに変換する( 例 "E38182" -> 0xE38182 )
     // 出力 : char_out 
@@ -134,7 +135,7 @@ namespace MISC
     size_t chrtobin( const char* chr_in, char* chr_out );
 
     // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
-    const std::string cut_str( const std::string& str, const unsigned int maxsize );
+    std::string cut_str( const std::string& str, const unsigned int maxsize );
 
     // 正規表現のメタ文字が含まれているか
     // escape == true ならエスケープを考慮 (例)  escape == true なら \+ → \+ のまま、falseなら \+ → \\\+
@@ -142,17 +143,17 @@ namespace MISC
 
     // 正規表現のメタ文字をエスケープ
     // escape == true ならエスケープを考慮 (例)  escape == true なら \+ → \+ のまま、falseなら \+ → \\\+
-    const std::string regex_escape( const std::string& str, const bool escape );
+    std::string regex_escape( const std::string& str, const bool escape );
 
     // 正規表現のメタ文字をアンエスケープ
-    const std::string regex_unescape( const std::string& str );
+    std::string regex_unescape( const std::string& str );
 
     // HTMLエスケープ
     // include_url : URL中でもエスケープする( デフォルト = true )
-    const std::string html_escape( const std::string& str, const bool include_url = true );
+    std::string html_escape( const std::string& str, const bool include_url = true );
 
     // HTMLアンエスケープ
-    const std::string html_unescape( const std::string& str );
+    std::string html_unescape( const std::string& str );
 
     // URL中のスキームを判別する
     // 戻り値 : スキームタイプ
@@ -169,26 +170,26 @@ namespace MISC
     bool is_url_char( const char* str_in, const bool loose_url );
 
     // URLデコード
-    const std::string url_decode( const std::string& url );
+    std::string url_decode( const std::string& url );
 
     // urlエンコード
-    const std::string url_encode( const char* str, const size_t n );
-    const std::string url_encode( const std::string& str );
+    std::string url_encode( const char* str, const size_t n );
+    std::string url_encode( const std::string& str );
 
     // 文字コードを変換して url エンコード
     // str は UTF-8 であること
-    const std::string charset_url_encode( const std::string& str, const std::string& charset );
+    std::string charset_url_encode( const std::string& str, const std::string& charset );
 
     // 文字コード変換して url エンコード
     // ただし半角スペースのところを+に置き換えて区切る
-    const std::string charset_url_encode_split( const std::string& str, const std::string& charset );
+    std::string charset_url_encode_split( const std::string& str, const std::string& charset );
 
     // BASE64
-    const std::string base64( const std::string& str );
+    std::string base64( const std::string& str );
 
     // 文字コードを coding_from から coding_to に変換
     // 遅いので連続的な処理が必要な時は使わないこと
-    const std::string Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to );
+    std::string Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to );
 
     // 「&#数字;」形式の数字参照文字列の中の「数字」部分の文字列長
     //
@@ -214,7 +215,7 @@ namespace MISC
     int decode_spchar_number( const char* in_char, const int offset, const int lng );
 
     // str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
-    const std::string decode_spchar_number( const std::string& str );
+    std::string decode_spchar_number( const std::string& str );
 
     // utf-8 -> ucs2 変換
     // 入力 : utfstr 入力文字 (UTF-8)
@@ -231,32 +232,32 @@ namespace MISC
     int ucs2toutf8( const int ucs2, char* utfstr );
 
     // WAVEDASHなどのWindows系UTF-8文字をUnix系文字と相互変換
-    const std::string utf8_fix_wavedash( const std::string& str, const int mode );
+    std::string utf8_fix_wavedash( const std::string& str, const int mode );
 
     // str を大文字化
-    const std::string toupper_str( const std::string& str );
+    std::string toupper_str( const std::string& str );
 
     // list 内のアイテムを全部大文字化
-    const std::list< std::string > toupper_list( const std::list< std::string >& list_str );
+    std::list< std::string > toupper_list( const std::list< std::string >& list_str );
     
     //str を小文字化
-    const std::string tolower_str( const std::string& str );
+    std::string tolower_str( const std::string& str );
 
     // path からホスト名だけ取り出す
     // protocol = false のときはプロトコルを除く
-    const std::string get_hostname( const std::string& path, const bool protocol = true );
+    std::string get_hostname( const std::string& path, const bool protocol = true );
 
     // path からファイル名だけ取り出す
-    const std::string get_filename( const std::string& path );
+    std::string get_filename( const std::string& path );
 
     // path からファイル名を除いてディレクトリだけ取り出す
-    const std::string get_dir( const std::string& path );
+    std::string get_dir( const std::string& path );
 
     // 文字数を限定して環境変数の値を返す
-    const std::string getenv_limited( const char *name, const size_t size = 1 );
+    std::string getenv_limited( const char *name, const size_t size = 1 );
 
     // pathセパレータを / に置き換える
-    const std::string recover_path( const std::string& str );
+    std::string recover_path( const std::string& str );
     std::vector< std::string > recover_path( std::vector< std::string >&& list_str );
 
     // 文字列(utf-8)に全角英数字が含まれるか判定する

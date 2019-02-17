@@ -19,14 +19,14 @@ namespace DBTREE
         ~Article2chCompati() noexcept;
 
         // 書き込みメッセージ変換
-        const std::string create_write_message( const std::string& name, const std::string& mail,
-                                                const std::string& msg ) override;
+        std::string create_write_message( const std::string& name, const std::string& mail,
+                                          const std::string& msg ) override;
 
         // bbscgi のURL
-        const std::string url_bbscgi() override;
+        std::string url_bbscgi() override;
         
         // subbbscgi のURL
-        const std::string url_subbbscgi() override;
+        std::string url_subbbscgi() override;
 
       private:
         

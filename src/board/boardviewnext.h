@@ -49,7 +49,7 @@ namespace BOARD
 
         // 次スレ移行処理に使用する前スレのアドレス
         // 次スレ移行処理に使用する。BoardViewBase::open_row()を参照せよ
-        const std::string get_url_pre_article() override { return m_url_pre_article; }
+        std::string get_url_pre_article() override { return m_url_pre_article; }
 
         void slot_abone_thread() override;
 

@@ -153,7 +153,7 @@ bool DragableNoteBook::on_expose_event( GdkEventExpose* event )
 // 及びタブの高さと位置を取得 ( 枠の描画用 )
 //
 #if !GTKMM_CHECK_VERSION(3,0,0)
-const Alloc_NoteBook DragableNoteBook::get_alloc_notebook()
+Alloc_NoteBook DragableNoteBook::get_alloc_notebook()
 {
     Alloc_NoteBook alloc;
 

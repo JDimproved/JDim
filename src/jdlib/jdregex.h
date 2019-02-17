@@ -52,7 +52,7 @@ namespace JDLIB
                    const bool newline, const bool usemigemo, const bool wchar );
 
         int pos( const size_t num );
-        const std::string str( const size_t num );
+        std::string str( const size_t num );
     };
 }
 

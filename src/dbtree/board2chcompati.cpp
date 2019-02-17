@@ -88,7 +88,7 @@ bool Board2chCompati::is_valid( const std::string& filename )
 
 
 //書き込み用クッキー作成
-const std::string Board2chCompati::cookie_for_write()
+std::string Board2chCompati::cookie_for_write()
 {
     const std::list< std::string > list_cookies = BoardBase::list_cookies_for_write();
     if( list_cookies.empty() ) return std::string();
@@ -252,7 +252,7 @@ void Board2chCompati::analyze_keyword_for_write( const std::string& html )
 
 
 // 新スレ作成時の書き込みメッセージ作成
-const std::string Board2chCompati::create_newarticle_message( const std::string& subject,
+std::string Board2chCompati::create_newarticle_message( const std::string& subject,
                                                        const std::string& name, const std::string& mail, const std::string& msg )
 {
     if( subject.empty() ) return std::string();
@@ -283,7 +283,7 @@ const std::string Board2chCompati::create_newarticle_message( const std::string&
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-const std::string Board2chCompati::url_bbscgi_new()
+std::string Board2chCompati::url_bbscgi_new()
 {
     std::string cgibase = url_bbscgibase();
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
@@ -295,7 +295,7 @@ const std::string Board2chCompati::url_bbscgi_new()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-const std::string Board2chCompati::url_subbbscgi_new()
+std::string Board2chCompati::url_subbbscgi_new()
 {
     std::string cgibase = url_subbbscgibase();
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
@@ -481,7 +481,7 @@ void Board2chCompati::regist_article( const bool is_online )
 }
 
 
-const std::string Board2chCompati::localrule()
+std::string Board2chCompati::localrule()
 {
     if( m_ruleloader ){
         if( m_ruleloader->is_loading() ) return "ロード中です";
@@ -496,7 +496,7 @@ const std::string Board2chCompati::localrule()
 }
 
 
-const std::string Board2chCompati::settingtxt()
+std::string Board2chCompati::settingtxt()
 {
     if( m_settingloader ){
         if( m_settingloader->is_loading() ) return "ロード中です";
@@ -511,7 +511,7 @@ const std::string Board2chCompati::settingtxt()
 }
 
 
-const std::string Board2chCompati::default_noname()
+std::string Board2chCompati::default_noname()
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->default_noname();
@@ -538,7 +538,7 @@ int Board2chCompati::message_count()
 }    
 
 
-const std::string Board2chCompati::get_unicode()
+std::string Board2chCompati::get_unicode()
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->get_unicode();

@@ -145,7 +145,7 @@ Gtk::Window* MessageViewBase::get_parent_win()
 //
 // メインウィンドウのURLバーなどに表示する)
 //
-const std::string MessageViewBase::url_for_copy()
+std::string MessageViewBase::url_for_copy()
 {
     return DBTREE::url_readcgi( get_url(), 0, 0 );
 }
@@ -269,7 +269,7 @@ void MessageViewBase::set_message( const std::string& msg )
 }
 
 
-const Glib::ustring MessageViewBase::get_message()
+Glib::ustring MessageViewBase::get_message()
 {
     if( m_text_message ) return m_text_message->get_text();
 

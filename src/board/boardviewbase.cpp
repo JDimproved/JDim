@@ -240,7 +240,7 @@ int BoardViewBase::get_icon( const std::string& iconname )
 //
 // コピー用URL(メインウィンドウのURLバーなどに表示する)
 //
-const std::string BoardViewBase::url_for_copy()
+std::string BoardViewBase::url_for_copy()
 {
     return DBTREE::url_boardbase( get_url_board() );
 }
@@ -360,7 +360,7 @@ void BoardViewBase::setup_action()
 //
 // 通常の右クリックメニューの作成
 //
-const std::string BoardViewBase::create_context_menu()
+std::string BoardViewBase::create_context_menu()
 {
     std::list< int > list_menu;
 
@@ -1817,7 +1817,7 @@ void BoardViewBase::update_item_all()
 //
 // 行を作って内容をセット
 //
-const Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const int id )
+Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const int id )
 {
     Gtk::TreeModel::Row row = *( m_liststore->prepend() ); // append より prepend の方が速いらしい
 
@@ -2531,7 +2531,7 @@ void BoardViewBase::open_selected_rows( const bool reget )
 //
 // path -> スレッドの(dat型)URL変換
 //
-const std::string BoardViewBase::path2daturl( const Gtk::TreePath& path )
+std::string BoardViewBase::path2daturl( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return std::string();
@@ -2544,7 +2544,7 @@ const std::string BoardViewBase::path2daturl( const Gtk::TreePath& path )
 //
 // path -> 板URL変換
 //
-const std::string BoardViewBase::path2url_board( const Gtk::TreePath& path )
+std::string BoardViewBase::path2url_board( const Gtk::TreePath& path )
 {
     if( ! get_url_board().empty() ) return get_url_board();
     if( path.empty() ) return std::string();
@@ -2965,7 +2965,7 @@ void BoardViewBase::slot_abone_thread()
 // path と column からそのセルの内容を取得
 //
 template < typename ColumnType >
-const std::string BoardViewBase::get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column )
+std::string BoardViewBase::get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return std::string();

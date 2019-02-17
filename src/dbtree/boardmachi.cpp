@@ -98,7 +98,7 @@ ArticleBase* BoardMachi::append_article( const std::string& datbase, const std::
 // (例) "http://hoge.machi.to/bbs/read.cgi?BBS=board&KEY=12345&START=12&END=15"" のとき
 // 戻り値 : "http://hoge.machi.to/bbs/read.cgi?BBS=board&KEY=12345", num_from = 12, num_to = 15, num_str = 12-15
 //
-const std::string BoardMachi::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
+std::string BoardMachi::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {
     if( empty() ) return std::string();
 
@@ -167,7 +167,7 @@ const std::string BoardMachi::url_dat( const std::string& url, int& num_from, in
 //
 // (例) "/bbs/read.cgi?BBS=board&KEY=" (最初に '/' がつく)
 //
-const std::string BoardMachi::url_datpath()
+std::string BoardMachi::url_datpath()
 {
     if( empty() ) return std::string();
 
@@ -175,8 +175,8 @@ const std::string BoardMachi::url_datpath()
 }
 
 
-const std::string BoardMachi::create_newarticle_message( const std::string& subject,
-                                                        const std::string& name, const std::string& mail, const std::string& msg )
+std::string BoardMachi::create_newarticle_message( const std::string& subject, const std::string& name,
+                                                   const std::string& mail, const std::string& msg )
 {
     if( subject.empty() ) return std::string();
     if( msg.empty() ) return std::string();
@@ -189,7 +189,7 @@ const std::string BoardMachi::create_newarticle_message( const std::string& subj
 //
 // 新スレ作成時のbbscgi(write.cgi) のURL
 //
-const std::string BoardMachi::url_bbscgi_new()
+std::string BoardMachi::url_bbscgi_new()
 {
     return std::string();
 }
@@ -198,7 +198,7 @@ const std::string BoardMachi::url_bbscgi_new()
 //
 // 新スレ作成時のsubbbscgi のURL
 //
-const std::string BoardMachi::url_subbbscgi_new()
+std::string BoardMachi::url_subbbscgi_new()
 {
     return std::string();
 }

@@ -25,31 +25,31 @@ namespace DBTREE
         ~Board2chCompati();
 
         // 書き込み用クッキー
-        const std::string cookie_for_write() override;
+        std::string cookie_for_write() override;
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
         // 確認画面のhtmlから解析する      
         void analyze_keyword_for_write( const std::string& html ) override;
 
         // 新スレ作成用のメッセージ変換
-        const std::string create_newarticle_message( const std::string& subject, const std::string& name,
-                                                     const std::string& mail, const std::string& msg ) override;
+        std::string create_newarticle_message( const std::string& subject, const std::string& name,
+                                               const std::string& mail, const std::string& msg ) override;
 
         // 新スレ作成用のbbscgi のURL
-        const std::string url_bbscgi_new() override;
+        std::string url_bbscgi_new() override;
         
         // 新スレ作成用のsubbbscgi のURL
-        const std::string url_subbbscgi_new() override;
+        std::string url_subbbscgi_new() override;
 
         // ローカルルール
-        const std::string localrule() override;
+        std::string localrule() override;
 
         // SETTING.TXT 
-        const std::string settingtxt() override;
-        const std::string default_noname() override;
+        std::string settingtxt() override;
+        std::string default_noname() override;
         int line_number() override;
         int message_count() override;
-        const std::string get_unicode() override;
+        std::string get_unicode() override;
 
       private:
 

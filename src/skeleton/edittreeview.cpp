@@ -511,7 +511,7 @@ Gtk::TreeViewColumn* EditTreeView::create_column( const int ypad )
 //
 // 新規ディレクトリ作成
 //
-const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
+Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
 {
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
@@ -541,7 +541,7 @@ const Gtk::TreePath EditTreeView::create_newdir( const Gtk::TreePath& path )
 
 
 // ディレクトリIDとパスを相互変換
-const Gtk::TreePath EditTreeView::dirid_to_path( const size_t dirid )
+Gtk::TreePath EditTreeView::dirid_to_path( const size_t dirid )
 {
     if( ! dirid ) return Gtk::TreePath();
 
@@ -572,7 +572,7 @@ size_t EditTreeView::path_to_dirid( const Gtk::TreePath path )
 //
 // コメント挿入
 //
-const Gtk::TreePath EditTreeView::create_newcomment( const Gtk::TreePath& path )
+Gtk::TreePath EditTreeView::create_newcomment( const Gtk::TreePath& path )
 {
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
@@ -1567,8 +1567,9 @@ void EditTreeView::path2info( CORE::DATA_INFO& info, const Gtk::TreePath& path )
 //
 // (4) そうでなければ path_dest の後に追加
 //
-const Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const std::string& name, const int type, const size_t dirid, const std::string& data,
-                                                  const Gtk::TreePath& path_dest, const bool before, const bool subdir )
+Gtk::TreePath EditTreeView::append_one_row( const std::string& url, const std::string& name, const int type,
+                                            const size_t dirid, const std::string& data,
+                                            const Gtk::TreePath& path_dest, const bool before, const bool subdir )
 {
     Glib::RefPtr< Gtk::TreeStore > treestore = Glib::RefPtr< Gtk::TreeStore >::cast_dynamic( get_model() );
     if( ! treestore ) return Gtk::TreePath();

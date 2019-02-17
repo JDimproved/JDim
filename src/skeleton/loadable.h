@@ -142,11 +142,11 @@ namespace SKELETON
         void callback_dispatch() override;
 
         int get_loader_code();
-        const std::string get_loader_str_code();
-        const std::string get_loader_contenttype();
-        const std::string get_loader_modified();
-        const std::list< std::string > get_loader_cookies();
-        const std::string get_loader_location();
+        std::string get_loader_str_code();
+        std::string get_loader_contenttype();
+        std::string get_loader_modified();
+        std::list< std::string > get_loader_cookies();
+        std::string get_loader_location();
         size_t get_loader_length();
     };
 }

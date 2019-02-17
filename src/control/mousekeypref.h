@@ -48,9 +48,9 @@ namespace CONTROL
 
         int get_id() const { return m_id; }
 
-        const std::string get_key_label();
-        const std::string get_mouse_label();
-        const std::string get_button_label();
+        std::string get_key_label();
+        std::string get_mouse_label();
+        std::string get_button_label();
 
       private:
 
@@ -105,7 +105,7 @@ namespace CONTROL
         MouseKeyDiag( Gtk::Window* parent, const std::string& url,
                       const int id, const std::string& target, const std::string& str_motions );
 
-        const std::string get_str_motions();
+        std::string get_str_motions();
 
       protected:
 
@@ -117,15 +117,15 @@ namespace CONTROL
         void set_single( bool single ){ m_single = single; }
 
         virtual InputDiag* create_inputdiag() = 0;
-        virtual const std::string get_default_motions( const int id ) = 0;
-        virtual const std::vector< int > check_conflict( const int mode, const std::string& str_motion ) = 0;
+        virtual std::string get_default_motions( const int id ) = 0;
+        virtual std::vector< int > check_conflict( const int mode, const std::string& str_motion ) = 0;
 
       private:
 
         Gtk::TreeModel::Row append_row( const std::string& motion );
 
         // 入力ダイアログを表示
-        const std::string show_inputdiag( bool is_append );
+        std::string show_inputdiag( bool is_append );
 
         // 行をダブルクリック
         void slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column );
@@ -191,8 +191,8 @@ namespace CONTROL
         void append_comment_row( const std::string& comment );
 
         virtual MouseKeyDiag* create_setting_diag( const int id, const std::string& str_motions ) = 0;
-        virtual const std::string get_str_motions( const int id ) = 0;
-        virtual const std::string get_default_motions( const int id ) = 0;
+        virtual std::string get_str_motions( const int id ) = 0;
+        virtual std::string get_default_motions( const int id ) = 0;
         virtual void set_motions( const int id, const std::string& str_motions ) = 0;
         virtual bool remove_motions( const int id ) = 0;
 

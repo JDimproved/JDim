@@ -78,8 +78,8 @@ namespace CONFIG
         void append_row( const std::string& comment );
 
         void set_value( Gtk::TreeModel::Row& row, const std::string& value );
-        void set_value( Gtk::TreeModel::Row& row, const int& value );
-        void set_value( Gtk::TreeModel::Row& row, const bool& value );
+        void set_value( Gtk::TreeModel::Row& row, const int value );
+        void set_value( Gtk::TreeModel::Row& row, const bool value );
 
         void slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column );
     };

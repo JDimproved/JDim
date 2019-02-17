@@ -37,19 +37,19 @@ RuleLoader::~RuleLoader()
 }
 
 
-const std::string RuleLoader::get_url()
+std::string RuleLoader::get_url()
 {
     return m_url_boadbase + HEAD_TXT;
 }
 
 
-const std::string RuleLoader::get_path()
+std::string RuleLoader::get_path()
 {
     return CACHE::path_board_root( m_url_boadbase ) + HEAD_TXT;
 }
 
 
-const std::string RuleLoader::get_charset()
+std::string RuleLoader::get_charset()
 {
     return DBTREE::board_charset( m_url_boadbase );
 }

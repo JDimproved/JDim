@@ -249,7 +249,7 @@ int CONTROL::get_mode( const int id )
 
 // 操作モードIDからモード名取得
 // 例えば mode == CONTROL::MODE_COMMON の時は "共通" を返す
-const std::string CONTROL::get_mode_label( const int mode )
+std::string CONTROL::get_mode_label( const int mode )
 {
     if( mode < CONTROL::MODE_START || mode > MODE_END ) return std::string();
 
@@ -289,7 +289,7 @@ guint CONTROL::get_keysym( const std::string& keyname )
 
 // keysymからキー名を取得
 // 例えば keysym == GDK_space の時は "Space"  を返す
-const std::string CONTROL::get_keyname( const guint keysym )
+std::string CONTROL::get_keyname( const guint keysym )
 {
 #ifdef _DEBUG
     std::cout << "CONTROL::get_keyname sym = " << keysym;
@@ -336,7 +336,7 @@ int CONTROL::get_id( const std::string& name )
 
 // IDから操作名取得
 // 例えば id == CONTROL::Up の時は "Up" を返す
-const std::string CONTROL::get_name( const int id )
+std::string CONTROL::get_name( const int id )
 {
     if( id < CONTROL::COMMONMOTION || id >=  CONTROL::CONTROL_END ) return std::string();
 
@@ -346,7 +346,7 @@ const std::string CONTROL::get_name( const int id )
 
 // IDからラベル取得
 // 例えば id == CONTROL::Up の時は "上移動" を返す
-const std::string CONTROL::get_label( const int id )
+std::string CONTROL::get_label( const int id )
 {
     if( id < CONTROL::COMMONMOTION || id >=  CONTROL::CONTROL_END ) return std::string();
 
@@ -356,7 +356,7 @@ const std::string CONTROL::get_label( const int id )
 
 // IDからショートカットを付けたラベルを取得
 // 例えば id == CONTROL::Save の時は "名前を付けて保存(_S)..." を返す
-const std::string CONTROL::get_label_with_mnemonic( const int id )
+std::string CONTROL::get_label_with_mnemonic( const int id )
 {
     unsigned int pos;
 
@@ -540,7 +540,7 @@ const std::string CONTROL::get_label_with_mnemonic( const int id )
 
 
 // IDからキーボードとマウスジェスチャの両方を取得
-const std::string CONTROL::get_str_motions( const int id )
+std::string CONTROL::get_str_motions( const int id )
 {
     int ctl = id;
 
@@ -570,7 +570,7 @@ const std::string CONTROL::get_str_motions( const int id )
 
 
 // IDからラベルと操作の両方を取得
-const std::string CONTROL::get_label_motions( const int id )
+std::string CONTROL::get_label_motions( const int id )
 {
     std::string motion = CONTROL::get_str_motions( id );
     return CONTROL::get_label( id ) + ( motion.empty() ? "" :  "  " ) + motion;
@@ -740,14 +740,14 @@ void CONTROL::restore_keyconfig()
 
 
 // IDからキーボード操作を取得
-const std::string CONTROL::get_str_keymotions( const int id )
+std::string CONTROL::get_str_keymotions( const int id )
 {
     return CONTROL::get_keyconfig()->get_str_motions( id );
 }
 
 
 // IDからデフォルトキーボード操作を取得
-const std::string CONTROL::get_default_keymotions( const int id )
+std::string CONTROL::get_default_keymotions( const int id )
 {
     return CONTROL::get_keyconfig()->get_default_motions( id );
 }
@@ -768,7 +768,7 @@ bool CONTROL::remove_keymotions( const int id )
 
 
 // キーボード操作が重複していないか
-const std::vector< int > CONTROL::check_key_conflict( const int mode, const std::string& str_motion )
+std::vector< int > CONTROL::check_key_conflict( const int mode, const std::string& str_motion )
 {
     return CONTROL::get_keyconfig()->check_conflict( mode, str_motion );
 }
@@ -848,14 +848,14 @@ void CONTROL::restore_mouseconfig()
 
 
 // IDからマウスジェスチャを取得
-const std::string CONTROL::get_str_mousemotions( const int id )
+std::string CONTROL::get_str_mousemotions( const int id )
 {
     return convert_mouse_motions( CONTROL::get_mouseconfig()->get_str_motions( id ) );
 }
 
 
 // IDからデフォルトマウスジェスチャを取得
-const std::string CONTROL::get_default_mousemotions( const int id )
+std::string CONTROL::get_default_mousemotions( const int id )
 {
     return convert_mouse_motions( CONTROL::get_mouseconfig()->get_default_motions( id ) );
 }
@@ -877,7 +877,7 @@ bool CONTROL::remove_mousemotions( const int id )
 
 
 // マウスジェスチャが重複していないか
-const std::vector< int > CONTROL::check_mouse_conflict( const int mode, const std::string& str_motion )
+std::vector< int > CONTROL::check_mouse_conflict( const int mode, const std::string& str_motion )
 {
     const std::string motion = convert_mouse_motions_reverse( str_motion );
     return CONTROL::get_mouseconfig()->check_conflict( mode, motion );
@@ -903,14 +903,14 @@ void CONTROL::restore_buttonconfig()
 
 
 // IDからボタン設定を取得
-const std::string CONTROL::get_str_buttonmotions( const int id )
+std::string CONTROL::get_str_buttonmotions( const int id )
 {
     return CONTROL::get_buttonconfig()->get_str_motions( id );
 }
 
 
 // IDからデフォルトボタン設定を取得
-const std::string CONTROL::get_default_buttonmotions( const int id )
+std::string CONTROL::get_default_buttonmotions( const int id )
 {
     return CONTROL::get_buttonconfig()->get_default_motions( id );
 }
@@ -930,7 +930,7 @@ bool CONTROL::remove_buttonmotions( const int id )
 
 
     // ボタンが重複していないか
-const std::vector< int > CONTROL::check_button_conflict( const int mode, const std::string& str_motion )
+std::vector< int > CONTROL::check_button_conflict( const int mode, const std::string& str_motion )
 {
     return CONTROL::get_buttonconfig()->check_conflict( mode, str_motion );
 }

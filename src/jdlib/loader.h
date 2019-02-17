@@ -102,7 +102,7 @@ namespace JDLIB
         void clear();
         void run_main();
         struct addrinfo* get_addrinfo( const std::string& hostname, const int port );
-        const std::string create_msg_send();
+        std::string create_msg_send();
         bool wait_recv_send( const int fd, const bool recv );
         bool send_connect( const int soc, std::string& errmsg );
 

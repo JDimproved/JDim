@@ -521,7 +521,7 @@ void ToolBar::add_search_control_mode( const int mode )
 }
 
 
-const std::string ToolBar::get_search_text()
+std::string ToolBar::get_search_text()
 {
     if( ! m_entry_search ) return std::string();
 

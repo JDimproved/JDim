@@ -36,17 +36,16 @@ InputDiag* ButtonDiag::create_inputdiag()
 }
 
 
-const std::string ButtonDiag::get_default_motions( const int id )
+std::string ButtonDiag::get_default_motions( const int id )
 {
     return CONTROL::get_default_buttonmotions( id );
 }
 
 
-const std::vector< int > ButtonDiag::check_conflict( const int mode, const std::string& str_motion )
+std::vector< int > ButtonDiag::check_conflict( const int mode, const std::string& str_motion )
 {
     // 衝突判定をしない
-    std::vector< int > vec_ids;
-    return vec_ids;
+    return {};
 }
 
 
@@ -127,13 +126,13 @@ MouseKeyDiag* ButtonPref::create_setting_diag( const int id, const std::string& 
 }
 
 
-const std::string ButtonPref::get_str_motions( const int id )
+std::string ButtonPref::get_str_motions( const int id )
 {
     return CONTROL::get_str_buttonmotions( id );
 }
 
 
-const std::string ButtonPref::get_default_motions( const int id )
+std::string ButtonPref::get_default_motions( const int id )
 {
     return CONTROL::get_default_buttonmotions( id );
 }

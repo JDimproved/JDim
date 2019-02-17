@@ -324,7 +324,7 @@ int Admin::get_tab_nums()
 //
 // 含まれているページのURLのリスト取得
 //
-const std::list<std::string> Admin::get_URLs()
+std::list<std::string> Admin::get_URLs()
 {
     std::list<std::string> urls;
     
@@ -2055,7 +2055,7 @@ int Admin::get_current_page()
 //
 // 現在表示されているページのURL
 //
-const std::string Admin::get_current_url()
+std::string Admin::get_current_url()
 {
     SKELETON::View* view = get_current_view();
     if( ! view ) return std::string();
@@ -2856,7 +2856,7 @@ void Admin::remove_switchhistory( const std::string& url )
 //   また、その不一致なタブの切り替え履歴を、セッション情報 ( article_switchhistoryなど ) に
 //   保存してしまっていたため、ここで不一致な履歴の削除を行うことで、履歴を修復する。
 //
-const std::string Admin::get_valid_switchhistory()
+std::string Admin::get_valid_switchhistory()
 {
     if( ! m_use_switchhistory ) return std::string();
 

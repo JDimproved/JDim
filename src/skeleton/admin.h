@@ -86,7 +86,7 @@ namespace SKELETON
         virtual int get_tab_nums();
 
         // 含まれているページのURLのリスト取得
-        virtual const std::list< std::string > get_URLs();
+        virtual std::list< std::string > get_URLs();
 
         // Core からのクロック入力。
         // Coreでタイマーをひとつ動かして全体の同期を取るようにしているので
@@ -125,7 +125,7 @@ namespace SKELETON
         // 現在表示してるページ番号およびURL
         // 表示ページを指定したいときは "set_page" コマンドを使う
         virtual int get_current_page();
-        const std::string get_current_url();
+        std::string get_current_url();
 
         // urlで指定されるタブがロックされているか
         bool is_locked( const std::string& url );
@@ -177,7 +177,7 @@ namespace SKELETON
         virtual COMMAND_ARGS url_to_openarg( const std::string& url, const bool tab, const bool lock ) = 0; 
 
         // COMMAND_ARGS からビューの URL を取得する
-        virtual const std::string command_to_url( const COMMAND_ARGS& command ){ return command.url; }
+        virtual std::string command_to_url( const COMMAND_ARGS& command ){ return command.url; }
 
         // view_modeに該当するページを探す
         virtual int find_view( const std::string& view_mode ){ return -1; };
@@ -344,7 +344,7 @@ namespace SKELETON
         // タブの切り替え履歴を更新
         void append_switchhistory( const std::string& url );
         void remove_switchhistory( const std::string& url );
-        const std::string get_valid_switchhistory();
+        std::string get_valid_switchhistory();
     };
 }
 

@@ -47,9 +47,9 @@ namespace SKELETON
 
       protected:
 
-        virtual const std::string get_url() = 0;
-        virtual const std::string get_path() = 0;
-        virtual const std::string get_charset() = 0;
+        virtual std::string get_url() = 0;
+        virtual std::string get_path() = 0;
+        virtual std::string get_charset() = 0;
 
         // ロード用データ作成
         virtual void create_loaderdata( JDLIB::LOADERDATA& data ) = 0;

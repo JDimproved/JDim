@@ -50,14 +50,14 @@ namespace CONTROL
                       const bool dblclick, const bool trpclick );
 
         // IDから操作文字列取得
-        virtual const std::string get_str_motions( const int id );
+        virtual std::string get_str_motions( const int id );
 
         // IDからデフォルトの操作文字列取得
-        virtual const std::string get_default_motions( const int id );
+        virtual std::string get_default_motions( const int id );
 
         // 同じモード内でモーションが重複していないかチェック
         // 戻り値 : コントロールID
-        const std::vector< int > check_conflict( const int mode, const std::string& str_motion );
+        std::vector< int > check_conflict( const int mode, const std::string& str_motion );
 
         // スペースで区切られた複数の操作をデータベースに登録
         void set_motions( const int id, const std::string& str_motions );

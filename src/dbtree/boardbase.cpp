@@ -165,7 +165,7 @@ const std::string& BoardBase::get_agent_w()
 
 
 // 読み込み用プロキシ
-const std::string BoardBase::get_proxy_host()
+std::string BoardBase::get_proxy_host()
 {
     const int mode = get_mode_local_proxy();
 
@@ -188,7 +188,7 @@ int BoardBase::get_proxy_port()
     return 0;
 }
 
-const std::string BoardBase::get_proxy_basicauth()
+std::string BoardBase::get_proxy_basicauth()
 {
     const int mode = get_mode_local_proxy();
 
@@ -200,7 +200,7 @@ const std::string BoardBase::get_proxy_basicauth()
 
 
 // 書き込み用プロキシ
-const std::string BoardBase::get_proxy_host_w()
+std::string BoardBase::get_proxy_host_w()
 {
     const int mode = get_mode_local_proxy_w();
 
@@ -224,7 +224,7 @@ int BoardBase::get_proxy_port_w()
 }
 
 
-const std::string BoardBase::get_proxy_basicauth_w()
+std::string BoardBase::get_proxy_basicauth_w()
 {
     const int mode = get_mode_local_proxy_w();
 
@@ -236,20 +236,20 @@ const std::string BoardBase::get_proxy_basicauth_w()
 
 
 // ローカルルール
-const std::string BoardBase::localrule()
+std::string BoardBase::localrule()
 {
     return "利用できません";
 }
 
 
 // setting.txt
-const std::string BoardBase::settingtxt()
+std::string BoardBase::settingtxt()
 {
     return "利用できません";
 }
 
 // デフォルトの名無し名
-const std::string BoardBase::default_noname()
+std::string BoardBase::default_noname()
 {
     return "???";
 }
@@ -270,14 +270,14 @@ int BoardBase::message_count()
 
 
 // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
-const std::string BoardBase::get_unicode()
+std::string BoardBase::get_unicode()
 {
-    return "";
+    return {};
 }
 
 
 //書き込み用クッキー
-const std::string BoardBase::cookie_for_write()
+std::string BoardBase::cookie_for_write()
 {
     if( m_list_cookies_for_write.empty() ) return std::string();
 
@@ -570,7 +570,7 @@ void BoardBase::update_url( const std::string& root, const std::string& path_boa
 //
 // 戻り値 : "http://www.hoge2ch.net/hogeboard/dat/12345.dat",  num_from = 12, num_to = 15, num_str = "12-15"
 //
-const std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
+std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str )
 {
     if( empty() ) return std::string();
 
@@ -719,7 +719,7 @@ const std::string BoardBase::url_dat( const std::string& url, int& num_from, int
 //
 // 戻り値 : "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345/12-15"
 //
-const std::string BoardBase::url_readcgi( const std::string& url, int num_from, int num_to )
+std::string BoardBase::url_readcgi( const std::string& url, int num_from, int num_to )
 {
     if( empty() ) return std::string();
 
@@ -757,7 +757,7 @@ const std::string BoardBase::url_readcgi( const std::string& url, int num_from, 
 //
 // (例) "http://www.hoge2ch.net/hogeboard/subject.txt"
 //
-const std::string BoardBase::url_subject()
+std::string BoardBase::url_subject()
 {
     if( empty() ) return std::string();
 
@@ -771,7 +771,7 @@ const std::string BoardBase::url_subject()
 //
 // (例) "http://www.hoge2ch.net/"  (最後に '/' がつく)
 //
-const std::string BoardBase::url_root()
+std::string BoardBase::url_root()
 {
     if( empty() ) return std::string();
 
@@ -784,7 +784,7 @@ const std::string BoardBase::url_root()
 //
 // (例) "http://www.hoge2ch.net/hogeboard/"  (最後に '/' がつく)
 //
-const std::string BoardBase::url_boardbase()
+std::string BoardBase::url_boardbase()
 {
     if( empty() ) return std::string();
 
@@ -797,7 +797,7 @@ const std::string BoardBase::url_boardbase()
 //
 // (例) "http://www.hoge2ch.net/hogeboard/dat/" (最後に '/' がつく)
 //
-const std::string BoardBase::url_datbase()
+std::string BoardBase::url_datbase()
 {
     if( empty() ) return std::string();
 
@@ -810,7 +810,7 @@ const std::string BoardBase::url_datbase()
 //
 // (例) "/hogeboard/dat/"  (最初と最後に '/' がつく)
 //
-const std::string BoardBase::url_datpath()
+std::string BoardBase::url_datpath()
 {
     if( empty() ) return std::string();
 
@@ -824,7 +824,7 @@ const std::string BoardBase::url_datpath()
 //
 // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/"  (最後に '/' がつく)
 //
-const std::string BoardBase::url_readcgibase()
+std::string BoardBase::url_readcgibase()
 {
     if( empty() ) return std::string();
 
@@ -837,7 +837,7 @@ const std::string BoardBase::url_readcgibase()
 //
 // (例) "/test/read.cgi/hogeboard/"   (最初と最後に '/' がつく)
 //
-const std::string BoardBase::url_readcgipath()
+std::string BoardBase::url_readcgipath()
 {
     if( empty() ) return std::string();
 
@@ -851,7 +851,7 @@ const std::string BoardBase::url_readcgipath()
 // (例) "http://www.hoge2ch.net/test/bbs.cgi/" ( 最後に '/' がつく )
 //
 //
-const std::string BoardBase::url_bbscgibase()
+std::string BoardBase::url_bbscgibase()
 {
     if( empty() ) return std::string();
 
@@ -864,7 +864,7 @@ const std::string BoardBase::url_bbscgibase()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi/"  ( 最後に '/' がつく )
 //
-const std::string BoardBase::url_subbbscgibase()
+std::string BoardBase::url_subbbscgibase()
 {
     if( empty() ) return std::string();
 
@@ -1847,7 +1847,7 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
                               const std::string& query,
                               const bool mode_or, // 今のところ無視
                               const bool bm,
-                              const bool& stop // 呼出元のスレッドで true にセットすると検索を停止する
+                              const bool stop // 呼出元のスレッドで true にセットすると検索を停止する
     )
 {
 #ifdef _DEBUG
@@ -1930,7 +1930,7 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
 
 // datファイルのインポート
 // 成功したらdat型のurlを返す
-const std::string BoardBase::import_dat( const std::string& filename )
+std::string BoardBase::import_dat( const std::string& filename )
 {
     if( empty() ) return std::string();
     if( CACHE::file_exists( filename ) != CACHE::EXIST_FILE ){
@@ -2341,7 +2341,7 @@ void BoardBase::show_updateicon( const bool update )
 
 // 板の更新チェック時に、更新チェックを行うスレのアドレスのリスト
 // キャッシュが存在し、かつdat落ちしていないで新着数が0のスレを速度の順でソートして返す
-const std::list< std::string > BoardBase::get_check_update_articles()
+std::list< std::string > BoardBase::get_check_update_articles()
 {
     std::list< std::string > list_url;
 

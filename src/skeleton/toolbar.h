@@ -143,7 +143,7 @@ namespace SKELETON
         // CompletionEntry の入力コントローラのモード設定
         void add_search_control_mode( const int mode );
 
-        const std::string get_search_text();
+        std::string get_search_text();
 
         // 上検索
         Gtk::ToolButton* get_button_up_search();

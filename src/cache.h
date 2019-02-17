@@ -141,10 +141,10 @@ namespace CACHE
     std::string path_aahistory();  // AAの使用履歴ファイル
 
     // テーマのルートパス
-    const std::string path_theme_root();
+    std::string path_theme_root();
 
     // アイコンテーマのルートパス
-    const std::string path_theme_icon_root();
+    std::string path_theme_icon_root();
 
     // css
     std::string path_css();
@@ -236,7 +236,7 @@ namespace CACHE
 
     // 相対パスから絶対パスを取得してファイルが存在すれば絶対パスを返す
     // ファイルが存在しない場合は std::string() を返す
-    const std::string get_realpath( const std::string& path );
+    std::string get_realpath( const std::string& path );
 }
 
 #endif

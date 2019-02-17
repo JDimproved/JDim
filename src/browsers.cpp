@@ -35,13 +35,13 @@ namespace CORE
 #endif
     };
 
-    const std::string get_browser_label( const int num ){
+    std::string get_browser_label( const int num ){
 
         if( num >= BROWSER_NUM ) return std::string();
         return browsers[ num ][ 0 ];
     }
 
-    const std::string get_browser_name( const int num ){
+    std::string get_browser_name( const int num ){
 
         if( num >= BROWSER_NUM ) return std::string();
         std::string name = browsers[ num ][ 1 ];

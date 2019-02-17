@@ -160,7 +160,7 @@ namespace DBTREE
         NODE* res_header( int number );
 
         // number番の名前
-        const std::string get_name( int number );
+        std::string get_name( int number );
 
         // number番の名前の重複数( = 発言数 )
         int get_num_name( int number );
@@ -170,10 +170,10 @@ namespace DBTREE
 
         // number番のレスの時刻を文字列で取得
         // 内部で regex　を使っているので遅い
-        const std::string get_time_str( int number );
+        std::string get_time_str( int number );
 
         // number番のID
-        const std::string get_id_name( int number );
+        std::string get_id_name( int number );
 
         // 指定したID の重複数( = 発言数 )
         // 下のget_num_id_name( int number )と違って検索するので遅い
@@ -204,15 +204,15 @@ namespace DBTREE
 
         // query を含むレス番号をリストにして取得
         // mode_or == true なら OR抽出
-        const std::list< int > get_res_query( const std::string& query, const bool mode_or );
+        std::list< int > get_res_query( const std::string& query, const bool mode_or );
 
 
         // number番のレスの文字列を返す
         // ref == true なら先頭に ">" を付ける        
-        const std::string get_res_str( int number, bool ref = false );
+        std::string get_res_str( int number, bool ref = false );
 
         // number　番のレスの生文字列を返す
-        const std::string get_raw_res_str( int number );
+        std::string get_raw_res_str( int number );
         
         // 明示的にhtml を加える
         // パースして追加したノードのポインタを返す

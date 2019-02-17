@@ -210,7 +210,7 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
 }
 
 
-const std::string BoardAdmin::command_to_url( const COMMAND_ARGS& command )
+std::string BoardAdmin::command_to_url( const COMMAND_ARGS& command )
 {
     if( command.arg4 == "NEXT" ) return command.url + NEXT_SIGN + ARTICLE_SIGN + command.arg5;
 

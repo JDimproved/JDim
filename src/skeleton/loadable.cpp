@@ -212,7 +212,7 @@ int Loadable::get_loader_code()
 }
 
 
-const std::string Loadable::get_loader_str_code()
+std::string Loadable::get_loader_str_code()
 {
     if( ! m_loader ) return std::string();
 
@@ -220,7 +220,7 @@ const std::string Loadable::get_loader_str_code()
 }
 
 
-const std::string Loadable::get_loader_contenttype()
+std::string Loadable::get_loader_contenttype()
 {
     if( ! m_loader ) return std::string();
 
@@ -228,7 +228,7 @@ const std::string Loadable::get_loader_contenttype()
 }
 
 
-const std::string Loadable::get_loader_modified()
+std::string Loadable::get_loader_modified()
 {
     if( ! m_loader ) return std::string();
 
@@ -236,7 +236,7 @@ const std::string Loadable::get_loader_modified()
 }
 
 
-const std::list< std::string > Loadable::get_loader_cookies()
+std::list< std::string > Loadable::get_loader_cookies()
 {
     if( ! m_loader ) return std::list< std::string >();
 
@@ -244,7 +244,7 @@ const std::list< std::string > Loadable::get_loader_cookies()
 }
 
 
-const std::string Loadable::get_loader_location()
+std::string Loadable::get_loader_location()
 {
     if( ! m_loader ) return std::string();
 

@@ -86,7 +86,7 @@ namespace XML
       public:
 
         // コンストラクタ、デストラクタ
-        Dom( const int& type, const std::string& name, const bool html = false );
+        Dom( const int type, const std::string& name, const bool html = false );
         virtual ~Dom();
 
         // クリア
@@ -101,7 +101,7 @@ namespace XML
 
         // プロパティを扱うアクセッサ
         int nodeType();
-        const std::string nodeName();
+        std::string nodeName();
         std::string nodeValue();
         void nodeValue( const std::string& value );
 
@@ -133,7 +133,7 @@ namespace XML
         bool hasAttribute( const std::string& name );
         std::string getAttribute( const std::string& name );
         bool setAttribute( const std::string& name, const std::string& value );
-        bool setAttribute( const std::string& name, const int& value );
+        bool setAttribute( const std::string& name, const int value );
         bool removeAttribute( const std::string& name );
     };
 }

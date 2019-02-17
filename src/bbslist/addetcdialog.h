@@ -25,10 +25,10 @@ namespace BBSLIST
 
         AddEtcDialog( const bool move, const std::string& url, const std::string& _name, const std::string& _id, const std::string& _passwd );
 
-        const std::string get_name(){ return m_entry_name.get_text(); }
-        const std::string get_url(){ return m_entry_url.get_text(); }
-        const std::string get_id(){ return m_entry_id.get_text(); }
-        const std::string get_passwd(){ return m_entry_pw.get_text(); }
+        std::string get_name() const { return m_entry_name.get_text(); }
+        std::string get_url() const { return m_entry_url.get_text(); }
+        std::string get_id() const { return m_entry_id.get_text(); }
+        std::string get_passwd() const { return m_entry_pw.get_text(); }
     };   
 
 }

@@ -2060,7 +2060,7 @@ void BBSListViewBase::slot_sort( const int mode )
 //
 // path -> url 変換
 //
-const Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
+Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
@@ -2070,7 +2070,7 @@ const Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
 
 
 // 移転をチェックするバージョン
-const Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
+Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
@@ -2104,7 +2104,7 @@ const Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
 // 板の場合は boardbase
 // スレの場合は dat 型のアドレスを返す
 //
-const Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
+Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return Glib::ustring();
 
@@ -2135,7 +2135,7 @@ const Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
 //
 // path -> name 変換
 //
-const Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
+Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
 {
     Gtk::TreeModel::Row row = m_treeview.get_row( path );
     if( !row ) return Glib::ustring();
@@ -2168,7 +2168,7 @@ int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
 //
 // row -> name 変換
 //
-const Glib::ustring BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
+Glib::ustring BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
 {
     if( !row ) return Glib::ustring();
     return row[ m_columns.m_name ];
@@ -3033,7 +3033,7 @@ void BBSListViewBase::get_threads( const size_t dirid, std::vector< std::string 
 
 
 // 指定したidのディレクトリの名前を取得
-const std::string BBSListViewBase::get_dirname( const int dirid )
+std::string BBSListViewBase::get_dirname( const int dirid )
 {
     if( ! dirid ) return get_label();
 

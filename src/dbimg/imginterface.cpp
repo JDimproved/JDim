@@ -81,7 +81,7 @@ DBIMG::Img* DBIMG::get_img( const std::string& url )
 }
 
 
-const std::string DBIMG::get_cache_path( const std::string& url )
+std::string DBIMG::get_cache_path( const std::string& url )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_cache_path();
@@ -201,7 +201,7 @@ int DBIMG::get_code( const std::string& url )
 }
 
 
-const std::string DBIMG::get_str_code( const std::string& url )
+std::string DBIMG::get_str_code( const std::string& url )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_str_code();
@@ -261,7 +261,7 @@ void DBIMG::set_size( const std::string& url, int size )
 }
 
 
-const std::string DBIMG::get_refurl( const std::string& url )
+std::string DBIMG::get_refurl( const std::string& url )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_refurl();

@@ -131,14 +131,14 @@ namespace SKELETON
         void select_all_dir( Gtk::TreePath path_dir );
 
         // 新規ディレクトリ作成
-        const Gtk::TreePath create_newdir( const Gtk::TreePath& path );
+        Gtk::TreePath create_newdir( const Gtk::TreePath& path );
 
         // ディレクトリIDとパスを相互変換
-        const Gtk::TreePath dirid_to_path( const size_t dirid );
+        Gtk::TreePath dirid_to_path( const size_t dirid );
         size_t path_to_dirid( const Gtk::TreePath path );
 
         // コメント挿入
-        const Gtk::TreePath create_newcomment( const Gtk::TreePath& path );
+        Gtk::TreePath create_newcomment( const Gtk::TreePath& path );
 
         // pathで指定した行の名前の変更
         void rename_row( const Gtk::TreePath& path );
@@ -182,8 +182,9 @@ namespace SKELETON
         // (2) before = true なら前に作る
         // (3) path_dest がディレクトリかつ sudir == true なら path_dest の下に追加。
         // (4) そうでなければ path_dest の後に追加
-        const Gtk::TreePath append_one_row( const std::string& url, const std::string& name, const int type, const size_t dirid, const std::string& data,
-                                            const Gtk::TreePath& path_dest,const bool before, const bool subdir );
+        Gtk::TreePath append_one_row( const std::string& url, const std::string& name, const int type,
+                                      const size_t dirid, const std::string& data,
+                                      const Gtk::TreePath& path_dest, const bool before, const bool subdir );
 
         // ソート実行
         void sort( const Gtk::TreePath& path, const int mode );
@@ -282,7 +283,7 @@ namespace SKELETON
         EditTreeViewIterator( EditTreeView& treeview, EditColumns& columns, const Gtk::TreePath path );
 
         Gtk::TreeModel::Row operator * ();
-        const Gtk::TreePath get_path() const { return m_path; }
+        Gtk::TreePath get_path() const { return m_path; }
 
         void operator ++ ();
 

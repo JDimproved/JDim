@@ -62,7 +62,7 @@ namespace DBIMG
     int get_type_real( const std::string& url );
 
     DBIMG::Img* get_img( const std::string& url );
-    const std::string get_cache_path( const std::string& url );
+    std::string get_cache_path( const std::string& url );
 
     // ロード開始
     // refurl : 参照元のスレのアドレス
@@ -86,7 +86,7 @@ namespace DBIMG
     bool is_loading( const std::string& url );
     bool is_wait( const std::string& url );
     int get_code( const std::string& url );
-    const std::string get_str_code( const std::string& url );
+    std::string get_str_code( const std::string& url );
     bool get_mosaic( const std::string& url );
     void set_mosaic( const std::string& url, bool mosaic );
     void show_large_img( const std::string& url );
@@ -94,7 +94,7 @@ namespace DBIMG
     void set_zoom_to_fit( const std::string& url, bool fit );
     int get_size( const std::string& url );
     void set_size( const std::string& url, int size );
-    const std::string get_refurl( const std::string& url );
+    std::string get_refurl( const std::string& url );
 
     size_t byte( const std::string& url );
     size_t get_filesize( const std::string& url );

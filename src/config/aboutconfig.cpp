@@ -363,7 +363,7 @@ void AboutConfig::set_value( Gtk::TreeModel::Row& row, const std::string& value 
 }
 
 
-void AboutConfig::set_value( Gtk::TreeModel::Row& row, const int& value )
+void AboutConfig::set_value( Gtk::TreeModel::Row& row, const int value )
 {
     row[ m_columns.m_col_value ] = MISC::itostr( value );
 
@@ -373,7 +373,7 @@ void AboutConfig::set_value( Gtk::TreeModel::Row& row, const int& value )
 }
 
 
-void AboutConfig::set_value( Gtk::TreeModel::Row& row, const bool& value )
+void AboutConfig::set_value( Gtk::TreeModel::Row& row, const bool value )
 {
     if( value ) row[ m_columns.m_col_value ] = "はい";
     else row[ m_columns.m_col_value ] = "いいえ";

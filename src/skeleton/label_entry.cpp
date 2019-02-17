@@ -70,7 +70,7 @@ void LabelEntry::set_text( const std::string& text )
 }
 
 
-const Glib::ustring LabelEntry::get_text()
+Glib::ustring LabelEntry::get_text() const
 {
     if( m_editable ) return m_entry.get_text();
     return m_info.get_text();

@@ -36,7 +36,7 @@ namespace SKELETON
         void set_label( const std::string& label );
 
         void set_text( const std::string& text );
-        const Glib::ustring get_text();
+        Glib::ustring get_text() const;
 
         void grab_focus();
         bool has_grab();

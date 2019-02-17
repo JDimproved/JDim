@@ -507,7 +507,7 @@ std::string CACHE::path_aahistory()
 //
 // テーマのルートパス
 //
-const std::string CACHE::path_theme_root()
+std::string CACHE::path_theme_root()
 {
     return CACHE::path_root() + "theme/";
 }
@@ -515,7 +515,7 @@ const std::string CACHE::path_theme_root()
 //
 // アイコンテーマのルートパス
 //
-const std::string CACHE::path_theme_icon_root()
+std::string CACHE::path_theme_icon_root()
 {
     return CACHE::path_theme_root() + "icons/";
 }
@@ -1204,7 +1204,7 @@ guint64 CACHE::get_dirsize( const std::string& dir )
 
 // 相対パスから絶対パスを取得してファイルが存在すれば絶対パスを返す
 // ファイルが存在しない場合は std::string() を返す
-const std::string CACHE::get_realpath( const std::string& path )
+std::string CACHE::get_realpath( const std::string& path )
 {
     std::string path_real;
 

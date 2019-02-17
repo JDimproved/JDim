@@ -207,7 +207,7 @@ void DragTreeView::set_str_tooltip( const std::string& text )
 //
 // ツールチップ最小幅設定
 //
-void DragTreeView::set_tooltip_min_width( const int& min_width )
+void DragTreeView::set_tooltip_min_width( const int min_width )
 {
     m_tooltip.set_min_width( min_width);
 }

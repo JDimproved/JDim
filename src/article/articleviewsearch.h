@@ -35,7 +35,7 @@ namespace ARTICLE
 
         // SKELETON::View の関数のオーバロード
 
-        const std::string url_for_copy() override; // コピーやURLバー表示用のURL
+        std::string url_for_copy() override; // コピーやURLバー表示用のURL
         bool set_command( const std::string& command,
                           const std::string& arg1 = {},
                           const std::string& arg2 = {} ) override;
@@ -65,7 +65,7 @@ namespace ARTICLE
         void set_toolbar_from_url();
 
         // queryなどを変更した時の新しいURL
-        const std::string get_new_url();
+        std::string get_new_url();
 
         // ラベルやタブを更新
         void update_label();

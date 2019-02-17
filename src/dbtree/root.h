@@ -123,15 +123,14 @@ namespace DBTREE
 
         // 板が移転したかチェックする
         // 移転した時は移転後のURLを返す
-        const std::string is_board_moved( const std::string& url ); // 簡易版
+        std::string is_board_moved( const std::string& url ); // 簡易版
 
-        const std::string is_board_moved( const std::string& url,
-                                          std::string& old_root,
-                                          std::string& old_path_board,
-                                          std::string& new_root,
-                                          std::string& new_path_board,
-                                          const int count = 0
-            );
+        std::string is_board_moved( const std::string& url,
+                                    std::string& old_root,
+                                    std::string& old_path_board,
+                                    std::string& new_root,
+                                    std::string& new_path_board,
+                                    const int count = 0 );
 
         // 移転情報保存の有効切り替え
         void set_enable_save_movetable( const bool set ){ m_enable_save_movetable = set; }
@@ -146,7 +145,7 @@ namespace DBTREE
         void save_articleinfo_all();
 
         // 全ログ検索
-        void search_cache( std::vector< ArticleBase* >& list_article, const std::string& query, const bool mode_or, const bool bm, const bool& stop );
+        void search_cache( std::vector< ArticleBase* >& list_article, const std::string& query, const bool mode_or, const bool bm, const bool stop );
 
         // 全てのスレの書き込み履歴削除
         void clear_all_post_history();
