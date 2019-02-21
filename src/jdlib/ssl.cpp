@@ -65,70 +65,82 @@ bool JDSSL::connect( const int soc, const char *host )
 
     int ret;
 
-    gnutls_certificate_allocate_credentials( &m_cred );
-#if GNUTLS_VERSION_NUMBER >= 0x030020
-    ret = gnutls_certificate_set_x509_system_trust( m_cred );
-    assert( ret >= 0 );
-#endif
-
     ret = gnutls_init( &m_session, GNUTLS_CLIENT );
     if( ret != 0 ){
         m_errmsg = "gnutls_init failed";
         return false;
     }
 
-#if GNUTLS_VERSION_NUMBER >= 0x020104
-    gnutls_set_default_priority( m_session );
+#if GNUTLS_VERSION_NUMBER >= 0x030406
+    ret = gnutls_certificate_allocate_credentials( &m_cred );
+    assert( ret == GNUTLS_E_SUCCESS );
+    ret = gnutls_certificate_set_x509_system_trust( m_cred );
+    assert( ret >= 0 );
+
+    ret = gnutls_server_name_set( m_session, GNUTLS_NAME_DNS, host, strlen( host ) );
+    assert( ret == GNUTLS_E_SUCCESS );
+
+    ret = gnutls_set_default_priority( m_session );
+    assert( ret == GNUTLS_E_SUCCESS );
+    ret = gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
+    assert( ret == GNUTLS_E_SUCCESS );
+
+    gnutls_session_set_verify_cert( m_session, host, 0 );
+
+    gnutls_transport_set_int( m_session, soc );
+    gnutls_handshake_set_timeout( m_session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT );
+
+#else // GNUTLS_VERSION_NUMBER < 0x030406
+
 #if GNUTLS_VERSION_NUMBER >= 0x020108
+    // gnutls >= 2.1.7 (unreleased)
     gnutls_priority_set_direct( m_session, "NORMAL:%COMPAT", NULL );
-#else
+#else // GNUTLS_VERSION_NUMBER >= 0x020108
     static const int priority_prot[] = { GNUTLS_SSL3, 0 };
+    // DEPRECATED (gnutls >= 2.1.4 gnutls =< 2.1.6)
+    // UNDEPRECATED (gnutls >= 2.1.7)
+    gnutls_set_default_priority( m_session );
     // _GNUTLS_GCC_ATTR_DEPRECATE (gnutls >= 2.12.0)
     gnutls_protocol_set_priority( m_session, priority_prot );
 #endif // GNUTLS_VERSION_NUMBER >= 0x020108
-#endif // GNUTLS_VERSION_NUMBER >= 0x020104
 
+    gnutls_transport_set_ptr( m_session, (gnutls_transport_ptr_t)(long) soc );
+    gnutls_certificate_allocate_credentials( &m_cred );
     gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
     gnutls_server_name_set( m_session, GNUTLS_NAME_DNS, host, strlen( host ) );
-#if GNUTLS_VERSION_NUMBER >= 0x030406
-    gnutls_session_set_verify_cert( m_session, host, 0 );
-#endif
 
-#if GNUTLS_VERSION_NUMBER >= 0x030109
-    gnutls_transport_set_int( m_session, soc );
-#else
-    gnutls_transport_set_ptr( m_session, static_cast< gnutls_transport_ptr_t >( soc ) );
-#endif
-#if GNUTLS_VERSION_NUMBER >= 0x030100
-    gnutls_handshake_set_timeout( m_session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT );
-#endif
+#endif // GNUTLS_VERSION_NUMBER >= 0x030406
 
     do {
         ret = gnutls_handshake( m_session );
     } while( ret < 0 && gnutls_error_is_fatal( ret ) == 0 );
 
     if( ret < 0 ) {
-#if defined(_DEBUG) && GNUTLS_VERSION_NUMBER >= 0x030406
+        m_errmsg = "JDSSL::connect(gnutls) *** Handshake failed: ";
+        m_errmsg += gnutls_strerror( ret );
+#if GNUTLS_VERSION_NUMBER >= 0x030406
         if( ret == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR ) {
             gnutls_certificate_type_t type = gnutls_certificate_type_get( m_session );
             const unsigned status = gnutls_session_get_verify_cert_status( m_session );
             gnutls_datum_t out;
-            gnutls_certificate_verification_status_print( status, type, &out, 0 );
-            std::cout << "JDSSL::connect(gnutls) - cert verify output: " << out.data << std::endl;
-            gnutls_free( out.data );
+            ret = gnutls_certificate_verification_status_print( status, type, &out, 0 );
+            if( ret == GNUTLS_E_SUCCESS ) {
+                m_errmsg += "\nJDSSL::connect(gnutls) - cert verify output: ";
+                m_errmsg += reinterpret_cast< const char* >( out.data );
+                gnutls_free( out.data );
+            }
         }
 #endif
-        m_errmsg = "JDSSL::connect(gnutls) *** Handshake failed: ";
-        m_errmsg += gnutls_strerror( ret );
         return false;
     }
 
 #ifdef _DEBUG
 #if GNUTLS_VERSION_NUMBER >= 0x030110
     char* desc = gnutls_session_get_desc( m_session );
+    assert( desc );
     std::cout << "JDSSL::connect(gnutls) - Session info: " << desc << std::endl;
     gnutls_free( desc );
-#elif
+#else
     std::cout << "JDSSL::connect(gnutls)" << std::endl;
 #endif
 #endif // _DEBUG
