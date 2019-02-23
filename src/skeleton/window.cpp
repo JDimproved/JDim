@@ -73,6 +73,9 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     m_label_stat.set_alignment( Gtk::ALIGN_START );
     m_label_stat.set_selectable( true );
     m_label_stat.set_single_line_mode( true );
+#if GTKMM_CHECK_VERSION(2,6,0)
+    m_label_stat.set_ellipsize( Pango::ELLIPSIZE_END );
+#endif
 
     m_label_stat_ebox.add( m_label_stat );
     m_label_stat_ebox.set_visible_window( false );
