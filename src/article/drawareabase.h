@@ -235,6 +235,25 @@ namespace ARTICLE
         // 自分の書き込みに対するレスマークアイコン
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_refer_post;
 
+#if GTKMM_CHECK_VERSION(3,14,0)
+        // マウスのクリックとタッチスクリーンのタップ
+        Glib::RefPtr< Gtk::GestureMultiPress > m_gesture_multipress;
+
+        // タッチスクリーンのスクロール
+        Glib::RefPtr< Gtk::GesturePan > m_gesture_pan;
+        Glib::RefPtr< Gtk::GestureSwipe > m_gesture_swipe;
+        double m_drag_start_y;
+
+        // 慣性スクロール
+        struct DecelerationInfo
+        {
+            double elapsed; // 換算された経過時間
+            double initial_dy; // スケーリングされた初速度(pixcels/frame)
+            gint64 last_time; // 前回コールバックが呼び出された時間(frame)
+            guint id = 0; // コールバックのID
+        } m_deceleration;
+#endif
+
       public:
 
         SIG_BUTTON_PRESS sig_button_press(){ return m_sig_button_press; }
@@ -484,6 +503,24 @@ namespace ARTICLE
 
         bool slot_key_press_event( GdkEventKey* event );
         bool slot_key_release_event( GdkEventKey* event );
+
+#if GTKMM_CHECK_VERSION(3,14,0)
+        void setup_event_controller();
+
+        void slot_multipress_pressed( int n_press, double x, double y );
+        void slot_multipress_released( int n_press, double x, double y );
+
+        void slot_pan_begin( double start_x, double start_y );
+        void slot_pan_update( double offset_x, double offset_y );
+        void slot_gesture_end( GdkEventSequence* sequence );
+
+        void slot_swipe( double velocity_x, double velocity_y );
+
+        // 慣性スクロール
+        static gboolean deceleration_tick_cb( GtkWidget* cwidget, GdkFrameClock* clock, gpointer );
+        gboolean deceleration_tick_impl( GdkFrameClock* clock );
+        void cancel_deceleration();
+#endif
     };
 
 
