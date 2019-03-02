@@ -12,11 +12,12 @@
 
 #include "xml/document.h"
 
-#include "jdlib/hash_set.h"
-
 #include "columns.h"
 
 #include <gtkmm.h>
+
+#include <string>
+#include <unordered_set>
 
 namespace SKELETON
 {
@@ -70,7 +71,7 @@ namespace BBSLIST
 
         // ツリーに含まれているスレのURLを入れる hash_set
         // toggle_articleicon() で使用する
-        JDLIB::hash_set_thread m_set_thread;
+        std::unordered_set< std::string > m_set_thread;
 
         // ツリーに含まれている板のURLを入れる set
         // toggle_boardicon() で使用する

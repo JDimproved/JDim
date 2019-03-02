@@ -107,9 +107,8 @@ void BoardViewLog::slot_search_fin( const std::string& id )
     update_view_impl( list_article, loading_fin );
 
     m_set_thread.clear();
-    for( size_t i = 0; i < list_article.size(); ++i ){
-
-        const DBTREE::ArticleBase* art = list_article[ i ];
+    m_set_thread.reserve( list_article.size() );
+    for( const auto art : list_article ) {
         m_set_thread.insert( art->get_url() );
     }
 }
@@ -157,7 +156,9 @@ void BoardViewLog::update_item( const std::string& url, const std::string& id )
     const std::string url_dat = DBTREE::url_datbase( url ) + id;
 
     Gtk::TreeModel::Row row;
-    if( ! id.empty() && m_set_thread.find_if( url_dat ) ) row = get_row_from_url( url_dat );
+    if( ! id.empty() && m_set_thread.find( url_dat ) != m_set_thread.end() ) {
+        row = get_row_from_url( url_dat );
+    }
 
 #ifdef _DEBUG
     std::cout << "BoardViewLog::update_item " << get_url() << std::endl
