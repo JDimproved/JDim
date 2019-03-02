@@ -517,12 +517,14 @@ int ENVIRONMENT::get_wm()
 {
     if( window_manager != WM_UNKNOWN ) return window_manager;
 
-    const std::string str_wm = MISC::getenv_limited( "DESKTOP_SESSION", 5 );
+    const std::string str_wm = MISC::getenv_limited( "DESKTOP_SESSION", 8 );
 
     if( str_wm.find( "xfce" ) != std::string::npos ) window_manager = WM_XFCE;
     else if( str_wm.find( "gnome" ) != std::string::npos ) window_manager = WM_GNOME;
     else if( str_wm.find( "kde" ) != std::string::npos ) window_manager = WM_KDE;
     else if( str_wm.find( "LXDE" ) != std::string::npos ) window_manager = WM_LXDE;
+    else if( str_wm.find( "mate" ) != std::string::npos ) window_manager = WM_MATE;
+    else if( str_wm.find( "cinnamon" ) != std::string::npos ) window_manager = WM_CINNAMON;
 
     if( window_manager == WM_UNKNOWN )
     {
@@ -561,6 +563,8 @@ std::string ENVIRONMENT::get_wm_str()
         case WM_XFCE  : desktop = "XFCE";  break;
         case WM_KDE   : desktop = "KDE";   break;
         case WM_LXDE  : desktop = "LXDE";  break;
+        case WM_MATE  : desktop = "MATE";  break;
+        case WM_CINNAMON  : desktop = "Cinnamon";  break;
     }
 #endif
 

@@ -246,7 +246,8 @@ void JDWindow::clock_in()
         // メインウィンドウと画像ウィンドウが同時にフォーカスアウトしたら
         // 一時的に transient 指定を外す。メインウィンドウがフォーカスインしたときに
         // Admin::focus_out() で transient 指定を戻す
-        if( ENVIRONMENT::get_wm() == ENVIRONMENT::WM_GNOME
+        const auto wm = ENVIRONMENT::get_wm();
+        if( ( wm == ENVIRONMENT::WM_GNOME || wm == ENVIRONMENT::WM_MATE || wm == ENVIRONMENT::WM_CINNAMON )
             && ! SESSION::is_iconified_win_main() // メインウィンドウが最小化しているときに transient を外すとウィンドウが表示されなくなる
             && ! SESSION::is_focus_win_main() && ! is_focus_win() ){
 
