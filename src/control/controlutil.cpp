@@ -358,10 +358,8 @@ std::string CONTROL::get_label( const int id )
 // 例えば id == CONTROL::Save の時は "名前を付けて保存(_S)..." を返す
 std::string CONTROL::get_label_with_mnemonic( const int id )
 {
-    unsigned int pos;
-
     std::string label = CONTROL::get_label ( id );
-    pos = label.find( "...", 0);
+    const auto pos = label.find( "...", 0);
     if ( pos != std::string::npos )
     {
         switch ( id )
