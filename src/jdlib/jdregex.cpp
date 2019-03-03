@@ -14,7 +14,7 @@
 
 enum
 {
-    MAX_TARGET_SIZE = 64 * 1024,   // 全角半角変換のバッファサイズ
+    MAX_TARGET_SIZE = 64 * 2048,   // 全角半角変換のバッファサイズ
     REGEX_MAX_NMATCH = 32
 };
 
