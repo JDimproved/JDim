@@ -265,8 +265,7 @@ namespace MISC
 
     // 全角英数字(str1) -> 半角英数字(str2)
     // table_pos : 置き換えた文字列の位置
-    // n : str2 と table_pos のバッファサイズ
-    void asc( const char* str1, char* str2, int* table_pos, const size_t n );
+    void asc( const char* str1, std::string& str2, std::vector< int >& table_pos );
 
 
     // URL中のスキームを判別する

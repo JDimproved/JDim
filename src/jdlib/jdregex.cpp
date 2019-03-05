@@ -14,16 +14,14 @@
 
 enum
 {
-    MAX_TARGET_SIZE = 64 * 2048,   // 全角半角変換のバッファサイズ
+    MAX_TARGET_SIZE = 64 * 1024,   // 全角半角変換のバッファサイズ
     REGEX_MAX_NMATCH = 32
 };
 
 using namespace JDLIB;
 
 Regex::Regex()
-    : m_compiled(false),
-      m_target_asc( NULL ),
-      m_table_pos( NULL )
+    : m_compiled(false)
 {
     m_results.clear();
     m_pos.clear();
@@ -33,9 +31,6 @@ Regex::Regex()
 Regex::~Regex()
 {
     dispose();
-
-    if( m_target_asc ) free( m_target_asc );
-    if( m_table_pos ) free( m_table_pos );
 }
 
 
@@ -82,11 +77,15 @@ bool Regex::compile( const std::string reg, const bool icase, const bool newline
     // 全角英数字 → 半角英数字、半角カナ → 全角カナ
     if( m_wchar && MISC::has_widechar( asc_reg ) ){
 
-        if( ! m_target_asc ) m_target_asc = ( char* )malloc( MAX_TARGET_SIZE );
-        if( ! m_table_pos ) m_table_pos = ( int* )malloc( sizeof( int ) * MAX_TARGET_SIZE );
+        m_target_asc.clear();
+        m_table_pos.clear();
+        if( m_target_asc.capacity() < MAX_TARGET_SIZE ) {
+            m_target_asc.reserve( MAX_TARGET_SIZE );
+            m_table_pos.reserve( MAX_TARGET_SIZE );
+        }
 
-        MISC::asc( asc_reg, m_target_asc, m_table_pos, MAX_TARGET_SIZE );
-        asc_reg = m_target_asc;
+        MISC::asc( asc_reg, m_target_asc, m_table_pos );
+        asc_reg = m_target_asc.c_str();
 
 #ifdef _DEBUG
         std::cout << m_target_asc << std::endl;
@@ -148,12 +147,16 @@ bool Regex::exec( const std::string& target, const size_t offset )
         std::cout << target << std::endl;
 #endif
 
-        if( ! m_target_asc ) m_target_asc = ( char* )malloc( MAX_TARGET_SIZE );
-        if( ! m_table_pos ) m_table_pos = ( int* )malloc( sizeof( int ) * MAX_TARGET_SIZE );
+        m_target_asc.clear();
+        m_table_pos.clear();
+        if( m_target_asc.capacity() < MAX_TARGET_SIZE ) {
+            m_target_asc.reserve( MAX_TARGET_SIZE );
+            m_table_pos.reserve( MAX_TARGET_SIZE );
+        }
 
-        MISC::asc( asc_target, m_target_asc, m_table_pos, MAX_TARGET_SIZE );
+        MISC::asc( asc_target, m_target_asc, m_table_pos );
         exec_asc = true;
-        asc_target = m_target_asc;
+        asc_target = m_target_asc.c_str();
 
 #ifdef _DEBUG
         std::cout << m_target_asc << std::endl;
