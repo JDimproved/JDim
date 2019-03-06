@@ -83,7 +83,7 @@ bool Regex::compile( const std::string reg, const bool icase, const bool newline
     if( m_wchar && MISC::has_widechar( asc_reg ) ){
 
         if( ! m_target_asc ) m_target_asc = ( char* )malloc( MAX_TARGET_SIZE );
-        if( ! m_table_pos ) m_table_pos = ( int* )malloc( MAX_TARGET_SIZE );
+        if( ! m_table_pos ) m_table_pos = ( int* )malloc( sizeof( int ) * MAX_TARGET_SIZE );
 
         MISC::asc( asc_reg, m_target_asc, m_table_pos, MAX_TARGET_SIZE );
         asc_reg = m_target_asc;
@@ -149,7 +149,7 @@ bool Regex::exec( const std::string& target, const size_t offset )
 #endif
 
         if( ! m_target_asc ) m_target_asc = ( char* )malloc( MAX_TARGET_SIZE );
-        if( ! m_table_pos ) m_table_pos = ( int* )malloc( MAX_TARGET_SIZE );
+        if( ! m_table_pos ) m_table_pos = ( int* )malloc( sizeof( int ) * MAX_TARGET_SIZE );
 
         MISC::asc( asc_target, m_target_asc, m_table_pos, MAX_TARGET_SIZE );
         exec_asc = true;

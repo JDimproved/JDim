@@ -1513,8 +1513,8 @@ bool Loader::init_unzip()
 
     assert( m_buf_zlib_in == NULL );
     assert( m_buf_zlib_out == NULL );
-    m_buf_zlib_in = ( Bytef* )malloc( m_lng_buf_zlib_in + 64 );
-    m_buf_zlib_out = ( Bytef* )malloc( m_lng_buf_zlib_out + 64 );
+    m_buf_zlib_in = ( Bytef* )malloc( sizeof( Bytef ) * m_lng_buf_zlib_in + 64 );
+    m_buf_zlib_out = ( Bytef* )malloc( sizeof( Bytef ) * m_lng_buf_zlib_out + 64 );
 
     return true;
 }
