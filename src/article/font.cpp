@@ -47,9 +47,9 @@ void ARTICLE::init_font()
 
             for( int j = 0; j < UCS2_MAX; ++j ){
                 
-                if( width_of_char[ i ][ j ].width ) delete width_of_char[ i ][ j ].width;
+                if( width_of_char[ i ][ j ].width ) delete[] width_of_char[ i ][ j ].width;
             }
-            delete width_of_char[ i ];
+            delete[] width_of_char[ i ];
         }
 
         width_of_char[ i ] = NULL;
@@ -76,10 +76,7 @@ bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
     width_wide = 0;
 
     if( ! width_of_char[ mode ] ){
-        const int size = sizeof( WIDTH_DATA ) * UCS2_MAX;
-
-        width_of_char[ mode ] = ( WIDTH_DATA* ) malloc( size );
-        memset( width_of_char[ mode ], 0, size );
+        width_of_char[ mode ] = new WIDTH_DATA[ UCS2_MAX ]{} ;
     }
 
     const int ucs2 = MISC::utf8toucs2( utfstr, byte );
@@ -95,13 +92,10 @@ bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
         if( byte == 1 && strict_of_char ){
 
             if( ! width_of_char[ mode ][ ucs2 ].width ){
-                const int size = sizeof( unsigned int ) * 128;
-
-                width_of_char[ mode ][ ucs2 ].width = ( unsigned int* ) malloc( size );
-                memset( width_of_char[ mode ][ ucs2 ].width, 0, size );
+                width_of_char[ mode ][ ucs2 ].width = new unsigned int[ 128 ]{} ;
             }
 
-            const int pre_char_num = ( const int ) pre_char;
+            const int pre_char_num = ( int ) pre_char;
             if( pre_char_num < 128 ) width = width_of_char[ mode ][ ucs2 ].width[ pre_char_num ];
         }
     }
@@ -131,7 +125,7 @@ void ARTICLE::set_width_of_char( const char* utfstr, int& byte, const char pre_c
     // 半角モードの幅を厳密に求める場合
     if( byte == 1 && strict_of_char ){
 
-        const int pre_char_num = ( const int ) pre_char;
+        const int pre_char_num = ( int ) pre_char;
         if( pre_char_num < 128 ) width_of_char[ mode ][ ucs2 ].width[ pre_char_num ] = width;
     }
 
