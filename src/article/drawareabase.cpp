@@ -827,6 +827,23 @@ void DrawAreaBase::redraw_view()
 
     configure_impl();
 
+#if GTKMM_CHECK_VERSION(3,20,0)
+    // 実行時の警告を修正する
+    // Gtk-WARNING **: HH:MM:SS.sss: Drawing a gadget with negative dimensions. Did you forget to allocate a size?
+    // (node tab owner gtkmm__GtkNotebook)
+    // FIXME: 起動時に隠れているタブのスレビューを開くとこの警告が出る
+    const auto alloc_view = m_view.get_allocation();
+#ifdef _DEBUG
+    std::cout << "DrawAreaBase::redraw_view "
+              << " m_view.x = " << alloc_view.get_x()
+              << " m_view.y = " << alloc_view.get_y()
+              << " m_view.width = " << alloc_view.get_width()
+              << " m_view.height = " << alloc_view.get_height()
+              << std::endl;
+#endif
+    if( alloc_view.get_x() < 0 || alloc_view.get_y() < 0 ) return;
+#endif
+
     m_view.queue_draw();
     if( m_window ) m_window->process_updates( false );
 }
