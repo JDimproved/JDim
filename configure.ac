@@ -369,24 +369,22 @@ esac
 dnl
 dnl checking oniguruma
 dnl
-AC_ARG_WITH(oniguruma,[ --with-oniguruma    (enable oniguruma)],
-       [ if test "$withval" != "no" ;then
-               echo "use oniguruma"
-               AC_CHECK_PROG(ONIG_CONFIG, onig-config, onig-config)
-               if test "x${ONIG_CONFIG}" = "x" ; then
-                 AC_MSG_ERROR([onig-config not found])
-               fi
-               ONIG_CFLAGS=`onig-config --cflags`
-               CPPFLAGS="${CPPFLAGS} ${ONIG_CFLAGS}"
-               ONIG_LIBS=`onig-config --libs`
-               LDFLAGS_ORIGINAL="${LDFLAGS}"
-               LDFLAGS="${LDFLAGS} ${ONIG_LIBS}"
-               AC_CHECK_HEADER([onigposix.h], ,[AC_MSG_ERROR([onigposix.h not found])])
-               AC_CHECK_LIB([onig],[regexec], ,[AC_MSG_ERROR([libonig.a not found])])
-               AC_DEFINE(USE_ONIG, , "use oniguruma")
-               AC_SUBST(ONIG_LIBS)
-               LDFLAGS="${LDFLAGS_ORIGINAL}"
-       fi ])
+AC_MSG_CHECKING(for --with-oniguruma)
+AC_ARG_WITH(oniguruma,
+  AS_HELP_STRING([--with-oniguruma], [enable oniguruma regular expressions library]),
+  [with_oniguruma="$withval"],
+  [with_oniguruma=no])
+AC_MSG_RESULT($with_oniguruma)
+
+AS_IF(
+  [test "x$with_oniguruma" = xyes],
+  [PKG_CHECK_MODULES(ONIG, [oniguruma])
+   AC_CHECK_HEADER([onigposix.h], , [AC_MSG_ERROR([onigposix.h not found])])
+   AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])
+   AC_DEFINE(USE_ONIG, , [use oniguruma regular expressions library])
+   AC_SUBST(ONIG_CFLAGS)
+   AC_SUBST(ONIG_LIBS)]
+)
 
 
 dnl
