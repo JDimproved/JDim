@@ -18,6 +18,8 @@ enum{
     ICON_SIZE = 32 // 画像アイコンの大きさ
 };
 
+constexpr int kExpectedResInfo{ 512 }; // しおり、書き込み、返信などレス情報の想定値(上限ではない)
+
 
 // 書き込みビューの名前欄の空白
 #define JD_NAME_BLANK "jd_name_blank"

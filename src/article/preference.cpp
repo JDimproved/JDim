@@ -14,8 +14,9 @@
 #include "cache.h"
 #include "command.h"
 
-#include <string>
 #include <list>
+#include <set>
+#include <string>
 
 using namespace ARTICLE;
 
@@ -133,35 +134,30 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         std::list< std::string > list_id = DBTREE::get_abone_list_id( get_url() );
         for( it = list_id.begin(); it != list_id.end(); ++it ) if( ! ( *it ).empty() ) str_id += ( *it ) + "\n";
         m_edit_id.set_text( str_id );
-
         // あぼーんレス番号
         // 連番は 12-34 の様なフォーマットに変換
-        std::vector< char > vec_res = DBTREE::get_abone_vec_res( get_url() );
-        std::vector< char >::iterator it_res = vec_res.begin();
-        int res = 0;
+        const std::unordered_set< int >& set_res = DBTREE::get_abone_vec_res( get_url() );
+        // レス番号をソートする
+        const std::set< int > tmp_set{ set_res.begin(), set_res.end() };
         int pre_res = 0;
-        int count = 0;
-        for( ; it_res != vec_res.end(); ++res ){
-
-            if( ( *it_res ) ){
-                if( ! pre_res ) pre_res = res;
-                ++count;
+        int save = 0;
+        for( const int res : tmp_set ) {
+            if( !pre_res ) {
+                pre_res = save = res;
             }
-
-            ++it_res;
-
-            if( !( *it_res ) || it_res == vec_res.end() ){
-
-                if( pre_res ){
-                    str_res += MISC::itostr( pre_res );
-                    if( count > 1 ) str_res += "-" + MISC::itostr( pre_res + count -1 );
-                    str_res += "\n";
-                    pre_res = 0;
-                    count = 0;
-                }
+            else if( res - pre_res > 1 ) {
+                str_res.append( std::to_string( save ) );
+                if( pre_res != save ) str_res.append( '-' + std::to_string( pre_res ) );
+                str_res.push_back( '\n' );
+                save = res;
             }
+            pre_res = res;
         }
-
+        if( !tmp_set.empty() ) {
+            str_res.append( std::to_string( save ) );
+            if( pre_res != save ) str_res.append( '-' + std::to_string( pre_res ) );
+            str_res.push_back( '\n' );
+        }
 
         m_edit_res.set_text( str_res );
 

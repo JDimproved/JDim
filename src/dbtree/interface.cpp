@@ -1169,7 +1169,7 @@ const std::list< std::string >& DBTREE::get_abone_list_regex( const std::string&
 }
 
 
-const std::vector< char >& DBTREE::get_abone_vec_res( const std::string& url )
+const std::unordered_set< int >& DBTREE::get_abone_vec_res( const std::string& url )
 {
     return DBTREE::get_article( url )->get_abone_vec_res();
 }
