@@ -9,15 +9,16 @@
 #ifndef _ARTICLEBASE_H
 #define _ARTICLEBASE_H
 
-#include <string>
-#include <sys/time.h>
-#include <list>
-#include <vector>
-#include <ctime>
-
 #include "skeleton/lockable.h"
 
 #include "jdlib/constptr.h"
+
+#include <ctime>
+#include <list>
+#include <string>
+#include <sys/time.h>
+#include <unordered_set>
+#include <vector>
 
 namespace DBTREE
 {
@@ -74,7 +75,7 @@ namespace DBTREE
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
-        std::vector< char > m_vec_abone_res; // レスあぼーん情報
+        std::unordered_set< int > m_vec_abone_res; // レスあぼーん情報
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
         bool m_abone_age; // age ているレスをあぼーん
@@ -85,10 +86,10 @@ namespace DBTREE
         bool m_bookmarked_thread;
 
         // 「レス」のブックマーク
-        std::vector< char > m_vec_bookmark; // ブックマーク判定キャッシュ
+        std::unordered_set< int > m_vec_bookmark; // ブックマーク判定キャッシュ
 
         // 自分が書き込んだレスか
-        std::vector< char > m_vec_posted;
+        std::unordered_set< int > m_vec_posted;
 
         // HDDにキャッシュされているか
         bool m_cached;
@@ -317,7 +318,7 @@ namespace DBTREE
         const std::list< std::string >& get_abone_list_name(){ return m_list_abone_name; }
         const std::list< std::string >& get_abone_list_word(){ return m_list_abone_word; }
         const std::list< std::string >& get_abone_list_regex(){ return m_list_abone_regex; }
-        const std::vector< char >& get_abone_vec_res(){ return m_vec_abone_res; }
+        const std::unordered_set< int >& get_abone_vec_res() const noexcept { return m_vec_abone_res; }
 
         // 透明
         bool get_abone_transparent();

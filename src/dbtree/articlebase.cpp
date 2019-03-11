@@ -570,11 +570,7 @@ void ArticleBase::update_writetime()
 //
 int ArticleBase::get_num_posted()
 {
-    if( ! m_vec_posted.size() ) return 0;
-
-    int ret = 0;
-    for( int i = 1; i < MAX_RESNUMBER; ++i ) if( is_posted( i ) ) ++ret;
-    return ret;
+    return m_vec_posted.size();
 }
 
 
@@ -704,11 +700,13 @@ void ArticleBase::reset_abone( const std::list< std::string >& ids,
 
     if( vec_abone_res.size() ){
 
-        if( ! m_vec_abone_res.size() ) m_vec_abone_res.resize( MAX_RESNUMBER );
-
         for( int i = 1; i <= MIN( m_number_load, (int)vec_abone_res.size() ) ; ++i ){
-            if( vec_abone_res[ i ] ) m_vec_abone_res[ i ] = true;
-            else m_vec_abone_res[ i ] = false;
+            if( vec_abone_res[ i ] ) {
+                m_vec_abone_res.insert( i );
+            }
+            else {
+                m_vec_abone_res.erase( i );
+            }
         }
     }
     
@@ -801,9 +799,12 @@ void ArticleBase::set_abone_res( const int num_from, const int num_to, const boo
     std::cout << "ArticleBase::set_abone_res num_from = " << num_from << " num_to = " << num_to << " set = " << set << std::endl;
 #endif    
 
-    if( ! m_vec_abone_res.size() ) m_vec_abone_res.resize( MAX_RESNUMBER );
-
-    for( int i = num_from; i <= num_to; ++i ) m_vec_abone_res[ i ] = set;
+    if( set ) {
+        for( int i = num_from; i <= num_to; ++i ) m_vec_abone_res.insert( i );
+    }
+    else {
+        for( int i = num_from; i <= num_to; ++i ) m_vec_abone_res.erase( i );
+    }
 
     update_abone();
 
@@ -892,11 +893,7 @@ void ArticleBase::set_abone_global( const bool set )
 //
 int ArticleBase::get_num_bookmark()
 {
-    if( ! m_vec_bookmark.size() ) return 0;
-
-    int ret = 0;
-    for( int i = 1; i < MAX_RESNUMBER; ++i ) if( is_bookmarked( i ) ) ++ret;
-    return ret;
+    return m_vec_bookmark.size();
 }
 
 
@@ -908,11 +905,9 @@ bool ArticleBase::is_bookmarked( const int number )
     if( number <= 0 || number > m_number_load ) return false;
 
     // まだnodetreeが作られてなくてブックマークの情報が得られてないのでnodetreeを作って情報取得
-    if( ! m_vec_bookmark.size() ) get_nodetree();
+    if( m_vec_bookmark.empty() ) get_nodetree();
 
-    if( ! m_vec_bookmark.size() ) return false;
-
-    return ( m_vec_bookmark[ number ] );
+    return ( m_vec_bookmark.find( number ) != m_vec_bookmark.end() );
 }
 
 
@@ -921,13 +916,16 @@ bool ArticleBase::is_bookmarked( const int number )
 //
 void ArticleBase::set_bookmark( const int number, const bool set )
 {
-    if( ! m_vec_bookmark.size() ) get_nodetree();
+    if( m_vec_bookmark.empty() ) get_nodetree();
     if( number <= 0 || number > MAX_RESNUMBER ) return;
 
-    if( ! m_vec_bookmark.size() ) m_vec_bookmark.resize( MAX_RESNUMBER );
-
     m_save_info = true;
-    m_vec_bookmark[ number ] = set;
+    if( set ) {
+        m_vec_bookmark.insert( number );
+    }
+    else {
+        m_vec_bookmark.erase( number );
+    }
 }
 
 
@@ -939,11 +937,9 @@ bool ArticleBase::is_posted( const int number )
     if( number <= 0 || number > m_number_load ) return false;
 
     // まだnodetreeが作られてなくて情報が得られてないのでnodetreeを作って情報取得
-    if( ! m_vec_posted.size() ) get_nodetree();
+    if( m_vec_posted.empty() ) get_nodetree();
 
-    if( ! m_vec_posted.size() ) return false;
-
-    return ( m_vec_posted[ number ] );
+    return ( m_vec_posted.find( number ) != m_vec_posted.end() );
 }
 
 
@@ -960,12 +956,15 @@ void ArticleBase::set_posted( const int number, const bool set )
     if( number <= 0 || number > m_number_load ) return;
 
     // まだnodetreeが作られてなくて情報が得られてないのでnodetreeを作って情報取得
-    if( ! m_vec_posted.size() ) get_nodetree();
-
-    if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
+    if( m_vec_posted.empty() ) get_nodetree();
 
     m_save_info = true;
-    m_vec_posted[ number ] = set;
+    if( set ) {
+        m_vec_posted.insert( number );
+    }
+    else {
+        m_vec_posted.erase( number );
+    }
 
     // nodetreeに情報反映
     m_nodetree->set_posted( number, set );
@@ -979,7 +978,7 @@ void ArticleBase::clear_post_history()
     if( ! is_cached() ) return;
 
     read_info();
-    if( m_vec_posted.size() || m_write_time.tv_sec || m_write_time.tv_usec ){
+    if( !m_vec_posted.empty() || m_write_time.tv_sec || m_write_time.tv_usec ){
 
 #ifdef _DEBUG
         std::cout << "ArticleBase::clear_post_history size = " << m_vec_posted.size()
@@ -1374,17 +1373,22 @@ void ArticleBase::slot_load_finished()
     else m_number_new = 0;
 
     // 書き込み情報
-    if( m_number_new && m_nodetree->get_vec_posted().size() ){
+    const auto& node_posted = m_nodetree->get_vec_posted();
+    if( m_number_new && node_posted.size() ){
 
-        if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
-
+        const auto end = m_vec_posted.end();
+        const auto node_end = node_posted.end();
+        (void)end; // _DEBUGが定義されていないときの警告抑制
         for( int i = m_number_before_load +1; i <= m_number_load; ++i ){
 
-            if( m_nodetree->get_vec_posted()[ i ] ) m_vec_posted[ i ] = true;
-            else m_vec_posted[ i ] = false;
-
+            if( node_posted.find( i ) != node_end ) {
+                m_vec_posted.insert( i );
+            }
+            else {
+                m_vec_posted.erase( i );
+            }
 #ifdef _DEBUG
-            if( m_vec_posted[ i ] ) std::cout << "posted no = " << i << std::endl;
+            if( m_vec_posted.find( i ) != end ) std::cout << "posted no = " << i << std::endl;
 #endif
         }
     }
@@ -1890,14 +1894,11 @@ void ArticleBase::read_info()
         GET_INFOVALUE( str_tmp, "bookmark = " );
         if( ! str_tmp.empty() ){
 
-            if( ! m_vec_bookmark.size() ) m_vec_bookmark.resize( MAX_RESNUMBER );
-
             list_tmp = MISC::split_line( str_tmp );
-            it_tmp = list_tmp.begin();
-            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
-                int number = atoi( (*it_tmp).c_str() );
-                if( !(*it_tmp).empty() ) m_vec_bookmark[ number ] = true;
-                else m_vec_bookmark[ number ] = false;
+            for( const std::string& num_str : list_tmp ) {
+                if( !num_str.empty() ) {
+                    m_vec_bookmark.insert( std::stoi( num_str ) );
+                }
             }
         }
 
@@ -1924,14 +1925,11 @@ void ArticleBase::read_info()
         GET_INFOVALUE( str_tmp, "aboneres = " );
         if( ! str_tmp.empty() ){
 
-            if( ! m_vec_abone_res.size() ) m_vec_abone_res.resize( MAX_RESNUMBER );
-
             list_tmp = MISC::split_line( str_tmp );
-            it_tmp = list_tmp.begin();
-            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
-                int number = atoi( (*it_tmp).c_str() );
-                if( !(*it_tmp).empty() ) m_vec_abone_res[ number ] = true;
-                else m_vec_abone_res[ number ] = false;
+            for( const std::string& num_str : list_tmp ) {
+                if( !num_str.empty() ) {
+                    m_vec_abone_res.insert( std::stoi( num_str ) );
+                }
             }
         }
 
@@ -1944,14 +1942,11 @@ void ArticleBase::read_info()
         GET_INFOVALUE( str_tmp, "posted = " );
         if( ! str_tmp.empty() ){
 
-            if( ! m_vec_posted.size() ) m_vec_posted.resize( MAX_RESNUMBER );
-
             list_tmp = MISC::split_line( str_tmp );
-            it_tmp = list_tmp.begin();
-            for( ; it_tmp != list_tmp.end(); ++it_tmp ){
-                int number = atoi( (*it_tmp).c_str() );
-                if( !(*it_tmp).empty() ) m_vec_posted[ number ] = true;
-                else m_vec_posted[ number ] = false;
+            for( const std::string& num_str : list_tmp ) {
+                if( !num_str.empty() ) {
+                    m_vec_posted.insert( std::stoi( num_str ) );
+                }
             }
         }
 
@@ -2052,21 +2047,29 @@ void ArticleBase::read_info()
     std::cout << "abone-regex\n"; it = m_list_abone_regex.begin();
     for( ; it != m_list_abone_regex.end(); ++it ) std::cout << (*it) << std::endl;
 
-    if( m_vec_abone_res.size() ){
+    if( !m_vec_abone_res.empty() ) {
         std::cout << "abone-res =";
-        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_abone_res[ i ] ) std::cout << " " << i;
+        const auto end = m_vec_abone_res.end();
+        for( int i = 1; i <= m_number_load; ++i ) {
+            if( m_vec_abone_res.find( i ) != end ) std::cout << ' ' << i;
+        }
+    }
+
+    if( !m_vec_bookmark.empty() ) {
+        std::cout << "bookmark = ";
+        const auto end = m_vec_bookmark.end();
+        for( int i = 1; i <= m_number_load; ++i ) {
+            if( m_vec_bookmark.find( i ) != end ) std::cout << ' ' << i;
+        }
         std::cout << std::endl;
     }
 
-    if( m_vec_bookmark.size() ){
-        std::cout << "bookmark =";
-        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_bookmark[ i ] ) std::cout << " " << i;
-        std::cout << std::endl;
-    }
-
-    if( m_vec_posted.size() ){
+    if( !m_vec_posted.empty() ) {
         std::cout << "posted =";
-        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_posted[ i ] ) std::cout << " " << i;
+        const auto end = m_vec_posted.end();
+        for( int i = 1; i <= m_number_load; ++i ) {
+            if( m_vec_posted.find( i ) != end ) std::cout << ' ' << i;
+        }
         std::cout << std::endl;
     }
 #endif
@@ -2119,20 +2122,29 @@ void ArticleBase::save_info( const bool force )
 
     // レスあぼーん
     std::ostringstream ss_abone_res;
-    if( m_vec_abone_res.size() ){
-        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_abone_res[ i ] ) ss_abone_res << " " << i;
+    if( !m_vec_abone_res.empty() ) {
+        const auto end = m_vec_abone_res.end();
+        for( int i = 1; i <= m_number_load; ++i ) {
+            if( m_vec_abone_res.find( i ) != end ) ss_abone_res << ' ' << i;
+        }
     }
 
     // レスのブックマーク
     std::ostringstream ss_bookmark;
-    if( m_vec_bookmark.size() ){
-        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_bookmark[ i ] ) ss_bookmark << " " << i;
+    if( !m_vec_bookmark.empty() ) {
+        const auto end = m_vec_bookmark.end();
+        for( int i = 1; i <= m_number_load; ++i ) {
+            if( m_vec_bookmark.find( i ) != end ) ss_bookmark << ' ' << i;
+        }
     }
 
     // 書き込み
     std::ostringstream ss_posted;
-    if( m_vec_posted.size() ){
-        for( int i = 1; i <= m_number_load; ++i ) if( m_vec_posted[ i ] ) ss_posted << " " << i;
+    if( !m_vec_posted.empty() ) {
+        const auto end = m_vec_posted.end();
+        for( int i = 1; i <= m_number_load; ++i ) {
+            if( m_vec_posted.find( i ) != end ) ss_posted << ' ' << i;
+        }
     }
 
     std::ostringstream sstr;
