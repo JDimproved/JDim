@@ -3261,6 +3261,7 @@ void NodeTreeBase::update_reference( int from_number, int to_number )
 //
 // number番のレスが参照しているレスのレス番号の参照数(num_reference)と色をチェック
 //
+// TBD {update,check}_id_nameとの一貫性からこの関数もupdate_referenceと統合したほうが良いかも？
 void NodeTreeBase::check_reference( const int number )
 {
     NODE* head = res_header( number );
@@ -3447,59 +3448,28 @@ void NodeTreeBase::clear_id_name()
 void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 {
     if( ! CONFIG::get_check_id() ) return;
-
     if( empty() ) return;
     if( to_number < from_number ) return;
-    for( int i = from_number ; i <= to_number; ++i ) check_id_name( i );
-}
 
+    //まずIDをキーにしたレス番号の一覧を集計
+    for( int i = from_number ; i <= to_number; ++i ) {
+        NODE* header = res_header( i );
+        if( ! header ) continue;
+        if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) continue;
 
-
-//
-// number番のレスの発言数を更新
-//
-void NodeTreeBase::check_id_name( const int number )
-{
-    NODE* header = res_header( number );
-    if( ! header ) return;
-//    if( header->headinfo->abone ) return;
-    if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) return;
-
-    const char* str_id = header->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link;
-
-    // 同じIDのレスを持つ一つ前のレスを探す
-    NODE* tmphead;
-    NODE* prehead = NULL;
-    for( int i = header->id_header -1 ; i >= 1 ; --i ){
-
-        tmphead = m_vec_header[ i ];
-
-        if( tmphead
-//            && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
-            && tmphead->headinfo->block[ BLOCK_ID_NAME ]
-            && str_id[ 0 ] == tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link[ 0 ]
-            && strcmp( str_id, tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link ) == 0 ){
-            prehead = tmphead;
-            break;
-        }
+        std::string str_id = header->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link;
+        m_map_id_name_resnumber[ str_id ].insert( i );
     }
 
-    // 見つからなかった
-    if( ! prehead ) set_num_id_name( header, 1, NULL );
-
-    // 見つかった
-    else{
-
-        set_num_id_name( header, prehead->headinfo->num_id_name+1, prehead );
-
-        // 以前に出た同じIDのレスの発言数を更新
-        tmphead = prehead;
-        while( tmphead ){
-
-            set_num_id_name( tmphead, tmphead->headinfo->num_id_name+1, tmphead->headinfo->pre_id_name_header );
-            tmphead = tmphead->headinfo->pre_id_name_header;
+    //集計したものを元に各ノードの情報を更新
+    for( const auto &a: m_map_id_name_resnumber ){ // ID = a.first, レス番号の一覧 = a.second
+        for( const auto &num: a.second ) {
+            NODE* header = res_header( num );
+            if( ! header ) continue;
+            if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) continue;
+            set_num_id_name( header, a.second.size() );
         }
-    }
+     }
 }
 
 
@@ -3508,12 +3478,11 @@ void NodeTreeBase::check_id_name( const int number )
 //
 // IDノードの色も変更する
 //
-void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name, NODE* pre_id_name_header )
+void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name )
 {
     if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) return;
 
     header->headinfo->num_id_name = num_id_name;        
-    header->headinfo->pre_id_name_header = pre_id_name_header;
 
     if( num_id_name >= m_num_id[ LINK_HIGH ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_ID_HIGH;
     else if( num_id_name >= m_num_id[ LINK_LOW ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_ID_LOW;
@@ -3535,6 +3504,7 @@ void NodeTreeBase::update_fontid( const int from_number, const int to_number )
 //
 // number番のレスのフォント判定を更新
 //
+// TBD {update,check}_id_nameとの一貫性からこの関数もupdate_fontidと統合したほうが良いかも？
 void NodeTreeBase::check_fontid( const int number )
 {
     NODE* head = res_header( number );

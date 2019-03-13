@@ -79,7 +79,6 @@ namespace DBTREE
         bool sage; // メール欄がsageか
 
         int num_id_name; // 同じIDのレスの個数( = 発言数 )
-        NODE* pre_id_name_header; // 同じIDを持つ一つ前のヘッダノードのアドレス
 
         NODE* block[ BLOCK_NUM ];
     };
