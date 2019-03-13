@@ -102,7 +102,8 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
 
     // ルートヘッダ作成。中は空。
     m_id_header = -1; // ルートヘッダIDが 0 になるように -1
-    NODE* tmpnode = create_node_header(); 
+    NODE* tmpnode = create_node_header();
+    assert( tmpnode );
     m_vec_header[ m_id_header ] = tmpnode;
 
     m_default_noname = DBTREE::default_noname( m_url );
@@ -816,8 +817,13 @@ NODE* NodeTreeBase::create_node()
 //
 // ヘッダノード作成
 //
+// 要素数が(MAX_RESNUMBER - 1)以上の場合nullptrを返す
 NODE* NodeTreeBase::create_node_header()
 {
+    if( m_id_header >= MAX_RESNUMBER - 1 ) {
+        return nullptr;
+    }
+
     ++m_id_header;
     m_node_previous = NULL;
 
@@ -1068,6 +1074,9 @@ NODE* NodeTreeBase::append_html( const std::string& html )
 #endif
 
     NODE* header = create_node_header();
+    if( !header ) {
+        return nullptr;
+    }
     m_vec_header[ m_id_header ] = header;
 
     init_loading();
@@ -1517,7 +1526,7 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
     int num_before = m_id_header;
     const char* pos = datlines;
 
-    while( * ( pos = add_one_dat_line( pos ) ) != '\0' ) ++pos;
+    while( ( pos = add_one_dat_line( pos ) ) && *pos != '\0' ) ++pos;
 
     if( num_before != m_id_header ){
 
@@ -1555,6 +1564,9 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 
     size_t i;
     NODE* header = create_node_header();
+    if( !header ) {
+        return nullptr;
+    }
     m_vec_header[ m_id_header ] =  header;
 
     // レス番号
