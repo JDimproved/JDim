@@ -519,6 +519,9 @@ namespace CONFIG
         // スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )
         int delete_img_in_thread;
 
+        //最大表示可能レス数
+        int max_resnumber;
+
         // FIFOの作成などにエラーがあったらダイアログを表示する
         bool show_diag_fifo_error;
 

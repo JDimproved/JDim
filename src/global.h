@@ -11,8 +11,6 @@ enum{
     TIMER_TIMEOUT = 50, // msec  内部クロックの周期
     TIMER_TIMEOUT_SMOOTH_SCROLL = 33, // msec  スレビューのスムーススクロール描画用クロック周期
 
-    MAX_RESNUMBER = 11000, // 最大表示可能レス数
-
     MAX_MG_LNG = 5,  // マウスジェスチャの最大ストローク
 
     ICON_SIZE = 32 // 画像アイコンの大きさ

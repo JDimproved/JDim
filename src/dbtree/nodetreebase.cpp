@@ -29,6 +29,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <limits>
 
 
 #ifndef MAX
@@ -47,7 +48,7 @@ constexpr int LNG_ID = 256;
 constexpr size_t LNG_LINK = 256;
 constexpr size_t MAX_ANCINFO = 64;
 constexpr int RANGE_REF = 20;
-constexpr size_t MAX_LINK_DIGIT = 4;  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
+constexpr size_t MAX_LINK_DIGIT = std::numeric_limits< int >::digits10 + 1;  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
 
 constexpr size_t MAXSISE_OF_LINES = 512 * 1024;  // ロード時に１回の呼び出しで読み込まれる最大データサイズ
 constexpr size_t SIZE_OF_HEAP = MAXSISE_OF_LINES + 64;
@@ -815,10 +816,10 @@ NODE* NodeTreeBase::create_node()
 //
 // ヘッダノード作成
 //
-// 要素数が(MAX_RESNUMBER - 1)以上の場合nullptrを返す
+// 要素数が(CONFIG::get_max_resnumber() - 1)以上の場合nullptrを返す
 NODE* NodeTreeBase::create_node_header()
 {
-    if( m_id_header >= MAX_RESNUMBER - 1 ) {
+    if( m_id_header >= CONFIG::get_max_resnumber() - 1 ) {
         return nullptr;
     }
 
@@ -3332,7 +3333,7 @@ void NodeTreeBase::check_reference( const int number )
                         if( anc_from == 0 ) break;
                         ++anc;
 
-                        anc_to = MIN( anc_to, MAX_RESNUMBER );
+                        anc_to = MIN( anc_to, CONFIG::get_max_resnumber() );
 
                         // >>1-1000 みたいなアンカーは弾く
                         if( anc_to - anc_from >= RANGE_REF ) continue;

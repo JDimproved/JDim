@@ -113,7 +113,7 @@ namespace DBTREE
     {
         unsigned char type;
 
-        short id_header; // ヘッダID ( つまりレス番号、ルートヘッダは0 )
+        int id_header; // ヘッダID ( つまりレス番号、ルートヘッダは0 )
         NODE* next_node; // 最終ノードはNULL
         
         char* text;

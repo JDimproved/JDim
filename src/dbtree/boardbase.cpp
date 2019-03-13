@@ -494,7 +494,7 @@ void BoardBase::set_number_max_res( const int number )
     std::cout << "BoardBase::set_number_max_res " << m_number_max_res << " -> " << number << std::endl;
 #endif
 
-    m_number_max_res = MAX( 0, MIN( MAX_RESNUMBER, number ) );
+    m_number_max_res = MAX( 0, MIN( CONFIG::get_max_resnumber(), number ) );
 
     ArticleHashIterator it = m_hash_article->begin();
     for( ; it != m_hash_article->end(); ++it ) ( *it )->set_number_max( m_number_max_res );
@@ -631,7 +631,7 @@ std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_
             num_from = MAX( 1, num_from );
 
             // 12- みたいな場合はとりあえず大きい数字を入れとく
-            if( !regex.str( 5 ).empty() && !num_to ) num_to = MAX_RESNUMBER + 1;
+            if( !regex.str( 5 ).empty() && !num_to ) num_to = CONFIG::get_max_resnumber() + 1;
         }
 
         // -15 みたいな場合
@@ -2088,7 +2088,7 @@ void BoardBase::read_board_info()
     m_status = cf.get_option_int( "status", STATUS_UNKNOWN, 0, 8192 );
 
     // 最大レス数
-    m_number_max_res = cf.get_option_int( "max_res", get_default_number_max_res(), 0, MAX_RESNUMBER );
+    m_number_max_res = cf.get_option_int( "max_res", get_default_number_max_res(), 0, CONFIG::get_max_resnumber() );
 
 #ifdef _DEBUG
     std::cout << "modified = " << get_date_modified() << std::endl;

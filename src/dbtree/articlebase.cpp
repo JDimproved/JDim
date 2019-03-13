@@ -793,7 +793,7 @@ void ArticleBase::set_abone_res( const int num_from, const int num_to, const boo
 {
     if( empty() ) return;
     if( num_from > num_to ) return;
-    if( num_from <= 0 || num_to >= MAX_RESNUMBER ) return;
+    if( num_from <= 0 || num_to >= CONFIG::get_max_resnumber() ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::set_abone_res num_from = " << num_from << " num_to = " << num_to << " set = " << set << std::endl;
@@ -917,7 +917,7 @@ bool ArticleBase::is_bookmarked( const int number )
 void ArticleBase::set_bookmark( const int number, const bool set )
 {
     if( m_bookmarks.empty() ) get_nodetree();
-    if( number <= 0 || number > MAX_RESNUMBER ) return;
+    if( number <= 0 || number > CONFIG::get_max_resnumber() ) return;
 
     m_save_info = true;
     if( set ) {
@@ -1826,13 +1826,13 @@ void ArticleBase::read_info()
         // 取得数
         m_number_load = 0;
         GET_INFOVALUE( str_tmp, "load = " );
-        if( ! str_tmp.empty() ) m_number_load = atoi( str_tmp.c_str() );
+        if( ! str_tmp.empty() ) m_number_load = std::stoi( str_tmp );
         m_number_before_load = m_number_load;
 
         // 見た場所
         m_number_seen = 0;
         GET_INFOVALUE( str_tmp, "seen = " );
-        if( ! str_tmp.empty() ) m_number_seen = atoi( str_tmp.c_str() );
+        if( ! str_tmp.empty() ) m_number_seen = std::stoi( str_tmp );
 
         // 更新時間 (time)
         GET_INFOVALUE( m_date_modified, "modified = " );
