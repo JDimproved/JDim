@@ -66,7 +66,7 @@ namespace DBTREE
         bool m_broken;  
 
         JDLIB::HEAP m_heap;
-        NODE** m_vec_header;  // レスのヘッダのポインタの配列
+        std::vector< NODE* > m_vec_header;  // レスのヘッダのポインタの配列
         
         std::string m_subject;
 

@@ -55,7 +55,6 @@ using namespace ARTICLE;
 LayoutTree::LayoutTree( const std::string& url, const bool show_abone, const bool show_multispace )
     : m_heap( SIZE_OF_HEAP ),
       m_url( url ),
-      m_vec_header( NULL ),
       m_local_nodetree( 0 ),
       m_separator_header( NULL ),
       m_show_abone( show_abone ),
@@ -88,7 +87,7 @@ void LayoutTree::clear()
 {
     m_heap.clear();
 
-    m_vec_header = NULL;
+    m_map_header.clear();
     
     m_last_header = NULL;
     m_max_res_number = 0;
@@ -326,8 +325,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
         header->res_number = res_number;
         header->node = node_header;
         if( res_number > m_max_res_number ) m_max_res_number = res_number;
-        if( ! m_vec_header ) m_vec_header = ( LAYOUT** ) m_heap.heap_alloc( sizeof( LAYOUT* ) * MAX_RESNUMBER );
-        m_vec_header[ res_number ] = header;
+        m_map_header[ res_number ] = header;
 
         while( dom ){
             m_last_dom_attr = dom->attr;
@@ -466,7 +464,6 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 {
     const int res_number = node_header->id_header;
     if( res_number > m_max_res_number ) m_max_res_number = res_number;
-    if( ! m_vec_header ) m_vec_header = ( LAYOUT** ) m_heap.heap_alloc( sizeof( LAYOUT* ) * MAX_RESNUMBER );
 
 #ifdef _DEBUG
     std::cout << "LayoutTree::append_abone_node num = " << res_number << std::endl;
@@ -476,7 +473,7 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
     if( ! m_show_abone && m_article->get_abone_transparent() ) return;
 
     LAYOUT* head = create_layout_header();
-    m_vec_header[ res_number ] = head;
+    m_map_header[ res_number ] = head;
 
     head->res_number = res_number;
 
@@ -559,10 +556,10 @@ const LAYOUT* LayoutTree::get_header_of_res_const( const int number ){ return ge
 
 LAYOUT* LayoutTree::get_header_of_res( const int number )
 {
-    if( ! m_vec_header ) return NULL;
+    if( m_map_header.empty() ) return NULL;
     if( number > m_max_res_number || number <= 0 ) return NULL;
 
-    return m_vec_header[ number ];
+    return m_map_header[ number ];
 }
 
 

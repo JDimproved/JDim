@@ -97,14 +97,12 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
 
     clear();
 
-    // ヘッダのポインタの配列作成
-    m_vec_header = ( NODE** ) m_heap.heap_alloc( sizeof( NODE* ) * MAX_RESNUMBER );
-
     // ルートヘッダ作成。中は空。
     m_id_header = -1; // ルートヘッダIDが 0 になるように -1
     NODE* tmpnode = create_node_header();
     assert( tmpnode );
-    m_vec_header[ m_id_header ] = tmpnode;
+    assert( m_vec_header.size() == static_cast< decltype( m_vec_header.size() ) >( m_id_header ) );
+    m_vec_header.push_back( tmpnode );
 
     m_default_noname = DBTREE::default_noname( m_url );
 
@@ -1077,7 +1075,8 @@ NODE* NodeTreeBase::append_html( const std::string& html )
     if( !header ) {
         return nullptr;
     }
-    m_vec_header[ m_id_header ] = header;
+    assert( m_vec_header.size() == static_cast< decltype( m_vec_header.size() ) >( m_id_header ) );
+    m_vec_header.push_back( header );
 
     init_loading();
     header->headinfo->block[ BLOCK_MES ] = create_node_block();
@@ -1567,7 +1566,8 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     if( !header ) {
         return nullptr;
     }
-    m_vec_header[ m_id_header ] =  header;
+    assert( m_vec_header.size() == static_cast< decltype( m_vec_header.size() ) >( m_id_header ) );
+    m_vec_header.push_back( header );
 
     // レス番号
     char tmplink[ LNG_RES ], tmpstr[ LNG_RES ];
