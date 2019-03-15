@@ -570,7 +570,7 @@ void ArticleBase::update_writetime()
 //
 int ArticleBase::get_num_posted()
 {
-    return m_vec_posted.size();
+    return m_posts.size();
 }
 
 
@@ -658,7 +658,7 @@ void ArticleBase::update_abone()
     // nodetreeが作られていないときは更新しない
     if( ! m_nodetree ) return;
 
-    get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
+    get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_abone_reses,
                                      m_abone_transparent, m_abone_chain, m_abone_age, m_abone_board, m_abone_global );
 
     get_nodetree()->update_abone_all();
@@ -702,10 +702,10 @@ void ArticleBase::reset_abone( const std::list< std::string >& ids,
 
         for( int i = 1; i <= MIN( m_number_load, (int)vec_abone_res.size() ) ; ++i ){
             if( vec_abone_res[ i ] ) {
-                m_vec_abone_res.insert( i );
+                m_abone_reses.insert( i );
             }
             else {
-                m_vec_abone_res.erase( i );
+                m_abone_reses.erase( i );
             }
         }
     }
@@ -800,10 +800,10 @@ void ArticleBase::set_abone_res( const int num_from, const int num_to, const boo
 #endif    
 
     if( set ) {
-        for( int i = num_from; i <= num_to; ++i ) m_vec_abone_res.insert( i );
+        for( int i = num_from; i <= num_to; ++i ) m_abone_reses.insert( i );
     }
     else {
-        for( int i = num_from; i <= num_to; ++i ) m_vec_abone_res.erase( i );
+        for( int i = num_from; i <= num_to; ++i ) m_abone_reses.erase( i );
     }
 
     update_abone();
@@ -893,7 +893,7 @@ void ArticleBase::set_abone_global( const bool set )
 //
 int ArticleBase::get_num_bookmark()
 {
-    return m_vec_bookmark.size();
+    return m_bookmarks.size();
 }
 
 
@@ -905,9 +905,9 @@ bool ArticleBase::is_bookmarked( const int number )
     if( number <= 0 || number > m_number_load ) return false;
 
     // まだnodetreeが作られてなくてブックマークの情報が得られてないのでnodetreeを作って情報取得
-    if( m_vec_bookmark.empty() ) get_nodetree();
+    if( m_bookmarks.empty() ) get_nodetree();
 
-    return ( m_vec_bookmark.find( number ) != m_vec_bookmark.end() );
+    return ( m_bookmarks.find( number ) != m_bookmarks.end() );
 }
 
 
@@ -916,15 +916,15 @@ bool ArticleBase::is_bookmarked( const int number )
 //
 void ArticleBase::set_bookmark( const int number, const bool set )
 {
-    if( m_vec_bookmark.empty() ) get_nodetree();
+    if( m_bookmarks.empty() ) get_nodetree();
     if( number <= 0 || number > MAX_RESNUMBER ) return;
 
     m_save_info = true;
     if( set ) {
-        m_vec_bookmark.insert( number );
+        m_bookmarks.insert( number );
     }
     else {
-        m_vec_bookmark.erase( number );
+        m_bookmarks.erase( number );
     }
 }
 
@@ -937,9 +937,9 @@ bool ArticleBase::is_posted( const int number )
     if( number <= 0 || number > m_number_load ) return false;
 
     // まだnodetreeが作られてなくて情報が得られてないのでnodetreeを作って情報取得
-    if( m_vec_posted.empty() ) get_nodetree();
+    if( m_posts.empty() ) get_nodetree();
 
-    return ( m_vec_posted.find( number ) != m_vec_posted.end() );
+    return ( m_posts.find( number ) != m_posts.end() );
 }
 
 
@@ -956,14 +956,14 @@ void ArticleBase::set_posted( const int number, const bool set )
     if( number <= 0 || number > m_number_load ) return;
 
     // まだnodetreeが作られてなくて情報が得られてないのでnodetreeを作って情報取得
-    if( m_vec_posted.empty() ) get_nodetree();
+    if( m_posts.empty() ) get_nodetree();
 
     m_save_info = true;
     if( set ) {
-        m_vec_posted.insert( number );
+        m_posts.insert( number );
     }
     else {
-        m_vec_posted.erase( number );
+        m_posts.erase( number );
     }
 
     // nodetreeに情報反映
@@ -978,14 +978,14 @@ void ArticleBase::clear_post_history()
     if( ! is_cached() ) return;
 
     read_info();
-    if( !m_vec_posted.empty() || m_write_time.tv_sec || m_write_time.tv_usec ){
+    if( !m_posts.empty() || m_write_time.tv_sec || m_write_time.tv_usec ){
 
 #ifdef _DEBUG
-        std::cout << "ArticleBase::clear_post_history size = " << m_vec_posted.size()
+        std::cout << "ArticleBase::clear_post_history size = " << m_posts.size()
                   << " time = " << m_write_time_date
                   << " subject = " << m_subject << std::endl;
 #endif
-        m_vec_posted.clear();
+        m_posts.clear();
         memset( &m_write_time, 0, sizeof( struct timeval ) );
         m_write_time_date = std::string();
 
@@ -1023,11 +1023,11 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
         assert( m_nodetree );
 
         // あぼーん情報のコピー
-        m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_vec_abone_res,
+        m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_abone_reses,
                                      m_abone_transparent, m_abone_chain, m_abone_age, m_abone_board, m_abone_global );
 
         // 書き込み情報のコピー
-        m_nodetree->copy_post_info( m_vec_posted );
+        m_nodetree->copy_post_info( m_posts );
 
         m_nodetree->sig_updated().connect( sigc::mem_fun( *this, &ArticleBase::slot_node_updated ) );
         m_nodetree->sig_finished().connect( sigc::mem_fun( *this, &ArticleBase::slot_load_finished ) );
@@ -1373,22 +1373,22 @@ void ArticleBase::slot_load_finished()
     else m_number_new = 0;
 
     // 書き込み情報
-    const auto& node_posted = m_nodetree->get_vec_posted();
-    if( m_number_new && node_posted.size() ){
+    const auto& node_posts = m_nodetree->get_posts();
+    if( m_number_new && node_posts.size() ) {
 
-        const auto end = m_vec_posted.end();
-        const auto node_end = node_posted.end();
+        const auto end = m_posts.end();
+        const auto node_end = node_posts.end();
         (void)end; // _DEBUGが定義されていないときの警告抑制
         for( int i = m_number_before_load +1; i <= m_number_load; ++i ){
 
-            if( node_posted.find( i ) != node_end ) {
-                m_vec_posted.insert( i );
+            if( node_posts.find( i ) != node_end ) {
+                m_posts.insert( i );
             }
             else {
-                m_vec_posted.erase( i );
+                m_posts.erase( i );
             }
 #ifdef _DEBUG
-            if( m_vec_posted.find( i ) != end ) std::cout << "posted no = " << i << std::endl;
+            if( m_posts.find( i ) != end ) std::cout << "posted no = " << i << std::endl;
 #endif
         }
     }
@@ -1715,13 +1715,13 @@ void ArticleBase::delete_cache( const bool cache_only )
         m_write_fixname = false;
         m_write_fixmail = false;
 
-        m_vec_bookmark.clear();
-        m_vec_posted.clear();
+        m_bookmarks.clear();
+        m_posts.clear();
         m_list_abone_id.clear();
         m_list_abone_name.clear();
         m_list_abone_word.clear();
         m_list_abone_regex.clear();
-        m_vec_abone_res.clear();
+        m_abone_reses.clear();
         m_abone_transparent = false;
         m_abone_chain = false;
         m_abone_age = false;
@@ -1897,7 +1897,7 @@ void ArticleBase::read_info()
             list_tmp = MISC::split_line( str_tmp );
             for( const std::string& num_str : list_tmp ) {
                 if( !num_str.empty() ) {
-                    m_vec_bookmark.insert( std::stoi( num_str ) );
+                    m_bookmarks.insert( std::stoi( num_str ) );
                 }
             }
         }
@@ -1921,14 +1921,14 @@ void ArticleBase::read_info()
         if( ! str_tmp.empty() ) m_abone_chain = atoi( str_tmp.c_str() );
 
         // レス番号あぼーん
-        m_vec_abone_res.clear();
+        m_abone_reses.clear();
         GET_INFOVALUE( str_tmp, "aboneres = " );
         if( ! str_tmp.empty() ){
 
             list_tmp = MISC::split_line( str_tmp );
             for( const std::string& num_str : list_tmp ) {
                 if( !num_str.empty() ) {
-                    m_vec_abone_res.insert( std::stoi( num_str ) );
+                    m_abone_reses.insert( std::stoi( num_str ) );
                 }
             }
         }
@@ -1945,7 +1945,7 @@ void ArticleBase::read_info()
             list_tmp = MISC::split_line( str_tmp );
             for( const std::string& num_str : list_tmp ) {
                 if( !num_str.empty() ) {
-                    m_vec_posted.insert( std::stoi( num_str ) );
+                    m_posts.insert( std::stoi( num_str ) );
                 }
             }
         }
@@ -2047,28 +2047,28 @@ void ArticleBase::read_info()
     std::cout << "abone-regex\n"; it = m_list_abone_regex.begin();
     for( ; it != m_list_abone_regex.end(); ++it ) std::cout << (*it) << std::endl;
 
-    if( !m_vec_abone_res.empty() ) {
+    if( !m_abone_reses.empty() ) {
         std::cout << "abone-res =";
-        const auto end = m_vec_abone_res.end();
+        const auto end = m_abone_reses.end();
         for( int i = 1; i <= m_number_load; ++i ) {
-            if( m_vec_abone_res.find( i ) != end ) std::cout << ' ' << i;
+            if( m_abone_reses.find( i ) != end ) std::cout << ' ' << i;
         }
     }
 
-    if( !m_vec_bookmark.empty() ) {
+    if( !m_bookmarks.empty() ) {
         std::cout << "bookmark = ";
-        const auto end = m_vec_bookmark.end();
+        const auto end = m_bookmarks.end();
         for( int i = 1; i <= m_number_load; ++i ) {
-            if( m_vec_bookmark.find( i ) != end ) std::cout << ' ' << i;
+            if( m_bookmarks.find( i ) != end ) std::cout << ' ' << i;
         }
         std::cout << std::endl;
     }
 
-    if( !m_vec_posted.empty() ) {
+    if( !m_posts.empty() ) {
         std::cout << "posted =";
-        const auto end = m_vec_posted.end();
+        const auto end = m_posts.end();
         for( int i = 1; i <= m_number_load; ++i ) {
-            if( m_vec_posted.find( i ) != end ) std::cout << ' ' << i;
+            if( m_posts.find( i ) != end ) std::cout << ' ' << i;
         }
         std::cout << std::endl;
     }
@@ -2122,28 +2122,28 @@ void ArticleBase::save_info( const bool force )
 
     // レスあぼーん
     std::ostringstream ss_abone_res;
-    if( !m_vec_abone_res.empty() ) {
-        const auto end = m_vec_abone_res.end();
+    if( !m_abone_reses.empty() ) {
+        const auto end = m_abone_reses.end();
         for( int i = 1; i <= m_number_load; ++i ) {
-            if( m_vec_abone_res.find( i ) != end ) ss_abone_res << ' ' << i;
+            if( m_abone_reses.find( i ) != end ) ss_abone_res << ' ' << i;
         }
     }
 
     // レスのブックマーク
     std::ostringstream ss_bookmark;
-    if( !m_vec_bookmark.empty() ) {
-        const auto end = m_vec_bookmark.end();
+    if( !m_bookmarks.empty() ) {
+        const auto end = m_bookmarks.end();
         for( int i = 1; i <= m_number_load; ++i ) {
-            if( m_vec_bookmark.find( i ) != end ) ss_bookmark << ' ' << i;
+            if( m_bookmarks.find( i ) != end ) ss_bookmark << ' ' << i;
         }
     }
 
     // 書き込み
     std::ostringstream ss_posted;
-    if( !m_vec_posted.empty() ) {
-        const auto end = m_vec_posted.end();
+    if( !m_posts.empty() ) {
+        const auto end = m_posts.end();
         for( int i = 1; i <= m_number_load; ++i ) {
-            if( m_vec_posted.find( i ) != end ) ss_posted << ' ' << i;
+            if( m_posts.find( i ) != end ) ss_posted << ' ' << i;
         }
     }
 
