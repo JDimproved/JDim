@@ -75,7 +75,7 @@ namespace DBTREE
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
-        std::unordered_set< int > m_vec_abone_res; // レスあぼーん情報
+        std::unordered_set< int > m_abone_reses; // レスあぼーん情報
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
         bool m_abone_age; // age ているレスをあぼーん
@@ -86,10 +86,10 @@ namespace DBTREE
         bool m_bookmarked_thread;
 
         // 「レス」のブックマーク
-        std::unordered_set< int > m_vec_bookmark; // ブックマーク判定キャッシュ
+        std::unordered_set< int > m_bookmarks; // ブックマーク判定キャッシュ
 
         // 自分が書き込んだレスか
-        std::unordered_set< int > m_vec_posted;
+        std::unordered_set< int > m_posts;
 
         // HDDにキャッシュされているか
         bool m_cached;
@@ -318,7 +318,7 @@ namespace DBTREE
         const std::list< std::string >& get_abone_list_name(){ return m_list_abone_name; }
         const std::list< std::string >& get_abone_list_word(){ return m_list_abone_word; }
         const std::list< std::string >& get_abone_list_regex(){ return m_list_abone_regex; }
-        const std::unordered_set< int >& get_abone_vec_res() const noexcept { return m_vec_abone_res; }
+        const std::unordered_set< int >& get_abone_reses() const noexcept { return m_abone_reses; }
 
         // 透明
         bool get_abone_transparent();

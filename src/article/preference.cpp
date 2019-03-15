@@ -136,7 +136,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_edit_id.set_text( str_id );
         // あぼーんレス番号
         // 連番は 12-34 の様なフォーマットに変換
-        const std::unordered_set< int >& set_res = DBTREE::get_abone_vec_res( get_url() );
+        const std::unordered_set< int >& set_res = DBTREE::get_abone_reses( get_url() );
         // レス番号をソートする
         const std::set< int > tmp_set{ set_res.begin(), set_res.end() };
         int pre_res = 0;

@@ -90,7 +90,7 @@ namespace DBTREE
 
         std::list< std::string > m_list_abone_word_global; // あぼーんする文字列(全体)
         std::list< std::string > m_list_abone_regex_global; // あぼーんする正規表現(全体)
-        std::unordered_set< int > m_vec_abone_res; // レスあぼーん情報
+        std::unordered_set< int > m_abone_reses; // レスあぼーん情報
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
         bool m_abone_age; // age ているレスはあぼーん
@@ -98,10 +98,10 @@ namespace DBTREE
         bool m_abone_global; // 全体レベルでのあぼーんを有効にする
 
         // 自分が書き込んだレスか
-        std::unordered_set< int > m_vec_posted;
+        std::unordered_set< int > m_posts;
 
         // 自分の書き込みにレスしているか
-        std::unordered_set< int > m_vec_refer_posted;
+        std::unordered_set< int > m_refer_posts;
 
         // 未来のレスに対するアンカーがある時に使用する
         // check_reference() を参照
@@ -237,7 +237,7 @@ namespace DBTREE
                               const std::list< std::string >& list_abone_name,
                               const std::list< std::string >& list_abone_word,
                               const std::list< std::string >& list_abone_regex,
-                              const std::unordered_set< int >& vec_abone_res,
+                              const std::unordered_set< int >& abone_reses,
                               const bool abone_transparent, const bool abone_chain, const bool abone_age,
                               const bool abone_board, const bool abone_global );
 
@@ -246,8 +246,8 @@ namespace DBTREE
         void update_abone_all();
 
         // 自分が書き込んだレスか
-        void copy_post_info( const std::unordered_set< int >& vec_posted ){ m_vec_posted = vec_posted; }
-        const std::unordered_set< int >& get_vec_posted() const noexcept { return m_vec_posted; }
+        void copy_post_info( const std::unordered_set< int >& posts ){ m_posts = posts; }
+        const std::unordered_set< int >& get_posts() const noexcept { return m_posts; }
 
         // 自分の書き込みにレスしたか
         bool is_refer_posted( const int number );

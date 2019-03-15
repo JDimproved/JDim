@@ -327,7 +327,7 @@ namespace DBTREE
     const std::list< std::string >& get_abone_list_thread_remove( const std::string& url );
     const std::list< std::string >& get_abone_list_word_thread( const std::string& url );
     const std::list< std::string >& get_abone_list_regex_thread( const std::string& url );
-    const std::unordered_set< int >& get_abone_vec_res( const std::string& url );
+    const std::unordered_set< int >& get_abone_reses( const std::string& url );
     int get_abone_number_thread( const std::string& url );
     int get_abone_hour_thread( const std::string& url );
 
