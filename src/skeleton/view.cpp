@@ -279,6 +279,7 @@ std::string View::get_color()
 {
     if( is_broken() ) return "red";
     else if( is_old() ) return "blue";
+    else if( is_overflow() ) return "green";
 
     return "";
 }

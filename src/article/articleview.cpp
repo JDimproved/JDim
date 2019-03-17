@@ -215,6 +215,12 @@ bool ArticleViewMain::is_broken()
     return ( get_article()->get_status() & STATUS_BROKEN );
 }
 
+//レス数が最大表示可能数以上か
+bool ArticleViewMain::is_overflow() const noexcept
+{
+    return ( get_article()->get_status() & STATUS_OVERFLOW );
+}
+
 //
 // 再読み込み実行
 //
@@ -469,6 +475,7 @@ void ArticleViewMain::update_finish()
     std::string str_tablabel;
     if( is_broken() ) str_tablabel = "[ 壊れています ]  ";
     else if( is_old() ) str_tablabel = "[ DAT落ち ]  ";
+    else if( is_overflow() ) str_tablabel = "[ レス数が最大表示可能数以上です ]  ";
 
     if( get_label().empty() || ! str_tablabel.empty() ) set_label( str_tablabel + DBTREE::article_subject( url_article() ) );
     ARTICLE::get_admin()->set_command( "redraw_toolbar" );
@@ -626,6 +633,7 @@ void ArticleViewMain::create_status_message()
     if( is_old() ) str_stat = "[ DAT落ち 又は 移転しました ] ";
     if( is_check_update() ) str_stat += "[ 更新可能です ] ";
     if( is_broken() ) str_stat += "[ 壊れています ] ";
+    if( is_overflow() ) str_stat += "[ レス数が最大表示可能数以上です ] ";
 
     if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += "[ " + DBTREE::article_ext_err( url_article() ) + " ] ";
 

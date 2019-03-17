@@ -216,7 +216,8 @@ enum
     STATUS_BROKEN =         1 << 2, // あぼーんなどで壊れている
     STATUS_UPDATE =         1 << 3, // 更新可能
     STATUS_UPDATED =        1 << 4, // 更新済み
-    STATUS_BROKEN_SUBJECT = 1 << 5  // subject.txt が壊れている( subject.txt に示されたレス数よりも実際の取得数の方が多い )
+    STATUS_BROKEN_SUBJECT = 1 << 5, // subject.txt が壊れている( subject.txt に示されたレス数よりも実際の取得数の方が多い )
+    STATUS_OVERFLOW =       1 << 6  // レス数が最大表示可能数以上
 };
 
 

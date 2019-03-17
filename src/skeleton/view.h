@@ -258,6 +258,9 @@ namespace SKELETON
         // 壊れているか
         virtual bool is_broken(){ return false; }
 
+        // レス数が最大表示可能数以上か
+        virtual bool is_overflow() const noexcept { return false; }
+
         // ラベルやステータスバーの色
         std::string get_color();
 

@@ -1325,6 +1325,13 @@ void ArticleBase::slot_load_finished()
     // 壊れている
     if( m_nodetree->is_broken() ) m_status |= STATUS_BROKEN;
 
+    // レス数最大表示可能数以上か
+    if( get_number_load() >= CONFIG::get_max_resnumber() )
+        m_status |= STATUS_OVERFLOW;
+    else {
+        m_status &= ~STATUS_OVERFLOW;
+    }
+
     // 状態が変わっていたら情報保存
     if( old_status != m_status ) m_save_info = true;
 

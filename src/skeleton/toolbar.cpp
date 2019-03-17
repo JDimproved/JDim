@@ -122,7 +122,7 @@ void ToolBar::set_view( SKELETON::View* view )
 
     // ラベル表示更新
     set_label( view->get_label() );
-    if( view->is_broken() || view->is_old() ) set_color( view->get_color() );
+    if( view->is_broken() || view->is_old() || view->is_overflow() ) set_color( view->get_color() );
 
     // 閉じるボタンの表示更新
     if( m_button_close ){
