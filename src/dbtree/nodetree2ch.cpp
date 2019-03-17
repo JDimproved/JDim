@@ -27,7 +27,8 @@ enum
     MODE_OFFLAW,
     MODE_OFFLAW2,
     MODE_KAKO_GZ,
-    MODE_KAKO
+    MODE_KAKO,
+    MODE_OLDURL
 };
 
 
@@ -187,7 +188,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         data.url = ss.str();
     }
 
-    // 普通の読み込み
+    // 普通もしくは旧URLからの読み込み
     else{
 
         // レジューム設定
@@ -198,7 +199,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         }
         else set_resume( false );
 
-        data.url = get_url();
+        data.url = ( m_mode == MODE_OLDURL ) ? m_org_url : get_url();
     }
 
 #ifdef _DEBUG    
@@ -248,11 +249,13 @@ void NodeTree2ch::receive_finish()
 
   (例) http://HOGE.2ch.net/test/read.cgi/hoge/1234567890/ を取得
 
-  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。302で●がある場合(2-1)、無い場合は(2-2)へ(※)
+  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。302で●がある場合(2-1)、旧URLがある場合(2-2)、無い場合は(2-3)へ(※)
 
   (2-1) offlaw.cgiを使って取得
 
-  (2-2) http://HOGE.2ch.net/hoge/kako/1234/12345/1234567890.dat.gz から取得。302なら(3)へ
+  (2-2) 旧URLから取得
+
+  (2-3) http://HOGE.2ch.net/hoge/kako/1234/12345/1234567890.dat.gz から取得。302なら(3)へ
 
   (3) http://HOGE.2ch.net/hoge/kako/1234/12345/1234567890.dat から取得 
 
@@ -261,11 +264,13 @@ void NodeTree2ch::receive_finish()
 
   (例) http://HOGE.2ch.net/test/read.cgi/hoge/123456789/ を取得
 
-  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。302で●がある場合(2-1)、無い場合は(2-2)へ(※)
+  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。302で●がある場合(2-1)、旧URLがある場合(2-2)、無い場合は(2-3)へ(※)
 
   (2-1) offlaw.cgiを使って取得
 
-  (2-2) http://HOGE.2ch.net/hoge/kako/123/123456789.dat.gz から取得。302なら(3)へ
+  (2-2) 旧URLから取得
+
+  (2-3) http://HOGE.2ch.net/hoge/kako/123/123456789.dat.gz から取得。302なら(3)へ
 
   (3) http://HOGE.2ch.net/hoge/kako/123/123456789.dat から取得 
 
@@ -283,9 +288,12 @@ void NodeTree2ch::receive_finish()
         else if( m_mode == MODE_NORMAL && CONFIG::get_use_offlaw2_2ch()
                 && get_url().find( ".bbspink.com" ) == std::string::npos ) m_mode = MODE_OFFLAW2;
 
+        // 旧URLがある場合、そのURLで再取得
+        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OFFLAW || m_mode == MODE_OFFLAW2 ) && get_url() != m_org_url ) m_mode = MODE_OLDURL;
+
         // 過去ログ倉庫(gz圧縮)
         // ただし 2008年1月1日以降に立てられたスレは除く
-        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OFFLAW ) && m_since_time < 1199113200 ) m_mode = MODE_KAKO_GZ;
+        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OFFLAW || m_mode == MODE_OLDURL ) && m_since_time < 1199113200 ) m_mode = MODE_KAKO_GZ;
 
         // 過去ログ倉庫
         else if( m_mode == MODE_KAKO_GZ ) m_mode = MODE_KAKO;
