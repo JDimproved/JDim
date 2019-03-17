@@ -793,7 +793,7 @@ void ArticleBase::set_abone_res( const int num_from, const int num_to, const boo
 {
     if( empty() ) return;
     if( num_from > num_to ) return;
-    if( num_from <= 0 || num_to >= CONFIG::get_max_resnumber() ) return;
+    if( num_from <= 0 || num_to > CONFIG::get_max_resnumber() ) return;
 
 #ifdef _DEBUG
     std::cout << "ArticleBase::set_abone_res num_from = " << num_from << " num_to = " << num_to << " set = " << set << std::endl;
@@ -1325,7 +1325,7 @@ void ArticleBase::slot_load_finished()
     // 壊れている
     if( m_nodetree->is_broken() ) m_status |= STATUS_BROKEN;
 
-    // レス数最大表示可能数以上か
+    // レス数が最大表示可能数以上か
     if( get_number_load() >= CONFIG::get_max_resnumber() )
         m_status |= STATUS_OVERFLOW;
     else {

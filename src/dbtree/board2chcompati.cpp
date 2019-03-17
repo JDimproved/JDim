@@ -415,7 +415,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
         }
 
         const auto num = std::atoi( str_num );
-        artinfo.number = ( num < CONFIG::get_max_resnumber() ) ? num : CONFIG::get_max_resnumber() - 1 ;
+        artinfo.number = ( num < CONFIG::get_max_resnumber() ) ? num : CONFIG::get_max_resnumber();
 
         get_list_artinfo().push_back( artinfo );
 

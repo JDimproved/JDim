@@ -816,10 +816,10 @@ NODE* NodeTreeBase::create_node()
 //
 // ヘッダノード作成
 //
-// 要素数が(CONFIG::get_max_resnumber() - 1)以上の場合nullptrを返す
+// 要素数が(CONFIG::get_max_resnumber())より多くなる場合nullptrを返す
 NODE* NodeTreeBase::create_node_header()
 {
-    if( m_id_header >= CONFIG::get_max_resnumber() - 1 ) {
+    if( m_id_header >= CONFIG::get_max_resnumber() ) {
         return nullptr;
     }
 
