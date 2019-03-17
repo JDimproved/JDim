@@ -30,8 +30,10 @@ namespace JDLIB
         bool m_newline;
         bool m_wchar;
 
-        char *m_target_asc;
-        int *m_table_pos;
+        // 全角半角を区別しないときに使う変換用バッファ
+        // 処理可能なバッファ長は regoff_t (= int) のサイズに制限される
+        std::string m_target_asc;
+        std::vector< int > m_table_pos;
 
     public:
 

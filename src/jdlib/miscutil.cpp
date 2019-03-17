@@ -1815,59 +1815,44 @@ bool MISC::has_widechar( const char* str )
 // 全角英数字(str1) -> 半角英数字(str2)
 //
 // table_pos : 置き換えた文字列の位置
-// n : str2 と table_pos のバッファサイズ
 //
-void MISC::asc( const char* str1, char* str2, int* table_pos, const size_t n )
+void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_pos )
 {
-    const size_t mrg = 18;
-    size_t pos = 0;
-    size_t pos2 = 0;
+    for( int pos = 0; str1[ pos ] != '\0'; ) {
+        assert( pos >= 0 );
+        assert( table_pos.max_size() > table_pos.size() );
+        const auto in1 = static_cast< unsigned char >( str1[ pos ] );
 
-    while( pos2 < ( n - mrg ) && *( str1 + pos ) != '\0' ){
-
-        const unsigned char in = *( str1 + pos );
-
-        if( in == 0xef ){
-
-            const unsigned char in2 = * ( str1 + pos + 1 );
-            const unsigned char in3 = * ( str1 + pos + 2 );
+        if( in1 == 0xef ) {
+            const auto in2 = static_cast< unsigned char >( str1[ pos + 1 ] );
+            const auto in3 = static_cast< unsigned char >( str1[ pos + 2 ] );
 
             if( in2 == 0xbc ){
-
-                //  全角数字
+                //  全角数字 (U+FF10 - U+FF19)
                 if( 0x90 <= in3 && in3 <= 0x99 ){
-
-                    str2[ pos2 ] = '0' + in3 - 0x90;;
-                    table_pos[ pos2 ] = pos;
+                    str2.push_back( '0' + in3 - 0x90 );
+                    table_pos.push_back( pos );
                     pos += 3;
-                    ++pos2;
                     continue;
                 }
-
-                //  全角大文字
+                //  全角大文字 (U+FF21 - U+FF3A)
                 else if( 0xa1 <= in3 && in3 <= 0xba ){
-
-                    str2[ pos2 ] = 'A' + in3 - 0xa1;
-                    table_pos[ pos2 ] = pos;
-
+                    str2.push_back( 'A' + in3 - 0xa1 );
+                    table_pos.push_back( pos );
                     pos += 3;
-                    ++pos2;
                     continue;
                 }
             }
 
-            //  全角小文字
+            //  全角小文字 (U+FF41 - U+FF5A)
             else if( in2 == 0xbd && ( 0x81 <= in3 && in3 <= 0x9a ) ){
-
-                str2[ pos2 ] = 'a' + in3 - 0x81;
-                table_pos[ pos2 ] = pos;
-
+                str2.push_back( 'a' + in3 - 0x81 );
+                table_pos.push_back( pos );
                 pos += 3;
-                ++pos2;
                 continue;
             }
 
-            // 半角かな
+            // 半角かな (U+FF61 - U+FF9F)
             else if( ( in2 == 0xbd && ( 0xa1 <= in3 && in3 <= 0xbf ) )
                      || ( in2 == 0xbe && ( 0x80 <= in3 && in3 <= 0x9f ) ) ){
 
@@ -1876,18 +1861,16 @@ void MISC::asc( const char* str1, char* str2, int* table_pos, const size_t n )
                 size_t i = 0;
 
                 // 濁点、半濁点
-                const unsigned char in4 = * ( str1 + pos + 3 );
-                const unsigned char in5 = * ( str1 + pos + 4 );
+                const auto in4 = static_cast< unsigned char >( str1[ pos + 3 ] );
+                const auto in5 = static_cast< unsigned char >( str1[ pos + 4 ] );
                 if( in4 == 0xef && in5 == 0xbe ){
-
-                    const unsigned char in6 = * ( str1 + pos + 5 );
+                    const auto in6 = static_cast< unsigned char >( str1[ pos + 5 ] );
 
                     // 濁点
                     if( in6 == 0x9e ){
                         dakuten = true;
                         i = 61;
                     }
-
                     // 半濁点
                     else if( in6 == 0x9f ){
                         dakuten = true;
@@ -1897,16 +1880,14 @@ void MISC::asc( const char* str1, char* str2, int* table_pos, const size_t n )
 
                 while( !flag_hkana && hkana_table1[ i ][ 0 ][ 0 ] != '\0' ){
 
-                    if( in == hkana_table1[ i ][ 0 ][ 0 ] && in2 == hkana_table1[ i ][ 0 ][ 1 ] && in3 == hkana_table1[ i ][ 0 ][ 2 ] ){
+                    if( in1 == hkana_table1[ i ][ 0 ][ 0 ]
+                            && in2 == hkana_table1[ i ][ 0 ][ 1 ]
+                            && in3 == hkana_table1[ i ][ 0 ][ 2 ] ) {
 
-                        str2[ pos2 ] = hkana_table1[ i ][ 1 ][ 0 ];
-                        str2[ pos2 +1 ] = hkana_table1[ i ][ 1 ][ 1 ];
-                        str2[ pos2 +2 ] = hkana_table1[ i ][ 1 ][ 2 ];
-                        table_pos[ pos2 ] = pos;
+                        std::copy_n( hkana_table1[ i ][ 1 ], 3, std::back_inserter( str2 ) );
+                        std::generate_n( std::back_inserter( table_pos ), 3, [&pos]{ return pos++; } );
 
-                        pos += 3;
                         if( dakuten ) pos += 3;
-                        pos2 += 3;
                         flag_hkana = true;
                     }
                     ++i;
@@ -1915,18 +1896,8 @@ void MISC::asc( const char* str1, char* str2, int* table_pos, const size_t n )
             }
         }
 
-        str2[ pos2 ] = str1[ pos ];
-        table_pos[ pos2 ] = pos;
-
+        str2.push_back( str1[ pos ] );
+        table_pos.push_back( pos );
         ++pos;
-        ++pos2;
     }
-
-    if( pos2 >= ( n - mrg ) ){
-        ERRMSG( "MISC::asc : buffer overflow." );
-        pos2 = ( n - mrg ) - 1;
-    }
-
-    table_pos[ pos2 ] = pos;
-    str2[ pos2 ] = '\0';
 }
