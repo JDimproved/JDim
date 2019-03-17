@@ -5702,10 +5702,11 @@ void DrawAreaBase::slot_multipress_pressed( int n_press, double, double )
     if( !event || event->type != GDK_BUTTON_PRESS ) return;
 
     const unsigned int n_points = m_gesture_multipress->property_n_points();
+    const unsigned int button = m_gesture_multipress->get_current_button();
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::slot_multipress_pressed "
               << "n_press = " << n_press << ", event = " << event->type << ", n_points = " << n_points
-              << std::endl;
+              << ", button = " << button << std::endl;
 #endif
 
     const auto device = m_gesture_multipress->get_device();
@@ -5721,6 +5722,15 @@ void DrawAreaBase::slot_multipress_pressed( int n_press, double, double )
         button_event.button = GDK_BUTTON_SECONDARY;
     }
     slot_button_press_event( &button_event );
+
+    if( button >= 4 ) {
+        // GtkGestureMultiPressを使うとButton4以上のマウスボタンで
+        // button-release-eventの反応が悪くなる環境がある。
+        // そのためpressedから直接releasedの処理を実行することによって問題を回避する。
+        button_event.type = GDK_BUTTON_RELEASE;
+        slot_button_release_event( &button_event );
+        m_gesture_multipress->set_sequence_state( sequence, Gtk::EVENT_SEQUENCE_DENIED );
+    }
 }
 
 void DrawAreaBase::slot_multipress_released( int n_press, double, double )
