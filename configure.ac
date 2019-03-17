@@ -430,7 +430,8 @@ AS_IF(
   [test "x$with_gthread" = xyes -a "x$with_stdthread" = xyes],
   [AC_MSG_ERROR([cannot configure both gthread and stdthread.])],
   [test "x$with_gthread" = xyes],
-  [AC_DEFINE(USE_GTHREAD, , [use gthread instead of pthread])],
+  [AC_MSG_WARN([--with-gthread is deprecated. Use --with-stdthread instead.])
+   AC_DEFINE(USE_GTHREAD, , [use gthread instead of pthread])],
   [test "x$with_stdthread" = xyes],
   [AC_DEFINE(WITH_STD_THREAD, 1, [Use std::thread instead of pthread])]
 )

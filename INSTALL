@@ -104,6 +104,7 @@
     --with-[gthread|stdthread]
 
        pthreadの代わりにgthreadまたはstd::threadを使用する。
+       gthreadは非推奨: かわりにstd::threadを使用してください。
 
     --with-gtkmm3
 
