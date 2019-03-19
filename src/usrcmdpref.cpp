@@ -90,9 +90,10 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
 
     m_scrollwin.add( m_treeview );
     m_scrollwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
+    m_scrollwin.set_size_request( 640, 400 );
 
     get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_label );
+    get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
     get_vbox()->pack_start( m_scrollwin );
 
 #if !GTKMM_CHECK_VERSION(2,7,0)
