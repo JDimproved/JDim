@@ -110,9 +110,6 @@ namespace MISC
 
     // str 中に含まれている str2 の 数を返す
     int count_str( const std::string& str, const std::string& str2 );
-    
-    // str 中に含まれている chr の 数を返す
-    int count_chr( const std::string& str, const char chr );
 
     // 文字列(utf-8も) -> 整数変換
     // (例) "12３" -> 123
