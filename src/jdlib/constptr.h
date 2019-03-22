@@ -19,9 +19,9 @@ namespace JDLIB
         T* operator -> () const noexcept { return m_p; }
         bool operator == ( const T *p ) const { return( m_p == p ); }
         bool operator != ( const T *p ) const { return( m_p != p ); }
-        bool operator ! () const { return ( m_p == NULL ); }
+        bool operator ! () const { return ( m_p == nullptr ); }
         T& operator * () const { return *m_p; }
-        operator bool () const { return ( m_p != NULL ); }
+        operator bool () const { return ( m_p != nullptr ); }
         T& operator [] ( const int i ){ return m_p[ i ]; }
 
         ConstPtr< T >& operator = ( const ConstPtr< T >& a ){ m_p = a.m_p; return *this; }
@@ -29,7 +29,7 @@ namespace JDLIB
         ConstPtr< T >& operator = ( const T *p ){ m_p = p; return *this; }    
         ConstPtr< T >& operator = ( T *p ){ m_p = p; return *this; }
 
-        void reset() { m_p = NULL; }
+        void reset() { m_p = nullptr; }
 
         // clear は deleteも実行
         void clear(){
