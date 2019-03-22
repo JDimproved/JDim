@@ -16,6 +16,7 @@
 #endif
 
 #ifdef USE_OPENSSL
+#include <array>
 #include <openssl/sha.h>
 #else // defined USE_GNUTLS
 #include <gcrypt.h>
