@@ -33,30 +33,25 @@ dnl
 case "${host_os}" in 
  freebsd*) 
    echo "os = freebsd"
-   AC_DEFINE(ICONV_CONST, const, "iconv_const")
    AC_DEFINE(USE_MKTIME, , "use mktime")
    ;;
  solaris*)
    echo "os = solaris"
-   AC_DEFINE(ICONV_CONST, const, "iconv_const")
    AC_DEFINE(NO_TIMEGM, , "no timegm")
    ;;
  mingw*)
    echo "os = ${host_os}"
-   AC_DEFINE(ICONV_CONST, , "iconv_const")
    AC_DEFINE(USE_MKTIME, , "use mktime")
    ;;
  darwin*)
    echo "os = ${host_os}"
    AC_DEFUN([AM_ICONV], [])
-   AC_DEFINE(ICONV_CONST, , "iconv_const")
    AC_DEFINE(USE_MKTIME, , "use mktime")
    ;;
 dnl linux*|gnu*|*-gnu
  *)
    echo "os = ${host_os}"
    AC_DEFUN([AM_ICONV], [])
-   AC_DEFINE(ICONV_CONST, , "iconv_const")
    ;;
 esac
 

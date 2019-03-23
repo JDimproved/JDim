@@ -4,10 +4,6 @@
 //#define _DEBUG_ICONV
 #include "jddebug.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "jdiconv.h"
 #include "miscmsg.h"
 #include "miscutil.h"
@@ -16,6 +12,24 @@
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
+
+
+namespace
+{
+struct iconv_cast
+{
+    char** const m_t;
+    iconv_cast() = delete;
+    iconv_cast( char** t ) noexcept : m_t{ t } {}
+    ~iconv_cast() noexcept = default;
+
+    // POSIX-1.2008 : https://pubs.opengroup.org/onlinepubs/9699919799/functions/iconv.html
+    operator char**() const noexcept { return const_cast< char** >( m_t ); }
+    // SUSv2 : https://pubs.opengroup.org/onlinepubs/7908799/xsh/iconv.html
+    operator const char**() const noexcept { return const_cast< const char** >( m_t ); }
+};
+} // namespace
+
 
 using namespace JDLIB;
 
@@ -100,7 +114,7 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
         std::cout << "byte_left_out = " << byte_left_out << std::endl;
 #endif
     
-        const int ret = iconv( m_cd, ( ICONV_CONST char**)&m_buf_in_tmp, &m_byte_left_in, &buf_out, &byte_left_out );
+        const int ret = iconv( m_cd, iconv_cast{ &m_buf_in_tmp }, &m_byte_left_in, &buf_out, &byte_left_out );
 
 #ifdef _DEBUG
         std::cout << "--> ret = " << ret << std::endl;
