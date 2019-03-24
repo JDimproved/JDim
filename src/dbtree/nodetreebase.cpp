@@ -48,7 +48,7 @@ constexpr int LNG_ID = 256;
 constexpr size_t LNG_LINK = 256;
 constexpr size_t MAX_ANCINFO = 64;
 constexpr int RANGE_REF = 20;
-constexpr size_t MAX_LINK_DIGIT = std::numeric_limits< int >::digits10 + 1;  // レスアンカーでMAX_LINK_DIGIT 桁までリンクにする
+constexpr size_t MAX_RES_DIGIT = std::numeric_limits< int >::digits10 + 1;  // レスアンカーや発言数で使われるレスの桁数
 
 constexpr size_t MAXSISE_OF_LINES = 512 * 1024;  // ロード時に１回の呼び出しで読み込まれる最大データサイズ
 constexpr size_t SIZE_OF_HEAP = MAXSISE_OF_LINES + 64;
@@ -1047,7 +1047,7 @@ NODE* NodeTreeBase::create_node_ntext( const char* text, const int n, const int 
     if( tmpnode ){
         tmpnode->type = NODE_TEXT;
 
-        tmpnode->text = ( char* )m_heap.heap_alloc( n +8 );
+        tmpnode->text = ( char* )m_heap.heap_alloc( n + MAX_RES_DIGIT + 4 );
         memcpy( tmpnode->text, text, n ); tmpnode->text[ n ] = '\0';
         tmpnode->color_text = color_text;
         tmpnode->bold = bold;
@@ -2594,10 +2594,10 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
     // 数字かチェック
     size_t n, dig;
     int num = MISC::str_to_uint( pos, dig, n );
-    if( dig == 0 || dig > MAX_LINK_DIGIT || num == 0 ){
+    if( dig == 0 || dig > MAX_RES_DIGIT || num == 0 ){
 
         // モード2で数字が長すぎるときは飛ばす
-        if( mode == 2 && dig > MAX_LINK_DIGIT ) n_in = ( int )( pos - str_in ) + n; 
+        if( mode == 2 && dig > MAX_RES_DIGIT ) n_in = ( int )( pos - str_in ) + n;
 
         return false;
     }
@@ -2620,7 +2620,7 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
         // >>1１ を書き込むと <a href="..">&gt;&gt;1</a>１ となるため
         size_t n2, dig2;
         const int num2 = MISC::str_to_uint( pos, dig2, n2 );
-        if( dig2 > 0 && dig2 <= MAX_LINK_DIGIT ){
+        if( dig2 > 0 && dig2 <= MAX_RES_DIGIT ){
 
             for( size_t i = 0; i < dig2; ++i ) num *= 10;
             num += num2;
@@ -2652,7 +2652,7 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
     if( offset ){
         
         ancinfo->anc_to = MAX( ancinfo->anc_from, MISC::str_to_uint( pos + offset, dig, n ) );
-        if( dig && dig <= MAX_LINK_DIGIT && ancinfo->anc_to ){
+        if( dig && dig <= MAX_RES_DIGIT && ancinfo->anc_to ){
 
             // 画面に表示する文字            
             memcpy( str_out + lng_out, pos, offset + n );
