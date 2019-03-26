@@ -11,8 +11,6 @@ enum{
     TIMER_TIMEOUT = 50, // msec  内部クロックの周期
     TIMER_TIMEOUT_SMOOTH_SCROLL = 33, // msec  スレビューのスムーススクロール描画用クロック周期
 
-    MAX_RESNUMBER = 11000, // 最大表示可能レス数
-
     MAX_MG_LNG = 5,  // マウスジェスチャの最大ストローク
 
     ICON_SIZE = 32 // 画像アイコンの大きさ
@@ -212,13 +210,14 @@ enum
 // 板やスレッドの状態
 enum
 {
-    STATUS_UNKNOWN = 0,  // 不明
-    STATUS_NORMAL = 1,   // 通常
-    STATUS_OLD = 2,      // DAT落ち or 板が移転した
-    STATUS_BROKEN = 4,   // あぼーんなどで壊れている
-    STATUS_UPDATE = 8,   // 更新可能
-    STATUS_UPDATED = 16,   // 更新済み
-    STATUS_BROKEN_SUBJECT = 32  // subject.txt が壊れている( subject.txt に示されたレス数よりも実際の取得数の方が多い )
+    STATUS_UNKNOWN =        0, // 不明
+    STATUS_NORMAL =         1 << 0, // 通常
+    STATUS_OLD =            1 << 1, // DAT落ち or 板が移転した
+    STATUS_BROKEN =         1 << 2, // あぼーんなどで壊れている
+    STATUS_UPDATE =         1 << 3, // 更新可能
+    STATUS_UPDATED =        1 << 4, // 更新済み
+    STATUS_BROKEN_SUBJECT = 1 << 5, // subject.txt が壊れている( subject.txt に示されたレス数よりも実際の取得数の方が多い )
+    STATUS_OVERFLOW =       1 << 6  // レス数が最大表示可能数以上
 };
 
 

@@ -50,6 +50,7 @@ namespace ARTICLE
         bool is_check_update() override;
         bool is_old() override;
         bool is_broken() override;
+        bool is_overflow() const noexcept override;
 
         void show_view() override;
         void update_view() override;

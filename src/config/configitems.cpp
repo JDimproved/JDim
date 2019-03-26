@@ -600,6 +600,9 @@ bool ConfigItems::load( const bool restore )
     // スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )
     delete_img_in_thread = cf.get_option_int( "delete_img_in_thread", CONF_DELETE_IMG_IN_THREAD, 0, 2 );
 
+    //最大表示可能レス数
+    max_resnumber = cf.get_option_int( "max_resnumber", CONF_MAX_RESNUMBER, 1, std::numeric_limits< int >::max() - 1 );
+
     // FIFOの作成などにエラーがあったらダイアログを表示する
     show_diag_fifo_error = cf.get_option_bool( "show_diag_fifo_error", CONF_SHOW_DIAG_FIFO_ERROR );
 
@@ -949,6 +952,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_machi_offlaw", use_machi_offlaw );
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );
     cf.update( "delete_img_in_thread", delete_img_in_thread );
+    cf.update( "max_resnumber", max_resnumber );
     cf.update( "show_diag_fifo_error", show_diag_fifo_error );
     cf.update( "save_session", save_session );
 

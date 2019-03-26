@@ -588,6 +588,10 @@ namespace CONFIG
     int get_delete_img_in_thread();
     void set_delete_img_in_thread( const int set );
 
+    //最大表示可能レス数
+    int get_max_resnumber();
+    void set_max_resnumber( const int set );
+
     // FIFOの作成などにエラーがあったらダイアログを表示する
     bool get_show_diag_fifo_error();
     void set_show_diag_fifo_error( const bool set );

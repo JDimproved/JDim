@@ -598,6 +598,11 @@ void CONFIG::set_del_written_thread_diag( const bool set ){ get_confitem()->show
 int CONFIG::get_delete_img_in_thread(){ return get_confitem()->delete_img_in_thread; }
 void CONFIG::set_delete_img_in_thread( const int set ){ get_confitem()->delete_img_in_thread = set; }
 
+//最大表示可能レス数
+int CONFIG::get_max_resnumber(){ return get_confitem()->max_resnumber; }
+void CONFIG::set_max_resnumber( const int set ){ get_confitem()->max_resnumber = set; }
+
+
 // FIFOの作成などにエラーがあったらダイアログを表示する
 bool CONFIG::get_show_diag_fifo_error(){ return get_confitem()->show_diag_fifo_error; }
 void CONFIG::set_show_diag_fifo_error( const bool set ){ get_confitem()->show_diag_fifo_error = set; }

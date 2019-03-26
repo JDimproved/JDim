@@ -3183,23 +3183,11 @@ int DrawAreaBase::set_num_id( LAYOUT* layout )
     int num_id = layout->header->node->headinfo->num_id_name;
     if( num_id >= 2 ){
 
-        layout->node->text[ pos++] = ' ';
-        layout->node->text[ pos++] = '(';
-        int div_tmp = 1;
-        if( num_id / 1000 ) div_tmp = 1000;
-        else if( num_id / 100 ) div_tmp = 100;
-        else if( num_id / 10 ) div_tmp = 10;
-        while( div_tmp ){
+        const auto &tmp_str = std::string( " (" ) + std::to_string( num_id ) + ")" ;
+        std::memcpy( layout->node->text, tmp_str.c_str(), tmp_str.size() + 1 );
 
-            int tmp_val = num_id / div_tmp;
-            num_id -= tmp_val * div_tmp;
-            div_tmp /= 10;
-
-            layout->node->text[ pos++] = '0' + tmp_val;
-        }
-        layout->node->text[ pos++] = ')';
-        layout->node->text[ pos ] = '\0';
-        layout->lng_text = pos;
+        pos = tmp_str.size();
+        layout->lng_text = pos ;
     }
 
     return pos;

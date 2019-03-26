@@ -160,7 +160,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     // 最大レス数
     const int max_res = DBTREE::board_get_number_max_res( get_url() );
     m_label_maxres.set_text( "最大レス数 (0 : 未設定)：" );
-    m_spin_maxres.set_range( 0, MAX_RESNUMBER );
+    m_spin_maxres.set_range( 0, CONFIG::get_max_resnumber() );
     m_spin_maxres.set_increments( 1, 1 );
     m_spin_maxres.set_value( max_res );
     m_spin_maxres.set_sensitive( true );

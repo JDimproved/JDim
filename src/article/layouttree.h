@@ -7,6 +7,7 @@
 #define _LAYOUTTREE_H
 
 #include <string>
+#include <unordered_map>
 
 #include "jdlib/refptr_lock.h"
 #include "jdlib/heap.h"
@@ -83,7 +84,7 @@ namespace ARTICLE
         JDLIB::HEAP m_heap;
         std::string m_url;
 
-        LAYOUT** m_vec_header;  // ヘッダのポインタの配列
+        std::unordered_map< int, LAYOUT* > m_map_header;  // ヘッダのポインタの連想配列
 
         // コメントノードやプレビュー表示時に使うローカルなノードツリー
         DBTREE::NodeTreeBase* m_local_nodetree; 
