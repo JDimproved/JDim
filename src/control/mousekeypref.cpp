@@ -301,11 +301,11 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
     m_vbuttonbox.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox.set_spacing( 4 );
 
-    m_hbox.pack_start( m_scrollwin, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_scrollwin, Gtk::PACK_EXPAND_WIDGET );
     m_hbox.pack_start( m_vbuttonbox, Gtk::PACK_SHRINK );
 
     get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_label );
+    get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
     get_vbox()->pack_start( m_hbox );
 
     show_all_children();
