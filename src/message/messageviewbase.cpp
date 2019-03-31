@@ -1019,10 +1019,16 @@ void MessageViewBase::show_status()
         m_lng_str_enc = str_enc.length();
 
         // 特殊文字の文字数を計算
-        m_lng_str_enc += MISC::count_chr( str_enc, '\n' ) * 5; // " <br> " = 6バイト
-        m_lng_str_enc += MISC::count_chr( str_enc, '"' ) * 5; // &quot; = 6バイト
-        m_lng_str_enc += MISC::count_chr( str_enc, '<' ) * 3; // &lt; = 4バイト
-        m_lng_str_enc += MISC::count_chr( str_enc, '>' ) * 3; // &gt; = 4バイト
+        for( const char c : str_enc ) {
+            if( c == '\n' || c == '"' ) {
+                // " <br> " = 6バイト,  &quot; = 6バイト
+                m_lng_str_enc += 5;
+            }
+            else if( c == '<' || c == '>' ) {
+                // &lt; = 4バイト, &gt; = 4バイト
+                m_lng_str_enc += 3;
+            }
+        }
 
         ss << m_lng_str_enc;
     }
