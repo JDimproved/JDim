@@ -22,7 +22,9 @@
 #include <gcrypt.h>
 #endif
 
+#ifdef HAVE_CRYPT_H
 #include <crypt.h>
+#endif
 
 
 /*--------------------------------------------------------------------*/
