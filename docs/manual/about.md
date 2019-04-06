@@ -1,65 +1,61 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="main.xsl"?>
-<!-- Firefoxは外部DTDを読み込まない -->
-<!DOCTYPE document SYSTEM "document.dtd" [
-    <!ENTITY project "JD Project">
-]>
+---
+title: JDimについて
+layout: default
+---
 
-<document header="JDについて">
+&gt; [Top](../) &gt; {{ page.title }}
 
+## {{ page.title }}
 
-<group header="概要">
-  <sentence>
-  JDはGTK+2(gtkmm)を使用した<text link="http://www.2ch.net/">２ちゃんねる</text>
-  型マルチスレッドBBSを閲覧するためのブラウザです。
-  </sentence>
-</group>
+- [概要](#abstract)
+- [著作権](#copyright)
+- [ライセンス](#license)
+- [連絡先](#contact)
+- [動作プラットフォーム](#platform)
 
 
-<group header="著作権">
-  <sentence>
-  <issue /><!-- 発行年をXSLT経由で表示する -->
-  <text>&#32;</text>
-  <text link="http://sourceforge.jp/projects/jd4linux/">&project;</text>
-  </sentence>
+<a name="abstract"></a>
+### 概要
+JDim (JD improved)はGTK+(gtkmm)を使用した[５ちゃんねる][]型マルチスレッドBBSを閲覧するためのブラウザです。
+JDimはGPLv2の下で公開されている [JD][] からforkしたソフトウェアであり、
+ルック・アンド・フィールや環境設定はJDと[互換性][]があります。
 
-  <sentence>
-  パッチやファイルを取り込んだ場合、それらのコピーライトは「&project;」
-  に統一します。
-  </sentence>
-</group>
+**注意: JDim本体は5ch.netのAPIに対応しておりません。**
+ご不便をおかけして申し訳ありませんが、5ch.netにアクセスする場合はWebブラウザなどをご使用ください。
 
 
-<group header="ライセンス">
-  <sentence>
-  <text link="http://sourceforge.jp/projects/opensource/wiki/licenses%2FGNU_General_Public_License">GNU General Public License, version 2</text>
-  </sentence>
+<a name="copyright"></a>
+### 著作権
+© 2017-2019 [yama-natuki][]  
+© 2019 [JDimproved project][repository]
 
-  <sentence>
-  将来的にライセンスをGPL3に変更するかもしれません。GPL3以降へのライセンス
-  変更に関してはプロジェクトリーダーに一任させて頂きます。
-  </sentence>
-</group>
+パッチやファイルを取り込んだ場合、それらのコピーライトは「JDimproved project」に統一します。
 
-
-<group header="連絡先">
-  <sentence>
-  バグ報告その他は<text link="http://www.2ch.net/linux/">Linux板@２ちゃんねる</text>
-  のJDスレ、またはJDのヘルプメニューから行くことが出来るサポート掲示板
-  にて行ってください。
-  </sentence>
-</group>
+##### fork元
+© 2006-2015 [JD project][JD]
 
 
-<group header="動作プラットフォーム">
-  <sentence>
-  LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
-  </sentence>
-
-  <sentence>
-  WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定していないようです。
-  </sentence>
-</group>
+<a name="license"></a>
+### ライセンス
+[GNU General Public License, version 2][gpl2]
 
 
-</document>
+<a name="contact"></a>
+### 連絡先
+バグ報告その他は[Linux板@５ちゃんねる][linux]のJD/JDimスレ、または[JDimのリポジトリ][repository]にて行ってください。
+
+
+<a name="platform"></a>
+### 動作プラットフォーム
+LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
+
+WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定していないようです。
+
+
+[５ちゃんねる]: https://5ch.net
+[JD]: https://ja.osdn.net/projects/jd4linux/ "JD for Linux プロジェクト日本語トップページ"
+[互換性]: {{ site.baseurl }}/start/#compatibility "起動について | JDim"
+[yama-natuki]: https://github.com/yama-natuki
+[repository]: https://github.com/JDimproved/JDim
+[gpl2]: https://ja.osdn.net/projects/opensource/wiki/licenses%2FGNU_General_Public_License
+[linux]: https://mao.5ch.net/linux/
