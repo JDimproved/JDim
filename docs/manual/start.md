@@ -1,92 +1,133 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="main.xsl"?>
-<!DOCTYPE document SYSTEM "document.dtd">
+---
+title: 起動について
+layout: default
+---
 
-<document header="起動について">
+&gt; [Top](../) &gt; {{ page.title }}
 
+## {{ page.title }}
 
-<group header="通常の起動">
-  <sentence>使い方は以下のとおり。</sentence>
-  <shell>$ jd [OPTION] [URL,FILE]</shell>
-
-  <sentence>
-  引数にURLを付けて起動する事も出来るので、他のアプリケーションから外部
-  コマンドとしてURLを開く事などが出来る。(JDが扱う事の出来るURLでない場
-  合は設定されているWebブラウザに渡される)
-  </sentence>
-  <shell>$ jd http://pc99.2ch.net/test/read.cgi/linux/1234567890/</shell>
-
-  <sentence>
-   ローカルにあるdatファイルを指定して、一時的にスレビュー表示させることも出来る。
-  </sentence>
-  <shell>$ jd ./12345.dat</shell>
-
-  <sentence>
-  環境変数 JD_CACHE でキャッシュディレクトリの位置を変更・指定することが可能。
-  指定しなければ ~/.jd がキャッシュディレクトリになる。
-  </sentence>
-
-  <shell>$ JD_CACHE=~/.mycache jd</shell>
-
-  <sentence>
-  環境変数 JD_LOCK でロックファイルの位置を変更・指定することが可能。
-  指定しなければ ~/.jd/JDLOCK がロックファイルになる。
-  </sentence>
-
-  <shell>$ JD_LOCK=~/mylock jd</shell>
-
-  <descriptions caption="オプション">
-    <item header="-h, --help">ヘルプを表示</item>
-    <item header="-m, --multi">多重起動時のサブプロセスであっても終了しない</item>
-    <item header="-n, --norestore">前回異常終了した時にバックアップファイルを復元しない</item>
-    <item header="-s, --skip-setup">初回起動時の設定ダイアログを表示しない</item>
-    <item header="-l, --logfile">エラーなどのメッセージをファイル(キャッシュディレクトリのlog/msglog)に出力する</item>
-    <item header="-g, --geometry WxH-X+Y">幅(W)高さ(H)横位置(X)縦位置(Y)の指定。WxHは省略化(例: -g 100x40-10+30, -g -20+100 )</item>
-    <item header="-V, --version">バージョン及びconfigureオプションを全て表示</item>
-  </descriptions>
-</group>
+- [通常の起動](#run)
+- [多重起動について](#multiple)
+- [JDとの互換性](#compatibility)
+- [GTK3版について](#gtk3)
 
 
-<group header="多重起動について">
-  <sentence>JDはメインプロセス/サブプロセスという関係で動作する。</sentence>
+<a name="run"></a>
+### 通常の起動
+使い方は以下のとおり。
+```
+$ jdim [OPTION] [URL,FILE]
+```
 
-  <list type="none">
-    <item>メインプロセス: 指令を受け取る事が出来るプロセス</item>
-    <item>サブプロセス　: 指令を出す事が出来るプロセス</item>
-  </list>
+引数にURLを付けて起動する事も出来るので、他のアプリケーションから外部
+コマンドとしてURLを開く事などが出来る。(JDimが扱う事の出来るURLでない場
+合は設定されているWebブラウザに渡される)
+```
+$ jdim http://pc99.2ch.net/test/read.cgi/linux/1234567890/
+```
 
-  <sentence>
-  通常は最初に起動した物がメインプロセスとなり、メインプロセスは1つだけ存
-  在する事が出来る。メインプロセスが存在する状態で起動したプロセスはサブ
-  プロセスとして扱われ、複数存在させる事も可能。なお、指令を受け取るのは
-  メインプロセスのみなので、指令を出す側のサブプロセスでURLは開かれない。
-  </sentence>
+ローカルにあるdatファイルを指定して、一時的にスレビュー表示させることも出来る。
+```
+$ jdim ./12345.dat
+```
 
-  <sentence>
-  以下のコマンドを使い分ける事でサブプロセスの起動のしかたをコントロール
-  出来る。
-  </sentence>
+環境変数 `JDIM_CACHE` でキャッシュディレクトリの位置を変更・指定することが可能。
+指定しなければ `~/.jd` がキャッシュディレクトリになる。
+```
+$ JDIM_CACHE=~/.mycache jdim
+```
 
-  <list type="alpha">
-    <item>
-    起動するかどうか確認してサブプロセスを起動
-    <shell>$ jd</shell>
-    </item>
-    <item>
-    確認せずにサブプロセスを起動
-    <shell>$ jd -m</shell>
-    </item>
-    <item>
-    メインプロセスに&lt;URL&gt;を渡してサブプロセスを起動
-    <shell>$ jd -m http://pc99.2ch.net/test/read.cgi/linux/1234567890/</shell>
-    </item>
-  </list>
+環境変数 `JDIM_LOCK` でロックファイルの位置を変更・指定することが可能。
+指定しなければ `~/.jd/JDLOCK` がロックファイルになる。
+```
+$ JDIM_LOCK=~/mylock jdim
+```
 
-  <sentence>
-  注: サブプロセスを残したままメインプロセスを終了していた場合は次に起動
-  したプロセスがメインプロセスとなる。
-  </sentence>
-</group>
+#### オプション
+<dl>
+  <dt>-h, --help</dt><dd>ヘルプを表示</dd>
+  <dt>-m, --multi</dt><dd>多重起動時のサブプロセスであっても終了しない</dd>
+  <dt>-n, --norestore</dt><dd>前回異常終了した時にバックアップファイルを復元しない</dd>
+  <dt>-s, --skip-setup</dt><dd>初回起動時の設定ダイアログを表示しない</dd>
+  <dt>-l, --logfile</dt>
+  <dd>エラーなどのメッセージをファイル(キャッシュディレクトリの<code>log/msglog</code>)に出力する</dd>
+  <dt>-g, --geometry WxH-X+Y</dt>
+  <dd>幅(W)高さ(H)横位置(X)縦位置(Y)の指定。
+  WxHは省略化(例: <code>-g 100x40-10+30</code>, <code>-g -20+100</code> )</dd>
+  <dt>-V, --version</dt><dd>バージョン及びconfigureオプションを全て表示</dd>
+</dl>
 
 
-</document>
+<a name="multiple"></a>
+### 多重起動について
+JDimはメインプロセス/サブプロセスという関係で動作する。
+
+- メインプロセス: 指令を受け取る事が出来るプロセス
+- サブプロセス　: 指令を出す事が出来るプロセス
+
+通常は最初に起動した物がメインプロセスとなり、メインプロセスは1つだけ存
+在する事が出来る。メインプロセスが存在する状態で起動したプロセスはサブ
+プロセスとして扱われ、複数存在させる事も可能。なお、指令を受け取るのは
+メインプロセスのみなので、指令を出す側のサブプロセスでURLは開かれない。
+
+以下のコマンドを使い分ける事でサブプロセスの起動のしかたをコントロール出来る。
+
+- 起動するかどうか確認してサブプロセスを起動
+  ```
+  $ jdim
+  ```
+- 確認せずにサブプロセスを起動
+  ```
+  $ jdim -m
+  ```
+- メインプロセスにURLを渡してサブプロセスを起動
+  ```
+  $ jdim -m http://pc99.2ch.net/test/read.cgi/linux/1234567890/
+  ```
+
+注: サブプロセスを残したままメインプロセスを終了していた場合は次に起動
+したプロセスがメインプロセスとなる。
+
+
+<a name="compatibility"></a>
+### JDとの互換性
+JDimの環境設定はJDからフォーマットを継承しているので後方互換性がある。
+また、ユーザーインタフェースは今のところ変更されていない。
+JDimで追加された不具合や機能の修正については[Pull requests][pr-merged]から見ることができる。
+
+#### JDから移行する
+* デフォルトのキャッシュディレクトリ(`~/.jd`)を使用している場合はデータや設定をそのままJDimで使うことができる。
+* 環境変数`JD_CACHE`でキャッシュディレクトリを設定している場合はかわりに`JDIM_CACHE`を使用する。
+* JDとJDimを併存させる(データや設定を共有しない)ためには環境変数によるキャッシュディレクトリの設定が要る。
+  ([通常の起動](#run)を参照)
+
+
+<a name="gtk3"></a>
+### GTK3版について
+GTK3版はGTK2版同様のルック・アンド・フィールになるように実装しているが、
+技術的な問題やテスト不足から完全な再現はできていない。
+
+#### マウスホイール操作
+板一覧やスレ一覧でマウスホイールによるスクロールが動作しないことがある。
+環境変数 `GDK_CORE_DEVICE_EVENTS=1` を設定してjdimを起動するとマウスホイール機能が使える。
+```sh
+# シェルからJDimを起動する場合
+GDK_CORE_DEVICE_EVENTS=1 ./src/jdim
+```
+
+#### GTK2版から変更/追加された部分
+* GTK+ 3.14以上の環境でタッチスクリーンによる操作に対応した。
+  スレビューのタッチ操作については[操作方法について][]を参照。
+* 書き込みビューの配色にGTKテーマを使う設定が追加された。
+  1. メニューバーの`設定(C) > フォントと色(F) > 詳細設定(R)...`からフォントと色の詳細設定を開く
+  2. `色の設定`タブにある`書き込みビューの配色設定に GTKテーマ を用いる(W)`をチェックして適用する
+
+#### GTK3版の既知の問題
+* マウスホイールでタブを切り替える機能が動作しない環境がある。(gtk 3.20以上?)
+* タブのドラッグ・アンド・ドロップの矢印ポップアップの背景が透過しない環境がある。
+  (アルファチャンネルが利用できない環境)
+
+
+[pr-merged]: https://github.com/JDimproved/JDim/pulls?q=is%3Apr+is%3Amerged
+[操作方法について]: {{ site.baseurl }}/operation/#threadview_touch "操作方法について | JDim"
