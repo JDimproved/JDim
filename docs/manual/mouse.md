@@ -1,46 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="main.xsl"?>
-<!DOCTYPE document SYSTEM "document.dtd">
+---
+title: マウスジェスチャについて
+layout: default
+---
 
-<document header="マウスジェスチャについて">
+&gt; [Top](../) &gt; {{ page.title }}
 
+## {{ page.title }}
 
-<group header="操作">
-  <sentence>
-  マウスの右ボタンを押しながら下のジェスチャを入力しボタンを放すとコマンドが実行される。
-  </sentence>
+### 操作
+マウスの右ボタンを押しながら下のジェスチャを入力しボタンを放すとコマンドが実行される。
 
-  <descriptions>
-    <item header="←">前のビューに戻る</item>
-    <item header="→">次のビューに進む</item>
-    <item header="↓→">閉じる</item>
-    <item header="↓→↓">削除</item>
-    <item header="↑↓">再読込</item>
-    <item header="↑">ロード停止(Escape)</item>
-    <item header="↓">スレ一覧ビュー ←→ スレビュー切替 (2ペーンモード時)</item>
-    <item header="↑←">左のタブへ移動</item>
-    <item header="↑→">右のタブへ移動</item>
-    <item header="→↑">Home</item>
-    <item header="→↓">End</item>
-    <item header="→↓→">新着へ移動</item>
-    <item header="↓↑"><text link="next.xml">次スレ検索</text>  (スレビュー)</item>
-    <item header="↓←">書き込み</item>
-    <item header="↓↑">画像のモザイク解除 (画像ビュー)</item>
-    <item header="←↑">サイドバーの更新チェック</item>
-    <item header="←↓">サイドバーを更新チェックしてタブで開く</item>
-  </descriptions>
+| ジェスチャ | 操作 |
+| --- | --- |
+| &#x1f804; | 前のビューに戻る |
+| &#x1f806; | 次のビューに進む |
+| &#x1f807;&#x1f806; | 閉じる |
+| &#x1f807;&#x1f806;&#x1f807; | 削除 |
+| &#x1f805;&#x1f807; | 再読込 |
+| &#x1f805; | ロード停止(Escape) |
+| &#x1f807; | スレ一覧ビュー ⟷ スレビュー切替 (2ペーンモード時) |
+| &#x1f805;&#x1f804; | 左のタブへ移動 |
+| &#x1f805;&#x1f806; | 右のタブへ移動 |
+| &#x1f806;&#x1f805; | Home |
+| &#x1f806;&#x1f807; | End |
+| &#x1f806;&#x1f807;&#x1f806; | 新着へ移動 |
+| &#x1f807;&#x1f805; | [次スレ検索]({{ site.baseurl }}/next/) (スレビュー) |
+| &#x1f807;&#x1f804; | 書き込み |
+| &#x1f807;&#x1f805; | 画像のモザイク解除 (画像ビュー) |
+| &#x1f804;&#x1f805; | サイドバーの更新チェック |
+| &#x1f804;&#x1f807; | サイドバーを更新チェックしてタブで開く |
 
-  <sentence>
-  また、右ボタンを押しながらマウスホイールを回転させるとタブを切り替える。
-  </sentence>
+また、右ボタンを押しながらマウスホイールを回転させるとタブを切り替える。
 
-  <sentence>
-  マウスジェスチャの割り当ては設定メニュー → マウス／キーボード → マウスジェスチャ設定から変更できる。
-  なお、マウスジェスチャ設定の最大ストロークは5で、判定開始半径を変えるには about:config
-  の「マウスジェスチャの判定開始半径」の値を変更する
-  </sentence>
-
-</group>
-
-
-</document>
+マウスジェスチャの割り当ては`設定`メニュー → `マウス／キーボード` → `マウスジェスチャ詳細設定`から変更できる。
+なお、マウスジェスチャ設定の最大ストロークは5で、判定開始半径を変えるには `about:config`
+の「`マウスジェスチャの判定開始半径`」の値を変更する
