@@ -1,61 +1,60 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="main.xsl"?>
-<!DOCTYPE document SYSTEM "document.dtd">
+---
+title: アスキーアート(AA)の入力について
+layout: default
+---
 
-<document header="アスキーアート(AA)の入力について">
+&gt; [Top](../) &gt; {{ page.title }}
 
+## {{ page.title }}
 
-<group header="操作方法">
-  <sentence>
-  書き込みビューでアスキーアート(AA)メニューを表示してAAを入力することが
-  できる。
-  </sentence>
-
-  <descriptions>
-    <item header="Alt+a">AAメニューを表示</item>
-    <item header="↑、j, Ctrl+p">選択項目を上に移動</item>
-    <item header="↓、k, Ctrl+n, space">選択項目を下に移動</item>
-    <item header="Enter">決定</item>
-    <item header="Esc">キャンセル</item>
-  </descriptions>
-
-  <sentence>
-  なお、AAメニューの左側の[]の内部にある文字はキーボードショートカットを
-  表していて、キーを押すと対応するAAが入力される(数字→英小文字→英大文字の順にキーが割り当てられる。
-  ただし h,i,j,k は除く )。
-  </sentence>
-</group>
+- [操作方法](#operation)
+- [登録方法](#register)
 
 
-<group header="登録方法">
-  <sentence>
-  AAはキャッシュディレクトリ(デフォルトでは~/.jd/)にaalist.txtというテキ
-  ストファイルを作成して登録する。
-  </sentence>
+<a name="operation"></a>
+### 操作方法
+書き込みビューでアスキーアート(AA)メニューを表示してAAを入力することができる。
 
-  <sentence>一行AAはそのままaalist.txtの各行に登録する。</sentence>
+<dl>
+  <dt>Alt+A</dt>
+  <dd>AAメニューを表示</dd>
+  <dt>&#x1f871;,&ensp;J,&ensp;Ctrl+P</dt>
+  <dd>選択項目を上に移動</dd>
+  <dt>&#x1f873;,&ensp;K,&ensp;Ctrl+N,&ensp;Space</dt>
+  <dd>選択項目を下に移動</dd>
+  <dt>Enter</dt>
+  <dd>決定</dd>
+  <dt>Esc</dt>
+  <dd>キャンセル</dd>
+</dl>
 
-  <sentence>
-  複数行AAはキャッシュディレクトリに「aa」というディレクトリを作成し、そ
-  の下に複数行AAを保存したテキストファイル(*.txt)をおき、aalist.txtに
-  「*ファイル名」という形式で登録する。なお拡張子(.txt)は省略することが
-  出来る。なお先頭のアスタリスクを「**」と2つつなげるとファイル名ではなく
-  て文字の「*」一文字に変換される。
-  </sentence>
+なお、AAメニューの左側の`[]`の内部にある文字はキーボードショートカットを表していて、
+キーを押すと対応するAAが入力される(数字→英小文字→英大文字の順にキーが割り当てられる。
+ただし `h`,`i`,`j`,`k` は除く )。
 
-<asciiart caption="aalist.txt 登録例">
+
+<a name="register"></a>
+### 登録方法
+AAはキャッシュディレクトリ(デフォルトでは`~/.jd/`)に**aalist.txt**というテキストファイルを作成して登録する。
+
+一行AAはそのままaalist.txtの各行に登録する。
+
+複数行AAはキャッシュディレクトリに「`aa`」というディレクトリを作成し、
+その下に複数行AAを保存したテキストファイル(\*.txt)をおき、
+aalist.txtに「\*ファイル名」という形式で登録する。なお拡張子(.txt)は省略することが出来る。
+なお先頭のアスタリスクを「\*\*」と2つつなげるとファイル名ではなくて文字の「\*」一文字に変換される。
+
+#### aalist.txt 登録例
+```
 ｷﾀ━━━━━━(ﾟ∀ﾟ)━━━━━━ !!
 *mona
-</asciiart>
+```
 
-<asciiart caption="~/.jd/aa/mona.txtの内容">
+#### ~/.jd/aa/mona.txtの内容
+```
 　 ∧＿∧
 　（　´∀｀）
 　（　　　　）
 　｜　|　 |
 　（＿_)＿）
-</asciiart>
-</group>
-
-
-</document>
+```
