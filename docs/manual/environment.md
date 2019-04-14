@@ -1,81 +1,84 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="main.xsl"?>
-<!DOCTYPE document SYSTEM "document.dtd">
+---
+title: 動作環境の記入について
+layout: default
+---
 
-<document header="動作環境の記入について">
+&gt; [Top](../) &gt; [その他]({{ site.baseurl }}/info/) &gt; {{ page.title }}
+
+## {{ page.title }}
+
+- [概要](#abstract)
+- [注意](#note)
+- [記載例](#example)
 
 
-<group header="概要">
-  <sentence>
-  書き込みビューのコンテキストメニューからJDの動作環境が記入できる。不具
-  合報告などの際に活用すること。
-  </sentence>
+<a name="abstract"></a>
+### 概要
 
-<asciiart caption="自動的に入力される物の例">
-[バージョン] 2.0.3-090305
+書き込みビューのコンテキストメニューからJDimの動作環境が記入できる。不具合報告などの際に活用すること。
+
+#### 自動的に入力される物の例
+```
+[バージョン] JDim 0.1.0-20190331(git:1baa555550)
 [ディストリ ] Example Linux
-[パッケージ] バイナリ/ソース( &lt;配布元&gt; )
+[パッケージ] バイナリ/ソース( <配布元> )
 [ DE／WM ] GNOME
-[　gtkmm 　] 2.14.3
-[　glibmm 　] 2.18.1
+[　gtkmm 　] 2.24.5
+[　glibmm 　] 2.56.0
 [オプション ] '--with-alsa'
 [ そ の 他 ]
-</asciiart>
+```
 
-  <sentence>
-  バージョン等は自動で入力されるが、他の項目については追加/変更すること。
-  </sentence>
-</group>
+バージョン等は自動で入力されるが、他の項目については追加/変更すること。
 
 
-<group header="注意">
-  <list type="circle">
-    <item>「[パッケージ]」の項目に自動で表示される物はテンプレートなので明らかに不要と考えられる場合を除いて変更する事。</item>
-    <item>「[ DE／WM ]」の項目は環境変数から判別出来た場合のみ入る。</item>
-    <item>「[オプション ]」の項目はconfigureオプションの一部が入る。</item>
-    <item>SVN版のバージョンはビルド時にリビジョン番号が取得できた場合にはそれになるが、そうでない場合は日時形式になる。</item>
-    <item>makeはソースのルートディレクトリ(top_builddir)で実行しないとリビジョン番号が取得/更新されないので注意。</item>
-  </list>
-</group>
+<a name="note"></a>
+### 注意
+
+- 「`[バージョン]`」はgitのコミットハッシュが取得できた場合はコミット作成日と `(git:〜)` が追加されるが、
+  そうでない場合は [ヘッダーファイル (jdversion.h)][jdversion] の日付が追加される。
+- 「`[パッケージ]`」の項目に自動で表示される物はテンプレートなので明らかに不要と考えられる場合を除いて変更する事。
+- 「`[ DE／WM ]`」の項目は環境変数から判別出来た場合のみ入る。
+- 「`[オプション ]`」の項目はconfigureオプションの一部が入る。( 無い場合は省略 )
+- makeはソースのルートディレクトリ(top\_builddir)で実行しないとリビジョン番号が取得/更新されないので注意。
 
 
-<group header="記載例">
+<a name="example"></a>
+### 記載例
+引用: [5ch ブラウザ JD 21][thread] (5chスレ)
 
-<asciiart>
-[バージョン] 2.0.3-090305
-[ディストリ ] Ubuntu 8.10
-[パッケージ] バイナリ( Ubuntu-ja )
+```
+[バージョン] JDim 0.1.0-20190126(git:71f2266d0f)
+[ディストリ ] Linux Mint 19.1 (x86_64)
+[パッケージ] バイナリ/ソース( <配布元> )
 [ DE／WM ] GNOME
-[　gtkmm 　] 2.14.1
-[　glibmm 　] 2.18.1
-[オプション ]
+[　gtkmm 　] 2.24.5
+[　glibmm 　] 2.56.0
 [ そ の 他 ]
-</asciiart>
+```
 
-<asciiart>
-[バージョン] 2.0.3-090305
-[ディストリ ] Fedora release 10 (Cambridge)
-[パッケージ] ソース( Fedora SRPM )
-[ DE／WM ] KDE + compiz-0.7.8
-[　gtkmm 　] 2.14.3
-[　glibmm 　] 2.18.1
-[オプション ] '--with-sessionlib=gnomeui'
+```
+[バージョン] JDim 0.1.0-20190217(git:e8cc28c993)
+[ディストリ ] PCLinuxOS 2019 (x86_64)
+[パッケージ] バイナリ/ソース( <配布元> )
+[ DE／WM ] KDE
+[　gtkmm 　] 2.24.5
+[　glibmm 　] 2.56.1
+[ そ の 他 ] LANG = en_US.UTF-8
+```
+
+```
+[バージョン] JDim 0.1.0-20190302(git:b959c45b2a)
+[ディストリ ] Manjaro Linux (x86_64)
+[パッケージ] バイナリ/ソース( <配布元> )
+[ DE／WM ] XFCE
+[　gtkmm 　] 3.24.0
+[　glibmm 　] 2.58.0
+[オプション ] '--with-stdthread'
+'--with-openssl''--with-gtkmm3'
 [ そ の 他 ]
-</asciiart>
-
-<asciiart>
-[バージョン] SVN Rev.2701
-[ディストリ ] Gentoo Base System release 1.12.11.1( x86_64 )
-[パッケージ] ソース( JD project )
-[ DE／WM ] fluxbox
-[　gtkmm 　] 2.14.3
-[　glibmm 　] 2.18.1
-[オプション ] '--with-alsa'
-'--eneble-gprof'
-[ そ の 他 ] ebuild 使用
-</asciiart>
-
-</group>
+```
 
 
-</document>
+[jdversion]: https://github.com/JDimproved/JDim/tree/master/src/jdversion.h "JDim/jdversion.h at master"
+[thread]: https://mao.5ch.net/test/read.cgi/linux/1540656394/
