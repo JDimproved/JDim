@@ -1,32 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xsl" href="main.xsl"?>
-<!DOCTYPE document SYSTEM "document.dtd">
+---
+title: バックアップ、アンインストールについて
+layout: default
+---
 
-<document header="バックアップ、アンインストールについて">
+&gt; [Top](../) &gt; {{ page.title }}
+
+## {{ page.title }}
+
+- [バックアップ方法](#backup)
+- [アンインストール方法( rpm の場合 )](#uninstall-rpm)
+- [アンインストール方法( 手動の場合 )](#uninstall-manual)
 
 
-<group header="バックアップ方法">
-  <sentence>
-  キャッシュのバックアップはキャッシュディレクトリ(デフォルトでは ~/.jd )
-  以下を保存するだけでよい。
-  </sentence>
-</group>
+<a name="backup"></a>
+### バックアップ方法
+キャッシュのバックアップはキャッシュディレクトリ(デフォルトでは `~/.jd` )
+以下を保存するだけでよい。
 
 
-<group header="アンインストール方法( rpm の場合 )">
-<shell>
+<a name="uninstall-rpm"></a>
+### アンインストール方法( rpm の場合 )
+```
 $ rpm -e jd
-$ rm -rf &lt;キャッシュディレクトリ&gt;
-</shell>
-</group>
+$ rm -rf <キャッシュディレクトリ>
+```
 
 
-<group header="アンインストール方法( 手動の場合 )">
-<shell>
+<a name="uninstall-manual"></a>
+### アンインストール方法( 手動の場合 )
+```
 $ rm (インストールパス)/jd
-$ rm -rf &lt;キャッシュディレクトリ&gt;
-</shell>
-</group>
-
-
-</document>
+$ rm -rf <キャッシュディレクトリ>
+```
