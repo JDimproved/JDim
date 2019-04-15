@@ -1,47 +1,32 @@
-JAVA = /usr/bin/java
-SAXON = saxon9he.jar
-XSLT = xml/main.xsl
-SOURCES = $(wildcard xml/*.xml)
-HISTORIES = xml/history.xml $(sort $(wildcard xml/20[0-9][0-9].xml))
-ATTACH = ChangeLog INSTALL README
-OUT =
-PLACE = $(shell /bin/ls -Fd $(OUT) 2>/dev/null)
+BUNDLE := bundle
+BUNDLE_DIR := .bundle/
+GEMFILE_LOCK := Gemfile.lock
+
+JEKYLL := $(BUNDLE) exec jekyll
+DEST_DIR := _site/
 
 
-.SUFFIXES: .xsl .xml .html
+.PHONY: all build clean distclean install run
 
-.PHONY: all clean manual attach
+all: run
 
-all: manual attach
+build: $(BUNDLE_DIR)
+	$(JEKYLL) build -d $(DEST_DIR)
 
-clean:
-	-rm -rf $(addprefix $(PLACE), *.html *.css image/ $(ATTACH))
+clean: $(DEST_DIR)
+	$(JEKYLL) clean -d $(DEST_DIR)
 
+distclean: clean
+	$(RM) -rf $(BUNDLE_DIR)
+	$(RM) $(GEMFILE_LOCK)
 
-# マニュアル
-manual: $(SOURCES:.xml=.html)
-	@cp -ru xml/*.css xml/image $(PLACE)
+install: $(GEMFILE_LOCK)
 
-$(HISTORIES:.xml=.html): XSLT = xml/history.xsl
-
-$(SOURCES): xml/main.xsl
-
-$(HISTORIES): xml/history.xsl
-
-xml/history.xsl: xml/main.xsl
-
-.xml.html:
-	$(JAVA) -jar $(SAXON) -xsl:$(XSLT) -s:$< -o:$(addprefix $(PLACE), $(notdir $@))
+run: $(BUNDLE_DIR)
+	$(JEKYLL) serve --watch -d $(DEST_DIR)
 
 
-# リリース時に付属するファイル
-attach: $(ATTACH)
+$(GEMFILE_LOCK):
+	$(BUNDLE) install --path $(BUNDLE_DIR)
 
-ChangeLog: $(word $(words $(HISTORIES)), $(HISTORIES)) attach/changelog.xsl
-	$(JAVA) -jar $(SAXON) -xsl:attach/changelog.xsl -s:$< -o:$(addprefix $(PLACE), $(notdir $@))
-
-INSTALL: xml/make.xml attach/install.xsl
-	$(JAVA) -jar $(SAXON) -xsl:attach/install.xsl -s:$< -o:$(addprefix $(PLACE), $(notdir $@))
-
-README: xml/about.xml attach/readme.xsl
-	$(JAVA) -jar $(SAXON) -xsl:attach/readme.xsl -s:$< -o:$(addprefix $(PLACE), $(notdir $@))
+$(BUNDLE_DIR): $(GEMFILE_LOCK)
