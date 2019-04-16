@@ -16,12 +16,15 @@
 #endif
 
 #ifdef USE_OPENSSL
+#include <array>
 #include <openssl/sha.h>
 #else // defined USE_GNUTLS
 #include <gcrypt.h>
 #endif
 
+#ifdef HAVE_CRYPT_H
 #include <crypt.h>
+#endif
 
 
 /*--------------------------------------------------------------------*/
