@@ -1,3 +1,5 @@
 theme: jekyll-theme-cayman
 plugins:
   - jekyll-redirect-from
+exclude: [ Gemfile*, Makefile, README.md ]
+lang: ja
