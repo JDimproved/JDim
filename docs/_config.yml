@@ -3,3 +3,9 @@ plugins:
   - jekyll-redirect-from
 exclude: [ Gemfile*, Makefile, README.md ]
 lang: ja
+baseurl: /JDim
+defaults:
+  - scope:
+      path: "manual"
+    values:
+      permalink: /:basename/
