@@ -6,9 +6,8 @@ layout: default
 &gt; [Top](../) &gt; {{ page.title }}
 
 ## {{ page.title }}
-&#x1F6A7; work in progress &#x1F6A7;
 
-- 2019年 ... JDimproved project
+- [2019年]({{ site.baseurl }}/2019/) ... JDimproved project
 - [2018年]({{ site.baseurl }}/2018/)
 - [2017年]({{ site.baseurl }}/2017/) ... yama-natuki/JD
 - [2015年]({{ site.baseurl }}/2015/)
