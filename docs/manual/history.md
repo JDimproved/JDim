@@ -10,7 +10,7 @@ layout: default
 
 - 2019年 ... JDimproved project
 - 2018年
-- 2017年 ... yama-natuki/JD
+- [2017年]({{ site.baseurl }}/2017/) ... yama-natuki/JD
 - [2015年]({{ site.baseurl }}/2015/)
 - [2014年]({{ site.baseurl }}/2014/)
 - [2013年]({{ site.baseurl }}/2013/)
