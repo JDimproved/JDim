@@ -49,6 +49,26 @@ HTMLのタグによるマークアップはなるべく使わないようにし�
   ([f50eb12365](https://github.com/JDimproved/JDim/commit/f50eb12365)) ←マージコミットのハッシュとリンク
 ```
 
+`api.github.com`からPull requestのデータを取得して変更履歴を作るコマンド (curl, jq, sed を使う)
+```sh
+# 最新100件から変更履歴を作る
+API='https://api.github.com/repos/JDimproved/JDim/pulls?state=closed&base=master&per_page=100'
+QUERY='.[] | select(.merged_at != null) | .title, .html_url, .merge_commit_sha'
+TITLE_SED='1~3s/^/- /'
+PR_SED='2~3s%^\(.\+\)/\([0-9]\+\)$%  ([#\2](\1/\2))%'
+HASH_SED='3~3s%^\(.\{10\}\)\(.\{30\}\)$%  ([\1](https://github.com/JDimproved/JDim/commit/\1\2))%'
+curl "$API" | jq -r "$QUERY" | sed -e "$TITLE_SED" -e "$PR_SED" -e "$HASH_SED"
+```
+```sh
+# 特定のPRから変更履歴を作る
+API='https://api.github.com/repos/JDimproved/JDim/pulls/1'
+QUERY='select(.merged) | .title, .html_url, .merge_commit_sha'
+TITLE_SED='1~3s/^/- /'
+PR_SED='2~3s%^\(.\+\)/\([0-9]\+\)$%  ([#\2](\1/\2))%'
+HASH_SED='3~3s%^\(.\{10\}\)\(.\{30\}\)$%  ([\1](https://github.com/JDimproved/JDim/commit/\1\2))%'
+curl "$API" | jq -r "$QUERY" | sed -e "$TITLE_SED" -e "$PR_SED" -e "$HASH_SED"
+```
+
 #### 年が変わる場合
 更新履歴は年ごとに分けているので、年が変わる場合は以下の作業をします。
 
