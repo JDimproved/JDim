@@ -96,7 +96,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
     get_vbox()->pack_start( m_scrollwin );
 
-#if !GTKMM_CHECK_VERSION(2,7,0)
+#if GTKMM_CHECK_VERSION(2,7,0)
     m_ckbt_hide_usrcmd.set_active( CONFIG::get_hide_usrcmd() );
     get_vbox()->pack_start( m_ckbt_hide_usrcmd, Gtk::PACK_SHRINK );
 #endif
