@@ -652,6 +652,10 @@ void BoardViewBase::update_columns()
 
         // ヘッダをクリックしたときに呼ぶslot
         column->signal_clicked().connect( sigc::bind< int >( sigc::mem_fun( *this, &BoardViewBase::slot_col_clicked ), id ) );
+#if GTKMM_CHECK_VERSION(3,0,0)
+        // 列の幅が変わったらセッション情報に記憶する
+        column->connect_property_changed( "width", [this]{ save_column_width(); } );
+#endif
 
         // ヘッダの位置
         switch( id ){
