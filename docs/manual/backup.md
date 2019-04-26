@@ -21,7 +21,7 @@ layout: default
 <a name="uninstall-rpm"></a>
 ### アンインストール方法( rpm の場合 )
 ```
-$ rpm -e jd
+$ rpm -e jdim
 $ rm -rf <キャッシュディレクトリ>
 ```
 
@@ -29,6 +29,6 @@ $ rm -rf <キャッシュディレクトリ>
 <a name="uninstall-manual"></a>
 ### アンインストール方法( 手動の場合 )
 ```
-$ rm (インストールパス)/jd
+$ rm (インストールパス)/jdim
 $ rm -rf <キャッシュディレクトリ>
 ```

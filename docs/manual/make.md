@@ -50,6 +50,7 @@ layout: default
 - openssl (`--with-openssl`)
 - oniguruma (`--with-oniguruma`)
 - libpcre (`--with-pcre`)
+- migemo (`--with-migemo`)
 
 OSやディストリビューション別の解説は[OS/ディストリビューション別インストール方法][wiki-install] (JD wiki) を参照。
 
