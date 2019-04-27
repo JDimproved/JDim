@@ -1,7 +1,8 @@
 # JDim - 2ch browser for linux
 
-ここに書かれていない詳細については[リポジトリ][repository]を参照してください。
+ここに書かれていない詳細については[オンラインマニュアル][manual]や[リポジトリ][repository]を参照してください。
 
+[manual]: https://jdimproved.github.io/JDim/
 [repository]: https://github.com/JDimproved/JDim
 
 * [概要](#概要)
