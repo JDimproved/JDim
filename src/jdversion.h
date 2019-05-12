@@ -25,20 +25,14 @@
 
 //---------------------------------
 
-// FIXME: オンラインマニュアルはfork元のURLを参照している
-#define JDVERSION ( 289 )
-#define JDVERSION_FULL ( JDVERSION * 1000000 + atoi( JDDATE_FALLBACK ) )
-
-//---------------------------------
-
 #define JDCOMMENT "JDim (JD improved) は gtkmm/GTK+ を用いた2chブラウザです。"
 #define JDCOPYRIGHT "(c) 2006-2015 JD project" "\n" \
                     "(c) 2017-2019 yama-natuki" "\n" \
                     "(c) 2019 JDimproved project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
-#define JDHELP CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/"
-#define JDHELPCMD CONFIG::get_url_jdhp()+"manual/"+MISC::itostr( JDVERSION )+"/usrcmd.html"
+#define JDHELP "https://jdimproved.github.io/JDim/"
+#define JDHELPCMD JDHELP "usrcmd/"
 
 // [ ライセンス表記 ]
 //

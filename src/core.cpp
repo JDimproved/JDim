@@ -769,10 +769,10 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "OldLog", "2chスレ過去ログ(_L)" ), sigc::mem_fun( *this, &Core::slot_show_old2ch ) );
     Gtk::AccelKey jdhelpKey = CONTROL::get_accelkey( CONTROL::JDHelp );
     if( jdhelpKey.is_null() ){
-        m_action_group->add( Gtk::Action::create( "Manual", "JD オンラインマニュアル(_M)..." ),
+        m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
                              sigc::mem_fun( *this, &Core::slot_show_manual ) );
     }else{
-        m_action_group->add( Gtk::Action::create( "Manual", "JD オンラインマニュアル(_M)..." ),
+        m_action_group->add( Gtk::Action::create( "Manual", "オンラインマニュアル(_M)..." ),
                              jdhelpKey,
                              sigc::mem_fun( *this, &Core::slot_show_manual ) );
     }

@@ -16,7 +16,7 @@ JDimへのコントリビュート方法を案内します。
 ## :question: 質問をしたい
 Issueを開いて質問をします。 → [New issue][new-issue]
 
-使い方や設定方法の情報は[オンラインマニュアル (JD)][manual]や
+使い方や設定方法の情報は[オンラインマニュアル][manual]や
 2ch/5chのスレッド・過去ログにありますのでそちらも参照してください。
 
 
@@ -42,6 +42,7 @@ Pull requestは`master`ブランチに対してお願いいたします。
 
 * 文書やソースコードのタイプミス修正、バグ修正、文書の改善、機能の改善などは直接PRを受け付けています。
 * ユーザーインタフェースの変更や互換性に影響が出る修正は最初にissueを開いて意見・要望をお伝えいただければ幸いです。
+* オンラインマニュアルの編集については [docs/README.md][docs-readme] を参照してください。
 
 #### :pencil: C++ソースコードを修正するときの注意
 
@@ -56,5 +57,6 @@ Pull requestは`master`ブランチに対してお願いいたします。
 [pull-requests]: https://github.com/JDimproved/JDim/pulls
 [linux-5ch]: https://mao.5ch.net/linux/
 [new-issue]: https://github.com/JDimproved/JDim/issues/new
-[manual]: https://jd4linux.osdn.jp/manual/289/
+[manual]: https://jdimproved.github.io/JDim/
+[docs-readme]: https://github.com/JDimproved/JDim/tree/master/docs/README.md
 [isocpp]: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
