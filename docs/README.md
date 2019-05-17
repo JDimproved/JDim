@@ -46,27 +46,25 @@ HTMLのタグによるマークアップはなるべく使わないようにし�
 ```markdown
 - Always include crypt.h header for crypt function ←PRのタイトル
   ([#1](https://github.com/JDimproved/JDim/pull/1)) ←PRの番号とURL
-  ([f50eb12365](https://github.com/JDimproved/JDim/commit/f50eb12365)) ←マージコミットのハッシュとリンク
 ```
 
-`api.github.com`からPull requestのデータを取得して変更履歴を作るコマンド (curl, jq, sed を使う)
+`api.github.com`からPull requestのデータを取得して変更履歴を作るコマンド (curl, jq, sed を使った例)
 ```sh
-# 最新100件から変更履歴を作る
-API='https://api.github.com/repos/JDimproved/JDim/pulls?state=closed&base=master&per_page=100'
-QUERY='.[] | select(.merged_at != null) | .title, .html_url, .merge_commit_sha'
-TITLE_SED='1~3s/^/- /'
-PR_SED='2~3s%^\(.\+\)/\([0-9]\+\)$%  ([#\2](\1/\2))%'
-HASH_SED='3~3s%^\(.\{10\}\)\(.\{30\}\)$%  ([\1](https://github.com/JDimproved/JDim/commit/\1\2))%'
-curl "$API" | jq -r "$QUERY" | sed -e "$TITLE_SED" -e "$PR_SED" -e "$HASH_SED"
+# マージされた最新100件のPRから変更履歴を作る
+generate_changelogs () {
+  API='https://api.github.com/repos/JDimproved/JDim/pulls?state=closed&base=master&per_page=100'
+  QUERY='.[] | select(.merged_at != null) | .title, .html_url'
+  curl "$API" | jq -r "$QUERY" | sed -e '1~2s/^ */- /' -e '2~2s%^.\+/\(.\+\)$%  ([#\1](&))%'
+}
+generate_changelogs
 ```
 ```sh
 # 特定のPRから変更履歴を作る
-API='https://api.github.com/repos/JDimproved/JDim/pulls/1'
-QUERY='select(.merged) | .title, .html_url, .merge_commit_sha'
-TITLE_SED='1~3s/^/- /'
-PR_SED='2~3s%^\(.\+\)/\([0-9]\+\)$%  ([#\2](\1/\2))%'
-HASH_SED='3~3s%^\(.\{10\}\)\(.\{30\}\)$%  ([\1](https://github.com/JDimproved/JDim/commit/\1\2))%'
-curl "$API" | jq -r "$QUERY" | sed -e "$TITLE_SED" -e "$PR_SED" -e "$HASH_SED"
+generate_changelog () {
+  API="https://api.github.com/repos/JDimproved/JDim/pulls/$1"
+  curl "$API" | jq -r '.title, .html_url' | sed -e '1~2s/^ */- /' -e '2~2s%^.\+/\(.\+\)$%  ([#\1](&))%'
+}
+generate_changelog 1
 ```
 
 #### 年が変わる場合

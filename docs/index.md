@@ -16,7 +16,6 @@ layout: default
 - [マウスジェスチャについて]({{ site.baseurl }}/mouse/)
 
 - [お気に入りについて]({{ site.baseurl }}/favorite/)
-- [2chログイン、BEログイン、p2ログインについて]({{ site.baseurl }}/login/)
 - [外部板について]({{ site.baseurl }}/external/)
 - [実況モードについて]({{ site.baseurl }}/live/)
 - [ユーザーコマンド、リンクフィルタについて]({{ site.baseurl }}/usrcmd/)
