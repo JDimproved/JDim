@@ -274,4 +274,6 @@ JDim は GPLv2 の下で公開されています。
 ## 連絡先
 
 バグ報告その他は [Linux板@５ちゃんねる](http://mao.5ch.net/linux/) のJD/JDimスレ、
-またはJDimのリポジトリにて行ってください。
+またはJDimのリポジトリにて行ってください。詳しい方法は[ガイド][contrib]をご覧ください。
+
+[contrib]: https://github.com/JDimproved/JDim/tree/master/CONTRIBUTING.md
