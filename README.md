@@ -137,18 +137,6 @@ yay -S jdim-git
   make するときに `-j job数`(並列処理の数) を指定すれば高速にコンパイルできます。
   使用するCPUのコア数と相談して決めてください。
 
-* **‘to_string’ is not a member of ‘std’なエラーが出た場合**
-
-  このエラーが出た場合は、 automake のマクロが入っていないか、gcc のバージョンが古い可能性があります。
-  automakeのマクロはubuntuでは `autoconf-archive` というパッケージ名です。
-
-  またマクロを入れなくても、
-  ```sh
-  make CXXFLAGS+="-std=c++11"
-  ```
-  でも同様の効果があります。もしこれで駄目な場合はgccのversionが古すぎるので、
-  gccのバージョンアップをするか、ディストリをバージョンアップしてください。
-
 * **configureチェック中に `AX_CXX_COMPILE_STDCXX_11(noext, mandatory)` に関連したエラーがでた場合**
 
   ubuntuでは `autoconf-archive` をインストールして `autoreconf -i` からやり直してみてください。
@@ -157,6 +145,9 @@ yay -S jdim-git
   1. `configure.ac` の `AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])` の行を削除する。
   2. `autoreconf -i` で `configure` を作りconfigureチェックをやり直す。
   3. `make CXXFLAGS+="-std=c++11"` でビルドする。
+
+  もしこれで駄目な場合はgccのversionが古すぎるので、
+  gccのバージョンアップをするか、ディストリをバージョンアップしてください。
 
 
 ### GTK3版について
