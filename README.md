@@ -77,19 +77,19 @@ sudo apt build-dep jdim
 開発環境が入っていない場合は、
 
 ```sh
-sudo apt-get install build-essential automake autoconf-archive git libtool
+sudo apt install build-essential automake autoconf-archive git libtool
 ```
 
 必要なライブラリを入れます。(抜けがあるかも)
 
 *GTK2版*
 ```sh
-sudo apt-get install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
+sudo apt install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
 ```
 
 *GTK3版* - `libgtkmm-2.4-dev` のかわりに `libgtkmm-3.0-dev` をインストールします。
 ```sh
-sudo apt-get install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
+sudo apt install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
 ```
 
 
