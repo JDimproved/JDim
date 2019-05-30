@@ -77,19 +77,19 @@ sudo apt build-dep jdim
 開発環境が入っていない場合は、
 
 ```sh
-sudo apt-get install build-essential automake autoconf-archive git libtool
+sudo apt install build-essential automake autoconf-archive git libtool
 ```
 
 必要なライブラリを入れます。(抜けがあるかも)
 
 *GTK2版*
 ```sh
-sudo apt-get install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
+sudo apt install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
 ```
 
 *GTK3版* - `libgtkmm-2.4-dev` のかわりに `libgtkmm-3.0-dev` をインストールします。
 ```sh
-sudo apt-get install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
+sudo apt install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
 ```
 
 
@@ -137,18 +137,6 @@ yay -S jdim-git
   make するときに `-j job数`(並列処理の数) を指定すれば高速にコンパイルできます。
   使用するCPUのコア数と相談して決めてください。
 
-* **‘to_string’ is not a member of ‘std’なエラーが出た場合**
-
-  このエラーが出た場合は、 automake のマクロが入っていないか、gcc のバージョンが古い可能性があります。
-  automakeのマクロはubuntuでは `autoconf-archive` というパッケージ名です。
-
-  またマクロを入れなくても、
-  ```sh
-  make CXXFLAGS+="-std=c++11"
-  ```
-  でも同様の効果があります。もしこれで駄目な場合はgccのversionが古すぎるので、
-  gccのバージョンアップをするか、ディストリをバージョンアップしてください。
-
 * **configureチェック中に `AX_CXX_COMPILE_STDCXX_11(noext, mandatory)` に関連したエラーがでた場合**
 
   ubuntuでは `autoconf-archive` をインストールして `autoreconf -i` からやり直してみてください。
@@ -157,6 +145,9 @@ yay -S jdim-git
   1. `configure.ac` の `AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])` の行を削除する。
   2. `autoreconf -i` で `configure` を作りconfigureチェックをやり直す。
   3. `make CXXFLAGS+="-std=c++11"` でビルドする。
+
+  もしこれで駄目な場合はgccのversionが古すぎるので、
+  gccのバージョンアップをするか、ディストリをバージョンアップしてください。
 
 
 ### GTK3版について
@@ -174,9 +165,13 @@ GDK_CORE_DEVICE_EVENTS=1 ./src/jdim
 ```
 
 #### GTK2版から変更/追加された部分
+* GTK+ 3.14以上の環境でタッチスクリーンによる操作に対応した。
+  スレビューのタッチ操作については[マニュアル][manual-touch]を参照。
 * 書き込みビューの配色にGTKテーマを使う設定が追加された。
   1. メニューバーの`設定(C) > フォントと色(F) > 詳細設定(R)...`からフォントと色の詳細設定を開く
   2. `色の設定`タブにある`書き込みビューの配色設定に GTKテーマ を用いる(W)`をチェックして適用する
+
+[manual-touch]: https://jdimproved.github.io/JDim/operation/#threadview_touch "操作方法について | JDim"
 
 #### GTK3版の既知の問題
 * マウスホイールでタブを切り替える機能が動作しない環境がある。(gtk 3.20以上?)
@@ -234,31 +229,9 @@ $ JDIM_LOCK=~/mylock jdim
 
 ## 多重起動について
 
-JDimはメインプロセス/サブプロセスという関係で動作します。
+[マニュアル][manual-multiple]を参照してください。
 
-* メインプロセス: 指令を受け取る事が出来るプロセス
-* サブプロセス: 指令を出す事が出来るプロセス
-
-通常は最初に起動した物がメインプロセスとなり、メインプロセスは1つだけ存在する事が出来ます。
-メインプロセスが存在する状態で起動したプロセスはサブプロセスとして扱われ、複数存在させる事も可能です。
-なお、指令を受け取るのはメインプロセスのみなので、指令を出す側のサブプロセスでURLは開かれません。
-
-以下のコマンドを使い分ける事でサブプロセスの起動のしかたをコントロール出来ます。
-
-* a. 起動するかどうか確認してサブプロセスを起動
-  ```sh
-  $ jdim
-  ```
-* b. 確認せずにサブプロセスを起動
-  ```sh
-  $ jdim -m
-  ```
-* c. メインプロセスにURLを渡してサブプロセスを起動
-  ```sh
-  $ jdim -m http://pc99.2ch.net/test/read.cgi/linux/1234567890/
-  ```
-
-注: サブプロセスを残したままメインプロセスを終了していた場合は次に起動したプロセスがメインプロセスとなります。
+[manual-multiple]: https://jdimproved.github.io/JDim/start/#multiple "起動について | JDim"
 
 
 ## JDとの互換性
@@ -301,4 +274,6 @@ JDim は GPLv2 の下で公開されています。
 ## 連絡先
 
 バグ報告その他は [Linux板@５ちゃんねる](http://mao.5ch.net/linux/) のJD/JDimスレ、
-またはJDimのリポジトリにて行ってください。
+またはJDimのリポジトリにて行ってください。詳しい方法は[ガイド][contrib]をご覧ください。
+
+[contrib]: https://github.com/JDimproved/JDim/tree/master/CONTRIBUTING.md
