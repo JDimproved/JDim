@@ -43,6 +43,7 @@ Pull requestは`master`ブランチに対してお願いいたします。
 * 文書やソースコードのタイプミス修正、バグ修正、文書の改善、機能の改善などは直接PRを受け付けています。
 * ユーザーインタフェースの変更や互換性に影響が出る修正は最初にissueを開いて意見・要望をお伝えいただければ幸いです。
 * オンラインマニュアルの編集については [docs/README.md][docs-readme] を参照してください。
+* テストケースを追加して動作をチェックすることもできます。詳細は [test/README.md][test-readme] を参照してください。
 
 #### :pencil: C++ソースコードを修正するときの注意
 
@@ -59,4 +60,5 @@ Pull requestは`master`ブランチに対してお願いいたします。
 [new-issue]: https://github.com/JDimproved/JDim/issues/new
 [manual]: https://jdimproved.github.io/JDim/
 [docs-readme]: https://github.com/JDimproved/JDim/tree/master/docs/README.md
+[test-readme]: https://github.com/JDimproved/JDim/tree/master/test/README.md
 [isocpp]: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
