@@ -137,6 +137,19 @@ yay -S jdim-git
   make するときに `-j job数`(並列処理の数) を指定すれば高速にコンパイルできます。
   使用するCPUのコア数と相談して決めてください。
 
+* **CPUに合わせた最適化**
+
+  `./configure`を実行するときにCPUの種類(`-march=ARCH`や`-mcpu=CPU`)と最適化レベル(`-O`)を`CXXFLAGS`に設定します。
+  ###### 例 (Intel Core 2)
+  ```sh
+  ./configure CXXFLAGS="-march=core2 -O2"
+  ```
+
+  マシンのCPUは下のコマンドで調べることができます。([GCCの最適化][gentoo-gcc] - Gentoo Wikiより)
+  ```sh
+  gcc -Q -c -march=native --help=target -o /dev/null | grep "march\|mtune\|mcpu"
+  ```
+
 * **configureチェック中に `AX_CXX_COMPILE_STDCXX_11(noext, mandatory)` に関連したエラーがでた場合**
 
   ubuntuでは `autoconf-archive` をインストールして `autoreconf -i` からやり直してみてください。
@@ -148,6 +161,8 @@ yay -S jdim-git
 
   もしこれで駄目な場合はgccのversionが古すぎるので、
   gccのバージョンアップをするか、ディストリをバージョンアップしてください。
+
+[gentoo-gcc]: https://wiki.gentoo.org/wiki/GCC_optimization/ja#-march
 
 
 ### GTK3版について
