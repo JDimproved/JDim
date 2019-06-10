@@ -47,7 +47,7 @@ layout: default
 #### オプション
 - alsa-lib (`--with-alsa`)
 - libgnomeui (`--with-sessionlib=gnomeui`) GTK2版のみ
-- openssl (`--with-openssl`)
+- openssl (`--with-tls=openssl`)
 - oniguruma (`--with-regex=oniguruma`)
 - libpcre (`--with-regex=pcre`)
 - migemo (`--with-migemo`)
@@ -88,8 +88,14 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
     CPUに合わせた最適化。<strong><code>--with-native</code>以外のオプションは非推奨:</strong>
     かわりに <code>./configure CXXFLAGS=&quot;-march=ARCH&quot;</code> を使用してください。
   </dd>
+
+  <dt>--with-tls=[gnutls|openssl]</dt>
+  <dd>使用するSSL/TLSライブラリを設定する。デフォルトでは GnuTLS を使用する。</dd>
+  <dt>--with-tls=openssl</dt>
+  <dd>GnuTLS のかわりに OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。</dd>
   <dt>--with-openssl</dt>
-  <dd>GNU TLS ではなく OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。</dd>
+  <dd><strong>非推奨</strong>: かわりに <code>--with-tls=openssl</code> を使用してください。</dd>
+
   <dt>--with-alsa</dt>
   <dd>ALSA による効果音再生機能を有効にする。
   詳しくは<a href="{{ site.baseurl }}/sound/">効果音の再生</a>の項を参照すること。</dd>

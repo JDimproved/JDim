@@ -34,7 +34,7 @@
 
   ・alsa-lib (--with-alsa)
   ・libgnomeui (--with-sessionlib=gnomeui) (GTK2版)
-  ・openssl (--with-openssl)
+  ・openssl (--with-tls=openssl)
   ・oniguruma (--with-regex=oniguruma)
   ・libpcre (--with-regex=pcre)
   ・migemo (--with-migemo)
@@ -74,9 +74,17 @@
        CPUに合わせた最適化
        --with-native以外のオプションは非推奨: かわりに ./configure CXXFLAGS="-march=ARCH" を使用してください。
 
+    --with-tls=[gnutls|openssl]
+
+       使用するSSL/TLSライブラリを設定する。デフォルトでは GnuTLS を使用する。
+
+    --with-tls=openssl
+
+       GnuTLS のかわりに OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。
+
     --with-openssl
 
-       GNU TLSではなく OpenSSLを使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。
+       非推奨: かわりに --with-tls=openssl を使用してください。
 
     --with-alsa
 
