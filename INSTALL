@@ -115,10 +115,21 @@
 
        非推奨: かわりに --with-regex=pcre を使用してください。
 
+    --with-thread=[posix|glib|std]
+
+       使用するスレッドライブラリを設定する。デフォルトでは pthread を使用する。
+
+    --with-thread=glib
+
+       非推奨: かわりに --with-thread=std を使用してください。
+
+    --with-thread=std
+
+       pthread のかわりに std::thread を使用する。
+
     --with-[gthread|stdthread]
 
-       pthreadの代わりにgthreadまたはstd::threadを使用する。
-       gthreadは非推奨: かわりにstd::threadを使用してください。
+       非推奨: かわりに --with-thread=[glib|std] を使用してください。
 
     --with-gtkmm3
 
