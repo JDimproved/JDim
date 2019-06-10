@@ -35,8 +35,8 @@
   ・alsa-lib (--with-alsa)
   ・libgnomeui (--with-sessionlib=gnomeui) (GTK2版)
   ・openssl (--with-openssl)
-  ・oniguruma (--with-oniguruma)
-  ・libpcre (--with-pcre)
+  ・oniguruma (--with-regex=oniguruma)
+  ・libpcre (--with-regex=pcre)
   ・migemo (--with-migemo)
 
   OSやディストリビューション別の解説は"OS/ディストリビューション別インストール方法 [https://ja.osdn.net/projects/jd4linux/wiki/OS%2f%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95]"(wiki) を参照。
@@ -91,17 +91,29 @@
        gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDimを実行すると
        gmon.out が出来るのでgprof./jdgmon.out で解析できる。CPUの最適化は効かなくなるので注意する。
 
-    --with-oniguruma
+    --with-regex=[posix|oniguruma|pcre]
 
-       正規表現ライブラリとしてPOSIX regex の代わりに鬼車を使用する。
+       使用する正規表現ライブラリを設定する。デフォルトでは POSIX regex を使用する。
+
+    --with-regex=oniguruma
+
+       POSIX regex のかわりに鬼車を使用する。
        鬼車はBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
 
-    --with-pcre
+    --with-regex=pcre
 
-       正規表現ライブラリとしてPOSIX regex の代わりにPCREを使用する。
+       POSIX regex のかわりに PCRE を使用する。
        PCREはBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
        UTF-8が有効な ( --enable-utf オプションを用いて make する ) PCRE 6.5 以降が必要となる。
        Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
+
+    --with-oniguruma
+
+       非推奨: かわりに --with-regex=oniguruma を使用してください。
+
+    --with-pcre
+
+       非推奨: かわりに --with-regex=pcre を使用してください。
 
     --with-[gthread|stdthread]
 
