@@ -2423,7 +2423,7 @@ void BBSListViewBase::toggle_articleicon( const std::string& url )
     for( ; ! it.end(); ++it ){
 
         Gtk::TreeModel::Row row = *it;
-        const Glib::ustring url_row = row[ m_columns.m_url ];
+        const Glib::ustring& url_row = row[ m_columns.m_url ];
         const int type_row = row[ m_columns.m_type ];
 
         if( type_row == TYPE_THREAD || type_row == TYPE_THREAD_UPDATE || type_row == TYPE_THREAD_OLD ){
@@ -2472,7 +2472,7 @@ void BBSListViewBase::toggle_boardicon( const std::string& url )
     for( ; ! it.end(); ++it ){
 
         Gtk::TreeModel::Row row = *it;
-        const Glib::ustring url_row = row[ m_columns.m_url ];
+        const Glib::ustring& url_row = row[ m_columns.m_url ];
         const int type_row = row[ m_columns.m_type ];
 
         if( type_row == TYPE_BOARD || type_row == TYPE_BOARD_UPDATE ){
