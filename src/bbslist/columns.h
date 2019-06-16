@@ -15,8 +15,8 @@ namespace BBSLIST
     {
 
     public:
-        
-        TreeColumns();
+
+        using SKELETON::EditColumns::EditColumns;
         ~TreeColumns() noexcept;
 
         void setup_row( Gtk::TreeModel::Row& row,

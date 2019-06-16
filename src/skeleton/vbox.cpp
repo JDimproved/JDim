@@ -7,11 +7,6 @@
 
 using namespace SKELETON;
 
-JDVBox::JDVBox()
-    : Gtk::VBox()
-{}
-
-
 JDVBox::~JDVBox() noexcept = default;
 
 

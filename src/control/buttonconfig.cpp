@@ -18,11 +18,6 @@
 using namespace CONTROL;
 
 
-ButtonConfig::ButtonConfig()
-    : MouseKeyConf()
-{}
-
-
 ButtonConfig::~ButtonConfig() noexcept = default;
 
 

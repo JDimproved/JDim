@@ -32,7 +32,7 @@ namespace SKELETON
         SIG_KEY_PRESS signal_key_press(){ return m_sig_key_press; }
         SIG_OPERATE signal_operate(){ return m_sig_operate; }
 
-        JDEntry() : Gtk::Entry(){}
+        using Gtk::Entry::Entry;
         ~JDEntry() noexcept;
 
         // CONTROL::Control のモード設定( controlid.h 参照 )

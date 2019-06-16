@@ -14,7 +14,7 @@ namespace SKELETON
     {
       public:
 
-        JDNotebook();
+        using Gtk::Notebook::Notebook;
         ~JDNotebook() noexcept;
 
         // unpack = true の時取り除く

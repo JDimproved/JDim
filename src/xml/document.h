@@ -16,7 +16,7 @@ namespace XML
         std::string remove_comments( const std::string& str );
 
         // コピーコンストラクタは使わない
-        Document( const Document& );
+        Document( const Document& ) = delete;
 
       public:
 

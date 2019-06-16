@@ -7,10 +7,6 @@
 
 using namespace SKELETON;
 
-JDNotebook::JDNotebook()
-    : Gtk::Notebook()
-{}
-
 
 JDNotebook::~JDNotebook() noexcept = default;
 

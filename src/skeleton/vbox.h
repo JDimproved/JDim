@@ -14,7 +14,7 @@ namespace SKELETON
     {
       public:
 
-        JDVBox();
+        using Gtk::VBox::VBox;
         ~JDVBox() noexcept;
 
         // unpack = true の時取り除く
