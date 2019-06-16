@@ -218,11 +218,7 @@ bool Css_Manager::read_css()
 #endif    
 
     std::string css_data;
-    if( ! CACHE::load_rawdata( css_file, css_data ) ){
-
-        // 旧バージョンとの互換性のため
-        if( ! CACHE::load_rawdata( CACHE::path_css_old(), css_data ) ) return false;
-    }
+    if( ! CACHE::load_rawdata( css_file, css_data ) ) return false;
 
 #ifdef _DEBUG
     std::cout << "css : \n" << css_data << "--------------\n\n";
@@ -719,11 +715,7 @@ bool Css_Manager::read_html()
 #endif    
 
     std::string html;
-    if( ! CACHE::load_rawdata( htmlfile, html ) ){
-
-        // 旧バージョンとの互換性のため
-        if( ! CACHE::load_rawdata( CACHE::path_reshtml_old(), html ) ) return false;
-    }
+    if( ! CACHE::load_rawdata( htmlfile, html ) ) return false;
 
 #ifdef _DEBUG
     std::cout << "html : \n" << html << "--------------\n\n";

@@ -76,60 +76,8 @@ Usrcmd_Manager::Usrcmd_Manager()
 {
     std::string xml;
     if( CACHE::load_rawdata( CACHE::path_usrcmd(), xml ) ) m_document.init( xml );
-    else txt2xml();
 
     analyze_xml();
-}
-
-
-//
-// 旧式の設定ファイル(テキスト形式)をxmlに変換する
-//
-void Usrcmd_Manager::txt2xml()
-{
-    m_document.clear();
-
-    // 旧設定ファイルからユーザーコマンドを読み込み
-    const std::string file_usrcmd = CACHE::path_usrcmd_old();
-    std::string usrcmd;
-
-    if( CACHE::load_rawdata( file_usrcmd, usrcmd ) ){
-
-        XML::Dom* root = m_document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME_USRCMD ) );
-        XML::Dom* subdir = root;
-
-        std::list< std::string > list_usrcmd = MISC::get_lines( usrcmd );
-        list_usrcmd = MISC::remove_commentline_from_list( list_usrcmd );
-        list_usrcmd = MISC::remove_space_from_list( list_usrcmd );
-        list_usrcmd = MISC::remove_nullline_from_list( list_usrcmd );
-
-        // ユーザコマンドが 3つ以上 (廃止した max_show_usrcmd 設定の初期値 )より
-        // 大きい場合はサブディレクトリ化する
-        if( list_usrcmd.size() >= 3 * 2 ){
-            subdir = root->appendChild( XML::NODE_TYPE_ELEMENT, XML::get_name( TYPE_DIR ) );
-            subdir->setAttribute( "name", "ユーザコマンド" );
-            subdir->setAttribute( "open", "y" );
-        }
-
-        std::list< std::string >::iterator it;
-        for( it = list_usrcmd.begin(); it != list_usrcmd.end(); ++it ){
-
-            const std::string name = *( it++ );
-            if( it == list_usrcmd.end() ) break;
-            const std::string cmd = *it;
-
-            XML::Dom* usrcmd = subdir->appendChild( XML::NODE_TYPE_ELEMENT, XML::get_name( TYPE_USRCMD ) );
-            usrcmd->setAttribute( "name", name );
-            usrcmd->setAttribute( "data", cmd );
-        }
-
-#ifdef _DEBUG
-        std::cout << "Usrcmd_Manager::txt2xml\n";
-        std::cout << "nodes = " << m_document.childNodes().size() << std::endl;
-        std::cout << m_document.get_xml() << std::endl;
-#endif
-        save_xml();
-    }
 }
 
 

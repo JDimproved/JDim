@@ -51,15 +51,6 @@ std::string CACHE::path_conf_bkup()
 }
 
 
-// 旧設定ファイル
-std::string CACHE::path_conf_old()
-{
-    std::string home = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH );
-
-    return home + "/.jdrc";
-}
-
-
 // セッション情報ファイル
 std::string CACHE::path_session()
 {
@@ -114,11 +105,6 @@ std::string CACHE::path_xml_listmain_bkup()
 {
     return CACHE::path_xml_listmain() + ".bkup";
 }
-// 1.9.5-beta070611以前
-std::string CACHE::path_xml_listmain_old()
-{
-    return CACHE::path_root() +  "list_main.xml";
-}
 
 
 // お気に入り
@@ -130,11 +116,6 @@ std::string CACHE::path_xml_favorite()
 std::string CACHE::path_xml_favorite_bkup()
 {
     return CACHE::path_xml_favorite() + ".bkup";
-}
-// 1.9.5-beta070611以前
-std::string CACHE::path_xml_favorite_old()
-{
-    return CACHE::path_root() +  "favorite.xml";
 }
 
 
@@ -149,11 +130,6 @@ std::string CACHE::path_etcboard()
 std::string CACHE::path_usrcmd()
 {
     return CACHE::path_root() +  "usrcmd.xml";
-}
-
-std::string CACHE::path_usrcmd_old()
-{
-    return CACHE::path_root() +  "usrcmd.txt";
 }
 
 
@@ -536,24 +512,6 @@ std::string CACHE::path_css()
 std::string CACHE::path_reshtml()
 {
     return CACHE::path_theme_root() +  "Res.html";
-}
-
-
-//
-// css (旧バージョンとの互換性のため)
-//
-std::string CACHE::path_css_old()
-{
-    return CACHE::path_root() +  "jd.css";
-}
-
-
-//
-// res.html (旧バージョンとの互換性のため)
-//
-std::string CACHE::path_reshtml_old()
-{
-    return CACHE::path_root() +  "Res.html";
 }
 
 
