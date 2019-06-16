@@ -277,12 +277,7 @@ void Root::load_cache()
 {
     clear();
 
-    // ファイルが存在しなければ入力を旧ファイル名にする
     std::string file_in = CACHE::path_xml_listmain();
-    if( CACHE::file_exists( file_in ) != CACHE::EXIST_FILE )
-    {
-        file_in = CACHE::path_xml_listmain_old();
-    }
 
 #ifdef _DEBUG
     std::cout << "Root::load_cache xml  = " << file_in << std::endl;

@@ -56,12 +56,7 @@ void FavoriteListView::show_view()
 {
     std::string xml;
 
-    // ファイルが存在しなければ入力を旧ファイル名にする
     std::string file_in = CACHE::path_xml_favorite();
-    if( CACHE::file_exists( file_in ) != CACHE::EXIST_FILE )
-    {
-    	file_in = CACHE::path_xml_favorite_old();
-    }
 
     CACHE::load_rawdata( file_in, xml );
 

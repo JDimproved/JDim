@@ -44,7 +44,6 @@ namespace CACHE
     // 設定ファイル
     std::string path_conf();
     std::string path_conf_bkup();
-    std::string path_conf_old();  // 旧ファイル
 
     // セッション情報ファイル
     std::string path_session();
@@ -61,19 +60,16 @@ namespace CACHE
     // 板
     std::string path_xml_listmain();
     std::string path_xml_listmain_bkup();
-    std::string path_xml_listmain_old();
 
     // お気に入り
     std::string path_xml_favorite();
     std::string path_xml_favorite_bkup();
-    std::string path_xml_favorite_old();
 
     // 外部板設定ファイル( navi2ch 互換 )
     std::string path_etcboard();
 
     // ユーザーコマンド設定ファイル
     std::string path_usrcmd();
-    std::string path_usrcmd_old();
 
     // リンクフィルタ
     std::string path_linkfilter();
@@ -148,11 +144,9 @@ namespace CACHE
 
     // css
     std::string path_css();
-    std::string path_css_old();
 
     // html
     std::string path_reshtml();
-    std::string path_reshtml_old();
 
     // ログ
     std::string path_logroot();

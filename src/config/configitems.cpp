@@ -72,25 +72,8 @@ ConfigItems::~ConfigItems() noexcept
 // 設定読み込み
 bool ConfigItems::load( const bool restore )
 {
-    std::string path_conf;
-
     // restoreモード
-    if( restore )
-    {
-        path_conf = CACHE::path_conf_bkup();
-    }
-    else
-    {
-        path_conf = CACHE::path_conf();
-
-        // 新設定ファイルが無く、かつキャッシュディレクトリが存在していたら旧ファイルから設定を引き継ぐ
-        if( CACHE::file_exists( path_conf ) != CACHE::EXIST_FILE
-            && CACHE::file_exists( CACHE::path_root() ) == CACHE::EXIST_DIR
-            && CACHE::file_exists( CACHE::path_conf_old() ) == CACHE::EXIST_FILE ){
-
-                path_conf = CACHE::path_conf_old();
-        }
-    }
+    const std::string path_conf = restore ? CACHE::path_conf_bkup() : CACHE::path_conf();
 
     JDLIB::ConfLoader cf( path_conf, std::string() );
 
@@ -653,7 +636,6 @@ bool ConfigItems::load( const bool restore )
 void ConfigItems::save()
 {
     save_impl( CACHE::path_conf() );
-    if( CACHE::file_exists( CACHE::path_conf_old() ) == CACHE::EXIST_FILE ) save_impl( CACHE::path_conf_old() );
 }
 
 
