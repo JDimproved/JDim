@@ -455,6 +455,7 @@ if test "$use_gprof" = "no"; then
     AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
         [ if test "$withval" != "no"; then
             echo "use core2duo"
+            AC_MSG_WARN([--with-core2duo is deprecated. Use ./configure CXXFLAGS="-march=core2"])
             CXXFLAGS="$CXXFLAGS -march=pentium-m -msse3"
         fi ])
 
@@ -464,6 +465,7 @@ if test "$use_gprof" = "no"; then
     AC_ARG_WITH(athlon64,[ --with-athlon64    (use athlon64)],
         [ if test "$withval" != "no"; then
             echo "use athlon64"
+            AC_MSG_WARN([--with-athlon64 is deprecated. Use ./configure CXXFLAGS="-march=athlon64"])
             CXXFLAGS="$CXXFLAGS -march=athlon64"
         fi ])
 
@@ -473,6 +475,7 @@ if test "$use_gprof" = "no"; then
     AC_ARG_WITH(atom,[ --with-atom    (use atom)],
         [ if test "$withval" != "no"; then
             echo "use atom"
+            AC_MSG_WARN([--with-atom is deprecated. Use ./configure CXXFLAGS="-march=prescott"])
             CXXFLAGS="$CXXFLAGS -march=prescott"
         fi ])
 
@@ -482,6 +485,7 @@ if test "$use_gprof" = "no"; then
     AC_ARG_WITH(ppc7400,[ --with-ppc7400    (use PowerPC7400)],
         [ if test "$withval" != "no"; then
             echo "use ppc7400"
+            AC_MSG_WARN([--with-ppc7400 is deprecated. Use ./configure CXXFLAGS="-mcpu=7400 -maltivec -mabi=altivec"])
             CXXFLAGS="$CXXFLAGS -mcpu=7400 -maltivec -mabi=altivec"
         fi ])
 
@@ -491,6 +495,7 @@ if test "$use_gprof" = "no"; then
     AC_ARG_WITH(ppc7450,[ --with-ppc7450    (use PowerPC7450)],
         [ if test "$withval" != "no"; then
             echo "use ppc7450"
+            AC_MSG_WARN([--with-ppc7450 is deprecated. Use ./configure CXXFLAGS="-mcpu=7450 -maltivec -mabi=altivec"])
             CXXFLAGS="$CXXFLAGS -mcpu=7450 -maltivec -mabi=altivec"
         fi ])
 fi

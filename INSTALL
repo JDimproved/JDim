@@ -72,6 +72,7 @@
     --with-[native|core2duo|athlon64|atom|ppc7400|ppc7450]
 
        CPUに合わせた最適化
+       --with-native以外のオプションは非推奨: かわりに ./configure CXXFLAGS="-march=ARCH" を使用してください。
 
     --with-openssl
 

@@ -84,7 +84,10 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
   <dt>--with-migemo</dt>
   <dd>migemo による検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。</dd>
   <dt>--with-[native|core2duo|athlon64|atom|ppc7400|ppc7450]</dt>
-  <dd>CPUに合わせた最適化</dd>
+  <dd>
+    CPUに合わせた最適化。<strong><code>--with-native</code>以外のオプションは非推奨:</strong>
+    かわりに <code>./configure CXXFLAGS=&quot;-march=ARCH&quot;</code> を使用してください。
+  </dd>
   <dt>--with-openssl</dt>
   <dd>GNU TLS ではなく OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。</dd>
   <dt>--with-alsa</dt>
