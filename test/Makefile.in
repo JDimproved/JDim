@@ -1,6 +1,7 @@
 # Outputs from result of configure script
 CC = @CC@
 CXX = @CXX@
+MKDIR_P = @MKDIR_P@
 CXXFLAGS = @CXXFLAGS@
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GTHREAD_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @GNOMEUI_CFLAGS@ @LIBSM_CFLAGS@
 AM_LDFLAGS = @LIBS@ @GTKMM_LIBS@ @GTHREAD_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @GNOMEUI_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@ @X11_LIBS@
@@ -29,7 +30,7 @@ clean:
 distclean: clean
 	$(RM) Makefile
 
-test: $(BUILD_DIR)/$(TEST_TARGET)
+test: $(BUILD_DIR) $(BUILD_DIR)/$(TEST_TARGET)
 	$(BUILD_DIR)/$(TEST_TARGET)
 
 # NOTE: A link error might occur due to ordering for libraries.
