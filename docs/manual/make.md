@@ -47,9 +47,9 @@ layout: default
 #### オプション
 - alsa-lib (`--with-alsa`)
 - libgnomeui (`--with-sessionlib=gnomeui`) GTK2版のみ
-- openssl (`--with-openssl`)
-- oniguruma (`--with-oniguruma`)
-- libpcre (`--with-pcre`)
+- openssl (`--with-tls=openssl`)
+- oniguruma (`--with-regex=oniguruma`)
+- libpcre (`--with-regex=pcre`)
 - migemo (`--with-migemo`)
 
 OSやディストリビューション別の解説は[OS/ディストリビューション別インストール方法][wiki-install] (JD wiki) を参照。
@@ -88,8 +88,14 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
     CPUに合わせた最適化。<strong><code>--with-native</code>以外のオプションは非推奨:</strong>
     かわりに <code>./configure CXXFLAGS=&quot;-march=ARCH&quot;</code> を使用してください。
   </dd>
+
+  <dt>--with-tls=[gnutls|openssl]</dt>
+  <dd>使用するSSL/TLSライブラリを設定する。デフォルトでは GnuTLS を使用する。</dd>
+  <dt>--with-tls=openssl</dt>
+  <dd>GnuTLS のかわりに OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。</dd>
   <dt>--with-openssl</dt>
-  <dd>GNU TLS ではなく OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。</dd>
+  <dd><strong>非推奨</strong>: かわりに <code>--with-tls=openssl</code> を使用してください。</dd>
+
   <dt>--with-alsa</dt>
   <dd>ALSA による効果音再生機能を有効にする。
   詳しくは<a href="{{ site.baseurl }}/sound/">効果音の再生</a>の項を参照すること。</dd>
@@ -101,23 +107,35 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
     コンパイルオプションに <code>-pg</code> が付き、JDimを実行すると <code>gmon.out</code> が出来るので
     <code>gprof  ./jdim  gmon.out</code> で解析できる。CPUの最適化は効かなくなるので注意する。
   </dd>
-  <dt>--with-oniguruma</dt>
+
+  <dt>--with-regex=[posix|oniguruma|pcre]</dt>
+  <dd>使用する正規表現ライブラリを設定する。デフォルトでは POSIX regex を使用する。</dd>
+  <dt>--with-regex=oniguruma</dt>
   <dd>
-    正規表現ライブラリとして POSIX regex の代わりに鬼車を使用する。
+    POSIX regex のかわりに鬼車を使用する。
     鬼車はBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
   </dd>
-  <dt>--with-pcre</dt>
+  <dt>--with-regex=pcre</dt>
   <dd>
-    正規表現ライブラリとして POSIX regex の代わりに PCRE を使用する。
+    POSIX regex のかわりに PCRE を使用する。
     PCREはBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
     UTF-8が有効な ( <code>--enable-utf</code> オプションを用いて make する ) PCRE 6.5 以降が必要となる。
     Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
   </dd>
+  <dt>--with-oniguruma</dt>
+  <dd><strong>非推奨</strong>: かわりに <code>--with-regex=oniguruma</code> を使用してください。</dd>
+  <dt>--with-pcre</dt>
+  <dd><strong>非推奨</strong>: かわりに <code>--with-regex=pcre</code> を使用してください。</dd>
+
+  <dt>--with-thread=[posix|glib|std]</dt>
+  <dd>使用するスレッドライブラリを設定する。デフォルトでは pthread を使用する。</dd>
+  <dt>--with-thread=glib</dt>
+  <dd><strong>非推奨</strong>: かわりに <code>--with-thread=std</code> を使用してください。</dd>
+  <dt>--with-thread=std</dt>
+  <dd>pthread のかわりに std::thread を使用する。</dd>
   <dt>--with-[gthread|stdthread]</dt>
-  <dd>
-    pthreadの代わりにgthreadまたはstd::threadを使用する。
-    <strong>gthreadは非推奨</strong>: かわりに<code>stdthread</code>を使用してください。
-  </dd>
+  <dd><strong>非推奨</strong>: かわりに <code>--with-thread=[glib|std]</code> を使用してください。</dd>
+
   <dt>--with-gtkmm3</dt>
   <dd>gtkmm2のかわりにgtkmm3を使用する。</dd>
 </dl>

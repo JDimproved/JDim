@@ -1,5 +1,9 @@
 // ライセンス: GPL2
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 //#define _DEBUG
 //#define _DEBUG_CARETMOVE
 //#define _DRAW_CARET

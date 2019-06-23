@@ -32,25 +32,20 @@ dnl OSを判定してOS別の設定
 dnl 
 case "${host_os}" in 
  freebsd*) 
-   echo "os = freebsd"
-   AC_DEFINE(USE_MKTIME, , "use mktime")
+   AC_DEFINE(USE_MKTIME, , [use mktime])
    ;;
  solaris*)
-   echo "os = solaris"
-   AC_DEFINE(NO_TIMEGM, , "no timegm")
+   AC_DEFINE(NO_TIMEGM, , [no timegm])
    ;;
  mingw*)
-   echo "os = ${host_os}"
-   AC_DEFINE(USE_MKTIME, , "use mktime")
+   AC_DEFINE(USE_MKTIME, , [use mktime])
    ;;
  darwin*)
-   echo "os = ${host_os}"
    AC_DEFUN([AM_ICONV], [])
-   AC_DEFINE(USE_MKTIME, , "use mktime")
+   AC_DEFINE(USE_MKTIME, , [use mktime])
    ;;
 dnl linux*|gnu*|*-gnu
  *)
-   echo "os = ${host_os}"
    AC_DEFUN([AM_ICONV], [])
    ;;
 esac
@@ -110,8 +105,6 @@ AC_SUBST(GTKMM_LIBS)
 dnl
 dnl crypt
 dnl
-
-echo "use crypt"
 AC_CHECK_HEADERS([crypt.h])
 AC_CHECK_LIB(crypt,crypt)
 
@@ -119,8 +112,6 @@ AC_CHECK_LIB(crypt,crypt)
 dnl
 dnl zlib
 dnl
-
-echo "use zlib"
 AC_CHECK_HEADERS([zlib.h])
 AC_CHECK_LIB(z,inflate)
 
@@ -137,22 +128,17 @@ case "${host_os}" in
    dnl not available uname on windows
    dnl
    
-   echo "use winsock2"
    AC_CHECK_HEADERS([winsock2.h])
    AC_CHECK_LIB(ws2_32,_head_libws2_32_a)
    
-   echo "use regex2"
    AC_CHECK_HEADERS([regex.h])
    AC_CHECK_LIB(regex,regexec)
    
-   echo "use iconv"
    AC_CHECK_HEADERS([iconv.h])
    AC_CHECK_LIB(iconv,_head_libiconv_a)
-   
-   echo "use windows resources"
    AC_CHECK_TOOL([WINDRES], [windres], [windres])
    AC_SUBST(WINDRES)
-   AC_DEFINE(USE_WINDRES, , "use windres")
+   AC_DEFINE(USE_WINDRES, , [use windres])
    use_windres="yes"
    ;;
  *)
@@ -160,10 +146,8 @@ case "${host_os}" in
    dnl any other POSIX systems
    dnl
 
-   echo "use uname"
    AC_CHECK_HEADERS([sys/utsname.h])
 
-   echo "use socket"
    AC_CHECK_HEADERS([socket.h])
    AC_CHECK_LIB(socket,socket)
    ;;
@@ -192,253 +176,274 @@ esac
 dnl
 dnl セッション管理
 dnl
-dnl
-use_xsmp=no
-use_gnomeui=no
-
+AC_MSG_CHECKING(for --with-sessionlib)
 AC_ARG_WITH(sessionlib,
-[
-  --with-sessionlib[[=xsmp/gnomeui/no]]
-                          use session control library [[default=xsmp]]
-],
-[case "${withval}" in
-  xsmp)
-    use_xsmp=yes
-    ;;
-  gnomeui)
-    use_gnomeui=yes
-    ;;
-  no)
-    use_xsmp=no
-    use_gnomeui=no
-    ;;
-  *)
-    use_xsmp=yes
-    ;;
-esac],use_xsmp=yes)
+AC_HELP_STRING([--with-sessionlib=@<:@xsmp|gnomeui|no@:>@],
+               [use session control library @<:@default=xsmp@:>@]),
+[with_sessionlib="$withval"], [with_sessionlib=xsmp])
+AC_MSG_RESULT($with_sessionlib)
 
-dnl
-dnl XSMPを使ってセッション管理をする。libSMとlibICEが必要。無ければXSMPは無効になる
-dnl
-dnl dirsの並びは Tk の configure に書いてあったもの + Fedora 向けにディレクトリを追加
-dnl
-if test x"$use_xsmp" = "xyes" ; then
-  
-  AC_MSG_CHECKING(for SMlib.h and ICElib.h)
-  LIBSM_CFLAGS=""
-  dirs="/usr/unsupported/include /usr/local/include /usr/X386/include /usr/X11R6/include /usr/X11R5/include /usr/include/X11R5 /usr/include/X11R4 /usr/openwin/include /usr/X11/include /usr/sww/include /usr/include"
-  for i in $dirs ; do
-    if test -r $i/X11/ICE/ICElib.h -a -r $i/X11/SM/SMlib.h ; then
-      AC_MSG_RESULT($i)
-      LIBSM_CFLAGS="-I$i"
-      break
-    fi
-  done
-  if test -z "$LIBSM_CFLAGS" ; then
-    AC_MSG_RESULT(could not find SMlib.h and ICElib.h)
-  fi
+AS_IF(
+  [test "x$with_sessionlib" = xno],
+  [],
 
-  AC_MSG_CHECKING(for libSM and libICE)
-  LIBSM_LIBS="" 
-  dirs="/usr/unsupported/lib /usr/local/lib /usr/X386/lib /usr/X11R6/lib /usr/X11R5/lib /usr/lib/X11R5 /usr/lib/X11R4 /usr/openwin/lib /usr/X11/lib /usr/sww/X11/lib /usr/lib /usr/X11R6/lib64 /usr/lib64"
-  for i in $dirs ; do
-    if test -r $i/libICE.so -a -r $i/libSM.so ; then
-      AC_MSG_RESULT($i)
-      LIBSM_LIBS="-L$i -lICE -lSM"
-      break
-    fi
-  done
-  if test -z "$LIBSM_LIBS" ; then
-    AC_MSG_RESULT(could not find libSM and libICE.)
-  fi
+  dnl XSMPを使ってセッション管理をする。libSMとlibICEが必要。無ければXSMPは無効になる
+  [test "x$with_sessionlib" = xxsmp],
+  [PKG_CHECK_MODULES(LIBSM, [sm >= 1.2], [], [ac_sm_ice_found=no])
+   PKG_CHECK_MODULES(LIBICE, [ice >= 1.0], [], [ac_sm_ice_found=no])
+   AS_IF(
+     [test "x$ac_sm_ice_found" = xno],
+     [AC_MSG_NOTICE([Disable XSMP due to LIBSM or LIBICE not found])],
 
-  if test -n "$LIBSM_CFLAGS" -a -n "$LIBSM_LIBS" ; then
-    echo "use XSMP"
-    AC_SUBST(LIBSM_CFLAGS)
-    AC_SUBST(LIBSM_LIBS)
-    CXXFLAGS="$CXXFLAGS -DUSE_XSMP"
-  fi
-fi
+     [LIBSM_CFLAGS="$LIBSM_CFLAGS $LIBICE_CFLAGS"
+      LIBSM_LIBS="$LIBSM_LIBS $LIBICE_LIBS"
+      AC_DEFINE(USE_XSMP, , [use xsmp])
+      AC_SUBST(LIBSM_CFLAGS)
+      AC_SUBST(LIBSM_LIBS)]
+   )],
 
-dnl
-dnl GNOMEUIを使ってセッション管理をする。libgnomeui-develが必要。
-dnl
-if test x"$use_gnomeui" = "xyes" ; then
+  [test "x$with_sessionlib" = xgnomeui -a "x$with_gtkmm3" != xno],
+  [AC_MSG_ERROR([gnomeui won't support for gtkmm3])],
 
-  PKG_CHECK_MODULES(GNOMEUI, [libgnomeui-2.0 >= 2.0] )
+  [test "x$with_sessionlib" = xgnomeui],
+  [PKG_CHECK_MODULES(GNOMEUI, [libgnomeui-2.0 >= 2.0])
+   AC_DEFINE(USE_GNOMEUI, , [use gnomeui])
+   AC_SUBST(GNOMEUI_CFLAGS)
+   AC_SUBST(GNOMEUI_LIBS)],
 
-  echo "use GNOMEUI"
-  AC_SUBST(GNOMEUI_CFLAGS)
-  AC_SUBST(GNOMEUI_LIBS)
-  CXXFLAGS="$CXXFLAGS -DUSE_GNOMEUI"
-fi
+  [AC_MSG_ERROR([session control library not found])]
+)
 
 
 dnl
-dnl SSL
+dnl checking oniguruma (deprecated option)
 dnl
+AC_ARG_WITH(oniguruma,
+AS_HELP_STRING([--with-oniguruma], [DEPRECATED. use --with-regex=oniguruma]),
+[AC_MSG_WARN([--with-oniguruma is deprecated. Use --with-regex=oniguruma instead.])
+ with_regex=oniguruma])
 
-use_gnutls=yes
+dnl
+dnl checking PCRE (deprecated option)
+dnl
+AC_ARG_WITH(pcre,
+AS_HELP_STRING([--with-pcre], [DEPRECATED. use --with-regex=pcre]),
+[AC_MSG_WARN([--with-pcre is deprecated. Use --with-regex=pcre instead.])
+ with_regex=pcre])
 
-AC_ARG_WITH(openssl,[ --with-openssl    (use openssl)],
-       [ if test "$withval" != "no" ;then
-         use_gnutls=no
-       fi ])
 
-case "${use_gnutls}" in 
- yes)
-   echo "use gnutls"
+dnl
+dnl 正規表現ライブラリ
+dnl
+AC_MSG_CHECKING(for --with-regex)
+AC_ARG_WITH(regex,
+AC_HELP_STRING([--with-regex=@<:@posix|pcre|oniguruma@:>@],
+               [use regular expression library @<:@default=posix@:>@]),
+[], [with_regex=posix])
+AC_MSG_RESULT($with_regex)
 
-   PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2], [echo "gnutls >= 1.2"])
-   AC_DEFINE(USE_GNUTLS, , "use gnutls")
+AS_IF(
+  [test "x$with_regex" = xposix],
+  [AC_CHECK_HEADERS([regex.h], , [AC_MSG_ERROR([regex.h not found])])
+   AC_CHECK_LIB([regex], [regexec])],
+
+  [test "x$with_regex" = xpcre],
+  [PKG_CHECK_MODULES(PCRE, [libpcre >= 6.5])
+   AC_DEFINE(USE_PCRE, , [use PCRE])
+   AC_SUBST(PCRE_CFLAGS)
+   AC_SUBST(PCRE_LIBS)
+   AC_CHECK_HEADERS([pcreposix.h], , [AC_MSG_ERROR([pcreposix.h not found])])
+   AC_CHECK_LIB([pcreposix], [regexec], , [AC_MSG_ERROR([libpcreposix.a not found])])],
+
+  [test "x$with_regex" = xoniguruma],
+  [PKG_CHECK_MODULES(ONIG, [oniguruma])
+   AC_DEFINE(USE_ONIG, , [use oniguruma regular expressions library])
+   AC_SUBST(ONIG_CFLAGS)
+   AC_SUBST(ONIG_LIBS)
+   AC_CHECK_HEADERS([onigposix.h], , [AC_MSG_ERROR([onigposix.h not found])])
+   AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])],
+
+  [AC_MSG_ERROR([regular expression library not found])]
+)
+
+
+dnl
+dnl checking OpenSSL (deprecated option)
+dnl
+AC_ARG_WITH(openssl,
+AS_HELP_STRING([--with-openssl], [DEPRECATED. use --with-tls=openssl]),
+[AC_MSG_WARN([--with-openssl is deprecated. Use --with-tls=openssl instead.])
+ with_tls=openssl])
+
+dnl
+dnl TLS
+dnl
+AC_MSG_CHECKING(for --with-tls)
+AC_ARG_WITH(tls,
+AC_HELP_STRING([--with-tls=@<:@gnutls|openssl@:>@],
+               [use TLS library @<:@default=gnutls@:>@]),
+[with_tls="$withval"], [with_tls=gnutls])
+AC_MSG_RESULT($with_tls)
+
+AS_IF(
+  [test "x$with_tls" = xgnutls],
+  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2])
+   AC_DEFINE(USE_GNUTLS, , [use gnutls])
    AC_CHECK_HEADERS([gcrypt.h])
    AC_CHECK_LIB(gcrypt, gcry_md_hash_buffer, [], [AC_MSG_ERROR([gcrypt not found])])
    AC_SUBST(GNUTLS_CFLAGS)
-   AC_SUBST(GNUTLS_LIBS)
-   ;;
- *)
-   echo "use openssl"
-   PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9] )
-   AC_DEFINE(USE_OPENSSL, , "use openssl")
+   AC_SUBST(GNUTLS_LIBS)],
+
+  [test "x$with_tls" = xopenssl],
+  [PKG_CHECK_MODULES(OPENSSL, [openssl >= 0.9])
+   AC_DEFINE(USE_OPENSSL, , [use openssl])
    AC_SUBST(OPENSSL_CFLAGS)
-   AC_SUBST(OPENSSL_LIBS)
-   ;;
-esac
+   AC_SUBST(OPENSSL_LIBS)],
+
+  [AC_MSG_ERROR([TLS library not found])]
+)
 
 
 dnl
 dnl enable gprof
 dnl
+AC_MSG_CHECKING(for --enable-gprof)
+AC_ARG_ENABLE(gprof,
+AC_HELP_STRING([--enable-gprof],[enable gprof]),
+[enable_gprof="$enableval"], [enable_gprof=no])
+AC_MSG_RESULT($enable_gprof)
 
-use_gprof=no
+AS_IF(
+  [test "x$enable_gprof" = xyes],
+  [CXXFLAGS="$CXXFLAGS -pg"]
+)
 
-AC_ARG_ENABLE(gprof,[ --enable-gprof  (enable gprof)],
-       [ if test "$enable_gprof" = "yes"; then
-               echo "use gprof"
-               CXXFLAGS="$CXXFLAGS -pg"
-               use_gprof=yes
-       fi ])
 
 dnl
 dnl checking migemo
 dnl
-AC_ARG_WITH(migemo,[ --with-migemo    (enable migemo search)],
-       [ if test "$withval" != "no" ;then
-               echo "use migemo"
-               AC_CHECK_HEADERS([migemo.h])
-               AC_CHECK_LIB(migemo,migemo_open)
-       fi ])
+AC_MSG_CHECKING(for --with-migemo)
+AC_ARG_WITH(migemo,
+AC_HELP_STRING([--with-migemo],[enable migemo search]),
+[with_migemo="$withval"], [with_migemo=no])
+AC_MSG_RESULT($with_migemo)
+
+AS_IF(
+  [test "x$with_migemo" = xyes],
+  [AC_CHECK_HEADERS([migemo.h])
+   AC_CHECK_LIB(migemo, migemo_open)]
+)
 
 
-AC_ARG_WITH(migemodict,[ --with-migemodict    (specifiy the path of migemo dictionary)],
-       [ if test "$withval" ;then
-               echo "migemodict = $withval"
-               AC_DEFINE_UNQUOTED(MIGEMODICT, "$withval" , "migemodict")
-       fi ])
+AC_MSG_CHECKING(for --with-migemodict)
+AC_ARG_WITH(migemodict,
+AC_HELP_STRING([--with-migemodict=PATH],[specifiy the path of migemo dictionary]),
+[with_migemodict="$withval"], [with_migemodict=])
+AC_MSG_RESULT($with_migemodict)
+
+AS_IF(
+  [test -n "$with_migemodict"],
+  [AC_DEFINE_UNQUOTED(MIGEMODICT, "$with_migemodict", [migemodict])]
+)
 
 
 dnl
 dnl checking xdg-open
 dnl
-AC_ARG_WITH(xdgopen,[ --with-xdgopen    (use xdg-open as default browser)],
-       [ if test "$withval" ;then
-               echo "use xdg-open"
-               AC_DEFINE(XDGOPEN, , "use xdg-open")
-       fi ])
+AC_MSG_CHECKING(for --with-xdgopen)
+AC_ARG_WITH(xdgopen,
+AC_HELP_STRING([--with-xdgopen],[use xdg-open as default browser]),
+[with_xdgopen="$withval"], [with_xdgopen=no])
+AC_MSG_RESULT($with_xdgopen)
+
+AS_IF(
+  [test "x$with_xdgopen" = xyes],
+  [AC_DEFINE(XDGOPEN, , [use xdg-open])]
+)
 
 
 dnl
 dnl checking alsa
 dnl
 case "${host_os}" in
- linux*|*linux)
- AC_ARG_WITH(alsa,[ --with-alsa (enable alsa)],
-       [ if test "$withval" != "no" ;then
-               echo "use alsa"
-	       PKG_CHECK_MODULES(ALSA, [alsa >= 1.0] )
-	       AC_DEFINE(USE_ALSA, , "use alsa")
-	       AC_SUBST(ALSA_CFLAGS)
-	       AC_SUBST(ALSA_LIBS)
-       fi ])
+  linux*|*linux)
+  AC_MSG_CHECKING(for --with-alsa)
+  AC_ARG_WITH(alsa,
+  AC_HELP_STRING([--with-alsa],[enable alsa]),
+  [with_alsa="$withval"], [with_alsa=no])
+  AC_MSG_RESULT($with_alsa)
+
+  AS_IF(
+    [test "x$with_alsa" = xyes],
+    [PKG_CHECK_MODULES(ALSA, [alsa >= 1.0])
+     AC_DEFINE(USE_ALSA, , [use alsa])
+     AC_SUBST(ALSA_CFLAGS)
+     AC_SUBST(ALSA_LIBS)]
+  )
  ;;
 esac
 
 
 dnl
-dnl checking oniguruma
+dnl checking gthread (deprecated option)
 dnl
-AC_MSG_CHECKING(for --with-oniguruma)
-AC_ARG_WITH(oniguruma,
-  AS_HELP_STRING([--with-oniguruma], [enable oniguruma regular expressions library]),
-  [with_oniguruma="$withval"],
-  [with_oniguruma=no])
-AC_MSG_RESULT($with_oniguruma)
+AC_ARG_WITH(gthread,
+AS_HELP_STRING([--with-gthread], [DEPRECATED. use --with-thread=glib]),
+[AC_MSG_WARN([--with-gthread is deprecated. Use --with-thread=glib instead.])
+ with_thread=glib])
+
+dnl
+dnl checking std::thread (deprecated option)
+dnl
+AC_ARG_WITH(stdthread,
+AS_HELP_STRING([--with-stdthread], [DEPRECATED. use --with-thread=std]),
+[AC_MSG_WARN([--with-stdthread is deprecated. Use --with-thread=std instead.])
+ with_thread=std])
+
+dnl
+dnl thread
+dnl
+AC_MSG_CHECKING(for --with-thread)
+AC_ARG_WITH(thread,
+AC_HELP_STRING([--with-thread=@<:@posix|glib|std@:>@],
+               [use thread library @<:@default=posix@:>@]),
+[with_thread="$withval"], [with_thread=posix])
+AC_MSG_RESULT($with_thread)
 
 AS_IF(
-  [test "x$with_oniguruma" = xyes],
-  [PKG_CHECK_MODULES(ONIG, [oniguruma])
-   AC_CHECK_HEADER([onigposix.h], , [AC_MSG_ERROR([onigposix.h not found])])
-   AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])
-   AC_DEFINE(USE_ONIG, , [use oniguruma regular expressions library])
-   AC_SUBST(ONIG_CFLAGS)
-   AC_SUBST(ONIG_LIBS)]
+  [test "x$with_thread" = xposix],
+  [],
+
+  [test "x$with_thread" = xglib],
+  [AC_MSG_WARN([--with-thread=glib is deprecated. Use --with-thread=std instead.])
+   AC_DEFINE(USE_GTHREAD, , [Use gthread instead of pthread])],
+
+  [test "x$with_thread" = xstd],
+  [AC_DEFINE(WITH_STD_THREAD, 1, [Use std::thread instead of pthread])],
+
+  [AC_MSG_ERROR([thread library not found])]
 )
 
 
 dnl
-dnl checking PCRE
+dnl checking pangolayout
 dnl
-AC_ARG_WITH(pcre,[ --with-pcre    (enable PCRE)],
-       [ if test "$withval" != "no" ;then
-               echo "use PCRE"
-               PKG_CHECK_MODULES(PCRE, [libpcre >= 6.5] )
-               AC_DEFINE(USE_PCRE, , "use PCRE")
-               AC_SUBST(PCRE_CFLAGS)
-               AC_SUBST(PCRE_LIBS)
-               AC_CHECK_HEADERS([pcreposix.h])
-               AC_CHECK_LIB(pcreposix,regexec)
-       fi ])
-
-
-dnl
-dnl checking gthread
-dnl
-AC_MSG_CHECKING(for --with-gthread)
-AC_ARG_WITH(gthread,
-  AS_HELP_STRING([--with-gthread],
-                 [use gthread instead of pthread [default=no]]),
-  [with_gthread="$withval"],
-  [with_gthread=no])
-AC_MSG_RESULT($with_gthread)
-
-
-dnl
-dnl checking std::thread
-dnl
-AC_MSG_CHECKING(for --with-stdthread)
-AC_ARG_WITH(stdthread,
-  AS_HELP_STRING([--with-stdthread],
-                 [use std::thread instead of pthread [default=no]]),
-  [with_stdthread="$withval"],
-  [with_stdthread=no])
-AC_MSG_RESULT($with_stdthread)
-
+AC_MSG_CHECKING(for --with-pangolayout)
+AC_ARG_WITH(pangolayout,
+AC_HELP_STRING([--with-pangolayout],[use pangolayout]),
+[with_pangolayout="$withval"], [with_pangolayout=no])
+AC_MSG_RESULT($with_pangolayout)
 
 AS_IF(
-  [test "x$with_gthread" = xyes -a "x$with_stdthread" = xyes],
-  [AC_MSG_ERROR([cannot configure both gthread and stdthread.])],
-  [test "x$with_gthread" = xyes],
-  [AC_MSG_WARN([--with-gthread is deprecated. Use --with-stdthread instead.])
-   AC_DEFINE(USE_GTHREAD, , [use gthread instead of pthread])],
-  [test "x$with_stdthread" = xyes],
-  [AC_DEFINE(WITH_STD_THREAD, 1, [Use std::thread instead of pthread])]
+  [test "x$with_pangolayout" = xyes],
+  [AC_DEFINE(USE_PANGOLAYOUT, , [use pangolayout])]
 )
 
 
 dnl
 dnl CPU別の最適化オプション
 dnl
-if test "$use_gprof" = "no"; then
+if test "x$enable_gprof" = "xno"; then
 
     dnl
     dnl checking native (gcc >= 4.2 x86 & x86_64)
@@ -499,16 +504,6 @@ if test "$use_gprof" = "no"; then
             CXXFLAGS="$CXXFLAGS -mcpu=7450 -maltivec -mabi=altivec"
         fi ])
 fi
-
-
-dnl
-dnl checking pangolayout
-dnl
-AC_ARG_WITH(pangolayout,[ --with-pangolayout    (use pangolayout)],
-       [ if test "$withval" != "no" ;then
-               echo "use pango_layout for drawing"
-	       CXXFLAGS="$CXXFLAGS -DUSE_PANGOLAYOUT"
-       fi ])
 
 
 AC_ARG_VAR(GTEST_SRCDIR, [path overriding googletest framework source directory])
