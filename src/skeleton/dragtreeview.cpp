@@ -205,33 +205,6 @@ void DragTreeView::set_str_tooltip( const std::string& text )
 
 
 //
-// ツールチップ最小幅設定
-//
-void DragTreeView::set_tooltip_min_width( const int min_width )
-{
-    m_tooltip.set_min_width( min_width);
-}
-
-
-//
-// ツールチップを表示
-//
-void DragTreeView::show_tooltip()
-{
-    m_tooltip.show_tooltip();
-}
-
-
-//
-// ツールチップ隠す
-//
-void DragTreeView::hide_tooltip()
-{
-    m_tooltip.hide_tooltip();
-}
-
-
-//
 // ポップアップが表示されていてかつマウスがその上にあるか
 //
 bool DragTreeView::is_mouse_on_popup()

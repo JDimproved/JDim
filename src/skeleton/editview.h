@@ -130,19 +130,8 @@ namespace SKELETON
 
     public:
 
-        EditView(){
-            set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
-
-            add( m_textview );
-#if GTKMM_CHECK_VERSION(3,0,0)
-            auto context = m_textview.get_style_context();
-            context->add_class( s_css_classname );
-            context->add_provider( m_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
-#endif
-
-            show_all_children();
-        }
-        ~EditView() noexcept {}
+        EditView();
+        ~EditView() noexcept;
 
         SIG_BUTTON_PRESS sig_button_press(){ return m_textview.sig_button_press(); }
         SIG_KEY_PRESS sig_key_press(){ return m_textview.sig_key_press(); }

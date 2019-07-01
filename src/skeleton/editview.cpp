@@ -718,6 +718,24 @@ void EditTextView::slot_hide_aamenu()
 }
 
 
+//////////////////////////////////////////////
+
+EditView::EditView()
+    : Gtk::ScrolledWindow()
+{
+    set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
+    add( m_textview );
+#if GTKMM_CHECK_VERSION(3,0,0)
+    auto context = m_textview.get_style_context();
+    context->add_class( s_css_classname );
+    context->add_provider( m_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
+#endif
+    show_all_children();
+}
+
+
+EditView::~EditView() noexcept = default;
+
 
 #if GTKMM_CHECK_VERSION(3,0,0)
 constexpr const char* EditView::s_css_classname;

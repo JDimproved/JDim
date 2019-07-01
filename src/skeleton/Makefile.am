@@ -26,6 +26,7 @@ libskeleton_a_SOURCES = \
 	menubutton.cpp \
 	toolmenubutton.cpp \
 	backforwardbutton.cpp \
+	popupwinbase.cpp \
 	popupwin.cpp \
 	tooltip.cpp \
 	entry.cpp \
@@ -88,6 +89,7 @@ noinst_HEADERS = \
 	msgdiag.h \
 	aboutdiag.h \
 	detaildiag.h \
+	editviewdialog.h \
 	filediag.h \
 	login.h \
 	panecontrol.h \
