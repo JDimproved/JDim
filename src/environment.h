@@ -8,15 +8,20 @@
 namespace ENVIRONMENT
 {
     // WM
-    enum
+    enum class DesktopType
     {
-        WM_GNOME = 0,
-        WM_XFCE,
-        WM_KDE,
-        WM_LXDE,
-        WM_MATE,
-        WM_CINNAMON,
-        WM_UNKNOWN
+        gnome = 0,
+        xfce,
+        kde,
+        lxde,
+        unity,
+        cinnamon,
+        mate,
+        budgie,
+        pantheon,
+        enlightenment,
+        lxqt,
+        unknown
     };
 
     // configure_argsのモード
@@ -39,7 +44,7 @@ namespace ENVIRONMENT
 
     std::string get_jdversion();
     std::string get_distname();
-    int get_wm();
+    DesktopType get_wm();
     std::string get_wm_str();
 	std::string get_gtkmm_version();
 	std::string get_glibmm_version();

@@ -37,7 +37,7 @@ std::string ENVIRONMENT::get_jdhelpcmd(){ return std::string( JDHELPCMD ); }
 std::string ENVIRONMENT::get_jdlicense(){ return std::string( JDLICENSE ); }
 
 
-int window_manager = ENVIRONMENT::WM_UNKNOWN;
+static ENVIRONMENT::DesktopType window_manager = ENVIRONMENT::DesktopType::unknown;
 
 
 //
@@ -509,35 +509,48 @@ std::string ENVIRONMENT::get_distname()
 }
 
 
+static constexpr const char* tbl_desktop[] = {
+    "GNOME", "XFCE", "KDE", "LXDE", "UNITY", "CINNAMON", "MATE",
+    "BUDGIE", "PANTHEON", "ENLIGHTENMENT", "LXQT", "(unknown)" };
+
 //
 // WM 判定
 // TODO: 環境変数で判定できない場合の判定方法を考える
 //
-int ENVIRONMENT::get_wm()
+ENVIRONMENT::DesktopType ENVIRONMENT::get_wm()
 {
-    if( window_manager != WM_UNKNOWN ) return window_manager;
+#ifndef _WIN32
+    if( window_manager != DesktopType::unknown ) return window_manager;
 
-    const std::string str_wm = MISC::getenv_limited( "DESKTOP_SESSION", 8 );
+    constexpr const char* envvar[] = { "DESKTOP_SESSION", "XDG_CURRENT_DESKTOP" };
 
-    if( str_wm.find( "xfce" ) != std::string::npos ) window_manager = WM_XFCE;
-    else if( str_wm.find( "gnome" ) != std::string::npos ) window_manager = WM_GNOME;
-    else if( str_wm.find( "kde" ) != std::string::npos ) window_manager = WM_KDE;
-    else if( str_wm.find( "LXDE" ) != std::string::npos ) window_manager = WM_LXDE;
-    else if( str_wm.find( "mate" ) != std::string::npos ) window_manager = WM_MATE;
-    else if( str_wm.find( "cinnamon" ) != std::string::npos ) window_manager = WM_CINNAMON;
+    for( const char* v : envvar ) {
 
-    if( window_manager == WM_UNKNOWN )
+        const std::string str_wm = MISC::toupper_str( MISC::getenv_limited( v, 20 ) );
+
+        if( !str_wm.empty() ){
+            constexpr auto table_size = static_cast< std::size_t >( DesktopType::unknown );
+            for( std::size_t i = 0; i < table_size; ++i ){
+                if( str_wm.find( tbl_desktop[ i ] ) != std::string::npos ){
+                    window_manager = static_cast< DesktopType >( i );
+                }
+            }
+        }
+    }
+
+    if( window_manager == DesktopType::unknown )
     {
         if( ! MISC::getenv_limited( "GNOME_DESKTOP_SESSION_ID" ).empty() )
         {
-            window_manager = WM_GNOME;
+            window_manager = DesktopType::gnome;
         }
         else
         {
             const std::string str_wm = MISC::getenv_limited( "KDE_FULL_SESSION", 4 );
-            if( str_wm == "true" ) window_manager = WM_KDE;
+            if( str_wm == "true" ) window_manager = DesktopType::kde;
         }
     }
+#endif
 
     return window_manager;
 }
@@ -552,20 +565,12 @@ std::string ENVIRONMENT::get_wm_str()
 
 #ifdef _WIN32
 #ifdef __MINGW32__
-    return std::string( "build by mingw32" );
+    desktop = "build by mingw32";
 #else
-    return std::string( "build with _WIN32" );
+    desktop = "build with _WIN32";
 #endif
 #else
-    switch( get_wm() )
-    {
-        case WM_GNOME : desktop = "GNOME"; break;
-        case WM_XFCE  : desktop = "XFCE";  break;
-        case WM_KDE   : desktop = "KDE";   break;
-        case WM_LXDE  : desktop = "LXDE";  break;
-        case WM_MATE  : desktop = "MATE";  break;
-        case WM_CINNAMON  : desktop = "Cinnamon";  break;
-    }
+    desktop = tbl_desktop[ static_cast< int >( get_wm() ) ];
 #endif
 
     return desktop;

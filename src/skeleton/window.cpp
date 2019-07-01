@@ -246,8 +246,9 @@ void JDWindow::clock_in()
         // メインウィンドウと画像ウィンドウが同時にフォーカスアウトしたら
         // 一時的に transient 指定を外す。メインウィンドウがフォーカスインしたときに
         // Admin::focus_out() で transient 指定を戻す
-        const auto wm = ENVIRONMENT::get_wm();
-        if( ( wm == ENVIRONMENT::WM_GNOME || wm == ENVIRONMENT::WM_MATE || wm == ENVIRONMENT::WM_CINNAMON )
+        using ENVIRONMENT::DesktopType;
+        const DesktopType wm = ENVIRONMENT::get_wm();
+        if( ( wm == DesktopType::gnome || wm == DesktopType::mate || wm == DesktopType::cinnamon )
             && ! SESSION::is_iconified_win_main() // メインウィンドウが最小化しているときに transient を外すとウィンドウが表示されなくなる
             && ! SESSION::is_focus_win_main() && ! is_focus_win() ){
 
@@ -548,7 +549,7 @@ void JDWindow::set_enable_fold( bool enable )
         // XFCE 環境の場合はここでpresent()しておかないとフォーカスが外れる
         if( m_mode == JDWIN_NORMAL && m_enable_fold ){
 
-            if( ENVIRONMENT::get_wm() == ENVIRONMENT::WM_KDE ) switch_admin();
+            if( ENVIRONMENT::get_wm() == ENVIRONMENT::DesktopType::kde ) switch_admin();
             else present();
         }
     }
