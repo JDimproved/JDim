@@ -56,8 +56,7 @@ CompletionEntry::CompletionEntry( const int mode )
 }
 
 
-CompletionEntry::~CompletionEntry() noexcept
-{}
+CompletionEntry::~CompletionEntry() noexcept = default;
 
 
 // 補完実行

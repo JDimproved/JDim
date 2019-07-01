@@ -20,13 +20,7 @@
 using namespace CONTROL;
 
 
-KeyConfig::KeyConfig()
-    : MouseKeyConf()
-{}
-
-
-KeyConfig::~KeyConfig() noexcept
-{}
+KeyConfig::~KeyConfig() noexcept = default;
 
 
 

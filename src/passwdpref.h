@@ -176,7 +176,7 @@ namespace CORE
             show_all_children();
         }
 
-        ~PasswdPref() noexcept {}
+        ~PasswdPref() noexcept = default;
     };
 
 }

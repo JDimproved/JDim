@@ -7,13 +7,8 @@
 
 using namespace SKELETON;
 
-JDNotebook::JDNotebook()
-    : Gtk::Notebook()
-{}
 
-
-JDNotebook::~JDNotebook()
-{}
+JDNotebook::~JDNotebook() noexcept = default;
 
 
 // unpack = true の時取り除く

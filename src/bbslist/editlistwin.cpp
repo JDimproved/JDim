@@ -74,6 +74,9 @@ EditListWin::EditListWin( const std::string& url, Glib::RefPtr< Gtk::TreeStore >
 }
 
 
+EditListWin::~EditListWin() noexcept = default;
+
+
 void EditListWin::clock_in()
 {
     if( m_selectview ) m_selectview->clock_in();

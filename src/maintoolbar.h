@@ -41,7 +41,7 @@ namespace CORE
       public:
 
         MainToolBar(); 
-        ~MainToolBar() noexcept {}
+        ~MainToolBar() noexcept;
 
       protected:
 

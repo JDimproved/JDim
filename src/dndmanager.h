@@ -27,7 +27,7 @@ namespace CORE
       public:
 
         DND_Manager():m_dnd( false ){}
-        virtual ~DND_Manager() noexcept {}
+        virtual ~DND_Manager() noexcept = default;
 
         bool now_dnd() const { return m_dnd; }
 

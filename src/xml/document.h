@@ -16,7 +16,7 @@ namespace XML
         std::string remove_comments( const std::string& str );
 
         // コピーコンストラクタは使わない
-        Document( const Document& );
+        Document( const Document& ) = delete;
 
       public:
 
@@ -30,7 +30,7 @@ namespace XML
         // 何も無い状態からノードツリーを作る場合
         Document();
 
-        ~Document() noexcept {}
+        ~Document() noexcept = default;
 
         // このクラスは代入可能
         Document& operator=( const Document& document );

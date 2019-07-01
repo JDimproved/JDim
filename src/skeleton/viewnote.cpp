@@ -33,6 +33,9 @@ ViewNotebook::ViewNotebook( DragableNoteBook* parent )
 }
 
 
+ViewNotebook::~ViewNotebook() noexcept = default;
+
+
 //
 // 描画イベント
 //

@@ -20,6 +20,9 @@ SelectListView::SelectListView( const std::string& url, const std::string& arg1,
 }
 
 
+SelectListView::~SelectListView() noexcept = default;
+
+
 void SelectListView::close_view()
 {
 #ifdef _DEBUG

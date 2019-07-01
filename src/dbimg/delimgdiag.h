@@ -119,7 +119,7 @@ namespace DBIMG
             show_all_children();
         }
 
-        ~DelImgDiag() noexcept {}
+        ~DelImgDiag() noexcept = default;
     };
 
 }

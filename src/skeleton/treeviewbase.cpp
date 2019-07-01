@@ -19,8 +19,7 @@ JDTreeViewBase::JDTreeViewBase()
 }
 
 
-JDTreeViewBase::~JDTreeViewBase() noexcept
-{}
+JDTreeViewBase::~JDTreeViewBase() noexcept = default;
 
 
 //

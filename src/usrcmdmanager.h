@@ -27,7 +27,7 @@ namespace CORE
     public:
 
         Usrcmd_Manager();
-        virtual ~Usrcmd_Manager() noexcept {}
+        virtual ~Usrcmd_Manager() noexcept = default;
 
         XML::Document& xml_document() { return m_document; }
         void analyze_xml();

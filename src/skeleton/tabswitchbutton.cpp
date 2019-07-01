@@ -41,8 +41,7 @@ TabSwitchButton::TabSwitchButton( DragableNoteBook* parent )
 }
 
 
-TabSwitchButton::~TabSwitchButton() noexcept
-{}
+TabSwitchButton::~TabSwitchButton() noexcept = default;
 
 
 void TabSwitchButton::show_button()

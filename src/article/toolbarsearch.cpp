@@ -37,6 +37,9 @@ SearchToolBar::SearchToolBar() :
 }
 
 
+SearchToolBar::~SearchToolBar() noexcept = default;
+
+
 //
 // ボタンのパッキング
 //

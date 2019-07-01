@@ -43,6 +43,9 @@ AboutDiag::AboutDiag( const Glib::ustring& title )
 }
 
 
+AboutDiag::~AboutDiag() noexcept = default;
+
+
 //
 // run()
 //

@@ -17,11 +17,11 @@ namespace SKELETON
 
     class ToolMenuButton : public Gtk::ToolItem
     {
-        SKELETON::MenuButton* m_button;
+        SKELETON::MenuButton* m_button = nullptr;
 
       public:
 
-        ToolMenuButton() : m_button( NULL ){}
+        ToolMenuButton();
 
         ToolMenuButton( const std::string& label, const bool expand,
                         const bool show_arrow,
@@ -30,6 +30,8 @@ namespace SKELETON
         ToolMenuButton( const std::string& label, const bool expand,
                         const bool show_arrow ,
                         const int id );
+
+        ~ToolMenuButton() noexcept;
 
         SKELETON::MenuButton* get_button(){ return m_button; }
 

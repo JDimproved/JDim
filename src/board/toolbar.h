@@ -16,7 +16,7 @@ namespace BOARD
       public:
 
         BoardToolBar();
-        ~BoardToolBar() noexcept {}
+        ~BoardToolBar() noexcept;
 
         // ツールバー表示切り替え時に検索関係の wiget の位置を変更する
         void unpack_pack();

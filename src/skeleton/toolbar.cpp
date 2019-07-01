@@ -92,6 +92,9 @@ ToolBar::ToolBar( Admin* admin )
 }
 
 
+ToolBar::~ToolBar() noexcept = default;
+
+
 void ToolBar::set_url( const std::string& url )
 {
     m_url = url;

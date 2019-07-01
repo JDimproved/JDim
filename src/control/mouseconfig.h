@@ -15,7 +15,7 @@ namespace CONTROL
     {
       public:
 
-        MouseConfig();
+        using MouseKeyConf::MouseKeyConf;
         ~MouseConfig() noexcept;
 
         void load_conf() override;

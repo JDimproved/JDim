@@ -30,8 +30,7 @@ ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, 
 }
 
 
-ArticleMachi::~ArticleMachi() noexcept
-{}
+ArticleMachi::~ArticleMachi() noexcept = default;
 
 
 std::string ArticleMachi::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )

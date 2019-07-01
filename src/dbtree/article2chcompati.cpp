@@ -34,10 +34,7 @@ Article2chCompati::Article2chCompati( const std::string& datbase, const std::str
 }
 
 
-
-Article2chCompati::~Article2chCompati() noexcept
-{}
-
+Article2chCompati::~Article2chCompati() noexcept = default;
 
 
 // 書き込みメッセージ変換

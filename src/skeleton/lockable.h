@@ -20,7 +20,7 @@ namespace SKELETON
 
         Lockable() :m_lock( 0 ){}
         
-        virtual ~Lockable() noexcept {}
+        virtual ~Lockable() noexcept = default;
 
         int get_lock() const { return m_lock; }
     

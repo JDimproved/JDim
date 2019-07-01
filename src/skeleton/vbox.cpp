@@ -7,13 +7,7 @@
 
 using namespace SKELETON;
 
-JDVBox::JDVBox()
-    : Gtk::VBox()
-{}
-
-
-JDVBox::~JDVBox()
-{}
+JDVBox::~JDVBox() noexcept = default;
 
 
 // unpack = true の時取り除く

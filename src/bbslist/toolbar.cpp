@@ -65,6 +65,9 @@ BBSListToolBar::BBSListToolBar() :
 }
 
 
+BBSListToolBar::~BBSListToolBar() noexcept = default;
+
+
 //
 // ボタンのパッキング
 //

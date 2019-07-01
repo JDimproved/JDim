@@ -80,7 +80,7 @@ namespace SKELETON
       public:
 
         SelectItemPref( Gtk::Window* parent, const std::string& url );
-        ~SelectItemPref() noexcept {}
+        ~SelectItemPref() noexcept = default;
 
       private:
 

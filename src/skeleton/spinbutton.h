@@ -19,7 +19,7 @@ namespace SKELETON
 
       public:
 
-        SpinButton() : Gtk::SpinButton(){}
+        using Gtk::SpinButton::SpinButton;
 
       protected:
 
@@ -39,7 +39,7 @@ namespace SKELETON
     {
       public:
 
-        SpinButtonDouble() : Gtk::SpinButton(){}
+        using Gtk::SpinButton::SpinButton;
 
       protected:
 

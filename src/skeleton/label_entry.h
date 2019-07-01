@@ -27,6 +27,7 @@ namespace SKELETON
       public:
 
         LabelEntry( const bool editable, const std::string& label, const std::string& text = std::string() );
+        ~LabelEntry() noexcept;
 
         SIG_ACTIVATE signal_activate(){ return m_sig_activate; }
 

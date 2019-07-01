@@ -14,8 +14,8 @@ namespace SKELETON
     {
       public:
 
-        JDVBox();
-        ~JDVBox();
+        using Gtk::VBox::VBox;
+        ~JDVBox() noexcept;
 
         // unpack = true の時取り除く
         void pack_remove_start( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );

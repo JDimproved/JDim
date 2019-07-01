@@ -31,8 +31,7 @@ Board2ch::Board2ch( const std::string& root, const std::string& path_board, cons
 }
 
 
-Board2ch::~Board2ch() noexcept
-{}
+Board2ch::~Board2ch() noexcept = default;
 
 
 // ユーザエージェント

@@ -14,7 +14,7 @@ namespace ARTICLE
       public:
 
         ArticleToolBarSimple();
-        ~ArticleToolBarSimple() noexcept {}
+        ~ArticleToolBarSimple() noexcept;
 
       protected:
 

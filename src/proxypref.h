@@ -132,7 +132,7 @@ namespace CORE
             show_all_children();
         }
 
-        ~ProxyPref() noexcept {}
+        ~ProxyPref() noexcept = default;
     };
 
 }

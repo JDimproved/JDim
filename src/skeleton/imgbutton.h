@@ -23,6 +23,9 @@ namespace SKELETON
         ImgButton( const Gtk::StockID& stock_id,
                    const std::string label = std::string(),
                    const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
+
+        ~ImgButton() noexcept;
+
       private:
 
         void set( const std::string& label );

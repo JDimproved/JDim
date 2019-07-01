@@ -14,6 +14,9 @@ JDVPaned::JDVPaned( const int fixmode )
 {}
 
 
+JDVPaned::~JDVPaned() noexcept = default;
+
+
 void JDVPaned::on_realize()
 {
     Gtk::VPaned::on_realize();

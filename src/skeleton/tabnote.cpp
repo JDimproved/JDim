@@ -354,7 +354,7 @@ public:
         set_flags( Gtk::NO_WINDOW );
 #endif
     }
-    ~DummyWidget() noexcept {}
+    ~DummyWidget() noexcept = default;
 };
 
 
@@ -403,6 +403,10 @@ TabNotebook::TabNotebook( DragableNoteBook* parent )
 
     m_pre_width = get_width();
 }
+
+
+TabNotebook::~TabNotebook() noexcept = default;
+
 
 //
 // クロック入力

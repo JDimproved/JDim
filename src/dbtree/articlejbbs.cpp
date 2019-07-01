@@ -27,8 +27,7 @@ ArticleJBBS::ArticleJBBS( const std::string& datbase, const std::string& _id, bo
 }
 
 
-ArticleJBBS::~ArticleJBBS()
-{}
+ArticleJBBS::~ArticleJBBS() noexcept = default;
 
 
 std::string ArticleJBBS::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )

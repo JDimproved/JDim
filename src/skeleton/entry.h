@@ -32,8 +32,8 @@ namespace SKELETON
         SIG_KEY_PRESS signal_key_press(){ return m_sig_key_press; }
         SIG_OPERATE signal_operate(){ return m_sig_operate; }
 
-        JDEntry() : Gtk::Entry(){}
-        ~JDEntry() noexcept {}
+        using Gtk::Entry::Entry;
+        ~JDEntry() noexcept;
 
         // CONTROL::Control のモード設定( controlid.h 参照 )
         // キー入力をフックして JDEntry::on_key_release_event() で SIG_OPERATE をemitする

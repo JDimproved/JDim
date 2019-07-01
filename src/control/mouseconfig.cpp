@@ -18,14 +18,7 @@
 using namespace CONTROL;
 
 
-MouseConfig::MouseConfig()
-    : MouseKeyConf()
-{}
-
-
-
-MouseConfig::~MouseConfig() noexcept
-{}
+MouseConfig::~MouseConfig() noexcept = default;
 
 
 //

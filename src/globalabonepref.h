@@ -76,7 +76,7 @@ namespace CORE
             show_all_children();
         }
 
-        ~GlobalAbonePref() noexcept {}
+        ~GlobalAbonePref() noexcept = default;
     };
 
 }
