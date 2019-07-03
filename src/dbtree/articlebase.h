@@ -396,7 +396,7 @@ namespace DBTREE
         // ロード終了時( slot_load_finished() )に次スレ移行チェックをする
         void set_url_pre_article( const std::string& url_pre_article );
 
-        // url_src で示されるスレの情報をコピー
+        // url_src で示されるスレの情報を引き継ぐ
         void copy_article_info( const std::string& url_src );
 
         // スレッド924か

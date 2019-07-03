@@ -638,7 +638,7 @@ const char* ArticleViewBase::get_menu_item( const int item )
         case ITEM_SAVE_DAT:
             return "<menuitem action='SaveDat'/>";
 
-            // 情報コピー
+            // スレ情報の引き継ぎ
         case ITEM_COPY_THREAD_INFO:
             return "<menuitem action='CopyInfo'/>";
 
@@ -1557,7 +1557,7 @@ void ArticleViewBase::slot_save_dat()
 
 
 //
-// スレ情報コピー
+// スレ情報の引き継ぎ
 //
 void ArticleViewBase::slot_copy_article_info()
 {
@@ -3288,7 +3288,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         }
     }
 
-    // スレ情報コピー
+    // スレ情報の引き継ぎ
     act = action_group()->get_action( "CopyInfo" );
     if( act ){
 

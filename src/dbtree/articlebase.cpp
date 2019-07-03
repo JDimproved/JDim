@@ -1226,7 +1226,7 @@ void ArticleBase::set_url_pre_article( const std::string& url_pre_article )
 
 
 //
-// url_src で示されるスレの情報をコピー
+// url_src で示されるスレの情報を引き継ぐ
 //
 void ArticleBase::copy_article_info( const std::string& url_src )
 {
@@ -1454,7 +1454,7 @@ void ArticleBase::slot_load_finished()
                       << "value = " << value << std::endl;
 #endif
 
-            // このスレは m_url_pre_article の次スレとみなして情報をコピーする
+            // このスレは m_url_pre_article の次スレとみなして情報を引き継ぐ
             if( value >= CONFIG::get_threshold_next() ){
 
 #ifdef _DEBUG
