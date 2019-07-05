@@ -5,8 +5,6 @@
 
 #include "aboutconfigdiag.h"
 
-#include "jdlib/miscutil.h"
-
 using namespace CONFIG;
 
 AboutConfigDiagStr::AboutConfigDiagStr( Gtk::Window* parent, std::string* value, const std::string& defaultval )
@@ -52,7 +50,7 @@ AboutConfigDiagInt::AboutConfigDiagInt( Gtk::Window* parent, int* value, const i
 {
     resize( 200, 1 );
 
-    m_entry.set_text( MISC::itostr( *value ) );
+    m_entry.set_text( std::to_string( *value ) );
     m_hbox.pack_start( m_entry );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagInt::slot_default ) );
@@ -76,7 +74,7 @@ void AboutConfigDiagInt::slot_ok_clicked()
 
 void AboutConfigDiagInt::slot_default()
 {
-    m_entry.set_text( MISC::itostr( m_defaultval ) );
+    m_entry.set_text( std::to_string( m_defaultval ) );
 }
 
 

@@ -255,7 +255,7 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     cmd_out = MISC::replace_str( cmd_out, "$LOCALDATL", CACHE::path_dat( link ) );
     cmd_out = MISC::replace_str( cmd_out, "$LOCALDAT", CACHE::path_dat( url ) );
     cmd_out = MISC::replace_str( cmd_out, "$LINK", link );
-    cmd_out = MISC::replace_str( cmd_out, "$NUMBER", MISC::itostr( number ) );
+    cmd_out = MISC::replace_str( cmd_out, "$NUMBER", std::to_string( number ) );
 
     if( cmd_out.find( "$CACHEDIMG" ) != std::string::npos ){
         cmd_out = MISC::replace_str( cmd_out, "$CACHEDIMG", DBIMG::get_cache_path( link ) );
@@ -469,7 +469,7 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
 #ifdef _DEBUG
                 std::cout << "[" << dirno << "] " << name << std::endl;
 #endif
-                const std::string dirname = "usrcmd_dir" + MISC::itostr( dirno );
+                const std::string dirname = "usrcmd_dir" + std::to_string( dirno );
                 action_group->add( Gtk::Action::create( dirname, name ) );
                 ++dirno;
 
@@ -489,7 +489,7 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
 #ifdef _DEBUG
                     std::cout << "[" << cmdno << "] " << name << std::endl;
 #endif
-                    const std::string cmdname = "usrcmd" + MISC::itostr( cmdno );
+                    const std::string cmdname = "usrcmd" + std::to_string( cmdno );
                     action_group->add( Gtk::Action::create( cmdname, name ) );
                     ++cmdno;
 
@@ -507,7 +507,7 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
 
 Glib::RefPtr< Gtk::Action > Usrcmd_Manager::get_action( Glib::RefPtr< Gtk::ActionGroup >& action_group, const int num )
 {
-    const std::string str_cmd = "usrcmd" + MISC::itostr( num );
+    const std::string str_cmd = "usrcmd" + std::to_string( num );
     return action_group->get_action( str_cmd );
 }
 

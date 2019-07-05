@@ -170,7 +170,7 @@ void MessageViewBase::clock_in()
             bool set_color = false;
             if( m_str_pass.empty() ) set_color = true;
 
-            m_str_pass = "規制中 " + MISC::itostr( left ) + " 秒 ";
+            m_str_pass = "規制中 " + std::to_string( left ) + " 秒 ";
 
             std::string force;
             if( SESSION::focused_admin() == SESSION::FOCUS_MESSAGE ) force = "force";
@@ -609,7 +609,9 @@ void MessageViewBase::write()
     if( left
         && ! SESSION::loginbe() // BEログイン中はダイアログを表示しない
         ){
-        SKELETON::MsgDiag mdiag( get_parent_win(), "書き込み規制中です ( 残り " + MISC::itostr( left ) + " 秒 )\n\nもう暫くお待ち下さい。規制秒数が短くなった場合は板のプロパティからリセットできます。" );
+        constexpr const char* message =
+            " 秒 )\n\nもう暫くお待ち下さい。規制秒数が短くなった場合は板のプロパティからリセットできます。";
+        SKELETON::MsgDiag mdiag( get_parent_win(), "書き込み規制中です ( 残り " + std::to_string( left ) + message );
         mdiag.run();
         return;
     }

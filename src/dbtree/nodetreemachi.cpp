@@ -130,7 +130,7 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
         if( regex.exec( "(https?://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)", get_url(), offset, icase, newline, usemigemo, wchar ) ){
 
             data.url = regex.str( 1 ) + std::string( "/bbs/offlaw.cgi/" ) + regex.str( 2 ) + std::string( "/" ) +  regex.str( 3 );
-            if( id_header() >= 1 ) data.url += "/" + MISC::itostr( id_header() +1 ) + "-";
+            if( id_header() >= 1 ) data.url += "/" + std::to_string( id_header() +1 ) + "-";
         }
     }
 
@@ -138,7 +138,7 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
     else{
 
         data.url = get_url();
-        if( id_header() ) data.url += "&START=" + MISC::itostr( id_header() + 1 );
+        if( id_header() ) data.url += "&START=" + std::to_string( id_header() + 1 );
     }
 
     data.agent = DBTREE::get_agent( get_url() );

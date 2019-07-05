@@ -2316,7 +2316,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         // もう一度開く
         if( command.arg1 == "reget" ){
 
-            const std::string str_num_open = "page" + MISC::itostr( num_open );
+            const std::string str_num_open = "page" + std::to_string( num_open );
             const std::string mode = std::string( "noswitch" ) + ( locked ? " lock" : "" );
             const std::string str_num_jump = command.arg2;
 
@@ -2809,7 +2809,8 @@ void Core::set_command( const COMMAND_ARGS& command )
             const size_t max_lng = DBTREE::board_get_max_dat_lng( command.url );
             if( max_lng > 0 && DBTREE::article_lng_dat( command.url ) > max_lng * 1000 ){
 
-                SKELETON::MsgDiag mdiag( NULL, "スレのサイズが" + MISC::itostr( max_lng ) + "Kバイトを越えています。\n\n本当に書き込みますか？",
+                SKELETON::MsgDiag mdiag( nullptr, "スレのサイズが" + std::to_string( max_lng )
+                                                  + "Kバイトを越えています。\n\n本当に書き込みますか？",
                                          false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
                 if( mdiag.run() != Gtk::RESPONSE_YES ) return;
             }
@@ -3268,7 +3269,7 @@ void Core::exec_command()
             std::cout << "exec : open_article url = " << url_dat << std::endl;
 #endif
             
-            if( num_from ) CORE::core_set_command( "open_article" , url_dat, "newtab", "", MISC::itostr( num_from ) );
+            if( num_from ) CORE::core_set_command( "open_article" , url_dat, "newtab", "", std::to_string( num_from ) );
             else CORE::core_set_command( "open_article" , url_dat, "newtab", "" );
         }
 

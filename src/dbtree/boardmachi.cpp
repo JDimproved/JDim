@@ -144,11 +144,11 @@ std::string BoardMachi::url_dat( const std::string& url, int& num_from, int& num
 
         if( ! regex.str( 5 ).empty() ){
             num_from = atoi( regex.str( 5 ).c_str() );
-            num_str = MISC::itostr( num_from );
+            num_str = std::to_string( num_from );
         }
         if( ! regex.str( 7 ).empty() ){
             num_to = atoi( regex.str( 7 ).c_str() );
-            num_str += "-" + MISC::itostr( num_to );
+            num_str += "-" + std::to_string( num_to );
         }
 
 #ifdef _DEBUG

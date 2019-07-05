@@ -1396,7 +1396,7 @@ void ArticleViewBase::slot_preferences_image()
 //
 void ArticleViewBase::back_viewhistory( const int count )
 {
-    ARTICLE::get_admin()->set_command( "back_viewhistory", get_url(), MISC::itostr( count ) );
+    ARTICLE::get_admin()->set_command( "back_viewhistory", get_url(), std::to_string( count ) );
 }
 
 
@@ -1405,7 +1405,7 @@ void ArticleViewBase::back_viewhistory( const int count )
 //
 void ArticleViewBase::forward_viewhistory( const int count )
 {
-    ARTICLE::get_admin()->set_command( "forward_viewhistory", get_url(), MISC::itostr( count ) );
+    ARTICLE::get_admin()->set_command( "forward_viewhistory", get_url(), std::to_string( count ) );
 }
 
 
@@ -1597,7 +1597,7 @@ std::string ArticleViewBase::get_html_url4report( const std::list< int >& list_r
         const std::string time_str = m_article->get_time_str( num );
         const std::string id_str = m_article->get_id_name( num );
 
-        html += url_for_copy() + MISC::itostr( num );
+        html += url_for_copy() + std::to_string( num );
         if( ! time_str.empty() ) html += " " + MISC::remove_str_regex( time_str, "\\([^\\)]+\\)" ); // 曜日を取り除く
         if( ! id_str.empty() ) html += " " + id_str.substr( strlen( PROTO_ID ) );
         html += "<br>";
@@ -1791,8 +1791,11 @@ void ArticleViewBase::show_postlog( const int num )
         if( i == 1 ) no = 0;
         else no = maxno - ( i -1 );
 
-        if( no == num ) html_header += MISC::itostr( i ) + " ";
-        else html_header += std::string( "<a href=\"" ) + PROTO_POSTLOG + MISC::itostr( no ) + "\">" + MISC::itostr( i ) + "</a> ";
+        if( no == num ) html_header += std::to_string( i ) + " ";
+        else {
+            html_header += std::string( "<a href=\"" ) + PROTO_POSTLOG + std::to_string( no ) + "\">"
+                + std::to_string( i ) + "</a> ";
+        }
     }
 
 #ifdef _DEBUG
@@ -2582,7 +2585,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         // ジャンプ先セット
         m_jump_to = url.substr( strlen( PROTO_ANCHORE ) );
-        m_jump_from = MISC::itostr( res_number );
+        m_jump_from = std::to_string( res_number );
         m_str_num = m_jump_to;
 
 #ifdef _DEBUG
@@ -2609,7 +2612,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
             hide_popup();
 
-            m_str_num = MISC::itostr( res_number );
+            m_str_num = std::to_string( res_number );
             m_url_tmp = DBTREE::url_readcgi( m_url_article, res_number, 0 );
 
             // ジャンプ先セット
@@ -2676,7 +2679,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuImageButton ) ){
-            m_str_num = MISC::itostr( res_number );
+            m_str_num = std::to_string( res_number );
             show_popupmenu( url, false );
         }
 
@@ -3476,10 +3479,14 @@ void ArticleViewBase::slot_search_title()
 //
 void ArticleViewBase::slot_usrcmd( int num )
 {
-    int res_num = 0;
-    if( m_drawarea ) res_num =  m_drawarea->get_current_res_num();
+    std::string current = "0";
+    std::string selection;
+    if( m_drawarea ) {
+        current = std::to_string( m_drawarea->get_current_res_num() );
+        selection = m_drawarea->str_selection();
+    }
 
-    CORE::core_set_command( "exec_usr_cmd" ,m_url_article, MISC::itostr( num ), m_url_tmp, m_drawarea->str_selection(), MISC::itostr( res_num ) );
+    CORE::core_set_command( "exec_usr_cmd", m_url_article, std::to_string( num ), m_url_tmp, selection, current );
 }
 
 
@@ -3594,8 +3601,8 @@ void ArticleViewBase::slot_quote_selection_res()
 
     const int num_to = m_drawarea->get_selection_resnum_to();
 
-    std::string str_num = MISC::itostr( num_from );
-    if( num_from < num_to ) str_num += "-" + MISC::itostr( num_to );
+    std::string str_num = std::to_string( num_from );
+    if( num_from < num_to ) str_num += "-" + std::to_string( num_to );
 
     std::string str_res;
     str_res = CONFIG::get_ref_prefix();
@@ -4197,7 +4204,7 @@ void ArticleViewBase::exec_search()
     }
     else{
         focus_view();
-        CORE::core_set_command( "set_info", "", "検索結果： " + MISC::itostr( hit ) + "件" );
+        CORE::core_set_command( "set_info", "", "検索結果： " + std::to_string( hit ) + "件" );
     }
 }
 

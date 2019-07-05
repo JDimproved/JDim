@@ -11,8 +11,6 @@
 #include "skeleton/dragnote.h"
 #include "skeleton/undobuffer.h"
 
-#include "jdlib/miscutil.h"
-
 #include "global.h"
 #include "viewfactory.h"
 #include "session.h"
@@ -125,7 +123,7 @@ void BBSListAdmin::restore( const bool only_locked )
     command_arg = url_to_openarg( URL_HISTCLOSEIMGVIEW, true, false );
     open_view( command_arg );
 
-    set_command( "set_page", std::string(), MISC::itostr( SESSION::bbslist_page() ) );
+    set_command( "set_page", std::string(), std::to_string( SESSION::bbslist_page() ) );
     set_command( "hide_tabs" );
 }
 

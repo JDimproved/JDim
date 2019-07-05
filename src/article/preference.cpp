@@ -46,7 +46,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         int size = DBTREE::article_lng_dat( get_url() );
 
         m_label_cache.set_text( CACHE::path_dat( get_url() ) );
-        m_label_size.set_text( MISC::itostr( size )  + " / " + MISC::itostr( size/1024 ) );
+        m_label_size.set_text( std::to_string( size )  + " / " + std::to_string( size/1024 ) );
 
         if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
         else m_label_modified.set_text(

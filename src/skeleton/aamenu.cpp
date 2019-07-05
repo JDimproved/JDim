@@ -6,8 +6,6 @@
 
 #include "aamenu.h"
 
-#include "jdlib/miscutil.h"
-
 #include "config/globalconf.h"
 
 #include "fontid.h"
@@ -81,7 +79,7 @@ void AAMenu::create_menuitem( Glib::RefPtr< Gtk::ActionGroup > actiongroup, Gtk:
     std::string shortcut = CORE::get_aamanager()->id2shortcut( id );
     if( ! shortcut.empty() ) aa_label = "[" + shortcut + "] " + aa_label;
 
-    std::string actname = "aa" + MISC::itostr( id );
+    std::string actname = "aa" + std::to_string( id );
     if( actiongroup->get_action( actname ) ) return; // 登録済み
 
 #ifdef _DEBUG

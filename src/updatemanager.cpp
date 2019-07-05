@@ -7,8 +7,6 @@
 
 #include "dbtree/interface.h"
 
-#include "jdlib/miscutil.h"
-
 #include "command.h"
 #include "global.h"
 
@@ -211,8 +209,8 @@ void CheckUpdate_Manager::pop_front()
     // チェック実行
     else{
 
-        CORE::core_set_command( "set_info", "",
-                                "更新チェック中 (" + MISC::itostr( m_total - m_list_item.size() ) + "/" + MISC::itostr( m_total ) +")" );
+        CORE::core_set_command( "set_info", "", "更新チェック中 (" + std::to_string( m_total - m_list_item.size() )
+                                                + "/" + std::to_string( m_total ) +")" );
 
         // チェックした結果、更新されていたら
         // グループの残りのスレのチェックをキャンセルして次のグループへ

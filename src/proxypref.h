@@ -95,7 +95,7 @@ namespace CORE
             if( CONFIG::get_proxy_basicauth_for2ch().empty() ) host = CONFIG::get_proxy_for2ch();
             else host = CONFIG::get_proxy_basicauth_for2ch() + "@" + CONFIG::get_proxy_for2ch();
             m_frame_2ch.entry_host.set_text( host );
-            m_frame_2ch.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for2ch() ) );
+            m_frame_2ch.entry_port.set_text( std::to_string( CONFIG::get_proxy_port_for2ch() ) );
 
             set_activate_entry( m_frame_2ch.entry_host );
             set_activate_entry( m_frame_2ch.entry_port );
@@ -106,7 +106,7 @@ namespace CORE
             if( CONFIG::get_proxy_basicauth_for2ch_w().empty() ) host = CONFIG::get_proxy_for2ch_w();
             else host = CONFIG::get_proxy_basicauth_for2ch_w() + "@" + CONFIG::get_proxy_for2ch_w();
             m_frame_2ch_w.entry_host.set_text( host );
-            m_frame_2ch_w.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for2ch_w() ) );
+            m_frame_2ch_w.entry_port.set_text( std::to_string( CONFIG::get_proxy_port_for2ch_w() ) );
 
             set_activate_entry( m_frame_2ch_w.entry_host );
             set_activate_entry( m_frame_2ch_w.entry_port );
@@ -117,7 +117,7 @@ namespace CORE
             if( CONFIG::get_proxy_basicauth_for_data().empty() ) host = CONFIG::get_proxy_for_data();
             else host = CONFIG::get_proxy_basicauth_for_data() + "@" + CONFIG::get_proxy_for_data();
             m_frame_data.entry_host.set_text( host );
-            m_frame_data.entry_port.set_text( MISC::itostr( CONFIG::get_proxy_port_for_data() ) );
+            m_frame_data.entry_port.set_text( std::to_string( CONFIG::get_proxy_port_for_data() ) );
 
             set_activate_entry( m_frame_data.entry_host );
             set_activate_entry( m_frame_data.entry_port );

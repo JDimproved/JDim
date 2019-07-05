@@ -11,8 +11,6 @@
 #include "skeleton/compentry.h"
 #include "skeleton/undobuffer.h"
 
-#include "jdlib/miscutil.h"
-
 #include "viewfactory.h"
 
 using namespace BBSLIST;
@@ -139,7 +137,7 @@ void EditListWin::slot_operate_search( const int controlid )
     std::cout << "EditListWin::slot_operate_search id = " << controlid << std::endl;
 #endif
 
-    if( m_selectview ) m_selectview->operate_search( MISC::itostr( controlid ) );
+    if( m_selectview ) m_selectview->operate_search( std::to_string( controlid ) );
 }
 
 

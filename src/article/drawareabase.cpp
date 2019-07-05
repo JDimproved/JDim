@@ -4837,7 +4837,7 @@ std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos 
         // 数字
         if( dig && num ){
 
-            url = PROTO_ANCHORE + MISC::itostr( num );
+            url = PROTO_ANCHORE + std::to_string( num );
 
             for(;;){
 
@@ -4856,7 +4856,7 @@ std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos 
                 select_str = select_str.substr( tmpstr.length() );
 
                 num = MISC::str_to_uint( select_str.c_str(), dig, n );
-                if( dig && num ) url += tmpstr2 + MISC::itostr( num );
+                if( dig && num ) url += tmpstr2 + std::to_string( num );
                 else break;
             }
         }
