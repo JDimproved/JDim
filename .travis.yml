@@ -1,0 +1,65 @@
+dist: xenial
+language: cpp
+
+branches:
+  only:
+    - master
+
+addons:
+  apt:
+    update: true
+    packages:
+      - libgnutls28-dev
+      - libgcrypt20-dev
+      - libgtkmm-2.4-dev
+      - zlib1g-dev
+      - libmigemo-dev
+      - libasound2-dev
+      - autoconf-archive
+
+matrix:
+  include:
+    - name: "gtkmm2 + gcc (migemo, alsa, PangoLayout) DEBUG"
+      os: linux
+      compiler: gcc
+      env: CONFIG_ARG="--with-migemo --with-alsa --with-pangolayout" CXXFLAGS="-D_DEBUG"
+
+    - name: "gtkmm2 + clang (gnomeui, PCRE, OpenSSL)"
+      os: linux
+      compiler: clang
+      env: CONFIG_ARG="--with-sessionlib=gnomeui --with-regex=pcre --with-tls=openssl"
+      addons:
+        apt:
+          packages:
+            - libgnomeui-dev
+            - libssl-dev
+            - libpcre3-dev
+
+    - name: "gtkmm3 + gcc (Oniguruma, std::thread)"
+      os: linux
+      compiler: gcc
+      env: CONFIG_ARG="--with-gtkmm3 --with-regex=oniguruma --with-thread=std"
+      addons:
+        apt:
+          packages:
+            - libgtkmm-3.0
+            - libonig-dev
+
+    - name: "gtkmm3 + clang (xdg-open) DEBUG"
+      os: linux
+      compiler: clang
+      env: CONFIG_ARG="--with-gtkmm3 --with-xdgopen" CXXFLAGS="-D_DEBUG"
+      addons:
+        apt:
+          packages:
+            - libgtkmm-3.0
+
+install:
+  - travis_retry git clone --depth 1 --branch master https://github.com/google/googletest.git test/googletest
+
+script:
+  - autoreconf -i
+  - ./configure $CONFIG_ARG
+  - make
+  - make test
+  - ./src/jdim -V
