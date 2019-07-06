@@ -111,8 +111,8 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 //
 std::list< std::string > MISC::split_line( const std::string& str )
 {
-    std::string str_space = "　";
-    size_t lng_space = str_space.length();
+    constexpr const char* str_space = u8"\u3000"; // "\xE3\x80\x80" 全角スペース
+    constexpr size_t lng_space = 3;
     bool dquote;
 
     std::list< std::string > list_str;
@@ -129,7 +129,7 @@ std::list< std::string > MISC::split_line( const std::string& str )
             // 全角
             else if( str[ i ] == str_space[ 0 ] &&
                      str[ i +1 ] == str_space[ 1 ] &&
-                     ( lng_space == 2 || str[ i +2 ] == str_space[ 2 ] ) ) i += lng_space;
+                     str[ i +2 ] == str_space[ 2 ] ) i += lng_space;
 
             else break;
         }
@@ -157,7 +157,7 @@ std::list< std::string > MISC::split_line( const std::string& str )
                 // 全角
                 else if( str[ i2 ] == str_space[ 0 ] &&
                          str[ i2 +1 ] == str_space[ 1 ] &&
-                         ( lng_space == 2 || str[ i2 +2 ] == str_space[ 2 ] ) ){
+                         str[ i2 +2 ] == str_space[ 2 ] ){
                     lng_tmp = lng_space;
                     break;
                 }
@@ -294,13 +294,13 @@ std::string MISC::listtostr( const std::list< std::string >& list_in )
 //
 std::string MISC::remove_space( const std::string& str )
 {
-    std::string str_space = "　";
-    size_t lng_space = str_space.length();
+    constexpr const char* str_space = u8"\u3000"; // "\xE3\x80\x80" 全角スペース
+    constexpr size_t lng_space = 3;
 
     size_t lng = str.length();
     
     if( lng == 0 ) return str;
-    if( str.find( " " ) == std::string::npos ) return str;
+    if( str.find( ' ' ) == std::string::npos ) return str;
 
     // 前
     size_t i = 0;
@@ -312,7 +312,7 @@ std::string MISC::remove_space( const std::string& str )
         // 全角
         else if( str[ i ] == str_space[ 0 ] &&
                  str[ i +1 ] == str_space[ 1 ] &&
-                 ( lng_space == 2 || str[ i +2 ] == str_space[ 2 ] ) ) i += lng_space;
+                 str[ i +2 ] == str_space[ 2 ] ) i += lng_space;
         else break;
     }
 
@@ -327,7 +327,7 @@ std::string MISC::remove_space( const std::string& str )
         else if( i2 +1 >= lng_space &&
                  str[ i2 - lng_space +1 ] == str_space[ 0 ] &&
                  str[ i2 - lng_space +2 ] == str_space[ 1 ] &&
-                 ( lng_space == 2 || str[ i2 - lng_space +3 ] == str_space[ 2 ] ) ) i2 -= lng_space;
+                 str[ i2 - lng_space +3 ] == str_space[ 2 ] ) i2 -= lng_space;
         else break;
     }
 
