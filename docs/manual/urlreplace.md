@@ -80,4 +80,14 @@ youtubeのサムネイルをインライン画像として表示するための�
 http://www\.foobar\.com/view/([0-9]+)	$0	$0	$IMAGE
 </code></pre>
   </dd>
+  <dt>imgurの拡張子無しURLを画像リンク(jpg)にする</dt>
+  <dd>
+<pre><code>^https?://imgur\.com/([0-9A-Za-z]{7})$	https://i.imgur.com/$1.jpg		$IMAGE
+</code></pre>
+  </dd>
+  <dt>imgurの画像URLは偽装チェックしない</dt>
+  <dd>
+<pre><code>^https?://i\.imgur\.com/([^#&=/]+)$	$0		$GENUINE
+</code></pre>
+  </dd>
 </dl>

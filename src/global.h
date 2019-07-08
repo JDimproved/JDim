@@ -70,7 +70,7 @@ enum{
 #define ITEM_NAME_COPY_URL      "URLをコピー"
 #define ITEM_NAME_COPY_TITLE_URL "タイトルとURLをコピー"
 #define ITEM_NAME_COPY_TITLE_URL_THREAD "スレのタイトルとURLをコピー"
-#define ITEM_NAME_COPY_THREAD_INFO   "スレ情報のコピー"
+#define ITEM_NAME_COPY_THREAD_INFO   "スレ情報を引き継ぐ"
 
 #define ITEM_NAME_DELETE    "削除"
 #define ITEM_NAME_QUIT      "閉じる"
