@@ -342,7 +342,7 @@ std::map< std::string, std::string > Dom::create_attribute( const std::string& s
 //
 // XMLタグ構造の文字列を生成
 //
-std::string Dom::get_xml( const int n )
+std::string Dom::get_xml( const int n ) const
 {
     std::stringstream xml;
 
@@ -353,10 +353,10 @@ std::string Dom::get_xml( const int n )
     std::string text;
 
     // 属性
-    std::map< std::string, std::string >::iterator attr_it = m_attributes.begin();
+    std::map< std::string, std::string >::const_iterator attr_it = m_attributes.cbegin();
 
     // 子要素
-    std::list< Dom* >::iterator child_it = m_childNodes.begin();
+    std::list< Dom* >::const_iterator child_it = m_childNodes.cbegin();
 
     // ノードの種類別に処理
     switch( m_nodeType )
@@ -371,7 +371,7 @@ std::string Dom::get_xml( const int n )
             xml << indent << "<" << m_nodeName;
 
             // 属性を追加
-            while( attr_it != m_attributes.end() )
+            while( attr_it != m_attributes.cend() )
             {
                 xml << " " << (*attr_it).first << "=\"" << (*attr_it).second << "\"";
                 ++attr_it;
@@ -382,7 +382,7 @@ std::string Dom::get_xml( const int n )
             {
                 xml << ">\n";
 
-                while( child_it != m_childNodes.end() )
+                while( child_it != m_childNodes.cend() )
                 {
                     // 子要素をたどる
                     xml << (*child_it)->get_xml( n + 2 );
@@ -414,7 +414,7 @@ std::string Dom::get_xml( const int n )
 
             if( ! m_childNodes.empty() ) xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
-            while( child_it != m_childNodes.end() )
+            while( child_it != m_childNodes.cend() )
             {
                 // 子要素をたどる
                 xml << (*child_it)->get_xml();
@@ -554,12 +554,12 @@ void Dom::nodeValue( const std::string& value )
 //
 // getElementById()
 //
-Dom* Dom::getElementById( const std::string& id )
+Dom* Dom::getElementById( const std::string& id ) const
 {
     Dom* node = 0;
 
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    std::list< Dom* >::const_iterator it = m_childNodes.cbegin();
+    while( it != m_childNodes.cend() )
     {
         if( (*it)->nodeType() == NODE_TYPE_ELEMENT )
         {
@@ -579,12 +579,12 @@ Dom* Dom::getElementById( const std::string& id )
 //
 // getElementsByTagName()
 //
-DomList Dom::getElementsByTagName( const std::string& name )
+DomList Dom::getElementsByTagName( const std::string& name ) const
 {
     DomList domlist;
 
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    std::list< Dom* >::const_iterator it = m_childNodes.cbegin();
+    while( it != m_childNodes.cend() )
     {
         if( (*it)->nodeType() == NODE_TYPE_ELEMENT )
         {
@@ -604,7 +604,7 @@ DomList Dom::getElementsByTagName( const std::string& name )
 //
 // ノード：ownerDocument
 //
-Dom* Dom::ownerDocument()
+Dom* Dom::ownerDocument() const
 {
     Dom* parent = m_parentNode;
 
@@ -644,7 +644,7 @@ bool Dom::hasChildNodes()
 //
 // ノード：childNodes
 //
-DomList Dom::childNodes()
+DomList Dom::childNodes() const
 {
     DomList result;
 
@@ -687,7 +687,7 @@ void Dom::copy_childNodes( const Dom& dom )
 //
 // ノード：firstChild
 //
-Dom* Dom::firstChild()
+Dom* Dom::firstChild() const
 {
     if( m_childNodes.empty() ) return 0;
 
@@ -698,7 +698,7 @@ Dom* Dom::firstChild()
 //
 // ノード：lastChild
 //
-Dom* Dom::lastChild()
+Dom* Dom::lastChild() const
 {
     if( m_childNodes.empty() ) return 0;
 
@@ -796,7 +796,7 @@ Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* 
 //
 // ノード：previousSibling
 //
-Dom* Dom::previousSibling()
+Dom* Dom::previousSibling() const
 {
     Dom* previous = 0;
 
@@ -820,7 +820,7 @@ Dom* Dom::previousSibling()
 //
 // ノード：nextSibling
 //
-Dom* Dom::nextSibling()
+Dom* Dom::nextSibling() const
 {
     Dom* next = 0;
 
@@ -868,7 +868,7 @@ bool Dom::hasAttributes()
 //
 // 属性：hasAttribute()
 //
-bool Dom::hasAttribute( const std::string& name )
+bool Dom::hasAttribute( const std::string& name ) const
 {
     if( name.empty() ) return false;
 
@@ -879,15 +879,15 @@ bool Dom::hasAttribute( const std::string& name )
 //
 // 属性：getAttribute()
 //
-std::string Dom::getAttribute( const std::string& name )
+std::string Dom::getAttribute( const std::string& name ) const
 {
     std::string value;
 
     if( name.empty() ) return value;
 
-    std::map< std::string, std::string >::iterator it = m_attributes.find( name );
+    std::map< std::string, std::string >::const_iterator it = m_attributes.find( name );
 
-    if( it != m_attributes.end() ) value = MISC::html_unescape( (*it).second );
+    if( it != m_attributes.cend() ) value = MISC::html_unescape( (*it).second );
 
     return value;
 }

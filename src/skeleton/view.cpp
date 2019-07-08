@@ -275,7 +275,7 @@ void View::slot_hide_popupmenu()
 //
 // ラベルやステータスバーの色
 //
-std::string View::get_color()
+std::string View::get_color() const
 {
     if( is_broken() ) return "red";
     else if( is_old() ) return "blue";

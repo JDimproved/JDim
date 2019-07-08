@@ -34,7 +34,7 @@ namespace XML
         // 添字によるアクセス
         Dom* operator []( const unsigned int n );
 
-        std::list< Dom* > get_list() { return m_list; }
+        std::list< Dom* > get_list() const noexcept { return m_list; }
 
         std::list< Dom* >::iterator begin();
         std::list< Dom* >::reverse_iterator rbegin();

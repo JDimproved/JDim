@@ -102,10 +102,10 @@ namespace ARTICLE
 
         void save_session() override {}
 
-        std::string url_for_copy() override; // コピーやURLバー表示用のURL
-        int width_client() override;
-        int height_client() override;
-        int get_icon( const std::string& iconname ) override;
+        std::string url_for_copy() const override; // コピーやURLバー表示用のURL
+        int width_client() const override;
+        int height_client() const override;
+        int get_icon( const std::string& iconname ) const override;
         bool set_command( const std::string& command,
                           const std::string& arg1 = {},
                           const std::string& arg2 = {} ) override;
@@ -151,14 +151,15 @@ namespace ARTICLE
         // 実況モードか
         bool get_live() const { return m_live; }
 
-        DrawAreaBase* drawarea();
+        DrawAreaBase* drawarea() const noexcept { return m_drawarea; }
 
     protected:
 
         // Viewが所属するAdminクラス
         SKELETON::Admin* get_admin() override;
 
-        const JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article() const noexcept;
+        JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article() noexcept { return m_article; };
+        const JDLIB::RefPtr_Lock< DBTREE::ArticleBase >& get_article() const noexcept { return m_article; };
 
         // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
         void activate_act_before_popupmenu( const std::string& url ) override;

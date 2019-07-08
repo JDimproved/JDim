@@ -1080,7 +1080,7 @@ bool ArticleBase::is_loading() const
 //
 // 更新チェック中か
 //
-bool ArticleBase::is_checking_update()
+bool ArticleBase::is_checking_update() const
 {
     if( ! is_loading() ) return false;
 

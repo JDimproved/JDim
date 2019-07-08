@@ -150,19 +150,19 @@ namespace CORE
         virtual ~Css_Manager() noexcept = default;
 
         // ユーザ設定の色取得
-        std::string get_color( int colorid );
+        std::string get_color( int colorid ) const;
 
         // ユーザ設定の色( 先頭は黒 )
         std::vector< std::string >& get_colors() { return m_colors; }
 
         // クラス名からID取得
-        int get_classid( const std::string& classname );
+        int get_classid( const std::string& classname ) const;
 
         // プロパティ取得
         CSS_PROPERTY get_property( const int id );
 
         // 文字の高さを与えてemをセット
-        void set_size( CSS_PROPERTY* css, double height );
+        void set_size( CSS_PROPERTY* css, double height ) const;
 
         // DOM 取得
         const DOM* get_dom() const { return m_dom; }

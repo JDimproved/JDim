@@ -104,7 +104,7 @@ namespace BOARD
         ~BoardViewBase() noexcept;
 
         const std::string& get_url_board() const { return m_url_board; }
-        std::string url_for_copy() override;
+        std::string url_for_copy() const override;
 
         // 行数
         int get_row_size();
@@ -115,7 +115,7 @@ namespace BOARD
 
         void update_url( const std::string& url_old, const std::string& url_new ) override;
 
-        int get_icon( const std::string& iconname ) override;
+        int get_icon( const std::string& iconname ) const override;
         bool is_loading() const override { return m_loading; }
         bool set_command( const std::string& command,
                           const std::string& arg1 = {},
