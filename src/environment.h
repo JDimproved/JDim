@@ -48,6 +48,7 @@ namespace ENVIRONMENT
     std::string get_wm_str();
 	std::string get_gtkmm_version();
 	std::string get_glibmm_version();
+    std::string get_tlslib_version();
     std::string get_jdinfo();
 }
 

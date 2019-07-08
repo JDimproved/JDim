@@ -315,6 +315,10 @@ void AboutDiag::set_environment_list()
     row[ column_value ] = ENVIRONMENT::get_glibmm_version();
 
     row = *( liststore->append() );
+    row[ column_name ] = "TLSライブラリ";
+    row[ column_value ] = ENVIRONMENT::get_tlslib_version();
+
+    row = *( liststore->append() );
     row[ column_name ] = "主なオプション";
     row[ column_value ] = ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_OMITTED );
 
