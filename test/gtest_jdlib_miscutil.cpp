@@ -48,4 +48,37 @@ TEST_F(SplitLineTest, split_doublequote_U_3000)
     EXPECT_EQ( expect, MISC::split_line( u8"\u3000\"the\u3000quick\" \"\u3000\" \"\u3000brown \u3000fox\u3000\"" ) );
 }
 
+
+class RemoveSpaceTest : public ::testing::Test {};
+
+TEST_F(RemoveSpaceTest, remove_empty)
+{
+    std::string expect = {};
+    EXPECT_EQ( expect, MISC::remove_space( u8"" ) );
+}
+
+TEST_F(RemoveSpaceTest, remove_U_0020)
+{
+    std::string expect = {};
+    EXPECT_EQ( expect, MISC::remove_space( u8"    " ) );
+
+    expect.assign( u8"the quick  brown   fox" );
+    EXPECT_EQ( expect, MISC::remove_space( u8" the quick  brown   fox  " ) );
+}
+
+TEST_F(RemoveSpaceTest, remove_U_3000)
+{
+    std::string expect = {};
+    EXPECT_EQ( expect, MISC::remove_space( u8"\u3000 \u3000 " ) );
+
+    expect.assign( u8"the quick\u3000brown\u3000 fox" );
+    EXPECT_EQ( expect, MISC::remove_space( u8"\u3000the quick\u3000brown\u3000 fox\u3000 " ) );
+}
+
+TEST_F(RemoveSpaceTest, remove_doublequote)
+{
+    std::string expect = u8"\"\"";
+    EXPECT_EQ( expect, MISC::remove_space( u8"\u3000 \"\"\u3000 " ) );
+}
+
 } // namespace
