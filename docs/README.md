@@ -83,32 +83,32 @@ JDimがリリースされた時には以下の作業を行います。
 
 1. `docs/manual/YYYY.md`にある先頭の見出しをコピーします。例:
    ```markdown
-   <a name="1.0.0-unreleased"></a>
-   ### [1.0.0-unreleased](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...master) (unreleased)
+   <a name="0.2.0-unreleased"></a>
+   ### [0.2.0-unreleased](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...master) (unreleased)
 
-   <a name="1.0.0-unreleased"></a>
-   ### [1.0.0-unreleased](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...master) (unreleased)
+   <a name="0.2.0-unreleased"></a>
+   ### [0.2.0-unreleased](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...master) (unreleased)
    ...
    ```
 2. バージョン番号、日付、リンクを修正します。例:
    ```markdown
-   <a name="2.0.0-unreleased"></a>
-   ### [2.0.0-unreleased](https://github.com/JDimproved/JDim/compare/JDim-v1.0.0...master) (unreleased)
+   <a name="0.3.0-unreleased"></a>
+   ### [0.3.0-unreleased](https://github.com/JDimproved/JDim/compare/JDim-v0.2.0...master) (unreleased)
 
-   <a name="1.0.0-20190430"></a>
-   ### [1.0.0-20190430](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...JDim-v1.0.0) (2019-04-30)
+   <a name="0.2.0-20190720"></a>
+   ### [0.2.0-20190720](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...JDim-v0.2.0) (2019-07-20)
    ...
    ```
 3. リリースの見出しとリンクを追加します。例:
    ```markdown
-   <a name="2.0.0-unreleased"></a>
-   ### [2.0.0-unreleased](https://github.com/JDimproved/JDim/compare/JDim-v1.0.0...master) (unreleased)
+   <a name="0.3.0-unreleased"></a>
+   ### [0.3.0-unreleased](https://github.com/JDimproved/JDim/compare/JDim-v0.2.0...master) (unreleased)
 
-   <a name="JDim-v1.0.0"></a>
-   ### [**JDim-v1.0.0** Release](https://github.com/JDimproved/JDim/releases/tag/JDim-v1.0.0) (2019-05-01)
+   <a name="JDim-v0.2.0"></a>
+   ### [**JDim-v0.2.0** Release](https://github.com/JDimproved/JDim/releases/tag/JDim-v0.2.0) (2019-07-20)
 
-   <a name="1.0.0-20190430"></a>
-   ### [1.0.0-20190430](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...JDim-v1.0.0) (2019-04-30)
+   <a name="0.2.0-20190720"></a>
+   ### [0.2.0-20190720](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...JDim-v0.2.0) (2019-07-20)
    ...
    ```
 
