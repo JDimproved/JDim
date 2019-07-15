@@ -1469,8 +1469,8 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
             return;
         }
 
-        // http が無ければ付ける
-        if( url.find( "http://" ) != 0 && url.find( "https://" ) != 0 ) url = "http://" + url;
+        // http[s] が無ければ付ける
+        if( url.find( "://" ) == std::string::npos ) url = "http://" + url;
 
         // .htmlを取り除く
         JDLIB::Regex regex;
@@ -2524,6 +2524,10 @@ void BBSListViewBase::select_item( const std::string& url )
         // スレまたは画像の場合
     }
     else {
+        // 板以外の履歴は処理しない
+        if( get_url() == URL_HISTTHREADVIEW || get_url() == URL_HISTCLOSEVIEW ||
+            get_url() == URL_HISTCLOSEIMGVIEW ) return;
+
         // 板の場合
         url_item = DBTREE::url_boardbase( url );
 

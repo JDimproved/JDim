@@ -259,19 +259,21 @@ void DragableNoteBook::set_show_tabs( bool show_tabs )
     std::cout << "DragableNoteBook::set_show_tabs show_tabs = " << show_tabs << std::endl;
 #endif
 
-    if( m_show_tabs ){
+    if( ! show_tabs && m_show_tabs ){
 
         remove( m_hbox_tab );
 
         m_show_tabs = false;
     }
-    else{
+    else if( show_tabs && ! m_show_tabs ){
 
-        remove( m_notebook_toolbar );
+        if( m_show_toolbar && m_notebook_toolbar.get_n_pages() )
+            remove( m_notebook_toolbar );
         remove( m_notebook_view );
 
         pack_start( m_hbox_tab, Gtk::PACK_SHRINK );
-        pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
+        if( m_show_toolbar && m_notebook_toolbar.get_n_pages() )
+            pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
         pack_start( m_notebook_view );
 
         m_show_tabs = true;

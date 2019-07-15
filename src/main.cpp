@@ -487,7 +487,7 @@ int main( int argc, char **argv )
     }
 #endif
 
-#if ! GLIB_CHECK_VERSION(2, 46, 0)
+#if !GLIB_CHECK_VERSION(2,45,5)
 #ifdef _DEBUG_MEM_PROFILE
     g_mem_set_vtable( glib_mem_profiler_table );
     atexit( g_mem_profile );

@@ -19,7 +19,6 @@ CONFIG::ConfigItems* instance_confitem_bkup = NULL;
 
 CONFIG::ConfigItems* CONFIG::get_confitem()
 {
-    if( ! instance_confitem ) instance_confitem = new CONFIG::ConfigItems();
     return instance_confitem;
 }
 
@@ -36,6 +35,7 @@ void CONFIG::delete_confitem()
 
 bool CONFIG::load_conf()
 {
+    if( ! instance_confitem ) instance_confitem = new CONFIG::ConfigItems();
     return get_confitem()->load();
 }
 

@@ -935,7 +935,7 @@ NODE* NodeTreeBase::create_node_link( const char* text, const int n, const char*
         tmpnode->type = NODE_LINK;
 
         // リンク情報作成
-        char *tmplink = ( char* )m_heap.heap_alloc( n_link +4 );
+        char *tmplink = ( char* )m_heap.heap_alloc( n_link + 1 );
         memcpy( tmplink, link, n_link );
         tmplink[ n_link ] = '\0';
 
@@ -975,7 +975,7 @@ NODE* NodeTreeBase::create_node_sssp( const char* link, const int n_link )
     tmpnode->type = NODE_SSSP;
 
     // リンク情報作成
-    char *tmplink = ( char* )m_heap.heap_alloc( n_link +4 );
+    char *tmplink = ( char* )m_heap.heap_alloc( n_link + 1 );
     memcpy( tmplink, link, n_link );
     tmplink[ n_link ] = '\0';
 
@@ -1013,7 +1013,7 @@ NODE* NodeTreeBase::create_node_thumbnail( const char* text, const int n, const 
 
     if( tmpnode ){
         // サムネイル画像のURLをセット
-        char *tmpthumb = ( char* )m_heap.heap_alloc( n_thumb +4 );
+        char *tmpthumb = ( char* )m_heap.heap_alloc( n_thumb + 1 );
         memcpy( tmpthumb, thumb, n_thumb );
         tmpthumb[ n_thumb ] = '\0';
 
@@ -1159,7 +1159,7 @@ void NodeTreeBase::set_resume_data( const char* data, size_t length )
 
         // レジューム時のチェック用に生データの先頭から RESUME_CHKSIZE バイト分をコピーしておく
         // 詳しくは NodeTreeBase::receive_data() を参照せよ
-        const size_t length_chk = MIN( RESUME_CHKSIZE, length );
+        const size_t length_chk = MIN( (RESUME_CHKSIZE - 1), length );
         memcpy( m_resume_head, data, length_chk );
         m_resume_head[ length_chk ] = '\0';
     }
@@ -1364,6 +1364,7 @@ void NodeTreeBase::receive_finish()
         && get_code() != HTTP_OK
         && get_code() != HTTP_PARTIAL_CONTENT
         && get_code() != HTTP_NOT_MODIFIED
+        && get_code() != HTTP_RANGE_ERR
         && get_code() != HTTP_OLD
         ){
         is_error = true;
@@ -1371,7 +1372,7 @@ void NodeTreeBase::receive_finish()
         std::ostringstream err;
         err << m_url << std::endl
             << "load failed. : " << get_str_code();
-        if( get_code() == HTTP_REDIRECT || get_code() == HTTP_REDIRECT ) err << " location = " << location();
+        if( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT ) err << " location = " << location();
         MISC::ERRMSG( err.str() );
     }
 
@@ -1464,7 +1465,7 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
 #endif
 
         // 先頭からdatを送ってきたかチェック
-        const size_t length_chk = MIN( lng, MIN( RESUME_CHKSIZE, strlen( m_resume_head ) ) );
+        const size_t length_chk = MIN( lng, MIN( (RESUME_CHKSIZE - 1), strlen( m_resume_head ) ) );
         if( strncmp( rawlines, m_resume_head, length_chk ) == 0 ){
             m_resume = RESUME_MODE3;
             m_resume_lng = 0;

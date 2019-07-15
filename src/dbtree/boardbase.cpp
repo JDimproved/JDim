@@ -1164,7 +1164,13 @@ void BoardBase::receive_finish()
             std::string query = ".*window.location.href=\"([^\"]*)\".*";
             if( regex.exec( query, m_rawdata, offset, icase, newline, usemigemo, wchar ) ){
 
-                const std::string new_url = regex.str( 1 );
+                std::string new_url = regex.str( 1 );
+                if( new_url.compare( 0, 2, "//" ) == 0 ){
+                    std::string tmp_url = url_boardbase();
+                    size_t pos = tmp_url.find("://");
+                    if( pos != std::string::npos )
+                        new_url.insert( 0, tmp_url.substr( 0, pos + 1 ) );
+                }
                 int ret = Gtk::RESPONSE_YES;
 
                 if( CONFIG::get_show_movediag() ){
@@ -1280,17 +1286,20 @@ void BoardBase::receive_finish()
 
     // 一度全てのarticleをdat落ち状態にして subject.txt に
     // 含まれているものだけ regist_article()の中で通常状態にする
-    if( m_is_online
-        || m_is_booting // ブート中の時も状態を変えないと起動直後にスレ一覧を復元した時にdat落ちしたスレが表示されない
-        ){  
+    ArticleHashIterator hash_it = m_hash_article->begin();
+    for( ; hash_it != m_hash_article->end(); ++hash_it ){
 
-        ArticleHashIterator it = m_hash_article->begin();
-        for( ; it != m_hash_article->end(); ++it ){
-
-            int status = ( *it )->get_status();
+        if( read_from_cache && ! ( *hash_it )->is_924()
+                && ( *hash_it )->get_since_time() > m_last_access_time ){
+            // キャッシュから読み込む場合にsubject.txtよりも新しいスレは残す
+            ( *hash_it )->read_info();
+            if( ! is_abone_thread( *hash_it ) ) m_list_subject.push_back( *hash_it );
+        }
+        else{
+            int status = ( *hash_it )->get_status();
             status &= ~STATUS_NORMAL;
             status |= STATUS_OLD;
-            ( *it )->set_status( status );
+            ( *hash_it )->set_status( status );
         }
     }
 

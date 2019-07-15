@@ -2295,10 +2295,6 @@ void Core::set_command( const COMMAND_ARGS& command )
             }
         }
 
-        DBTREE::delete_article( command.url, ( command.arg1 == "reget" ) );
-
-        if( DBTREE::article_is_cached( command.url ) ) return;
-
         ARTICLE::get_admin()->set_command( "unlock_views", command.url );
         ARTICLE::get_admin()->set_command( "close_view", command.url,
                                            "closeall" // command.url を含む全てのビューを閉じる
@@ -2308,6 +2304,10 @@ void Core::set_command( const COMMAND_ARGS& command )
         BOARD::get_admin()->set_command( "close_view", command.url,
                                          "closeall" // command.url を含む全てのビューを閉じる
             );
+
+        DBTREE::delete_article( command.url, ( command.arg1 == "reget" ) );
+
+        if( DBTREE::article_is_cached( command.url ) ) return;
 
         // ポップアップも削除して対象となるarticlebaseのロックを解除 (注) ポップアップは遅延してdeleteされる
         // そうしないと articlebase::unlock_impl()が呼び出されないためnotetreebaseが削除されない

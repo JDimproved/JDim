@@ -673,7 +673,7 @@ void MessageViewBase::write()
         const bool newline = true;
         const bool usemigemo = false;
         const bool wchar = false;
-        if( regex.exec( "%26%23[0-9]*%3b", msg, offset, icase, newline, usemigemo, wchar ) ){
+        if( regex.exec( "%26%23[0-9]+%3b", msg, offset, icase, newline, usemigemo, wchar ) ){
 
             SKELETON::MsgDiag mdiag( get_parent_win(),
                                      "ユニコード文字が含まれていますが、この板ではユニコード文字は文字化けします(BBS_UNICODE=change)。\n\n書き込みますか？",

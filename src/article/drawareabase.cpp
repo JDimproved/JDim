@@ -3091,7 +3091,11 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
                 pango_cairo_show_layout( text_cr, m_pango_layout->gobj() );
             }
 #else
-            m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
+            // Glib::ustringのコンストラクタでchar*から変換するとUTF-8が
+            // 壊れている場合にインスタンスが生成されない
+            // (例外をキャッチしないとクラッシュする)ので
+            // std::stringからGlib::ustringに変換するコンストラクタを使う
+            m_pango_layout->set_text( std::string( node->text + pos_start, n_byte ) );
             m_backscreen->draw_layout( m_gc,x, y, m_pango_layout, m_color[ color ], m_color[ color_back ] );
 
             if( node->bold ){
@@ -3850,7 +3854,7 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
 
                         const size_t lng = strlen( tmplayout->text );
 
-                        if( buffer_lng + lng > SEARCH_BUFFER_SIZE ){
+                        if( buffer_lng + lng >= SEARCH_BUFFER_SIZE ){
 
                             MISC::ERRMSG( "DrawAreaBase::search : buffer overflow." );
                             break;
@@ -4494,7 +4498,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
 
                         ) pos_left = pos_tmp + byte_char;
 
-                    pos_tmp += byte_char;
+                    pos_tmp += ( byte_char ? byte_char : 1 );
                 }
 
                 // 右位置を求める
@@ -4512,7 +4516,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                     // 区切り文字が来たらbreak
                     if( is_separate_char( ucs2 ) ) break;
 
-                    pos_right += byte_char;
+                    pos_right += ( byte_char ? byte_char : 1 );
 
                     // 文字種が変わった
                     if( ucs2_next == '\0'
