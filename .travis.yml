@@ -1,0 +1,94 @@
+dist: xenial
+language: cpp
+
+branches:
+  only:
+    - master
+
+cache:
+  apt: true
+
+matrix:
+  include:
+    - name: "COMPILER=gcc CONFIG_ARG=\"--with-migemo --with-alsa --with-pangolayout\" CXXFLAGS=\"-D_DEBUG\""
+      os: linux
+      compiler: gcc
+      env: CONFIG_ARG="--with-migemo --with-alsa --with-pangolayout" CXXFLAGS="-D_DEBUG"
+      addons:
+        apt:
+          update: true
+          packages:
+            - autoconf-archive
+            - libgtkmm-2.4-dev
+            - zlib1g-dev
+            - libgnutls28-dev
+            - libgcrypt20-dev
+            - libmigemo-dev
+            - libasound2-dev
+
+    - name: "COMPILER=clang CONFIG_ARG=\"--with-sessionlib=gnomeui --with-regex=pcre --with-tls=openssl\""
+      os: linux
+      compiler: clang
+      env: CONFIG_ARG="--with-sessionlib=gnomeui --with-regex=pcre --with-tls=openssl"
+      addons:
+        apt:
+          update: true
+          packages:
+            - autoconf-archive
+            - libgtkmm-2.4-dev
+            - zlib1g-dev
+            - libgnomeui-dev
+            - libssl-dev
+            - libpcre3-dev
+
+    - name: "COMPILER=gcc CONFIG_ARG=\"--with-gtkmm3 --with-regex=oniguruma --with-thread=std\""
+      os: linux
+      compiler: gcc
+      env: CONFIG_ARG="--with-gtkmm3 --with-regex=oniguruma --with-thread=std"
+      addons:
+        apt:
+          update: true
+          packages:
+            - autoconf-archive
+            - libgtkmm-3.0-dev
+            - zlib1g-dev
+            - libgnutls28-dev
+            - libgcrypt20-dev
+            - libonig-dev
+
+    - name: "COMPILER=clang CONFIG_ARG=\"--with-gtkmm3 --with-xdgopen\" CXXFLAGS=\"-D_DEBUG\""
+      os: linux
+      compiler: clang
+      env: CONFIG_ARG="--with-gtkmm3 --with-xdgopen" CXXFLAGS="-D_DEBUG"
+      addons:
+        apt:
+          update: true
+          packages:
+            - autoconf-archive
+            - libgtkmm-3.0-dev
+            - zlib1g-dev
+            - libgnutls28-dev
+            - libgcrypt20-dev
+
+    - name: "manual build"
+      os: linux
+      language: ruby
+      rvm: 2.4.5
+      cache: bundler
+      sudo: false
+      env: NOKOGIRI_USE_SYSTEM_LIBRARIES=true
+      addons:
+        apt:
+          packages:
+            - libcurl4-openssl-dev
+      script: make -j3 -C docs build
+
+install:
+  - travis_retry git clone --depth 1 --branch master https://github.com/google/googletest.git test/googletest
+
+script:
+  - autoreconf -i
+  - ./configure $CONFIG_ARG
+  - make -j3
+  - make test -j3
+  - ./src/jdim -V
