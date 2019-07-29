@@ -1,5 +1,7 @@
 # JDim - 2ch browser for linux
 
+[![Build Status](https://travis-ci.com/JDimproved/JDim.svg?branch=master)](https://travis-ci.com/JDimproved/JDim)
+
 ここに書かれていない詳細については[オンラインマニュアル][manual]や[リポジトリ][repository]を参照してください。
 
 [manual]: https://jdimproved.github.io/JDim/
