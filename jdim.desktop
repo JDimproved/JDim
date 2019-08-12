@@ -8,3 +8,4 @@ Name[ja]=2ch ブラウザ JDim
 Comment=JDim is a 2ch browser based on gtkmm.
 Comment[ja]=gtkmm を利用した 2ch ブラウザ
 Categories=Network;
+Keywords=2ch;jd;bbs;
