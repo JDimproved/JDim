@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2019 JDimproved project -->
+<component type="desktop-application">
+  <id>com.github.jdimproved.JDim</id>
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>GPL-2.0</project_license>
+  <name>JDim</name>
+  <summary>2ch browser for Linux</summary>
+
+  <description>
+    <p>
+      JDim (JD improved) is a browser for Japanese textboard "2channel".
+      The software has been forked from JD released under the terms of GPL-2.0,
+      having look-and-feel and environment settings compatible.
+    </p>
+    <p>
+      Various features which are better viewing 2ch: Fetching updated posts,
+      Hide NG word posts, Message posting, ASCII art input, Play-by-play mode,
+      Display linked images, Bookmark and History, Filters for URL, Thread title search,
+      Keyword search in thread, External boards support, Highly customizations and more...
+    </p>
+  </description>
+
+  <launchable type="desktop-id">jdim.desktop</launchable>
+
+  <screenshots>
+    <!-- JDim does not provide user interface with English -->
+    <screenshot type="default">
+      <caption>Marking a post (post ID 49)</caption>
+      <image>https://user-images.githubusercontent.com/15698961/63214888-ced03d00-c10d-11e9-9ea2-7f4880a09fac.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Extracting a keyword (highlight "any")</caption>
+      <image>https://user-images.githubusercontent.com/15698961/63214887-ced03d00-c10d-11e9-98b4-7fea93277dc1.png</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://github.com/JDimproved/JDim</url>
+  <url type="bugtracker">https://github.com/JDimproved/JDim/issues</url>
+  <url type="help">https://jdimproved.github.io/JDim/</url>
+  <project_group>JDimproved project</project_group>
+
+  <provides>
+    <binary>jdim</binary>
+  </provides>
+
+  <releases>
+    <release version="0.2.0" date="2019-07-20">
+      <description>
+        <p>Support for GTK3 (optional)</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.2.0</url>
+    </release>
+  </releases>
+
+  <categories>
+    <category>Network</category>
+  </categories>
+  <content_rating type="oars-1.1">
+    <content_attribute id="social-chat">intense</content_attribute>
+  </content_rating>
+</component>

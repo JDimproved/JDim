@@ -6,6 +6,9 @@ dist_desktop_DATA = jdim.desktop
 icondir = $(datadir)/pixmaps
 dist_icon_DATA = jd.png
 
+metainfodir = $(datadir)/metainfo
+dist_metainfo_DATA = jdim.metainfo.xml
+
 EXTRA_DIST = AUTHORS TODO README configure jdim.spec
 
 jdim_BUILDINFO_HEADER = buildinfo.h
