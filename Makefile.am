@@ -49,29 +49,6 @@ $(jdim_BUILDINFO_HEADER):
 	fi
 
 	@echo '' >> $@.new
-	@echo '// Version information of SVN.' >> $@.new
-
-	@if test -n "$(SVN)" -a -n "$(AWK)"; \
-	then \
-	    SVN_REPOSITORY=`LANG=C "$(SVN)" info 2>/dev/null | $(AWK) '/^URL/ {print $$2}' 2>/dev/null`; \
-	    if test -n "$${SVN_REPOSITORY}"; \
-	    then \
-	        echo "SVN: Repository = \"$${SVN_REPOSITORY}\""; \
-	        echo "#define SVN_REPOSITORY \"$${SVN_REPOSITORY}\"" >> $@.new; \
-	    fi \
-	fi
-
-	@if test -n "$(SVNVERSION)"; \
-	then \
-	    SVN_REVISION=`LANG=C "$(SVNVERSION)" -n 2>/dev/null`; \
-	    if test -n "$${SVN_REVISION}" -a "$${SVN_REVISION}" != "exported"; \
-	    then \
-	        echo "SVN: Revision = \"$${SVN_REVISION}\""; \
-	        echo "#define SVN_REVISION \"$${SVN_REVISION}\"" >> $@.new; \
-	    fi \
-	fi
-
-	@echo '' >> $@.new
 	@echo '// Version information of GIT.' >> $@.new
 
 	@GIT_HASH="" ; \
