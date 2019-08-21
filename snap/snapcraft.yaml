@@ -1,16 +1,7 @@
 name: jdim
+adopt-info: jdim
 version: "0.2.0-git"
-summary: 2ch browser for Linux
 license: "GPL-2.0"
-description: |
-  JDim (JD improved) is a browser for Japanese textboard "2channel".
-  The software has been forked from JD released under the terms of GPL-2.0,
-  having look-and-feel and environment settings compatible.
-
-  Various features which are better viewing 2ch: Fetching updated posts,
-  Hide NG word posts, Message posting, ASCII art input, Play-by-play mode,
-  Display linked images, Bookmark and History, Filters for URL, Thread title search,
-  Keyword search in thread, External boards support, Highly customizations and more...
 
 confinement: strict
 base: core18
@@ -82,6 +73,7 @@ parts:
     after: [desktop-gnome-platform]
     stage:
       - -./usr/share/**
+    parse-info: [jdim.metainfo.xml]
 
   # https://hackmd.io/0I09MG1FRKqO0ehIdLHpoQ#
   desktop-gnome-platform:
@@ -106,6 +98,7 @@ parts:
 apps:
   jdim:
     command: bin/desktop-launch $SNAP/bin/jdim
+    common-id: com.github.jdimproved.JDim
     desktop: share/applications/jdim.desktop
     plugs:
       - desktop
