@@ -35,7 +35,8 @@ layout: default
 
 <a name="register"></a>
 ### 登録方法
-AAはキャッシュディレクトリ(デフォルトでは`~/.jd/`)に**aalist.txt**というテキストファイルを作成して登録する。
+AAはキャッシュディレクトリ(デフォルトでは`$XDG_CACHE_HOME/jdim/`)に
+**aalist.txt**というテキストファイルを作成して登録する。
 
 一行AAはそのままaalist.txtの各行に登録する。
 
@@ -50,7 +51,7 @@ aalist.txtに「\*ファイル名」という形式で登録する。なお拡�
 *mona
 ```
 
-#### ~/.jd/aa/mona.txtの内容
+#### $XDG_CACHE_HOME/jdim/aa/mona.txtの内容
 ```
 　 ∧＿∧
 　（　´∀｀）

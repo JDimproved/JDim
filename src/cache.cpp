@@ -2,6 +2,9 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
 #include "cache.h"
 
@@ -80,15 +83,26 @@ std::string CACHE::path_root()
 {
     if( root_path.empty() ){
 
-        const std::string jd_cache = MISC::getenv_limited( "JDIM_CACHE", MAX_SAFE_PATH );
-        root_path = jd_cache.empty() ? "~/.jd/" : jd_cache;
-
-        if( root_path[ root_path.length() -1 ] != '/' ) root_path = root_path + "/";
-
-        if( root_path[ 0 ] == '~' ){
+        root_path = MISC::getenv_limited( "JDIM_CACHE", MAX_SAFE_PATH );
+        if( root_path.empty() ) {
+#ifdef ENABLE_COMPAT_CACHE_DIR
+            root_path = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH ) + "/.jd/";
+#else
+            root_path = Glib::get_user_cache_dir() + "/jdim/";
+#endif
+        }
+        else if( root_path[ 0 ] == '~' ){
             std::string home = MISC::getenv_limited( ENV_HOME , MAX_SAFE_PATH );
             root_path.replace( 0, 1, home );
         }
+
+        if( root_path.back() != '/' ) root_path.push_back( '/' );
+
+#ifdef ENABLE_COMPAT_CACHE_DIR
+        if( CACHE::file_exists( root_path ) != CACHE::EXIST_DIR ) {
+            root_path = Glib::get_user_cache_dir() + "/jdim/";
+        }
+#endif
     }
 
     return root_path;

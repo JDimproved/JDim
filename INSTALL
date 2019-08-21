@@ -143,6 +143,10 @@
 
        gtkmm2のかわりにgtkmm3を使用する。
 
+    --disable-compat-cache-dir
+
+       JDのキャッシュディレクトリ ~/.jd を読み込む互換機能を無効化する。
+
 * メモ
 
   最近のディストリビューションの場合は autogen.sh よりも autoreconf -i の方を推奨。
