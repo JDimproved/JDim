@@ -66,6 +66,10 @@ namespace SKELETON
         // text/uri-list をドロップされた
         SIG_DROPPED_URI_LIST m_sig_dropped_url_list;
 
+#if GTKMM_CHECK_VERSION(3,3,18)
+        double m_smooth_dy{ 0.0 }; // GDK_SMOOTH_SCROLL のスクロール変化量
+#endif
+
       public:
 
         // use_usr_fontcolor が true の時はフォントや色を指定する
