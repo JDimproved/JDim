@@ -31,6 +31,9 @@ TabLabel::TabLabel( const std::string& url )
 
     add_events( Gdk::POINTER_MOTION_MASK );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
+#if GTKMM_CHECK_VERSION(3,3,18)
+    add_events( Gdk::SMOOTH_SCROLL_MASK ); // マウスホイールによるタブの切り替え
+#endif
 
     add( m_hbox );
     m_hbox.pack_start( m_label, Gtk::PACK_SHRINK );
