@@ -47,10 +47,6 @@ namespace CONFIG
         std::string regex_res_aa;
         bool aafont_enabled;
 
-        // キャッシュのルートディレクトリ
-        // 旧バージョンとの互換のため残しているだけで使用していない
-        std::string path_cacheroot;
-
         // 読み込み用プロクシとポート番号
         bool use_proxy_for2ch;
         std::string proxy_for2ch;

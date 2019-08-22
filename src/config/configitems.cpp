@@ -109,9 +109,6 @@ bool ConfigItems::load( const bool restore )
     // レスにアスキーアートがあると判定する正規表現
     regex_res_aa = cf.get_option_str( "regex_res_aa", CONF_REGEX_RES_AA );
 
-    // キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
-    path_cacheroot = cf.get_option_str( "path_cacheroot", CONF_PATH_CACHEROOT );
-
     // 読み込み用プロクシとポート番号
     use_proxy_for2ch = cf.get_option_bool( "use_proxy_for2ch", CONF_USE_PROXY_FOR2CH );
     str_tmp = cf.get_option_str( "proxy_for2ch", "" );
@@ -680,8 +677,6 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "ref_prefix_space", ref_prefix_space );
 
     cf.update( "regex_res_aa", regex_res_aa );
-
-    cf.update( "path_cacheroot", path_cacheroot );
 
     cf.update( "agent_for2ch", agent_for2ch );
 
