@@ -69,12 +69,17 @@ std::string ENVIRONMENT::get_configure_args( const int mode )
     bool multi = false;
 
     // 省略形として"--with-"や"--enable-"などを取り出す
-    while( ( found_pos = args.find( "'--with-", search_pos ) ) != std::string::npos ||
-            ( found_pos = args.find( "'--enable-", search_pos ) ) != std::string::npos )
+    while( ( found_pos = args.find( "'--", search_pos ) ) != std::string::npos )
     {
-        size_t quote_pos = args.find( "'", found_pos + 1 );
+        const size_t quote_pos = args.find( "'", found_pos + 1 );
 
-        if( quote_pos != std::string::npos && quote_pos != end_quote_pos)
+        if( args.compare( found_pos + 3, 4, "with" ) != 0
+            && args.compare( found_pos + 3, 6, "enable" ) != 0
+            && args.compare( found_pos + 3, 7, "disable" ) != 0 )
+        {
+            search_pos = quote_pos + 1;
+        }
+        else if( quote_pos != std::string::npos && quote_pos != end_quote_pos )
         {
             // 項目が複数の場合は改行かスペースを付与
             if( multi )
