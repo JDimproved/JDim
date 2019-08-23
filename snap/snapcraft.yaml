@@ -1,6 +1,5 @@
 name: jdim
 adopt-info: jdim
-version: "0.2.0-git"
 license: "GPL-2.0"
 
 confinement: strict
@@ -65,6 +64,12 @@ parts:
       - libsm6
       - zlib1g
       - libappindicator3-1
+    override-build: |
+      set -eu
+      snapcraftctl build
+      VER="$(./src/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\).*$%\1-\2%p')"
+      echo "version ${VER}"
+      snapcraftctl set-version "${VER}"
     override-prime: |
       set -eu
       snapcraftctl prime
