@@ -93,10 +93,10 @@ layout: default
   <dt>$CACHEDIMG</dt>
   <dd>リンクが画像でかつキャッシュされている時は画像キャッシュの場所</dd>
   <dt>$LOGPATH</dt>
-  <dd>キャッシュディレクトリの場所 ( 例: <code>~/.jd/</code> )</dd>
+  <dd>キャッシュディレクトリの場所 ( 例: <code>$XDG_CACHE_HOME/jdim/</code> )</dd>
   <dt>$LOCALDAT</dt>
   <dd>キャッシュディレクトリにあるdatファイルの場所 ( 例:
-    <code>~/.jd/hibari.2ch.net/linux/1276299375.dat</code> )</dd>
+    <code>$XDG_CACHE_HOME/jdim/hibari.2ch.net/linux/1276299375.dat</code> )</dd>
   <dt>$LOCALDATL</dt>
   <dd>もしリンク先が2chのスレの場合は、キャッシュディレクトリにあるdatファイルの場所</dd>
 

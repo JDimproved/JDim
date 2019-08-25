@@ -138,6 +138,9 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
 
   <dt>--with-gtkmm3</dt>
   <dd>gtkmm2のかわりにgtkmm3を使用する。</dd>
+
+  <dt>--disable-compat-cache-dir</dt>
+  <dd>JDのキャッシュディレクトリ <code>~/.jd</code> を読み込む互換機能を無効化する。</dd>
 </dl>
 
 

@@ -56,10 +56,10 @@ matrix:
             - libgcrypt20-dev
             - libonig-dev
 
-    - name: "COMPILER=clang CONFIG_ARG=\"--with-gtkmm3 --with-xdgopen\" CXXFLAGS=\"-D_DEBUG\""
+    - name: "COMPILER=clang CONFIG_ARG=\"--with-gtkmm3 --with-xdgopen --disable-compat-cache-dir\" CXXFLAGS=\"-D_DEBUG\""
       os: linux
       compiler: clang
-      env: CONFIG_ARG="--with-gtkmm3 --with-xdgopen" CXXFLAGS="-D_DEBUG"
+      env: CONFIG_ARG="--with-gtkmm3 --with-xdgopen --disable-compat-cache-dir" CXXFLAGS="-D_DEBUG"
       addons:
         apt:
           update: true

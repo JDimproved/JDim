@@ -440,6 +440,22 @@ AS_IF(
 
 
 dnl
+dnl checking compatible cache directory
+dnl
+AC_MSG_CHECKING(for --disable-compat-cache-dir)
+AC_ARG_ENABLE(compat-cache-dir,
+AC_HELP_STRING([--disable-compat-cache-dir], [disable compatible cache directory]),
+[enable_compat_cache_dir="$enableval"], [enable_compat_cache_dir=yes])
+
+AS_IF(
+  [test "x$enable_compat_cache_dir" = xyes],
+  [AC_MSG_RESULT(no)
+   AC_DEFINE(ENABLE_COMPAT_CACHE_DIR, 1, [Support for compatible cache directory.])],
+  [AC_MSG_RESULT(yes)]
+)
+
+
+dnl
 dnl CPU別の最適化オプション
 dnl
 if test "x$enable_gprof" = "xno"; then
