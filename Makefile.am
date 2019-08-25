@@ -3,8 +3,8 @@ SUBDIRS = src test
 desktopdir= $(datadir)/applications
 dist_desktop_DATA = jdim.desktop
 
-icondir = $(datadir)/pixmaps
-dist_icon_DATA = jd.png
+icondir = $(datadir)/icons/hicolor/48x48/apps
+dist_icon_DATA = jdim.png
 
 EXTRA_DIST = AUTHORS TODO README configure jdim.spec
 
