@@ -45,6 +45,7 @@ $ JDIM_LOCK=~/mylock jdim
 ```
 
 #### キャッシュディレクトリの優先順位
+
 | `~/.jd` | `$XDG_CACHE_HOME/jdim` | 使われるのは… |
 | --- | --- | --- |
 | 存在する | any | `~/.jd` |
