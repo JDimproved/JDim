@@ -101,41 +101,6 @@ std::string ENVIRONMENT::get_configure_args( const int mode )
 
 
 //
-// SVNリビジョンとして表示する文字列を返す
-//
-std::string get_svn_revision( const char* rev = NULL )
-{
-    std::string svn_revision = "SVN:";
-
-    if( rev )
-    {
-        // "2000:2002MS"など[0-9:MS]の形式かどうか
-        bool valid = true;
-        unsigned int n;
-        const size_t rev_length = strlen( rev );
-        for( n = 0; n < rev_length; ++n )
-        {
-            if( (unsigned char)( rev[n] - 0x30 ) > 0x0A
-                && rev[n] != 'M'
-                && rev[n] != 'S' )
-            {
-                valid = false;
-                break;
-            }
-        }
-
-        if( valid ) svn_revision.append( std::string( "Rev." ) + std::string( rev ) );
-    }
-
-    if( svn_revision.compare( "SVN:" ) == 0 )
-    {
-        svn_revision.append( std::string( __DATE__ ) + "-" + std::string( __TIME__ ) );
-    }
-
-    return svn_revision;
-}
-
-//
 // GITリビジョンとして表示する文字列を返す
 // リビジョンが得られなかった場合（tarballのソース等）は、fallbackの日付を返す
 // git_dirtyは、まだcommitされてない変更があるかどうか
@@ -215,20 +180,10 @@ std::string ENVIRONMENT::get_jdversion()
 {
     std::stringstream jd_version;
 
-#ifdef JDVERSION_SVN
-
-#ifdef SVN_REVISION
-    jd_version << get_svn_revision( SVN_REVISION );
-#else
-    jd_version << get_svn_revision( NULL );
-#endif // SVN_REVISION
-
-#else
     jd_version << MAJORVERSION << "."
                 << MINORVERSION << "."
                 << MICROVERSION << "-"
                 << JDTAG << get_git_revision(GIT_DATE, GIT_HASH, GIT_DIRTY, JDDATE_FALLBACK);
-#endif // JDVERSION_SVN
 
     return jd_version.str();
 }
@@ -658,9 +613,6 @@ std::string ENVIRONMENT::get_jdinfo()
 
     jd_info <<
     "[バージョン] " << progname << " " << version << "\n" <<
-//#ifdef SVN_REPOSITORY
-//    "[リポジトリ ] " << SVN_REPOSITORY << "\n" <<
-//#endif
     "[ディストリ ] " << distribution << "\n" <<
     "[パッケージ] " << "バイナリ/ソース( <配布元> )" << "\n" <<
     "[ DE／WM ] " << desktop << "\n" <<
