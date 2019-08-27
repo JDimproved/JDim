@@ -102,6 +102,10 @@ namespace SKELETON
 
         Alloc_NoteBook m_alloc_old;
 
+#if GTKMM_CHECK_VERSION(3,3,18)
+        double m_smooth_dy{ 0.0 }; // GDK_SMOOTH_SCROLL のスクロール変化量
+#endif
+
       public:
 
         SIG_SWITCH_PAGE signal_switch_page(){ return m_sig_switch_page; }

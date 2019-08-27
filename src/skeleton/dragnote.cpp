@@ -729,36 +729,36 @@ bool DragableNoteBook::slot_scroll_event( GdkEventScroll* event )
 #endif
 
     bool ret = false;
+    int next_page;
 
-    // gtk3ではタブの循環に加え隣のタブへ切り替える処理も実装する必要がある
-    // REVIEW: GTK3版ではホイールによるタブの切り替えが動作しない環境がある
     if( event->direction == GDK_SCROLL_UP ) {
-        const int current_page = get_current_page();
-        if( current_page == 0 ) {
-            set_current_page( get_n_pages() - 1 );
-            ret = true;
-        }
-#if GTKMM_CHECK_VERSION(3,0,0)
-        else {
-            set_current_page( current_page - 1 );
-            ret = true;
-        }
-#endif
+        next_page = get_current_page() - 1; // If negative, the last page will be used.
+        ret = true;
     }
     else if( event->direction == GDK_SCROLL_DOWN ) {
-        const int current_page = get_current_page();
-        if( current_page == get_n_pages() - 1 ) {
-            set_current_page( 0 );
-            ret = true;
-        }
-#if GTKMM_CHECK_VERSION(3,0,0)
-        else {
-            set_current_page( current_page + 1 );
-            ret = true;
-        }
-#endif
+        next_page = ( get_current_page() + 1 ) % get_n_pages();
+        ret = true;
     }
+#if GTKMM_CHECK_VERSION(3,3,18)
+    else if( event->direction == GDK_SCROLL_SMOOTH ) {
+        constexpr double smooth_scroll_factor{ 4.0 };
+        m_smooth_dy += smooth_scroll_factor * event->delta_y;
+        if( m_smooth_dy < -1.0 ) {
+            next_page = get_current_page() - 1; // If negative, the last page will be used.
+            ret = true;
+            m_smooth_dy = 0.0;
+        }
+        else if( m_smooth_dy > 1.0 ) {
+            next_page = ( get_current_page() + 1 ) % get_n_pages();
+            ret = true;
+            m_smooth_dy = 0.0;
+        }
+    }
+#endif // GTKMM_CHECK_VERSION(3,3,18)
 
+    if( ret ) {
+        set_current_page( next_page );
+    }
     m_sig_tab_scrolled.emit( event );
 
     return ret;
