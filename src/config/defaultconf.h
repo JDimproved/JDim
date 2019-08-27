@@ -190,9 +190,6 @@ namespace CONFIG
 #define CONF_REGEX_RES_AA_DEFAULT "　 "
 #define CONF_REGEX_RES_AA "\"" CONF_REGEX_RES_AA_DEFAULT "\""
 
-// キャッシュのルートディレクトリ(旧バージョンとの互換のため残している)
-#define CONF_PATH_CACHEROOT "~/.jd/"
-
 // 2ch にアクセスするときのエージェント名
 #define CONF_AGENT_FOR2CH "Monazilla/1.00 JD"
 
