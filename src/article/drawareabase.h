@@ -192,7 +192,7 @@ namespace ARTICLE
 
         // スクロール情報
 #if GTKMM_CHECK_VERSION(3,3,18)
-        double m_smooth_dy; // GDK_SMOOTH_SCROLL のスクロール変化量
+        double m_smooth_dy; // GDK_SCROLL_SMOOTH のスクロール変化量
 #endif
         SCROLLINFO m_scrollinfo;
         guint32 m_wheel_scroll_time; // 前回ホイールを回した時刻
