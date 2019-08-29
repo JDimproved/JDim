@@ -192,24 +192,6 @@ Gtk::Menu* ImageViewIcon::get_popupmenu( const std::string& url )
 
 
 //
-// マウスホイールイベント
-//
-bool ImageViewIcon::slot_scroll_event( GdkEventScroll* event )
-{
-    // 回転したらタブ切り替え
-    int control = CONTROL::None;
-    if( event->direction == GDK_SCROLL_UP ) control = CONTROL::TabLeft;
-    if( event->direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
-
-    ImageViewBase::operate_view( control );
-    IMAGE::get_admin()->set_command( "switch_admin" );
-
-    return true;
-}
-
-
-
-//
 // D&D開始
 //
 void ImageViewIcon::slot_drag_begin( const Glib::RefPtr<Gdk::DragContext>& context )

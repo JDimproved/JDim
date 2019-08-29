@@ -33,6 +33,10 @@ namespace IMAGE
         int m_scroll;
         int m_counter_scroll;
 
+#if GTKMM_CHECK_VERSION(3,3,18)
+        double m_smooth_dy{ 0.0 }; // GDK_SCROLL_SMOOTH のスクロール変化量
+#endif
+
       public:
 
         ImageAdmin( const std::string& url );
@@ -117,6 +121,8 @@ namespace IMAGE
         void slot_press_right();
         void slot_release_left();
         void slot_release_right();
+        // マウスホイールによるタブ切り替え
+        bool slot_scroll_event( GdkEventScroll* event );
 
         bool copy_file( const std::string& url, const std::string& path_from, const std::string& path_to );
         void save_all();
