@@ -36,6 +36,12 @@ parts:
       - --disable-compat-cache-dir
       - --with-gtkmm3
       - --with-xdgopen
+    build-environment:
+      # https://wiki.debian.org/Hardening
+      - CFLAGS: "$(dpkg-buildflags --get CFLAGS)"
+      - CPPFLAGS: "$(dpkg-buildflags --get CPPFLAGS)"
+      - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
+      - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
     build-packages:
       # https://packages.ubuntu.com/source/disco/jdim
       - build-essential
