@@ -27,7 +27,8 @@ namespace IMAGE
       protected:
 
         Gtk::Menu* get_popupmenu( const std::string& url ) override;
-        bool slot_scroll_event( GdkEventScroll* event ) override;
+        // マウスホイールのイベント(タブ切り替え)は親ウィジェットで処理する
+        bool slot_scroll_event( GdkEventScroll* event ) override { return false; }
 
       private:
 
