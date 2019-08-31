@@ -1,0 +1,122 @@
+name: jdim
+adopt-info: jdim
+license: "GPL-2.0"
+
+confinement: strict
+base: core18
+grade: devel
+icon: jdim.png
+
+plugs:
+  gnome-3-28-1804:
+    interface: content
+    target: $SNAP/gnome-platform
+    default-provider: gnome-3-28-1804
+  gtk-3-themes:
+    interface: content
+    target: $SNAP/data-dir/themes
+    default-provider: gtk-common-themes
+  icon-themes:
+    interface: content
+    target: $SNAP/data-dir/icons
+    default-provider: gtk-common-themes
+  sound-themes:
+    interface: content
+    target: $SNAP/data-dir/sounds
+    default-provider: gtk-common-themes
+
+parts:
+  jdim:
+    plugin: autotools
+    source: https://github.com/JDimproved/JDim.git
+    source-type: git
+    source-branch: master
+    source-depth: 1
+    configflags:
+      - --disable-compat-cache-dir
+      - --with-gtkmm3
+      - --with-xdgopen
+    build-environment:
+      # https://wiki.debian.org/Hardening
+      - CFLAGS: "$(dpkg-buildflags --get CFLAGS)"
+      - CPPFLAGS: "$(dpkg-buildflags --get CPPFLAGS)"
+      - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
+      - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
+    build-packages:
+      # https://packages.ubuntu.com/source/disco/jdim
+      - build-essential
+      - git
+      - libc6-dev
+      - libgnutls28-dev
+      - libgcrypt20-dev
+      - libgtkmm-3.0-dev
+      - zlib1g-dev
+      - autoconf-archive
+    stage-packages:
+      # https://packages.ubuntu.com/disco/net/jdim
+      - libatkmm-1.6-1v5
+      - libgcc1
+      - libgcrypt20
+      - libglib2.0-0
+      - libglibmm-2.4-1v5
+      - libgnutls30
+      - libgtkmm-3.0-1v5
+      - libpango-1.0-0
+      - libpangomm-1.4-1v5
+      - libsigc++-2.0-0v5
+      - libstdc++6
+      - libx11-6
+      - libice6
+      - libsm6
+      - zlib1g
+      - libappindicator3-1
+    override-build: |
+      set -eu
+      snapcraftctl build
+      VER="$(./src/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\).*$%\1-\2%p')"
+      echo "version ${VER}"
+      snapcraftctl set-version "${VER}"
+    override-prime: |
+      set -eu
+      snapcraftctl prime
+      sed --in-place -e 's|^Icon=.*|Icon=\${SNAP}/share/icons/hicolor/48x48/apps/jdim.png|' \
+      share/applications/jdim.desktop
+    after: [desktop-gnome-platform]
+    stage:
+      - -./usr/share/**
+    parse-info: [jdim.metainfo.xml]
+
+  # https://hackmd.io/0I09MG1FRKqO0ehIdLHpoQ#
+  desktop-gnome-platform:
+    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
+    source-depth: 1
+    source-subdir: gtk
+
+    plugin: make
+    build-packages:
+    - build-essential
+    - libgtk-3-dev
+    override-build: |
+      snapcraftctl build
+      mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
+
+  my-desktop:
+    # gtk-common-themes does not provide breeze icon theme.
+    plugin: nil
+    stage-packages:
+      - breeze-icon-theme
+
+apps:
+  jdim:
+    command: bin/desktop-launch $SNAP/bin/jdim
+    common-id: com.github.jdimproved.JDim
+    desktop: share/applications/jdim.desktop
+    plugs:
+      - desktop
+      - desktop-legacy
+      - gsettings
+      - home
+      - network
+      - unity7
+      - wayland
+      - x11
