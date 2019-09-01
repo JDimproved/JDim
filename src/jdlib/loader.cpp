@@ -1547,7 +1547,6 @@ bool Loader::unzip( char* buf, std::size_t read_size )
         // 出力バッファセット
         m_zstream.next_out = m_buf_zlib_out;
         m_zstream.avail_out = m_lng_buf_zlib_out;
-        byte_out = 0;
 
         // 解凍
         int ret = inflate( &m_zstream, Z_NO_FLUSH );
