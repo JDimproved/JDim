@@ -4303,6 +4303,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                 // 次のノードが画像ノード場合
                 // 現在のノードの右端にキャレットをセットして画像ノードを返す
                 if( ( layout_next->type == DBTREE::NODE_IMG || layout_next->type == DBTREE::NODE_SSSP )
+                    && layout_next->rect
                     && ( layout_next->rect->x <= x && x <= layout_next->rect->x + layout_next->rect->width )
                     && ( layout_next->rect->y <= y && y <= layout_next->rect->y + layout_next->rect->height ) ){
 
