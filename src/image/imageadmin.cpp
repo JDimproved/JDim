@@ -551,7 +551,7 @@ void ImageAdmin::close_view( const std::string& url )
     SKELETON::View* view = get_view( url );
 
     if( ! icon && ! view ) return;
-    if( DBIMG::is_cached( url ) && icon->is_locked() ) return;
+    if( DBIMG::is_cached( url ) && icon && icon->is_locked() ) return;
 
     // 現在表示中のviewを閉じた場合は次か前の画像に切り替える
     if( view && view == get_current_view() ){
