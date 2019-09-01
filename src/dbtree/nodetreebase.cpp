@@ -2683,7 +2683,6 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
             // アンカー文字をもう一度作成
             snprintf( str_link, lng_link, "%d-%d", ancinfo->anc_from, ancinfo->anc_to );
             pos += offset + n;
-            lng_out += offset + n;
         }
     }
 
