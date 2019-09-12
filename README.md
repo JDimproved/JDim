@@ -58,12 +58,12 @@ CentOS 6(2011年)より前にリリースされたディストリビューショ
 #### Redhat系
 *GTK2版*
 ```sh
-dnf install gtkmm24-devel gnutls-devel libgcrypt-devel libSM-devel libtool automake autoconf-archive git
+dnf install gtkmm24-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
 ```
 
 *GTK3版* - `gtkmm24-devel` のかわりに `gtkmm30-devel` をインストールします。
 ```sh
-dnf install gtkmm30-devel gnutls-devel libgcrypt-devel libSM-devel libtool automake autoconf-archive git
+dnf install gtkmm30-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
 ```
 
 #### Debian (stretch-backportsあるいはbuster以降)
@@ -86,12 +86,12 @@ sudo apt install build-essential automake autoconf-archive git libtool
 
 *GTK2版*
 ```sh
-sudo apt install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
+sudo apt install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev
 ```
 
 *GTK3版* - `libgtkmm-2.4-dev` のかわりに `libgtkmm-3.0-dev` をインストールします。
 ```sh
-sudo apt install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev libgcrypt20-dev
+sudo apt install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev
 ```
 
 

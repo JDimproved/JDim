@@ -19,7 +19,8 @@
 #include <array>
 #include <openssl/sha.h>
 #else // defined USE_GNUTLS
-#include <gcrypt.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/crypto.h>
 #endif
 
 #ifdef HAVE_CRYPT_H
@@ -63,11 +64,13 @@ std::string create_sha1( const std::string& key )
 
 #else // defined USE_GNUTLS
 
-    const unsigned int digest_length = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
+    const unsigned int digest_length = ::gnutls_hash_get_len( GNUTLS_DIG_SHA1 );
 
     std::vector< unsigned char > digest( digest_length );
 
-    gcry_md_hash_buffer( GCRY_MD_SHA1, digest.data(), key.c_str(), key.length() );
+    if( ::gnutls_hash_fast( GNUTLS_DIG_SHA1, key.c_str(), key.size(), digest.data() ) < 0 ) {
+        return std::string{};
+    }
 
 #endif
 

@@ -286,10 +286,8 @@ AC_MSG_RESULT($with_tls)
 
 AS_IF(
   [test "x$with_tls" = xgnutls],
-  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 1.2])
+  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 2.12])
    AC_DEFINE(USE_GNUTLS, , [use gnutls])
-   AC_CHECK_HEADERS([gcrypt.h])
-   AC_CHECK_LIB(gcrypt, gcry_md_hash_buffer, [], [AC_MSG_ERROR([gcrypt not found])])
    AC_SUBST(GNUTLS_CFLAGS)
    AC_SUBST(GNUTLS_LIBS)],
 
