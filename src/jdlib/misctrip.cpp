@@ -179,6 +179,7 @@ std::string create_trip_newtype( const std::string& key )
 
             // 先頭から12文字
             trip = encoded.substr( 0, 12 );
+            std::replace( trip.begin(), trip.end(), '+', '.' );
         }
     }
 
