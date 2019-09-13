@@ -2,6 +2,9 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#ifdef _DEBUG
+#include <iomanip>
+#endif
 
 #include "misctrip.h"
 #include "miscutil.h"
@@ -74,27 +77,15 @@ std::string create_sha1( const std::string& key )
 
 #endif
 
-    std::stringstream sha1;
-
 #ifdef _DEBUG
-    std::cout << "create_sha1 : SHA1 = ";
-#endif
-
-    unsigned int n;
-    for( n = 0; n < digest_length; ++n )
-    {
-        sha1 << digest[n];
-
-#ifdef _DEBUG
-        std::cout << std::hex << (unsigned int)digest[n] << std::dec;
-#endif
+    std::cout << "create_sha1 : SHA1 = " << std::hex << std::setfill( '0' );
+    for( unsigned char u : digest ) {
+        std::cout << std::setw( 2 ) << static_cast<unsigned int>( u );
     }
-
-#ifdef _DEBUG
-    std::cout << std::endl;
+    std::cout << std::setfill( ' ' ) << std::dec << std::endl;
 #endif
 
-    return sha1.str();
+    return std::string( digest.begin(), digest.end() );
 }
 
 
