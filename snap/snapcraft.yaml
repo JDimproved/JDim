@@ -48,7 +48,6 @@ parts:
       - git
       - libc6-dev
       - libgnutls28-dev
-      - libgcrypt20-dev
       - libgtkmm-3.0-dev
       - zlib1g-dev
       - autoconf-archive
@@ -56,7 +55,6 @@ parts:
       # https://packages.ubuntu.com/disco/net/jdim
       - libatkmm-1.6-1v5
       - libgcc1
-      - libgcrypt20
       - libglib2.0-0
       - libglibmm-2.4-1v5
       - libgnutls30
