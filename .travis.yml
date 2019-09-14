@@ -22,7 +22,6 @@ matrix:
             - libgtkmm-2.4-dev
             - zlib1g-dev
             - libgnutls28-dev
-            - libgcrypt20-dev
             - libmigemo-dev
             - libasound2-dev
 
@@ -53,7 +52,6 @@ matrix:
             - libgtkmm-3.0-dev
             - zlib1g-dev
             - libgnutls28-dev
-            - libgcrypt20-dev
             - libonig-dev
 
     - name: "COMPILER=clang CONFIG_ARG=\"--with-gtkmm3 --with-xdgopen --disable-compat-cache-dir\" CXXFLAGS=\"-D_DEBUG\""
@@ -68,7 +66,6 @@ matrix:
             - libgtkmm-3.0-dev
             - zlib1g-dev
             - libgnutls28-dev
-            - libgcrypt20-dev
 
     - name: "manual build"
       os: linux
