@@ -35,6 +35,7 @@ parts:
     configflags:
       - --disable-compat-cache-dir
       - --with-gtkmm3
+      - --with-pangolayout
       - --with-xdgopen
     build-environment:
       # https://wiki.debian.org/Hardening
