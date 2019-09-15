@@ -2,6 +2,9 @@
 
 //#define _DEBUG
 #include "jddebug.h"
+#ifdef _DEBUG
+#include <iomanip>
+#endif
 
 #include "misctrip.h"
 #include "miscutil.h"
@@ -19,7 +22,8 @@
 #include <array>
 #include <openssl/sha.h>
 #else // defined USE_GNUTLS
-#include <gcrypt.h>
+#include <gnutls/gnutls.h>
+#include <gnutls/crypto.h>
 #endif
 
 #ifdef HAVE_CRYPT_H
@@ -63,35 +67,25 @@ std::string create_sha1( const std::string& key )
 
 #else // defined USE_GNUTLS
 
-    const unsigned int digest_length = gcry_md_get_algo_dlen( GCRY_MD_SHA1 );
+    const unsigned int digest_length = ::gnutls_hash_get_len( GNUTLS_DIG_SHA1 );
 
     std::vector< unsigned char > digest( digest_length );
 
-    gcry_md_hash_buffer( GCRY_MD_SHA1, digest.data(), key.c_str(), key.length() );
-
-#endif
-
-    std::stringstream sha1;
-
-#ifdef _DEBUG
-    std::cout << "create_sha1 : SHA1 = ";
-#endif
-
-    unsigned int n;
-    for( n = 0; n < digest_length; ++n )
-    {
-        sha1 << digest[n];
-
-#ifdef _DEBUG
-        std::cout << std::hex << (unsigned int)digest[n] << std::dec;
-#endif
+    if( ::gnutls_hash_fast( GNUTLS_DIG_SHA1, key.c_str(), key.size(), digest.data() ) < 0 ) {
+        return std::string{};
     }
 
-#ifdef _DEBUG
-    std::cout << std::endl;
 #endif
 
-    return sha1.str();
+#ifdef _DEBUG
+    std::cout << "create_sha1 : SHA1 = " << std::hex << std::setfill( '0' );
+    for( unsigned char u : digest ) {
+        std::cout << std::setw( 2 ) << static_cast<unsigned int>( u );
+    }
+    std::cout << std::setfill( ' ' ) << std::dec << std::endl;
+#endif
+
+    return std::string( digest.begin(), digest.end() );
 }
 
 
@@ -179,6 +173,7 @@ std::string create_trip_newtype( const std::string& key )
 
             // 先頭から12文字
             trip = encoded.substr( 0, 12 );
+            std::replace( trip.begin(), trip.end(), '+', '.' );
         }
     }
 

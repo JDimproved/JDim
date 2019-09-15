@@ -22,7 +22,7 @@ layout: default
 - gtkmm-2.4.8 以上 ( GTK2版 )
 - gtkmm-3.0.0 以上 ( GTK3版 )
 - zlib-1.2 以上
-- gnutls-1.2 以上
+- gnutls-2.12 以上
 
 #### 推奨環境
 - Linux Kernel 2.6 以上
