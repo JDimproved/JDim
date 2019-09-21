@@ -525,6 +525,11 @@ void DragTreeView::wheelscroll( GdkEventScroll* event )
             val += std::copysign( scr_inc, m_smooth_dy );
             m_smooth_dy = 0.0;
         }
+
+        // チルトホイール(横スクロール)対応
+        constexpr double smooth_scroll_factor_x = 0.5;
+        auto hadj = get_hadjustment();
+        hadj->set_value( hadj->get_value() + scr_inc * smooth_scroll_factor_x * event->delta_x );
     }
 #endif
     adj->set_value( val );
