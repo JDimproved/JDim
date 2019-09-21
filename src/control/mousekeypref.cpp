@@ -148,7 +148,7 @@ bool InputDiag::on_button_press_event( GdkEventButton* event )
         else if( button == 6 ) buttonname = "Tilt_Left";
         else if( button == 7 ) buttonname = "Tilt_Right";
         else if( button == 8 ) buttonname = "Button4";
-        else if( button == 9 ) buttonname = "Button6";
+        else if( button == 9 ) buttonname = "Button5";
 
         if( ! buttonname.empty() ){
             if( ctrl )  m_str_motion += "Ctrl+";
