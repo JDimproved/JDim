@@ -322,6 +322,8 @@ namespace BBSLIST
 
         // ツリーの編集ウィンドウが閉じた
         void slot_hide_editlistwin();
+
+        bool slot_query_tooltip( int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip );
     };
 }
 
