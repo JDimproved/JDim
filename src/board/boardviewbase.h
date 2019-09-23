@@ -255,6 +255,7 @@ namespace BOARD
         bool slot_motion_notify( GdkEventMotion* event );
         bool slot_key_release( GdkEventKey* event );
         bool slot_scroll_event( GdkEventScroll* event );
+        bool slot_query_tooltip( int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip );
 
         void slot_bookmark( int bookmark );
         void slot_open_tab();
