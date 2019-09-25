@@ -37,9 +37,6 @@ DragableNoteBook::DragableNoteBook()
     m_notebook_tab.sig_button_press().connect( sigc::mem_fun( *this, &DragableNoteBook::slot_button_press_event ) );
     m_notebook_tab.sig_button_release().connect( sigc::mem_fun( *this, &DragableNoteBook::slot_button_release_event ) );
 
-    m_notebook_tab.sig_tab_motion_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_motion_event ) );
-    m_notebook_tab.sig_tab_leave_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_leave_event ) );
-
     m_notebook_tab.sig_tab_drag_motion().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_motion ) );
 
     m_notebook_tab.sig_scroll_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_scroll_event ) );
@@ -79,16 +76,6 @@ DragableNoteBook::~DragableNoteBook()
 void DragableNoteBook::clock_in()
 {
     m_notebook_tab.clock_in();
-    m_tooltip.clock_in();
-}
-
-
-//
-// フォーカスアウト
-//
-void DragableNoteBook::focus_out()
-{
-    m_tooltip.hide_tooltip();
 }
 
 
@@ -381,8 +368,6 @@ void DragableNoteBook::remove_page( const int page, const bool adjust_tab )
 
     if( tablabel ) delete tablabel;
 
-    m_tooltip.hide_tooltip();
-
     if( ! get_n_pages() ) m_bt_tabswitch.hide_button();
 }
 
@@ -555,9 +540,6 @@ SKELETON::TabLabel* DragableNoteBook::create_tablabel( const std::string& url )
     m_control.get_eventbutton( CONTROL::DragStartButton, event );
     tablabel->set_dragable( m_dragable, event.button );
 
-    tablabel->sig_tab_motion_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_motion_event ) );
-    tablabel->sig_tab_leave_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_leave_event ) );
-
     tablabel->sig_tab_drag_begin().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_begin ) );
     tablabel->sig_tab_drag_data_get().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_data_get ) );
     tablabel->sig_tab_drag_end().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_drag_end ) );
@@ -686,39 +668,6 @@ bool DragableNoteBook::slot_button_release_event( GdkEventButton* event )
     return false;
 }
 
-
-
-//
-// タブの中でマウスを動かした
-//
-void DragableNoteBook::slot_motion_event()
-{
-    const int page = m_notebook_tab.get_page_under_mouse();
-
-#ifdef _DEBUG
-    std::cout << "DragableNoteBook::slot_motion_event page = " << page << std::endl;
-#endif
-
-    // ツールチップにテキストをセット
-    if( page >= 0 && page < m_notebook_tab.get_n_pages() ){
-        SKELETON::TabLabel* tab = m_notebook_tab.get_tablabel( page );
-        if( tab ) m_tooltip.set_text( tab->get_fulltext() );
-    }
-    else m_tooltip.hide_tooltip();
-}
-
-
-//
-// タブからマウスが出た
-//
-void DragableNoteBook::slot_leave_event()
-{
-#ifdef _DEBUG
-    std::cout << "DragableNoteBook::slot_leave_event page\n";
-#endif
-
-    m_tooltip.hide_tooltip();
-}
 
 
 // notebook_tab の上でホイールを回した

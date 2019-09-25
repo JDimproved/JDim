@@ -1804,7 +1804,6 @@ void Admin::focus_out()
 
     SKELETON::View* view = get_current_view();
     if( view ) view->focus_out();
-    m_notebook->focus_out();
 }
 
 

@@ -94,8 +94,6 @@ namespace SKELETON
         // 入力コントローラ
         CONTROL::Control m_control;
 
-        Tooltip m_tooltip;
-
         bool m_dragable;
 
         SKELETON::IconPopup* m_down_arrow;
@@ -121,7 +119,6 @@ namespace SKELETON
         ~DragableNoteBook();
 
         void clock_in();
-        void focus_out();
 
 #if !GTKMM_CHECK_VERSION(3,0,0)
         // 枠描画
@@ -205,10 +202,7 @@ namespace SKELETON
         // コントローラ
         CONTROL::Control& get_control(){ return m_control; }
 
-        // タブからくるシグナルにコネクトする
-        void slot_motion_event();
-        void slot_leave_event();
-
+        // タブのドラッグ・アンド・ドロップ処理
         void slot_drag_begin();
         void slot_drag_motion( const int page, const int tab_x, const int tab_y, const int tab_width );
         void slot_drag_data_get( Gtk::SelectionData& selection_data );
