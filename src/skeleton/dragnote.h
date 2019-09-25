@@ -16,8 +16,6 @@
 #include "viewnote.h"
 #include "tabswitchbutton.h"
 
-#include "tooltip.h"
-
 #include "control/control.h"
 
 #include <gtkmm.h>

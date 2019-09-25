@@ -11,9 +11,9 @@
 #ifndef _DRAGTREEVIEW_H
 #define _DRAGTREEVIEW_H
 
-#include "treeviewbase.h"
+#include "gtkmmversion.h"
 
-#include "tooltip.h"
+#include "treeviewbase.h"
 
 #include "control/control.h"
 
