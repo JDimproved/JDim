@@ -678,7 +678,6 @@ void BBSListViewBase::focus_out()
 {
     SKELETON::View::focus_out();
 
-    m_treeview.hide_tooltip();
     m_treeview.hide_popup();
 }
 
@@ -1167,8 +1166,6 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
         // 画像ポップアップ
         if( type == TYPE_IMAGE ){
 
-            m_treeview.hide_tooltip();
-
             if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && DBIMG::get_code( url ) != HTTP_INIT ){
 
                 if( m_treeview.pre_popup_url() != url ){
@@ -1186,7 +1183,6 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
         }
     }
     else{
-        m_treeview.hide_tooltip();
         m_treeview.hide_popup();
     }
 
