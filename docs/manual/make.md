@@ -19,14 +19,14 @@ layout: default
 ### 動作環境
 
 #### 必須環境
-- gtkmm-2.4.8 以上 ( GTK2版 )
+- gtkmm-2.18.0 以上 ( GTK2版 )
 - gtkmm-3.0.0 以上 ( GTK3版 )
 - zlib-1.2 以上
 - gnutls-2.12 以上
 
 #### 推奨環境
 - Linux Kernel 2.6 以上
-- gtkmm-2.8 以上 ( 2.6より低いとレイアウトが一部崩れる、2.8より低いとスレ一覧表示が遅い )  
+- gtkmm-2.24 以上
 - gtkmm-3.18 以上 ( GTK3版 )
 - UTF-8環境 ( EUC環境では `LANG="ja_JP.UTF-8"` を指定する必要がある )
 

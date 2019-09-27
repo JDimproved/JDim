@@ -1,7 +1,7 @@
 dnl
 dnl JDim用 configure.ac
 dnl
-AC_PREREQ(2.50)
+AC_PREREQ(2.63)
 AC_INIT(jdim, 1.0)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -90,10 +90,7 @@ AC_ARG_WITH(gtkmm3,
 AC_MSG_RESULT($with_gtkmm3)
 
 AS_IF([test "x$with_gtkmm3" = xno],
-      [PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.18.0], [], [
-         AC_MSG_WARN([JDim will require gtkmm-2.4 >= 2.18.0 in the future release.])
-         PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.4.0])
-       ])],
+      [PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.18.0], [], [])],
       [PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.0.0], [], [])
        AC_DEFINE(WITH_GTKMM_3_0, 1, [Use gtkmm-3.0 instead of gtkmm-2.4])])
 
