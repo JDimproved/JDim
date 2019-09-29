@@ -2517,11 +2517,12 @@ void BBSListViewBase::select_item( const std::string& url )
     if( ! m_ready_tree ) return;
     if( m_treestore->children().empty() ) return;
 
-    std::string url_item( url );
+    std::string url_item;
 
-    if( m_set_thread.find( url_item ) != m_set_thread.end()
-            || m_set_image.find( url_item ) != m_set_image.end()){
+    if( m_set_thread.find( url ) != m_set_thread.end()
+            || m_set_image.find( url ) != m_set_image.end()){
         // スレまたは画像の場合
+        url_item = url;
     }
     else {
         // 板以外の履歴は処理しない

@@ -68,11 +68,9 @@ enum
 
 
 #define IS_URL(node) \
-( node->type == NODE_LINK && node->linkinfo->link \
-&& ( std::string( node->linkinfo->link ).find( "http" ) == 0 \
-|| std::string( node->linkinfo->link ).find( "https" ) == 0  \
-|| std::string( node->linkinfo->link ).find( "ftp" ) == 0 )  \
-)
+ ( node->type == NODE_LINK && node->linkinfo->link \
+  && ( memcmp( node->linkinfo->link, "http", 4 ) == 0 \
+      || memcmp( node->linkinfo->link, "ftp", 3 ) == 0 ) )
 
 
 using namespace DBTREE;
@@ -1446,8 +1444,10 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
     // 入っている時があるので取り除く
     for( size_t i = 0; i < size; ++i ){
         if( rawlines[ i ] == '\0' ){
-            MISC::ERRMSG( "EOF was inserted in the middle of the raw data" );
-            rawlines[ i ] = ' ';
+            const size_t beg = i;
+            while( i < size && rawlines[ i ] == '\0' ) ++i;
+            MISC::ERRMSG( MISC::itostr( i - beg ) + " EOF was inserted in the middle of the raw data" );
+            memset( rawlines + beg, ' ', i - beg );
         } 
     }
 

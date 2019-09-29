@@ -302,7 +302,7 @@ void BoardBase::set_list_cookies_for_write( const std::list< std::string >& list
 #endif
 
         std::string key;
-        const size_t n = cookie.find( "=" );
+        const size_t n = cookie.find( '=' );
         if( n != std::string::npos ) key = cookie.substr( 0, n+1 );
 
         // 更新
@@ -1149,7 +1149,7 @@ void BoardBase::receive_finish()
         set_date_modified( std::string() );
         send_update_board();
 
-        if( m_lng_rawdata && get_code() == HTTP_OK && std::string( m_rawdata ).find( "window.location.href" ) != std::string::npos ){
+        if( m_lng_rawdata && get_code() == HTTP_OK && strstr( m_rawdata, "window.location.href" ) != nullptr ){
 
 #ifdef _DEBUG
             std::cout << m_rawdata << std::endl;
