@@ -12,6 +12,7 @@
 
 using namespace JDLIB;
 
+
 //
 // file : 設定ファイル
 // str_conf : 設定文字列
@@ -32,22 +33,18 @@ ConfLoader::ConfLoader( const std::string& file, std::string str_conf )
     // 行ごとに分割してConfDataに登録
     if( ! str_conf.empty() ){
 
-        std::list< std::string > lines = MISC::get_lines( str_conf );
-        if( lines.size() == 0 ) return;
+        const std::list< std::string > lines = MISC::get_lines( str_conf );
+        if( lines.empty() ) return;
 
-        std::list < std::string >::iterator it = lines.begin();
-        for( ; it != lines.end(); ++it ){
+        for( const std::string& line : lines ) {
 
-            std::string line = MISC::remove_space( ( *it ) );
-
-            size_t i = line.find( "=" );
+            const size_t i = line.find( '=' );
             if( i != std::string::npos ){
 
-                ConfData data;
-                data.name = MISC::remove_space( line.substr( 0, i ) );
-                data.value = MISC::remove_space( line.substr( i +1 ) );
-                m_data.push_back( data );
+                m_data.push_back({ MISC::remove_space( line.substr( 0, i ) ),
+                                   MISC::remove_space( line.substr( i + 1 ) ) });
 #ifdef _DEBUG
+                const ConfData& data = m_data.back();
                 std::cout << data.name << " = " << data.value << std::endl;
 #endif 
             }
@@ -59,7 +56,7 @@ ConfLoader::ConfLoader( const std::string& file, std::string str_conf )
 
 bool ConfLoader::empty()
 {
-    return !( m_data.size() );
+    return m_data.empty();
 }
 
 
@@ -71,8 +68,9 @@ void ConfLoader::save()
 
     std::string str_conf;
 
-    std::list < ConfData >::iterator it = m_data.begin();
-    for( ; it != m_data.end(); ++it ) str_conf += (*it).name + " = " + (*it).value + "\n";
+    for( const ConfData& conf : m_data ) {
+        str_conf += conf.name + " = " + conf.value + "\n";
+    }
 
 #ifdef _DEBUG
     std::cout << "ConfLoader::save " << m_file << std::endl;
@@ -90,19 +88,15 @@ void ConfLoader::update( const std::string& name, const std::string& value )
 {
     if( name.empty() ) return;
 
-    std::list < ConfData >::iterator it = m_data.begin();
-    for( ; it != m_data.end(); ++it ){
-        if( (*it).name == name ){
-            (*it).value = value;
+    for( ConfData& conf : m_data ) {
+        if( conf.name == name ) {
+            conf.value = value;
             return;
         }
     }
 
     // 追加
-    ConfData data;
-    data.name = name;
-    data.value = value;
-    m_data.push_back( data );
+    m_data.push_back({ name, value });
 }
 
 // 値を変更 (bool型)
@@ -147,22 +141,21 @@ std::string ConfLoader::get_option_str( const std::string& name, const std::stri
 {
     if( name.empty() ) return std::string();
 
-    std::list < ConfData >::iterator it = m_data.begin();
-    for( ; it != m_data.end(); ++it )
+    for( const ConfData& conf : m_data )
     {
-        if( (*it).name == name )
+        if( conf.name == name )
         {
             // maxlengthが設定されている場合は文字数制限をする
-            if( maxlength > 0 && (*it).value.length() > maxlength )
+            if( maxlength > 0 && conf.value.length() > maxlength )
             {
                 m_broken = true;
 #ifdef _DEBUG
-    std::cout << "ConfLoader::get_option_str: " << name << "=" << (*it).value << std::endl;
+                std::cout << "ConfLoader::get_option_str: " << name << "=" << conf.value << std::endl;
 #endif
                 break;
             }
 
-            return (*it).value;
+            return conf.value;
         }
     }
 
