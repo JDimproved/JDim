@@ -13,7 +13,7 @@ all: run
 build: $(BUNDLE_DIR)
 	$(JEKYLL) build -d $(DEST_DIR)
 
-clean: $(DEST_DIR)
+clean:
 	$(JEKYLL) clean -d $(DEST_DIR)
 
 distclean: clean
@@ -27,6 +27,6 @@ run: $(BUNDLE_DIR)
 
 
 $(GEMFILE_LOCK):
-	$(BUNDLE) install --path $(BUNDLE_DIR)
+	$(BUNDLE) install --jobs $(shell nproc) --path $(BUNDLE_DIR)
 
 $(BUNDLE_DIR): $(GEMFILE_LOCK)
