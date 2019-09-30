@@ -1,8 +1,3 @@
 source 'https://rubygems.org'
-
-# NOTE: This is workaround for error on octokit (from faraday 0.16.1).
-# https://github.com/lostisland/faraday/issues/1033
-gem 'faraday', '<=0.15.4'
-
 gem 'github-pages', group: :jekyll_plugins
 gem 'jekyll-redirect-from'
