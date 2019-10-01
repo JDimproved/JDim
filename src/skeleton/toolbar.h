@@ -29,10 +29,6 @@ namespace SKELETON
 
         bool m_enable_slot;
 
-#if !GTKMM_CHECK_VERSION(2,12,0)
-        Gtk::Tooltips m_tooltip;
-#endif
-
         // ボタンバー
         SKELETON::JDToolbar m_buttonbar;
         bool m_buttonbar_shown;

@@ -294,11 +294,7 @@ void ToolBar::pack_transparent_separator()
 //
 void ToolBar::set_tooltip( Gtk::ToolItem& toolitem, const std::string& tip )
 {
-#if GTKMM_CHECK_VERSION(2,12,0)
     toolitem.set_tooltip_text( tip );
-#else
-    toolitem.set_tooltip( m_tooltip, tip );
-#endif
 }
 
 
