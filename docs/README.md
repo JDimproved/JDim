@@ -111,6 +111,9 @@ JDimがリリースされた時には以下の作業を行います。
    ### [0.2.0-20190720](https://github.com/JDimproved/JDim/compare/JDim-v0.1.0...JDim-v0.2.0) (2019-07-20)
    ...
    ```
+4. 前のバージョンのマニュアルを更新します。<br>
+   リンク集のファイル `link-YYYYMMDD` をコピーして日付やバージョン番号、URLなどを改めます。
+   そして `index.md` の「前のバージョンのマニュアル (GitHubリンク)」に新しいページへのリンクを追加します。
 
 
 [gh-pages]: https://pages.github.com/
