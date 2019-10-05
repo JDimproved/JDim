@@ -28,7 +28,6 @@ libskeleton_a_SOURCES = \
 	backforwardbutton.cpp \
 	popupwinbase.cpp \
 	popupwin.cpp \
-	tooltip.cpp \
 	entry.cpp \
 	compentry.cpp \
 	label_entry.cpp \
@@ -80,7 +79,6 @@ noinst_HEADERS = \
 	popupwinbase.h \
 	popupwin.h \
 	iconpopup.h \
-	tooltip.h \
 	entry.h \
 	compentry.h \
 	label_entry.h \

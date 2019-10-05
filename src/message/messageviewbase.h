@@ -37,10 +37,6 @@ namespace MESSAGE
     {
         Post* m_post;
 
-#if !GTKMM_CHECK_VERSION(2,12,0)
-        Gtk::Tooltips m_tooltip;
-#endif
-
         Gtk::Notebook m_notebook;
         SKELETON::View* m_preview;
         Gtk::VBox m_msgview;

@@ -177,6 +177,8 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     m_treeview.sig_key_press().connect( sigc::mem_fun(*this, &BoardViewBase::slot_key_press ) );
     m_treeview.sig_key_release().connect( sigc::mem_fun(*this, &BoardViewBase::slot_key_release ) );
     m_treeview.sig_scroll_event().connect( sigc::mem_fun(*this, &BoardViewBase::slot_scroll_event ) );
+    m_treeview.set_has_tooltip( true );
+    m_treeview.signal_query_tooltip().connect( sigc::mem_fun(*this, &BoardViewBase::slot_query_tooltip) );
     m_treeview.signal_drag_data_get().connect( sigc::mem_fun(*this, &BoardViewBase::slot_drag_data_get ) );
     m_treeview.sig_dropped_uri_list().connect( sigc::mem_fun(*this, &BoardViewBase::slot_dropped_url_list ) );
 
@@ -1370,8 +1372,6 @@ void BoardViewBase::focus_view()
 void BoardViewBase::focus_out()
 {
     SKELETON::View::focus_out();
-
-    m_treeview.hide_tooltip();
 }
 
 
@@ -2131,27 +2131,6 @@ bool BoardViewBase::slot_motion_notify( GdkEventMotion* event )
     /// マウスジェスチャ
     get_control().MG_motion( event );
 
-    const int x = (int)event->x;
-    const int y = (int)event->y;
-    Gtk::TreeModel::Path path;
-    Gtk::TreeView::Column* column;
-    int cell_x;
-    int cell_y;
-
-    // ツールチップに文字列をセットする
-    if( m_treeview.get_path_at_pos( x, y, path, column, cell_x, cell_y ) ){
-
-        // 列幅よりもツールチップの幅が広い場合はツールチップを表示する
-        m_treeview.set_tooltip_min_width( column->get_width() );
-
-        if( column->get_title() == ITEM_NAME_BOARD ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_board ) );
-        else if( column->get_title() == ITEM_NAME_NAME ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_subject ) );
-        else if( column->get_title() == ITEM_NAME_SINCE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_since ) );
-        else if( column->get_title() == ITEM_NAME_LASTWRITE ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_write ) );
-        else if( column->get_title() == ITEM_NAME_ACCESS ) m_treeview.set_str_tooltip( get_name_of_cell( path, m_columns.m_col_access ) );
-        else m_treeview.set_str_tooltip( std::string() );
-    }
-
     return true;
 }
 
@@ -2217,6 +2196,33 @@ bool BoardViewBase::slot_scroll_event( GdkEventScroll* event )
 
     m_treeview.wheelscroll( event );
     return true;
+}
+
+
+//
+// ツールチップのセット
+//
+bool BoardViewBase::slot_query_tooltip( int x, int y, bool keyboard_tooltip,
+                                        const Glib::RefPtr<Gtk::Tooltip>& tooltip )
+{
+    // NOTE: GTK2版で Gtk::TreeView::get_tooltip_context_path() を使うと
+    // マウスポインターをヘッダーや空行へ動かしたときに segmentation fault でクラッシュする
+    Gtk::TreeModel::iterator iter;
+    if( m_treeview.get_tooltip_context_iter( x, y, keyboard_tooltip, iter ) ) {
+
+        const Gtk::TreeModel::Path path = m_liststore->get_path( iter );
+        m_treeview.set_tooltip_row( tooltip, path );
+
+        const Gtk::TreeModel::Row row = m_treeview.get_row( path );
+        const Glib::ustring& subject = row[ m_columns.m_col_subject ];
+
+#ifdef _DEBUG
+        std::cout << "BoardViewBase::slot_query_tooltip subject: " << subject << std::endl;
+#endif
+        tooltip->set_text( subject );
+        return true;
+    }
+    return false;
 }
 
 

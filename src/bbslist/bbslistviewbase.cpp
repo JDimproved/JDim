@@ -183,6 +183,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     // treeviewのシグナルにコネクト
     m_treeview.signal_row_expanded().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_row_exp ) );
     m_treeview.signal_row_collapsed().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_row_col ) );
+    m_treeview.set_has_tooltip( true );
+    m_treeview.signal_query_tooltip().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_query_tooltip) );
 
     m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_button_press ) );
     m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_button_release ) );
@@ -676,7 +678,6 @@ void BBSListViewBase::focus_out()
 {
     SKELETON::View::focus_out();
 
-    m_treeview.hide_tooltip();
     m_treeview.hide_popup();
 }
 
@@ -1155,8 +1156,6 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 
     if( m_treeview.get_path_at_pos( x, y, path, column, cell_x, cell_y ) && m_treeview.get_row( path ) ){
 
-        const int mrg = 16; // アイコンの横幅。計算するのが面倒だったのでとりあえず
-
         Gtk::TreeModel::Row row = m_treeview.get_row( path );
         Glib::ustring subject = row[ m_columns.m_name ];
         Glib::ustring url = row[ m_columns.m_url ];
@@ -1166,8 +1165,6 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
 
         // 画像ポップアップ
         if( type == TYPE_IMAGE ){
-
-            m_treeview.hide_tooltip();
 
             if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && DBIMG::get_code( url ) != HTTP_INIT ){
 
@@ -1180,19 +1177,12 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
             else m_treeview.hide_popup();
         }
 
-        // ツールチップ
+        // ツールチップはslot_query_tooltipでセットする
         else{
-
             m_treeview.hide_popup();
-
-            Gdk::Rectangle rect;
-            m_treeview.get_cell_area( path, *column, rect );
-            m_treeview.set_tooltip_min_width( rect.get_width() - mrg );
-            m_treeview.set_str_tooltip( subject );
         }
     }
     else{
-        m_treeview.hide_tooltip();
         m_treeview.hide_popup();
     }
 
@@ -3161,6 +3151,41 @@ void BBSListViewBase::slot_hide_editlistwin()
     if( m_editlistwin ) delete m_editlistwin;
     m_editlistwin = NULL;
 }
+
+
+//
+// ツールチップのセット
+//
+bool BBSListViewBase::slot_query_tooltip( int x, int y, bool keyboard_tooltip,
+                                          const Glib::RefPtr<Gtk::Tooltip>& tooltip )
+{
+    // NOTE: GTK2版で Gtk::TreeView::get_tooltip_context_path() を使うと
+    // マウスポインターをヘッダーや空行へ動かしたときに segmentation fault でクラッシュする
+    Gtk::TreeModel::iterator iter;
+    if( m_treeview.get_tooltip_context_iter( x, y, keyboard_tooltip, iter ) ) {
+
+        const Gtk::TreeModel::Path path = m_treestore->get_path( iter );
+        m_treeview.set_tooltip_row( tooltip, path );
+
+        const Gtk::TreeModel::Row row = m_treeview.get_row( path );
+        const Glib::ustring& subject = row[ m_columns.m_name ];
+        const Glib::ustring& url = row[ m_columns.m_url ];
+        const int type = row[ m_columns.m_type ];
+
+        m_treeview.reset_pre_popupurl( url );
+
+        // 画像ポップアップはslot_motion_notifyでセットする
+        if( type == TYPE_IMAGE ) return false;
+
+        // ツールチップ
+        m_treeview.hide_popup();
+        tooltip->set_text( subject );
+        return true;
+    }
+    m_treeview.hide_popup();
+    return false;
+}
+
 
 
 //

@@ -11,9 +11,9 @@
 #ifndef _DRAGTREEVIEW_H
 #define _DRAGTREEVIEW_H
 
-#include "treeviewbase.h"
+#include "gtkmmversion.h"
 
-#include "tooltip.h"
+#include "treeviewbase.h"
 
 #include "control/control.h"
 
@@ -37,8 +37,6 @@ namespace SKELETON
         bool m_selection_canceled; // 範囲選択を解除したときにsig_button_release()を発行しないようにする
         Gtk::TreeModel::Path m_path_dragstart;
         Gtk::TreeModel::Path m_path_dragpre;
-
-        Tooltip m_tooltip;
 
 #if GTKMM_CHECK_VERSION(3,0,0)
         static constexpr const char* s_css_classname = u8"jd-dragtreeview";
@@ -93,13 +91,6 @@ namespace SKELETON
 
         // フォント初期化
         void init_font( const std::string& fontname );
-        
-        // ツールチップ表示
-        void set_str_tooltip( const std::string& str );
-        // ツールチップ最小幅設定(指定した幅よりもツールチップが広い場合は表示)
-        void set_tooltip_min_width( const int min_width ){ m_tooltip.set_min_width( min_width ); }
-        void hide_tooltip(){ m_tooltip.hide_tooltip(); }
-        void show_tooltip(){ m_tooltip.show_tooltip(); }
 
         // ポップアップウィンドウ表示
         const std::string& pre_popup_url() const { return m_pre_popup_url; }

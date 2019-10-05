@@ -578,6 +578,7 @@ void TabNotebook::set_tab_fulltext( const std::string& str, int page )
     SKELETON::TabLabel* tablabel = get_tablabel( page );
     if( tablabel && str != tablabel->get_fulltext() ){
         tablabel->set_fulltext( str );
+        tablabel->set_tooltip_text( str );
         if( m_fixtab ) tablabel->resize_tab( str.length() );
         else adjust_tabwidth();
     }

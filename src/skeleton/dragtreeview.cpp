@@ -175,8 +175,6 @@ void DragTreeView::init_font( const std::string& fontname )
 #else
     modify_font( pfd );
 #endif
-
-    m_tooltip.modify_font_label( fontname );
 }
 
 
@@ -190,17 +188,6 @@ void DragTreeView::clock_in()
         m_popup_win->view()->clock_in();
         return;
     }
-
-    m_tooltip.clock_in();
-}
-
-
-//
-// ツールチップに文字をセット
-//
-void DragTreeView::set_str_tooltip( const std::string& text )
-{
-    m_tooltip.set_text( text );
 }
 
 
@@ -550,7 +537,6 @@ void DragTreeView::wheelscroll( GdkEventScroll* event )
 
 bool DragTreeView::on_leave_notify_event( GdkEventCrossing* event )
 {
-    m_tooltip.hide_tooltip();
     if( ! is_mouse_on_popup() ){
         hide_popup();
         m_pre_popup_url = std::string();

@@ -441,15 +441,8 @@ void MessageViewBase::pack_widget()
     m_check_fixname.set_label( "固定" );
     m_check_fixmail.set_label( "固定" );
 
-    constexpr const char* name_tip = "チェックすると名前欄を保存して固定にする";
-    constexpr const char* mail_tip = "チェックするとメール欄を保存して固定にする";
-#if GTKMM_CHECK_VERSION(2,12,0)
-    m_check_fixname.set_tooltip_text( name_tip );
-    m_check_fixmail.set_tooltip_text( mail_tip );
-#else
-    m_tooltip.set_tip( m_check_fixname, name_tip );
-    m_tooltip.set_tip( m_check_fixmail, mail_tip );
-#endif
+    m_check_fixname.set_tooltip_text( "チェックすると名前欄を保存して固定にする" );
+    m_check_fixmail.set_tooltip_text( "チェックするとメール欄を保存して固定にする" );
 
     set_name();
     set_mail();
