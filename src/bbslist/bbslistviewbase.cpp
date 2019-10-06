@@ -3159,12 +3159,19 @@ void BBSListViewBase::slot_hide_editlistwin()
 bool BBSListViewBase::slot_query_tooltip( int x, int y, bool keyboard_tooltip,
                                           const Glib::RefPtr<Gtk::Tooltip>& tooltip )
 {
-    // NOTE: GTK2版で Gtk::TreeView::get_tooltip_context_path() を使うと
-    // マウスポインターをヘッダーや空行へ動かしたときに segmentation fault でクラッシュする
-    Gtk::TreeModel::iterator iter;
-    if( m_treeview.get_tooltip_context_iter( x, y, keyboard_tooltip, iter ) ) {
+    if( keyboard_tooltip ) return false;
 
-        const Gtk::TreeModel::Path path = m_treestore->get_path( iter );
+    int bin_x, bin_y;
+    m_treeview.convert_widget_to_bin_window_coords( x, y, bin_x, bin_y );
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::slot_query_tooltip"
+        << " x(" << x << ") y(" << y << ") bin_x(" << bin_x << ") bin_y(" << bin_y << ")" << std::endl;
+#endif
+
+    Gtk::TreeModel::Path path;
+    Gtk::TreeView::Column* column;
+    int cell_x, cell_y;
+    if( m_treeview.get_path_at_pos( bin_x, bin_y, path, column, cell_x, cell_y ) ) {
         m_treeview.set_tooltip_row( tooltip, path );
 
         const Gtk::TreeModel::Row row = m_treeview.get_row( path );
@@ -3177,10 +3184,25 @@ bool BBSListViewBase::slot_query_tooltip( int x, int y, bool keyboard_tooltip,
         // 画像ポップアップはslot_motion_notifyでセットする
         if( type == TYPE_IMAGE ) return false;
 
-        // ツールチップ
-        m_treeview.hide_popup();
-        tooltip->set_text( subject );
-        return true;
+        Gdk::Rectangle cell_area;
+        m_treeview.get_cell_area( path, *column, cell_area );
+        const int capacity_width = m_treeview.get_width() - cell_area.get_x();
+
+        const auto layout = m_treeview.create_pango_layout( subject );
+        int pixel_width, ph;
+        layout->get_pixel_size( pixel_width, ph );
+
+        constexpr int icon_size{ 16 };
+#ifdef _DEBUG
+        std::cout << "BBSListViewBase::slot_query_tooltip" << " pixel_width(" << pixel_width
+            << ") + icon_size(" << icon_size << ")" << " > capacity_width(" << capacity_width << ")" << std::endl;
+#endif
+        // 板一覧の幅よりセルの内容が長いならツールチップを表示する
+        if( pixel_width + icon_size > capacity_width ) {
+            m_treeview.hide_popup();
+            tooltip->set_text( subject );
+            return true;
+        }
     }
     m_treeview.hide_popup();
     return false;
