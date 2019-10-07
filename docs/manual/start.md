@@ -152,4 +152,5 @@ GDK_CORE_DEVICE_EVENTS=1 ./src/jdim
 
 
 [pr-merged]: https://github.com/JDimproved/JDim/pulls?q=is%3Apr+is%3Amerged
-[操作方法について]: {{ site.baseurl }}/operation/#threadview_touch "操作方法について | JDim"
+
+[操作方法について]: {{ site.baseurl }}/operation/#threadview_touch "操作方法について \| JDim"
