@@ -48,6 +48,18 @@
 using namespace CORE;
 
 
+namespace {
+#if GTKMM_CHECK_VERSION(3,1,16)
+struct FontSelectionDialog : public Gtk::FontChooserDialog
+{
+    Glib::ustring get_font_name() const { return get_font(); }
+    void set_font_name( const Glib::ustring& name ) { set_font( name ); }
+};
+#else
+using FontSelectionDialog = Gtk::FontSelectionDialog;
+#endif
+} // namespace
+
 
 //
 // URLを開く
@@ -781,7 +793,7 @@ void Core::slot_setup_button()
 //
 void Core::slot_changefont_main()
 {
-    Gtk::FontSelectionDialog diag;
+    FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname( FONT_MAIN ) );
     diag.set_title( "スレビューフォント" );
     diag.set_transient_for( *CORE::get_mainwindow() );
@@ -802,7 +814,7 @@ void Core::slot_changefont_main()
 //
 void Core::slot_changefont_popup()
 {
-    Gtk::FontSelectionDialog diag;
+    FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname( FONT_POPUP ) );
     diag.set_title( "ポップアップフォント" );
     diag.set_transient_for( *CORE::get_mainwindow() );
@@ -819,7 +831,7 @@ void Core::slot_changefont_popup()
 //
 void Core::slot_changefont_tree()
 {
-    Gtk::FontSelectionDialog diag;
+    FontSelectionDialog diag;
     diag.set_font_name( CONFIG::get_fontname( FONT_BBS ) );
     diag.set_title( "板／スレ一覧フォント" );
     diag.set_transient_for( *CORE::get_mainwindow() );
