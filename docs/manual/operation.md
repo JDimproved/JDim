@@ -709,20 +709,21 @@ layout: default
 項目設定ダイアログで非表示指定した項目はコンテキストメニューの「`その他`」に表示される。
 
 
-[bkmark_update]: {{ site.baseurl }}/manual/image/bkmark_update.png
-[bkmark_broken_subject]: {{ site.baseurl }}/manual/image/bkmark_broken_subject.png
-[bkmark]: {{ site.baseurl }}/manual/image/bkmark.png
-[update]: {{ site.baseurl }}/manual/image/update.png
-[broken_subject]: {{ site.baseurl }}/manual/image/broken_subject.png
-[check]: {{ site.baseurl }}/manual/image/check.png
-[newthread]: {{ site.baseurl }}/manual/image/newthread.png
-[newthread_hour]: {{ site.baseurl }}/manual/image/newthread_hour.png
-[info]: {{ site.baseurl }}/manual/image/info.png
-[down]: {{ site.baseurl }}/manual/image/down.png
-[board]: {{ site.baseurl }}/manual/image/board.png
-[board_update]: {{ site.baseurl }}/manual/image/board_update.png
-[board_updated]: {{ site.baseurl }}/manual/image/board_updated.png
-[thread]: {{ site.baseurl }}/manual/image/thread.png
-[thread_old]: {{ site.baseurl }}/manual/image/thread_old.png
-[thread_update]: {{ site.baseurl }}/manual/image/thread_update.png
-[thread_updated]: {{ site.baseurl }}/manual/image/thread_updated.png
+<!-- 相対URLで GitHub Pages と GitHub.com 両方に対応する -->
+[bkmark_update]: ../assets/bkmark_update.png
+[bkmark_broken_subject]: ../assets/bkmark_broken_subject.png
+[bkmark]: ../assets/bkmark.png
+[update]: ../assets/update.png
+[broken_subject]: ../assets/broken_subject.png
+[check]: ../assets/check.png
+[newthread]: ../assets/newthread.png
+[newthread_hour]: ../assets/newthread_hour.png
+[info]: ../assets/info.png
+[down]: ../assets/down.png
+[board]: ../assets/board.png
+[board_update]: ../assets/board_update.png
+[board_updated]: ../assets/board_updated.png
+[thread]: ../assets/thread.png
+[thread_old]: ../assets/thread_old.png
+[thread_update]: ../assets/thread_update.png
+[thread_updated]: ../assets/thread_updated.png

@@ -54,8 +54,9 @@ WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定�
 
 [５ちゃんねる]: https://5ch.net
 [JD]: https://ja.osdn.net/projects/jd4linux/ "JD for Linux プロジェクト日本語トップページ"
-[互換性]: {{ site.baseurl }}/start/#compatibility "起動について | JDim"
 [yama-natuki]: https://github.com/yama-natuki
 [repository]: https://github.com/JDimproved/JDim
 [gpl2]: https://ja.osdn.net/projects/opensource/wiki/licenses%2FGNU_General_Public_License
 [linux]: https://mao.5ch.net/linux/
+
+[互換性]: {{ site.baseurl }}/start/#compatibility "起動について \| JDim"

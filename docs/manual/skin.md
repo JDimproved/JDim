@@ -155,6 +155,8 @@ Res.html(下)と[jd.css][jdcss]
 
 
 [iconfiles]: https://github.com/JDimproved/JDim/blob/master/src/icons/iconfiles.h "JDim/iconfiles.h at master"
-[skin_sample_thumb]: {{ site.baseurl }}/manual/image/skin_sample_thumb.png
-[skin_sample]: {{ site.baseurl }}/manual/image/skin_sample.png "サンプルのスクリーンショット"
-[jdcss]: {{ site.baseurl }}/manual/jd.css "サンプルのcss"
+
+<!-- 相対URLで GitHub Pages と GitHub.com 両方に対応する -->
+[skin_sample_thumb]: ../assets/skin_sample_thumb.png
+[skin_sample]: ../assets/skin_sample.png "サンプルのスクリーンショット"
+[jdcss]: ../assets/jd.css "サンプルのcss"
