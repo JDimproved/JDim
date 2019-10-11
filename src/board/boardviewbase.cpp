@@ -2205,21 +2205,37 @@ bool BoardViewBase::slot_scroll_event( GdkEventScroll* event )
 bool BoardViewBase::slot_query_tooltip( int x, int y, bool keyboard_tooltip,
                                         const Glib::RefPtr<Gtk::Tooltip>& tooltip )
 {
-    // NOTE: GTK2版で Gtk::TreeView::get_tooltip_context_path() を使うと
-    // マウスポインターをヘッダーや空行へ動かしたときに segmentation fault でクラッシュする
-    Gtk::TreeModel::iterator iter;
-    if( m_treeview.get_tooltip_context_iter( x, y, keyboard_tooltip, iter ) ) {
+    if( keyboard_tooltip ) return false;
 
-        const Gtk::TreeModel::Path path = m_liststore->get_path( iter );
-        m_treeview.set_tooltip_row( tooltip, path );
+    int bin_x, bin_y;
+    m_treeview.convert_widget_to_bin_window_coords( x, y, bin_x, bin_y );
 
-        const Gtk::TreeModel::Row row = m_treeview.get_row( path );
-        const Glib::ustring& subject = row[ m_columns.m_col_subject ];
+    Gtk::TreeModel::Path path;
+    Gtk::TreeView::Column* column;
+    int cell_x, cell_y;
+    if( m_treeview.get_path_at_pos( bin_x, bin_y, path, column, cell_x, cell_y ) ) {
+        m_treeview.set_tooltip_cell( tooltip, &path, column, nullptr );
 
-#ifdef _DEBUG
-        std::cout << "BoardViewBase::slot_query_tooltip subject: " << subject << std::endl;
-#endif
-        tooltip->set_text( subject );
+        const Glib::ustring title = column->get_title();
+        Glib::ustring cell_text;
+        if( title == ITEM_NAME_BOARD ) cell_text = get_name_of_cell( path, m_columns.m_col_board );
+        else if( title == ITEM_NAME_NAME ) cell_text = get_name_of_cell( path, m_columns.m_col_subject );
+        else if( title == ITEM_NAME_SINCE ) cell_text = get_name_of_cell( path, m_columns.m_col_since );
+        else if( title == ITEM_NAME_LASTWRITE ) cell_text = get_name_of_cell( path, m_columns.m_col_write );
+        else if( title == ITEM_NAME_ACCESS ) cell_text = get_name_of_cell( path, m_columns.m_col_access );
+
+        // セルの内容が空ならツールチップを表示しない
+        if( cell_text.empty() ) return false;
+
+        const auto layout = m_treeview.create_pango_layout( cell_text );
+        int pixel_width, ph;
+        layout->get_pixel_size( pixel_width, ph );
+        constexpr int offset{ 8 };
+        // セルの内容の幅が列幅より小さいならツールチップを表示しない
+        if( pixel_width + offset < column->get_width() ) return false;
+
+        // ツールチップにセルの内容をセットする
+        tooltip->set_text( cell_text );
         return true;
     }
     return false;
