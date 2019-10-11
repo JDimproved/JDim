@@ -20,6 +20,7 @@ LabelEntry::LabelEntry( const bool editable, const std::string& label, const std
     m_info.set_size_request( 0, 0 );
     m_info.set_alignment( Gtk::ALIGN_START );
     m_info.set_selectable( true );
+    m_info.set_ellipsize( Pango::ELLIPSIZE_END );
 
     setup();
     set_text( text );
