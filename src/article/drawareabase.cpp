@@ -855,7 +855,10 @@ void DrawAreaBase::redraw_view()
 #endif
 
     m_view.queue_draw();
+#if !GTKMM_CHECK_VERSION(3,22,0)
+    // 廃止予定の関数を呼び出すとスクロールバーの挙動がおかしくなるため省略する
     if( m_window ) m_window->process_updates( false );
+#endif
 }
 
 // 強制再描画
@@ -1822,7 +1825,9 @@ bool DrawAreaBase::draw_screen( const int y, const int height )
     // expose イベント経由で exec_draw_screen() を呼び出す
     // gtk2.18以降は expose イベント内で描画処理しないと正しく描画されない様なので注意
     m_view.queue_draw();
+#if !GTKMM_CHECK_VERSION(3,22,0)
     m_window->process_updates( false );
+#endif
 
     return true;
 }
