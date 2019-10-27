@@ -451,69 +451,18 @@ AS_IF(
 
 
 dnl
-dnl CPU別の最適化オプション
+dnl CPUの最適化オプション
 dnl
-if test "x$enable_gprof" = "xno"; then
-
-    dnl
-    dnl checking native (gcc >= 4.2 x86 & x86_64)
-    dnl
-	AC_ARG_WITH(native,[ --with-native    (use native)],
-        [ if test "$withval" != "no"; then
-            echo "use native"
-            CXXFLAGS="$CXXFLAGS -march=native"
-        fi ])
-
-    dnl
-    dnl checking core2duo
-    dnl
-    AC_ARG_WITH(core2duo,[ --with-core2duo    (use core2duo)],
-        [ if test "$withval" != "no"; then
-            echo "use core2duo"
-            AC_MSG_WARN([--with-core2duo is deprecated. Use ./configure CXXFLAGS="-march=core2"])
-            CXXFLAGS="$CXXFLAGS -march=pentium-m -msse3"
-        fi ])
-
-    dnl
-    dnl checking athlon64
-    dnl
-    AC_ARG_WITH(athlon64,[ --with-athlon64    (use athlon64)],
-        [ if test "$withval" != "no"; then
-            echo "use athlon64"
-            AC_MSG_WARN([--with-athlon64 is deprecated. Use ./configure CXXFLAGS="-march=athlon64"])
-            CXXFLAGS="$CXXFLAGS -march=athlon64"
-        fi ])
-
-    dnl
-    dnl checking atom
-    dnl
-    AC_ARG_WITH(atom,[ --with-atom    (use atom)],
-        [ if test "$withval" != "no"; then
-            echo "use atom"
-            AC_MSG_WARN([--with-atom is deprecated. Use ./configure CXXFLAGS="-march=prescott"])
-            CXXFLAGS="$CXXFLAGS -march=prescott"
-        fi ])
-
-    dnl
-    dnl checking ppc7400
-    dnl
-    AC_ARG_WITH(ppc7400,[ --with-ppc7400    (use PowerPC7400)],
-        [ if test "$withval" != "no"; then
-            echo "use ppc7400"
-            AC_MSG_WARN([--with-ppc7400 is deprecated. Use ./configure CXXFLAGS="-mcpu=7400 -maltivec -mabi=altivec"])
-            CXXFLAGS="$CXXFLAGS -mcpu=7400 -maltivec -mabi=altivec"
-        fi ])
-
-    dnl
-    dnl checking ppc7450
-    dnl
-    AC_ARG_WITH(ppc7450,[ --with-ppc7450    (use PowerPC7450)],
-        [ if test "$withval" != "no"; then
-            echo "use ppc7450"
-            AC_MSG_WARN([--with-ppc7450 is deprecated. Use ./configure CXXFLAGS="-mcpu=7450 -maltivec -mabi=altivec"])
-            CXXFLAGS="$CXXFLAGS -mcpu=7450 -maltivec -mabi=altivec"
-        fi ])
-fi
+AS_IF(
+  dnl gprofを利用する場合最適化オプションは無視される
+  [test "x$enable_gprof" = xno],
+  [AC_MSG_CHECKING(for --with-native)
+   AC_ARG_WITH(native, AC_HELP_STRING([--with-native], [produce code optimized for the local machine]),
+               [with_native="$withval"], [with_native=no])
+   AC_MSG_RESULT($with_native)
+   AS_IF([test "x$with_native" != xno],
+         [CXXFLAGS="$CXXFLAGS -march=native"])]
+)
 
 
 AC_ARG_VAR(GTEST_SRCDIR, [path overriding googletest framework source directory])
