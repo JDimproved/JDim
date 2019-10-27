@@ -69,10 +69,10 @@
 
        migemoによる検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
 
-    --with-[native|core2duo|athlon64|atom|ppc7400|ppc7450]
+    --with-native
 
        CPUに合わせた最適化
-       --with-native以外のオプションは非推奨: かわりに ./configure CXXFLAGS="-march=ARCH" を使用してください。
+       CPUを指定する場合は ./configure CXXFLAGS="-march=ARCH" を利用してください。
 
     --with-tls=[gnutls|openssl]
 
