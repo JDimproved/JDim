@@ -204,6 +204,7 @@ AS_IF(
   [test "x$with_sessionlib" = xgnomeui],
   [PKG_CHECK_MODULES(GNOMEUI, [libgnomeui-2.0 >= 2.0])
    AC_DEFINE(USE_GNOMEUI, , [use gnomeui])
+   AC_MSG_WARN([--with-sessionlib=gnomeui is deprecated. Use --with-sessionlib=xsmp instead.])
    AC_SUBST(GNOMEUI_CFLAGS)
    AC_SUBST(GNOMEUI_LIBS)],
 

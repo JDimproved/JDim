@@ -46,7 +46,7 @@ layout: default
 
 #### オプション
 - alsa-lib (`--with-alsa`)
-- libgnomeui (`--with-sessionlib=gnomeui`) GTK2版のみ
+- libgnomeui (`--with-sessionlib=gnomeui`) GTK2版のみ、廃止予定
 - openssl (`--with-tls=openssl`)
 - oniguruma (`--with-regex=oniguruma`)
 - libpcre (`--with-regex=pcre`)
@@ -75,9 +75,11 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
 <dl>
   <dt>--with-sessionlib=[xsmp|gnomeui|no]</dt>
   <dd>
-    GNOMEUI を使ってセッション管理をするには <code>gnomeui</code> を、セッション管理
-    を無効にするには <code>no</code> を選択。デフォルトでは XSMP を使用する。
-    <code>gnomeui</code>はGTK2版のみ有効。
+    XSMP を使ってセッション管理をするには <code>xsmp</code> を、
+    セッション管理を無効にするには <code>no</code> を選択する。デフォルトでは XSMP を使用する。
+    <code>gnomeui</code> はGTK2版のみ有効。
+    <strong><code>--with-sessionlib=gnomeui</code> は非推奨</strong>:
+    かわりに <code>--with-sessionlib=xsmp</code> を使用してください。
   </dd>
   <dt>--with-pangolayout</dt>
   <dd>描画に PangoLayout を使う。デフォルトでは PangoGlyphString を使用する。</dd>
