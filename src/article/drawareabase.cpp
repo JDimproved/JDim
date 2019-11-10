@@ -3837,9 +3837,7 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
     m_multi_selection.clear();
 
     std::vector< LAYOUT_TABLE > layout_table;
-    const char *target;
-    char *buffer = nullptr;
-    size_t buffer_lng = 0;
+    std::string target;
 
     // 先頭ノードから順にサーチして m_multi_selection に選択箇所をセットしていく
     LAYOUT* tmpheader = m_layout_tree->top_header();
@@ -3851,40 +3849,33 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
             if( HAS_TEXT( tmplayout ) ){
 
                 layout_table.clear();
-                buffer_lng = 0;
-                target = tmplayout->text;
+                target.clear();
 
                 // 次のノードもテキストを含んでいたら変換テーブルを作成しながらバッファに連結コピー
                 if( tmplayout->next_layout && HAS_TEXT( tmplayout->next_layout ) ){
 
-                    if( ! buffer ) buffer = ( char* )malloc( SEARCH_BUFFER_SIZE );
-                    target = buffer;
-
                     do{
-                        LAYOUT_TABLE tbl;
-                        tbl.layout = tmplayout;
-                        tbl.offset = buffer_lng;;
-                        layout_table.push_back( tbl );
+                        layout_table.push_back( LAYOUT_TABLE{ tmplayout, target.size() } );
 
                         const size_t lng = strlen( tmplayout->text );
 
-                        if( buffer_lng + lng >= SEARCH_BUFFER_SIZE ){
+                        if( target.size() + lng >= SEARCH_BUFFER_SIZE ){
 
                             MISC::ERRMSG( "DrawAreaBase::search : buffer overflow." );
                             break;
                         }
-
-                        memcpy( buffer + buffer_lng, tmplayout->text, lng );
-                        buffer_lng += lng;
-                        buffer[ buffer_lng ] = '\0';
+                        target.append( tmplayout->text, lng );
 
                         tmplayout = tmplayout->next_layout;
                     }
                     while( tmplayout && HAS_TEXT( tmplayout ) );
 
 #ifdef _DEBUG
-                    std::cout << "use buffer lng = " << buffer_lng << std::endl << buffer << std::endl;
+                    std::cout << "use buffer lng = " << target.size() << std::endl << target << std::endl;
 #endif
+                }
+                else {
+                    target = tmplayout->text;
                 }
 
                 /////////////////////////////////
@@ -3960,8 +3951,6 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
 
         tmpheader = tmpheader->next_header;
     }
-
-    if( buffer ) free( buffer );
 
 #ifdef _DEBUG
     std::cout << "m_multi_selection.size = " << m_multi_selection.size() << std::endl;
