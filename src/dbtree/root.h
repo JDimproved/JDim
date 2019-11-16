@@ -65,7 +65,7 @@ namespace DBTREE
         std::set< std::string > m_analyzed_path_board; // XML 解析中に処理済みの板のpath
         std::string m_move_info;  // 移転したときにダイアログに表示する移転済み板の一覧
 
-        // NULL board クラス
+        // Null board クラス
         BoardBase* m_board_null;
 
         // get_board()のキャッシュ

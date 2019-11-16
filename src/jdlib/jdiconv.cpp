@@ -34,7 +34,7 @@ struct iconv_cast
 using namespace JDLIB;
 
 Iconv::Iconv( const std::string& coding_from, const std::string& coding_to )
-    : m_buf_in( 0 ), m_buf_out( 0 ), m_coding_from( coding_from )
+    : m_buf_in( nullptr ), m_buf_out( nullptr ), m_coding_from( coding_from )
 {
 #ifdef _DEBUG
     std::cout << "Iconv::Iconv coding = " << m_coding_from << " to " << coding_to << std::endl;
@@ -91,7 +91,7 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
 #endif
 
     assert( m_byte_left_in + size_in < BUF_SIZE_ICONV_IN );
-    if( m_cd == ( iconv_t ) -1 ) return NULL;
+    if( m_cd == ( iconv_t ) -1 ) return nullptr;
     
     size_t byte_left_out = BUF_SIZE_ICONV_OUT;
     char* buf_out = m_buf_out;

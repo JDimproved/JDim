@@ -12,7 +12,7 @@
 
 
 // インスタンスは Core でひとつだけ作って、Coreのデストラクタでdeleteする
-DBIMG::ImgRoot *instance_dbimg_root = NULL;
+DBIMG::ImgRoot *instance_dbimg_root = nullptr;
 
 
 void DBIMG::create_root()
@@ -77,7 +77,7 @@ int DBIMG::get_type_real( const std::string& url )
 DBIMG::Img* DBIMG::get_img( const std::string& url )
 {
     if( instance_dbimg_root ) return instance_dbimg_root->get_img( url );
-    return NULL;
+    return nullptr;
 }
 
 

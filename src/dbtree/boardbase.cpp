@@ -60,14 +60,14 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_live_sec( 0 )
     , m_last_access_time( 0 )
     , m_number_max_res( 0 )
-    , m_iconv( NULL )
-    , m_rawdata( NULL )
-    , m_rawdata_left( NULL )
+    , m_iconv( nullptr )
+    , m_rawdata( nullptr )
+    , m_rawdata_left( nullptr )
     , m_read_info( 0 )
     , m_append_articles( false )
-    , m_get_article( NULL )
+    , m_get_article( nullptr )
     , m_cancel_remove_abone_thread( false )
-    , m_article_null( 0 )
+    , m_article_null( nullptr )
 {
     clear();
     clear_load_data();
@@ -341,10 +341,10 @@ void BoardBase::set_list_cookies_for_write( const std::list< std::string >& list
 void BoardBase::clear()
 {
     if( m_rawdata ) free( m_rawdata );
-    m_rawdata = NULL;
+    m_rawdata = nullptr;
 
     if( m_rawdata_left ) free( m_rawdata_left );
-    m_rawdata_left = NULL;
+    m_rawdata_left = nullptr;
 
     m_lng_rawdata = 0;
     m_lng_rawdata_left = 0;
@@ -352,7 +352,7 @@ void BoardBase::clear()
     m_get_article_url = std::string();
 
     if( m_iconv ) delete m_iconv;
-    m_iconv = NULL;
+    m_iconv = nullptr;
 
     m_list_artinfo.clear();
 }
@@ -876,7 +876,7 @@ std::string BoardBase::url_subbbscgibase()
 //
 // article のID を渡してハッシュから article のポインタを検索して返すだけ
 //
-// 無ければNULLクラスを返す
+// 無ければNullクラスを返す
 //
 ArticleBase* BoardBase::get_article( const std::string& datbase, const std::string& id )
 {
@@ -1177,7 +1177,7 @@ void BoardBase::receive_finish()
 
                     const std::string msg = "「" + get_name() + "」は\n\n" + new_url + " に移転しました。\n\nデータベースを更新しますか？";
 
-                    SKELETON::MsgCheckDiag mdiag( NULL,
+                    SKELETON::MsgCheckDiag mdiag( nullptr,
                                                   msg,
                                                   "今後表示しない(常に更新)(_D)",
                                                   Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
@@ -1199,7 +1199,7 @@ void BoardBase::receive_finish()
             }
         }
         else{
-            SKELETON::MsgDiag mdiag( NULL, "移転しました\n\n板一覧を更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            SKELETON::MsgDiag mdiag( nullptr, "移転しました\n\n板一覧を更新しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             if( mdiag.run() == Gtk::RESPONSE_YES ) CORE::core_set_command( "reload_bbsmenu" );
         }
@@ -1357,7 +1357,7 @@ void BoardBase::receive_finish()
         // オンライン、かつcodeが200か304なら最終アクセス時刻を更新
         if( m_is_online && ( get_code() == HTTP_OK || get_code() == HTTP_NOT_MODIFIED ) ){
 
-            m_last_access_time = time( NULL );
+            m_last_access_time = time( nullptr );
 
 #ifdef _DEBUG
             std::cout << "access time " << m_last_access_time << std::endl;
@@ -1367,7 +1367,7 @@ void BoardBase::receive_finish()
         // オンライン、かつcodeが200なら情報を更新・保存して subject.txt をキャッシュに保存
         if( m_is_online && get_code() == HTTP_OK ){
 
-            m_last_access_time = time( NULL );
+            m_last_access_time = time( nullptr );
 
 #ifdef _DEBUG
             std::cout << "save info and subject.txt\n";
@@ -1629,7 +1629,7 @@ void BoardBase::remove_old_abone_thread()
 
     if( CONFIG::get_remove_old_abone_thread() == 0 ){
 
-        SKELETON::MsgCheckDiag mdiag( NULL,
+        SKELETON::MsgCheckDiag mdiag( nullptr,
                                       "NGスレタイトルに登録したスレがdat落ちしました。\n\nNGスレタイトルから除外しますか？\n後で板のプロパティから削除する事も可能です。",
                                       "今後表示しない(_D)",
                                       Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
@@ -1943,7 +1943,7 @@ std::string BoardBase::import_dat( const std::string& filename )
 {
     if( empty() ) return std::string();
     if( CACHE::file_exists( filename ) != CACHE::EXIST_FILE ){
-        SKELETON::MsgDiag mdiag( NULL, "datファイルが存在しません" );
+        SKELETON::MsgDiag mdiag( nullptr, "datファイルが存在しません" );
         mdiag.run();
         return std::string();
     }
@@ -1951,7 +1951,7 @@ std::string BoardBase::import_dat( const std::string& filename )
     const std::string dir = MISC::get_dir( filename );
     const std::string id = MISC::get_filename( filename );
     if( id.empty() || ! is_valid( id ) ){
-        SKELETON::MsgDiag mdiag( NULL, "ファイル名が正しくありません" );
+        SKELETON::MsgDiag mdiag( nullptr, "ファイル名が正しくありません" );
         mdiag.run();
         return std::string();
     }
@@ -1973,7 +1973,7 @@ std::string BoardBase::import_dat( const std::string& filename )
             art->read_info();
         }
         else{
-            SKELETON::MsgDiag mdiag( NULL, "datファイルのコピーに失敗しました" );
+            SKELETON::MsgDiag mdiag( nullptr, "datファイルのコピーに失敗しました" );
             mdiag.run();
             return std::string();
         }

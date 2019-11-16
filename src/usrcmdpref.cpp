@@ -248,7 +248,7 @@ bool UsrCmdPref::slot_key_release( GdkEventKey* event )
 // ポップアップメニュー表示
 void UsrCmdPref::show_popupmenu()
 {
-    Gtk::Menu* menu = NULL;
+    Gtk::Menu* menu = nullptr;
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
     if( list_it.size() <= 1 ) menu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
     else menu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu_mul" ) );
@@ -290,7 +290,7 @@ void UsrCmdPref::slot_newcmd()
         CORE::DATA_INFO_LIST list_info;
         CORE::DATA_INFO info;
         info.type = TYPE_USRCMD;
-        info.parent = NULL;
+        info.parent = nullptr;
         info.url = std::string();
         info.name = diag.get_name();
         info.data = diag.get_cmd();
@@ -322,7 +322,7 @@ void UsrCmdPref::slot_newsepa()
     CORE::DATA_INFO_LIST list_info;
     CORE::DATA_INFO info;
     info.type = TYPE_SEPARATOR;
-    info.parent = NULL;
+    info.parent = nullptr;
     info.url = std::string();
     info.name = "--- 区切り ---";
     info.data = std::string();
@@ -345,7 +345,7 @@ void UsrCmdPref::slot_newsepa()
 //
 void UsrCmdPref::delete_row()
 {
-    SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    SKELETON::MsgDiag mdiag( nullptr, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
     slot_delete();

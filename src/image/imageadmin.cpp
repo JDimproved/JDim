@@ -24,7 +24,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 
-IMAGE::ImageAdmin *instance_imageadmin = NULL;
+IMAGE::ImageAdmin *instance_imageadmin = nullptr;
 
 IMAGE::ImageAdmin* IMAGE::get_admin()
 {
@@ -37,7 +37,7 @@ IMAGE::ImageAdmin* IMAGE::get_admin()
 void IMAGE::delete_admin()
 {
     if( instance_imageadmin ) delete instance_imageadmin;
-    instance_imageadmin = NULL;
+    instance_imageadmin = nullptr;
 }
 
 
@@ -891,7 +891,7 @@ SKELETON::View* ImageAdmin::get_icon( const std::string& url, int& pos )
     }
 
     pos = -1;
-    return NULL;
+    return nullptr;
 }
 
 // 簡易版
@@ -921,7 +921,7 @@ SKELETON::View* ImageAdmin::get_nth_icon( const unsigned int n )
 SKELETON::View* ImageAdmin::get_current_icon()
 {
     SKELETON::View* view = get_current_view();
-    if( !view ) return NULL;
+    if( !view ) return nullptr;
     return get_icon( view->get_url() );
 }
 
@@ -941,7 +941,7 @@ SKELETON::View* ImageAdmin::get_view( const std::string& url )
         if( ( *it_view )->get_url() == url ) return ( *it_view );
     }
 
-    return NULL;
+    return nullptr;
 }
 
 

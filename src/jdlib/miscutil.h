@@ -152,7 +152,7 @@ namespace MISC
     // URL中のスキームを判別する
     // 戻り値 : スキームタイプ
     // length    : "http://"等の文字数
-    int is_url_scheme( const char* str_in, int* length = NULL );
+    int is_url_scheme( const char* str_in, int* length = nullptr );
     int is_url_scheme_impl( const char* str_in, int* length );
 
     // URLとして扱う文字かどうか判別する

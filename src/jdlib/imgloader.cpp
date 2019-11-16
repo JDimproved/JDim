@@ -125,7 +125,7 @@ bool ImgLoader::load_imgfile( const int loadlevel )
 #endif
 
     bool ret = true;
-    FILE* f = NULL;
+    FILE* f = nullptr;
     const size_t bufsize = 8192;
     size_t readsize = 0;
     guint8 data[ bufsize ];

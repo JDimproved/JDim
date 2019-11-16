@@ -336,7 +336,7 @@ void FontColorPref::slot_checkbutton_font_toggled()
 {
     if( m_checkbutton_font.property_active() )
     {
-        SKELETON::MsgDiag mdiag( NULL, WARNING_STRICTCHAR );
+        SKELETON::MsgDiag mdiag( nullptr, WARNING_STRICTCHAR );
         mdiag.run();
     }
 }
@@ -346,7 +346,7 @@ void FontColorPref::slot_chk_use_gtkrc_toggled()
 #if !GTKMM_CHECK_VERSION(3,0,0)
     if( m_chk_use_gtkrc_tree.property_active() )
     {
-        SKELETON::MsgDiag mdiag( NULL, WARNING_GTKRC_TREE );
+        SKELETON::MsgDiag mdiag( nullptr, WARNING_GTKRC_TREE );
         mdiag.run();
     }
 #endif
@@ -534,7 +534,7 @@ void FontColorPref::slot_reset_all_colors()
 #if !GTKMM_CHECK_VERSION(3,0,0)
     if( m_chk_use_gtkrc_tree.property_active() )
     {
-        SKELETON::MsgDiag mdiag( NULL, WARNING_GTKRC_TREE );
+        SKELETON::MsgDiag mdiag( nullptr, WARNING_GTKRC_TREE );
         mdiag.run();
     }
 #endif

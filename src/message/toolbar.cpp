@@ -24,7 +24,7 @@ using namespace MESSAGE;
 MessageToolBarBase::MessageToolBarBase() :
     SKELETON::ToolBar( MESSAGE::get_admin() ),
     m_enable_slot( true ),
-    m_button_preview( NULL )
+    m_button_preview( nullptr )
 {}
 
 
@@ -74,11 +74,11 @@ void MessageToolBarBase::set_active_previewbutton( const bool active )
 
 MessageToolBar::MessageToolBar() :
     MessageToolBarBase(),
-    m_button_insert_draft( NULL ),
-    m_button_undo( NULL ),
+    m_button_insert_draft( nullptr ),
+    m_button_undo( nullptr ),
     m_show_entry_new_subject( false ),
-    m_tool_new_subject( NULL ),
-    m_entry_new_subject( NULL )
+    m_tool_new_subject( nullptr ),
+    m_entry_new_subject( nullptr )
 {
     pack_buttons();
 }

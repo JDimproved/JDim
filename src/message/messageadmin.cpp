@@ -21,7 +21,7 @@
 #include "global.h"
 #include "session.h"
 
-MESSAGE::MessageAdmin* instance_messageadmin = NULL;
+MESSAGE::MessageAdmin* instance_messageadmin = nullptr;
 
 MESSAGE::MessageAdmin* MESSAGE::get_admin()
 {
@@ -33,14 +33,14 @@ MESSAGE::MessageAdmin* MESSAGE::get_admin()
 void MESSAGE::delete_admin()
 {
     if( instance_messageadmin ) delete instance_messageadmin;
-    instance_messageadmin = NULL;
+    instance_messageadmin = nullptr;
 }
 
 using namespace MESSAGE;
 
 
 MessageAdmin::MessageAdmin( const std::string& url )
-    : SKELETON::Admin( url ), m_toolbar( NULL ), m_toolbar_preview( NULL ), m_text_message( NULL )
+    : SKELETON::Admin( url ), m_toolbar( nullptr ), m_toolbar_preview( nullptr ), m_text_message( nullptr )
 {
     get_notebook()->set_show_tabs( false );
 }

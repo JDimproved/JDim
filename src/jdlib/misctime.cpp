@@ -97,7 +97,7 @@ time_t MISC::datetotime( const std::string& date )
 #else // _WIN32
     // (注意) LC_TIMEが"C"でないと環境によってはstrptime()が失敗する
     std::string lcl;
-    char *lcl_tmp = setlocale( LC_TIME, NULL );
+    char *lcl_tmp = setlocale( LC_TIME, nullptr );
     if( lcl_tmp ) lcl = lcl_tmp;
 #ifdef _DEBUG
     std::cout << "locale = " << lcl << std::endl;
@@ -106,7 +106,7 @@ time_t MISC::datetotime( const std::string& date )
     char *ret = strptime( date.c_str(), "%a, %d %b %Y %T %Z", &tm_out );
     if( ! lcl.empty() ) setlocale( LC_TIME, lcl.c_str() ); 
 
-    if( ret == NULL ) return 0;
+    if( ret == nullptr ) return 0;
 
 #ifdef USE_MKTIME
     time_t t_ret = mktime( &tm_out );
@@ -163,7 +163,7 @@ std::string MISC::timettostr( const time_t time_from, const int mode )
     }
     else if( mode == MISC::TIME_PASSED ){
 
-        const time_t tmp_t = time( NULL ) - time_from;
+        const time_t tmp_t = time( nullptr ) - time_from;
 
         if( tmp_t < 0 ) snprintf( str_ret, lng, "未来" );
         else if( tmp_t < 60 ) snprintf( str_ret, lng, "%d 秒前", (int) tmp_t );
@@ -219,7 +219,7 @@ void MISC::start_measurement( const int id )
         tv_measurement.push_back( tv );
     }
 
-    gettimeofday( &tv_measurement[ id ], NULL );
+    gettimeofday( &tv_measurement[ id ], nullptr );
 }
 
 int MISC::measurement( const int id )
@@ -227,7 +227,7 @@ int MISC::measurement( const int id )
     if( id >= (int)tv_measurement.size() ) return 0;
 
     struct timeval tv;
-    gettimeofday( &tv, NULL );
+    gettimeofday( &tv, nullptr );
 
     int ret = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( tv_measurement[ id ].tv_sec * 1000000 + tv_measurement[ id ].tv_usec );
     tv_measurement[ id ] = tv;

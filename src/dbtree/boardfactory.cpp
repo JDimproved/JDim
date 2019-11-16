@@ -24,6 +24,6 @@ DBTREE::BoardBase* DBTREE::BoardFactory( int type, const std::string& root, cons
 
         case TYPE_BOARD_MACHI:return  new DBTREE::BoardMachi( root, path_board, name );
 
-        default: return NULL;
+        default: return nullptr;
     }
 }

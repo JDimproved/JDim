@@ -37,8 +37,8 @@ using namespace DBTREE;
 Board2chCompati::Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name,
     const std::string& basicauth)
     : BoardBase( root, path_board, name ),
-      m_settingloader( NULL ),
-      m_ruleloader( NULL )
+      m_settingloader( nullptr ),
+      m_ruleloader( nullptr )
 {
     set_path_dat( "/dat" );
     set_path_readcgi( "/test/read.cgi" );
@@ -59,13 +59,13 @@ Board2chCompati::~Board2chCompati()
         m_settingloader->terminate_load();
         delete m_settingloader;
     }
-    m_settingloader = NULL;
+    m_settingloader = nullptr;
 
     if( m_ruleloader ){
         m_ruleloader->terminate_load();
         delete m_ruleloader;
     }
-    m_ruleloader = NULL;
+    m_ruleloader = nullptr;
 }
 
 

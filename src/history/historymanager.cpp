@@ -20,7 +20,7 @@
 #include "global.h"
 
 
-HISTORY::History_Manager* instance_history_manager = NULL;
+HISTORY::History_Manager* instance_history_manager = nullptr;
 
 
 HISTORY::History_Manager* HISTORY::get_history_manager()
@@ -35,7 +35,7 @@ HISTORY::History_Manager* HISTORY::get_history_manager()
 void HISTORY::delete_history_manager()
 {
     if( instance_history_manager ) delete instance_history_manager;
-    instance_history_manager = NULL;
+    instance_history_manager = nullptr;
 }
 
 
@@ -68,12 +68,12 @@ using namespace HISTORY;
 
 
 History_Manager::History_Manager()
-    : m_menu_thread( NULL ),
-      m_menu_board( NULL ),
-      m_menu_close( NULL ),
-      m_menu_closeboard( NULL ),
-      m_menu_closeimg( NULL ),
-      m_last_viewhistory( NULL )
+    : m_menu_thread( nullptr ),
+      m_menu_board( nullptr ),
+      m_menu_close( nullptr ),
+      m_menu_closeboard( nullptr ),
+      m_menu_closeimg( nullptr ),
+      m_last_viewhistory( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "History_Manager::History_Manager\n";
@@ -379,7 +379,7 @@ void History_Manager::viewhistory2xml()
 //
 ViewHistory* History_Manager::get_viewhistory( const std::string& url )
 {
-    if( url.empty() ) return NULL;
+    if( url.empty() ) return nullptr;
 
     // キャッシュ
     if( m_last_viewhistory && m_last_viewhistory->get_current_url() == url ) return m_last_viewhistory;
@@ -406,7 +406,7 @@ ViewHistory* History_Manager::get_viewhistory( const std::string& url )
     std::cout << "not found\n";
 #endif
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -449,7 +449,7 @@ void History_Manager::delete_viewhistory( const std::string& url )
 
                 m_view_histories.erase( it );
                 delete history;
-                m_last_viewhistory = NULL;
+                m_last_viewhistory = nullptr;
 
                 break;
             }
@@ -594,7 +594,7 @@ const ViewHistoryItem* History_Manager::back_viewhistory( const std::string& url
 #endif
 
     ViewHistory* history = get_viewhistory( url );
-    if( ! history ) return NULL;
+    if( ! history ) return nullptr;
 
     return history->back( count, exec );
 }
@@ -614,7 +614,7 @@ const ViewHistoryItem* History_Manager::forward_viewhistory( const std::string& 
 #endif
 
     ViewHistory* history = get_viewhistory( url );
-    if( ! history ) return NULL;
+    if( ! history ) return nullptr;
 
     return history->forward( count, exec );
 }

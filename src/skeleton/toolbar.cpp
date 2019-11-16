@@ -46,37 +46,37 @@ ToolBar::ToolBar( Admin* admin )
       m_buttonbar_shown( false ),
       m_buttonbar_packed( false ),
 
-      m_tool_label( NULL ),
-      m_ebox_label( NULL ),
-      m_label( NULL ),
+      m_tool_label( nullptr ),
+      m_ebox_label( nullptr ),
+      m_label( nullptr ),
 
-      m_searchbar( NULL ),
+      m_searchbar( nullptr ),
       m_searchbar_shown( false ),
       m_searchbar_packed( false ),
-      m_button_open_searchbar( NULL ),
-      m_button_close_searchbar( NULL ),
-      m_button_up_search( NULL ),
-      m_button_down_search( NULL ),
-      m_button_clear_highlight( NULL ),
+      m_button_open_searchbar( nullptr ),
+      m_button_close_searchbar( nullptr ),
+      m_button_up_search( nullptr ),
+      m_button_down_search( nullptr ),
+      m_button_clear_highlight( nullptr ),
 
-      m_tool_search( NULL ),
-      m_entry_search( NULL ),
+      m_tool_search( nullptr ),
+      m_entry_search( nullptr ),
 
-      m_label_board( NULL ),
-      m_button_board( NULL ),
+      m_label_board( nullptr ),
+      m_button_board( nullptr ),
 
-      m_button_write( NULL ),
-      m_button_reload( NULL ),
-      m_button_stop( NULL ),
-      m_button_close( NULL ),
-      m_button_delete( NULL ),
-      m_button_favorite( NULL ),
-      m_button_undo( NULL ),
-      m_button_redo( NULL ),
-      m_button_lock( NULL ),
+      m_button_write( nullptr ),
+      m_button_reload( nullptr ),
+      m_button_stop( nullptr ),
+      m_button_close( nullptr ),
+      m_button_delete( nullptr ),
+      m_button_favorite( nullptr ),
+      m_button_undo( nullptr ),
+      m_button_redo( nullptr ),
+      m_button_lock( nullptr ),
 
-      m_button_back( NULL ),
-      m_button_forward( NULL )
+      m_button_back( nullptr ),
+      m_button_forward( nullptr )
 {
     m_buttonbar.set_border_width( 0 );
 #if GTKMM_CHECK_VERSION(2,12,0)
@@ -256,7 +256,7 @@ void ToolBar::set_relief()
         std::vector< Gtk::Widget* >::iterator it = lists.begin();
         for( ; it != lists.end(); ++it ){
 
-            Gtk::Button* button = NULL;
+            Gtk::Button* button = nullptr;
             Gtk::ToolButton* toolbutton = dynamic_cast< Gtk::ToolButton* >( *it );
             if( toolbutton ) button = dynamic_cast< Gtk::Button* >( toolbutton->get_child() );
             if( ! button ){
@@ -702,7 +702,7 @@ void ToolBar::slot_menu_board( int i )
 {
     if( ! m_enable_slot ) return;
 
-    SKELETON::PrefDiag* pref = NULL;
+    SKELETON::PrefDiag* pref = nullptr;
 
     // ToolBar::get_button_board()で作成したメニューの順番に内容を合わせる
     if( i == 0 ) slot_open_board();

@@ -100,24 +100,24 @@ struct LAYOUT_TABLE
 
 DrawAreaBase::DrawAreaBase( const std::string& url )
     : m_url( url )
-    , m_vscrbar( 0 )
-    , m_layout_tree( 0 )
+    , m_vscrbar( nullptr )
+    , m_layout_tree( nullptr )
     , m_seen_current( 0 )
-    , m_window( 0 )
+    , m_window( nullptr )
 #if GTKMM_CHECK_VERSION(3,0,0)
     , m_cr( nullptr, cairo_destroy )
     , m_backscreen( nullptr, cairo_surface_destroy )
 #else
-    , m_gc( 0 )
-    , m_backscreen( NULL )
+    , m_gc( nullptr )
+    , m_backscreen( nullptr )
 #endif
-    , m_pango_layout( 0 )
+    , m_pango_layout( nullptr )
     , m_draw_frame( false )
 #if GTKMM_CHECK_VERSION(3,0,0)
     , m_back_frame_top( nullptr, cairo_surface_destroy )
     , m_back_frame_bottom( nullptr, cairo_surface_destroy )
 #else
-    , m_back_frame( NULL )
+    , m_back_frame( nullptr )
 #endif
     , m_ready_back_frame( false )
     , m_aafont_initialized( false )
@@ -131,7 +131,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 #if GTKMM_CHECK_VERSION(3,0,0)
     , m_back_marker( nullptr, cairo_surface_destroy )
 #else
-    , m_back_marker( NULL )
+    , m_back_marker( nullptr )
 #endif
     , m_ready_back_marker( false )
     , m_wait_scroll( 0 )
@@ -166,7 +166,7 @@ DrawAreaBase::~DrawAreaBase()
     cancel_deceleration();
 #endif
     if( m_layout_tree ) delete m_layout_tree;
-    m_layout_tree = NULL;
+    m_layout_tree = nullptr;
     clear();
 }
 
@@ -181,7 +181,7 @@ DrawAreaBase::~DrawAreaBase()
 void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const bool show_multispace )
 {
     if( m_layout_tree ) delete m_layout_tree;
-    m_layout_tree = NULL;
+    m_layout_tree = nullptr;
     clear();
 
     m_article = DBTREE::get_article( m_url );
@@ -273,7 +273,7 @@ void DrawAreaBase::clear()
 
     m_selection.select = false;
     m_multi_selection.clear();
-    m_layout_current = NULL;
+    m_layout_current = nullptr;
     m_width_client = 0;
     m_height_client = 0;
     m_clicked = false;
@@ -987,7 +987,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
         x += header->css->padding_left;
         y += header->css->padding_top;
 
-        LAYOUT* current_div = NULL;
+        LAYOUT* current_div = nullptr;
         int br_size = m_font->br_size; // 現在行の改行サイズ
 
         // 先頭の子ノードから順にレイアウトしていく
@@ -1253,7 +1253,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 void DrawAreaBase::adjust_layout_baseline( LAYOUT* header )
 {
     int top_y = -1, max_height = 0;
-    LAYOUT* line_layout = NULL;
+    LAYOUT* line_layout = nullptr;
     bool line_onsssp = false;
 
     LAYOUT* layout = header->next_layout;
@@ -1363,10 +1363,10 @@ void DrawAreaBase::set_align( LAYOUT* div, int id_end, int align )
 //    std::cout << "DrawAreaBase::set_align width = " << div->rect->width << std::endl;
 #endif
 
-    LAYOUT* layout_from = NULL;
-    LAYOUT* layout_to = NULL;
-    RECTANGLE* rect_from = NULL;
-    RECTANGLE* rect_to = NULL;
+    LAYOUT* layout_from = nullptr;
+    LAYOUT* layout_to = nullptr;
+    RECTANGLE* rect_from = nullptr;
+    RECTANGLE* rect_to = nullptr;
 
     LAYOUT* layout = div->next_layout;
     int width_line = 0;
@@ -1393,7 +1393,7 @@ void DrawAreaBase::set_align( LAYOUT* div, int id_end, int align )
 
             // wrap
             set_align_line( div, layout_from, layout_to, rect_from, rect_to, width_line, align );
-            layout_from = NULL;
+            layout_from = nullptr;
 
             rect = rect->next_rect;
         }
@@ -1401,7 +1401,7 @@ void DrawAreaBase::set_align( LAYOUT* div, int id_end, int align )
         // 改行
         if( layout_from && ( ! layout->next_layout || layout->type == DBTREE::NODE_BR || layout->id == id_end -1 ) ){
             set_align_line( div, layout_from, layout_to, rect_from, rect_to, width_line, align );
-            layout_from = NULL;
+            layout_from = nullptr;
         }
 
         layout = layout->next_layout;
@@ -2003,7 +2003,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     gettimeofday( &tv_before, &tz );
 
     // 2分探索で画面に表示されているノードの先頭を探す
-    LAYOUT* header = NULL;
+    LAYOUT* header = nullptr;
     int top = 1;
     int back = max_res_number;
     while( top <= back ){
@@ -2032,7 +2032,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
         if( header->rect->y > pos_y ) back = pivot -1;
         else top = pivot + 1;
 
-        header = NULL;
+        header = nullptr;
     }
     if( ! header ){
 #ifdef _DEBUG
@@ -2892,7 +2892,7 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
 
         delete layout->eimg;
         m_eimgs.remove( layout->eimg );
-        layout->eimg = NULL;
+        layout->eimg = nullptr;
 
         relayout = true;
     }
@@ -3009,7 +3009,7 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
 void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
                                 const int color, const int color_back, const int byte_from, const int byte_to )
 {
-    assert( node->text != NULL );
+    assert( node->text != nullptr );
     assert( m_layout_tree );
 
     if( ! node->lng_text ) return;
@@ -3847,7 +3847,7 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
 
     std::vector< LAYOUT_TABLE > layout_table;
     const char *target;
-    char *buffer = NULL;
+    char *buffer = nullptr;
     size_t buffer_lng = 0;
 
     // 先頭ノードから順にサーチして m_multi_selection に選択箇所をセットしていく
@@ -4169,11 +4169,11 @@ bool DrawAreaBase::is_pointer_on_rect( const RECTANGLE* rect, const char* text, 
 //
 // CARET_POSITION& caret_pos : キャレットの位置が計算されて入る
 //
-// 戻り値: 座標(x,y)の下のレイアウトノード。ノード外にある場合はNULL
+// 戻り値: 座標(x,y)の下のレイアウトノード。ノード外にある場合はnullptr
 //
 LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 {
-    if( ! m_layout_tree ) return NULL;
+    if( ! m_layout_tree ) return nullptr;
 
 #ifdef _DEBUG_CARETMOVE
     std::cout << "DrawAreaBase::set_caret x = " << x << " y = " << y << std::endl;
@@ -4181,11 +4181,11 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 
     // 先頭のレイアウトブロックから順に調べる
     LAYOUT* header = m_layout_tree->top_header();
-    if( ! header ) return NULL;
+    if( ! header ) return nullptr;
 
     // まだレイアウト計算していない
-    if( ! header->rect ) return NULL;
-    if( header->next_header && ! header->next_header->rect ) return NULL;
+    if( ! header->rect ) return nullptr;
+    if( header->next_header && ! header->next_header->rect ) return nullptr;
 
     while( header ){
 
@@ -4265,11 +4265,11 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                         // 左端にキャレットをセットして終了
                         caret_pos.set( layout, pos_start, x, tmp_x, tmp_y );
 
-                        return NULL;
+                        return nullptr;
                     }
 
                     // 右のマージンの上にポインタがある場合
-                    else if( layout->next_layout == NULL || layout->next_layout->type == DBTREE::NODE_BR ){
+                    else if( layout->next_layout == nullptr || layout->next_layout->type == DBTREE::NODE_BR ){
 
 #ifdef _DEBUG_CARETMOVE
                         std::cout << "found: right\n";
@@ -4280,7 +4280,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 
                         // 右端にキャレットをセットして終わり
                         caret_pos.set( layout, pos_start + n_byte, x, tmp_x + width, tmp_y );
-                        return NULL;
+                        return nullptr;
                     }
                 }
 
@@ -4346,7 +4346,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                 // 現在のノードの右端にキャレットをセット
                 caret_pos.set( layout, pos_start + n_byte, x, tmp_x + width, tmp_y );
 
-                return NULL;
+                return nullptr;
             }
 
             // 次のノードへ
@@ -4357,7 +4357,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
         header = header->next_header;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -4442,7 +4442,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 if( ! layout->text || ! rect ){
                     layout = layout->next_layout;
                     if( layout && layout->text ) layout_before = layout;
-                    else layout_before = NULL;
+                    else layout_before = nullptr;
                     continue;
                 }
 
@@ -4579,7 +4579,7 @@ bool DrawAreaBase::set_selection( const CARET_POSITION& caret_left, const CARET_
     m_caret_pos_pre = caret_left;
     m_caret_pos = caret_left;
     m_caret_pos_dragstart = caret_left;
-    return set_selection( caret_right, NULL );
+    return set_selection( caret_right, nullptr );
 }
 
 
@@ -4590,11 +4590,11 @@ bool DrawAreaBase::set_selection( const CARET_POSITION& caret_left, const CARET_
 //
 bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos )
 {
-    return set_selection( caret_pos, NULL );
+    return set_selection( caret_pos, nullptr );
 }
 
 
-// rect に再描画範囲を計算して入れる( NULL なら入らない )
+// rect に再描画範囲を計算して入れる( nullptr なら入らない )
 // その後 draw_screen( rect.y, rect.height ) で選択範囲を描画する
 bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANGLE* rect )
 {
@@ -4881,8 +4881,8 @@ void DrawAreaBase::select_all()
 #endif
 
     CARET_POSITION caret_left, caret_right;
-    LAYOUT* layout = NULL;
-    LAYOUT* layout_back = NULL;
+    LAYOUT* layout = nullptr;
+    LAYOUT* layout_back = nullptr;
 
     // 先頭
     LAYOUT* header = m_layout_tree->top_header();
@@ -5070,7 +5070,7 @@ bool DrawAreaBase::slot_draw( const Cairo::RefPtr< Cairo::Context >& cr )
         draw_frame();
     }
     // レイアウトがセットされていない or まだリサイズしていない
-    // ( m_backscreen == NULL )なら画面消去
+    // ( m_backscreen == nullptr )なら画面消去
     else if( !m_layout_tree->top_header() || !m_backscreen ) {
 #ifdef _DEBUG
         std::cout << "clear window\n";
@@ -5142,7 +5142,7 @@ bool DrawAreaBase::slot_expose_event( GdkEventExpose* event )
         draw_frame();
     }
 
-    // レイアウトがセットされていない or まだリサイズしていない( m_backscreen == NULL )なら画面消去
+    // レイアウトがセットされていない or まだリサイズしていない( m_backscreen == nullptr )なら画面消去
     else if( ! m_layout_tree->top_header() || ! m_backscreen ){
 
 #ifdef _DEBUG

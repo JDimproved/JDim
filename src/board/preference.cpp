@@ -54,7 +54,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
       m_button_clearsamba( "秒数クリア" ),
       m_check_oldlog( "過去ログを表示する" ),
       m_button_remove_old_title( "dat落ちしたスレのタイトルを削除する" ),
-      m_localrule( NULL )
+      m_localrule( nullptr )
 {
     m_edit_cookies.set_editable( false );
 
@@ -368,7 +368,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 Preferences::~Preferences()
 {
     if( m_localrule ) delete m_localrule;
-    m_localrule = NULL;
+    m_localrule = nullptr;
 }
 
 
@@ -396,7 +396,7 @@ void Preferences::slot_clear_samba()
 
 void Preferences::slot_clear_post_history()
 {
-    SKELETON::MsgDiag mdiag( NULL, "この板にある全てのスレの書き込み履歴を削除しますか？\n\nスレ数によっては時間がかかります。",
+    SKELETON::MsgDiag mdiag( nullptr, "この板にある全てのスレの書き込み履歴を削除しますか？\n\nスレ数によっては時間がかかります。",
                              false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
@@ -443,7 +443,7 @@ void Preferences::slot_remove_old_title()
 {
 
     if( ! DBTREE::board_list_subject( get_url() ).size() ){
-        SKELETON::MsgDiag mdiag( NULL, "再読み込みしてスレ一覧を更新して下さい。", false, Gtk::MESSAGE_WARNING );
+        SKELETON::MsgDiag mdiag( nullptr, "再読み込みしてスレ一覧を更新して下さい。", false, Gtk::MESSAGE_WARNING );
         mdiag.run();
         return;
     }

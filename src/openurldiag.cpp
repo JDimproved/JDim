@@ -9,7 +9,7 @@
 using namespace CORE;
 
 OpenURLDialog::OpenURLDialog( const std::string& url )
-    : SKELETON::PrefDiag( NULL, url, true, false, true ),
+    : SKELETON::PrefDiag( nullptr, url, true, false, true ),
       m_label_url( true, "URL ：" )
 {
     m_label_url.set_text( url );

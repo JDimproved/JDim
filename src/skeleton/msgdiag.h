@@ -25,7 +25,7 @@ namespace SKELETON
                  Gtk::ButtonsType buttons = Gtk::BUTTONS_OK,
                  bool modal = false);
 
-        // parent がポインタの時は  NULL かどうかで場合分け
+        // parent がポインタの時は  nullptr かどうかで場合分け
         MsgDiag( Gtk::Window* parent,
                  const Glib::ustring& message,
                  bool use_markup = false,

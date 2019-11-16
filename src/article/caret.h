@@ -18,7 +18,7 @@ namespace ARTICLE
         LAYOUT* layout; // キャレットの属するレイアウトノードへのポインタ
         long byte; // 何バイト目の文字の「前」か
 
-        CARET_POSITION() : x( 0 ), y( 0 ), layout( 0 ), byte( 0 ){}
+        CARET_POSITION() : x( 0 ), y( 0 ), layout( nullptr ), byte( 0 ){}
         ~CARET_POSITION(){}
         
         // キャレット座標計算関数

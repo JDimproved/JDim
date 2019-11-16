@@ -13,7 +13,7 @@
 #include "global.h"
 
 // インスタンスは Core でひとつだけ作って、Coreのデストラクタでdeleteする
-DBTREE::Root *instance_dbtree_root = NULL;
+DBTREE::Root *instance_dbtree_root = nullptr;
 
 
 void DBTREE::create_root()
@@ -40,21 +40,21 @@ void DBTREE::delete_root()
 
 DBTREE::Root* DBTREE::get_root()
 {
-    assert( instance_dbtree_root != NULL );
+    assert( instance_dbtree_root != nullptr );
     return instance_dbtree_root;
 }
 
 DBTREE::BoardBase* DBTREE::get_board( const std::string& url )
 {
     DBTREE::BoardBase* board = DBTREE::get_root()->get_board( url );
-    assert( board != NULL );
+    assert( board != nullptr );
     return board;
 }
 
 DBTREE::ArticleBase* DBTREE::get_article( const std::string& url )
 {
     DBTREE::ArticleBase* article = DBTREE::get_board( url )->get_article_fromURL( url );
-    assert( article != NULL );
+    assert( article != nullptr );
     return article;
 }
 

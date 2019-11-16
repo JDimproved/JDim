@@ -50,7 +50,7 @@ void* eimg_launcher( void* dat )
     std::cout << "end" << std::endl;
 #endif
 
-    return 0;
+    return nullptr;
 }
 
 

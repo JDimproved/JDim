@@ -81,7 +81,7 @@ PageNet::PageNet() : Gtk::VBox(),
 //
 void PageNet::slot_setup_proxy()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PROXY, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_PROXY, "" );
     pref->run();
     delete pref;
 }
@@ -92,7 +92,7 @@ void PageNet::slot_setup_proxy()
 //
 void PageNet::slot_setup_browser()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BROWSER, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_BROWSER, "" );
     pref->run();
     delete pref;
 

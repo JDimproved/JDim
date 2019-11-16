@@ -304,7 +304,7 @@ namespace DBTREE
         bool is_cached() const { return m_cached; }
         void set_cached( const bool set ){ m_cached = set; }
 
-        // キャッシュがarticlebaseに読み込まれている(nodetree!=NULL)か
+        // キャッシュがarticlebaseに読み込まれている(nodetree!=nullptr)か
         bool is_cache_read() const { return ( m_nodetree ); }
 
         // キャッシュがあって、かつ新着の読み込みが可能
@@ -411,7 +411,7 @@ namespace DBTREE
         // もしNodeTreeが作られていなかったら作成
         JDLIB::ConstPtr< NodeTreeBase >& get_nodetree();
 
-        virtual NodeTreeBase* create_nodetree(){ return NULL; }
+        virtual NodeTreeBase* create_nodetree(){ return nullptr; }
 
         void reset_status();
 

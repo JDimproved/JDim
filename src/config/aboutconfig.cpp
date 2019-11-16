@@ -89,7 +89,7 @@ void AboutConfig::pack_widgets()
 //
 void AboutConfig::slot_ok_clicked()
 {
-    SKELETON::MsgDiag mdiag( NULL, "一部の設定はJDimを再起動しない限り有効になりません。JDimを再起動してください。" );
+    SKELETON::MsgDiag mdiag( nullptr, "一部の設定はJDimを再起動しない限り有効になりません。JDimを再起動してください。" );
     mdiag.run();
 }
 
@@ -398,7 +398,7 @@ void AboutConfig::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tre
     const int type = row[ m_columns.m_col_type ];
     if( type == CONFTYPE_COMMENT ) return;
 
-    SKELETON::PrefDiag* pref = NULL;
+    SKELETON::PrefDiag* pref = nullptr;
 
     switch( type ){
 

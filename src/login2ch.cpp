@@ -23,7 +23,7 @@ enum
     SIZE_OF_RAWDATA = 64 * 1024
 };
 
-CORE::Login2ch* instance_login2ch = NULL;
+CORE::Login2ch* instance_login2ch = nullptr;
 
 CORE::Login2ch* CORE::get_login2ch()
 {
@@ -40,7 +40,7 @@ void CORE::delete_login2ch()
         instance_login2ch->terminate_load();
         delete instance_login2ch;
     }
-    instance_login2ch = NULL;
+    instance_login2ch = nullptr;
 }
 
 
@@ -49,7 +49,7 @@ using namespace CORE;
 
 Login2ch::Login2ch()
     : SKELETON::Login( URL_LOGIN2CH )
-    , m_rawdata( 0 ), m_lng_rawdata( 0 )
+    , m_rawdata( nullptr ), m_lng_rawdata( 0 )
 {
 #ifdef _DEBUG
     std::cout << "Login2ch::Login2ch\n";
@@ -196,21 +196,21 @@ void Login2ch::receive_finish()
 
     // エラー表示
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( nullptr, "オフラインです" );
         mdiag.run();
     }
     else if( get_username().empty() || get_passwd().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "IDまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
+        SKELETON::MsgDiag mdiag( nullptr, "IDまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
         mdiag.run();
     }
     else if( CONFIG::get_url_login2ch().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "2chの認証サーバのURLが指定されていません。" );
+        SKELETON::MsgDiag mdiag( nullptr, "2chの認証サーバのURLが指定されていません。" );
         mdiag.run();
     }
     else if( show_err ){
         std::string str_err = "ログインに失敗しました。\n";
         str_err += get_str_code();
-        SKELETON::MsgDiag mdiag( NULL, str_err );
+        SKELETON::MsgDiag mdiag( nullptr, str_err );
         mdiag.run();  
     }
 

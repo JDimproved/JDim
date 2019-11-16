@@ -29,8 +29,8 @@ using namespace DBTREE;
 
 NodeTreeJBBS::NodeTreeJBBS( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
-    , m_iconv( NULL )
-    , m_decoded_lines( NULL )
+    , m_iconv( nullptr )
+    , m_decoded_lines( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeJBBS::NodeTreeJBBS url = " << get_url() << " modified = " << date_modified << std::endl;
@@ -60,10 +60,10 @@ void NodeTreeJBBS::clear()
 
     // iconv 削除
     if( m_iconv ) delete m_iconv;
-    m_iconv = NULL;
+    m_iconv = nullptr;
 
     if( m_decoded_lines ) free( m_decoded_lines );
-    m_decoded_lines = NULL;
+    m_decoded_lines = nullptr;
 }
 
 
@@ -129,8 +129,8 @@ enum
 
 const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
 {
-    assert( m_iconv != NULL );
-    assert( m_decoded_lines != NULL );
+    assert( m_iconv != nullptr );
+    assert( m_decoded_lines != nullptr );
 
     int byte_lines;
     const char* lines = m_iconv->convert( rawlines, strlen( rawlines ), byte_lines );

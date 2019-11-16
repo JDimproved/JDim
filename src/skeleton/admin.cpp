@@ -52,11 +52,11 @@ using namespace SKELETON;
 
 Admin::Admin( const std::string& url )
     : m_url( url ),
-      m_win( NULL ),
-      m_notebook( NULL ),
+      m_win( nullptr ),
+      m_notebook( nullptr ),
       m_focus( false ),
-      m_move_menu( NULL ),
-      m_tabswitchmenu( NULL ),
+      m_move_menu( nullptr ),
+      m_tabswitchmenu( nullptr ),
       m_use_viewhistory( false ),
       m_use_switchhistory( false )
 {
@@ -290,7 +290,7 @@ void Admin::delete_jdwin()
 {
     if( m_win ){
         delete m_win;
-        m_win = NULL;
+        m_win = nullptr;
     }
 }
 
@@ -549,7 +549,7 @@ void Admin::exec_command()
                 // 現在開いているタブへの switch 処理
                 const bool focus_tmp = m_focus;
                 m_focus = true;
-                slot_switch_page( NULL,  m_notebook->get_current_page() );
+                slot_switch_page( nullptr,  m_notebook->get_current_page() );
                 m_focus = focus_tmp;
             }
         }
@@ -1336,7 +1336,7 @@ void Admin::tab_num( const std::string& str_num )
 {
     if( str_num.empty() ) return;
 
-    const int num = strtol( str_num.c_str(), NULL, 10 );
+    const int num = strtol( str_num.c_str(), nullptr, 10 );
 
     // Firefoxの動作に合わせた
     // 0 → 無視
@@ -1957,7 +1957,7 @@ View* Admin::get_view( const std::string& url )
         }
     }
     
-    return NULL;
+    return nullptr;
 }
 
 
@@ -2014,7 +2014,7 @@ std::list< View* > Admin::get_list_view()
 View* Admin::get_current_view()
 {
     int page = m_notebook->get_current_page();
-    if( page == -1 ) return NULL;
+    if( page == -1 ) return nullptr;
     SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
 
     return view;

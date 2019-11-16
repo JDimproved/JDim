@@ -1189,12 +1189,12 @@ void SESSION::set_col_diff( const int width ){ board_col_diff = width; }
 // 現在開いているarticle の ARTICLE::DrawAreaBase
 ARTICLE::DrawAreaBase* SESSION::get_base_drawarea()
 {
-    ARTICLE::ArticleViewBase* base_view = NULL;
+    ARTICLE::ArticleViewBase* base_view = nullptr;
     base_view = dynamic_cast< ARTICLE::ArticleViewBase* >( ARTICLE::get_admin()->get_current_view() );
 
-    if( base_view == NULL ) return NULL;
+    if( base_view == nullptr ) return nullptr;
 
-    ARTICLE::DrawAreaBase* base_drawarea = NULL;
+    ARTICLE::DrawAreaBase* base_drawarea = nullptr;
     base_drawarea = base_view->drawarea();
 
     return base_drawarea;

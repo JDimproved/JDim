@@ -324,7 +324,7 @@ void LinkFilterPref::slot_delete()
     Gtk::TreeModel::iterator row = get_selected_row();
     if( ! row ) return;
 
-    SKELETON::MsgDiag mdiag( NULL, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    SKELETON::MsgDiag mdiag( nullptr, "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
     Gtk::TreePath path_next( row );

@@ -22,7 +22,7 @@ namespace ARTICLE
       protected:
 
         // ポップアップメニューは表示しない
-        Gtk::Menu* get_popupmenu( const std::string& url ) override { return NULL; }
+        Gtk::Menu* get_popupmenu( const std::string& url ) override { return nullptr; }
 
       private:
 

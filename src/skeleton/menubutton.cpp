@@ -21,14 +21,14 @@ enum
 
 
 MenuButton::MenuButton( const bool show_arrow, Gtk::Widget& label )
-    : m_label( NULL ), m_arrow( NULL )
+    : m_label( nullptr ), m_arrow( nullptr )
 {
     setup( show_arrow, &label );
 }
 
 
 MenuButton::MenuButton( const bool show_arrow, const int id )
-    : m_label( NULL ), m_arrow( NULL )
+    : m_label( nullptr ), m_arrow( nullptr )
 {
     setup( show_arrow, Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) ), Gtk::PACK_SHRINK );
 }
@@ -39,7 +39,7 @@ void MenuButton::setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOpti
     const int space = 4;
 
     m_label = label;
-    m_popupmenu =  NULL;
+    m_popupmenu =  nullptr;
     m_on_arrow = false;
     m_enable_sig_clicked = true;
 
@@ -106,7 +106,7 @@ void MenuButton::append_menu( std::vector< std::string >& items )
         for( int i = 0; i < menusize; ++i ) m_popupmenu->remove( *m_menuitems[ i ] );
         delete m_popupmenu;
     }
-    m_popupmenu = NULL;
+    m_popupmenu = nullptr;
 
     if( ! items.size() ) return;
 
@@ -115,7 +115,7 @@ void MenuButton::append_menu( std::vector< std::string >& items )
     const size_t size = MIN( items.size(), MAX_MENU_SIZE );
     for( size_t i = 0 ; i < size; ++i ){
 
-        Gtk::MenuItem* item = NULL;
+        Gtk::MenuItem* item = nullptr;
 
         if( items[ i ] == "separator" ){
             item = Gtk::manage( new Gtk::SeparatorMenuItem() );

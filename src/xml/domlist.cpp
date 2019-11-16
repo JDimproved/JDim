@@ -20,7 +20,7 @@ DomList& DomList::operator =( const std::list< Dom* >& list )
 // 添字によるアクセス
 Dom* DomList::operator []( const unsigned int n )
 {
-    if( m_list.empty() || n > m_list.size() ) return 0;
+    if( m_list.empty() || n > m_list.size() ) return nullptr;
 
     size_t count = 0;
     std::list< Dom* >::iterator it = m_list.begin();
@@ -31,7 +31,7 @@ Dom* DomList::operator []( const unsigned int n )
         ++it;
     }
 
-    return 0;
+    return nullptr;
 }
 
 
@@ -75,7 +75,7 @@ bool DomList::empty() const
 // 参照ではなくポインタを返す
 Dom* DomList::front()
 {
-    if( m_list.empty() ) return 0;
+    if( m_list.empty() ) return nullptr;
 
     return *m_list.begin();
 }
@@ -83,7 +83,7 @@ Dom* DomList::front()
 // 参照ではなくポインタを返す
 Dom* DomList::back()
 {
-    if( m_list.empty() ) return 0;
+    if( m_list.empty() ) return nullptr;
 
     return *m_list.end();
 }

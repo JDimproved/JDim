@@ -35,8 +35,8 @@ EditTextView::EditTextView() :
     Gtk::TextView(),
     m_cancel_change( false ),
     m_line_offset( -1 ),
-    m_context_menu( NULL ),
-    m_aapopupmenu( NULL )
+    m_context_menu( nullptr ),
+    m_aapopupmenu( nullptr )
 {
     // コントロールモード設定
     m_control.add_mode( CONTROL::MODE_EDIT );
@@ -49,7 +49,7 @@ EditTextView::EditTextView() :
 EditTextView::~EditTextView()
 {
     if( m_aapopupmenu ) delete m_aapopupmenu;
-    m_aapopupmenu = NULL;
+    m_aapopupmenu = nullptr;
 }
 
 
@@ -617,7 +617,7 @@ void EditTextView::slot_hide_popupmenu()
     std::cout << "EditTextView::slot_hide_popupmenu\n";
 #endif
 
-    m_context_menu = NULL;
+    m_context_menu = nullptr;
     SESSION::set_popupmenu_shown( false );
 }
 

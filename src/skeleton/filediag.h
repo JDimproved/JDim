@@ -35,7 +35,7 @@ namespace SKELETON
             add_buttons();
         }
 
-        // parent がポインタの時は  NULL かどうかで場合分け
+        // parent がポインタの時は  nullptr かどうかで場合分け
         FileDiag( Gtk::Window* parent, const Glib::ustring& title, Gtk::FileChooserAction action = Gtk::FILE_CHOOSER_ACTION_OPEN )
         : Gtk::FileChooserDialog( title, action ), m_action( action )
         {

@@ -66,7 +66,7 @@ using FontSelectionDialog = Gtk::FontSelectionDialog;
 //
 void Core::slot_openurl()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_OPENURL, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_OPENURL, "" );
     pref->run();
     delete pref;
 }
@@ -159,7 +159,7 @@ void Core::slot_toggle_loginp2()
 void Core::slot_reload_list()
 {
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( nullptr, "オフラインです" );
         mdiag.run();
         return;
     }
@@ -501,7 +501,7 @@ void Core::slot_toggle_show_ssspicon()
 //
 void Core::slot_setup_boarditem_column()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEM_COLUM, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_BOARDITEM_COLUM, "" );
     pref->run();
     delete pref;
 }
@@ -512,7 +512,7 @@ void Core::slot_setup_boarditem_column()
 //
 void Core::slot_setup_mainitem()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_MAINITEM, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_MAINITEM, "" );
     pref->run();
     delete pref;
 }
@@ -523,7 +523,7 @@ void Core::slot_setup_mainitem()
 //
 void Core::slot_setup_sidebaritem()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_SIDEBARITEM, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_SIDEBARITEM, "" );
     pref->run();
     delete pref;
 }
@@ -534,7 +534,7 @@ void Core::slot_setup_sidebaritem()
 //
 void Core::slot_setup_boarditem()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEM, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_BOARDITEM, "" );
     pref->run();
     delete pref;
 }
@@ -545,7 +545,7 @@ void Core::slot_setup_boarditem()
 //
 void Core::slot_setup_articleitem()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLEITEM, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_ARTICLEITEM, "" );
     pref->run();
     delete pref;
 }
@@ -556,7 +556,7 @@ void Core::slot_setup_articleitem()
 //
 void Core::slot_setup_searchitem()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_SEARCHITEM, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_SEARCHITEM, "" );
     pref->run();
     delete pref;
 }
@@ -567,7 +567,7 @@ void Core::slot_setup_searchitem()
 //
 void Core::slot_setup_msgitem()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_MSGITEM, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_MSGITEM, "" );
     pref->run();
     delete pref;
 }
@@ -579,7 +579,7 @@ void Core::slot_setup_msgitem()
 //
 void Core::slot_setup_boarditem_menu()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARDITEM_MENU, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_BOARDITEM_MENU, "" );
     pref->run();
     delete pref;
 }
@@ -589,7 +589,7 @@ void Core::slot_setup_boarditem_menu()
 //
 void Core::slot_setup_articleitem_menu()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLEITEM_MENU, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_ARTICLEITEM_MENU, "" );
     pref->run();
     delete pref;
 }
@@ -650,7 +650,7 @@ void Core::slot_toggle_fold_message()
 {
     CONFIG::set_fold_message( ! CONFIG::get_fold_message() );
 
-    SKELETON::MsgDiag mdiag( NULL, "次に書き込みビューを開いた時から有効になります" );
+    SKELETON::MsgDiag mdiag( nullptr, "次に書き込みビューを開いた時から有効になります" );
     mdiag.run();
 }
 
@@ -692,7 +692,7 @@ void Core::slot_toggle_use_mosaic()
 {
     CONFIG::set_use_mosaic( ! CONFIG::get_use_mosaic() );
 
-    SKELETON::MsgDiag mdiag( NULL, "次に開いた画像から有効になります" );
+    SKELETON::MsgDiag mdiag( nullptr, "次に開いた画像から有効になります" );
     mdiag.run();
 }
 
@@ -760,7 +760,7 @@ void Core::slot_toggle_emacsmode()
 //
 void Core::slot_setup_mouse()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_MOUSE, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_MOUSE, "" );
     pref->run();
     delete pref;
 }
@@ -771,7 +771,7 @@ void Core::slot_setup_mouse()
 //
 void Core::slot_setup_key()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_KEY, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_KEY, "" );
     pref->run();
     delete pref;
 }
@@ -782,7 +782,7 @@ void Core::slot_setup_key()
 //
 void Core::slot_setup_button()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BUTTON, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_BUTTON, "" );
     pref->run();
     delete pref;
 }
@@ -918,7 +918,7 @@ void Core::slot_changecolor_back_tree()
 //
 void Core::slot_setup_fontcolor()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_FONTCOLOR, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_FONTCOLOR, "" );
     pref->run();
     delete pref;
 }
@@ -929,7 +929,7 @@ void Core::slot_setup_fontcolor()
 //
 void Core::slot_setup_proxy()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PROXY, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_PROXY, "" );
     pref->run();
     delete pref;
 }
@@ -940,7 +940,7 @@ void Core::slot_setup_proxy()
 //
 void Core::slot_setup_browser()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BROWSER, URL_BROWSER );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_BROWSER, URL_BROWSER );
     pref->run();
     delete pref;
 }
@@ -951,7 +951,7 @@ void Core::slot_setup_browser()
 //
 void Core::slot_setup_passwd()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PASSWD, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_PASSWD, "" );
     pref->run();
     delete pref;
 }
@@ -971,7 +971,7 @@ void Core::slot_toggle_ipv6()
 //
 void Core::slot_setup_abone()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_GLOBALABONE, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_GLOBALABONE, "" );
     pref->run();
     delete pref;
 }
@@ -982,7 +982,7 @@ void Core::slot_setup_abone()
 //
 void Core::slot_setup_abone_thread()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_GLOBALABONETHREAD, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_GLOBALABONETHREAD, "" );
     pref->run();
     delete pref;
 }
@@ -1025,7 +1025,7 @@ void Core::slot_toggle_abone_icase_wchar()
 // 実況設定
 void Core::slot_setup_live()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_LIVE, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_LIVE, "" );
     pref->run();
     delete pref;
 }
@@ -1036,7 +1036,7 @@ void Core::slot_setup_live()
 //
 void Core::slot_usrcmd_pref()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_USRCMD, URL_USRCMD );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_USRCMD, URL_USRCMD );
     pref->run();
     delete pref;
 }
@@ -1047,7 +1047,7 @@ void Core::slot_usrcmd_pref()
 //
 void Core::slot_filter_pref()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_LINKFILTER, URL_LINKFILTER );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_LINKFILTER, URL_LINKFILTER );
     pref->run();
     delete pref;
 }
@@ -1058,7 +1058,7 @@ void Core::slot_filter_pref()
 //
 void Core::slot_aboutconfig()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ABOUTCONFIG, URL_ABOUTCONFIG );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_ABOUTCONFIG, URL_ABOUTCONFIG );
     pref->run();
     delete pref;
 }
@@ -1068,7 +1068,7 @@ void Core::slot_aboutconfig()
 // プライバシー情報のクリア
 void Core::slot_clear_privacy()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_PRIVACY, URL_PRIVACY );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_PRIVACY, URL_PRIVACY );
     pref->run();
     delete pref;
 }
@@ -1079,7 +1079,7 @@ void Core::slot_clear_privacy()
 //
 void Core::slot_clear_post_log()
 {
-    SKELETON::MsgDiag mdiag( NULL, "書き込みログを削除しますか？",
+    SKELETON::MsgDiag mdiag( nullptr, "書き込みログを削除しますか？",
                              false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
@@ -1095,7 +1095,7 @@ void Core::slot_clear_post_log()
 //
 void Core::slot_clear_post_history()
 {
-    SKELETON::MsgDiag mdiag( NULL, "全スレの書き込み履歴を削除します。\n\nある板、または特定のスレの履歴を削除するには板またはスレのプロパティから行って下さい。\n\nまた全スレの書き込み履歴の削除には時間がかかります。\n\n全スレの書き込み履歴の削除を実行しますか？",
+    SKELETON::MsgDiag mdiag( nullptr, "全スレの書き込み履歴を削除します。\n\nある板、または特定のスレの履歴を削除するには板またはスレのプロパティから行って下さい。\n\nまた全スレの書き込み履歴の削除には時間がかかります。\n\n全スレの書き込み履歴の削除を実行しますか？",
                              false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 

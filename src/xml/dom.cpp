@@ -30,7 +30,7 @@ Dom::Dom( const int type, const std::string& name, const bool html )
     : m_html( html ),
       m_nodeType( type ),
       m_nodeName( name ),
-      m_parentNode( 0 )
+      m_parentNode( nullptr )
 {
     // HTMLの場合に空要素として扱う物の内で、使われていそうな物( 小文字で統一 )
     if( html && m_static_html_elements.empty() )
@@ -61,7 +61,7 @@ Dom::Dom( const Dom& dom )
       m_nodeType( dom.m_nodeType ),
       m_nodeName( dom.m_nodeName ),
       m_nodeValue( dom.m_nodeValue ),
-      m_parentNode( 0 ),
+      m_parentNode( nullptr ),
       m_attributes( dom.m_attributes )
 {
     copy_childNodes( dom );
@@ -556,7 +556,7 @@ void Dom::nodeValue( const std::string& value )
 //
 Dom* Dom::getElementById( const std::string& id ) const
 {
-    Dom* node = 0;
+    Dom* node = nullptr;
 
     std::list< Dom* >::const_iterator it = m_childNodes.cbegin();
     while( it != m_childNodes.cend() )
@@ -689,7 +689,7 @@ void Dom::copy_childNodes( const Dom& dom )
 //
 Dom* Dom::firstChild() const
 {
-    if( m_childNodes.empty() ) return 0;
+    if( m_childNodes.empty() ) return nullptr;
 
     return m_childNodes.front();
 }
@@ -700,7 +700,7 @@ Dom* Dom::firstChild() const
 //
 Dom* Dom::lastChild() const
 {
-    if( m_childNodes.empty() ) return 0;
+    if( m_childNodes.empty() ) return nullptr;
 
     return m_childNodes.back();
 }
@@ -711,7 +711,7 @@ Dom* Dom::lastChild() const
 //
 Dom* Dom::appendChild( const int node_type, const std::string& node_name )
 {
-    Dom* node = 0;
+    Dom* node = nullptr;
     
     {
         node = new Dom( node_type, node_name, m_html );
@@ -745,7 +745,7 @@ bool Dom::removeChild( Dom* node )
 //
 Dom* Dom::replaceChild( const int node_type, const std::string& node_name, Dom* oldNode )
 {
-    Dom* newNode = 0;
+    Dom* newNode = nullptr;
 
     newNode = new Dom( node_type, node_name );
 
@@ -773,7 +773,7 @@ Dom* Dom::replaceChild( const int node_type, const std::string& node_name, Dom* 
 //
 Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* insNode )
 {
-    Dom* newNode = 0;
+    Dom* newNode = nullptr;
 
     newNode = new Dom( node_type, node_name );
 
@@ -798,7 +798,7 @@ Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* 
 //
 Dom* Dom::previousSibling() const
 {
-    Dom* previous = 0;
+    Dom* previous = nullptr;
 
     DomList brothers = m_parentNode->childNodes();
 
@@ -822,7 +822,7 @@ Dom* Dom::previousSibling() const
 //
 Dom* Dom::nextSibling() const
 {
-    Dom* next = 0;
+    Dom* next = nullptr;
 
     DomList brothers = m_parentNode->childNodes();
 

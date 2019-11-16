@@ -61,7 +61,7 @@ Img::Img( const std::string& url )
     : SKELETON::Loadable()
     ,m_url( url )
     ,m_count_redirect( 0 )
-    ,m_fout( 0 )
+    ,m_fout( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "Img::Img url = " << m_url <<  std::endl;
@@ -84,7 +84,7 @@ Img::~Img()
 #endif 
 
     if( m_fout ) fclose( m_fout );
-    m_fout = NULL;
+    m_fout = nullptr;
 }
 
 
@@ -287,7 +287,7 @@ void Img::download_img( const std::string refurl, const bool mosaic, const int w
     // ダウンロード開始
     std::string path = get_cache_path();
     m_fout = fopen( to_locale_cstr( path ), "wb" );
-    if( m_fout == NULL ){
+    if( m_fout == nullptr ){
         m_type = T_OPENFAILED;
         receive_finish();
         return;
@@ -522,7 +522,7 @@ void Img::receive_finish()
 #endif
 
     if( m_fout ) fclose( m_fout );
-    m_fout = NULL;
+    m_fout = nullptr;
 
     // Created は OK にしておく
     if( get_code() == HTTP_CREATED ) set_code( HTTP_OK );

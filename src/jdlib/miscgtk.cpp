@@ -81,13 +81,13 @@ std::string MISC::htmlcolor_to_str( const std::string& _htmlcolor )
     if( htmlcolor.find( "#" ) == 0 ) offset = 1;
 
     std::string tmpstr = htmlcolor.substr( offset, 2 );
-    rgb[ 0 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), NULL, 16 );
+    rgb[ 0 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), nullptr, 16 );
 
     tmpstr = htmlcolor.substr( 2 + offset, 2 );
-    rgb[ 1 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), NULL, 16 );
+    rgb[ 1 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), nullptr, 16 );
 
     tmpstr = htmlcolor.substr( 4 + offset, 2 );
-    rgb[ 2 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), NULL, 16 );
+    rgb[ 2 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), nullptr, 16 );
 
 #ifdef _DEBUG
     std::cout << "MISC::htmlcolor_to_gdkcolor color = " << htmlcolor 

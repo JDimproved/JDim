@@ -24,7 +24,7 @@ enum
     SIZE_OF_RAWDATA = 64 * 1024
 };
 
-CORE::Loginp2* instance_loginp2 = NULL;
+CORE::Loginp2* instance_loginp2 = nullptr;
 
 CORE::Loginp2* CORE::get_loginp2()
 {
@@ -41,7 +41,7 @@ void CORE::delete_loginp2()
         instance_loginp2->terminate_load();
         delete instance_loginp2;
     }
-    instance_loginp2 = NULL;
+    instance_loginp2 = nullptr;
 }
 
 
@@ -50,7 +50,7 @@ using namespace CORE;
 
 Loginp2::Loginp2()
     : SKELETON::Login( URL_LOGINP2 )
-    , m_rawdata( 0 ), m_lng_rawdata( 0 )
+    , m_rawdata( nullptr ), m_lng_rawdata( 0 )
 {
 #ifdef _DEBUG
     std::cout << "Loginp2::Loginp2\n";
@@ -103,19 +103,19 @@ void Loginp2::start_login()
     set_str_code( "" );
 
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( nullptr, "オフラインです" );
         mdiag.run();
         return;
     }
 
     if( get_username().empty() || get_passwd().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "IDまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
+        SKELETON::MsgDiag mdiag( nullptr, "IDまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
         mdiag.run();
         return;
     }
 
     if( CONFIG::get_url_loginp2().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "p2の認証サーバのアドレスが指定されていません。" );
+        SKELETON::MsgDiag mdiag( nullptr, "p2の認証サーバのアドレスが指定されていません。" );
         mdiag.run();
         return;
     }
@@ -208,7 +208,7 @@ void Loginp2::receive_finish()
         }
         else{
 
-            SKELETON::MsgDiag mdiag( NULL, "csrfid の取得に失敗しました。p2のサーバが落ちていないか確認して下さい。" );
+            SKELETON::MsgDiag mdiag( nullptr, "csrfid の取得に失敗しました。p2のサーバが落ちていないか確認して下さい。" );
             mdiag.run();
         }
 
@@ -238,7 +238,7 @@ void Loginp2::receive_finish()
                 if( CONFIG::get_url_loginp2() != regex.str( 1 ) ){
                     std::string str_err = "p2のリダイレクト要求がされました。ログイン先を変更してよろしいですか？\n\n";
                     str_err += regex.str( 1 );
-                    SKELETON::MsgDiag mdiag( NULL, str_err, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+                    SKELETON::MsgDiag mdiag( nullptr, str_err, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
                     if( mdiag.run() != Gtk::RESPONSE_YES ) {
                         return;
                     }
@@ -341,7 +341,7 @@ void Loginp2::receive_finish()
 
             std::string str_err = "ログインに失敗しました。\n\np2の認証サーバのアドレスやID、パスワード等を確認して下さい。\n\n";
             str_err += get_str_code();
-            SKELETON::MsgDiag mdiag( NULL, str_err );
+            SKELETON::MsgDiag mdiag( nullptr, str_err );
             mdiag.run();  
         }
     }

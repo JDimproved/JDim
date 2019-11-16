@@ -34,8 +34,8 @@ void JDLIB::deinit_ssl()
 
 
 JDSSL::JDSSL()
-    : m_session( 0 ),
-      m_cred( 0 )
+    : m_session( nullptr ),
+      m_cred( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::JDSSL(gnutls)\n";
@@ -94,7 +94,7 @@ bool JDSSL::connect( const int soc, const char *host )
 
 #if GNUTLS_VERSION_NUMBER >= 0x020108
     // gnutls >= 2.1.7 (unreleased)
-    gnutls_priority_set_direct( m_session, "NORMAL:%COMPAT", NULL );
+    gnutls_priority_set_direct( m_session, "NORMAL:%COMPAT", nullptr );
 #else // GNUTLS_VERSION_NUMBER >= 0x020108
     static const int priority_prot[] = { GNUTLS_SSL3, 0 };
     // DEPRECATED (gnutls >= 2.1.4 gnutls =< 2.1.6)
@@ -158,11 +158,11 @@ bool JDSSL::close()
     if( m_session ){
         gnutls_bye( m_session, GNUTLS_SHUT_RDWR );
         gnutls_deinit( m_session );
-        m_session = 0;
+        m_session = nullptr;
     }
     if( m_cred ){
         gnutls_certificate_free_credentials( m_cred );
-        m_cred = 0;
+        m_cred = nullptr;
     }
 
     return true;
@@ -229,8 +229,8 @@ void JDLIB::deinit_ssl()
 
 
 JDSSL::JDSSL()
-    : m_ctx( NULL ),
-      m_ssl( NULL )
+    : m_ctx( nullptr ),
+      m_ssl( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::JDSSL(openssl)\n";
@@ -299,11 +299,11 @@ bool JDSSL::close()
     if( m_ssl ){
         SSL_shutdown( m_ssl );
         SSL_free( m_ssl );
-        m_ssl = NULL;
+        m_ssl = nullptr;
     }
     if( m_ctx ){
         SSL_CTX_free( m_ctx );
-        m_ctx = NULL;
+        m_ctx = nullptr;
     }
 
     return true;

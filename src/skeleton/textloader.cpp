@@ -26,7 +26,7 @@ using namespace SKELETON;
 TextLoader::TextLoader()
     : SKELETON::Loadable(),
       m_loaded( false ),
-      m_rawdata( NULL ),
+      m_rawdata( nullptr ),
       m_lng_rawdata( 0 )
 {
 #ifdef _DEBUG
@@ -54,7 +54,7 @@ void TextLoader::init()
 void TextLoader::clear()
 {
     if( m_rawdata ) free( m_rawdata );
-    m_rawdata = NULL;
+    m_rawdata = nullptr;
     m_lng_rawdata = 0;
 }
 

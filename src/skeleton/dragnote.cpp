@@ -29,7 +29,7 @@ DragableNoteBook::DragableNoteBook()
     , m_page( -1 )
     , m_dragging_tab( false )
     , m_dragable( false )
-    , m_down_arrow( NULL )
+    , m_down_arrow( nullptr )
 {
     set_spacing( 0 );
 

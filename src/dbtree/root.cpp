@@ -61,11 +61,11 @@ enum
 
 Root::Root()
     : SKELETON::Loadable()
-    , m_rawdata ( 0 )
+    , m_rawdata ( nullptr )
     , m_lng_rawdata( 0 )
     , m_analyzing_board_xml( false )
-    , m_board_null( 0 )
-    , m_get_board( NULL )
+    , m_board_null( nullptr )
+    , m_get_board( nullptr )
     , m_enable_save_movetable( true )
 {
     m_xml_document.clear();
@@ -121,7 +121,7 @@ Root::~Root()
 void Root::clear()
 {
     if( m_rawdata ) free( m_rawdata );
-    m_rawdata = NULL;
+    m_rawdata = nullptr;
     m_lng_rawdata = 0;
 }
 
@@ -163,7 +163,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 #endif
 
     m_get_board_url = url;
-    m_get_board = NULL;
+    m_get_board = nullptr;
 
     if( count == 0 ){
 
@@ -264,7 +264,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
     std::cout << "Root::get_board: not found url = " << url << std::endl;;
 #endif
     
-    // それでも見つからなかったらNULLクラスを返す
+    // それでも見つからなかったらNullクラスを返す
     return m_board_null;
 }
 
@@ -341,7 +341,7 @@ void Root::receive_finish()
     if( get_code() == HTTP_NOT_MODIFIED ){
 
         std::string msg = get_str_code() + "\n\nサーバー上の板一覧は更新されていません。強制的に再読み込みをしますか？";
-        SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        SKELETON::MsgDiag mdiag( nullptr, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
         mdiag.set_default_response( Gtk::RESPONSE_YES );
         if( mdiag.run() == Gtk::RESPONSE_YES ){
             set_date_modified( std::string() );
@@ -354,7 +354,7 @@ void Root::receive_finish()
     if( get_code() != HTTP_OK ){
 
         std::string msg = get_str_code() + "\n\n板一覧の読み込みに失敗したため板一覧は更新されませんでした。\n\nプロキシ設定や板一覧を取得するサーバのアドレスを確認して、ファイルメニューから板一覧の再読み込みをして下さい。\n板一覧取得サーバのアドレスはabout:configで確認出来ます。";
-        SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_ERROR );
+        SKELETON::MsgDiag mdiag( nullptr, msg, false, Gtk::MESSAGE_ERROR );
         mdiag.run();
         MISC::ERRMSG( "bbsmenu load failed : " + get_str_code() );
 
@@ -410,7 +410,7 @@ void Root::bbsmenu2xml( const std::string& menu )
     XML::Dom* root = m_xml_document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
 
     // カテゴリの要素 <subdir></subdir>
-    XML::Dom* subdir = 0;
+    XML::Dom* subdir = nullptr;
 
     // カテゴリの有効/無効
     bool enabled = true;
@@ -660,7 +660,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     if( type == TYPE_BOARD_UNKNOWN ) return false;
 
     // 移転チェック
-    BoardBase* board = NULL;
+    BoardBase* board = nullptr;
     const int stat = is_moved( root, path_board, name, &board, etc );
 
 #ifdef _SHOW_BOARD
@@ -802,7 +802,7 @@ bool Root::exec_move_board( BoardBase* board,
         std::string errmsg = "移転元のアドレスと移転先のアドレスが同じです\n\n"
         + old_root + old_path_board + " → " + new_root +  new_path_board;
 
-        SKELETON::MsgDiag mdiag( NULL, errmsg, false, Gtk::MESSAGE_ERROR );
+        SKELETON::MsgDiag mdiag( nullptr, errmsg, false, Gtk::MESSAGE_ERROR );
         mdiag.run();
         return false;
     }
@@ -823,7 +823,7 @@ bool Root::exec_move_board( BoardBase* board,
     MISC::MSG( ss.str() );
 
     m_get_board_url = std::string();
-    m_get_board = NULL;
+    m_get_board = nullptr;
 
     // もしキャッシュが存在したら移動して移転テーブル更新
     if( CACHE::file_exists( old_path ) == CACHE::EXIST_DIR ){
@@ -881,7 +881,7 @@ void Root::push_movetable( const std::string old_root,
         std::string errmsg = "移転元のアドレスと移転先のアドレスが同じです (Root::push_movetable)\n\n"
         + old_root + old_path_board + " → " + new_root +  new_path_board;
 
-        SKELETON::MsgDiag mdiag( NULL, errmsg, false, Gtk::MESSAGE_ERROR );
+        SKELETON::MsgDiag mdiag( nullptr, errmsg, false, Gtk::MESSAGE_ERROR );
         mdiag.run();
         return;
     }
@@ -988,7 +988,7 @@ bool Root::remove_board( const std::string& url )
     delete board;
 
     m_get_board_url = std::string();
-    m_get_board = NULL;
+    m_get_board = nullptr;
 
     return true;
 }

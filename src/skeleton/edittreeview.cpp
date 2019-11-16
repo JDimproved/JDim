@@ -192,12 +192,12 @@ void EditTreeView::setup()
     std::cout << "EditTreeView::Setup url = " << m_url << std::endl;
 #endif
 
-    m_parent_win = NULL;
+    m_parent_win = nullptr;
 
     m_updated = false;
     m_dragging_on_tree = false;
     m_editable = false;
-    m_undo_buffer = NULL;
+    m_undo_buffer = nullptr;
     m_dnd_counter = 0;
     m_row_dest = Gtk::TreeRow();
 
@@ -1535,7 +1535,7 @@ void EditTreeView::path2info( CORE::DATA_INFO& info, const Gtk::TreePath& path )
 
     info.type = row[ m_columns.m_type ];
 
-    info.parent = NULL;
+    info.parent = nullptr;
 
     tmp_str = row[ m_columns.m_url ];
     info.url = tmp_str.raw();

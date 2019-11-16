@@ -31,7 +31,7 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
       m_label_name( CORE::SBUF_size() == 1, "名前 ：" ),
       m_label_dirs( "ディレクトリ ：" ),
       m_bt_show_tree( "詳細" ),
-      m_selectview( NULL )
+      m_selectview( nullptr )
 {
     const int mrg = 8;
 
@@ -157,7 +157,7 @@ void SelectListDialog::slot_show_tree()
         get_vbox()->remove( *m_selectview );
         resize( get_width(), 1 );
         delete m_selectview;
-        m_selectview = NULL;
+        m_selectview = nullptr;
     }
 }
 

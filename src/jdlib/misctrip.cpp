@@ -149,7 +149,7 @@ std::string create_trip_newtype( const std::string& key )
                     // crypt (key は先頭8文字しか使われない)
                     const char *crypted = crypt( key_binary, salt );
 
-                    // 末尾から10文字(cryptの戻り値はNULLでなければ必ず13文字)
+                    // 末尾から10文字(cryptの戻り値はnullptrでなければ必ず13文字)
                     if( crypted ) trip = std::string( crypted + 3 );
                     else trip.clear();
                 }
@@ -225,7 +225,7 @@ std::string create_trip_conventional( const std::string& key )
 
     std::string trip;
 
-    // 末尾10(cryptの戻り値はNULLでなければ必ず13文字)
+    // 末尾10(cryptの戻り値はnullptrでなければ必ず13文字)
     if( crypted ) trip = std::string( crypted + 3 );
 
     return trip;

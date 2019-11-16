@@ -35,10 +35,10 @@ ToolMenuButton::~ToolMenuButton() noexcept = default;
 void ToolMenuButton::setup( SKELETON::MenuButton* button, const std::string& label, const bool expand )
 {
     m_button = button;
-    assert( m_button != NULL );
-    assert( m_button->get_label_widget() != NULL );
+    assert( m_button != nullptr );
+    assert( m_button->get_label_widget() != nullptr );
 
-    Gtk::MenuItem* item = NULL;
+    Gtk::MenuItem* item = nullptr;
 
     // アイコンの場合はアイコン表示
     Gtk::Image* image = dynamic_cast< Gtk::Image* >( m_button->get_label_widget() );

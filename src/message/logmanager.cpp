@@ -29,7 +29,7 @@ enum
 };
 
 
-MESSAGE::Log_Manager* instance_log_manager = NULL;
+MESSAGE::Log_Manager* instance_log_manager = nullptr;
 
 MESSAGE::Log_Manager* MESSAGE::get_log_manager()
 {
@@ -43,7 +43,7 @@ MESSAGE::Log_Manager* MESSAGE::get_log_manager()
 void MESSAGE::delete_log_manager()
 {
     if( instance_log_manager ) delete instance_log_manager;
-    instance_log_manager = NULL;
+    instance_log_manager = nullptr;
 }
 
 

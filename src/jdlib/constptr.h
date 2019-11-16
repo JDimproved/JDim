@@ -38,7 +38,7 @@ namespace JDLIB
             reset();
         }
 
-        ConstPtr() : m_p (0){}
+        ConstPtr() : m_p (nullptr){}
         ConstPtr( T *p ) : m_p (p){}
         ConstPtr( const T *p ) : m_p (p){}
     };

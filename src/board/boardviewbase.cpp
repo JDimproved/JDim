@@ -85,7 +85,7 @@ enum
 
 
 
-#define DELETE_COLUMN(col) do{ if( ! col ) { delete col; col = NULL; } }while(0)
+#define DELETE_COLUMN(col) do{ if( ! col ) { delete col; col = nullptr; } }while(0)
 
 // set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED ) を指定して append_columnする
 #define APPEND_COLUMN(col,title,model) do{                    \
@@ -98,18 +98,18 @@ m_treeview.append_column( *col ); \
 BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board )
     : SKELETON::View( url ),
       m_treeview( url, DNDTARGET_FAVORITE, true, CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
-      m_col_mark( NULL ),
-      m_col_id( NULL ),
-      m_col_board( NULL ),
-      m_col_subject( NULL ),
-      m_col_res( NULL ),
-      m_col_str_load( NULL ),
-      m_col_str_new( NULL ),
-      m_col_since( NULL ),
-      m_col_write( NULL ),
-      m_col_access( NULL ),
-      m_col_speed( NULL ),
-      m_col_diff( NULL ),
+      m_col_mark( nullptr ),
+      m_col_id( nullptr ),
+      m_col_board( nullptr ),
+      m_col_subject( nullptr ),
+      m_col_res( nullptr ),
+      m_col_str_load( nullptr ),
+      m_col_str_new( nullptr ),
+      m_col_since( nullptr ),
+      m_col_write( nullptr ),
+      m_col_access( nullptr ),
+      m_col_speed( nullptr ),
+      m_col_diff( nullptr ),
       m_clicked( false ),
       m_col( COL_NUM_COL ),
       m_previous_col( COL_NUM_COL ),
@@ -1728,7 +1728,7 @@ void BoardViewBase::activate_act_before_popupmenu( const std::string& url )
 //
 Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
 {
-    Gtk::Menu* popupmenu = NULL;
+    Gtk::Menu* popupmenu = nullptr;
 
     // 削除サブメニュー
     if( url == "popup_menu_delete" ){

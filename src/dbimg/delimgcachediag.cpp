@@ -89,7 +89,7 @@ void* DelImgCacheDiag::launcher( void* dat )
 {
     DelImgCacheDiag* tt = ( DelImgCacheDiag * ) dat;
     tt->main_thread();
-    return 0;
+    return nullptr;
 }
 
 

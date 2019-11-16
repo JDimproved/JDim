@@ -18,7 +18,7 @@
 
 
 // お気に入りの共通UNDOバッファ
-SKELETON::UNDO_BUFFER *instance_undo_buffer_favorite = NULL;
+SKELETON::UNDO_BUFFER *instance_undo_buffer_favorite = nullptr;
 
 SKELETON::UNDO_BUFFER* BBSLIST::get_undo_buffer_favorite()
 {
@@ -31,14 +31,14 @@ SKELETON::UNDO_BUFFER* BBSLIST::get_undo_buffer_favorite()
 void BBSLIST::delete_undo_buffer_favorite()
 {
     if( instance_undo_buffer_favorite ) delete instance_undo_buffer_favorite;
-    instance_undo_buffer_favorite = NULL;
+    instance_undo_buffer_favorite = nullptr;
 }
 
 
 //////////////////////////////////////////////
 
 
-BBSLIST::BBSListAdmin *instance_bbslistadmin = NULL;
+BBSLIST::BBSListAdmin *instance_bbslistadmin = nullptr;
 
 BBSLIST::BBSListAdmin* BBSLIST::get_admin()
 {
@@ -52,7 +52,7 @@ BBSLIST::BBSListAdmin* BBSLIST::get_admin()
 void BBSLIST::delete_admin()
 {
     if( instance_bbslistadmin ) delete instance_bbslistadmin;
-    instance_bbslistadmin = NULL;
+    instance_bbslistadmin = nullptr;
 }
 
 
@@ -62,7 +62,7 @@ void BBSLIST::delete_admin()
 using namespace BBSLIST;
 
 BBSListAdmin::BBSListAdmin( const std::string& url )
-    : SKELETON::Admin( url ), m_toolbar( NULL )
+    : SKELETON::Admin( url ), m_toolbar( nullptr )
 {
     get_notebook()->set_dragable( false );
     get_notebook()->set_fixtab( true );

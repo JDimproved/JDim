@@ -220,7 +220,7 @@ namespace ARTICLE
         bool m_drugging;  // ドラッグ中
         bool m_r_drugging; // 右ドラッグ中
         std::string m_link_current; // 現在マウスポインタの下にあるリンクの文字列
-        LAYOUT* m_layout_current; // 現在マウスポインタの下にあるlayoutノード(下が空白ならNULL)
+        LAYOUT* m_layout_current; // 現在マウスポインタの下にあるlayoutノード(下が空白ならnullptr)
         Gdk::CursorType m_cursor_type; // カーソルの形状
 
         // 入力コントローラ
@@ -530,7 +530,7 @@ namespace ARTICLE
     //
     // 文字列を wrap するか判定する関数
     //
-    // str != NULL なら禁則処理も考える
+    // str != nullptr なら禁則処理も考える
     //
     inline bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str )
     {

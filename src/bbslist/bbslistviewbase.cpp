@@ -136,7 +136,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
       m_open_only_onedir( false ),
       m_cancel_expand( false ),
       m_expanding( 0 ),
-      m_editlistwin( NULL ),
+      m_editlistwin( nullptr ),
       m_set_bookmark( false )
 {
     m_scrwin.add( m_treeview );
@@ -515,7 +515,7 @@ BBSListViewBase::~BBSListViewBase()
 #endif
 
     if( m_editlistwin ) delete m_editlistwin;
-    m_editlistwin = NULL;
+    m_editlistwin = nullptr;
 }
 
 
@@ -3149,7 +3149,7 @@ void BBSListViewBase::slot_hide_editlistwin()
 #endif
 
     if( m_editlistwin ) delete m_editlistwin;
-    m_editlistwin = NULL;
+    m_editlistwin = nullptr;
 }
 
 

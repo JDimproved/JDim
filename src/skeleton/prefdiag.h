@@ -26,7 +26,7 @@ namespace SKELETON
 
       public:
 
-        // parent == NULL のときはメインウィンドウをparentにする
+        // parent == nullptr のときはメインウィンドウをparentにする
         PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_cancel = true, const bool add_apply = false, const bool add_open = false );
 
         ~PrefDiag();

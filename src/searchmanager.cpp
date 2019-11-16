@@ -15,7 +15,7 @@
 
 #include "config/globalconf.h"
 
-CORE::Search_Manager* instance_search_manager = NULL;
+CORE::Search_Manager* instance_search_manager = nullptr;
 
 CORE::Search_Manager* CORE::get_search_manager()
 {
@@ -29,7 +29,7 @@ CORE::Search_Manager* CORE::get_search_manager()
 void CORE::delete_search_manager()
 {
     if( instance_search_manager ) delete instance_search_manager;
-    instance_search_manager = NULL;
+    instance_search_manager = nullptr;
 }
 
 ///////////////////////////////////////////////
@@ -38,7 +38,7 @@ using namespace CORE;
 
 Search_Manager::Search_Manager()
     : m_searching( false ),
-      m_searchloader( NULL )
+      m_searchloader( nullptr )
 {}
 
 
@@ -110,7 +110,7 @@ void* Search_Manager::launcher( void* dat )
 {
     Search_Manager* sm = ( Search_Manager * ) dat;
     sm->thread_search();
-    return 0;
+    return nullptr;
 }
 
 

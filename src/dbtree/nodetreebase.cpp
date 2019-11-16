@@ -84,13 +84,13 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
       m_resume_cached( false ),
       m_broken( false ),
       m_heap( SIZE_OF_HEAP ),
-      m_buffer_lines( NULL ),
-      m_parsed_text( NULL ),
-      m_buffer_write( NULL ),
+      m_buffer_lines( nullptr ),
+      m_parsed_text( nullptr ),
+      m_buffer_write( nullptr ),
       m_check_update( false ),
       m_check_write( false ),
       m_loading_newthread( false ),
-      m_fout ( NULL )
+      m_fout ( nullptr )
 {
     set_date_modified( modified );
 
@@ -175,17 +175,17 @@ void NodeTreeBase::clear()
 #endif
 
     if( m_buffer_lines ) free( m_buffer_lines );
-    m_buffer_lines = NULL;
+    m_buffer_lines = nullptr;
     m_byte_buffer_lines_left = 0;
 
     if( m_parsed_text ) free( m_parsed_text );
-    m_parsed_text = NULL;
+    m_parsed_text = nullptr;
 
     if( m_buffer_write ) free( m_buffer_write );
-    m_buffer_write = NULL;
+    m_buffer_write = nullptr;
     
     if( m_fout ) fclose( m_fout );
-    m_fout = NULL;
+    m_fout = nullptr;
 
     m_ext_err = std::string();
 }
@@ -209,7 +209,7 @@ int NodeTreeBase::get_res_number()
 //
 NODE* NodeTreeBase::res_header( int number )
 {
-    if( number > m_id_header || number <= 0 ) return NULL;
+    if( number > m_id_header || number <= 0 ) return nullptr;
     
     return m_vec_header[ number ];
 }
@@ -445,7 +445,7 @@ std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_nu
 
                     if( node->type == NODE_LINK ){
 
-                        // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+                        // アンカーノードの時は node->linkinfo->ancinfo != nullptr;
                         if( node->linkinfo->ancinfo ){
 
                             int anc = 0;
@@ -514,7 +514,7 @@ std::list< ANCINFO* > NodeTreeBase::get_res_anchors( const int number )
             NODE* node = head->headinfo->block[ block ];
             while( node ){
 
-                // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+                // アンカーノードの時は node->linkinfo->ancinfo != nullptr;
                 if( node->type == NODE_LINK 
                         && node->linkinfo->ancinfo ){
 
@@ -822,7 +822,7 @@ NODE* NodeTreeBase::create_node_header()
     }
 
     ++m_id_header;
-    m_node_previous = NULL;
+    m_node_previous = nullptr;
 
     NODE* tmpnode = create_node();
     tmpnode->type =  NODE_HEADER;
@@ -842,7 +842,7 @@ NODE* NodeTreeBase::create_node_header()
 //
 NODE* NodeTreeBase::create_node_block()
 {
-    m_node_previous = NULL;
+    m_node_previous = nullptr;
 
     NODE* tmpnode = create_node();
     tmpnode->type =  NODE_BLOCK;
@@ -1038,7 +1038,7 @@ NODE* NodeTreeBase::create_node_text( const char* text, const int color_text, co
 //
 NODE* NodeTreeBase::create_node_ntext( const char* text, const int n, const int color_text, const bool bold )
 {
-    if( n <= 0 ) return NULL;
+    if( n <= 0 ) return nullptr;
     
     NODE* tmpnode = create_node();
 
@@ -1063,8 +1063,8 @@ NODE* NodeTreeBase::create_node_ntext( const char* text, const int n, const int 
 //
 NODE* NodeTreeBase::append_html( const std::string& html )
 {
-    if( is_loading() ) return NULL;
-    if( html.empty() ) return NULL;
+    if( is_loading() ) return nullptr;
+    if( html.empty() ) return nullptr;
 
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::append_html url = " << m_url << " html = " << html << std::endl;
@@ -1099,8 +1099,8 @@ NODE* NodeTreeBase::append_html( const std::string& html )
 //
 NODE* NodeTreeBase::append_dat( const std::string& dat )
 {
-    if( is_loading() ) return NULL;
-    if( dat.empty() ) return NULL;
+    if( is_loading() ) return nullptr;
+    if( dat.empty() ) return nullptr;
 
     init_loading();
     receive_data( dat.c_str(), dat.length() );
@@ -1241,7 +1241,7 @@ void NodeTreeBase::download_dat( const bool check_update )
 #endif
 
             m_fout = fopen( to_locale_cstr( path_cache ), "ab" );
-            if( m_fout == NULL ){
+            if( m_fout == nullptr ){
                 MISC::ERRMSG( "fopen failed : " + path_cache );
             }
         }
@@ -3195,7 +3195,7 @@ bool NodeTreeBase::check_abone_chain( const int number )
         NODE* node = head->headinfo->block[ block ];
         while( node ){
 
-            // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+            // アンカーノードの時は node->linkinfo->ancinfo != nullptr;
             if( node->type == NODE_LINK && node->linkinfo->ancinfo ){
 
                 int anc = 0;
@@ -3322,7 +3322,7 @@ void NodeTreeBase::check_reference( const int number )
 
             if( node->type == NODE_LINK ){
 
-                // アンカーノードの時は node->linkinfo->ancinfo != NULL;
+                // アンカーノードの時は node->linkinfo->ancinfo != nullptr;
                 if( node->linkinfo->ancinfo ){
 
                     int anc = 0;
@@ -3568,7 +3568,7 @@ bool NodeTreeBase::remove_imenu( char* str_link )
     if ( memcmp( p, "://", strlen( "://" ) ) != 0 ) return false;
     p += strlen( "://" );
 
-    const char *cut_sites[] = { "ime.nu/", "ime.st/", "nun.nu/", "pinktower.com/", 0 };
+    const char *cut_sites[] = { "ime.nu/", "ime.st/", "nun.nu/", "pinktower.com/", nullptr };
     const char **q = cut_sites;
     while ( *q ) {
         size_t cs_len = strlen( *q );

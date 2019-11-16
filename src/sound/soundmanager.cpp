@@ -7,7 +7,7 @@
 
 #include "cache.h"
 
-SOUND::SOUND_Manager* instance_sound_manager = NULL;
+SOUND::SOUND_Manager* instance_sound_manager = nullptr;
 
 SOUND::SOUND_Manager* SOUND::get_sound_manager()
 {
@@ -24,7 +24,7 @@ void SOUND::delete_sound_manager()
 {
 #ifdef USE_ALSA
     if( instance_sound_manager ) delete instance_sound_manager;
-    instance_sound_manager = NULL;
+    instance_sound_manager = nullptr;
 #endif
 }
 

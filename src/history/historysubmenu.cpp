@@ -169,7 +169,7 @@ bool HistorySubMenu::open_history( const int i )
             case TYPE_IMAGE:
 
                 if( DBIMG::get_abone( info_list[ i ].url )){
-                    SKELETON::MsgDiag mdiag( NULL, "あぼ〜んされています" );
+                    SKELETON::MsgDiag mdiag( nullptr, "あぼ〜んされています" );
                     mdiag.run();
                 }
                 else{
@@ -314,25 +314,25 @@ void HistorySubMenu::slot_show_property()
         std::cout << "url " << info_list[ i ].url << std::endl;
 #endif
 
-        SKELETON::PrefDiag* pref = NULL;
+        SKELETON::PrefDiag* pref = nullptr;
         switch( info_list[ i ].type ){
 
             case TYPE_THREAD: 
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
 
-                pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_ARTICLE, info_list[ i ].url );
+                pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_ARTICLE, info_list[ i ].url );
                 break;
 
             case TYPE_BOARD:
             case TYPE_VBOARD:
 
-                pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_BOARD, info_list[ i ].url );
+                pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_BOARD, info_list[ i ].url );
                 break;
 
             case TYPE_IMAGE:
 
-                pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_IMAGE, info_list[ i ].url );
+                pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_IMAGE, info_list[ i ].url );
                 break;
         }
 

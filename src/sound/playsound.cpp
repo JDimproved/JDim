@@ -87,7 +87,7 @@ void* Play_Sound::launcher( void* dat )
 {
     Play_Sound* ps = ( Play_Sound * ) dat;
     ps->play_wavfile();
-    return 0;
+    return nullptr;
 }
 
 
@@ -102,9 +102,9 @@ void Play_Sound::play_wavfile()
     std::cout << "Play_Sound::play_wavfile file = " << m_wavfile << std::endl;
 #endif
 
-    char *buffer = NULL;
-    FILE* fin = NULL;
-    snd_pcm_t *handle = NULL;
+    char *buffer = nullptr;
+    FILE* fin = nullptr;
+    snd_pcm_t *handle = nullptr;
 
     try{
 

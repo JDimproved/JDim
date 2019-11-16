@@ -31,7 +31,7 @@ namespace CORE
         DATA_INFO()
         {
             type = 0;
-            parent = NULL;
+            parent = nullptr;
             url = std::string();
             name = std::string();
             path = std::string();

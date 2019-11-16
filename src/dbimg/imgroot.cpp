@@ -95,7 +95,7 @@ Img* ImgRoot::get_img( const std::string& url )
     Img* img = search_img( url );
 
     // 無ければ作る
-    if( img == NULL ){
+    if( img == nullptr ){
         img = new Img( url );
         m_map_img.insert( make_pair( url, img ) );
     }
@@ -114,7 +114,7 @@ Img* ImgRoot::search_img( const std::string& url )
     std::map< std::string, Img* >::iterator it = m_map_img.find( url );
     if( it != m_map_img.end() ) return ( *it ).second;
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -302,7 +302,7 @@ void ImgRoot::delete_all_files()
     std::cout << "ImgRoot::delete_all_files\n";
 #endif
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( NULL, CORE::PREFDIAG_DELIMG, "" );
+    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_DELIMG, "" );
     int ret = pref->run();
     delete pref;
     if( ret != Gtk::RESPONSE_OK ) return;

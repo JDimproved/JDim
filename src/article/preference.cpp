@@ -265,7 +265,7 @@ void Preferences::slot_clear_post_history()
 {
     if( m_label_write.get_text().empty() ) return;
 
-    SKELETON::MsgDiag mdiag( NULL, "書き込み履歴を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+    SKELETON::MsgDiag mdiag( nullptr, "書き込み履歴を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
     DBTREE::article_clear_post_history( get_url() );

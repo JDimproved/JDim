@@ -53,9 +53,9 @@ constexpr const char* JDWindow::s_css_stat_label;
 // メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
-      m_gtkwidget( NULL ),
-      m_gtkwindow( NULL ),
-      m_grand_parent_class( NULL ),
+      m_gtkwidget( nullptr ),
+      m_gtkwindow( nullptr ),
+      m_grand_parent_class( nullptr ),
       m_win_moved( false ),
       m_fold_when_focusout( fold_when_focusout ),
       m_boot( true ),
@@ -63,9 +63,9 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
       m_transient( false ),
       m_mode( JDWIN_INIT ),
       m_count_focusout( 0 ),
-      m_dummywin( NULL ),
-      m_scrwin( NULL ),
-      m_vbox_view( NULL )
+      m_dummywin( nullptr ),
+      m_scrwin( nullptr ),
+      m_vbox_view( nullptr )
 {
     // ステータスバー
 #if GTKMM_CHECK_VERSION(2,5,0)

@@ -5,7 +5,7 @@
 #include "dndmanager.h"
 
 
-CORE::DND_Manager* instance_dnd_manager = NULL;
+CORE::DND_Manager* instance_dnd_manager = nullptr;
 
 
 CORE::DND_Manager* CORE::get_dnd_manager()
@@ -20,7 +20,7 @@ CORE::DND_Manager* CORE::get_dnd_manager()
 void CORE::delete_dnd_manager()
 {
     if( instance_dnd_manager ) delete instance_dnd_manager;
-    instance_dnd_manager = NULL;
+    instance_dnd_manager = nullptr;
 }
 
 

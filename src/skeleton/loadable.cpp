@@ -13,7 +13,7 @@
 using namespace SKELETON;
 
 Loadable::Loadable()
-    : m_loader( NULL ),
+    : m_loader( nullptr ),
       m_low_priority( false )
 {
     clear_load_data();
@@ -61,7 +61,7 @@ bool Loadable::is_loading() const
 {
     if( ! m_loader ) return false;
 
-    // m_loader != NULL ならローダ起動中ってこと
+    // m_loader != nullptr ならローダ起動中ってこと
     return true;
 }
 
@@ -73,7 +73,7 @@ time_t Loadable::get_time_modified()
 {
     time_t time_out;
     time_out = MISC::datetotime( m_date_modified );
-    if( time_out == 0 ) time_out = time( NULL ) - 600;
+    if( time_out == 0 ) time_out = time( nullptr ) - 600;
 
 #ifdef _DEBUG
     std::cout << "Loadable::get_time_modified " << m_date_modified << std::endl
@@ -89,7 +89,7 @@ time_t Loadable::get_time_modified()
 void Loadable::delete_loader()
 {
     if( m_loader ) delete m_loader;
-    m_loader = NULL;
+    m_loader = nullptr;
 }
 
 
@@ -106,7 +106,7 @@ bool Loadable::start_load( const JDLIB::LOADERDATA& data )
     std::cout << "Loadable::start_load url = " << data.url << std::endl;
 #endif
 
-    assert( m_loader == NULL );
+    assert( m_loader == nullptr );
     m_loader = new JDLIB::Loader( m_low_priority );
 
     // 情報初期化

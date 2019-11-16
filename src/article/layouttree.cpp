@@ -55,8 +55,8 @@ using namespace ARTICLE;
 LayoutTree::LayoutTree( const std::string& url, const bool show_abone, const bool show_multispace )
     : m_heap( SIZE_OF_HEAP ),
       m_url( url ),
-      m_local_nodetree( 0 ),
-      m_separator_header( NULL ),
+      m_local_nodetree( nullptr ),
+      m_separator_header( nullptr ),
       m_show_abone( show_abone ),
       m_show_multispace( show_multispace ),
       m_last_dom_attr( 0 )
@@ -89,16 +89,16 @@ void LayoutTree::clear()
 
     m_map_header.clear();
     
-    m_last_header = NULL;
+    m_last_header = nullptr;
     m_max_res_number = 0;
 
     m_id_header = -STEP_ID; // ルートヘッダのIDが 0 になるように -STEP_ID を入れておく
     m_root_header = create_layout_header();
     
     if( m_local_nodetree ) delete m_local_nodetree;
-    m_local_nodetree = NULL;
+    m_local_nodetree = nullptr;
 
-    m_last_div = NULL;
+    m_last_div = nullptr;
 
     // 新着セパレータ作成
     m_separator_new = 0;
@@ -140,7 +140,7 @@ LAYOUT* LayoutTree::create_layout( const int type )
 //
 LAYOUT* LayoutTree::create_layout_header()
 {
-    m_last_layout = NULL;
+    m_last_layout = nullptr;
     m_id_layout = 0;
     m_id_header += STEP_ID;
 
@@ -206,7 +206,7 @@ LAYOUT* LayoutTree::create_layout_idnum( const char* text, const unsigned char* 
 LAYOUT* LayoutTree::create_layout_br( const bool nobr )
 {
     if( nobr ){
-        return create_layout_text( " ", NULL, false );
+        return create_layout_text( " ", nullptr, false );
     }
     LAYOUT* tmplayout = create_layout( DBTREE::NODE_BR );
     m_last_layout->next_layout = tmplayout;
@@ -311,7 +311,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
     // 本文ブロックだけ追加
     if( joint ){
         create_layout_br( m_last_dom_attr & CORE::DOMATTR_NOBR );
-        append_block( headinfo->block[ DBTREE::BLOCK_MES ], res_number, NULL, m_last_dom_attr );
+        append_block( headinfo->block[ DBTREE::BLOCK_MES ], res_number, nullptr, m_last_dom_attr );
     }
     else{
 
@@ -341,7 +341,7 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
                     break;
 
                 case CORE::DOMNODE_TEXT:
-                    create_layout_text( dom->chardat, NULL, false );
+                    create_layout_text( dom->chardat, nullptr, false );
                     break;
 
                 case CORE::DOMNODE_IMAGE: // インライン画像
@@ -388,7 +388,7 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
 
     while( tmpnode ){
 
-        LAYOUT* tmplayout = NULL;
+        LAYOUT* tmplayout = nullptr;
 
         switch( tmpnode->type ){
         
@@ -482,12 +482,12 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 
     DBTREE::NODE* node = node_header->headinfo->block[ DBTREE::BLOCK_NUMBER ]->next_node;
     create_layout_link( node->text, node->linkinfo->link, &node->color_text, node->bold );
-    create_layout_text( " ", NULL, false );
-    create_layout_link( "あぼ〜ん", PROTO_ABONE, NULL, false );
+    create_layout_text( " ", nullptr, false );
+    create_layout_link( "あぼ〜ん", PROTO_ABONE, nullptr, false );
 
     classid = CORE::get_css_manager()->get_classid( "mes" );
     create_layout_div( classid );
-    create_layout_link( "あぼ〜ん", PROTO_ABONE, NULL, false );
+    create_layout_link( "あぼ〜ん", PROTO_ABONE, nullptr, false );
 }
 
 
@@ -556,8 +556,8 @@ const LAYOUT* LayoutTree::get_header_of_res_const( const int number ){ return ge
 
 LAYOUT* LayoutTree::get_header_of_res( const int number )
 {
-    if( m_map_header.empty() ) return NULL;
-    if( number > m_max_res_number || number <= 0 ) return NULL;
+    if( m_map_header.empty() ) return nullptr;
+    if( number > m_max_res_number || number <= 0 ) return nullptr;
 
     return m_map_header[ number ];
 }
@@ -568,7 +568,7 @@ LAYOUT* LayoutTree::get_header_of_res( const int number )
 //
 LAYOUT* LayoutTree::create_separator()
 {
-    m_last_layout = NULL;
+    m_last_layout = nullptr;
     m_id_layout = 0;
 
     int classid = CORE::get_css_manager()->get_classid( "separator" );
@@ -581,7 +581,7 @@ LAYOUT* LayoutTree::create_separator()
 
     if( header->css->bg_color < 0 ) header->css->bg_color = COLOR_SEPARATOR_NEW;
 
-    LAYOUT* layout = create_layout_text( "ここまで読んだ", NULL, false );
+    LAYOUT* layout = create_layout_text( "ここまで読んだ", nullptr, false );
     layout->header = header;
 
     return header;

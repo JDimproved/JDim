@@ -365,14 +365,14 @@ std::string MouseKeyDiag::show_inputdiag( bool is_append )
         // 1つだけしか設定できない場合
         const int count = get_count();
         if( count > 1 || ( count == 1 && is_append ) ){
-            SKELETON::MsgDiag mdiag( NULL, "この項目には、1つだけ設定できます。" );
+            SKELETON::MsgDiag mdiag( nullptr, "この項目には、1つだけ設定できます。" );
             mdiag.run();
             return std::string();
         }
     }
 
     InputDiag* diag = create_inputdiag();
-    if( diag == NULL ) return std::string();
+    if( diag == nullptr ) return std::string();
 
     while( diag->run() == Gtk::RESPONSE_OK ){
 
@@ -383,7 +383,7 @@ std::string MouseKeyDiag::show_inputdiag( bool is_append )
         for( ; it != vec_ids.end(); ++it ){
             const int id = *it;
             if( id != CONTROL::None && id != m_id ){
-                SKELETON::MsgDiag mdiag( NULL, diag->get_str_motion() + "\n\nは「" + CONTROL::get_label( id ) + "」で使用されています" );
+                SKELETON::MsgDiag mdiag( nullptr, diag->get_str_motion() + "\n\nは「" + CONTROL::get_label( id ) + "」で使用されています" );
                 mdiag.run();
                 conflict = true;
                 break;
@@ -487,7 +487,7 @@ void MouseKeyDiag::slot_reset()
             const int id = *it;
 
             if( id != CONTROL::None && id != m_id ){
-                SKELETON::MsgDiag mdiag( NULL, motion + "\n\nは「" + CONTROL::get_label( id ) + "」で使用されています" );
+                SKELETON::MsgDiag mdiag( nullptr, motion + "\n\nは「" + CONTROL::get_label( id ) + "」で使用されています" );
                 mdiag.run();
                 conflict = true;
                 break;

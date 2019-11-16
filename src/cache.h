@@ -213,7 +213,7 @@ namespace CACHE
     void add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type );
 
     // ファイル選択ダイアログを表示する
-    // parent == NULL の時はメインウィンドウをparentにする
+    // parent == nullptr の時はメインウィンドウをparentにする
     // open_path はデフォルトの参照先
     // multi == true なら複数選択可能
     // 戻り値は選択されたファイルのpathのリスト

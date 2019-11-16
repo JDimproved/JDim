@@ -17,7 +17,7 @@ using namespace DBTREE;
 
 NodeTree2chCompati::NodeTree2chCompati( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
-    , m_iconv( NULL )
+    , m_iconv( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "NodeTree2chCompati::NodeTree2chCompati url = " << url << " modified = " << date_modified << std::endl;
@@ -51,7 +51,7 @@ void NodeTree2chCompati::clear()
 
     // iconv 削除
     if( m_iconv ) delete m_iconv;
-    m_iconv = NULL;
+    m_iconv = nullptr;
 }
 
 
@@ -136,7 +136,7 @@ char* NodeTree2chCompati::skip_status_line( char* pos, int status )
 //
 const char* NodeTree2chCompati::raw2dat( char* rawlines, int& byte )
 {
-    assert( m_iconv != NULL );
+    assert( m_iconv != nullptr );
 
     // バッファ自体はiconvクラスの中で持っているのでポインタだけもらう
     return  m_iconv->convert( rawlines, strlen( rawlines ), byte );

@@ -160,7 +160,7 @@ const std::string& ArticleBase::get_since_date()
 // スレ速度
 int ArticleBase::get_speed()
 {
-    time_t current_t = time( NULL );
+    time_t current_t = time( nullptr );
     return ( get_number() * 60 * 60 * 24 ) / MAX( 1, current_t - get_since_time() );
 }
 
@@ -356,7 +356,7 @@ time_t ArticleBase::get_time_modified()
 {
     time_t time_out;
     time_out = MISC::datetotime( m_date_modified );
-    if( time_out == 0 ) time_out = time( NULL ) - 600;
+    if( time_out == 0 ) time_out = time( nullptr ) - 600;
     return time_out; 
 }
 
@@ -365,7 +365,7 @@ time_t ArticleBase::get_time_modified()
 // スレが立ってからの経過時間( 時間 )
 int ArticleBase::get_hour()
 {
-    return ( time( NULL ) - get_since_time() ) / ( 60 * 60 );
+    return ( time( nullptr ) - get_since_time() ) / ( 60 * 60 );
 }
 
 
@@ -1626,7 +1626,7 @@ void ArticleBase::delete_cache( const bool cache_only )
             const std::string msg = "「" + get_subject() +
             "」にはしおりが付けられています。\n\nスレを削除しますか？\n\nしおりを解除するにはスレの上で右クリックしてしおり解除を選択してください。";
 
-            SKELETON::MsgDiag mdiag( NULL, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            SKELETON::MsgDiag mdiag( nullptr, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             mdiag.set_default_response( Gtk::RESPONSE_YES );
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
         }
@@ -1635,7 +1635,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
             const std::string msg = "「" + get_subject() + "」には書き込み履歴が残っています。\n\nスレを削除しますか？";
 
-            SKELETON::MsgCheckDiag mdiag( NULL, msg,
+            SKELETON::MsgCheckDiag mdiag( nullptr, msg,
                                           "今後表示しない(常に削除)(_D)",
                                           Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
@@ -1665,7 +1665,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
                     const std::string msg = "「" + get_subject() + "」には画像が貼られています。\n\n画像のキャッシュも削除しますか？";
 
-                    SKELETON::MsgCheckDiag mdiag( NULL, msg,
+                    SKELETON::MsgCheckDiag mdiag( nullptr, msg,
                                                   "今後表示しない(常に削除しない)(_D)",
                                                   Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
 
@@ -1776,7 +1776,7 @@ bool ArticleBase::save_dat( const std::string& path_to )
     std::string name = MISC::get_filename( path_to );
     if( name.empty() ) name = get_id();
 
-    std::string save_to = CACHE::copy_file( NULL, CACHE::path_dat( m_url ), dir + name, CACHE::FILE_TYPE_DAT );
+    std::string save_to = CACHE::copy_file( nullptr, CACHE::path_dat( m_url ), dir + name, CACHE::FILE_TYPE_DAT );
 
     if( ! save_to.empty() ){
         SESSION::set_dir_dat( MISC::get_dir( save_to ) );
