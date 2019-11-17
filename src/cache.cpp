@@ -83,26 +83,26 @@ std::string CACHE::path_root()
 {
     if( root_path.empty() ){
 
-        root_path = MISC::getenv_limited( "JDIM_CACHE", MAX_SAFE_PATH );
-        if( root_path.empty() ) {
+        std::string jdim_cache = MISC::getenv_limited( "JDIM_CACHE", MAX_SAFE_PATH );
+        if( jdim_cache.empty() ) {
 #ifdef ENABLE_COMPAT_CACHE_DIR
             root_path = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH ) + "/.jd/";
-#else
-            root_path = Glib::get_user_cache_dir() + "/jdim/";
+            if( CACHE::file_exists( root_path ) != CACHE::EXIST_DIR )
 #endif
+            {
+                root_path = Glib::get_user_cache_dir() + "/jdim/";
+            }
         }
-        else if( root_path[ 0 ] == '~' ){
+        else {
+            root_path = std::move( jdim_cache );
+        }
+
+        if( root_path.front() == '~' ) {
             std::string home = MISC::getenv_limited( ENV_HOME , MAX_SAFE_PATH );
             root_path.replace( 0, 1, home );
         }
 
         if( root_path.back() != '/' ) root_path.push_back( '/' );
-
-#ifdef ENABLE_COMPAT_CACHE_DIR
-        if( CACHE::file_exists( root_path ) != CACHE::EXIST_DIR ) {
-            root_path = Glib::get_user_cache_dir() + "/jdim/";
-        }
-#endif
     }
 
     return root_path;
