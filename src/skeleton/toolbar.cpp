@@ -990,7 +990,8 @@ Gtk::ToolItem* ToolBar::get_button_back()
 {
     if( ! m_button_back ){
 
-        m_button_back = Gtk::manage( new SKELETON::ToolBackForwardButton( "back", false, m_url, true ) );
+        const std::string label = CONTROL::get_label( CONTROL::PrevView );
+        m_button_back = Gtk::manage( new SKELETON::ToolBackForwardButton( label, false, m_url, true ) );
         m_button_back->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_back ) );
         m_button_back->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_back ) );
 
@@ -1034,7 +1035,8 @@ Gtk::ToolItem* ToolBar::get_button_forward()
 {
     if( ! m_button_forward ){
 
-        m_button_forward = Gtk::manage( new SKELETON::ToolBackForwardButton( "forward", false, m_url, false ) );
+        const std::string label = CONTROL::get_label( CONTROL::NextView );
+        m_button_forward = Gtk::manage( new SKELETON::ToolBackForwardButton( label, false, m_url, false ) );
         m_button_forward->get_button()->signal_button_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_forward ) );
         m_button_forward->get_button()->signal_selected().connect( sigc::mem_fun(*this, &ToolBar::slot_selected_forward ) );
         set_tooltip( *m_button_forward, CONTROL::get_label_motions( CONTROL::NextView ) );

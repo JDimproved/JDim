@@ -46,7 +46,7 @@ void ToolMenuButton::setup( SKELETON::MenuButton* button, const std::string& lab
         Gtk::StockID id;
         Gtk::IconSize size;
         image->get_stock( id, size );
-        item = Gtk::manage( new Gtk::ImageMenuItem( *Gtk::manage( new Gtk::Image( id, size ) ), "" ) );
+        item = Gtk::manage( new Gtk::ImageMenuItem( *Gtk::manage( new Gtk::Image( id, size ) ), label ) );
     }
     else item = Gtk::manage( new Gtk::MenuItem( label ) );
 
