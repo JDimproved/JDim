@@ -152,15 +152,15 @@ namespace SKELETON
         Gtk::ToolItem* get_button_board();
 
         // その他ボタン
-        Gtk::ToolItem* get_button_write();
-        Gtk::ToolItem* get_button_reload();
-        Gtk::ToolItem* get_button_stop();
+        Gtk::ToolButton* get_button_write();
+        Gtk::ToolButton* get_button_reload();
+        Gtk::ToolButton* get_button_stop();
         Gtk::ToolButton* get_button_close();
         Gtk::ToolItem* get_button_delete();
         Gtk::ToolItem* get_button_favorite();
         Gtk::ToolButton* get_button_undo();
         Gtk::ToolButton* get_button_redo();
-        Gtk::ToolItem* get_button_lock();
+        Gtk::ToolButton* get_button_lock();
 
         Gtk::ToolItem* get_button_back();
         Gtk::ToolItem* get_button_forward();

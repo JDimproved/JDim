@@ -62,13 +62,19 @@ void SearchToolBar::pack_buttons()
                 break;
 
             case ITEM_RELOAD:
-                get_buttonbar().append( *get_button_reload() );
-                set_tooltip( *get_button_reload(), "再検索 " + CONTROL::get_str_motions( CONTROL::Reload ) );
+                if( auto button = get_button_reload() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( "再検索" );
+                    set_tooltip( *button, "再検索 " + CONTROL::get_str_motions( CONTROL::Reload ) );
+                }
                 break;
 
             case ITEM_STOPLOADING:
-                get_buttonbar().append( *get_button_stop() );
-                set_tooltip( *get_button_stop(), "検索中止 " + CONTROL::get_str_motions( CONTROL::StopLoading ) );
+                if( auto button = get_button_stop() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( "検索中止" );
+                    set_tooltip( *button, "検索中止 " + CONTROL::get_str_motions( CONTROL::Reload ) );
+                }
                 break;
 
             case ITEM_QUIT:

@@ -123,10 +123,14 @@ void MessageToolBar::pack_buttons()
         switch( item ){
 
             case ITEM_PREVIEW:
-                get_buttonbar().append( *get_button_preview() );
-                set_tooltip( *get_button_preview(), CONTROL::get_label_motions( CONTROL::Preview )
-                             + "\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
-                             + CONTROL::get_label_motions( CONTROL::TabRight ) + "\n\n"+ CONTROL::get_label_motions( CONTROL::TabLeft ) );
+                if( auto button = get_button_preview() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( CONTROL::get_label( CONTROL::Preview ) );
+                    set_tooltip( *button, CONTROL::get_label_motions( CONTROL::Preview )
+                                          + "\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
+                                          + CONTROL::get_label_motions( CONTROL::TabRight ) + "\n\n"
+                                          + CONTROL::get_label_motions( CONTROL::TabLeft ) );
+                }
                 break;
 
             case ITEM_WRITEMSG:
@@ -189,11 +193,11 @@ void MessageToolBar::pack_buttons()
                 break;
 
             case ITEM_LOCK_MESSAGE:
-                get_buttonbar().append( *get_button_lock() );
-                set_tooltip( *get_button_lock(), CONTROL::get_label_motions( CONTROL::LockMessage ) );
-                Gtk::ToolButton* toolbt;
-                toolbt = dynamic_cast< Gtk::ToolButton* >( get_button_lock() );
-                if( toolbt ) toolbt->set_label( CONTROL::get_label( CONTROL::LockMessage ) );
+                if( auto button = get_button_lock() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( CONTROL::get_label( CONTROL::LockMessage ) );
+                    set_tooltip( *button, CONTROL::get_label_motions( CONTROL::LockMessage ) );
+                }
                 break;
 
             case ITEM_QUIT:
@@ -257,8 +261,11 @@ void MessageToolBarPreview::pack_buttons()
         switch( item ){
 
             case ITEM_PREVIEW:
-                get_buttonbar().append( *get_button_preview() );
-                set_tooltip( *get_button_preview(), "プレビューを閉じる" );
+                if( auto button = get_button_preview() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( "プレビューを閉じる" );
+                    set_tooltip( *button, "プレビューを閉じる" );
+                }
                 break;
 
             case ITEM_OPENBOARD:

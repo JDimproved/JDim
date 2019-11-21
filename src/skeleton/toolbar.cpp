@@ -719,7 +719,7 @@ void ToolBar::slot_menu_board( int i )
 //
 // 書き込みボタン
 //
-Gtk::ToolItem* ToolBar::get_button_write()
+Gtk::ToolButton* ToolBar::get_button_write()
 {
     if( ! m_button_write ){
         m_button_write = Gtk::manage( new ImgToolButton( ICON::WRITE, CONTROL::WriteMessage ) );
@@ -789,7 +789,7 @@ bool ToolBar::slot_focusout_write_button( GdkEventFocus* event )
 //
 // 再読み込みボタン
 //
-Gtk::ToolItem* ToolBar::get_button_reload()
+Gtk::ToolButton* ToolBar::get_button_reload()
 {
     if( ! m_button_reload ){
         m_button_reload = Gtk::manage( new ImgToolButton( ICON::RELOAD, CONTROL::Reload ) );
@@ -818,7 +818,7 @@ void ToolBar::slot_clicked_reload()
 //
 // 読み込み停止ボタン
 //
-Gtk::ToolItem* ToolBar::get_button_stop()
+Gtk::ToolButton* ToolBar::get_button_stop()
 {
     if( ! m_button_stop ){
         m_button_stop = Gtk::manage( new ImgToolButton( ICON::STOPLOADING, CONTROL::StopLoading ) );
@@ -1075,7 +1075,7 @@ void ToolBar::slot_selected_forward( const int i )
 //
 // ロックボタン
 //
-Gtk::ToolItem* ToolBar::get_button_lock()
+Gtk::ToolButton* ToolBar::get_button_lock()
 {
     if( ! m_button_lock ){
         m_button_lock = Gtk::manage( new ImgToggleToolButton( ICON::LOCK, CONTROL::Lock ) );
