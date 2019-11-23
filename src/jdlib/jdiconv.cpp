@@ -177,7 +177,7 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                     const int ucs2 = MISC::utf8toucs2( m_buf_in_tmp, byte );
                     if( byte != 1 ){
 
-                        const std::string ucs2_str = MISC::itostr( ucs2 );
+                        const std::string ucs2_str = std::to_string( ucs2 );
 #ifdef _DEBUG
                         std::cout << "ucs2 = " << ucs2_str << " byte = " << byte << std::endl;
 #endif

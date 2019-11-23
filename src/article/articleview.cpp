@@ -282,7 +282,7 @@ void ArticleViewMain::show_view()
 #endif
 
         set_reget( false );
-        CORE::core_set_command( "delete_article", url_article(), "reget", MISC::itostr( jump_to ) );        
+        CORE::core_set_command( "delete_article", url_article(), "reget", std::to_string( jump_to ) );
         return;
     }
 
@@ -715,7 +715,7 @@ void ArticleViewMain::live_start()
     const int live_sec = DBTREE::board_get_live_sec( get_url() );
 
     set_live( true );
-    ARTICLE::get_admin()->set_command_immediately( "start_autoreload", get_url(), "on", MISC::itostr( live_sec ) );
+    ARTICLE::get_admin()->set_command_immediately( "start_autoreload", get_url(), "on", std::to_string( live_sec ) );
     set_autoreload_counter( live_sec * 1000/TIMER_TIMEOUT );
     drawarea()->live_start();
     drawarea()->update_live_speed( live_sec );

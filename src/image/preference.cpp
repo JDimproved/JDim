@@ -40,12 +40,12 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_hbox_ref.pack_start( m_label_url_ref );
     m_hbox_ref.pack_start( m_open_ref, Gtk::PACK_SHRINK );
 
-    m_label_wh.set_text( MISC::itostr( DBIMG::get_width( get_url() ) )
+    m_label_wh.set_text( std::to_string( DBIMG::get_width( get_url() ) )
                                          + " x "
-                                         + MISC::itostr( DBIMG::get_height( get_url() ) ) );
+                                         + std::to_string( DBIMG::get_height( get_url() ) ) );
 
     int size = DBIMG::get_filesize( get_url() );
-    m_label_size.set_text( MISC::itostr( size )  + " / " + MISC::itostr( size/1024 ) );
+    m_label_size.set_text( std::to_string( size ) + " / " + std::to_string( size/1024 ) );
 
     std::string type;
     switch( DBIMG::get_type_real( get_url() ) ){
@@ -112,7 +112,7 @@ void Preferences::slot_open_ref()
     std::stringstream ss;
     ss << from << "-" << to;
 
-    CORE::core_set_command( "open_article_res" ,url, ss.str(), MISC::itostr( center ) );
+    CORE::core_set_command( "open_article_res", url, ss.str(), std::to_string( center ) );
 
     response( Gtk::RESPONSE_CANCEL );
 }

@@ -1446,7 +1446,7 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
         if( rawlines[ i ] == '\0' ){
             const size_t beg = i;
             while( i < size && rawlines[ i ] == '\0' ) ++i;
-            MISC::ERRMSG( MISC::itostr( i - beg ) + " EOF was inserted in the middle of the raw data" );
+            MISC::ERRMSG( std::to_string( i - beg ) + " EOF was inserted in the middle of the raw data" );
             memset( rawlines + beg, ' ', i - beg );
         } 
     }

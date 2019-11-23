@@ -16,8 +16,6 @@
 
 #include "skeleton/msgdiag.h"
 
-#include "jdlib/miscutil.h"
-
 #include "colorid.h"
 
 enum
@@ -369,7 +367,7 @@ void AboutConfig::set_value( Gtk::TreeModel::Row& row, const std::string& value 
 
 void AboutConfig::set_value( Gtk::TreeModel::Row& row, const int value )
 {
-    row[ m_columns.m_col_value ] = MISC::itostr( value );
+    row[ m_columns.m_col_value ] = std::to_string( value );
 
     const int  defaultval = row[ m_columns.m_col_default_int ];
     if( value != defaultval ) row[ m_columns.m_col_drawbg ] = true;

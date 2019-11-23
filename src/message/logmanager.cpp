@@ -337,7 +337,7 @@ void Log_Manager::save( const std::string& url,
     if( filesize > CONFIG::get_maxsize_post_log() ){
 
         const int maxno = get_max_num_of_log() + 1;
-        const std::string newpath = path + "-" + MISC::itostr( maxno );
+        const std::string newpath = path + "-" + std::to_string( maxno );
         CACHE::jdmv( path, newpath );
         chmod( newpath.c_str(), S_IWUSR | S_IRUSR );
 
@@ -365,7 +365,7 @@ std::string Log_Manager::get_post_log( const int num )
 {
     std::string path = CACHE::path_postlog();
 
-    if( num ) path += "-" + MISC::itostr( num );
+    if( num ) path += "-" + std::to_string( num );
 
     std::string html;
     CACHE::load_rawdata( path, html );
@@ -420,7 +420,7 @@ void Log_Manager::clear_post_log()
     for( int num = 0; num <= maxno; ++num ){
 
         std::string path = CACHE::path_postlog();
-        if( num ) path += "-" + MISC::itostr( num );
+        if( num ) path += "-" + std::to_string( num );
 
         unlink( to_locale_cstr( path ) );
     }

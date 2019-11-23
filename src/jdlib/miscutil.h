@@ -120,9 +120,6 @@ namespace MISC
     // 戻り値: 数値
     int str_to_uint( const char* str, size_t& dig, size_t& n );
 
-    // 数字　-> 文字変換
-    std::string itostr( const int n );
-
     // listで指定した数字を文字に変換
     std::string intlisttostr( const std::list< int >& list_num );
 

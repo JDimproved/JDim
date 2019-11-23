@@ -577,18 +577,6 @@ int MISC::str_to_uint( const char* str, size_t& dig, size_t& n )
 
 
 //
-// 数字　-> 文字変換
-//
-std::string MISC::itostr( const int n )
-{
-    std::ostringstream ss;
-    ss << n;
-
-    return ss.str();
-}
-
-
-//
 // listで指定した数字を文字に変換
 //
 std::string MISC::intlisttostr( const std::list< int >& list_num )
@@ -1490,7 +1478,7 @@ int MISC::utf8toucs2( const char* utfstr, int& byte )
     else {
         byte = 1;
         ucs2 =  utfstr[ 0 ];
-        ERRMSG( "MISC::utf8toucs2 : invalid code = " + MISC::itostr( ucs2 ) );
+        ERRMSG( "MISC::utf8toucs2 : invalid code = " + std::to_string( ucs2 ) );
     }
 
     return ucs2;

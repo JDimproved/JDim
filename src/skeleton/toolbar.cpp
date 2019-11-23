@@ -565,7 +565,7 @@ void ToolBar::slot_operate_search( const int controlid )
     std::cout << "ToolBar::slot_operate_search id = " << controlid << std::endl;
 #endif
 
-    m_admin->set_command( "toolbar_operate_search", m_url, MISC::itostr( controlid ) );
+    m_admin->set_command( "toolbar_operate_search", m_url, std::to_string( controlid ) );
 }
 
 
@@ -1024,7 +1024,7 @@ void ToolBar::slot_selected_back( const int i )
     std::cout << "ToolBar::slot_selected_back : " << i << " url = " << m_url << std::endl;
 #endif
 
-    m_admin->set_command( "back_viewhistory", m_url, MISC::itostr( i+1 ) );
+    m_admin->set_command( "back_viewhistory", m_url, std::to_string( i+1 ) );
 }
 
 
@@ -1067,7 +1067,7 @@ void ToolBar::slot_selected_forward( const int i )
     std::cout << "ToolBar::slot_selected_forward : " << i << " url = " << m_url << std::endl;
 #endif
 
-    m_admin->set_command( "forward_viewhistory", m_url, MISC::itostr( i+1 ) );
+    m_admin->set_command( "forward_viewhistory", m_url, std::to_string( i+1 ) );
 }
 
 

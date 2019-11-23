@@ -7,8 +7,6 @@
 #include "admin.h"
 #include "view.h"
 
-#include "jdlib/miscutil.h"
-
 #include "history/historymanager.h"
 
 #include "config/globalconf.h"
@@ -175,7 +173,7 @@ bool View::release_keyjump_key( int key )
         m_keyjump_num *= 10;
         m_keyjump_num += key - '0';
 
-        CORE::core_set_command( "set_info", "", MISC::itostr( m_keyjump_num ) );
+        CORE::core_set_command( "set_info", "", std::to_string( m_keyjump_num ) );
         return true;
     }
 

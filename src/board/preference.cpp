@@ -61,7 +61,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     // 書き込み設定
     const int samba_sec = DBTREE::board_samba_sec( get_url() );
     if( ! samba_sec ) m_label_samba.set_text( "未取得" );
-    else m_label_samba.set_text( MISC::itostr( samba_sec ) );
+    else m_label_samba.set_text( std::to_string( samba_sec ) );
 
     m_button_clearsamba.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_samba ) );
     m_hbox_samba.pack_start( m_label_samba );
@@ -152,8 +152,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     set_activate_entry( m_spin_live );
 
     // 一般ページのパッキング
-    m_label_max_line.set_text( MISC::itostr( DBTREE::line_number( get_url() ) * 2 ) );
-    m_label_max_byte.set_text( MISC::itostr( DBTREE::message_count( get_url() ) ) );
+    m_label_max_line.set_text( std::to_string( DBTREE::line_number( get_url() ) * 2 ) );
+    m_label_max_byte.set_text( std::to_string( DBTREE::message_count( get_url() ) ) );
     m_hbox_max.pack_start( m_label_max_line );
     m_hbox_max.pack_start( m_label_max_byte );
 
@@ -227,7 +227,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     if( DBTREE::board_get_local_proxy_basicauth( get_url() ).empty() ) host = DBTREE::board_get_local_proxy( get_url() );
     else host = DBTREE::board_get_local_proxy_basicauth( get_url() ) + "@" + DBTREE::board_get_local_proxy( get_url() );
     m_proxy_frame.entry_host.set_text( host );
-    m_proxy_frame.entry_port.set_text( MISC::itostr( DBTREE::board_get_local_proxy_port( get_url() ) ) );
+    m_proxy_frame.entry_port.set_text( std::to_string( DBTREE::board_get_local_proxy_port( get_url() ) ) );
 
     switch( DBTREE::board_get_mode_local_proxy_w( get_url() ) ){
         case DBTREE::PROXY_GLOBAL: m_proxy_frame_w.rd_global.set_active(); break;
@@ -237,7 +237,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     if( DBTREE::board_get_local_proxy_basicauth_w( get_url() ).empty() ) host = DBTREE::board_get_local_proxy_w( get_url() );
     else host = DBTREE::board_get_local_proxy_basicauth_w( get_url() ) + "@" + DBTREE::board_get_local_proxy_w( get_url() );
     m_proxy_frame_w.entry_host.set_text( host );
-    m_proxy_frame_w.entry_port.set_text( MISC::itostr( DBTREE::board_get_local_proxy_port_w( get_url() ) ) );
+    m_proxy_frame_w.entry_port.set_text( std::to_string( DBTREE::board_get_local_proxy_port_w( get_url() ) ) );
 
     m_vbox_proxy.pack_start( m_label_proxy, Gtk::PACK_SHRINK );
     m_vbox_proxy.pack_start( m_proxy_frame, Gtk::PACK_SHRINK );
@@ -390,7 +390,7 @@ void Preferences::slot_clear_samba()
 
     const int samba_sec = DBTREE::board_samba_sec( get_url() );
     if( ! samba_sec ) m_label_samba.set_text( "未取得" );
-    else m_label_samba.set_text( MISC::itostr( samba_sec ) );
+    else m_label_samba.set_text( std::to_string( samba_sec ) );
 }
 
 

@@ -399,8 +399,8 @@ void ImageViewMain::update_status()
 //
 void ImageViewMain::add_tab_number()
 {
-    set_status( " [" + MISC::itostr( IMAGE::get_admin()->get_current_page() + 1 )
-                + "/" + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) + "] "
+    set_status( " [" + std::to_string( IMAGE::get_admin()->get_current_page() + 1 )
+                + "/" + std::to_string( IMAGE::get_admin()->get_tab_nums() ) + "] "
                 + get_status_local()
                 + " [" + MISC::get_filename( get_url() )
                 + " (" + MISC::get_hostname( get_url(), false ) + ")]" );

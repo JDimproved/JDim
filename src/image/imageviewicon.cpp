@@ -183,7 +183,7 @@ Gtk::Menu* ImageViewIcon::get_popupmenu( const std::string& url )
         auto item = dynamic_cast< Gtk::MenuItem* >( *menu->get_children().begin() );
         auto label = dynamic_cast< Gtk::Label* >( item->get_child() );
         if( label ) label->set_text_with_mnemonic( ITEM_NAME_GO + std::string( " [ タブ数 " )
-                                                   + MISC::itostr( IMAGE::get_admin()->get_tab_nums() ) + " ](_M)" );
+                                                   + std::to_string( IMAGE::get_admin()->get_tab_nums() ) + " ](_M)" );
     }
 
     return menu;

@@ -553,7 +553,7 @@ void DragTreeView::slot_selection_changed()
     int size = get_selection()->get_selected_rows().size();
 
     std::string str;
-    if( size >= 2 ) str = "選択数 " + MISC::itostr( size );
+    if( size >= 2 ) str = "選択数 " + std::to_string( size );
     CORE::core_set_command( "set_info" ,"", str );
 }
 

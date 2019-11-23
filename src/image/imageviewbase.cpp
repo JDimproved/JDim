@@ -14,7 +14,6 @@
 #include "dbimg/imginterface.h"
 #include "dbimg/img.h"
 
-#include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
 
 #include "control/controlutil.h"
@@ -137,9 +136,9 @@ void ImageViewBase::setup_common()
     unsigned int size[] = SIZE_MENU;
     for( unsigned int i = 0; i < sizeof( size )/sizeof( unsigned int ) ; ++i ){
         int tmp_size = size[ i ];
-        std::string str_size = MISC::itostr( tmp_size );
+        std::string str_size = std::to_string( tmp_size );
         //ショートカットは、1から始まる
-        std::string str_shortcut = "(_" + MISC::itostr( i+1 ) + ")";
+        std::string str_shortcut = "(_" + std::to_string( i+1 ) + ")";
         Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "Size" + str_size, str_size + "%" + str_shortcut );
         action_group()->add( action, sigc::bind< int >( sigc::mem_fun( *this, &ImageViewBase::slot_resize_image ), tmp_size ) );
     }
@@ -1088,7 +1087,7 @@ void ImageViewBase::slot_open_ref()
     std::stringstream ss;
     ss << from << "-" << to;
 
-    CORE::core_set_command( "open_article_res" ,url, ss.str(), MISC::itostr( center ) );
+    CORE::core_set_command( "open_article_res" ,url, ss.str(), std::to_string( center ) );
 }
 
 
@@ -1320,9 +1319,9 @@ void ImageViewBase::slot_usrcmd( int num )
 
     CORE::core_set_command( "exec_usr_cmd" ,
                             url_article,
-                            MISC::itostr( num ),
+                            std::to_string( num ),
                             get_url(),
                             "",
-                            MISC::itostr( from )
+                            std::to_string( from )
         );
 }

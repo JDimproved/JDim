@@ -65,8 +65,8 @@ void restore_bkup( const bool no_restore_bkup )
     const std::string path_favor = CACHE::path_xml_favorite();
     const std::string path_main_bkup = CACHE::path_xml_listmain_bkup();
     const std::string path_favor_bkup = CACHE::path_xml_favorite_bkup();
-    const std::string path_main_old = path_main + "." + MISC::itostr( tv.tv_sec );
-    const std::string path_favor_old = path_favor + "." + MISC::itostr( tv.tv_sec );
+    const std::string path_main_old = path_main + "." + std::to_string( tv.tv_sec );
+    const std::string path_favor_old = path_favor + "." + std::to_string( tv.tv_sec );
 
     const bool bkup_main = ( CACHE::file_exists( path_main_bkup ) == CACHE::EXIST_FILE );
     const bool bkup_favor = ( CACHE::file_exists( path_favor_bkup ) == CACHE::EXIST_FILE );

@@ -2630,7 +2630,7 @@ bool BoardViewBase::drawout( const bool force_reset )
 
     if( reset ) CORE::core_set_command( "set_info", "", "" );
     else if( ! hit ) CORE::core_set_command( "set_info", "", "検索結果： ヒット無し" );
-    else CORE::core_set_command( "set_info", "", "検索結果： " + MISC::itostr( hit ) + "件" );
+    else CORE::core_set_command( "set_info", "", "検索結果： " + std::to_string( hit ) + "件" );
 
     return true;
 }
@@ -2796,7 +2796,7 @@ void BoardViewBase::slot_preferences_article()
 //
 void BoardViewBase::back_viewhistory( const int count )
 {
-    BOARD::get_admin()->set_command( "back_viewhistory", get_url(), MISC::itostr( count ) );
+    BOARD::get_admin()->set_command( "back_viewhistory", get_url(), std::to_string( count ) );
 }
 
 
@@ -2805,7 +2805,7 @@ void BoardViewBase::back_viewhistory( const int count )
 //
 void BoardViewBase::forward_viewhistory( const int count )
 {
-    BOARD::get_admin()->set_command( "forward_viewhistory", get_url(), MISC::itostr( count ) );
+    BOARD::get_admin()->set_command( "forward_viewhistory", get_url(), std::to_string( count ) );
 }
 
 

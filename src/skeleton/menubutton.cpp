@@ -69,7 +69,7 @@ void MenuButton::setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOpti
     Glib::RefPtr< Gtk::ActionGroup > actiongroup = Gtk::ActionGroup::create();
     Glib::RefPtr< Gtk::AccelGroup > agroup  = CORE::get_mainwindow()->get_accel_group();
     for( size_t i = 0 ; i < MAX_MENU_SIZE; ++i ){
-        Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "menu" + MISC::itostr( i ), "dummy" );
+        Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "menu" + std::to_string( i ), "dummy" );
         action->set_accel_group( agroup );
         Gtk::MenuItem* item = Gtk::manage( action->create_menu_item() );
         actiongroup->add( action, sigc::bind< int >( sigc::mem_fun( *this, &MenuButton::slot_menu_selected ), i ) );

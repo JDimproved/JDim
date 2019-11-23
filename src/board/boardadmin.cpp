@@ -15,7 +15,6 @@
 
 #include "icons/iconmanager.h"
 
-#include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/miscmsg.h"
 
@@ -136,7 +135,7 @@ void BoardAdmin::restore( const bool only_locked )
     set_switchhistory( list_switchhistory );
 
     SESSION::set_online( online );
-    if( get_tab_nums() ) set_command( "set_page", std::string(), MISC::itostr( set_page_num ) );
+    if( get_tab_nums() ) set_command( "set_page", std::string(), std::to_string( set_page_num ) );
 }
 
 

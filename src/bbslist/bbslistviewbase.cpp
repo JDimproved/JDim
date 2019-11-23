@@ -1730,7 +1730,7 @@ void BBSListViewBase::slot_opendir_as_board()
 
     const std::string tab = "newtab";
     const std::string mode = "";
-    CORE::core_set_command( "open_sidebar_board", get_url(), tab, mode, MISC::itostr( dirid ) );
+    CORE::core_set_command( "open_sidebar_board", get_url(), tab, mode, std::to_string( dirid ) );
 }
 
 
@@ -1747,7 +1747,7 @@ void BBSListViewBase::slot_create_vboard()
     CORE::DATA_INFO info;
     info.type = TYPE_VBOARD;
     info.parent = BBSLIST::get_admin()->get_win();
-    info.url = get_url() + SIDEBAR_SIGN + MISC::itostr( dirid );
+    info.url = get_url() + SIDEBAR_SIGN + std::to_string( dirid );
     info.name = path2name( m_path_selected );
     info.path = m_path_selected.to_string();
     list_info.push_back( info );

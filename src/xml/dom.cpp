@@ -922,7 +922,7 @@ bool Dom::setAttribute( const std::string& name, const int value )
     // 属性名は小文字に統一
     const std::string attr_name = MISC::tolower_str( name );
 
-    m_attributes.insert( make_pair( attr_name, MISC::itostr( value ) ) );
+    m_attributes.insert( make_pair( attr_name, std::to_string( value ) ) );
 
     return true;
 }
