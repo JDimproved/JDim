@@ -31,21 +31,6 @@ $(jdim_BUILDINFO_HEADER):
 	@echo '' >> $@.new
 	@echo '// Build information.' >> $@.new
 
-	@if test -n "$(CC)"; \
-	then \
-	    CC_INFO=$(CC); \
-	    CC_VERSION=`LANG=C $(CC) -dumpversion 2>/dev/null`; \
-	    test -n "$${CC_VERSION}" && CC_INFO="$(CC)($${CC_VERSION})"; \
-	    echo "#define CC_INFO \"$${CC_INFO}\"" >> $@.new; \
-	fi
-	@if test -n "$(CXX)"; \
-	then \
-	    CXX_INFO=$(CXX); \
-	    CXX_VERSION=`LANG=C $(CXX) -dumpversion 2>/dev/null`; \
-	    test -n "$${CXX_VERSION}" && CXX_INFO="$(CXX)($${CXX_VERSION})"; \
-	    echo "#define CXX_INFO \"$${CXX_INFO}\"" >> $@.new; \
-	fi
-
 	@if test -n "$(jdim_CONFIGURE_ARGS)"; \
 	then \
 	    echo "#define CONFIGURE_ARGS \"$(jdim_CONFIGURE_ARGS)\"" >> $@.new; \
