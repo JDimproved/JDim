@@ -1,0 +1,155 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+
+  build-default:
+
+    runs-on: ${{ matrix.sets.os }}
+    env:
+      CC: ${{ matrix.sets.cc }}
+      CXX: ${{ matrix.sets.cxx }}
+      CXXFLAGS: ${{ matrix.sets.debug }}
+    strategy:
+      matrix:
+        sets:
+          - os: ubuntu-16.04
+            cc: gcc-5
+            cxx: g++-5
+            package: g++-5
+            debug: -Og -D_DEBUG
+          - os: ubuntu-18.04
+            cc: gcc-6
+            cxx: g++-6
+            package: g++-6
+            debug: -Og -D_DEBUG
+          - os: ubuntu-18.04
+            cc: gcc-7
+            cxx: g++-7
+            package: g++-7
+            debug: -Og -D_DEBUG
+          - os: ubuntu-18.04
+            cc: gcc-8
+            cxx: g++-8
+            package: g++-8
+            debug: -Og -D_DEBUG
+
+          - os: ubuntu-16.04
+            cc: clang-4.0
+            cxx: clang++-4.0
+            package: clang-4.0
+            debug: -Og -D_DEBUG
+          - os: ubuntu-18.04
+            cc: clang-5.0
+            cxx: clang++-5.0
+            package: clang-5.0
+            debug: -Og -D_DEBUG
+          - os: ubuntu-18.04
+            cc: clang-6.0
+            cxx: clang++-6.0
+            package: clang-6.0
+            debug: -Og -D_DEBUG
+          - os: ubuntu-18.04
+            cc: clang-7
+            cxx: clang++-7
+            package: clang-7
+            debug: -Og -D_DEBUG
+          - os: ubuntu-18.04
+            cc: clang-8
+            cxx: clang++-8
+            package: clang-8
+            debug: -Og -D_DEBUG
+
+          - os: ubuntu-18.04
+            cc: gcc-7
+            cxx: g++-7
+            package: g++-7
+            debug:
+          - os: ubuntu-18.04
+            cc: clang-6.0
+            cxx: clang++-6.0
+            package: clang-6.0
+            debug:
+    steps:
+    - uses: actions/checkout@v2
+    - name: dependencies installation
+      run: |
+        sudo apt update
+        sudo apt install autoconf-archive libgnutls28-dev libgtkmm-3.0-dev libltdl-dev libtool zlib1g-dev ${{ matrix.sets.package }}
+      # 16.04's libgtest-dev is not same directory hierarchy for google/googletest.
+    - name: fetch googletest 1.10.0
+      run: git clone --branch=release-1.10.0 --depth 1 https://github.com/google/googletest.git test/googletest
+    - name: autoreconf -i
+      run: autoreconf -i
+    - name: ./configure --with-gtkmm3=yes
+      run: ./configure --with-gtkmm3=yes
+    - name: make -j$(nproc)
+      run: make -j$(nproc)
+    - name: make check -j$(nproc)
+      run: make check -j$(nproc)
+    - name: ./src/jdim -V
+      run: ./src/jdim -V
+
+  build-libs:
+
+    runs-on: ubuntu-18.04
+    env:
+      CC: ${{ matrix.compiler.cc }}
+      CXX: ${{ matrix.compiler.cxx }}
+      CXXFLAGS: -Og -D_DEBUG
+      GTEST_SRCDIR: /usr/src/googletest
+    strategy:
+      matrix:
+        compiler:
+          - cc: gcc-7
+            cxx: g++-7
+            package: g++-7
+          - cc: clang-6.0
+            cxx: clang++-6.0
+            package: clang-6.0
+        deps:
+          - config_args: --with-gtkmm3 --with-thread=posix --with-tls=gnutls --with-regex=posix --with-sessionlib=no --disable-compat-cache-dir
+            packages: libgtkmm-3.0-dev libgnutls28-dev
+          - config_args: --with-gtkmm3 --with-thread=posix --with-tls=openssl --with-regex=oniguruma --with-migemo --with-pangolayout
+            packages: libgtkmm-3.0-dev libssl-dev libonig-dev libmigemo-dev
+          - config_args: --with-gtkmm3 --with-thread=std --with-tls=gnutls --with-regex=pcre --with-alsa
+            packages: libgtkmm-3.0-dev libgnutls28-dev libpcre3-dev libasound2-dev
+          - config_args: --with-gtkmm3 --with-thread=std --with-tls=openssl --with-regex=posix --with-xdgopen
+            packages: libgtkmm-3.0-dev libssl-dev
+    steps:
+    - uses: actions/checkout@v2
+    - name: dependencies installation (${{ matrix.deps.packages }})
+      run: |
+        sudo apt update
+        sudo apt install autoconf-archive libgtest-dev libtool libltdl-dev ${{ matrix.deps.packages }} ${{ matrix.compiler.package }}
+    - name: autoreconf -i
+      run: autoreconf -i
+    - name: ./configure ${{ matrix.deps.config_args }}
+      run: ./configure ${{ matrix.deps.config_args }}
+    - name: make -j$(nproc)
+      run: make -j$(nproc)
+    - name: make check -j$(nproc)
+      run: make check -j$(nproc)
+    - name: ./src/jdim -V
+      run: ./src/jdim -V
+
+  manual:
+
+    runs-on: ubuntu-18.04
+    env:
+      NOKOGIRI_USE_SYSTEM_LIBRARIES: true
+    steps:
+    - uses: actions/checkout@v2
+    - name: dependencies installation
+      run: |
+        sudo apt update
+        sudo apt install ruby-dev ruby-bundler libcurl4-openssl-dev libxslt1-dev
+    - name: make -j$(nproc) -C docs build
+      run: make -j$(nproc) -C docs build
