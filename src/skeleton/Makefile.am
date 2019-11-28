@@ -20,7 +20,6 @@ libskeleton_a_SOURCES = \
 	tabswitchbutton.cpp \
 	tabswitchmenu.cpp \
 	imgbutton.cpp \
-	imgtoolbutton.cpp \
 	imgtogglebutton.cpp \
 	imgtoggletoolbutton.cpp \
 	menubutton.cpp \

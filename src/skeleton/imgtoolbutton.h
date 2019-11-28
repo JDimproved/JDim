@@ -7,18 +7,35 @@
 
 #include <gtkmm.h>
 #include <string>
+#include <type_traits>
+
+#include "control/controlutil.h"
+#include "icons/iconmanager.h"
 
 namespace SKELETON
 {
-    class ImgToolButton : public Gtk::ToolButton
+    template<typename Base>
+    class ToolButtonExtension : public Base
     {
-        Gtk::Image* m_img;
+        static_assert( std::is_base_of<Gtk::ToolButton, Base>::value, "Base must inherit Gtk::ToolButton" );
 
-      public:
+    public:
+        explicit ToolButtonExtension( const int iconid )
+            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ) ) ) )
+        {}
 
-        ImgToolButton( const int id );
-        ~ImgToolButton() noexcept;
+        explicit ToolButtonExtension( const int iconid, const int controlid )
+            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ) ) ), CONTROL::get_label( controlid ) )
+        {}
+
+        explicit ToolButtonExtension( const int iconid, const Glib::ustring& label )
+            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ) ) ), label )
+        {}
+
+        ~ToolButtonExtension() noexcept = default;
     };
+
+    using ImgToolButton = ToolButtonExtension<Gtk::ToolButton>;
 }
 
 #endif

@@ -13,7 +13,6 @@
 namespace SKELETON
 {
     class ImgToggleToolButton;
-    class ImgToolButton;
 }
 
 
@@ -47,8 +46,8 @@ namespace MESSAGE
     // 通常
     class MessageToolBar : public MessageToolBarBase
     {
-        SKELETON::ImgToolButton* m_button_insert_draft;
-        SKELETON::ImgToolButton* m_button_undo;
+        Gtk::ToolButton* m_button_insert_draft;
+        Gtk::ToolButton* m_button_undo;
 
         // false ならスレ名ラベル、trueなら新規レス名entry表示
         bool m_show_entry_new_subject;

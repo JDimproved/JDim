@@ -15,7 +15,6 @@ namespace SKELETON
 {
     class Admin;
     class View;
-    class ImgToolButton;
     class ImgToggleToolButton;
     class ToolMenuButton;
     class ToolBackForwardButton;
@@ -43,11 +42,11 @@ namespace SKELETON
         Gtk::Toolbar* m_searchbar; // 検索バー
         bool m_searchbar_shown;
         bool m_searchbar_packed;
-        SKELETON::ImgToolButton *m_button_open_searchbar;
-        SKELETON::ImgToolButton *m_button_close_searchbar;
-        SKELETON::ImgToolButton *m_button_up_search;
-        SKELETON::ImgToolButton *m_button_down_search;
-        SKELETON::ImgToolButton *m_button_clear_highlight;
+        Gtk::ToolButton* m_button_open_searchbar;
+        Gtk::ToolButton* m_button_close_searchbar;
+        Gtk::ToolButton* m_button_up_search;
+        Gtk::ToolButton* m_button_down_search;
+        Gtk::ToolButton* m_button_clear_highlight;
 
         Gtk::ToolItem* m_tool_search;
         SKELETON::CompletionEntry* m_entry_search;
@@ -57,14 +56,14 @@ namespace SKELETON
         SKELETON::ToolMenuButton* m_button_board;
 
         // その他ボタン
-        SKELETON::ImgToolButton* m_button_write;
-        SKELETON::ImgToolButton* m_button_reload;
-        SKELETON::ImgToolButton* m_button_stop;
-        SKELETON::ImgToolButton* m_button_close;
-        SKELETON::ImgToolButton* m_button_delete;
-        SKELETON::ImgToolButton* m_button_favorite;
-        SKELETON::ImgToolButton* m_button_undo;
-        SKELETON::ImgToolButton* m_button_redo;
+        Gtk::ToolButton* m_button_write;
+        Gtk::ToolButton* m_button_reload;
+        Gtk::ToolButton* m_button_stop;
+        Gtk::ToolButton* m_button_close;
+        Gtk::ToolButton* m_button_delete;
+        Gtk::ToolButton* m_button_favorite;
+        Gtk::ToolButton* m_button_undo;
+        Gtk::ToolButton* m_button_redo;
         SKELETON::ImgToggleToolButton* m_button_lock;
 
         // 進む、戻るボタン

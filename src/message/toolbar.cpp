@@ -167,7 +167,7 @@ void MessageToolBar::pack_buttons()
             case ITEM_UNDO:
 
                 if( ! m_button_undo ){
-                    m_button_undo = Gtk::manage( new SKELETON::ImgToolButton( ICON::UNDO ) );
+                    m_button_undo = Gtk::manage( new SKELETON::ImgToolButton( ICON::UNDO, CONTROL::UndoEdit ) );
                     m_button_undo->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_undo_clicked ) );
                 }
 
@@ -179,7 +179,8 @@ void MessageToolBar::pack_buttons()
             case ITEM_INSERTTEXT:
 
                 if( ! m_button_insert_draft ){
-                    m_button_insert_draft = Gtk::manage( new SKELETON::ImgToolButton( ICON::INSERTTEXT ) );
+                    m_button_insert_draft = Gtk::manage( new SKELETON::ImgToolButton( ICON::INSERTTEXT,
+                                                                                      CONTROL::InsertText ) );
                     m_button_insert_draft->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_insert_draft_clicked ) );
                 }
 

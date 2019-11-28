@@ -26,8 +26,8 @@ ArticleToolBar::ArticleToolBar() :
     SKELETON::ToolBar( ARTICLE::get_admin() ),
     m_enable_slot( true ),
 
-    m_button_drawout_and( ICON::SEARCH_AND ),
-    m_button_drawout_or( ICON::SEARCH_OR ),
+    m_button_drawout_and( ICON::SEARCH_AND, CONTROL::DrawOutAnd ),
+    m_button_drawout_or( ICON::SEARCH_OR, CONTROL::DrawOutOr ),
 
     m_button_live_play_stop( nullptr )
 {

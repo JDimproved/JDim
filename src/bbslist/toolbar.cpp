@@ -86,7 +86,8 @@ void BBSListToolBar::pack_buttons()
 
             case ITEM_CHECK_UPDATE_ROOT:
                 if( ! m_button_check_update_root ){
-                    m_button_check_update_root = Gtk::manage( new SKELETON::ImgToolButton( ICON::CHECK_UPDATE_ROOT ) );
+                    m_button_check_update_root = Gtk::manage( new SKELETON::ImgToolButton(
+                        ICON::CHECK_UPDATE_ROOT, CONTROL::CheckUpdateRoot ) );
                     m_button_check_update_root->signal_clicked().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_check_update_root ) );
                     set_tooltip( *m_button_check_update_root, CONTROL::get_label_motions( CONTROL::CheckUpdateRoot ) );
                 }
@@ -95,7 +96,8 @@ void BBSListToolBar::pack_buttons()
 
             case ITEM_CHECK_UPDATE_OPEN_ROOT:
                 if( ! m_button_check_update_open_root ){
-                    m_button_check_update_open_root = Gtk::manage( new SKELETON::ImgToolButton( ICON::CHECK_UPDATE_OPEN_ROOT ) );
+                    m_button_check_update_open_root = Gtk::manage( new SKELETON::ImgToolButton(
+                        ICON::CHECK_UPDATE_OPEN_ROOT, CONTROL::CheckUpdateOpenRoot ) );
                     m_button_check_update_open_root->signal_clicked().connect( sigc::mem_fun(*this, &BBSListToolBar::slot_check_update_open_root ) );
                     set_tooltip( *m_button_check_update_open_root, CONTROL::get_label_motions( CONTROL::CheckUpdateOpenRoot ) );
                 }

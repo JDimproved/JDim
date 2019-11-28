@@ -20,7 +20,7 @@ using namespace CORE;
 
 MainToolBar::MainToolBar() :
     SKELETON::ToolBar( nullptr ),
-    m_button_go( ICON::GO ),
+    m_button_go( ICON::GO, ITEM_NAME_GO ),
 
       m_button_bbslist( ICON::BBSLISTVIEW ),
       m_button_favorite( ICON::FAVORITEVIEW ),
