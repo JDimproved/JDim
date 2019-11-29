@@ -18,23 +18,23 @@
 using namespace CORE;
 
 
-MainToolBar::MainToolBar() :
-    SKELETON::ToolBar( nullptr ),
-    m_button_go( ICON::GO, ITEM_NAME_GO ),
+MainToolBar::MainToolBar()
+    : SKELETON::ToolBar( nullptr )
+    , m_button_go( ICON::GO, ITEM_NAME_GO )
 
-      m_button_bbslist( ICON::BBSLISTVIEW ),
-      m_button_favorite( ICON::FAVORITEVIEW ),
-      m_button_hist( ICON::HISTVIEW ),
-      m_button_hist_board( ICON::HIST_BOARDVIEW ),
-      m_button_hist_close( ICON::HIST_CLOSEVIEW ),
-      m_button_hist_closeboard( ICON::HIST_CLOSEBOARDVIEW ),
-      m_button_hist_closeimg( ICON::HIST_CLOSEIMGVIEW ),
+    , m_button_bbslist( ICON::BBSLISTVIEW, ITEM_NAME_BBSLISTVIEW )
+    , m_button_favorite( ICON::FAVORITEVIEW, ITEM_NAME_FAVORITEVIEW )
+    , m_button_hist( ICON::HISTVIEW, ITEM_NAME_HISTVIEW )
+    , m_button_hist_board( ICON::HIST_BOARDVIEW, ITEM_NAME_HIST_BOARDVIEW )
+    , m_button_hist_close( ICON::HIST_CLOSEVIEW, ITEM_NAME_HIST_CLOSEVIEW )
+    , m_button_hist_closeboard( ICON::HIST_CLOSEBOARDVIEW, ITEM_NAME_HIST_CLOSEBOARDVIEW )
+    , m_button_hist_closeimg( ICON::HIST_CLOSEIMGVIEW, ITEM_NAME_HIST_CLOSEIMGVIEW )
 
-      m_button_board( ICON::BOARDVIEW ),
+    , m_button_board( ICON::BOARDVIEW, ITEM_NAME_BOARDVIEW )
 
-      m_button_thread( ICON::ARTICLEVIEW ),
+    , m_button_thread( ICON::ARTICLEVIEW, ITEM_NAME_ARTICLEVIEW )
 
-      m_button_image( ICON::IMAGEVIEW )
+    , m_button_image( ICON::IMAGEVIEW, ITEM_NAME_IMAGEVIEW )
 {
     m_entry_url.set_size_request( 0 );
     m_tool_url.add( m_entry_url );

@@ -7,7 +7,6 @@
 #include "admin.h"
 #include "view.h"
 #include "imgtoolbutton.h"
-#include "imgtoggletoolbutton.h"
 #include "menubutton.h"
 #include "toolmenubutton.h"
 #include "backforwardbutton.h"
@@ -1077,9 +1076,8 @@ void ToolBar::slot_selected_forward( const int i )
 Gtk::ToolItem* ToolBar::get_button_lock()
 {
     if( ! m_button_lock ){
-        m_button_lock = Gtk::manage( new SKELETON::ImgToggleToolButton( ICON::LOCK ) );
+        m_button_lock = Gtk::manage( new ImgToggleToolButton( ICON::LOCK, CONTROL::Lock ) );
         set_tooltip( *m_button_lock, CONTROL::get_label_motions( CONTROL::Lock ) );
-        m_button_lock->set_label( CONTROL::get_label( CONTROL::Lock ) );
         m_button_lock->signal_clicked().connect( sigc::mem_fun( *this, &ToolBar::slot_lock_clicked ) );
     }
 

@@ -10,11 +10,6 @@
 #include "skeleton/toolbar.h"
 #include "skeleton/label_entry.h"
 
-namespace SKELETON
-{
-    class ImgToggleToolButton;
-}
-
 
 namespace MESSAGE
 {
@@ -22,7 +17,7 @@ namespace MESSAGE
     {
         bool m_enable_slot;
 
-        SKELETON::ImgToggleToolButton* m_button_preview;
+        Gtk::ToggleToolButton* m_button_preview;
 
       public:
 
@@ -34,7 +29,7 @@ namespace MESSAGE
 
       protected:
 
-        SKELETON::ImgToggleToolButton* get_button_preview();
+        Gtk::ToggleToolButton* get_button_preview();
 
       private:
 

@@ -7,7 +7,6 @@
 #include "messageadmin.h"
 
 #include "skeleton/imgtoolbutton.h"
-#include "skeleton/imgtoggletoolbutton.h"
 
 #include "icons/iconmanager.h"
 
@@ -28,7 +27,7 @@ MessageToolBarBase::MessageToolBarBase() :
 {}
 
 
-SKELETON::ImgToggleToolButton* MessageToolBarBase::get_button_preview()
+Gtk::ToggleToolButton* MessageToolBarBase::get_button_preview()
 {
 #ifdef _DEBUG
     std::cout << "MessageToolBarBase::get_button_preview\n";

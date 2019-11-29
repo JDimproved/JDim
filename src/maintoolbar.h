@@ -12,7 +12,7 @@
 
 #include "skeleton/toolbar.h"
 #include "skeleton/imgtoolbutton.h"
-#include "skeleton/imgtoggletoolbutton.h"
+
 
 namespace CORE
 {

@@ -15,7 +15,6 @@ namespace SKELETON
 {
     class Admin;
     class View;
-    class ImgToggleToolButton;
     class ToolMenuButton;
     class ToolBackForwardButton;
     class BackForwardButton;
@@ -64,7 +63,7 @@ namespace SKELETON
         Gtk::ToolButton* m_button_favorite;
         Gtk::ToolButton* m_button_undo;
         Gtk::ToolButton* m_button_redo;
-        SKELETON::ImgToggleToolButton* m_button_lock;
+        Gtk::ToggleToolButton* m_button_lock;
 
         // 進む、戻るボタン
         SKELETON::ToolBackForwardButton* m_button_back;

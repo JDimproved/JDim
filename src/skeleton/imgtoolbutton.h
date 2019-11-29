@@ -36,6 +36,7 @@ namespace SKELETON
     };
 
     using ImgToolButton = ToolButtonExtension<Gtk::ToolButton>;
+    using ImgToggleToolButton = ToolButtonExtension<Gtk::ToggleToolButton>;
 }
 
 #endif
