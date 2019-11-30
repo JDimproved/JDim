@@ -375,6 +375,7 @@ case "${host_os}" in
     [test "x$with_alsa" = xyes],
     [PKG_CHECK_MODULES(ALSA, [alsa >= 1.0])
      AC_DEFINE(USE_ALSA, , [use alsa])
+     AC_CHECK_HEADERS([alsa/asoundlib.h])
      AC_SUBST(ALSA_CFLAGS)
      AC_SUBST(ALSA_LIBS)]
   )
