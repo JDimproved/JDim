@@ -68,14 +68,11 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
       m_vbox_view( nullptr )
 {
     // ステータスバー
-#if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_size_request( 0, -1 );
     m_label_stat.set_alignment( Gtk::ALIGN_START );
     m_label_stat.set_selectable( true );
     m_label_stat.set_single_line_mode( true );
-#if GTKMM_CHECK_VERSION(2,6,0)
     m_label_stat.set_ellipsize( Pango::ELLIPSIZE_END );
-#endif
 
     m_label_stat_ebox.add( m_label_stat );
     m_label_stat_ebox.set_visible_window( false );
@@ -89,9 +86,6 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
 
     m_mginfo.set_width_chars( MGINFO_CHARS );
     m_mginfo.set_alignment( Gtk::ALIGN_START );
-#else
-    if( need_mginfo ) m_statbar.pack_start( m_mginfo );
-#endif
 
     m_statbar.show_all_children();
 
@@ -402,12 +396,8 @@ void JDWindow::set_status( const std::string& stat )
 
     m_status = stat;
 
-#if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( stat );
     m_label_stat_ebox.set_tooltip_text( stat );
-#else
-    m_statbar.push( stat );
-#endif
 }
 
 
@@ -419,21 +409,13 @@ void JDWindow::set_status_temporary( const std::string& stat )
 {
     if( stat == m_status ) return;
 
-#if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( stat );
-#else
-    m_statbar.push( stat );
-#endif
 }
 
 // 一時的に変えたステータスバーの表示を戻す
 void JDWindow::restore_status()
 {
-#if GTKMM_CHECK_VERSION(2,5,0)
     m_label_stat.set_text( m_status );
-#else
-    m_statbar.push( m_status );
-#endif
 }
 
 
@@ -478,7 +460,7 @@ void JDWindow::set_status_color( const std::string& color )
 #endif
     }
 
-#elif GTKMM_CHECK_VERSION(2,5,0)
+#else
     if( color.empty() ){
 
         if( m_label_stat_ebox.get_visible_window() ){

@@ -19,9 +19,7 @@ DetailDiag::DetailDiag( Gtk::Window* parent, const std::string& url,
       m_message( message ),
       m_detail( nullptr )
 {
-#if GTKMM_CHECK_VERSION(2,6,0)
     m_message.set_width_chars( 60 );
-#endif
     m_message.set_line_wrap( true );
     m_message.set_padding( 8, 8 );
     m_message.set_selectable( true );

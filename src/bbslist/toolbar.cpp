@@ -36,9 +36,7 @@ BBSListToolBar::BBSListToolBar() :
     m_button_toggle.get_button()->set_tooltip_arrow( "ページ切り替え\n\nマウスホイール回転でも切り替え可能" );
 
     m_label.set_alignment( Gtk::ALIGN_START );
-#if GTKMM_CHECK_VERSION(2,6,0)
     m_label.set_ellipsize( Pango::ELLIPSIZE_END );
-#endif
     std::vector< std::string > menu;
     menu.push_back( ITEM_NAME_BBSLISTVIEW );
     menu.push_back( ITEM_NAME_FAVORITEVIEW );
@@ -52,9 +50,7 @@ BBSListToolBar::BBSListToolBar() :
     m_button_toggle.get_button()->signal_scroll_event().connect(  sigc::mem_fun( *this, &BBSListToolBar::slot_scroll_event ));
     m_button_toggle.get_button()->set_enable_sig_clicked( false );
 
-#if GTKMM_CHECK_VERSION(2,12,0)
     m_tool_label.set_icon_size( Gtk::ICON_SIZE_MENU );
-#endif
     m_tool_label.set_toolbar_style( Gtk::TOOLBAR_ICONS );
     m_tool_label.append( m_button_toggle );
     m_tool_label.append( *get_button_close() );

@@ -25,12 +25,7 @@ PopupWin::PopupWin( Gtk::Widget* parent, SKELETON::View* view, const int mrg_x, 
     m_view->show_view();
 
     Gtk::Widget* toplevel = m_parent->get_toplevel();
-#if GTKMM_CHECK_VERSION(2,18,0)
-    const bool is_toplevel = toplevel->get_is_toplevel();
-#else
-    const bool is_toplevel = toplevel->is_toplevel();
-#endif
-    if( is_toplevel ) {
+    if( toplevel->get_is_toplevel() ) {
         set_transient_for( *dynamic_cast< Gtk::Window* >( toplevel ) );
     }
     slot_resize_popup();

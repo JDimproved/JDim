@@ -343,9 +343,7 @@ void EditTreeView::xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeSto
 
     treestore->clear();
 
-#if GTKMM_CHECK_VERSION(2,8,0)
     unset_model();
-#endif
 
     // 開いてるツリーの格納用
     std::list< Gtk::TreePath > list_path_expand;
@@ -353,9 +351,7 @@ void EditTreeView::xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeSto
     // Domノードから Gtk::TreeStore をセット
     document.set_treestore( treestore, m_columns, root_name, list_path_expand );
 
-#if GTKMM_CHECK_VERSION(2,8,0)
     set_treestore( treestore );
-#endif
 
     // ディレクトリIDのセット(まだセットされていない場合)
     get_max_dirid();

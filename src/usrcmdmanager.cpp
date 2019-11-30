@@ -526,7 +526,6 @@ void Usrcmd_Manager::toggle_sensitive( Glib::RefPtr< Gtk::ActionGroup >& action_
         Glib::RefPtr< Gtk::Action > act = get_action( action_group, i );
         if( act ){
 
-#if GTKMM_CHECK_VERSION(2,6,0)
             if( is_hide( i, url_article ) ) act->set_visible( false );
             else{
 
@@ -539,10 +538,6 @@ void Usrcmd_Manager::toggle_sensitive( Glib::RefPtr< Gtk::ActionGroup >& action_
                     if( CONFIG::get_hide_usrcmd() ) act->set_visible( false );
                 }
             }
-#else
-            if( is_sensitive( i, url_link, str_select ) ) act->set_sensitive( true );
-            else act->set_sensitive( false );
-#endif
         }
     }
 }
