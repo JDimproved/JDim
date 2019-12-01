@@ -50,10 +50,6 @@
 #include "link.h"
 #include "info.h"
 
-#if !GTKMM_CHECK_VERSION(2,5,0)
-#include "play.h"
-#endif
-
 #include <cstring>
 
 ICON::ICON_Manager* instance_icon_manager = nullptr;
@@ -186,11 +182,7 @@ ICON_Manager::ICON_Manager()
 
     // スレビュー
     m_list_icons[ ICON::SEARCH ]  = m_dummy.render_icon( Gtk::Stock::FIND, Gtk::ICON_SIZE_MENU );
-#if GTKMM_CHECK_VERSION(2,5,0)
     m_list_icons[ ICON::LIVE ]  = m_dummy.render_icon( Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU );
-#else
-    m_list_icons[ ICON::LIVE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_play ), icon_play );
-#endif
 
     // 検索バー
     m_list_icons[ ICON::CLOSE_SEARCH ]  = m_dummy.render_icon( Gtk::Stock::UNDO, Gtk::ICON_SIZE_MENU );
