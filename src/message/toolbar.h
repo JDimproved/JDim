@@ -10,12 +10,6 @@
 #include "skeleton/toolbar.h"
 #include "skeleton/label_entry.h"
 
-namespace SKELETON
-{
-    class ImgToggleToolButton;
-    class ImgToolButton;
-}
-
 
 namespace MESSAGE
 {
@@ -23,7 +17,7 @@ namespace MESSAGE
     {
         bool m_enable_slot;
 
-        SKELETON::ImgToggleToolButton* m_button_preview;
+        Gtk::ToggleToolButton* m_button_preview;
 
       public:
 
@@ -35,7 +29,7 @@ namespace MESSAGE
 
       protected:
 
-        SKELETON::ImgToggleToolButton* get_button_preview();
+        Gtk::ToggleToolButton* get_button_preview();
 
       private:
 
@@ -47,8 +41,8 @@ namespace MESSAGE
     // 通常
     class MessageToolBar : public MessageToolBarBase
     {
-        SKELETON::ImgToolButton* m_button_insert_draft;
-        SKELETON::ImgToolButton* m_button_undo;
+        Gtk::ToolButton* m_button_insert_draft;
+        Gtk::ToolButton* m_button_undo;
 
         // false ならスレ名ラベル、trueなら新規レス名entry表示
         bool m_show_entry_new_subject;

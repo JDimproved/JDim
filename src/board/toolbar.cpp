@@ -55,8 +55,11 @@ void BoardToolBar::pack_toolbar()
         switch( item ){
 
             case ITEM_NEWARTICLE:
-                get_buttonbar().append( *get_button_write() );
-                set_tooltip( *get_button_write(), CONTROL::get_label_motions( CONTROL::NewArticle ) );
+                if( auto button = get_button_write() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( CONTROL::get_label( CONTROL::NewArticle ) );
+                    set_tooltip( *button, CONTROL::get_label_motions( CONTROL::NewArticle ) );
+                }
                 break;
 
             case ITEM_SEARCHBOX:

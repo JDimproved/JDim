@@ -43,12 +43,21 @@ void ToolMenuButton::setup( SKELETON::MenuButton* button, const std::string& lab
     // アイコンの場合はアイコン表示
     Gtk::Image* image = dynamic_cast< Gtk::Image* >( m_button->get_label_widget() );
     if( image ){
-        Gtk::StockID id;
-        Gtk::IconSize size;
-        image->get_stock( id, size );
-        item = Gtk::manage( new Gtk::ImageMenuItem( *Gtk::manage( new Gtk::Image( id, size ) ), "" ) );
+        const Gtk::ImageType type = image->get_storage_type();
+        if( type == Gtk::IMAGE_STOCK ) {
+            Gtk::StockID id;
+            Gtk::IconSize size;
+            image->get_stock( id, size );
+            item = Gtk::manage( new Gtk::ImageMenuItem( *Gtk::manage( new Gtk::Image( id, size ) ), label ) );
+        }
+        else if( type == Gtk::IMAGE_PIXBUF ) {
+            auto pixbuf = image->get_pixbuf();
+            item = Gtk::manage( new Gtk::ImageMenuItem( *Gtk::manage( new Gtk::Image( pixbuf ) ), label ) );
+        }
     }
-    else item = Gtk::manage( new Gtk::MenuItem( label ) );
+    if( !item ) {
+        item = Gtk::manage( new Gtk::MenuItem( label ) );
+    }
 
     if( item ){
         item->signal_activate().connect( sigc::mem_fun( *m_button, &MenuButton::on_clicked ) );

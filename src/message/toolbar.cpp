@@ -7,7 +7,6 @@
 #include "messageadmin.h"
 
 #include "skeleton/imgtoolbutton.h"
-#include "skeleton/imgtoggletoolbutton.h"
 
 #include "icons/iconmanager.h"
 
@@ -28,7 +27,7 @@ MessageToolBarBase::MessageToolBarBase() :
 {}
 
 
-SKELETON::ImgToggleToolButton* MessageToolBarBase::get_button_preview()
+Gtk::ToggleToolButton* MessageToolBarBase::get_button_preview()
 {
 #ifdef _DEBUG
     std::cout << "MessageToolBarBase::get_button_preview\n";
@@ -124,10 +123,14 @@ void MessageToolBar::pack_buttons()
         switch( item ){
 
             case ITEM_PREVIEW:
-                get_buttonbar().append( *get_button_preview() );
-                set_tooltip( *get_button_preview(), CONTROL::get_label_motions( CONTROL::Preview )
-                             + "\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
-                             + CONTROL::get_label_motions( CONTROL::TabRight ) + "\n\n"+ CONTROL::get_label_motions( CONTROL::TabLeft ) );
+                if( auto button = get_button_preview() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( CONTROL::get_label( CONTROL::Preview ) );
+                    set_tooltip( *button, CONTROL::get_label_motions( CONTROL::Preview )
+                                          + "\n\nタブ移動のショートカットでも表示の切り替えが可能\n\n"
+                                          + CONTROL::get_label_motions( CONTROL::TabRight ) + "\n\n"
+                                          + CONTROL::get_label_motions( CONTROL::TabLeft ) );
+                }
                 break;
 
             case ITEM_WRITEMSG:
@@ -167,7 +170,7 @@ void MessageToolBar::pack_buttons()
             case ITEM_UNDO:
 
                 if( ! m_button_undo ){
-                    m_button_undo = Gtk::manage( new SKELETON::ImgToolButton( ICON::UNDO ) );
+                    m_button_undo = Gtk::manage( new SKELETON::ImgToolButton( ICON::UNDO, CONTROL::UndoEdit ) );
                     m_button_undo->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_undo_clicked ) );
                 }
 
@@ -179,7 +182,8 @@ void MessageToolBar::pack_buttons()
             case ITEM_INSERTTEXT:
 
                 if( ! m_button_insert_draft ){
-                    m_button_insert_draft = Gtk::manage( new SKELETON::ImgToolButton( ICON::INSERTTEXT ) );
+                    m_button_insert_draft = Gtk::manage( new SKELETON::ImgToolButton( ICON::INSERTTEXT,
+                                                                                      CONTROL::InsertText ) );
                     m_button_insert_draft->signal_clicked().connect( sigc::mem_fun( *this, &MessageToolBar::slot_insert_draft_clicked ) );
                 }
 
@@ -189,11 +193,11 @@ void MessageToolBar::pack_buttons()
                 break;
 
             case ITEM_LOCK_MESSAGE:
-                get_buttonbar().append( *get_button_lock() );
-                set_tooltip( *get_button_lock(), CONTROL::get_label_motions( CONTROL::LockMessage ) );
-                Gtk::ToolButton* toolbt;
-                toolbt = dynamic_cast< Gtk::ToolButton* >( get_button_lock() );
-                if( toolbt ) toolbt->set_label( CONTROL::get_label( CONTROL::LockMessage ) );
+                if( auto button = get_button_lock() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( CONTROL::get_label( CONTROL::LockMessage ) );
+                    set_tooltip( *button, CONTROL::get_label_motions( CONTROL::LockMessage ) );
+                }
                 break;
 
             case ITEM_QUIT:
@@ -257,8 +261,11 @@ void MessageToolBarPreview::pack_buttons()
         switch( item ){
 
             case ITEM_PREVIEW:
-                get_buttonbar().append( *get_button_preview() );
-                set_tooltip( *get_button_preview(), "プレビューを閉じる" );
+                if( auto button = get_button_preview() ) {
+                    get_buttonbar().append( *button );
+                    button->set_label( "プレビューを閉じる" );
+                    set_tooltip( *button, "プレビューを閉じる" );
+                }
                 break;
 
             case ITEM_OPENBOARD:
