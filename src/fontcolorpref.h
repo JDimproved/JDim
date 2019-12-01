@@ -4,7 +4,6 @@
 #define _FONTCOLORPREF_H
 
 #include "skeleton/prefdiag.h"
-#include "skeleton/spinbutton.h"
 #include "skeleton/label_entry.h"
 
 #include <vector>
@@ -53,9 +52,9 @@ namespace CORE
         Gtk::HBox m_hbox_space;
         Gtk::HBox m_hbox_ubar;
         Gtk::Label m_label_space;
-        SKELETON::SpinButtonDouble m_spin_space;
+        Gtk::SpinButton m_spin_space;
         Gtk::Label m_label_ubar;
-        SKELETON::SpinButtonDouble m_spin_ubar;
+        Gtk::SpinButton m_spin_ubar;
 
         SKELETON::LabelEntry m_label_aafont;
 

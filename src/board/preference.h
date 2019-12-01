@@ -9,7 +9,7 @@
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
 #include "skeleton/label_entry.h"
-#include "skeleton/spinbutton.h"
+
 
 #if GTKMM_CHECK_VERSION(3,0,0)
 using GtkNotebookPage = Gtk::Widget;
@@ -81,7 +81,7 @@ namespace BOARD
         Gtk::HBox m_hbox_live;
         Gtk::Label m_label_live;
         Gtk::CheckButton m_check_live;
-        SKELETON::SpinButton m_spin_live;
+        Gtk::SpinButton m_spin_live;
 
         // プロキシ
         Gtk::VBox m_vbox_proxy;
@@ -102,7 +102,7 @@ namespace BOARD
 
         // 最大レス数
         Gtk::Label m_label_maxres;
-        SKELETON::SpinButton m_spin_maxres;
+        Gtk::SpinButton m_spin_maxres;
 
         SKELETON::LabelEntry m_label_last_access;
 
@@ -132,11 +132,11 @@ namespace BOARD
 
         Gtk::HBox m_hbox_number;
         Gtk::Label m_label_number;
-        SKELETON::SpinButton m_spin_number;
+        Gtk::SpinButton m_spin_number;
 
         Gtk::HBox m_hbox_hour;
         Gtk::Label m_label_hour;
-        SKELETON::SpinButton m_spin_hour;
+        Gtk::SpinButton m_spin_hour;
 
         Gtk::VBox m_vbox_abone_title;
         Gtk::Button m_button_remove_old_title;

@@ -6,7 +6,7 @@
 #define _LIVEPREF_H
 
 #include "skeleton/prefdiag.h"
-#include "skeleton/spinbutton.h"
+
 
 namespace CORE
 {
@@ -23,11 +23,11 @@ namespace CORE
         Gtk::RadioButton m_mode2;
 
         Gtk::HBox m_hbox_speed;
-        SKELETON::SpinButton m_spin_speed;
+        Gtk::SpinButton m_spin_speed;
         Gtk::Label m_label_speed;
 
         Gtk::HBox m_hbox_th;
-        SKELETON::SpinButton m_spin_th;
+        Gtk::SpinButton m_spin_th;
         Gtk::Label m_label_th;
 
         Gtk::Button m_bt_reset;
