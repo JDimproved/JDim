@@ -56,7 +56,7 @@
 
 #include <cstring>
 
-ICON::ICON_Manager* instance_icon_manager = NULL;
+ICON::ICON_Manager* instance_icon_manager = nullptr;
 
 
 ICON::ICON_Manager* ICON::get_icon_manager()
@@ -71,7 +71,7 @@ ICON::ICON_Manager* ICON::get_icon_manager()
 void ICON::delete_icon_manager()
 {
     if( instance_icon_manager ) delete instance_icon_manager;
-    instance_icon_manager = NULL;
+    instance_icon_manager = nullptr;
 }
 
 

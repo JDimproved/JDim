@@ -69,7 +69,7 @@ using namespace ARTICLE;
 ArticleViewBase::ArticleViewBase( const std::string& url, const std::string& url_article )
     : SKELETON::View( url ),
       m_url_article( url_article ),
-      m_popup_win( NULL ),
+      m_popup_win( nullptr ),
       m_popup_shown( false ),
       m_hidepopup_counter( 0 ),
       m_enable_menuslot( true ),
@@ -2120,7 +2120,7 @@ bool ArticleViewBase::slot_key_release( GdkEventKey* event )
 #endif
 
     // ポップアップはキーフォーカスを取れないのでキー入力を送ってやる
-    ArticleViewBase* popup_article = NULL;
+    ArticleViewBase* popup_article = nullptr;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( popup_article ) return popup_article->slot_key_release( event );
 
@@ -2135,7 +2135,7 @@ bool ArticleViewBase::slot_key_release( GdkEventKey* event )
 bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
 {
     // ポップアップしているときはそちらにイベントを送ってやる
-    ArticleViewBase* popup_article = NULL;
+    ArticleViewBase* popup_article = nullptr;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( popup_article ) return popup_article->slot_scroll_event( event );
 
@@ -2174,7 +2174,7 @@ void ArticleViewBase::slot_on_url( std::string url, std::string imgurl, int res_
     }
 
     CORE::VIEWFACTORY_ARGS args;
-    SKELETON::View* view_popup = NULL;
+    SKELETON::View* view_popup = nullptr;
     int margin_popup_x = 0;
     int margin_popup_y = CONFIG::get_margin_popup();
 
@@ -2893,7 +2893,7 @@ void ArticleViewBase::hide_popup( const bool force )
 #endif
 
     // ArticleView をポップアップ表示している場合
-    ArticleViewBase* popup_article = NULL;
+    ArticleViewBase* popup_article = nullptr;
     popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
 
     if( popup_article ){
@@ -2933,7 +2933,7 @@ void ArticleViewBase::delete_popup()
 #endif
 
     if( m_popup_win ) delete m_popup_win;
-    m_popup_win = NULL;
+    m_popup_win = nullptr;
     m_popup_shown = false;
 }
 
@@ -2953,7 +2953,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
     m_enable_menuslot = false;
 
     // 子ポップアップが表示されていて、かつポインタがその上だったら表示しない
-    ArticleViewBase* popup_article = NULL;
+    ArticleViewBase* popup_article = nullptr;
     if( is_popup_shown() ) popup_article = dynamic_cast< ArticleViewBase* >( m_popup_win->view() );
     if( popup_article && popup_article->is_mouse_on_view() ) return;
     hide_popup();
@@ -3297,7 +3297,7 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
 Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )
 {
     // 表示
-    Gtk::Menu* popupmenu = NULL;
+    Gtk::Menu* popupmenu = nullptr;
 
     // 削除サブメニュー
     if( url == "popup_menu_delete" ){
@@ -4144,7 +4144,7 @@ void ArticleViewBase::slot_deleteimage()
 //
 void ArticleViewBase::slot_saveimage()
 {
-    DBIMG::save( m_url_tmp, NULL, std::string() );
+    DBIMG::save( m_url_tmp, nullptr, std::string() );
 }
 
 

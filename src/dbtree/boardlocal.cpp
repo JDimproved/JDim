@@ -102,7 +102,7 @@ ArticleBase* BoardLocal::append_article( const std::string& datbase, const std::
 // datファイルのインポート
 std::string BoardLocal::import_dat( const std::string& filename )
 {
-    if( empty() ) return FALSE;
+    if( empty() ) return {};
     if( CACHE::file_exists( filename ) != CACHE::EXIST_FILE ) return std::string();
 
     int num_from, num_to;

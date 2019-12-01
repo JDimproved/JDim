@@ -43,7 +43,7 @@ DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget
       m_dndtarget( dndtarget ),
       m_dragging( false ),
       m_use_bg_even( false ),
-      m_popup_win( NULL ),
+      m_popup_win( nullptr ),
       m_popup_shown( false )
 {
 #ifdef _DEBUG
@@ -284,7 +284,7 @@ void DragTreeView::delete_popup()
 #endif
 
         delete m_popup_win;
-        m_popup_win = NULL;
+        m_popup_win = nullptr;
 
         m_pre_popup_url = std::string();
         m_popup_shown = false;

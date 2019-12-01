@@ -207,7 +207,7 @@ namespace DBTREE
         // remove_old_abone_thread() をキャンセルするか
         bool m_cancel_remove_abone_thread;
 
-        // NULL artice クラス
+        // Null artice クラス
         ArticleBase* m_article_null;
 
       protected:

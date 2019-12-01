@@ -58,7 +58,7 @@ void HistoryViewBase::save_xml()
 //
 Gtk::Menu* HistoryViewBase::get_popupmenu( const std::string& url )
 {
-    Gtk::Menu* popupmenu = NULL;
+    Gtk::Menu* popupmenu = nullptr;
     if( ! url.empty() ){
 
         std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();

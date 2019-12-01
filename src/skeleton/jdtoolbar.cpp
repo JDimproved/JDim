@@ -102,7 +102,7 @@ customized_toolbar_content_expose (ToolbarContent *content,
                         GdkEventExpose *expose)
 {
     GtkToolbarChild *child;
-    GtkWidget *widget = NULL; /* quiet gcc */
+    GtkWidget *widget = nullptr; /* quiet gcc */
  
     switch (content->type)
     {
@@ -161,7 +161,7 @@ customized_gtk_toolbar_expose (GtkWidget      *widget,
     }
 */
 
-    for (list = priv->content; list != NULL; list = list->next)
+    for (list = priv->content; list != nullptr; list = list->next)
     {
         ToolbarContent *content = (ToolbarContent*)list->data;
 

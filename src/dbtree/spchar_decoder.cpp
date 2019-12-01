@@ -33,7 +33,7 @@ bool check_spchar( const char* n_in, const char* spchar )
 // n_in : 入力で使用した文字数が返る
 // out_char : 出力文字列
 // n_out : 出力した文字数が返る
-// only_check : チェックのみ実施 ( out_char は NULL でも可 )
+// only_check : チェックのみ実施 ( out_char は nullptr でも可 )
 //
 // 戻り値 : node.h で定義したノード番号
 //
@@ -82,7 +82,7 @@ int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_
 // n_in : 入力で使用した文字数が返る
 // out_char : 出力文字列
 // n_out : 出力した文字数が返る
-// only_check : チェックのみ実施 ( out_char は NULL でも可 )
+// only_check : チェックのみ実施 ( out_char は nullptr でも可 )
 //
 // 戻り値 : node.h で定義したノード番号
 //

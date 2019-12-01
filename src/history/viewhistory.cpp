@@ -87,7 +87,7 @@ const std::string& ViewHistory::get_current_url()
               << "top = " << m_history_top << std::endl
               << "cur = " << m_history_current << std::endl
               << "end = " << m_history_end << std::endl;
-    assert( m_items[ m_history_current ] != NULL );
+    assert( m_items[ m_history_current ] != nullptr );
 #endif
 
     return m_items[ m_history_current ]->url;
@@ -363,11 +363,11 @@ const ViewHistoryItem* ViewHistory::back_forward( const bool back, const int cou
     int tmp_current = m_history_current;
 
     if( back ){
-        if( ! can_back( count ) ) return NULL;
+        if( ! can_back( count ) ) return nullptr;
         tmp_current = ( tmp_current + MAX_LOCAL_HISTORY - count ) % MAX_LOCAL_HISTORY;
     }
     else{
-        if( ! can_forward( count ) )  return NULL;
+        if( ! can_forward( count ) )  return nullptr;
         tmp_current = ( tmp_current + count ) % MAX_LOCAL_HISTORY;
     }
 

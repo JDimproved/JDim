@@ -89,7 +89,7 @@ namespace DBTREE
         char* link; // リンクURL
 
         // アンカー情報のベクトル
-        // NULL なら一般のリンク
+        // nullptr なら一般のリンク
         // ancinfo->anc_from == ancinfo->anc_to == 0 が終端
         ANCINFO* ancinfo;
 
@@ -97,7 +97,7 @@ namespace DBTREE
         //
         // 画像リンクの場合、実際にリンクが画面に表示される段階でノードに DBIMG::Img
         // のポインタと色をセットする。
-        // image == true かつ img == NULL ならまだ img は未取得
+        // image == true かつ img == nullptr ならまだ img は未取得
         // 実際にノードが画面に表示された際に img のポインタを取得して画像の状態を取得する
         // 詳しくは  DrawAreaBase::draw_one_node() を参照
 
@@ -113,7 +113,7 @@ namespace DBTREE
         unsigned char type;
 
         int id_header; // ヘッダID ( つまりレス番号、ルートヘッダは0 )
-        NODE* next_node; // 最終ノードはNULL
+        NODE* next_node; // 最終ノードはnullptr
         
         char* text;
         unsigned char color_text; // 色

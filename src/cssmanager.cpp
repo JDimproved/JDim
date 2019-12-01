@@ -20,7 +20,7 @@ enum
     SIZE_OF_HEAP = 16 * 1024
 };
 
-CORE::Css_Manager* instance_css_manager = NULL;
+CORE::Css_Manager* instance_css_manager = nullptr;
 
 
 CORE::Css_Manager* CORE::get_css_manager()
@@ -35,7 +35,7 @@ CORE::Css_Manager* CORE::get_css_manager()
 void CORE::delete_css_manager()
 {
     if( instance_css_manager ) delete instance_css_manager;
-    instance_css_manager = NULL;
+    instance_css_manager = nullptr;
 }
 
 
@@ -53,7 +53,7 @@ enum
 
 Css_Manager::Css_Manager()
     : m_heap( SIZE_OF_HEAP ),
-      m_last_dom( NULL )
+      m_last_dom( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "Css_Manager::Css_Manager\n";
@@ -625,7 +625,7 @@ DOM* Css_Manager::create_domnode( int type )
 DOM* Css_Manager::create_divnode( const std::string& classname )
 {
     int classid = get_classid( classname );
-    if( classid < 0 ) return NULL;
+    if( classid < 0 ) return nullptr;
 
 #ifdef _DEBUG
     std::cout << "Css_Manager::create_divnode name = " << classname << std::endl;
@@ -654,7 +654,7 @@ DOM* Css_Manager::create_blocknode( int blockid )
 DOM* Css_Manager::create_textnode( const char* text )
 {
     int lng = strlen( text );
-    if( ! lng ) return NULL;
+    if( ! lng ) return nullptr;
 
 #ifdef _DEBUG
     std::cout << "Css_Manager::create_textnode text = " << text << std::endl;

@@ -63,11 +63,11 @@ enum
 
 MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url ),
-      m_post( 0 ),
-      m_preview( 0 ),
+      m_post( nullptr ),
+      m_preview( nullptr ),
       m_entry_name( CORE::COMP_NAME ),
       m_entry_mail( CORE::COMP_MAIL ),
-      m_text_message( NULL ),
+      m_text_message( nullptr ),
       m_enable_focus( true ),
       m_lng_str_enc( 0 ),
       m_counter( 0 ),
@@ -110,16 +110,16 @@ MessageViewBase::~MessageViewBase()
     CORE::get_completion_manager()->set_query( CORE::COMP_MAIL, mail );
 
     if( m_preview ) delete m_preview;
-    m_preview = NULL;
+    m_preview = nullptr;
 
     if( m_post ){
         m_post->terminate_load();
         delete m_post;
     }
-    m_post = NULL;
+    m_post = nullptr;
 
     if( m_iconv ) delete m_iconv;
-    m_iconv = NULL;
+    m_iconv = nullptr;
 
     SESSION::set_close_mes( ! is_locked() );
 }
@@ -161,7 +161,7 @@ void MessageViewBase::clock_in()
         m_counter = 0;
 
         // 書き込みから時間があまり経っていなければステータス表示を更新
-        if( time( NULL ) - DBTREE::article_write_time( get_url() ) < 60 * 60 ) show_status();
+        if( time( nullptr ) - DBTREE::article_write_time( get_url() ) < 60 * 60 ) show_status();
 
         // 書き込み規制経過時刻表示
         time_t left = DBTREE::board_write_leftsec( get_url() );

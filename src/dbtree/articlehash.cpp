@@ -39,7 +39,7 @@ ArticleHash::~ArticleHash()
 #endif
 
     if( m_iterator ) delete m_iterator;
-    m_iterator = NULL;
+    m_iterator = nullptr;
 }
 
 
@@ -71,14 +71,14 @@ void ArticleHash::push( ArticleBase* article )
 
 ArticleBase* ArticleHash::find( const std::string& datbase, const std::string& id )
 {
-    if( ! m_table.size() ) return NULL;
+    if( ! m_table.size() ) return nullptr;
 
     const size_t hash = get_hash( id );
 
     std::vector< ArticleBase* >::iterator it = m_table[ hash ].begin();
     for( ; it != m_table[ hash ].end(); ++it ) if( ( *it )->equal( datbase, id ) ) return *it;
 
-    return NULL;
+    return nullptr;
 }
 
 
@@ -94,7 +94,7 @@ ArticleHashIterator ArticleHash::begin()
 
 ArticleBase* ArticleHash::it_get()
 {
-    if( m_it_hash >= m_table.size() ) return NULL;
+    if( m_it_hash >= m_table.size() ) return nullptr;
 
     return m_table[ m_it_hash ][ m_it_pos ];
 }

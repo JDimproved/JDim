@@ -51,7 +51,7 @@ enum
     MAX_SAFE_ARGV = 1024 // 各引数の文字列の制限値
 };
 
-JDWinMain* Win_Main = NULL;
+JDWinMain* Win_Main = nullptr;
 
 
 // バックアップ復元
@@ -195,7 +195,7 @@ gboolean ice_process_message( GIOChannel *channel,
 {
     if( ! xsmpdata->ice_connect ) return FALSE;
 
-    IceProcessMessagesStatus status = IceProcessMessages( xsmpdata->ice_connect, NULL, NULL );
+    IceProcessMessagesStatus status = IceProcessMessages( xsmpdata->ice_connect, nullptr, nullptr );
 
 #ifdef _DEBUG
     std::cout << "ice_process_message status = " << status << std::endl;
@@ -208,7 +208,7 @@ gboolean ice_process_message( GIOChannel *channel,
 #endif
             
         IceCloseConnection( xsmpdata->ice_connect );
-        xsmpdata->ice_connect = NULL;
+        xsmpdata->ice_connect = nullptr;
         return FALSE;
     }
 
@@ -249,7 +249,7 @@ void ice_watch_proc( IceConn ice_connect,
                                                                 ( GIOCondition )( G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP ),
                                                                 ( GIOFunc ) ice_process_message,
                                                                 xsmpdata,
-                                                                NULL );
+                                                                nullptr );
             g_io_channel_unref( channel );
         }
     }
@@ -261,7 +261,7 @@ void ice_watch_proc( IceConn ice_connect,
 void xsmp_session_init( XSMPDATA* xsmpdata )
 {
     if( xsmpdata->smc_connect ) return;
-    if( g_getenv("SESSION_MANAGER") == NULL ) return;
+    if( g_getenv("SESSION_MANAGER") == nullptr ) return;
 
 #ifdef _DEBUG
     std::cout << "SESSION_MANAGER = " << g_getenv("SESSION_MANAGER") << std::endl;
@@ -276,13 +276,13 @@ void xsmp_session_init( XSMPDATA* xsmpdata )
     smc_callbacks.save_complete.callback       = xsmp_session_save_complete;
     smc_callbacks.shutdown_cancelled.callback  = xsmp_session_shutdown_cancelled;
 
-    gchar *id = NULL;
+    gchar *id = nullptr;
     gchar errstr[ 1024 ];
     xsmpdata->smc_connect
-    = SmcOpenConnection( NULL, NULL, SmProtoMajor, SmProtoMinor,
+    = SmcOpenConnection( nullptr, nullptr, SmProtoMajor, SmProtoMinor,
                          SmcSaveYourselfProcMask | SmcDieProcMask | SmcSaveCompleteProcMask | SmcShutdownCancelledProcMask,
                          &smc_callbacks,
-                         NULL,
+                         nullptr,
                          &id,
                          1024, errstr );
     if( ! xsmpdata->smc_connect ){
@@ -295,8 +295,8 @@ void xsmp_session_init( XSMPDATA* xsmpdata )
 // XSMP終了関数
 void xsmp_session_end( XSMPDATA* xsmpdata )
 {
-    if( xsmpdata->smc_connect ) SmcCloseConnection( xsmpdata->smc_connect, 0, NULL );
-    xsmpdata->smc_connect = NULL;
+    if( xsmpdata->smc_connect ) SmcCloseConnection( xsmpdata->smc_connect, 0, nullptr );
+    xsmpdata->smc_connect = nullptr;
 }
 
 #endif
@@ -360,15 +360,15 @@ int main( int argc, char **argv )
     // --help, --tab=<url>, --multi, --norestore, --logfile --version
     const struct option options[] =
     {
-        { "help", 0, 0, 'h' },
-        //{ "tab", 1, 0, 't' },
-        { "multi", 0, 0, 'm' },
-        { "norestore", 0, 0, 'n' },
-        { "skip-setup", 0, 0, 's' },
-        { "logfile", 0, 0, 'l' },
-        { "geometry", required_argument, NULL, 'g' },
-        { "version", 0, 0, 'V' },
-        { 0, 0, 0, 0 }
+        { "help", 0, nullptr, 'h' },
+        //{ "tab", 1, nullptr, 't' },
+        { "multi", 0, nullptr, 'm' },
+        { "norestore", 0, nullptr, 'n' },
+        { "skip-setup", 0, nullptr, 's' },
+        { "logfile", 0, nullptr, 'l' },
+        { "geometry", required_argument, nullptr, 'g' },
+        { "version", 0, nullptr, 'V' },
+        { nullptr, 0, nullptr, 0 }
     };
 
     std::string url;
@@ -391,7 +391,7 @@ int main( int argc, char **argv )
 
     // -h, -t <url>, -m, -n, -s, -l, -g WxH+X+Y, -V
     int opt = 0;
-    while( ( opt = getopt_long( argc, argv, "ht:mnslg:V", options, NULL ) ) != -1 )
+    while( ( opt = getopt_long( argc, argv, "ht:mnslg:V", options, nullptr ) ) != -1 )
     {
         switch( opt )
         {
@@ -479,9 +479,9 @@ int main( int argc, char **argv )
     sigact.sa_flags = SA_RESETHAND;
 
     // シグナルハンドラ設定
-    if( sigaction( SIGHUP, &sigact, NULL ) != 0
-        || sigaction( SIGINT, &sigact, NULL ) != 0
-        || sigaction( SIGQUIT, &sigact, NULL ) != 0 ){
+    if( sigaction( SIGHUP, &sigact, nullptr ) != 0
+        || sigaction( SIGINT, &sigact, nullptr ) != 0
+        || sigaction( SIGQUIT, &sigact, nullptr ) != 0 ){
         fprintf( stderr, "sigaction failed\n" );
         exit( 1 );
     }
@@ -528,7 +528,7 @@ int main( int argc, char **argv )
     // gnomeセッションマネージャとつないでログアウト時に"save_yourself"シグナルをもらう
     gnome_init( "jdim", "1.0", argc, argv );
     GnomeClient *client_gnome = gnome_master_client();
-    if( client_gnome ) gtk_signal_connect( GTK_OBJECT( client_gnome ), "save_yourself", GTK_SIGNAL_FUNC( save_yourself_gnome ), NULL );
+    if( client_gnome ) gtk_signal_connect( GTK_OBJECT( client_gnome ), "save_yourself", GTK_SIGNAL_FUNC( save_yourself_gnome ), nullptr );
     else MISC::ERRMSG( "failed to connect to gnome session manager" );
 #endif
 
@@ -561,9 +561,9 @@ int main( int argc, char **argv )
         FILE *tmp; // warning 消し
         const char *logfile = to_locale_cstr( CACHE::path_msglog() );
         tmp = freopen( logfile, "ab", stdout );
-        setbuf( tmp, NULL );
+        setbuf( tmp, nullptr );
         tmp = freopen( logfile, "ab", stderr );
-        setbuf( tmp, NULL );
+        setbuf( tmp, nullptr );
     }
 
     /*--- IOMonitor -------------------------------------------------*/
@@ -631,7 +631,7 @@ int main( int argc, char **argv )
         m.run( *Win_Main );
 
         delete Win_Main;
-        Win_Main = NULL;
+        Win_Main = nullptr;
     }
 
 #ifdef USE_XSMP

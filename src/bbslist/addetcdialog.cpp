@@ -13,7 +13,7 @@ using namespace BBSLIST;
 
 
 AddEtcDialog::AddEtcDialog( const bool move, const std::string& url, const std::string& name, const std::string& id, const std::string& passwd )
-    : SKELETON::PrefDiag( NULL, url, true ),
+    : SKELETON::PrefDiag( nullptr, url, true ),
       m_entry_name( true, "板名(_N)：", name ),
       m_entry_url( true, "アドレス(_U)：", url ),
       m_entry_id( true, "ID(_I)：", id ),

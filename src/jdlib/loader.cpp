@@ -132,7 +132,7 @@ void JDLIB::return_token( JDLIB::Loader* loader )
     assert( token_loader >= 0 );
 
     std::vector< JDLIB::Loader* >::iterator it = vec_loader.begin();
-    for( ; it != vec_loader.end(); ++it ) if( ( *it ) == loader ) ( *it ) = NULL;
+    for( ; it != vec_loader.end(); ++it ) if( ( *it ) == loader ) ( *it ) = nullptr;
 
 #ifdef _DEBUG
     std::cout << "JDLIB::return_token : url = " << loader->data().url << " token = " << token_loader << std::endl;
@@ -261,13 +261,13 @@ using namespace JDLIB;
 // low_priority = true の時はスレッド起動待ち状態になった時に、起動順のプライオリティを下げる
 //
 Loader::Loader( const bool low_priority )
-    : m_addrinfo( 0 ),
+    : m_addrinfo( nullptr ),
       m_stop( false ),
       m_loading( false ),
       m_low_priority( low_priority ),
-      m_buf( 0 ),
-      m_buf_zlib_in ( 0 ),
-      m_buf_zlib_out ( 0 ),
+      m_buf( nullptr ),
+      m_buf_zlib_in ( nullptr ),
+      m_buf_zlib_out ( nullptr ),
       m_use_zlib ( 0 )
 {
 #ifdef _DEBUG
@@ -309,18 +309,18 @@ void Loader::clear()
     stop();
     wait();
 
-    m_loadable = NULL;
+    m_loadable = nullptr;
     
     m_use_chunk = false;
 
     if( m_buf ) free( m_buf );
-    m_buf = NULL;
+    m_buf = nullptr;
 
     if( m_buf_zlib_in ) free( m_buf_zlib_in );
-    m_buf_zlib_in = NULL;
+    m_buf_zlib_in = nullptr;
 
     if( m_buf_zlib_out ) free( m_buf_zlib_out );
-    m_buf_zlib_out = NULL;
+    m_buf_zlib_out = nullptr;
     
     if( m_use_zlib ) inflateEnd( &m_zstream );
     m_use_zlib = false;
@@ -557,7 +557,7 @@ void* Loader::launcher( void* dat )
 {
     Loader* tt = ( Loader * ) dat;
     tt->run_main();
-    return 0;
+    return nullptr;
 }
 
 
@@ -657,7 +657,7 @@ void Loader::run_main()
 #endif
     bool use_proxy = ( ! m_data.host_proxy.empty() );
 
-    JDLIB::JDSSL* ssl = NULL;
+    JDLIB::JDSSL* ssl = nullptr;
     
     // 送信メッセージ作成
     const std::string msg_send = create_msg_send();
@@ -848,7 +848,7 @@ void Loader::run_main()
     // 受信用バッファを作ってメッセージ受信
     size_t mrg;
     mrg = 64; // 一応オーバーフロー避けのおまじない
-    assert( m_buf == NULL );
+    assert( m_buf == nullptr );
     m_buf = ( char* )malloc( m_lng_buf + mrg );
 
     bool receiving_header;
@@ -1001,7 +1001,7 @@ EXIT_LOADING:
     if( ssl ){
         ssl->close();
         delete ssl;
-        ssl = NULL;
+        ssl = nullptr;
     }
 
     if( SOC_ISVALID( soc ) ){
@@ -1050,7 +1050,7 @@ EXIT_LOADING:
 
     // addrinfo開放
     if( m_addrinfo ) freeaddrinfo( m_addrinfo );
-    m_addrinfo = NULL;
+    m_addrinfo = nullptr;
 
     // トークン返す
     return_token( this );
@@ -1072,8 +1072,8 @@ EXIT_LOADING:
 //
 struct addrinfo* Loader::get_addrinfo( const std::string& hostname, const int port )
 {
-    if( port < 0 || port > 65535 ) return NULL;
-    if( hostname.empty() ) return NULL;
+    if( port < 0 || port > 65535 ) return nullptr;
+    if( hostname.empty() ) return nullptr;
 
     int ret;
     struct addrinfo hints, *res;
@@ -1088,7 +1088,7 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, const int po
     ret = getaddrinfo( hostname.c_str(), port_str, &hints, &res );
     if( ret ) {
         MISC::ERRMSG( m_data.str_code );
-        return NULL;
+        return nullptr;
     }
     
 #ifdef _DEBUG    
@@ -1399,7 +1399,7 @@ bool Loader::skip_chunk( char* buf, size_t& read_size )
                     
                     *( m_pos_sizepart ) = '\0';
                     if( *( m_pos_sizepart -1 ) == '\r' ) *( m_pos_sizepart -1 ) = '\0'; // "\r\n"の場合
-                    m_lng_leftdata = strtol( m_str_sizepart, NULL, 16 );
+                    m_lng_leftdata = strtol( m_str_sizepart, nullptr, 16 );
                     m_pos_sizepart = m_str_sizepart;
                     
 #ifdef _DEBUG_CHUNKED
@@ -1511,8 +1511,8 @@ bool Loader::init_unzip()
         return false;
     }
 
-    assert( m_buf_zlib_in == NULL );
-    assert( m_buf_zlib_out == NULL );
+    assert( m_buf_zlib_in == nullptr );
+    assert( m_buf_zlib_out == nullptr );
     m_buf_zlib_in = ( Bytef* )malloc( sizeof( Bytef ) * m_lng_buf_zlib_in + 64 );
     m_buf_zlib_out = ( Bytef* )malloc( sizeof( Bytef ) * m_lng_buf_zlib_out + 64 );
 
@@ -1703,8 +1703,8 @@ bool Loader::wait_recv_send( const int fd, const bool recv )
         memset( &timeout, 0, sizeof( timeval ) );
         timeout.tv_sec = 1;
 
-        if( recv ) ret = select( fd+1 , &fdset , NULL , NULL , &timeout );
-        else ret = select( fd+1 , NULL, &fdset , NULL , &timeout );
+        if( recv ) ret = select( fd+1 , &fdset , nullptr , nullptr , &timeout );
+        else ret = select( fd+1 , nullptr, &fdset , nullptr , &timeout );
 
 #ifdef _DEBUG
         if( errno == EINTR && ret < 0 ) std::cout << "Loader::wait_recv_send : errno = EINTR " << errno << std::endl;

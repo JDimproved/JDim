@@ -20,7 +20,7 @@ using namespace ARTICLE;
 
 SearchToolBar::SearchToolBar() :
     SKELETON::ToolBar( ARTICLE::get_admin() ),
-    m_searchview( NULL ),
+    m_searchview( nullptr ),
     m_check_bm( "しおり" )
 {
     m_tool_bm.add( m_check_bm );

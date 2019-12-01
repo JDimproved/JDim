@@ -27,7 +27,7 @@ MsgDiag::MsgDiag( Gtk::Window& parent,
     : Gtk::MessageDialog( parent, message, use_markup, type, buttons, modal )
 {}
 
-// parent がポインタの時は  NULL かどうかで場合分け
+// parent がポインタの時は  nullptr かどうかで場合分け
 MsgDiag::MsgDiag( Gtk::Window* parent,
                   const Glib::ustring& message,
                   bool use_markup,
@@ -171,7 +171,7 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
     hbox->pack_start( m_chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
     get_vbox()->pack_start( *hbox, Gtk::PACK_SHRINK );
 
-    Gtk::Button* button = NULL;
+    Gtk::Button* button = nullptr;
 
     if( buttons == Gtk::BUTTONS_OK ){
 

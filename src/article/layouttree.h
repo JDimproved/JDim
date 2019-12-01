@@ -54,8 +54,8 @@ namespace ARTICLE
 
         LAYOUT* header;      // 親ヘッダーへのポインタ
         LAYOUT* div;         // 所属するdivへのポインタ
-        LAYOUT* next_layout; // 次のノード、最終ノードではNULL
-        LAYOUT* next_header; // 次のヘッダノード、ヘッダノード以外ではNULL
+        LAYOUT* next_layout; // 次のノード、最終ノードではnullptr
+        LAYOUT* next_header; // 次のヘッダノード、ヘッダノード以外ではnullptr
 
         RECTANGLE* rect; // 描画時のノード座標、幅、高さ情報
         CORE::CSS_PROPERTY* css; // cssプロパティ
@@ -137,7 +137,7 @@ namespace ARTICLE
         // joint == true の時はヘッダを作らないで、本文を前のツリーの続きに連結する
         void append_node( DBTREE::NODE* node_header, const bool joint );
 
-        void append_block( DBTREE::NODE* block, const int res_number, IMGDATA* imgdata = NULL, const int dom_attr = 0 );
+        void append_block( DBTREE::NODE* block, const int res_number, IMGDATA* imgdata = nullptr, const int dom_attr = 0 );
 
         // html をパースして追加
         void append_html( const std::string& html );

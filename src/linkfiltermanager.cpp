@@ -17,7 +17,7 @@
 
 #define ROOT_NODE_NAME_LINKFILTER "linkfilterlist"
 
-CORE::Linkfilter_Manager* instance_linkfilter_manager = NULL;
+CORE::Linkfilter_Manager* instance_linkfilter_manager = nullptr;
 
 CORE::Linkfilter_Manager* CORE::get_linkfilter_manager()
 {
@@ -31,7 +31,7 @@ CORE::Linkfilter_Manager* CORE::get_linkfilter_manager()
 void CORE::delete_linkfilter_manager()
 {
     if( instance_linkfilter_manager ) delete instance_linkfilter_manager;
-    instance_linkfilter_manager = NULL;
+    instance_linkfilter_manager = nullptr;
 }
 
 ///////////////////////////////////////////////

@@ -28,11 +28,11 @@ constexpr size_t BUF_SIZE_200 = 256;
 
 NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
-    , m_regex( NULL )
-    , m_iconv( NULL )
-    , m_decoded_lines( NULL )
-    , m_buffer( NULL )
-    , m_buffer_for_200( NULL )
+    , m_regex( nullptr )
+    , m_iconv( nullptr )
+    , m_decoded_lines( nullptr )
+    , m_buffer( nullptr )
+    , m_buffer_for_200( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeMachi::NodeTreeMachi url = " << get_url() << " modified = " << date_modified << std::endl;
@@ -62,20 +62,20 @@ void NodeTreeMachi::clear()
 
     // regex 削除
     if( m_regex ) delete m_regex;
-    m_regex = NULL;
+    m_regex = nullptr;
 
     // iconv 削除
     if( m_iconv ) delete m_iconv;
-    m_iconv = NULL;
+    m_iconv = nullptr;
 
     if( m_decoded_lines ) free( m_decoded_lines );
-    m_decoded_lines = NULL;
+    m_decoded_lines = nullptr;
 
     if( m_buffer ) free( m_buffer );
-    m_buffer = NULL;
+    m_buffer = nullptr;
 
     if( m_buffer_for_200 ) free( m_buffer_for_200 );
-    m_buffer_for_200 = NULL;
+    m_buffer_for_200 = nullptr;
 }
 
 

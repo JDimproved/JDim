@@ -156,7 +156,7 @@ namespace SKELETON
         virtual void activate_act_before_popupmenu( const std::string& url ){}
 
         //  ポップアップメニュー取得
-        virtual Gtk::Menu* get_popupmenu( const std::string& url ){ return NULL; }
+        virtual Gtk::Menu* get_popupmenu( const std::string& url ){ return nullptr; }
 
     public:
 

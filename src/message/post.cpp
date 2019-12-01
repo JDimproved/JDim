@@ -36,12 +36,12 @@ Post::Post( Gtk::Widget* parent, const std::string& url, const std::string& msg,
       m_parent( parent ),
       m_url( url ),
       m_msg( msg ),
-      m_rawdata( 0 ),
+      m_rawdata( nullptr ),
       m_lng_rawdata( 0 ),
       m_count( 0 ),
       m_subbbs( 0 ),
       m_new_article( new_article ),
-      m_writingdiag( 0 )
+      m_writingdiag( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "Post::Post " << m_url << std::endl;
@@ -61,7 +61,7 @@ Post::~Post()
     clear();
 
     if( m_writingdiag ) delete m_writingdiag;
-    m_writingdiag = NULL;
+    m_writingdiag = nullptr;
 }
 
 
@@ -72,7 +72,7 @@ void Post::clear()
 #endif
 
     if( m_rawdata ) free( m_rawdata );
-    m_rawdata = NULL;
+    m_rawdata = nullptr;
 
     if( m_writingdiag ) m_writingdiag->hide();
 }
@@ -89,7 +89,7 @@ void Post::emit_sigfin()
     clear();
 
     if( m_writingdiag ) delete m_writingdiag;
-    m_writingdiag = NULL;
+    m_writingdiag = nullptr;
 }
 
 

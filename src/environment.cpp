@@ -229,16 +229,16 @@ std::string ENVIRONMENT::get_distname()
             {
                 // read size of ProductName
                 rc = RegQueryValueEx( hKey, "ProductName",
-                        NULL, NULL, NULL, &dwSize );
+                        nullptr, nullptr, nullptr, &dwSize );
                 if( rc == ERROR_SUCCESS && dwSize > 0 )
                 {
                     // get buffer
                     regVal = (char *)malloc( dwSize );
-                    if( regVal != NULL )
+                    if( regVal != nullptr )
                     {
                         // read ProductName
                         rc = RegQueryValueEx( hKey, "ProductName",
-                                NULL, NULL, (LPBYTE)regVal, &dwSize );
+                                nullptr, nullptr, (LPBYTE)regVal, &dwSize );
                         if( rc == ERROR_SUCCESS && strlen( regVal ) > 0 )
                         {
                             // may be contains "Windows" in the value
@@ -251,16 +251,16 @@ std::string ENVIRONMENT::get_distname()
 
                 // read size of CSDVersion
                 rc = RegQueryValueEx( hKey, "CSDVersion",
-                        NULL, NULL, NULL, &dwSize );
+                        nullptr, nullptr, nullptr, &dwSize );
                 if( rc == ERROR_SUCCESS && dwSize > 0 )
                 {
                     // get buffer
                     regVal = (char *)malloc( dwSize );
-                    if( regVal != NULL )
+                    if( regVal != nullptr )
                     {
                         // read CSDVersion
                         rc = RegQueryValueEx( hKey, "CSDVersion",
-                                NULL, NULL, (LPBYTE)regVal, &dwSize );
+                                nullptr, nullptr, (LPBYTE)regVal, &dwSize );
                         if( rc == ERROR_SUCCESS && strlen( regVal ) > 0 )
                         {
                             // ServicePack version
@@ -435,7 +435,7 @@ std::string ENVIRONMENT::get_distname()
 
 #ifdef HAVE_SYS_UTSNAME_H
 
-    char *sysname = 0, *release = 0, *machine = 0;
+    char *sysname = nullptr, *release = nullptr, *machine = nullptr;
 
     // システムコール uname() 準拠：SVr4, POSIX.1-2001.
     struct utsname* uts;
@@ -466,7 +466,7 @@ std::string ENVIRONMENT::get_distname()
     }
 
     free( uts );
-    uts = NULL;
+    uts = nullptr;
 
 #endif
 #endif // _WIN32

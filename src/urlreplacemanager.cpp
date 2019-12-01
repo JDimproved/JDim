@@ -10,7 +10,7 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 
-CORE::Urlreplace_Manager* instance_urlreplace_manager = NULL;
+CORE::Urlreplace_Manager* instance_urlreplace_manager = nullptr;
 
 CORE::Urlreplace_Manager* CORE::get_urlreplace_manager()
 {
@@ -24,7 +24,7 @@ CORE::Urlreplace_Manager* CORE::get_urlreplace_manager()
 void CORE::delete_urlreplace_manager()
 {
     if( instance_urlreplace_manager ) delete instance_urlreplace_manager;
-    instance_urlreplace_manager = NULL;
+    instance_urlreplace_manager = nullptr;
 }
 
 ///////////////////////////////////////////////

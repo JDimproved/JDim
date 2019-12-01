@@ -297,7 +297,7 @@ void BoardMachi::regist_article( const bool is_online )
     std::cout << "BoardMachii::regist_article size = " << get_list_artinfo().size() << std::endl;
 #endif 
 
-    ArticleBase* article_first = NULL;
+    ArticleBase* article_first = nullptr;
 
     const std::string datbase = url_datbase();
 

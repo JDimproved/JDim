@@ -14,7 +14,7 @@
 #include "cache.h"
 #include "type.h"
 
-CORE::AAManager* instance_aamanager = NULL;
+CORE::AAManager* instance_aamanager = nullptr;
 
 CORE::AAManager* CORE::get_aamanager()
 {
@@ -26,7 +26,7 @@ CORE::AAManager* CORE::get_aamanager()
 void CORE::delete_aamanager()
 {
     if( instance_aamanager ) delete instance_aamanager;
-    instance_aamanager = NULL;
+    instance_aamanager = nullptr;
 }
 
 

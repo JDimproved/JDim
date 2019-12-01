@@ -122,7 +122,7 @@ bool TabNotebook::paint( GdkEventExpose* event )
 
     if( ! notebook->first_tab ) notebook->first_tab = notebook->children;
 
-    GtkNotebookPage* page = NULL;
+    GtkNotebookPage* page = nullptr;
     if( ! GTK_WIDGET_MAPPED( notebook->cur_page->tab_label ) ) page = GTK_NOTEBOOK_PAGE( notebook->first_tab );
     else page = notebook->cur_page;
 
@@ -288,7 +288,7 @@ void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook
         gtk_widget_style_get( widget,
                               "scroll-arrow-hlength", &rectangle->width,
                               "scroll-arrow-vlength", &rectangle->height,
-                              NULL );
+                              nullptr );
 #else
         // gtk+-2.9.1より前は 12 で固定
         rectangle->width = rectangle->height = 12;
@@ -307,7 +307,7 @@ void TabNotebook::get_arrow_rect( GtkWidget *widget, const GtkNotebook *notebook
 #if !GTKMM_CHECK_VERSION(3,0,0)
 gboolean TabNotebook::get_event_window_position( const GtkWidget *widget, const GtkNotebook *notebook, GdkRectangle *rectangle )
 {
-    GtkNotebookPage* visible_page = NULL;
+    GtkNotebookPage* visible_page = nullptr;
     GList* children = notebook->children;
     while( children ){
 

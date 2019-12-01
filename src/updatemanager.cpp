@@ -12,7 +12,7 @@
 
 #include <algorithm>
 
-CORE::CheckUpdate_Manager* instance_checkupdate_manager = NULL;
+CORE::CheckUpdate_Manager* instance_checkupdate_manager = nullptr;
 
 
 CORE::CheckUpdate_Manager* CORE::get_checkupdate_manager()
@@ -27,7 +27,7 @@ CORE::CheckUpdate_Manager* CORE::get_checkupdate_manager()
 void CORE::delete_checkupdate_manager()
 {
     if( instance_checkupdate_manager ) delete instance_checkupdate_manager;
-    instance_checkupdate_manager = NULL;
+    instance_checkupdate_manager = nullptr;
 }
 
 

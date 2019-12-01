@@ -115,7 +115,7 @@ void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETO
 //
 Dom* Document::get_root_element( const std::string& node_name )
 {
-    Dom* node = 0;
+    Dom* node = nullptr;
 
     DomList children = childNodes();
     std::list< Dom* >::iterator it = children.begin();

@@ -31,7 +31,7 @@ using namespace CORE;
 IOMonitor::IOMonitor()
 #ifndef _WIN32
     : m_fifo_fd( -1 )
-    , m_iochannel( NULL )
+    , m_iochannel( nullptr )
 #else
     : m_slot_hd( INVALID_HANDLE_VALUE )
 #endif // _WIN32
@@ -163,13 +163,13 @@ void IOMonitor::init()
     std::cerr << "Create slot name: " << m_slot_name << std::endl;
 #endif
     m_slot_hd = CreateMailslot( to_locale_cstr( m_slot_name.c_str() ),
-            0, FIFO_TIMEOUT_MILI, NULL );
+            0, FIFO_TIMEOUT_MILI, nullptr );
     if( m_slot_hd == INVALID_HANDLE_VALUE ){
         if( GetLastError() == ERROR_ALREADY_EXISTS ){
             // client
             m_slot_hd = CreateFile( to_locale_cstr( m_slot_name.c_str() ),
                     GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
-                    NULL, OPEN_EXISTING, 0, NULL );
+                    nullptr, OPEN_EXISTING, 0, nullptr );
             if( m_slot_hd == INVALID_HANDLE_VALUE ){
 #ifdef _DEBUG
                 std::cerr << "Open err: " << GetLastError() << std::endl;
@@ -240,7 +240,7 @@ bool IOMonitor::send_command( const char* command )
     g_assert( m_slot_hd != INVALID_HANDLE_VALUE );
 
     DWORD length = 0;
-    BOOL rc = WriteFile( m_slot_hd, command, command_length, &length, NULL );
+    BOOL rc = WriteFile( m_slot_hd, command, command_length, &length, nullptr );
 
     return rc != FALSE && ( size_t )length == command_length;
 #endif // _WIN32
@@ -275,7 +275,7 @@ bool IOMonitor::slot_ioin( Glib::IOCondition io_condition )
     memset( msg, 0, sizeof( msg ) );
     DWORD length = 0;
 
-    BOOL rc = ReadFile( m_slot_hd, msg, COMMAND_MAX_LENGTH - 1, &length, NULL );
+    BOOL rc = ReadFile( m_slot_hd, msg, COMMAND_MAX_LENGTH - 1, &length, nullptr );
     if( rc == FALSE ){
         DWORD error = GetLastError();
         if( error == ERROR_SEM_TIMEOUT ){

@@ -56,7 +56,7 @@ ArticleItemMenuPref::ArticleItemMenuPref( Gtk::Window* parent, const std::string
 //
 void ArticleItemMenuPref::slot_ok_clicked()
 {
-    SKELETON::MsgDiag mdiag( NULL, "次に開いたスレビューから有効になります" );
+    SKELETON::MsgDiag mdiag( nullptr, "次に開いたスレビューから有効になります" );
     mdiag.run();
 
     SESSION::set_items_article_menu_str( get_items() );

@@ -1388,7 +1388,7 @@ int MISC::decode_spchar_number( const char* in_char, const int offset, const int
 
     int num = 0;
     if( offset == 2 ) num = atoi( str_num );
-    else num = strtol( str_num, NULL, 16 );
+    else num = strtol( str_num, nullptr, 16 );
 
     return sanitize_numeric_character_reference( num );
 }

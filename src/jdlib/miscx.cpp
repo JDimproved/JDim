@@ -33,7 +33,7 @@ void MISC::WarpPointer( Glib::RefPtr< Gdk::Window > src, Glib::RefPtr< Gdk::Wind
 
     // スクリーン座標を取得してからカーソル位置を設定する
     hWnd = (HWND)GDK_WINDOW_HWND( Glib::unwrap( dest ) );
-    if( hWnd != NULL ){
+    if( hWnd != nullptr ){
         pos.x = x;
         pos.y = y;
         if( ClientToScreen( hWnd, &pos ) ){

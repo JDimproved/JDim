@@ -13,8 +13,8 @@
 #include "jdlib/miscutil.h"
 
 
-CONFIG::ConfigItems* instance_confitem = NULL;
-CONFIG::ConfigItems* instance_confitem_bkup = NULL;
+CONFIG::ConfigItems* instance_confitem = nullptr;
+CONFIG::ConfigItems* instance_confitem_bkup = nullptr;
 
 
 CONFIG::ConfigItems* CONFIG::get_confitem()
@@ -26,10 +26,10 @@ CONFIG::ConfigItems* CONFIG::get_confitem()
 void CONFIG::delete_confitem()
 {
     if( instance_confitem ) delete instance_confitem;
-    instance_confitem = NULL;
+    instance_confitem = nullptr;
 
     if( instance_confitem_bkup ) delete instance_confitem_bkup;
-    instance_confitem_bkup = NULL;
+    instance_confitem_bkup = nullptr;
 }
 
 

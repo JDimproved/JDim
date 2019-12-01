@@ -169,7 +169,7 @@ bool Thread::join()
 
 #else // pthread 使用
 
-    int status = pthread_join( m_thread, NULL );
+    int status = pthread_join( m_thread, nullptr );
     JDTH_CLEAR( m_thread );
     if( status ){
         MISC::ERRMSG( std::string( "Thread::join : " ) + strerror( status ) );

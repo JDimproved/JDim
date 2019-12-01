@@ -17,7 +17,7 @@ DetailDiag::DetailDiag( Gtk::Window* parent, const std::string& url,
                         const std::string& detail_html, const std::string& tab_detail )
     : SKELETON::PrefDiag( parent, url, add_cancel ),
       m_message( message ),
-      m_detail( NULL )
+      m_detail( nullptr )
 {
 #if GTKMM_CHECK_VERSION(2,6,0)
     m_message.set_width_chars( 60 );

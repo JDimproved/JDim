@@ -39,7 +39,7 @@ Timeout::~Timeout()
 #ifdef _WIN32
     if( m_identifer != 0 ){
         std::lock_guard< std::mutex > lock( s_lock );
-        KillTimer( NULL, m_identifer );
+        KillTimer( nullptr, m_identifer );
         s_timeouts.erase( m_identifer );
         m_identifer = 0;
     }
@@ -55,7 +55,7 @@ Timeout* Timeout::connect( const sigc::slot< bool > slot_timeout, unsigned int i
 #ifdef _WIN32
     std::lock_guard< std::mutex > lock( s_lock );
     // use global windows timer
-    UINT_PTR ident = SetTimer( NULL, 0, interval, slot_timeout_win32 );
+    UINT_PTR ident = SetTimer( nullptr, 0, interval, slot_timeout_win32 );
     if( ident != 0 ) {
         // register object into static domain
         s_timeouts.insert( std::map< UINT_PTR, Timeout* >::value_type( ident, timeout ));
@@ -83,7 +83,7 @@ void Timeout::slot_timeout_callback()
 VOID CALLBACK Timeout::slot_timeout_win32( HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime )
 {
     Timeout* timeout = s_timeouts[ idEvent ];
-    if( timeout != NULL ){
+    if( timeout != nullptr ){
         timeout->slot_timeout_callback();
     }
 }

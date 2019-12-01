@@ -52,7 +52,7 @@ void ARTICLE::init_font()
             delete[] width_of_char[ i ];
         }
 
-        width_of_char[ i ] = NULL;
+        width_of_char[ i ] = nullptr;
     }
 }
 

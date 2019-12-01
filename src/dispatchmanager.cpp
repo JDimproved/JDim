@@ -11,7 +11,7 @@
 
 
 static std::mutex dispatch_mutex;
-CORE::DispatchManager* instance_dispmanager = NULL;
+CORE::DispatchManager* instance_dispmanager = nullptr;
 
 
 CORE::DispatchManager* CORE::get_dispmanager()
@@ -23,7 +23,7 @@ CORE::DispatchManager* CORE::get_dispmanager()
 void CORE::delete_dispatchmanager()
 {
     if( instance_dispmanager ) delete instance_dispmanager;
-    instance_dispmanager = NULL;
+    instance_dispmanager = nullptr;
 }
 
 

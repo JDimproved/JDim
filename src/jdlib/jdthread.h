@@ -17,8 +17,8 @@
 #elif defined( USE_GTHREAD )
 #include <gtkmm.h>
 #define JDTH_TYPE Glib::Thread*
-#define JDTH_ISRUNNING( pth ) ( ( pth ) != NULL )
-#define JDTH_CLEAR( pth ) ( ( pth ) = NULL )
+#define JDTH_ISRUNNING( pth ) ( ( pth ) != nullptr )
+#define JDTH_CLEAR( pth ) ( ( pth ) = nullptr )
 #else
 #include <pthread.h>
 #define JDTH_TYPE pthread_t

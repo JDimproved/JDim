@@ -30,7 +30,7 @@
 
 
 
-BOARD::BoardAdmin *instance_boardadmin = NULL;
+BOARD::BoardAdmin *instance_boardadmin = nullptr;
 
 BOARD::BoardAdmin* BOARD::get_admin()
 {
@@ -44,14 +44,14 @@ BOARD::BoardAdmin* BOARD::get_admin()
 void BOARD::delete_admin()
 {
     if( instance_boardadmin ) delete instance_boardadmin;
-    instance_boardadmin = NULL;
+    instance_boardadmin = nullptr;
 }
 
 
 using namespace BOARD;
 
 BoardAdmin::BoardAdmin( const std::string& url )
-    : SKELETON::Admin( url ) , m_toolbar( NULL )
+    : SKELETON::Admin( url ) , m_toolbar( nullptr )
 {
     set_use_viewhistory( true );
     set_use_switchhistory( true );
@@ -384,10 +384,10 @@ SKELETON::View* BoardAdmin::create_view( const COMMAND_ARGS& command )
         view_args.arg1 = command.arg6; // "set_history" の時は板の履歴に登録する
     }
 
-    else return NULL;
+    else return nullptr;
 
     SKELETON::View* view = CORE::ViewFactory( type, command_to_url( command ), view_args );
-    assert( view != NULL );
+    assert( view != nullptr );
 
     return view;
 }

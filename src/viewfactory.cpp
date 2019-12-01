@@ -158,7 +158,7 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             return new MESSAGE::MessageViewNew( url, view_args.arg1 );
 
         default:
-            return NULL;
+            return nullptr;
     }
 }
 

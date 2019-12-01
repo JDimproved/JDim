@@ -33,7 +33,7 @@
 #include "config/globalconf.h"
 #include "dndmanager.h"
 
-ARTICLE::ArticleAdmin *instance_articleadmin = NULL;
+ARTICLE::ArticleAdmin *instance_articleadmin = nullptr;
 
 ARTICLE::ArticleAdmin* ARTICLE::get_admin()
 {
@@ -46,14 +46,14 @@ ARTICLE::ArticleAdmin* ARTICLE::get_admin()
 void ARTICLE::delete_admin()
 {
     if( instance_articleadmin ) delete instance_articleadmin;
-    instance_articleadmin = NULL;
+    instance_articleadmin = nullptr;
 }
 
 
 using namespace ARTICLE;
 
 ArticleAdmin::ArticleAdmin( const std::string& url )
-    : SKELETON::Admin( url ), m_toolbar( NULL ), m_toolbarsimple( NULL ), m_search_toolbar( NULL )
+    : SKELETON::Admin( url ), m_toolbar( nullptr ), m_toolbarsimple( nullptr ), m_search_toolbar( nullptr )
 {
     set_use_viewhistory( true );
     set_use_switchhistory( true );
@@ -544,10 +544,10 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
         view_args.arg1 = command.arg6;  // exec
     }
 
-    else return NULL;
+    else return nullptr;
 
     SKELETON::View* view = CORE::ViewFactory( type,  command_to_url( command ), view_args );
-    assert( view != NULL );
+    assert( view != nullptr );
 
     return view;
 }

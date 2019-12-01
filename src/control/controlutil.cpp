@@ -25,16 +25,16 @@
 #include <cstring>
 
 
-CONTROL::KeyConfig* instance_keyconfig = NULL;
-CONTROL::KeyConfig* instance_keyconfig_bkup = NULL;
+CONTROL::KeyConfig* instance_keyconfig = nullptr;
+CONTROL::KeyConfig* instance_keyconfig_bkup = nullptr;
 
 
-CONTROL::MouseConfig* instance_mouseconfig = NULL;
-CONTROL::MouseConfig* instance_mouseconfig_bkup = NULL;
+CONTROL::MouseConfig* instance_mouseconfig = nullptr;
+CONTROL::MouseConfig* instance_mouseconfig_bkup = nullptr;
 
 
-CONTROL::ButtonConfig* instance_buttonconfig = NULL;
-CONTROL::ButtonConfig* instance_buttonconfig_bkup = NULL;
+CONTROL::ButtonConfig* instance_buttonconfig = nullptr;
+CONTROL::ButtonConfig* instance_buttonconfig_bkup = nullptr;
 
 
 //////////////////////////////////////////////////////////
@@ -58,10 +58,10 @@ CONTROL::KeyConfig* CONTROL::get_keyconfig()
 void CONTROL::delete_keyconfig()
 {
     if( instance_keyconfig ) delete instance_keyconfig;
-    instance_keyconfig = NULL;
+    instance_keyconfig = nullptr;
 
     if( instance_keyconfig_bkup ) delete instance_keyconfig_bkup;
-    instance_keyconfig_bkup = NULL;
+    instance_keyconfig_bkup = nullptr;
 }
 
 
@@ -76,10 +76,10 @@ CONTROL::MouseConfig* CONTROL::get_mouseconfig()
 void CONTROL::delete_mouseconfig()
 {
     if( instance_mouseconfig ) delete instance_mouseconfig;
-    instance_mouseconfig = NULL;
+    instance_mouseconfig = nullptr;
 
     if( instance_mouseconfig_bkup ) delete instance_mouseconfig_bkup;
-    instance_mouseconfig_bkup = NULL;
+    instance_mouseconfig_bkup = nullptr;
 }
 
 
@@ -94,10 +94,10 @@ CONTROL::ButtonConfig* CONTROL::get_buttonconfig()
 void CONTROL::delete_buttonconfig()
 {
     if( instance_buttonconfig ) delete instance_buttonconfig;
-    instance_buttonconfig = NULL;
+    instance_buttonconfig = nullptr;
 
     if( instance_buttonconfig_bkup ) delete instance_buttonconfig_bkup;
-    instance_buttonconfig_bkup = NULL;
+    instance_buttonconfig_bkup = nullptr;
 }
 
 

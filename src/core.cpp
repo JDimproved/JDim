@@ -90,7 +90,7 @@ Core::Core( JDWinMain& win_main )
       m_hpaned_r( SKELETON::PANE_FIXSIZE_PAGE1 ),
       m_imagetab_shown( 0 ),
       m_vpaned_message( SKELETON::PANE_FIXSIZE_PAGE2 ),
-      m_toolbar( NULL ),
+      m_toolbar( nullptr ),
       m_enable_menuslot( true ),
       m_init( false ),
       m_count_savesession( 0 )
@@ -1768,7 +1768,7 @@ void Core::toggle_menubar()
 
     if( ! SESSION::show_menubar() && CONFIG::get_show_hide_menubar_diag() ){
 
-        SKELETON::MsgCheckDiag mdiag( NULL, "メニューバーを再表示するには\n\n" + CONTROL::get_str_motions( CONTROL::ShowMenuBar ) + "\n\nを押してください",
+        SKELETON::MsgCheckDiag mdiag( nullptr, "メニューバーを再表示するには\n\n" + CONTROL::get_str_motions( CONTROL::ShowMenuBar ) + "\n\nを押してください",
                                       "今後表示しない (_D)"
             );
 
@@ -1835,7 +1835,7 @@ void Core::toggle_draw_toolbarback()
 
     CONFIG::set_draw_toolbarback( ! CONFIG::get_draw_toolbarback() );
 
-    SKELETON::MsgDiag mdiag( NULL, "正しく表示させるためにはJDimを再起動してください。" );
+    SKELETON::MsgDiag mdiag( nullptr, "正しく表示させるためにはJDimを再起動してください。" );
     mdiag.run();
 }
 
@@ -2188,7 +2188,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "open_article_searchlog" ) { 
 
         if( CORE::get_search_manager()->is_searching() ){
-            SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
+            SKELETON::MsgDiag mdiag( nullptr, "他の検索スレッドが実行中です" );
             mdiag.run();
             return;
         }
@@ -2226,7 +2226,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "open_article_searchtitle" ) { 
 
         if( CORE::get_search_manager()->is_searching() ){
-            SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
+            SKELETON::MsgDiag mdiag( nullptr, "他の検索スレッドが実行中です" );
             mdiag.run();
             return;
         }
@@ -2440,7 +2440,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command  == "open_board_showlog" || command.command  == "open_board_showalllog" ){
 
         if( CORE::get_search_manager()->is_searching() ){
-            SKELETON::MsgDiag mdiag( NULL, "他の検索スレッドが実行中です" );
+            SKELETON::MsgDiag mdiag( nullptr, "他の検索スレッドが実行中です" );
             mdiag.run();
             return;
         }
@@ -2448,7 +2448,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         std::string url = command.url;
         if( command.command == "open_board_showalllog" ){
 
-            SKELETON::MsgDiag mdiag( NULL, "全ログの一覧表示はかなり時間がかかります。\n\n本当に表示しますか？",
+            SKELETON::MsgDiag mdiag( nullptr, "全ログの一覧表示はかなり時間がかかります。\n\n本当に表示しますか？",
                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
@@ -2573,7 +2573,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         if( command.arg1 == "show_diag" ){
 
-            SKELETON::MsgDiag mdiag( NULL, "「"+ DBTREE::board_name( command.url ) + "」\n\nにdatファイルをインポートしますか？",
+            SKELETON::MsgDiag mdiag( nullptr, "「"+ DBTREE::board_name( command.url ) + "」\n\nにdatファイルをインポートしますか？",
                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
         }
@@ -2583,7 +2583,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         // ダイアログを開いてファイルのリストを取得
         if( command.arg2.empty() ){
             
-            list_files = CACHE::open_load_diag( NULL, SESSION::get_dir_dat(), CACHE::FILE_TYPE_DAT, true );
+            list_files = CACHE::open_load_diag( nullptr, SESSION::get_dir_dat(), CACHE::FILE_TYPE_DAT, true );
         }
 
         // 共有バッファからファイルのリストを取得
@@ -2801,7 +2801,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command == "open_message" ){
 
         if( ! SESSION::is_online() ){
-            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+            SKELETON::MsgDiag mdiag( nullptr, "オフラインです" );
             mdiag.run();
         }
         else{
@@ -2828,11 +2828,11 @@ void Core::set_command( const COMMAND_ARGS& command )
     else if( command.command == "create_new_thread" ){
 
         if( ! SESSION::is_online() ){
-            SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+            SKELETON::MsgDiag mdiag( nullptr, "オフラインです" );
             mdiag.run();
         }
         else if( DBTREE::url_bbscgi_new( command.url ).empty() ){
-            SKELETON::MsgDiag mdiag( NULL, "この板では新スレを立てることは出来ません" );
+            SKELETON::MsgDiag mdiag( nullptr, "この板では新スレを立てることは出来ません" );
             mdiag.run();
         }
         else{
@@ -3280,7 +3280,7 @@ void Core::exec_command()
             if( CONFIG::get_use_image_view() ){
 
                 if( ! SESSION::is_online() ){
-                    SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+                    SKELETON::MsgDiag mdiag( nullptr, "オフラインです" );
                     mdiag.run();
                 }
                 else{
@@ -4323,7 +4323,7 @@ void Core::import_dat( const std::string& url_board, const std::vector< std::str
 void Core::check_update( const bool open )
 {
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( nullptr, "オフラインです" );
         mdiag.run();
         return;
     }

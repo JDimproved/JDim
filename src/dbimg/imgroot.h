@@ -34,7 +34,7 @@ namespace DBIMG
         // Imgクラス取得(無ければ作成)
         Img* get_img( const std::string& url );
 
-        // 検索(無ければNULL)
+        // 検索(無ければnullptr)
         Img* search_img( const std::string& url );
 
         // 画像データの先頭のシグネチャを見て画像のタイプを取得

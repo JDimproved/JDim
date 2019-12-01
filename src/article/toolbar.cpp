@@ -29,7 +29,7 @@ ArticleToolBar::ArticleToolBar() :
     m_button_drawout_and( ICON::SEARCH_AND ),
     m_button_drawout_or( ICON::SEARCH_OR ),
 
-    m_button_live_play_stop( NULL )
+    m_button_live_play_stop( nullptr )
 {
     // 検索バー
     set_tooltip( m_button_drawout_and, CONTROL::get_label_motions( CONTROL::DrawOutAnd ) );

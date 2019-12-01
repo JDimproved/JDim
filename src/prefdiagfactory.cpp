@@ -124,6 +124,6 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, 
             return new CORE::OpenURLDialog( url );
 
         default:
-            return NULL;
+            return nullptr;
     }
 }

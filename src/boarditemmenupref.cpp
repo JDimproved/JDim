@@ -48,7 +48,7 @@ BoardItemMenuPref::BoardItemMenuPref( Gtk::Window* parent, const std::string& ur
 //
 void BoardItemMenuPref::slot_ok_clicked()
 {
-    SKELETON::MsgDiag mdiag( NULL, "次に開いたスレ一覧から有効になります" );
+    SKELETON::MsgDiag mdiag( nullptr, "次に開いたスレ一覧から有効になります" );
     mdiag.run();
 
     SESSION::set_items_board_menu_str( get_items() );

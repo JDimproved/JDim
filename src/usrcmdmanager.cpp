@@ -23,7 +23,7 @@
 
 #include "config/globalconf.h"
 
-CORE::Usrcmd_Manager* instance_usrcmd_manager = NULL;
+CORE::Usrcmd_Manager* instance_usrcmd_manager = nullptr;
 
 CORE::Usrcmd_Manager* CORE::get_usrcmd_manager()
 {
@@ -37,7 +37,7 @@ CORE::Usrcmd_Manager* CORE::get_usrcmd_manager()
 void CORE::delete_usrcmd_manager()
 {
     if( instance_usrcmd_manager ) delete instance_usrcmd_manager;
-    instance_usrcmd_manager = NULL;
+    instance_usrcmd_manager = nullptr;
 }
 
 ///////////////////////////////////////////////
@@ -215,7 +215,7 @@ void Usrcmd_Manager::exec( const std::string command, // コマンド
 
     if( use_browser ) CORE::core_set_command( "open_url_browser", cmd );
     else if( show_dialog ){
-        SKELETON::MsgDiag mdiag( NULL, cmd );
+        SKELETON::MsgDiag mdiag( nullptr, cmd );
         mdiag.run();
     }
     else Glib::spawn_command_line_async( cmd );
@@ -229,7 +229,7 @@ bool Usrcmd_Manager::show_replacetextdiag( std::string& texti, const std::string
 {
     if( ! texti.empty() ) return true;
 
-    ReplaceTextDiag textdiag( NULL, title );
+    ReplaceTextDiag textdiag( nullptr, title );
     if( textdiag.run() != Gtk::RESPONSE_OK ) return false;
     texti = textdiag.get_text();
     return true;

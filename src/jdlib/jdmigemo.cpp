@@ -78,7 +78,7 @@ int jd_migemo_init(const char *filename)
         return 1;
     }else{
         migemo_close(migemo_object);
-        migemo_object=NULL;
+        migemo_object=nullptr;
         return 0;
     }
 }
@@ -87,7 +87,7 @@ int jd_migemo_init(const char *filename)
 int jd_migemo_close(void)
 {
     migemo_close(migemo_object);
-    migemo_object=NULL;
+    migemo_object=nullptr;
     return 1;
 }
 

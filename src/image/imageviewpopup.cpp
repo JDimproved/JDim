@@ -19,7 +19,7 @@ using namespace IMAGE;
 
 ImageViewPopup::ImageViewPopup( const std::string& url )
     : ImageViewBase( url )
-    , m_label( NULL )
+    , m_label( nullptr )
     , m_length_prev( 0 )
     , m_clicked( false )
 {
@@ -159,7 +159,7 @@ void ImageViewPopup::remove_label()
     if( m_label ){
         get_event().remove();
         delete m_label;
-        m_label = NULL;
+        m_label = nullptr;
     }
 }
 

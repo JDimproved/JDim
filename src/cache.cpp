@@ -940,7 +940,7 @@ bool CACHE::jdmv( const std::string& file_from, const std::string& file_to )
 //
 // 保存ダイアログを表示して file_from を file_to に保存する
 //
-// parent == NULL の時はメインウィンドウをparentにする
+// parent == nullptr の時はメインウィンドウをparentにする
 // file_toはデフォルトの保存先
 // 戻り値は保存先(保存に失敗したらempty())
 //
@@ -1024,7 +1024,7 @@ void CACHE::add_filter_to_diag( Gtk::FileChooserDialog& diag, const int type )
 //
 // ファイル選択ダイアログを表示する
 //
-// parent == NULL の時はメインウィンドウをparentにする
+// parent == nullptr の時はメインウィンドウをparentにする
 // open_path はデフォルトの参照先
 // multi == true なら複数選択可能
 // 戻り値は選択されたファイルのpathのリスト
@@ -1054,7 +1054,7 @@ std::vector< std::string > CACHE::open_load_diag( Gtk::Window* parent, const std
 //
 // 保存ファイル選択ダイアログを表示する
 //
-// parent == NULL の時はメインウィンドウをparentにする
+// parent == nullptr の時はメインウィンドウをparentにする
 // dirとnameはデフォルトの参照先
 // 戻り値は選択されたファイルのpath
 //

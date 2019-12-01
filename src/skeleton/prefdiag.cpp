@@ -14,7 +14,7 @@
 using namespace SKELETON;
 
 PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_cancel, const bool add_apply, const bool add_open )
-    : Gtk::Dialog(), m_url( url ), m_bt_ok( NULL ), m_bt_apply( Gtk::Stock::APPLY )
+    : Gtk::Dialog(), m_url( url ), m_bt_ok( nullptr ), m_bt_apply( Gtk::Stock::APPLY )
 {
     if( add_apply ){
         m_bt_apply.signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_apply_clicked ) );
@@ -39,7 +39,7 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_
 
 PrefDiag::~PrefDiag()
 {
-    if( m_conn_timer != NULL )
+    if( m_conn_timer != nullptr )
     {
         delete m_conn_timer;
     }

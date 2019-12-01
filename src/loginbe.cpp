@@ -22,7 +22,7 @@ enum
     SIZE_OF_RAWDATA = 64 * 1024
 };
 
-CORE::LoginBe* instance_loginbe = NULL;
+CORE::LoginBe* instance_loginbe = nullptr;
 
 CORE::LoginBe* CORE::get_loginbe()
 {
@@ -39,7 +39,7 @@ void CORE::delete_loginbe()
         instance_loginbe->terminate_load();
         delete instance_loginbe;
     }
-    instance_loginbe = NULL;
+    instance_loginbe = nullptr;
 }
 
 
@@ -48,7 +48,7 @@ using namespace CORE;
 
 LoginBe::LoginBe()
     : SKELETON::Login( URL_LOGINBE ),
-      m_rawdata( NULL ),
+      m_rawdata( nullptr ),
       m_lng_rawdata( 0 )
 {
 #ifdef _DEBUG
@@ -97,19 +97,19 @@ void LoginBe::start_login()
     set_str_code( "" );
 
     if( ! SESSION::is_online() ){
-        SKELETON::MsgDiag mdiag( NULL, "オフラインです" );
+        SKELETON::MsgDiag mdiag( nullptr, "オフラインです" );
         mdiag.run();
         return;
     }
 
     if( get_username().empty() || get_passwd().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "メールアドレスまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
+        SKELETON::MsgDiag mdiag( nullptr, "メールアドレスまたはパスワードが設定されていません\n\n設定→ネットワーク→パスワードで設定してください" );
         mdiag.run();
         return;
     }
 
     if( CONFIG::get_url_loginbe().empty() ){
-        SKELETON::MsgDiag mdiag( NULL, "BEの認証サーバのアドレスが指定されていません。" );
+        SKELETON::MsgDiag mdiag( nullptr, "BEの認証サーバのアドレスが指定されていません。" );
         mdiag.run();
         return;
     }
@@ -208,7 +208,7 @@ void LoginBe::receive_finish()
 
         std::string str_err = "ログインに失敗しました。\n\nBEの認証サーバのアドレスやメールアドレス、パスワード等を確認して下さい。\n\n";
         str_err += get_str_code();
-        SKELETON::MsgDiag mdiag( NULL, str_err );
+        SKELETON::MsgDiag mdiag( nullptr, str_err );
         mdiag.run();  
     }
 }
