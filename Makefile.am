@@ -6,6 +6,9 @@ dist_desktop_DATA = jdim.desktop
 icondir = $(datadir)/icons/hicolor/48x48/apps
 dist_icon_DATA = jdim.png
 
+iconsvgdir = $(datadir)/icons/hicolor/scalable/apps
+dist_iconsvg_DATA = jdim.svg
+
 metainfodir = $(datadir)/metainfo
 dist_metainfo_DATA = jdim.metainfo.xml
 
