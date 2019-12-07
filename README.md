@@ -188,6 +188,8 @@ GDK_CORE_DEVICE_EVENTS=1 ./src/jdim
 * 書き込みビューの配色にGTKテーマを使う設定が追加された。
   1. メニューバーの`設定(C) > フォントと色(F) > 詳細設定(R)...`からフォントと色の詳細設定を開く
   2. `色の設定`タブにある`書き込みビューの配色設定に GTKテーマ を用いる(W)`をチェックして適用する
+* GTK 3.16以上の環境で書き込みビューのダブルクリックによる単語の範囲選択、
+  トリプルクリックによる行の範囲選択に対応した。
 
 [manual-touch]: https://jdimproved.github.io/JDim/operation/#threadview_touch "操作方法について | JDim"
 
