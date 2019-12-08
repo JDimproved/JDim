@@ -6,7 +6,6 @@
 #define _DELIMGDIAG_H
 
 #include "skeleton/prefdiag.h"
-#include "skeleton/spinbutton.h"
 
 #include "config/globalconf.h"
 
@@ -24,11 +23,11 @@ namespace DBIMG
         Gtk::Label m_label;
         Gtk::Label m_spinlabel;
 
-        SKELETON::SpinButton m_spin;
+        Gtk::SpinButton m_spin;
 
       public:
 
-        SKELETON::SpinButton& get_spin(){ return m_spin; }
+        Gtk::SpinButton& get_spin(){ return m_spin; }
 
         ImgCacheFrame()
         {
@@ -65,11 +64,11 @@ namespace DBIMG
 
         Gtk::Label m_spinlabel;
 
-        SKELETON::SpinButton m_spin;
+        Gtk::SpinButton m_spin;
 
       public:
 
-        SKELETON::SpinButton& get_spin(){ return m_spin; }
+        Gtk::SpinButton& get_spin(){ return m_spin; }
 
         ImgAboneFrame()
         {

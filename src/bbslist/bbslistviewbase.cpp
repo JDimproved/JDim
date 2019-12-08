@@ -147,12 +147,6 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
 
     m_treestore = Gtk::TreeStore::create( m_columns );
 
-#if !GTKMM_CHECK_VERSION(2,7,0)
-    // gtkmm26以下にはunset_model()が無いのでここでset_model()しておく
-    // それ以上は m_treeview.xml2tree() でセットする
-    m_treeview.set_treestore( m_treestore );
-#endif
-
     // Gtk::TreeStoreでset_fixed_height_mode()を使うとexpandしたときに
     // スクロールバーが誤動作するので使わないこと
 /*
@@ -174,11 +168,9 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_treeview.create_column( CONFIG::get_tree_ypad() );
     m_treeview.set_column_for_height( 0 );
 
-#if GTKMM_CHECK_VERSION(2,12,0)
     // エクスパンダ表示とレベルインデント
     m_treeview.set_show_expanders( CONFIG::get_tree_show_expanders() );
     m_treeview.set_level_indentation( CONFIG::get_tree_level_indent() );
-#endif
 
     // treeviewのシグナルにコネクト
     m_treeview.signal_row_expanded().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_row_exp ) );

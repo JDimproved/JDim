@@ -40,14 +40,10 @@ namespace SKELETON
         // ステータスバー
         std::string m_status;
 
-#if GTKMM_CHECK_VERSION(2,5,0)
         Gtk::HBox m_statbar;
         Gtk::Label m_label_stat;
         Gtk::EventBox m_label_stat_ebox;
         Gtk::EventBox m_mginfo_ebox;
-#else
-        Gtk::Statusbar m_statbar;
-#endif
         Gtk::Label m_mginfo;
 
 #if GTKMM_CHECK_VERSION(3,0,0)

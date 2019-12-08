@@ -7,7 +7,6 @@
 
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
-#include "skeleton/spinbutton.h"
 
 #include "config/globalconf.h"
 
@@ -29,11 +28,11 @@ namespace CORE
 
         Gtk::HBox m_hbox_number;
         Gtk::Label m_label_number;
-        SKELETON::SpinButton m_spin_number;
+        Gtk::SpinButton m_spin_number;
 
         Gtk::HBox m_hbox_hour;
         Gtk::Label m_label_hour;
-        SKELETON::SpinButton m_spin_hour;
+        Gtk::SpinButton m_spin_hour;
 
         // OK押した
         void slot_ok_clicked() override

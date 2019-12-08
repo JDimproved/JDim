@@ -26,7 +26,6 @@
 #include "command.h"
 #include "prefdiagfactory.h"
 
-#include <gtk/gtk.h>  // gtk_separator_tool_item_set_draw
 #if !GTKMM_CHECK_VERSION(3,0,0)
 #include <gtk/gtkbutton.h>
 #endif
@@ -78,9 +77,7 @@ ToolBar::ToolBar( Admin* admin )
       m_button_forward( nullptr )
 {
     m_buttonbar.set_border_width( 0 );
-#if GTKMM_CHECK_VERSION(2,12,0)
     m_buttonbar.set_icon_size( Gtk::ICON_SIZE_MENU );
-#endif
     m_buttonbar.set_toolbar_style( Gtk::TOOLBAR_ICONS );
 
 #if GTKMM_CHECK_VERSION(3,0,0)
@@ -283,7 +280,7 @@ void ToolBar::pack_separator()
 void ToolBar::pack_transparent_separator()
 {
     Gtk::SeparatorToolItem *sep = Gtk::manage( new Gtk::SeparatorToolItem() ); // delete は unpack_buttons() で行う
-    gtk_separator_tool_item_set_draw( sep->gobj(), false );
+    sep->set_draw( false );
     m_buttonbar.append( *sep );
 }
 
@@ -309,11 +306,7 @@ Gtk::ToolItem* ToolBar::get_label()
         m_ebox_label = Gtk::manage( new Gtk::EventBox );
         m_label = Gtk::manage( new Gtk::Label );
 
-#if GTKMM_CHECK_VERSION(2,6,0)
         m_label->set_ellipsize( Pango::ELLIPSIZE_END );
-#else
-        m_label->set_size_request( 0, 0 );
-#endif
         m_label->set_alignment( Gtk::ALIGN_START );
         m_label->set_selectable( true );
 
@@ -392,9 +385,7 @@ Gtk::Toolbar* ToolBar::get_searchbar()
 {
     if( ! m_searchbar ){
         m_searchbar = Gtk::manage( new SKELETON::JDToolbar() );
-#if GTKMM_CHECK_VERSION(2,12,0)
         m_searchbar->set_icon_size( Gtk::ICON_SIZE_MENU );
-#endif
         m_searchbar->set_toolbar_style( Gtk::TOOLBAR_ICONS );
     }
 

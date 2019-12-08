@@ -72,7 +72,6 @@ noinst_HEADERS = \
 	menubutton.h \
 	toolmenubutton.h \
 	backforwardbutton.h \
-	spinbutton.h \
 	popupwinbase.h \
 	popupwin.h \
 	iconpopup.h \

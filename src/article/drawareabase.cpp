@@ -206,11 +206,7 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_view.add_events( Gdk::VISIBILITY_NOTIFY_MASK );
 
     // focus 可にセット
-#if GTKMM_CHECK_VERSION(2,18,0)
     m_view.set_can_focus( true );
-#else
-    m_view.set_flags( m_view.get_flags() | Gtk::CAN_FOCUS );
-#endif
     m_view.add_events( Gdk::KEY_PRESS_MASK );
     m_view.add_events( Gdk::KEY_RELEASE_MASK );
 
@@ -462,13 +458,8 @@ void DrawAreaBase::init_fontinfo( FONTINFO& fi, std::string& fontname )
     m_pango_layout->set_text( wstr );
 
     // リンクの下線の位置 ( トップからの距離 )
-#if GTKMM_CHECK_VERSION(2,5,0)
     fi.underline_pos = PANGO_PIXELS( ( metrics.get_ascent() - metrics.get_underline_position() )
                                   * CONFIG::get_adjust_underline_pos() );
-#else
-    fi.underline_pos = int( ( m_pango_layout->get_pixel_logical_extents().get_height() )
-                           * CONFIG::get_adjust_underline_pos() );
-#endif
 
     // 左右padding取得
     // マージン幅は真面目にやると大変そうなので文字列 wstr の平均を取る
@@ -4968,12 +4959,7 @@ bool DrawAreaBase::slot_configure_event( GdkEventConfigure* event )
 void DrawAreaBase::configure_impl()
 {
     if( ! m_configure_reserve ) return;
-#if GTKMM_CHECK_VERSION(2,18,0)
-    const bool is_drawable = m_view.get_is_drawable();
-#else
-    const bool is_drawable = m_view.is_drawable();
-#endif
-    if( !is_drawable ) return;
+    if( !m_view.get_is_drawable() ) return;
 
     m_configure_reserve = false;
 
