@@ -1,9 +1,11 @@
 # JDim - 2ch browser for linux
 
 [![Build Status](https://travis-ci.com/JDimproved/JDim.svg?branch=master)](https://travis-ci.com/JDimproved/JDim)
+[![GitHub Actions CI](https://github.com/JDimproved/JDim/workflows/CI/badge.svg)][actions-ci]
 
 ここに書かれていない詳細については[オンラインマニュアル][manual]や[リポジトリ][repository]を参照してください。
 
+[actions-ci]: https://github.com/JDimproved/JDim/actions?query=workflow%3ACI
 [manual]: https://jdimproved.github.io/JDim/
 [repository]: https://github.com/JDimproved/JDim
 
