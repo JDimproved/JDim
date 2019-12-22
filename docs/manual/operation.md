@@ -530,6 +530,11 @@ layout: default
 
 #### 基本操作
 <dl>
+  <dt>単語をダブルクリック (GTK 3.16以上)</dt>
+  <dd>単語を範囲選択</dd>
+  <dt>行をトリプルクリック (GTK 3.16以上)</dt>
+  <dd>行を範囲選択</dd>
+
   <dt>Alt+A</dt>
   <dd><a href="{{ site.baseurl }}/asciiart/">アスキーアート入力</a>のメニューを表示</dd>
   <dt>Alt+Q</dt>

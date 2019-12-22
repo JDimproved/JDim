@@ -30,6 +30,24 @@ enum
     MIN_AAMENU_LINES = 12
 };
 
+#if GTKMM_CHECK_VERSION(3,16,0)
+// extend-selectionのハンドラーはC APIを利用するためヘッダーには公開しない
+static gboolean EditTextView_slot_extend_selection( GtkTextView*,
+                                                    GtkTextExtendSelection granularity,
+                                                    GtkTextIter* location,
+                                                    GtkTextIter* start,
+                                                    GtkTextIter* end,
+                                                    gpointer );
+
+
+// 区切り文字の判定
+// FIXME: src/article/drawareabase.cpp にある同名の関数と統合する
+static inline bool is_separate_char( char32_t c )
+{
+    return g_unichar_isspace( c ) || g_unichar_ispunct( c );
+}
+#endif // GTKMM_CHECK_VERSION(3,16,0)
+
 
 EditTextView::EditTextView() :
     Gtk::TextView(),
@@ -43,6 +61,12 @@ EditTextView::EditTextView() :
     m_control.add_mode( CONTROL::MODE_MESSAGE );
 
     get_buffer()->signal_changed().connect( sigc::mem_fun( *this, &EditTextView::slot_buffer_changed ) );
+
+#if GTKMM_CHECK_VERSION(3,16,0)
+    // NOTE: gtkmmでextend-selectionシグナルが公開されていなかった
+    g_signal_connect( G_OBJECT( gobj() ), "extend-selection",
+                      G_CALLBACK( &EditTextView_slot_extend_selection ), nullptr );
+#endif
 }
 
 
@@ -716,6 +740,54 @@ void EditTextView::slot_hide_aamenu()
 
     SESSION::set_popupmenu_shown( false );
 }
+
+
+#if GTKMM_CHECK_VERSION(3,16,0)
+//
+// 範囲選択を実行する
+//
+static gboolean EditTextView_slot_extend_selection( GtkTextView*,
+                                                    GtkTextExtendSelection granularity,
+                                                    GtkTextIter* location,
+                                                    GtkTextIter* start,
+                                                    GtkTextIter* end,
+                                                    gpointer )
+{
+    const char32_t loc_char = gtk_text_iter_get_char( location );
+    if( loc_char == 0 ) return GDK_EVENT_PROPAGATE;
+
+    gtk_text_iter_assign( start, location );
+    gtk_text_iter_assign( end, location );
+    Gtk::TextIter& start_iter = Glib::wrap( start );
+    Gtk::TextIter& end_iter = Glib::wrap( end );
+
+    if( granularity == GTK_TEXT_EXTEND_SELECTION_WORD ) {
+        const auto mode = MISC::get_ucs2mode( loc_char );
+        const bool sep = is_separate_char( loc_char );
+        const auto find_char = [mode, sep]( char32_t c ) {
+            return mode != MISC::get_ucs2mode( c ) || sep != is_separate_char( c );
+        };
+        if( start_iter.backward_find_char( find_char ) ) {
+            start_iter.forward_char();
+        }
+        end_iter.forward_find_char( find_char );
+        return GDK_EVENT_STOP;
+    }
+    else if( granularity == GTK_TEXT_EXTEND_SELECTION_LINE ) {
+        while( start_iter.backward_char() ) {
+            if( start_iter.ends_line() ) {
+                start_iter.forward_char();
+                break;
+            }
+        }
+        if( !end_iter.ends_line() ) {
+            end_iter.forward_to_line_end();
+        }
+        return GDK_EVENT_STOP;
+    }
+    return GDK_EVENT_PROPAGATE;
+}
+#endif // GTKMM_CHECK_VERSION(3,16,0)
 
 
 //////////////////////////////////////////////
