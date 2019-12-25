@@ -61,8 +61,6 @@ enum
 
 Root::Root()
     : SKELETON::Loadable()
-    , m_rawdata ( nullptr )
-    , m_lng_rawdata( 0 )
     , m_analyzing_board_xml( false )
     , m_board_null( nullptr )
     , m_get_board( nullptr )
@@ -120,9 +118,8 @@ Root::~Root()
 
 void Root::clear()
 {
-    if( m_rawdata ) free( m_rawdata );
-    m_rawdata = nullptr;
-    m_lng_rawdata = 0;
+    m_rawdata.clear();
+    m_rawdata.shrink_to_fit();
 }
 
 
@@ -306,7 +303,7 @@ void Root::download_bbsmenu()
 
     clear();
     m_xml_document.clear();
-    m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
+    m_rawdata.reserve( SIZE_OF_RAWDATA );
 
     JDLIB::LOADERDATA data;
     data.init_for_data();
@@ -323,8 +320,7 @@ void Root::download_bbsmenu()
 // virtual
 void Root::receive_data( const char* data, size_t size )
 {
-    memcpy( m_rawdata + m_lng_rawdata , data, size );
-    m_lng_rawdata += size;
+    m_rawdata.append( data, size );
 }
 
 
@@ -366,7 +362,7 @@ void Root::receive_finish()
     // 文字コードを変換してXML作成
     JDLIB::Iconv* libiconv = new JDLIB::Iconv( "MS932", "UTF-8" );
     int byte_out;
-    const char* rawdata_utf8 = libiconv->convert( m_rawdata , m_lng_rawdata,  byte_out );
+    const char* rawdata_utf8 = libiconv->convert( &*m_rawdata.begin(), m_rawdata.size(),  byte_out );
     bbsmenu2xml( rawdata_utf8 );
 
     if( m_xml_document.hasChildNodes() )
