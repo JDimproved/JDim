@@ -1248,10 +1248,9 @@ void BoardBase::receive_finish()
         m_rawdata.clear();
         m_rawdata_left.clear();
 
-        char* rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
-        size_t lng = CACHE::load_rawdata( path_subject, rawdata, SIZE_OF_RAWDATA );
-        receive_data( rawdata, lng );
-        free( rawdata );
+        std::vector<char> rawdata( SIZE_OF_RAWDATA );
+        const std::size_t lng = CACHE::load_rawdata( path_subject, rawdata.data(), SIZE_OF_RAWDATA );
+        receive_data( rawdata.data(), lng );
     }
 
 #ifdef _DEBUG
