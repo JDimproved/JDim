@@ -18,9 +18,8 @@
 
 #define APPEND_SECTION( num ) do {\
 if( lng_sec[ num ] ){ \
-assert( byte + lng_sec[ num ] < BUF_SIZE_ICONV_OUT ); \
-memcpy( m_decoded_lines + byte, lines + pos_sec[ num ], lng_sec[ num ] ); \
-byte += lng_sec[ num ]; \
+assert( m_decoded_lines.size() + lng_sec[ num ] < BUF_SIZE_ICONV_OUT ); \
+m_decoded_lines.append( lines + pos_sec[ num ], lng_sec[ num ] ); \
 } } while( 0 )
 
 
@@ -30,7 +29,6 @@ using namespace DBTREE;
 NodeTreeJBBS::NodeTreeJBBS( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
     , m_iconv( nullptr )
-    , m_decoded_lines( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeJBBS::NodeTreeJBBS url = " << get_url() << " modified = " << date_modified << std::endl;
@@ -62,8 +60,8 @@ void NodeTreeJBBS::clear()
     if( m_iconv ) delete m_iconv;
     m_iconv = nullptr;
 
-    if( m_decoded_lines ) free( m_decoded_lines );
-    m_decoded_lines = nullptr;
+    m_decoded_lines.clear();
+    m_decoded_lines.shrink_to_fit();
 }
 
 
@@ -83,7 +81,9 @@ void NodeTreeJBBS::init_loading()
     std::string charset = DBTREE::board_charset( get_url() );
     if( ! m_iconv ) m_iconv = new JDLIB::Iconv( charset, "UTF-8" );
 
-    if( ! m_decoded_lines ) m_decoded_lines = ( char* )malloc( BUF_SIZE_ICONV_OUT );
+    if( m_decoded_lines.capacity() < BUF_SIZE_ICONV_OUT ) {
+        m_decoded_lines.reserve( BUF_SIZE_ICONV_OUT );
+    }
 }
 
 
@@ -130,7 +130,6 @@ enum
 const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
 {
     assert( m_iconv != nullptr );
-    assert( m_decoded_lines != nullptr );
 
     int byte_lines;
     const char* lines = m_iconv->convert( rawlines, strlen( rawlines ), byte_lines );
@@ -142,6 +141,7 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
 #endif
 
     // セクション分けして再合成する
+    m_decoded_lines.clear();
     byte = 0;
     int pos = 0;
     int section = 0;
@@ -178,48 +178,40 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
 #ifdef _DEBUG
                     std::cout << "abone : number = "<< number << " : " << number_in << std::endl;
 #endif
-                    char broken_str[] = "あぼ〜ん<><>あぼ〜ん<> あぼ〜ん <>\n";
-                    int lng_broken = strlen( broken_str );
-                    memcpy( m_decoded_lines + byte, broken_str, lng_broken );
-                    byte += lng_broken;
+                    constexpr char broken_str[] = "あぼ〜ん<><>あぼ〜ん<> あぼ〜ん <>\n";
+                    m_decoded_lines.append( broken_str );
                     ++number;
                 }
 
                 // 名前
                 APPEND_SECTION( 1 );
-                memcpy( m_decoded_lines + byte, "<>", 2 );
-                byte += 2;
+                m_decoded_lines.append( "<>" );
 
                 // メアド
                 APPEND_SECTION( 2 );
-                memcpy( m_decoded_lines + byte, "<>", 2 );
-                byte += 2;
+                m_decoded_lines.append( "<>" );
 
                 // 日付
                 APPEND_SECTION( 3 );
 
                 // ID
-                int i = 6;
+                constexpr int i = 6;
                 if( lng_sec[ i ] ){
 
-                    memcpy( m_decoded_lines + byte, " ID:", 4 );
-                    byte += 4;
+                    m_decoded_lines.append( " ID:" );
 
-                    memcpy( m_decoded_lines + byte, lines + pos_sec[ i ], lng_sec[ i ] );
-                    byte += lng_sec[ i ];
+                    m_decoded_lines.append( lines + pos_sec[ i ], lng_sec[ i ] );
                 }
-                memcpy( m_decoded_lines + byte, "<>", 2 );
-                byte += 2;
+                m_decoded_lines.append( "<>" );
 
                 // 本文
                 APPEND_SECTION( 4 );
-                memcpy( m_decoded_lines + byte, "<>", 2 );
-                byte += 2;
+                m_decoded_lines.append( "<>" );
 
                 // タイトル
                 APPEND_SECTION( 5 );
 
-                m_decoded_lines[ byte++ ] = '\n';
+                m_decoded_lines.push_back( '\n' );
                 ++number;
             }
 
@@ -252,11 +244,10 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
         }
     }
 
-    m_decoded_lines[ byte ] = '\0';
-
+    byte = m_decoded_lines.size();
 #ifdef _DEBUG
     std::cout << "byte = " << byte << std::endl;
 #endif
 
-    return m_decoded_lines;
+    return m_decoded_lines.c_str();
 }
