@@ -1212,16 +1212,14 @@ std::string MISC::Iconv( const std::string& str, const std::string& coding_from,
 {
     if( coding_from == coding_to ) return str;
 
-    char* str_bk = ( char* ) malloc( str.length() + 64 );
-    strcpy( str_bk, str.c_str() );
+    std::string str_bk = str;
 
     JDLIB::Iconv* libiconv = new JDLIB::Iconv( coding_from, coding_to );
     int byte_out;
 
-    const std::string str_enc = libiconv->convert( str_bk, strlen( str_bk ), byte_out );
+    std::string str_enc = libiconv->convert( &*str_bk.begin(), str_bk.size(), byte_out );
 
     delete libiconv;
-    free( str_bk );
 
     return str_enc;
 }
