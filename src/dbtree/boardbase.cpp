@@ -61,7 +61,6 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_last_access_time( 0 )
     , m_number_max_res( 0 )
     , m_iconv( nullptr )
-    , m_rawdata_left( nullptr )
     , m_read_info( 0 )
     , m_append_articles( false )
     , m_get_article( nullptr )
@@ -342,10 +341,8 @@ void BoardBase::clear()
     m_rawdata.clear();
     m_rawdata.shrink_to_fit();
 
-    if( m_rawdata_left ) free( m_rawdata_left );
-    m_rawdata_left = nullptr;
-
-    m_lng_rawdata_left = 0;
+    m_rawdata_left.clear();
+    m_rawdata_left.shrink_to_fit();
 
     m_get_article_url = std::string();
 
@@ -1087,28 +1084,29 @@ void BoardBase::receive_data( const char* data, size_t size )
     // 改行ごとに区切ってUTF8に文字コード変換して解析
     //
 
-    if( ! m_rawdata_left ) m_rawdata_left = ( char* )malloc( SIZE_OF_RAWDATA );
+    if( m_rawdata_left.capacity() < SIZE_OF_RAWDATA ) {
+        m_rawdata_left.reserve( SIZE_OF_RAWDATA );
+    }
     if( ! m_iconv ) m_iconv = new JDLIB::Iconv( m_charset, "UTF-8" );
 
-    memcpy( m_rawdata_left + m_lng_rawdata_left, data, size );
+    m_rawdata_left.append( data, size );
 
-    size_t byte_in = size + m_lng_rawdata_left;
-    m_lng_rawdata_left = byte_in;
-    while( byte_in && m_rawdata_left[ byte_in -1 ] != '\n' ) --byte_in;
-    if( byte_in ){
+    std::size_t byte_in = m_rawdata_left.rfind( '\n' );
+    if( byte_in != std::string::npos ) {
+        byte_in += 1; // 改行まで含める
 
         int byte_out;
-        const char* rawdata_utf8 = m_iconv->convert( m_rawdata_left,  byte_in,  byte_out );
+        const char* rawdata_utf8 = m_iconv->convert( &*m_rawdata_left.begin(), byte_in, byte_out );
 
         parse_subject( rawdata_utf8 );
 
         // 残りを先頭に移動
-        m_lng_rawdata_left -= byte_in;
-        memmove( m_rawdata_left, m_rawdata_left + byte_in, m_lng_rawdata_left );
+        m_rawdata_left.erase( 0, byte_in );
 
 #ifdef _DEBUG
         std::cout << "BoardBase::receive_data rawdata.size = " << m_rawdata.size() << " size = " << size
-                  << " byte_in = " << byte_in << " byte_out = " << byte_out << " lng_rawdata_left = " << m_lng_rawdata_left << std::endl;
+                  << " byte_in = " << byte_in << " byte_out = " << byte_out
+                  << " rawdata_left.size = " << m_rawdata_left.size() << std::endl;
 #endif
     }
 }
@@ -1248,7 +1246,7 @@ void BoardBase::receive_finish()
         std::cout << "read from cache " << path_subject << std::endl;
 #endif
         m_rawdata.clear();
-        m_lng_rawdata_left = 0;
+        m_rawdata_left.clear();
 
         char* rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
         size_t lng = CACHE::load_rawdata( path_subject, rawdata, SIZE_OF_RAWDATA );
@@ -1258,7 +1256,7 @@ void BoardBase::receive_finish()
 
 #ifdef _DEBUG
     std::cout << "size = " << m_list_artinfo.size() << " rawdata.size = " << m_rawdata.size()
-              << " left = " << m_lng_rawdata_left << std::endl;
+              << " left = " << m_rawdata_left.size() << std::endl;
 #endif
 
     // データが無い
