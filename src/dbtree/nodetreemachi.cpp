@@ -30,7 +30,6 @@ NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_mo
     : NodeTreeBase( url, date_modified )
     , m_regex( nullptr )
     , m_iconv( nullptr )
-    , m_buffer_for_200( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeMachi::NodeTreeMachi url = " << get_url() << " modified = " << date_modified << std::endl;
@@ -72,8 +71,8 @@ void NodeTreeMachi::clear()
     m_buffer.clear();
     m_buffer.shrink_to_fit();
 
-    if( m_buffer_for_200 ) free( m_buffer_for_200 );
-    m_buffer_for_200 = nullptr;
+    m_buffer_for_200.clear();
+    m_buffer_for_200.shrink_to_fit();
 }
 
 
@@ -96,7 +95,7 @@ void NodeTreeMachi::init_loading()
     std::string charset = DBTREE::board_charset( get_url() );
     if( ! m_iconv ) m_iconv = new JDLIB::Iconv( charset, "UTF-8" );
 
-    if( m_buffer_for_200 ) m_buffer_for_200[ 0 ] = '\0';
+    m_buffer_for_200.clear();
 
     m_tmp_buffer = std::string();
 }
@@ -349,16 +348,13 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
 void NodeTreeMachi::receive_data( const char* data, size_t size )
 {
     // dat落ち判定用処理。 receive_finish() も参照
-    if( ! is_checking_update() && get_code() == HTTP_OK
-        && ( ! m_buffer_for_200 || m_buffer_for_200[ 0 ] == '\0' ) ){
+    if( ! is_checking_update() && get_code() == HTTP_OK && m_buffer_for_200.empty() ) {
 #ifdef _DEBUG
         std::cout << "NodeTreeMachi::receive_data : save some bytes\n";
 #endif
 
-        if( ! m_buffer_for_200 ) m_buffer_for_200 = ( char* )malloc( BUF_SIZE_200 + 64 );
         const int lng = MIN( size, BUF_SIZE_200 );
-        memcpy( m_buffer_for_200, data, lng );
-        m_buffer_for_200[ lng ] = '\0';
+        m_buffer_for_200.append( data, lng );
     }
 
     NodeTreeBase::receive_data( data, size );
@@ -376,11 +372,11 @@ void NodeTreeMachi::receive_finish()
 #endif
 
     // dat落ち判定
-    if( m_buffer_for_200 && m_buffer_for_200[ 0 ] == '<' && ( m_buffer_for_200[ 1 ] == 'E' || m_buffer_for_200[ 1 ] == 'h' )
-        ){
+    if( m_buffer_for_200.size() >= 2 && m_buffer_for_200[ 0 ] == '<'
+            && ( m_buffer_for_200[ 1 ] == 'E' || m_buffer_for_200[ 1 ] == 'h' ) ) {
 
         int byte_lines;
-        std::string str_lines( m_iconv->convert( m_buffer_for_200, strlen( m_buffer_for_200 ), byte_lines ) );
+        std::string str_lines( m_iconv->convert( &*m_buffer_for_200.begin(), m_buffer_for_200.size(), byte_lines ) );
 
 #ifdef _DEBUG    
         std::cout << str_lines << std::endl;
