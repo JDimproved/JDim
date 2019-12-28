@@ -30,7 +30,6 @@ NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_mo
     : NodeTreeBase( url, date_modified )
     , m_regex( nullptr )
     , m_iconv( nullptr )
-    , m_buffer( nullptr )
     , m_buffer_for_200( nullptr )
 {
 #ifdef _DEBUG
@@ -70,8 +69,8 @@ void NodeTreeMachi::clear()
     m_decoded_lines.clear();
     m_decoded_lines.shrink_to_fit();
 
-    if( m_buffer ) free( m_buffer );
-    m_buffer = nullptr;
+    m_buffer.clear();
+    m_buffer.shrink_to_fit();
 
     if( m_buffer_for_200 ) free( m_buffer_for_200 );
     m_buffer_for_200 = nullptr;
@@ -96,8 +95,6 @@ void NodeTreeMachi::init_loading()
     // iconv 初期化
     std::string charset = DBTREE::board_charset( get_url() );
     if( ! m_iconv ) m_iconv = new JDLIB::Iconv( charset, "UTF-8" );
-
-    if( ! m_buffer ) m_buffer = ( char* )malloc( BUF_SIZE_ICONV_OUT + 64 );
 
     if( m_buffer_for_200 ) m_buffer_for_200[ 0 ] = '\0';
 
@@ -231,11 +228,9 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
         buffer = std::string();
     }
 
-    int byte = buffer.length();
-    memcpy( m_buffer, buffer.c_str(), byte );
-    m_buffer[ byte ] = '\0';
+    m_buffer = std::move( buffer );
 
-    return m_buffer;
+    return &*m_buffer.begin();
 }
 
 

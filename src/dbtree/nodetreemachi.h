@@ -23,7 +23,7 @@ namespace DBTREE
         JDLIB::Regex* m_regex;
         JDLIB::Iconv* m_iconv;
         std::string m_decoded_lines;
-        char* m_buffer;
+        std::string m_buffer;
         char* m_buffer_for_200;  // HTTP200が来た時のdat落ち判定用
 
         std::string m_tmp_buffer;
