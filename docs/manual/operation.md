@@ -418,6 +418,8 @@ layout: default
 
   <dt>Ctrl+S</dt>
   <dd>datを保存</dd>
+  <dt>Delete</dt>
+  <dd>表示しているスレのキャッシュを削除してタブを閉じる</dd>
 
   <dt>(範囲選択してから) Ctrl+K</dt>
   <dd>Web検索(google)</dd>
