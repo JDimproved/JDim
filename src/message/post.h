@@ -33,8 +33,7 @@ namespace MESSAGE
         std::string m_msg;
         std::string m_return_html;
         std::string m_errmsg;
-        char* m_rawdata;
-        size_t m_lng_rawdata;
+        std::string m_rawdata;
 
         int m_count; // 書き込み確認時の永久ループ防止用
         bool m_subbbs; // true なら subbbs.cgiにpostする

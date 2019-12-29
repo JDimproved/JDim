@@ -36,8 +36,6 @@ Post::Post( Gtk::Widget* parent, const std::string& url, const std::string& msg,
       m_parent( parent ),
       m_url( url ),
       m_msg( msg ),
-      m_rawdata( nullptr ),
-      m_lng_rawdata( 0 ),
       m_count( 0 ),
       m_subbbs( 0 ),
       m_new_article( new_article ),
@@ -71,8 +69,8 @@ void Post::clear()
     std::cout << "Post::clear\n";
 #endif
 
-    if( m_rawdata ) free( m_rawdata );
-    m_rawdata = nullptr;
+    m_rawdata.clear();
+    m_rawdata.shrink_to_fit();
 
     if( m_writingdiag ) m_writingdiag->hide();
 }
@@ -138,8 +136,7 @@ void Post::post_msg()
     if( is_loading() ) return;
 
     clear();
-    m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
-    m_lng_rawdata = 0;
+    m_rawdata.reserve( SIZE_OF_RAWDATA );
 
     // 書き込み中ダイアログ表示
     if( ! CONFIG::get_hide_writing_dialog() ) show_writingdiag( false );
@@ -199,9 +196,7 @@ void Post::receive_data( const char* data, size_t size )
 {
     if( get_code() != HTTP_OK ) return;
 
-    memcpy( m_rawdata + m_lng_rawdata , data, size );
-    m_lng_rawdata += size;
-    m_rawdata[ m_lng_rawdata ] = '\0';
+    m_rawdata.append( data, size );
 }
 
 
@@ -218,7 +213,7 @@ void Post::receive_finish()
     std::string charset = DBTREE::board_charset( m_url );
     JDLIB::Iconv* libiconv = new JDLIB::Iconv( charset, "UTF-8" );
     int byte_out;
-    m_return_html = libiconv->convert( m_rawdata, m_lng_rawdata, byte_out );
+    m_return_html = libiconv->convert( &*m_rawdata.begin(), m_rawdata.size(), byte_out );
     delete libiconv;
 
 #ifdef _DEBUG

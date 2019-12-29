@@ -56,8 +56,7 @@ namespace DBTREE
         std::list< MOVETABLE > m_movetable;
 
         XML::Document m_xml_document;
-        char* m_rawdata;
-        size_t m_lng_rawdata;
+        std::string m_rawdata;
         std::list< DBTREE::ETCBOARDINFO > m_etcboards; // 外部板情報
 
         // 移転処理用変数
