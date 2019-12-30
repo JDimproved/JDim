@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.com/JDimproved/JDim.svg?branch=master)](https://travis-ci.com/JDimproved/JDim)
 ![GitHub Actions CI](https://github.com/JDimproved/JDim/workflows/CI/badge.svg)
+[![Snap Status](https://build.snapcraft.io/badge/JDimproved/JDim.svg)](https://build.snapcraft.io/user/JDimproved/JDim)
+[![jdim](https://snapcraft.io//jdim/badge.svg)](https://snapcraft.io/jdim)
 
 ここに書かれていない詳細については[オンラインマニュアル][manual]や[リポジトリ][repository]を参照してください。
 
@@ -14,6 +16,7 @@
   * [事前準備](#事前準備)
   * [ビルド](#ビルド)
   * [GTK3版について](#GTK3版について)
+  * [Snapパッケージ](#Snapパッケージ)
 * [通常の起動](#通常の起動)
   * [コマンドライン オプション](#コマンドライン-オプション)
 * [多重起動について](#多重起動について)
@@ -208,6 +211,14 @@ GDK_CORE_DEVICE_EVENTS=1 ./src/jdim
 * ~~ダイアログウインドウの幅が項目の長さに合わせて大きくなり縮小できない。~~
 * ~~スレビューのスクロールバーがスクロール操作や検索したレスへの移動に反応せず、その後も1操作遅れて反応する。~~<br>
   **上記の３件は0.2.0-20191019以降のバージョンで修正されています。**
+
+
+### Snapパッケージ
+JDim GTK3版はSnapパッケージとして[Snap Storeで公開][snapcraft]されています。
+詳細は[マニュアル][manual-snap]を参照してください。
+
+[snapcraft]: https://snapcraft.io/jdim
+[manual-snap]: https://jdimproved.github.io/JDim/start#snap
 
 
 ## 通常の起動

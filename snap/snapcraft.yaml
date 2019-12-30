@@ -4,7 +4,7 @@ license: "GPL-2.0"
 
 confinement: strict
 base: core18
-grade: devel
+grade: stable
 icon: jdim.png
 
 plugs:
@@ -72,7 +72,7 @@ parts:
     override-build: |
       set -eu
       snapcraftctl build
-      VER="$(./src/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\).*$%\1-\2%p')"
+      VER="$(./src/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\)(git:\([0-9a-f]\+\).*$%\1-\2-\3%p')"
       echo "version ${VER}"
       snapcraftctl set-version "${VER}"
     override-prime: |
