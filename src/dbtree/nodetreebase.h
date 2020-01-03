@@ -111,7 +111,7 @@ namespace DBTREE
 
         // ロード用変数
         std::string m_buffer_lines;
-        char* m_parsed_text;
+        std::string m_parsed_text; // HTMLパーサに使うバッファ
         std::string m_buffer_write; // 書き込みチェック用バッファ
         bool m_check_update; // HEADによる更新チェックのみ
         bool m_check_write; // 自分の書き込みかチェックする
