@@ -11,6 +11,7 @@ layout: default
 - [多重起動について](#multiple)
 - [JDとの互換性](#compatibility)
 - [GTK3版について](#gtk3)
+- [Snapパッケージ](#snap)
 
 
 <a name="run"></a>
@@ -157,6 +158,28 @@ GDK_CORE_DEVICE_EVENTS=1 ./src/jdim
   **上記の３件は0.2.0-20191019以降のバージョンで修正された。**
 
 
+<a name="snap"></a>
+### Snapパッケージ
+JDim GTK3版はSnapパッケージとして[Snap Storeで公開][snapcraft]されている。
+`snap`コマンドやwebページからインストールすることでコマンドやデスクトップ環境のメニューから起動できる。
+
+```sh
+sudo snap install jdim --edge
+```
+
+Snapパッケージ版はアクセス制限が導入されているため通常のパッケージやビルドと異なる点がある。
+
+- デフォルトのキャッシュディレクトリが異なる (`~/snap/jdim/common/.cache/jdim/`)
+- **デフォルトのキャッシュディレクトリはパッケージを削除すると消去される**
+- JDのキャッシュディレクトリ (`~/.jd`) は使えない
+- 隠しファイル（ドットファイル）のキャッシュディレクトリは使えない
+- 外部コマンドの呼び出しは制限される
+- 環境によってはGTKテーマ、アイコン、マウスカーソルがうまく表示されない場合がある<br>
+  環境変数 (`GTK_THEME`) やGTKの設定ファイル (`$XDG_CONFIG_HOME/gtk-3.0/settings.ini`)
+  を調整することで改善できるかもしれない
+
+
 [pr-merged]: https://github.com/JDimproved/JDim/pulls?q=is%3Apr+is%3Amerged
+[snapcraft]: https://snapcraft.io/jdim
 
 [操作方法について]: {{ site.baseurl }}/operation/#threadview_touch "操作方法について \| JDim"
