@@ -7,6 +7,7 @@ layout: default
 
 ## {{ page.title }}
 
+- [2020年]({{ site.baseurl }}/2020/)
 - [2019年]({{ site.baseurl }}/2019/) ... JDimproved project
 - [2018年]({{ site.baseurl }}/2018/)
 - [2017年]({{ site.baseurl }}/2017/) ... yama-natuki/JD
