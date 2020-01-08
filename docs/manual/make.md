@@ -127,11 +127,11 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
   <dd><strong>非推奨</strong>: かわりに <code>--with-regex=pcre</code> を使用してください。</dd>
 
   <dt>--with-thread=[posix|glib|std]</dt>
-  <dd>使用するスレッドライブラリを設定する。デフォルトでは pthread を使用する。</dd>
+  <dd>使用するスレッドライブラリを設定する。デフォルトでは std::thread を使用する。(v0.3.0以降)</dd>
+  <dt>--with-thread=posix</dt>
+  <dd>std::thread のかわりに pthread を使用する。</dd>
   <dt>--with-thread=glib</dt>
   <dd><strong>非推奨</strong>: かわりに <code>--with-thread=std</code> を使用してください。</dd>
-  <dt>--with-thread=std</dt>
-  <dd>pthread のかわりに std::thread を使用する。</dd>
   <dt>--with-[gthread|stdthread]</dt>
   <dd><strong>非推奨</strong>: かわりに <code>--with-thread=[glib|std]</code> を使用してください。</dd>
 
