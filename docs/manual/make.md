@@ -64,6 +64,8 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
 
 <a name="make-configure"></a>
 ### make 方法( configure + make の場合 )
+デフォルトの設定では**GTK3版をビルド**する。(バージョン0.3.0以降)
+
 1. `autoreconf -i` ( 又は `./autogen.sh` )
 2. `./configure`
 3. `make`
@@ -135,8 +137,8 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
   <dt>--with-[gthread|stdthread]</dt>
   <dd><strong>非推奨</strong>: かわりに <code>--with-thread=[glib|std]</code> を使用してください。</dd>
 
-  <dt>--with-gtkmm3</dt>
-  <dd>gtkmm2のかわりにgtkmm3を使用する。</dd>
+  <dt>--with-gtkmm3=no</dt>
+  <dd>gtkmm3のかわりにgtkmm2を使用する。</dd>
 
   <dt>--disable-compat-cache-dir</dt>
   <dd>JDのキャッシュディレクトリ <code>~/.jd</code> を読み込む互換機能を無効化する。</dd>

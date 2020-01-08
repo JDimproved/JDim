@@ -84,9 +84,9 @@ dnl checking gtkmm
 dnl
 AC_MSG_CHECKING(for --with-gtkmm3)
 AC_ARG_WITH(gtkmm3,
-  [AS_HELP_STRING([--with-gtkmm3], [use gtkmm-3.0 instead of gtkmm-2.4 [default=no]])],
+  [AS_HELP_STRING([--with-gtkmm3], [use gtkmm-3.0 instead of gtkmm-2.4 @<:@default=yes@:>@])],
   [with_gtkmm3="$withval"],
-  [with_gtkmm3=no])
+  [with_gtkmm3=yes])
 AC_MSG_RESULT($with_gtkmm3)
 
 AS_IF([test "x$with_gtkmm3" = xno],

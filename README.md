@@ -51,7 +51,7 @@ CentOS 7(2014年)より前にリリースされたディストリビューショ
 
 ## 導入方法
 
-ソースコードからJDimをビルドします。**デフォルトの設定ではGTK2版がビルド**されますのでご注意ください。
+ソースコードからJDimをビルドします。**デフォルトの設定ではGTK3版がビルド**されますのでご注意ください。
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
 
@@ -60,14 +60,14 @@ CentOS 7(2014年)より前にリリースされたディストリビューショ
 ツールチェーンとライブラリをインストールします。一度インストールすれば次回から事前準備はいりません。
 
 #### Redhat系
-*GTK2版*
-```sh
-dnf install gtkmm24-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
-```
-
-*GTK3版* - `gtkmm24-devel` のかわりに `gtkmm30-devel` をインストールします。
+*GTK3版*
 ```sh
 dnf install gtkmm30-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
+```
+
+*GTK2版* - `gtkmm30-devel` のかわりに `gtkmm24-devel` をインストールします。
+```sh
+dnf install gtkmm24-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
 ```
 
 #### Debian (stretch-backportsあるいはbuster以降)
@@ -88,20 +88,20 @@ sudo apt install build-essential automake autoconf-archive git libtool
 
 必要なライブラリを入れます。(抜けがあるかも)
 
-*GTK2版*
-```sh
-sudo apt install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev
-```
-
-*GTK3版* - `libgtkmm-2.4-dev` のかわりに `libgtkmm-3.0-dev` をインストールします。
+*GTK3版*
 ```sh
 sudo apt install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev
+```
+
+*GTK2版* - `libgtkmm-3.0-dev` のかわりに `libgtkmm-2.4-dev` をインストールします。
+```sh
+sudo apt install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev
 ```
 
 
 ### ビルド
 
-*GTK2版 (デフォルト)*
+*GTK3版 (デフォルト)*
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 cd jdim
@@ -110,12 +110,12 @@ autoreconf -i
 make
 ```
 
-*GTK3版* - ./configure にオプション `--with-gtkmm3` を追加します。
+*GTK2版* - ./configure にオプション `--with-gtkmm3=no` を追加します。
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 cd jdim
 autoreconf -i
-./configure --with-gtkmm3
+./configure --with-gtkmm3=no
 make
 ```
 
