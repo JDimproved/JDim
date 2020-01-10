@@ -438,19 +438,20 @@ std::string ENVIRONMENT::get_distname()
     char *sysname = nullptr, *release = nullptr, *machine = nullptr;
 
     // システムコール uname() 準拠：SVr4, POSIX.1-2001.
-    struct utsname* uts;
-    uts = (struct utsname*)malloc( sizeof( struct utsname ) );
-    if( uname( uts ) != -1 )
+    struct utsname uts;
+    if( uname( &uts ) == 0 )
     {
-        sysname = uts->sysname;
-        release = uts->release;
-        machine = uts->machine;
+        sysname = uts.sysname;
+        release = uts.release;
+        machine = uts.machine;
     }
 
     // FreeBSD等やディストリ名が取得できなかった場合は"$ uname -rs"と同じ様式
     if( dist_name.empty() && sysname && release )
     {
-        dist_name = std::string( sysname ) + " " + std::string( release );
+        dist_name.append( sysname );
+        dist_name.push_back( ' ' );
+        dist_name.append( release );
     }
 
     // アーキテクチャがx86でない場合
@@ -464,9 +465,6 @@ std::string ENVIRONMENT::get_distname()
 
         if ( dist_name.find(arch, 0) == std::string::npos ) dist_name.append( " " + arch);
     }
-
-    free( uts );
-    uts = nullptr;
 
 #endif
 #endif // _WIN32
