@@ -946,7 +946,8 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
     // フォント設定
     set_node_font( header );
 
-    CORE::get_css_manager()->set_size( &m_css_body, m_font->height );
+    const CORE::Css_Manager *cssmgr = CORE::get_css_manager();
+    cssmgr->set_size( &m_css_body, m_font->height );
 
     y += offset_y * m_font->br_size;
     y += m_css_body.padding_top;
@@ -961,7 +962,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
         // (注) header は div ノードであり、クラス名は "res"
         // 詳しくは LayoutTree::create_layout_header() を参照せよ
-        CORE::get_css_manager()->set_size( header->css, m_font->height );
+        cssmgr->set_size( header->css, m_font->height );
 
         // div の位置と幅を計算
         // 高さは子ノードのレイアウトが全て済んでから計算
@@ -1011,7 +1012,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
                     // div の位置と幅を計算
                     // 高さは違う div に切り替わった時に計算
-                    CORE::get_css_manager()->set_size( current_div->css, m_font->height );
+                    cssmgr->set_size( current_div->css, m_font->height );
                     x = header->rect->x + header->css->padding_left;
                     x += current_div->css->mrg_left;
                     y += current_div->css->mrg_top;
@@ -1523,8 +1524,7 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
         if( pos_to >= byte_to ) break;
 
         // wrap 処理
-        x = 0;
-        if( div ) x = div->rect->x + div->css->padding_left;
+        x = div ? div->rect->x + div->css->padding_left : 0;
         y += br_size;
         br_size = m_font->br_size; // 次の行の改行位置をリセット
 
