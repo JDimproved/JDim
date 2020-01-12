@@ -176,10 +176,8 @@ namespace DBTREE
         // ダウンロード用変数
         std::list< std::string > m_url_update_views; // CORE::core_set_command( "update_board" ) を送信するビューのアドレス
         JDLIB::Iconv* m_iconv;
-        char* m_rawdata;
-        char* m_rawdata_left;
-        size_t m_lng_rawdata;
-        size_t m_lng_rawdata_left;
+        std::string m_rawdata;
+        std::string m_rawdata_left;
 
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
         bool m_read_info;

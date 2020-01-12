@@ -61,8 +61,6 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_last_access_time( 0 )
     , m_number_max_res( 0 )
     , m_iconv( nullptr )
-    , m_rawdata( nullptr )
-    , m_rawdata_left( nullptr )
     , m_read_info( 0 )
     , m_append_articles( false )
     , m_get_article( nullptr )
@@ -340,14 +338,11 @@ void BoardBase::set_list_cookies_for_write( const std::list< std::string >& list
 
 void BoardBase::clear()
 {
-    if( m_rawdata ) free( m_rawdata );
-    m_rawdata = nullptr;
+    m_rawdata.clear();
+    m_rawdata.shrink_to_fit();
 
-    if( m_rawdata_left ) free( m_rawdata_left );
-    m_rawdata_left = nullptr;
-
-    m_lng_rawdata = 0;
-    m_lng_rawdata_left = 0;
+    m_rawdata_left.clear();
+    m_rawdata_left.shrink_to_fit();
 
     m_get_article_url = std::string();
 
@@ -1077,11 +1072,10 @@ void BoardBase::receive_data( const char* data, size_t size )
 {
     if( ! size ) return;
 
-    if( ! m_rawdata ) m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
-
-    memcpy( m_rawdata + m_lng_rawdata , data, size );
-    m_lng_rawdata += size;
-    m_rawdata[ m_lng_rawdata ] = '\0';
+    if( m_rawdata.capacity() < SIZE_OF_RAWDATA ) {
+        m_rawdata.reserve( SIZE_OF_RAWDATA );
+    }
+    m_rawdata.append( data, size );
 
     if( m_read_url_boardbase ) return; // url_boardbase をロードして移転が起きたかチェック中
 
@@ -1090,28 +1084,29 @@ void BoardBase::receive_data( const char* data, size_t size )
     // 改行ごとに区切ってUTF8に文字コード変換して解析
     //
 
-    if( ! m_rawdata_left ) m_rawdata_left = ( char* )malloc( SIZE_OF_RAWDATA );
+    if( m_rawdata_left.capacity() < SIZE_OF_RAWDATA ) {
+        m_rawdata_left.reserve( SIZE_OF_RAWDATA );
+    }
     if( ! m_iconv ) m_iconv = new JDLIB::Iconv( m_charset, "UTF-8" );
 
-    memcpy( m_rawdata_left + m_lng_rawdata_left, data, size );
+    m_rawdata_left.append( data, size );
 
-    size_t byte_in = size + m_lng_rawdata_left;
-    m_lng_rawdata_left = byte_in;
-    while( byte_in && m_rawdata_left[ byte_in -1 ] != '\n' ) --byte_in;
-    if( byte_in ){
+    std::size_t byte_in = m_rawdata_left.rfind( '\n' );
+    if( byte_in != std::string::npos ) {
+        byte_in += 1; // 改行まで含める
 
         int byte_out;
-        const char* rawdata_utf8 = m_iconv->convert( m_rawdata_left,  byte_in,  byte_out );
+        const char* rawdata_utf8 = m_iconv->convert( &*m_rawdata_left.begin(), byte_in, byte_out );
 
         parse_subject( rawdata_utf8 );
 
         // 残りを先頭に移動
-        m_lng_rawdata_left -= byte_in;
-        memmove( m_rawdata_left, m_rawdata_left + byte_in, m_lng_rawdata_left );
+        m_rawdata_left.erase( 0, byte_in );
 
 #ifdef _DEBUG
-        std::cout << "BoardBase::receive_data lng_rawdata = " << m_lng_rawdata << " size = " << size
-                  << " byte_in = " << byte_in << " byte_out = " << byte_out << " lng_rawdata_left = " << m_lng_rawdata_left << std::endl;
+        std::cout << "BoardBase::receive_data rawdata.size = " << m_rawdata.size() << " size = " << size
+                  << " byte_in = " << byte_in << " byte_out = " << byte_out
+                  << " rawdata_left.size = " << m_rawdata_left.size() << std::endl;
 #endif
     }
 }
@@ -1135,7 +1130,7 @@ void BoardBase::receive_finish()
 
 #ifdef _DEBUG
     std::cout << "----------------------------------\nBoardBase::receive_finish code = " << get_str_code() << std::endl;
-    std::cout << "lng_rawdata = " << m_lng_rawdata << std::endl;
+    std::cout << "rawdata.size = " << m_rawdata.size() << std::endl;
 #endif
 
     ///////////////////////////////////////////////////////
@@ -1149,7 +1144,8 @@ void BoardBase::receive_finish()
         set_date_modified( std::string() );
         send_update_board();
 
-        if( m_lng_rawdata && get_code() == HTTP_OK && strstr( m_rawdata, "window.location.href" ) != nullptr ){
+        if( !m_rawdata.empty() && get_code() == HTTP_OK
+                && m_rawdata.find( "window.location.href" ) != std::string::npos ) {
 
 #ifdef _DEBUG
             std::cout << m_rawdata << std::endl;
@@ -1249,17 +1245,17 @@ void BoardBase::receive_finish()
 #ifdef _DEBUG
         std::cout << "read from cache " << path_subject << std::endl;
 #endif
-        m_lng_rawdata = 0;
-        m_lng_rawdata_left = 0;
+        m_rawdata.clear();
+        m_rawdata_left.clear();
 
-        char* rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
-        size_t lng = CACHE::load_rawdata( path_subject, rawdata, SIZE_OF_RAWDATA );
-        receive_data( rawdata, lng );
-        free( rawdata );
+        std::vector<char> rawdata( SIZE_OF_RAWDATA );
+        const std::size_t lng = CACHE::load_rawdata( path_subject, rawdata.data(), SIZE_OF_RAWDATA );
+        receive_data( rawdata.data(), lng );
     }
 
 #ifdef _DEBUG
-    std::cout << "size = " << m_list_artinfo.size() << " lng_rawdata = " << m_lng_rawdata << " left = " << m_lng_rawdata_left << std::endl;
+    std::cout << "size = " << m_list_artinfo.size() << " rawdata.size = " << m_rawdata.size()
+              << " left = " << m_rawdata_left.size() << std::endl;
 #endif
 
     // データが無い
@@ -1394,7 +1390,7 @@ void BoardBase::receive_finish()
                 }
 
                 // subject.txt セーブ
-                CACHE::save_rawdata( path_subject, m_rawdata, m_lng_rawdata );
+                CACHE::save_rawdata( path_subject, m_rawdata );
             }
         }
 
@@ -1434,7 +1430,7 @@ bool BoardBase::start_checkking_if_board_moved()
     std::cout << "BoardBase::start_checkking_if_board_moved " << url_boardbase() << std::endl;
 #endif
 
-    m_lng_rawdata = 0;
+    m_rawdata.clear();
 
     JDLIB::LOADERDATA data;
     data.init_for_data();
