@@ -164,7 +164,7 @@ JDim GTK3版はSnapパッケージとして[Snap Storeで公開][snapcraft]さ�
 `snap`コマンドやwebページからインストールすることでコマンドやデスクトップ環境のメニューから起動できる。
 
 ```sh
-sudo snap install jdim --edge
+sudo snap install jdim
 ```
 
 Snapパッケージ版はアクセス制限が導入されているため通常のパッケージやビルドと異なる点がある。
