@@ -15,7 +15,7 @@
     </p>
     <p>
       Various features which are better viewing 2ch: Fetching updated posts,
-      Hide NG word posts, Message posting, ASCII art input, Play-by-play mode,
+      Hide NG word posts, Message posting, ASCII art input, Play-by-play mode, Mouse gestures,
       Display linked images, Bookmark and History, Filters for URL, Thread title search,
       Keyword search in thread, External boards support, Highly customizations and more...
     </p>
@@ -27,11 +27,11 @@
     <!-- JDim does not provide user interface with English -->
     <screenshot type="default">
       <caption>Marking a post (post ID 49)</caption>
-      <image>https://user-images.githubusercontent.com/15698961/63214888-ced03d00-c10d-11e9-9ea2-7f4880a09fac.png</image>
+      <image>https://user-images.githubusercontent.com/15698961/72191765-39568200-33fb-11ea-9b2d-f8a997cf9ae8.png</image>
     </screenshot>
     <screenshot>
-      <caption>Extracting a keyword (highlight "any")</caption>
-      <image>https://user-images.githubusercontent.com/15698961/63214887-ced03d00-c10d-11e9-98b4-7fea93277dc1.png</image>
+      <caption>Extracting a keyword (highlight "観光")</caption>
+      <image>https://user-images.githubusercontent.com/15698961/72191766-39ef1880-33fb-11ea-84ad-b903408c2e5f.png</image>
     </screenshot>
   </screenshots>
 
@@ -45,6 +45,12 @@
   </provides>
 
   <releases>
+    <release version="0.3.0" date="2020-01-18">
+      <description>
+        <p>Improve GTK3 support</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.3.0</url>
+    </release>
     <release version="0.2.0" date="2019-07-20">
       <description>
         <p>Support for GTK3 (optional)</p>
