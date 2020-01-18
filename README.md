@@ -261,9 +261,12 @@ $ JDIM_LOCK=~/mylock jdim
 | --- | --- | --- |
 | 存在する | any | `~/.jd` |
 | 存在しない | any | `$XDG_CACHE_HOME/jdim` |
-| 無効化 | any | `$XDG_CACHE_HOME/jdim` |
+| any (無効化) | any | `$XDG_CACHE_HOME/jdim` |
 
-NOTE: 環境変数 `XDG_CACHE_HOME` が未設定または空のときはかわりに `$HOME/.cache/jdim` が使われます。
+NOTE:
+
+- 環境変数 `XDG_CACHE_HOME` が未設定または空のときはかわりに `$HOME/.cache/jdim` が使われます。
+- `~/.jd` が無効化されている場合は `jdim --version` の出力に `--disable-compat-cache-dir` が追加されます。
 
 ### コマンドライン オプション
 

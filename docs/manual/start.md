@@ -51,9 +51,12 @@ $ JDIM_LOCK=~/mylock jdim
 | --- | --- | --- |
 | 存在する | any | `~/.jd` |
 | 存在しない | any | `$XDG_CACHE_HOME/jdim` |
-| 無効化 | any | `$XDG_CACHE_HOME/jdim` |
+| any (無効化) | any | `$XDG_CACHE_HOME/jdim` |
 
-NOTE: 環境変数 `XDG_CACHE_HOME` が未設定または空のときはかわりに `$HOME/.cache/jdim` が使われる。
+NOTE:
+
+- 環境変数 `XDG_CACHE_HOME` が未設定または空のときはかわりに `$HOME/.cache/jdim` が使われる。
+- `~/.jd` が無効化されている場合は `jdim --version` の出力に `--disable-compat-cache-dir` が追加される。
 
 #### オプション
 <dl>
@@ -164,7 +167,7 @@ JDim GTK3版はSnapパッケージとして[Snap Storeで公開][snapcraft]さ�
 `snap`コマンドやwebページからインストールすることでコマンドやデスクトップ環境のメニューから起動できる。
 
 ```sh
-sudo snap install jdim --edge
+sudo snap install jdim
 ```
 
 Snapパッケージ版はアクセス制限が導入されているため通常のパッケージやビルドと異なる点がある。
