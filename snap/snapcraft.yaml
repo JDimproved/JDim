@@ -60,6 +60,25 @@ parts:
       - libpangomm-1.4-1v5
       - libpcre2-8-0
       - libsigc++-2.0-0v5
+    prime:
+      - -./etc
+      - -./lib
+      - -./usr/bin
+      - -./usr/sbin
+      - -./usr/share
+      - -./var
+      # Include shared objects for C++ library and a few missings.
+      - ./usr/lib/**/libatkmm-1.6.so*
+      - ./usr/lib/**/libcairomm-1.0.so*
+      - ./usr/lib/**/libfribidi.so*
+      - ./usr/lib/**/libgdkmm-3.0.so*
+      - ./usr/lib/**/libgiomm-2.4.so*
+      - ./usr/lib/**/libglibmm-2.4.so*
+      - ./usr/lib/**/libglibmm_generate_extra_defs-2.4.so*
+      - ./usr/lib/**/libgtkmm-3.0.so*
+      - ./usr/lib/**/libpangomm-1.4.so*
+      - ./usr/lib/**/libpcre2-8.so*
+      - ./usr/lib/**/libsigc-2.0.so*
 
 slots:
   dbus-daemon:
