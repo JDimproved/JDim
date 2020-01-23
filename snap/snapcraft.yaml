@@ -7,24 +7,7 @@ base: core18
 grade: stable
 icon: jdim.png
 
-plugs:
-  gnome-3-28-1804:
-    interface: content
-    target: $SNAP/gnome-platform
-    default-provider: gnome-3-28-1804
-  gtk-3-themes:
-    interface: content
-    target: $SNAP/data-dir/themes
-    default-provider: gtk-common-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/data-dir/icons
-    default-provider: gtk-common-themes
-  sound-themes:
-    interface: content
-    target: $SNAP/data-dir/sounds
-    default-provider: gtk-common-themes
-
+# https://forum.snapcraft.io/t/gtk3-applications/13483
 parts:
   jdim:
     plugin: autotools
@@ -72,6 +55,7 @@ parts:
     override-build: |
       set -eu
       snapcraftctl build
+      strip -s ${SNAPCRAFT_PART_INSTALL}/bin/jdim
       VER="$(./src/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\)(git:\([0-9a-f]\+\).*$%\1-\2-\3%p')"
       echo "version ${VER}"
       snapcraftctl set-version "${VER}"
@@ -79,43 +63,28 @@ parts:
       set -eu
       snapcraftctl prime
       sed --in-place -e 's|^Icon=.*|Icon=\${SNAP}/share/icons/hicolor/48x48/apps/jdim.png|' \
-      share/applications/jdim.desktop
-    after: [desktop-gnome-platform]
-    stage:
-      - -./usr/share/**
+      ${SNAPCRAFT_PRIME}/share/applications/jdim.desktop
     parse-info: [jdim.metainfo.xml]
 
-  # https://hackmd.io/0I09MG1FRKqO0ehIdLHpoQ#
-  desktop-gnome-platform:
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-depth: 1
-    source-subdir: gtk
-
-    plugin: make
-    build-packages:
-    - build-essential
-    - libgtk-3-dev
-    override-build: |
-      snapcraftctl build
-      mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
-
-  my-desktop:
-    # gtk-common-themes does not provide breeze icon theme.
-    plugin: nil
-    stage-packages:
-      - breeze-icon-theme
+slots:
+  dbus-daemon:
+    interface: dbus
+    bus: session
+    name: com.github.jdimproved.JDim
 
 apps:
   jdim:
-    command: bin/desktop-launch $SNAP/bin/jdim
+    command: bin/jdim
     common-id: com.github.jdimproved.JDim
     desktop: share/applications/jdim.desktop
+    # https://forum.snapcraft.io/t/the-gnome-3-28-extension/13485
+    extensions: [gnome-3-28]
     plugs:
-      - desktop
-      - desktop-legacy
       - gsettings
       - home
       - network
       - unity7
-      - wayland
-      - x11
+    slots:
+      - dbus-daemon
+    command-chain:
+      - snap/command-chain/desktop-launch
