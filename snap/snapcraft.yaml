@@ -27,31 +27,11 @@ parts:
       - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
       - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
     build-packages:
-      # https://packages.ubuntu.com/source/disco/jdim
-      - build-essential
-      - git
-      - libc6-dev
+      # https://packages.ubuntu.com/source/focal/jdim
       - libgnutls28-dev
       - libgtkmm-3.0-dev
       - zlib1g-dev
       - autoconf-archive
-    stage-packages:
-      # https://packages.ubuntu.com/disco/net/jdim
-      - libatkmm-1.6-1v5
-      - libgcc1
-      - libglib2.0-0
-      - libglibmm-2.4-1v5
-      - libgnutls30
-      - libgtkmm-3.0-1v5
-      - libpango-1.0-0
-      - libpangomm-1.4-1v5
-      - libsigc++-2.0-0v5
-      - libstdc++6
-      - libx11-6
-      - libice6
-      - libsm6
-      - zlib1g
-      - libappindicator3-1
     override-build: |
       set -eu
       snapcraftctl build
@@ -65,6 +45,21 @@ parts:
       sed --in-place -e 's|^Icon=.*|Icon=\${SNAP}/share/icons/hicolor/48x48/apps/jdim.png|' \
       ${SNAPCRAFT_PRIME}/share/applications/jdim.desktop
     parse-info: [jdim.metainfo.xml]
+
+  # gnome-3-28 extension does not bundle shared objects for C++ library.
+  jdim-depends:
+    plugin: nil
+    stage-packages:
+      # Exclude packages provided by gnome-3-28 extension and core18.
+      # https://gitlab.gnome.org/Community/Ubuntu/gnome-3-28-1804/blob/master/snapcraft.yaml
+      - libatkmm-1.6-1v5
+      - libcairomm-1.0-1v5
+      - libfribidi0
+      - libglibmm-2.4-1v5
+      - libgtkmm-3.0-1v5
+      - libpangomm-1.4-1v5
+      - libpcre2-8-0
+      - libsigc++-2.0-0v5
 
 slots:
   dbus-daemon:
