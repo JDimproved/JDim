@@ -7,24 +7,7 @@ base: core18
 grade: stable
 icon: jdim.png
 
-plugs:
-  gnome-3-28-1804:
-    interface: content
-    target: $SNAP/gnome-platform
-    default-provider: gnome-3-28-1804
-  gtk-3-themes:
-    interface: content
-    target: $SNAP/data-dir/themes
-    default-provider: gtk-common-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/data-dir/icons
-    default-provider: gtk-common-themes
-  sound-themes:
-    interface: content
-    target: $SNAP/data-dir/sounds
-    default-provider: gtk-common-themes
-
+# https://forum.snapcraft.io/t/gtk3-applications/13483
 parts:
   jdim:
     plugin: autotools
@@ -44,34 +27,15 @@ parts:
       - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
       - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
     build-packages:
-      # https://packages.ubuntu.com/source/disco/jdim
-      - build-essential
-      - git
-      - libc6-dev
+      # https://packages.ubuntu.com/source/focal/jdim
       - libgnutls28-dev
       - libgtkmm-3.0-dev
       - zlib1g-dev
       - autoconf-archive
-    stage-packages:
-      # https://packages.ubuntu.com/disco/net/jdim
-      - libatkmm-1.6-1v5
-      - libgcc1
-      - libglib2.0-0
-      - libglibmm-2.4-1v5
-      - libgnutls30
-      - libgtkmm-3.0-1v5
-      - libpango-1.0-0
-      - libpangomm-1.4-1v5
-      - libsigc++-2.0-0v5
-      - libstdc++6
-      - libx11-6
-      - libice6
-      - libsm6
-      - zlib1g
-      - libappindicator3-1
     override-build: |
       set -eu
       snapcraftctl build
+      strip -s ${SNAPCRAFT_PART_INSTALL}/bin/jdim
       VER="$(./src/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\)(git:\([0-9a-f]\+\).*$%\1-\2-\3%p')"
       echo "version ${VER}"
       snapcraftctl set-version "${VER}"
@@ -79,43 +43,62 @@ parts:
       set -eu
       snapcraftctl prime
       sed --in-place -e 's|^Icon=.*|Icon=\${SNAP}/share/icons/hicolor/48x48/apps/jdim.png|' \
-      share/applications/jdim.desktop
-    after: [desktop-gnome-platform]
-    stage:
-      - -./usr/share/**
+      ${SNAPCRAFT_PRIME}/share/applications/jdim.desktop
     parse-info: [jdim.metainfo.xml]
 
-  # https://hackmd.io/0I09MG1FRKqO0ehIdLHpoQ#
-  desktop-gnome-platform:
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-depth: 1
-    source-subdir: gtk
-
-    plugin: make
-    build-packages:
-    - build-essential
-    - libgtk-3-dev
-    override-build: |
-      snapcraftctl build
-      mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
-
-  my-desktop:
-    # gtk-common-themes does not provide breeze icon theme.
+  # gnome-3-28 extension does not bundle shared objects for C++ library.
+  jdim-depends:
     plugin: nil
     stage-packages:
-      - breeze-icon-theme
+      # Exclude packages provided by gnome-3-28 extension and core18.
+      # https://gitlab.gnome.org/Community/Ubuntu/gnome-3-28-1804/blob/master/snapcraft.yaml
+      - libatkmm-1.6-1v5
+      - libcairomm-1.0-1v5
+      - libfribidi0
+      - libglibmm-2.4-1v5
+      - libgtkmm-3.0-1v5
+      - libpangomm-1.4-1v5
+      - libpcre2-8-0
+      - libsigc++-2.0-0v5
+    prime:
+      - -./etc
+      - -./lib
+      - -./usr/bin
+      - -./usr/sbin
+      - -./usr/share
+      - -./var
+      # Include shared objects for C++ library and a few missings.
+      - ./usr/lib/**/libatkmm-1.6.so*
+      - ./usr/lib/**/libcairomm-1.0.so*
+      - ./usr/lib/**/libfribidi.so*
+      - ./usr/lib/**/libgdkmm-3.0.so*
+      - ./usr/lib/**/libgiomm-2.4.so*
+      - ./usr/lib/**/libglibmm-2.4.so*
+      - ./usr/lib/**/libglibmm_generate_extra_defs-2.4.so*
+      - ./usr/lib/**/libgtkmm-3.0.so*
+      - ./usr/lib/**/libpangomm-1.4.so*
+      - ./usr/lib/**/libpcre2-8.so*
+      - ./usr/lib/**/libsigc-2.0.so*
+
+slots:
+  dbus-daemon:
+    interface: dbus
+    bus: session
+    name: com.github.jdimproved.JDim
 
 apps:
   jdim:
-    command: bin/desktop-launch $SNAP/bin/jdim
+    command: bin/jdim
     common-id: com.github.jdimproved.JDim
     desktop: share/applications/jdim.desktop
+    # https://forum.snapcraft.io/t/the-gnome-3-28-extension/13485
+    extensions: [gnome-3-28]
     plugs:
-      - desktop
-      - desktop-legacy
       - gsettings
       - home
       - network
       - unity7
-      - wayland
-      - x11
+    slots:
+      - dbus-daemon
+    command-chain:
+      - snap/command-chain/desktop-launch
