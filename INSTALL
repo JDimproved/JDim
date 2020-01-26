@@ -49,6 +49,8 @@
 
 * make 方法( configure + make の場合 )
 
+    デフォルトの設定ではGTK3版をビルドする。(バージョン0.3.0以降)
+
     1. autoreconf -i ( 又は ./autogen.sh )
     2. ./configure
     3. make
@@ -140,9 +142,9 @@
 
        非推奨: かわりに --with-thread=[glib|std] を使用してください。
 
-    --with-gtkmm3
+    --with-gtkmm3=no
 
-       gtkmm2のかわりにgtkmm3を使用する。
+       gtkmm3のかわりにgtkmm2を使用する。
 
     --disable-compat-cache-dir
 
