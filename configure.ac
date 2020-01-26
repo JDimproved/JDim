@@ -405,8 +405,8 @@ dnl
 AC_MSG_CHECKING(for --with-thread)
 AC_ARG_WITH(thread,
 AC_HELP_STRING([--with-thread=@<:@posix|glib|std@:>@],
-               [use thread library @<:@default=posix@:>@]),
-[with_thread="$withval"], [with_thread=posix])
+               [use thread library @<:@default=std@:>@]),
+[with_thread="$withval"], [with_thread=std])
 AC_MSG_RESULT($with_thread)
 
 AS_IF(
