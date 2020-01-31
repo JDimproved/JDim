@@ -304,7 +304,7 @@ std::string MISC::remove_space( const std::string& str )
 
     // 前
     size_t i = 0;
-    while( 1 ){
+    while( i < lng ){
 
         // 半角
         if( str[ i ] == ' ' ) ++i;
@@ -315,6 +315,7 @@ std::string MISC::remove_space( const std::string& str )
                  str[ i +2 ] == str_space[ 2 ] ) i += lng_space;
         else break;
     }
+    if (i >= lng) return "";
 
     // 後
     size_t i2 = lng -1;
