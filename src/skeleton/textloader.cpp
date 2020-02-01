@@ -24,10 +24,7 @@ using namespace SKELETON;
 
 
 TextLoader::TextLoader()
-    : SKELETON::Loadable(),
-      m_loaded( false ),
-      m_rawdata( nullptr ),
-      m_lng_rawdata( 0 )
+    : SKELETON::Loadable()
 {
 #ifdef _DEBUG
     std::cout << "TextLoader::TextLoader\n";
@@ -47,15 +44,16 @@ TextLoader::~TextLoader()
 void TextLoader::init()
 {
     clear();
-    m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
+    if( m_rawdata.capacity() < SIZE_OF_RAWDATA ) {
+        m_rawdata.reserve( SIZE_OF_RAWDATA );
+    }
 }
 
 
 void TextLoader::clear()
 {
-    if( m_rawdata ) free( m_rawdata );
-    m_rawdata = nullptr;
-    m_lng_rawdata = 0;
+    m_rawdata.clear();
+    m_rawdata.shrink_to_fit();
 }
 
 
@@ -114,9 +112,8 @@ void TextLoader::download_text()
 //
 void TextLoader::receive_data( const char* data, size_t size )
 {
-    if( m_lng_rawdata + size < SIZE_OF_RAWDATA ){
-        memcpy( m_rawdata + m_lng_rawdata , data, size );
-        m_lng_rawdata += size;
+    if( m_rawdata.size() + size < SIZE_OF_RAWDATA ){
+        m_rawdata.append( data, size );
     }
     else{
         MISC::ERRMSG( "TextLoader : received failed ( BOF )\n" );
@@ -132,20 +129,22 @@ void TextLoader::receive_finish()
 {
 #ifdef _DEBUG
     std::cout << "TextLoader::receive_finish code = " << get_str_code() << std::endl
-              << "lng = " << m_lng_rawdata << " modified = " << get_date_modified() << std::endl;
+              << "lng = " << m_rawdata.size() << " modified = " << get_date_modified() << std::endl;
 #endif
 
     // 初期化時やnot modifiedの時はキャッシュから読み込み
     if( ! get_path().empty() && ( get_code() == HTTP_INIT || get_code() == HTTP_NOT_MODIFIED ) ){
 
-        m_lng_rawdata = CACHE::load_rawdata( get_path(), m_rawdata, SIZE_OF_RAWDATA );
+        m_rawdata.resize( SIZE_OF_RAWDATA );
+        const std::size_t read_size = CACHE::load_rawdata( get_path(), &*m_rawdata.begin(), SIZE_OF_RAWDATA );
+        m_rawdata.resize( read_size );
 
 #ifdef _DEBUG
         std::cout << "read from " << get_path() << std::endl;
-        if( ! m_lng_rawdata ) std::cout << "no data in cache!\n";
+        if( ! read_size ) std::cout << "no data in cache!\n";
 #endif        
 
-        if( ! m_lng_rawdata && get_code() == HTTP_INIT ) set_date_modified( std::string() );
+        if( ! read_size && get_code() == HTTP_INIT ) set_date_modified( std::string() );
     }
 
     // 読み込みエラー
@@ -159,9 +158,9 @@ void TextLoader::receive_finish()
     }
 
     // キャッシュに保存
-    if( ! get_path().empty() && get_code() == HTTP_OK && m_lng_rawdata ){
+    if( ! get_path().empty() && get_code() == HTTP_OK && ! m_rawdata.empty() ){
 
-        CACHE::save_rawdata( get_path(), m_rawdata, m_lng_rawdata );
+        CACHE::save_rawdata( get_path(), m_rawdata );
 
 #ifdef _DEBUG
         std::cout << "save to " << get_path() << std::endl;
@@ -175,7 +174,7 @@ void TextLoader::receive_finish()
     // UTF-8に変換しておく
     JDLIB::Iconv* libiconv = new JDLIB::Iconv( get_charset(), "UTF-8" );
     int byte_out;
-    m_data = libiconv->convert( m_rawdata , m_lng_rawdata,  byte_out );
+    m_data = libiconv->convert( &*m_rawdata.begin(), m_rawdata.size(),  byte_out );
     delete libiconv;
     clear();
 

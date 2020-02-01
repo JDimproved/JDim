@@ -22,10 +22,9 @@ namespace SKELETON
 {
     class TextLoader : public SKELETON::Loadable
     {
-        bool m_loaded; // 読み込み済みか
+        bool m_loaded{}; // 読み込み済みか
 
-        char* m_rawdata;
-        int m_lng_rawdata;
+        std::string m_rawdata;
         std::string m_data;
 
       public:
