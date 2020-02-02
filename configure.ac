@@ -90,10 +90,7 @@ AC_ARG_WITH(gtkmm3,
 AC_MSG_RESULT($with_gtkmm3)
 
 AS_IF([test "x$with_gtkmm3" = xno],
-      [PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.24.0], [], [
-         AC_MSG_WARN([JDim will require gtkmm-2.4 >= 2.24.0 in the future release.])
-         PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.18.0])
-       ])],
+      [PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.24.0])],
       [PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.0.0], [], [])
        AC_DEFINE(WITH_GTKMM_3_0, 1, [Use gtkmm-3.0 instead of gtkmm-2.4])])
 
@@ -287,7 +284,7 @@ AC_MSG_RESULT($with_tls)
 
 AS_IF(
   [test "x$with_tls" = xgnutls],
-  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 2.12])
+  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 3.3.8])
    AC_DEFINE(USE_GNUTLS, , [use gnutls])
    AC_SUBST(GNUTLS_CFLAGS)
    AC_SUBST(GNUTLS_LIBS)],
