@@ -29,10 +29,6 @@
 #include <iostream>
 #include <getopt.h>
 
-#ifdef USE_GNOMEUI
-#include <gnome.h>
-#endif
-
 #ifdef USE_XSMP
 #include <X11/ICE/ICElib.h>
 #include <X11/SM/SMlib.h>
@@ -134,29 +130,6 @@ void sig_handler( int sig )
 
     exit(0);
 }
-
-
-
-// GNOMEUI によるセッション管理
-#ifdef USE_GNOMEUI
-
-// gnomeセッションマネージャから "save_yourself" シグナルを受け取った
-static int save_yourself_gnome( GnomeClient *client,
-                          int phase,
-                          GnomeSaveStyle save_style,
-                          int shutdown,
-                          GnomeInteractStyle interact_style,
-                          int fast,
-                          gpointer client_data
-    )
-{
-
-    if( Win_Main ) Win_Main->save_session();
-
-    return TRUE;
-}
-
-#endif
 
 
 
@@ -516,20 +489,6 @@ int main( int argc, char **argv )
     XSMPDATA xsmpdata;
     memset( &xsmpdata, 0, sizeof( XSMPDATA ) );
     xsmp_session_init( &xsmpdata );    
-#endif
-
-    // GNOMEUIによるセッション管理
-#ifdef USE_GNOMEUI
-
-#ifdef _DEBUG
-    std::cout << "USE_GNOMEUI\n";
-#endif
-
-    // gnomeセッションマネージャとつないでログアウト時に"save_yourself"シグナルをもらう
-    gnome_init( "jdim", "1.0", argc, argv );
-    GnomeClient *client_gnome = gnome_master_client();
-    if( client_gnome ) gtk_signal_connect( GTK_OBJECT( client_gnome ), "save_yourself", GTK_SIGNAL_FUNC( save_yourself_gnome ), nullptr );
-    else MISC::ERRMSG( "failed to connect to gnome session manager" );
 #endif
 
     JDLIB::init_ssl();

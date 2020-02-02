@@ -33,7 +33,6 @@
   オプション
 
   ・alsa-lib (--with-alsa)
-  ・libgnomeui (--with-sessionlib=gnomeui) (GTK2版、廃止予定)
   ・openssl (--with-tls=openssl)
   ・oniguruma (--with-regex=oniguruma)
   ・libpcre (--with-regex=pcre)
@@ -58,11 +57,10 @@
 
 * configureオプション
 
-    --with-sessionlib=[xsmp|gnomeui|no]
+    --with-sessionlib=xsmp|no
 
        XSMP を使ってセッション管理をするには「xsmp」を、セッション管理を無効にするには「no」を選択する。
-       デフォルトでは XSMP を使用する。「gnomeui」はGTK2版のみ利用できる。
-       --with-sessionlib=gnomeui は非推奨: かわりに --with-sessionlib=xsmp を使用してください。
+       デフォルトでは XSMP を使用する。
 
     --with-pangolayout
 

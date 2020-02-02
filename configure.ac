@@ -67,8 +67,6 @@ dnl ---------------------------------------------------
 
 LIBSM_CFLAGS=""
 LIBSM_LIBS=""
-GNOMEUI_CFLAGS=""
-GNOMEUI_LIBS=""
 
 dnl
 dnl パッケージのチェック
@@ -174,7 +172,7 @@ dnl セッション管理
 dnl
 AC_MSG_CHECKING(for --with-sessionlib)
 AC_ARG_WITH(sessionlib,
-AC_HELP_STRING([--with-sessionlib=@<:@xsmp|gnomeui|no@:>@],
+AC_HELP_STRING([--with-sessionlib=xsmp|no],
                [use session control library @<:@default=xsmp@:>@]),
 [with_sessionlib="$withval"], [with_sessionlib=xsmp])
 AC_MSG_RESULT($with_sessionlib)
@@ -197,16 +195,6 @@ AS_IF(
       AC_SUBST(LIBSM_CFLAGS)
       AC_SUBST(LIBSM_LIBS)]
    )],
-
-  [test "x$with_sessionlib" = xgnomeui -a "x$with_gtkmm3" != xno],
-  [AC_MSG_ERROR([gnomeui won't support for gtkmm3])],
-
-  [test "x$with_sessionlib" = xgnomeui],
-  [PKG_CHECK_MODULES(GNOMEUI, [libgnomeui-2.0 >= 2.0])
-   AC_DEFINE(USE_GNOMEUI, , [use gnomeui])
-   AC_MSG_WARN([--with-sessionlib=gnomeui is deprecated. Use --with-sessionlib=xsmp instead.])
-   AC_SUBST(GNOMEUI_CFLAGS)
-   AC_SUBST(GNOMEUI_LIBS)],
 
   [AC_MSG_ERROR([session control library not found])]
 )
