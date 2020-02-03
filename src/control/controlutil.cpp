@@ -47,8 +47,8 @@ CONTROL::KeyConfig* CONTROL::get_keyconfig()
         instance_keyconfig = new CONTROL::KeyConfig();
 
         // ラベルをセットしておく
-        strncpy( control_label[ CONTROL::SearchWeb ][ 1 ], CONFIG::get_menu_search_web().c_str(), MAX_CONTROL_LABEL );
-        strncpy( control_label[ CONTROL::SearchTitle ][ 1 ], CONFIG::get_menu_search_title().c_str(), MAX_CONTROL_LABEL );
+        snprintf( control_label[ CONTROL::SearchWeb ][ 1 ], MAX_CONTROL_LABEL, "%s", CONFIG::get_menu_search_web().c_str() );
+        snprintf( control_label[ CONTROL::SearchTitle ][ 1 ], MAX_CONTROL_LABEL, "%s", CONFIG::get_menu_search_title().c_str() );
     }
 
     return instance_keyconfig;
