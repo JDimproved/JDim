@@ -274,7 +274,7 @@ namespace ARTICLE
         SIG_ON_URL sig_on_url(){ return m_sig_on_url; }
         SIG_LEAVE_URL sig_leave_url(){ return m_sig_leave_url; }
 
-        DrawAreaBase( const std::string& url );
+        explicit DrawAreaBase( const std::string& url );
         ~DrawAreaBase();
 
         const std::string& get_url() const { return m_url; }

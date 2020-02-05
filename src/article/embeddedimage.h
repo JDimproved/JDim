@@ -32,7 +32,7 @@ namespace ARTICLE
 
       public:
 
-        EmbeddedImage( const std::string& url );
+        explicit EmbeddedImage( const std::string& url );
         ~EmbeddedImage();
 
         Glib::RefPtr< Gdk::Pixbuf > get_pixbuf(){ return m_pixbuf; }

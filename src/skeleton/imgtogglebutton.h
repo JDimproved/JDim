@@ -18,11 +18,11 @@ namespace SKELETON
 
       public:
 
-        ImgToggleButton( const int id, const std::string& label = {} );
+        explicit ImgToggleButton( const int id, const std::string& label = {} );
 
-        ImgToggleButton( const Gtk::StockID& stock_id,
-                         const std::string& label = {},
-                         const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
+        explicit ImgToggleButton( const Gtk::StockID& stock_id,
+                                  const std::string& label = {},
+                                  const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
 
       private:
 

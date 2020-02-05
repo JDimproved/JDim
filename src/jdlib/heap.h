@@ -19,7 +19,7 @@ namespace JDLIB
         void* m_ptr_head; // 検索開始位置
 
       public:
-        HEAP( std::size_t blocksize ) noexcept;
+        explicit HEAP( std::size_t blocksize ) noexcept;
         ~HEAP();
 
         HEAP( const HEAP& ) = delete;

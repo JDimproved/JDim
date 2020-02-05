@@ -14,7 +14,7 @@ namespace BBSLIST
     {
       public:
 
-        FavoriteListView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit FavoriteListView( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
         ~FavoriteListView();
 
         void show_view() override;

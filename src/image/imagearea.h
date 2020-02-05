@@ -15,7 +15,7 @@ namespace IMAGE
     {
       public:
 
-        ImageAreaMain( const std::string& url );
+        explicit ImageAreaMain( const std::string& url );
         ~ImageAreaMain();
 
         void show_image() override;

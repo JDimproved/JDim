@@ -43,7 +43,7 @@ namespace ARTICLE
         std::unique_ptr<JDLIB::Timeout> m_conn_timer;
 
       public:
-        ArticleAdmin( const std::string& url );
+        explicit ArticleAdmin( const std::string& url );
         ~ArticleAdmin();
 
         void save_session() override;

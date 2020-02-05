@@ -15,7 +15,7 @@ namespace BBSLIST
     class BBSListViewMain : public BBSListViewBase
     {
       public:
-        BBSListViewMain( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit BBSListViewMain( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
         ~BBSListViewMain();
 
         void show_view() override;

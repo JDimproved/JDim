@@ -15,7 +15,7 @@ namespace ARTICLE
         std::string m_url_messageview;
 
       public:
-        ArticleViewPreview( const std::string& url );
+        explicit ArticleViewPreview( const std::string& url );
         ~ArticleViewPreview();
 
         bool operate_view( const int control ) override;

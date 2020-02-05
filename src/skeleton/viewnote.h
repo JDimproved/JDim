@@ -20,7 +20,7 @@ namespace SKELETON
 
       public:
 
-        ViewNotebook( DragableNoteBook* parent );
+        explicit ViewNotebook( DragableNoteBook* parent );
         ~ViewNotebook() noexcept;
 
         void redraw_scrollbar();

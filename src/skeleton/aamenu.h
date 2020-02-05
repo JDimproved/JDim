@@ -30,7 +30,7 @@ namespace SKELETON
 
       public:
 
-        AAMenu( Gtk::Window& parent );
+        explicit AAMenu( Gtk::Window& parent );
         ~AAMenu();
 
         // 選択されたらemitされる

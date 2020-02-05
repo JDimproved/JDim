@@ -12,7 +12,7 @@ namespace ARTICLE
     class DrawAreaInfo : public ARTICLE::DrawAreaBase
     {
       public:
-        DrawAreaInfo( const std::string& url );
+        explicit DrawAreaInfo( const std::string& url );
     };
 }
 

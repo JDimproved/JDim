@@ -64,7 +64,7 @@ namespace SKELETON
 
     public:
 
-        Admin( const std::string& url );
+        explicit Admin( const std::string& url );
         ~Admin();
 
         // コピー禁止

@@ -155,7 +155,7 @@ namespace ARTICLE
     class ArticleViewPopupBM : public ArticleViewPopup
     {
       public:
-      ArticleViewPopupBM( const std::string& url ) : ArticleViewPopup( url, false ){}
+        explicit ArticleViewPopupBM( const std::string& url ) : ArticleViewPopup( url, false ){}
         ~ArticleViewPopupBM() noexcept = default;
 
         void show_view() override

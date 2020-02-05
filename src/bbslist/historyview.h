@@ -35,35 +35,35 @@ namespace BBSLIST
     {
       public:
 
-        HistoryThreadView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit HistoryThreadView( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
     };
 
     class HistoryCloseView : public HistoryViewBase
     {
       public:
 
-        HistoryCloseView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit HistoryCloseView( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
     };
 
     class HistoryBoardView : public HistoryViewBase
     {
       public:
 
-        HistoryBoardView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit HistoryBoardView( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
     };
 
     class HistoryCloseBoardView : public HistoryViewBase
     {
       public:
 
-        HistoryCloseBoardView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit HistoryCloseBoardView( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
     };
 
     class HistoryCloseImgView : public HistoryViewBase
     {
       public:
 
-        HistoryCloseImgView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit HistoryCloseImgView( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
     };
 }
 
