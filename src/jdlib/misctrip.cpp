@@ -119,7 +119,7 @@ std::string create_trip_newtype( const std::string& key )
             // 16進数文字列を全てバイナリに変換出来た [0-9A-Za-z]{16}
             if( MISC::chrtobin( hex_part.c_str(), key_binary ) == 16 )
             {
-                char salt[5] = { 0 };
+                std::string salt;
 
                 bool is_salt_suitable = true;
 
@@ -131,7 +131,7 @@ std::string create_trip_newtype( const std::string& key )
                     // [./0-9A-Za-z]
                     if( isalnum( key[n] ) != 0 || (unsigned char)( key[n] - 0x2e ) < 2 )
                     {
-                        strncat( salt, &key[n], 1 );
+                        salt.push_back( key[n] );
                     }
                     else
                     {
@@ -144,10 +144,10 @@ std::string create_trip_newtype( const std::string& key )
                 if( is_salt_suitable == true )
                 {
                     // salt に".."を足す
-                    strncat( salt, "..", 2 );
+                    salt.append( ".." );
 
                     // crypt (key は先頭8文字しか使われない)
-                    const char *crypted = crypt( key_binary, salt );
+                    const char *crypted = crypt( key_binary, salt.c_str() );
 
                     // 末尾から10文字(cryptの戻り値はnullptrでなければ必ず13文字)
                     if( crypted ) trip = std::string( crypted + 3 );
