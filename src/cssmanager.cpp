@@ -662,7 +662,7 @@ DOM* Css_Manager::create_textnode( const char* text )
 
     DOM* tmpdom = create_domnode( DOMNODE_TEXT );
     tmpdom->chardat = ( char* ) m_heap.heap_alloc_char( lng + 1 );
-    strncpy( tmpdom->chardat, text, lng );
+    strncpy( tmpdom->chardat, text, lng + 1 );
 
     return tmpdom;
 }
