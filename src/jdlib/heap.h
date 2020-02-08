@@ -23,7 +23,8 @@ namespace JDLIB
 
         void clear();
 
-        unsigned char* heap_alloc( long n );
+        unsigned char* heap_alloc( long n, long alignment = 8 );
+        unsigned char* heap_alloc_char( long n ) { return heap_alloc(n, 1); };
     };
 }
 

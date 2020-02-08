@@ -48,11 +48,11 @@ void HEAP::clear()
 }
 
 
-unsigned char* HEAP::heap_alloc( long n )
+unsigned char* HEAP::heap_alloc( long n, long alignment )
 {
     assert( n > 0 && n <= m_max );
 
-    if( m_used == 0 || m_used + n > m_max ){
+    if( m_used == 0 || m_used + n + (alignment - 1) > m_max ){
 
         m_heap_list.push_back( ( unsigned char* )malloc( m_max ) );
         memset( m_heap_list.back(), 0, m_max );
@@ -64,6 +64,14 @@ unsigned char* HEAP::heap_alloc( long n )
     }
 
     unsigned char* heap = m_heap_list.back() + m_used;
+
+    // アライメント調整
+    uintptr_t i_heap = reinterpret_cast<uintptr_t>(heap);
+    int rem = (i_heap % alignment) ? alignment - (i_heap % alignment) : 0;
+    heap += rem;
+    m_used += rem;
+    m_total_size += rem;
+
     m_used += n + 4;
     m_total_size += n + 4;
     
