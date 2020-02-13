@@ -17,7 +17,6 @@
 #include "jdlib/miscutil.h"
 #include "config/globalconf.h"
 
-#include "gtk/gtktextview.h"
 
 using namespace SKELETON;
 
@@ -373,7 +372,6 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::UndoEdit:
         case CONTROL::InputAA:
         {
-#if GTKMM_CHECK_VERSION(3,0,0)
             if( im_context_filter_keypress( event ) ) {
 #ifdef _DEBUG
                 std::cout << "gtk_im_context_filter_keypress\n";
@@ -381,17 +379,6 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
                 reset_im_context();
                 return true;
             }
-#else
-            GtkTextView *textview = gobj();
-            if( gtk_im_context_filter_keypress( textview->im_context, event ) )
-            {
-#ifdef _DEBUG    
-                std::cout << "gtk_im_context_filter_keypress\n";
-#endif
-                textview->need_im_reset = TRUE;
-                return true;
-            }
-#endif // GTKMM_CHECK_VERSION(3,0,0)
         }
     }
 
