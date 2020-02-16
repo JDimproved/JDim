@@ -1483,10 +1483,6 @@ bool Loader::init_unzip()
 
     m_use_zlib = true;
         
-#ifdef USE_OLDZLIB
-    m_check_gzheader = true;
-#endif
-
     // zlib 初期化
     m_zstream.zalloc = Z_NULL;
     m_zstream.zfree = Z_NULL;
@@ -1494,19 +1490,8 @@ bool Loader::init_unzip()
     m_zstream.next_in = Z_NULL;
     m_zstream.avail_in = 0;
 
-#ifdef USE_OLDZLIB
-#ifdef _DEBUG
-    std::cout << "use old zlib\n";
-#endif
-    if ( inflateInit2( &m_zstream, -MAX_WBITS ) != Z_OK )
-#else
-#ifdef _DEBUG
-    std::cout << "use zlib12\n";
-#endif
     if ( inflateInit2( &m_zstream, 15 + 32 ) != Z_OK ) // デフォルトの15に+32する( windowBits = 47 )と自動でヘッダ認識
-#endif
-    {  
-
+    {
         MISC::ERRMSG( "inflateInit2 failed." );
         return false;
     }
@@ -1521,112 +1506,11 @@ bool Loader::init_unzip()
 
 
 
-#ifdef USE_OLDZLIB
-//
-// gzip のヘッダチェック
-//
-// 戻り値 : ヘッダのサイズ(エラーなら-1)
-//
-// TODO: size がヘッダサイズよりも小さいと必ず失敗する
-//
-int Loader::check_gzheader( char* buf, size_t& size )
-{
-#ifdef _DEBUG
-    std::cout << "Loader::check_gzheader\n";
-#endif    
-
-    m_check_gzheader = false;
-
-    unsigned int pos = 0;
-
-    if( ( ( unsigned char* )buf )[ pos++ ] != 0x1f || ( ( unsigned char* )buf )[ pos++ ] != 0x8b ) return -1;
-
-    // CM(1byte)
-    if( buf[ pos++ ] != 0x08 ) return false;
-
-    // FLG(1byte)
-    unsigned char flag =( ( unsigned char* )buf )[ pos++ ];
-#ifdef _DEBUG
-    std::cout << "flag = " << std::hex << ( unsigned int )flag << std::dec << std::endl;
-#endif
-    if( flag & 0xe0 ) return -1;
-
-    // MTIME(4byte), XFL(1byte), OS(1byte)を飛ばす
-    pos += 6;
-
-    // XLEN(2byte) + 拡張フィールド
-    if( flag & 4 ){
-        unsigned short lngext;
-        memcpy( &lngext, buf + pos, sizeof( unsigned short ) );
-#ifdef _DEBUG
-        std::cout << "FEXTRA lng = " << lngext << std::endl;
-#endif
-        pos += sizeof( unsigned short ) + lngext;
-    }
-
-    // NAME
-    if( flag & 8 ){
-        int i = 0;
-        char tmp_str[ 256 ];
-        while( pos < size && i < 256  && buf[ pos ] != '\0' ) tmp_str[ i++ ] = buf[ pos++ ];
-        tmp_str[ i ] = buf[ pos++ ];
-        if( tmp_str[ i ] != '\0' ) return -1;
-#ifdef _DEBUG
-        std::cout << "NAME = " << tmp_str << std::endl;
-#endif
-    }
-
-    // COMMENT
-    if( flag & 16 ){
-        int i = 0;
-        char tmp_str[ 256 ];
-        while( pos < size && i < 256  && buf[ pos ] != '\0' ) tmp_str[ i++ ] = buf[ pos++ ];
-        tmp_str[ i ] = buf[ pos++ ];
-        if( tmp_str[ i ] != '\0' ) return -1;
-#ifdef _DEBUG
-        std::cout << "COMMENT = " << tmp_str << std::endl;
-#endif
-    }
-
-    // CRC16
-    if(flag & 2 ){
-        pos += 2;
-#ifdef _DEBUG
-        std::cout << "CRC16\n";
-#endif
-    }
-
-    if( pos >= size ) return -1;
-
-#ifdef _DEBUG
-    std::cout << "header size = " << pos << std::endl;
-#endif
-
-    return pos;
-}
-#endif
-
-
-
 //
 // unzipしてコールバック呼び出し
 //
 bool Loader::unzip( char* buf, size_t& read_size )
 {
-#ifdef USE_OLDZLIB
-    // gzip のヘッダを飛ばす
-    if( m_check_gzheader ){
-        int headsize = check_gzheader( buf, read_size );
-        if( headsize < 0 ){
-
-            MISC::ERRMSG( "invalid gzip header : " + m_data.url );
-            return false;
-        }
-        buf += headsize;
-        read_size -= headsize;
-    }
-#endif    
-
     // zlibの入力バッファに値セット
     if( m_zstream.avail_in + read_size > m_lng_buf_zlib_in ){ // オーバーフローのチェック
 
@@ -1659,13 +1543,6 @@ bool Loader::unzip( char* buf, size_t& read_size )
             
             // コールバック呼び出し
             if( byte_out && m_loadable ) m_loadable->receive( ( char* )m_buf_zlib_out, byte_out );
-
-#ifdef USE_OLDZLIB
-            if( ret == Z_STREAM_END ){
-                m_zstream.avail_in = 0; // CRC32(4byte)とISIZE(4byte)の分を引く
-                return true;
-            }
-#endif            
         }
         else return true;
                 

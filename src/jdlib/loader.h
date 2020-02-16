@@ -24,12 +24,9 @@
 #include <netdb.h>
 #endif
 
-// zlibが1.2よりバージョンが低いか判定する
-#ifndef ZLIB_VERNUM
-#define ZLIB_VERNUM 0x1000
-#endif
-#if ZLIB_VERNUM < 0x1200
-#define USE_OLDZLIB
+// zlibのバージョンが1.2.0以上か判定する
+#if ! defined(ZLIB_VERNUM) || ZLIB_VERNUM < 0x1200
+#error "require zlib version >= 1.2.0."
 #endif
 
 
@@ -74,10 +71,7 @@ namespace JDLIB
         // zlib 用変数
         bool m_use_zlib;
         z_stream m_zstream;
-#ifdef USE_OLDZLIB
-        bool m_check_gzheader;
-#endif
-        
+
     public:
 
         // low_priority = true の時はスレッド起動待ち状態になった時に、起動順のプライオリティを下げる
@@ -121,9 +115,6 @@ namespace JDLIB
         // unzip 用
         bool init_unzip();
         bool unzip( char* buf, size_t& read_size );
-#ifdef USE_OLDZLIB
-        int check_gzheader( char* buf, size_t& size );
-#endif        
     };
 
     // ローダの起動待ちキューにあるスレッドを実行しない
