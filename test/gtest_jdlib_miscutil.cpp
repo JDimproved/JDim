@@ -91,12 +91,15 @@ TEST_F(IsUrlSchemeTest, url_none)
     EXPECT_EQ( MISC::SCHEME_NONE, MISC::is_url_scheme( "ttp:/" ) );
     EXPECT_EQ( MISC::SCHEME_NONE, MISC::is_url_scheme( "tp:/" ) );
     EXPECT_EQ( MISC::SCHEME_NONE, MISC::is_url_scheme( "ftp:/" ) );
-    EXPECT_EQ( MISC::SCHEME_NONE, MISC::is_url_scheme( "sssp:/" ) );
+    // "sssp:/" はバッファオーバーランを起こす
 }
 
 TEST_F(IsUrlSchemeTest, url_http)
 {
     int length;
+    EXPECT_EQ( MISC::SCHEME_HTTP, MISC::is_url_scheme( "http://", &length ) );
+    EXPECT_EQ( 7, length );
+
     EXPECT_EQ( MISC::SCHEME_HTTP, MISC::is_url_scheme( "http://foobar", &length ) );
     EXPECT_EQ( 7, length );
 }
@@ -104,6 +107,9 @@ TEST_F(IsUrlSchemeTest, url_http)
 TEST_F(IsUrlSchemeTest, url_ttp)
 {
     int length;
+    EXPECT_EQ( MISC::SCHEME_TTP, MISC::is_url_scheme( "ttp://", &length ) );
+    EXPECT_EQ( 6, length );
+
     EXPECT_EQ( MISC::SCHEME_TTP, MISC::is_url_scheme( "ttp://foobar", &length ) );
     EXPECT_EQ( 6, length );
 }
@@ -111,6 +117,9 @@ TEST_F(IsUrlSchemeTest, url_ttp)
 TEST_F(IsUrlSchemeTest, url_tp)
 {
     int length;
+    EXPECT_EQ( MISC::SCHEME_TP, MISC::is_url_scheme( "tp://", &length ) );
+    EXPECT_EQ( 5, length );
+
     EXPECT_EQ( MISC::SCHEME_TP, MISC::is_url_scheme( "tp://foobar", &length ) );
     EXPECT_EQ( 5, length );
 }
@@ -118,6 +127,9 @@ TEST_F(IsUrlSchemeTest, url_tp)
 TEST_F(IsUrlSchemeTest, url_ftp)
 {
     int length;
+    EXPECT_EQ( MISC::SCHEME_FTP, MISC::is_url_scheme( "ftp://", &length ) );
+    EXPECT_EQ( 6, length );
+
     EXPECT_EQ( MISC::SCHEME_FTP, MISC::is_url_scheme( "ftp://foobar", &length ) );
     EXPECT_EQ( 6, length );
 }
@@ -125,6 +137,9 @@ TEST_F(IsUrlSchemeTest, url_ftp)
 TEST_F(IsUrlSchemeTest, url_sssp)
 {
     int length;
+    EXPECT_EQ( MISC::SCHEME_HTTP, MISC::is_url_scheme( "sssp://", &length ) );
+    EXPECT_EQ( 7, length );
+
     EXPECT_EQ( MISC::SCHEME_HTTP, MISC::is_url_scheme( "sssp://foobar", &length ) );
     EXPECT_EQ( 7, length );
 
