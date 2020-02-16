@@ -30,9 +30,6 @@ NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_mo
     : NodeTreeBase( url, date_modified )
     , m_regex( nullptr )
     , m_iconv( nullptr )
-    , m_decoded_lines( nullptr )
-    , m_buffer( nullptr )
-    , m_buffer_for_200( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeMachi::NodeTreeMachi url = " << get_url() << " modified = " << date_modified << std::endl;
@@ -68,14 +65,14 @@ void NodeTreeMachi::clear()
     if( m_iconv ) delete m_iconv;
     m_iconv = nullptr;
 
-    if( m_decoded_lines ) free( m_decoded_lines );
-    m_decoded_lines = nullptr;
+    m_decoded_lines.clear();
+    m_decoded_lines.shrink_to_fit();
 
-    if( m_buffer ) free( m_buffer );
-    m_buffer = nullptr;
+    m_buffer.clear();
+    m_buffer.shrink_to_fit();
 
-    if( m_buffer_for_200 ) free( m_buffer_for_200 );
-    m_buffer_for_200 = nullptr;
+    m_buffer_for_200.clear();
+    m_buffer_for_200.shrink_to_fit();
 }
 
 
@@ -98,10 +95,7 @@ void NodeTreeMachi::init_loading()
     std::string charset = DBTREE::board_charset( get_url() );
     if( ! m_iconv ) m_iconv = new JDLIB::Iconv( charset, "UTF-8" );
 
-    if( ! m_decoded_lines ) m_decoded_lines = ( char* )malloc( BUF_SIZE_ICONV_OUT );
-    if( ! m_buffer ) m_buffer = ( char* )malloc( BUF_SIZE_ICONV_OUT + 64 );
-
-    if( m_buffer_for_200 ) m_buffer_for_200[ 0 ] = '\0';
+    m_buffer_for_200.clear();
 
     m_tmp_buffer = std::string();
 }
@@ -233,11 +227,9 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
         buffer = std::string();
     }
 
-    int byte = buffer.length();
-    memcpy( m_buffer, buffer.c_str(), byte );
-    m_buffer[ byte ] = '\0';
+    m_buffer = std::move( buffer );
 
-    return m_buffer;
+    return &*m_buffer.begin();
 }
 
 
@@ -343,11 +335,9 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
         buffer = std::string();
     }
 
-    byte = buffer.length();
-    memcpy( m_decoded_lines, buffer.c_str(), byte );
-    m_decoded_lines[ byte ] = '\0';
+    m_decoded_lines = std::move( buffer );
 
-    return m_decoded_lines;
+    return m_decoded_lines.c_str();
 }
 
 
@@ -358,16 +348,13 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
 void NodeTreeMachi::receive_data( const char* data, size_t size )
 {
     // dat落ち判定用処理。 receive_finish() も参照
-    if( ! is_checking_update() && get_code() == HTTP_OK
-        && ( ! m_buffer_for_200 || m_buffer_for_200[ 0 ] == '\0' ) ){
+    if( ! is_checking_update() && get_code() == HTTP_OK && m_buffer_for_200.empty() ) {
 #ifdef _DEBUG
         std::cout << "NodeTreeMachi::receive_data : save some bytes\n";
 #endif
 
-        if( ! m_buffer_for_200 ) m_buffer_for_200 = ( char* )malloc( BUF_SIZE_200 + 64 );
         const int lng = MIN( size, BUF_SIZE_200 );
-        memcpy( m_buffer_for_200, data, lng );
-        m_buffer_for_200[ lng ] = '\0';
+        m_buffer_for_200.append( data, lng );
     }
 
     NodeTreeBase::receive_data( data, size );
@@ -385,11 +372,11 @@ void NodeTreeMachi::receive_finish()
 #endif
 
     // dat落ち判定
-    if( m_buffer_for_200 && m_buffer_for_200[ 0 ] == '<' && ( m_buffer_for_200[ 1 ] == 'E' || m_buffer_for_200[ 1 ] == 'h' )
-        ){
+    if( m_buffer_for_200.size() >= 2 && m_buffer_for_200[ 0 ] == '<'
+            && ( m_buffer_for_200[ 1 ] == 'E' || m_buffer_for_200[ 1 ] == 'h' ) ) {
 
         int byte_lines;
-        std::string str_lines( m_iconv->convert( m_buffer_for_200, strlen( m_buffer_for_200 ), byte_lines ) );
+        std::string str_lines( m_iconv->convert( &*m_buffer_for_200.begin(), m_buffer_for_200.size(), byte_lines ) );
 
 #ifdef _DEBUG    
         std::cout << str_lines << std::endl;
