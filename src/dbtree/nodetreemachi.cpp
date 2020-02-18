@@ -336,6 +336,7 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
     }
 
     m_decoded_lines = std::move( buffer );
+    byte = m_decoded_lines.size();
 
     return m_decoded_lines.c_str();
 }
