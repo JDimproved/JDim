@@ -438,6 +438,7 @@ namespace ARTICLE
         void draw_string( LAYOUT* node, const CLIPINFO& ci,
                           const int color, const int color_back, const int byte_from, const int byte_to );
         bool draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci );
+        char get_layout_fontid(LAYOUT *layout);
         void set_node_font( LAYOUT* layout );
 
         // drawarea がリサイズ実行
@@ -452,7 +453,7 @@ namespace ARTICLE
         int get_vscr_maxval();
 
         // キャレット関係
-        bool is_pointer_on_rect( const RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
+        bool is_pointer_on_rect( const RECTANGLE* rect, LAYOUT* layout, const char* text, const int pos_start, const int pos_to,
                                  const int x, const int y,
                                  int& pos, int& width_line, int& char_width, int& byte_char );
         LAYOUT* set_caret( CARET_POSITION& caret_pos, int x, int y );
