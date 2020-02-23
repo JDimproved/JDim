@@ -1,79 +1,62 @@
 // ライセンス: GPL2
 
+// NOTE: unsigned charでメモリを確保する根拠 (C++規格ドラフト)
+// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3337.pdf#section.3.10 (3.10.10)
+// http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2012/n3337.pdf#section.3.11 (3.11.6)
+
 //#define _DEBUG
 #include "jddebug.h"
 
 #include "heap.h"
 
-#include <cstdlib>
-#include <cstring>
-
 using namespace JDLIB;
 
-HEAP::HEAP( long blocksize )
-    : m_max( blocksize ),
-      m_used( 0 ),
-      m_total_size( 0 )
-{
-#ifdef _DEBUG        
-    std::cout << "HEAP::HEAP : max = " << m_max << std::endl;
-#endif
-}
+HEAP::HEAP( std::size_t blocksize ) noexcept
+    : m_blocksize{ blocksize }
+    , m_space_avail{ 0 }
+    , m_ptr_head{ nullptr }
+{}
 
 
 HEAP::~HEAP()
 {
-#ifdef _DEBUG        
-    std::cout << "HEAP::~HEAP : size " << m_total_size << " max =" << m_max << std::endl;
-#endif
-
     clear();
 }
 
 
 void HEAP::clear()
 {
-#ifdef _DEBUG        
-    std::cout << "HEAP::crear max = " << m_max <<  " total = " << m_total_size << std::endl;
-#endif
-
-    m_total_size = 0;
-    m_used = 0;
-    
-    std::list< unsigned char* >::iterator it;
-    for( it = m_heap_list.begin(); it != m_heap_list.end(); ++it ){
-        free( (*it) );
-    }
     m_heap_list.clear();
+    m_space_avail = 0;
+    m_ptr_head = nullptr;
 }
 
 
-unsigned char* HEAP::heap_alloc( long n, long alignment )
+void* HEAP::heap_alloc( std::size_t size_bytes, std::size_t alignment )
 {
-    assert( n > 0 && n <= m_max );
+    assert( m_blocksize > size_bytes && size_bytes > 0 );
+    assert( size_bytes >= alignment );
 
-    if( m_used == 0 || m_used + n + (alignment - 1) > m_max ){
+    while(1) {
+        if( !m_ptr_head || m_space_avail < size_bytes || m_space_avail >= m_blocksize ) {
+            // 確保したメモリブロックはゼロ初期化する
+            m_heap_list.emplace_back( new unsigned char[m_blocksize]{} );
+            m_ptr_head = &m_heap_list.back()[0];
+            m_space_avail = m_blocksize - 1;
+        }
 
-        m_heap_list.push_back( ( unsigned char* )malloc( m_max ) );
-        memset( m_heap_list.back(), 0, m_max );
-        m_used = 0;
-
-#ifdef _DEBUG
-        std::cout << "HEAP::heap_alloc malloc max = " << m_max <<  " total = " << m_total_size + n + 4 << std::endl;
-#endif
+        // アライメント調整された指定サイズのバッファを探す
+        if(std::align( alignment, size_bytes, m_ptr_head, m_space_avail )) {
+            // 見つかったアドレスを保存してポインターと空きスペースを次の検索開始位置に合わせる
+            void* found = m_ptr_head;
+            m_ptr_head = std::next( reinterpret_cast<unsigned char*>(m_ptr_head), size_bytes );
+            m_space_avail -= size_bytes;
+            return found;
+        }
+        else {
+            // 見つからなかった場合は新しいメモリブロックを追加する
+            m_ptr_head = nullptr;
+            m_space_avail = 0;
+        }
     }
-
-    unsigned char* heap = m_heap_list.back() + m_used;
-
-    // アライメント調整
-    uintptr_t i_heap = reinterpret_cast<uintptr_t>(heap);
-    int rem = (i_heap % alignment) ? alignment - (i_heap % alignment) : 0;
-    heap += rem;
-    m_used += rem;
-    m_total_size += rem;
-
-    m_used += n + 4;
-    m_total_size += n + 4;
-    
-    return heap;
 }

@@ -610,7 +610,7 @@ void Css_Manager::set_size( CSS_PROPERTY* css, double height ) const
 //
 DOM* Css_Manager::create_domnode( int type )
 {
-    DOM* tmpdom = ( DOM* ) m_heap.heap_alloc( sizeof( DOM ) );
+    DOM* tmpdom = m_heap.heap_alloc<DOM>();
     tmpdom->nodetype = type;
     tmpdom->attr = 0;
 
@@ -661,7 +661,7 @@ DOM* Css_Manager::create_textnode( const char* text )
 #endif
 
     DOM* tmpdom = create_domnode( DOMNODE_TEXT );
-    tmpdom->chardat = ( char* ) m_heap.heap_alloc_char( lng + 1 );
+    tmpdom->chardat = m_heap.heap_alloc<char>( lng + 1 );
     strncpy( tmpdom->chardat, text, lng + 1 );
 
     return tmpdom;

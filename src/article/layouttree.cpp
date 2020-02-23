@@ -110,7 +110,7 @@ void LayoutTree::clear()
 // RECTANGLE型のメモリ確保
 RECTANGLE* LayoutTree::create_rect()
 {
-    RECTANGLE* rect = ( RECTANGLE* ) m_heap.heap_alloc( sizeof( RECTANGLE ) );
+    RECTANGLE* rect = m_heap.heap_alloc<RECTANGLE>();
     rect->end = true;
 
     return rect;
@@ -122,7 +122,7 @@ RECTANGLE* LayoutTree::create_rect()
 //
 LAYOUT* LayoutTree::create_layout( const int type )
 {
-    LAYOUT* tmplayout = ( LAYOUT* ) m_heap.heap_alloc( sizeof( LAYOUT ) );
+    LAYOUT* tmplayout = m_heap.heap_alloc<LAYOUT>();
     tmplayout->type = type;
     tmplayout->id_header = m_id_header; 
     tmplayout->id = m_id_layout++;
@@ -250,7 +250,7 @@ LAYOUT* LayoutTree::create_layout_div( const int id )
 
     m_last_div = div;
 
-    div->css = ( CORE::CSS_PROPERTY* ) m_heap.heap_alloc( sizeof( CORE::CSS_PROPERTY ) );
+    div->css = m_heap.heap_alloc<CORE::CSS_PROPERTY>();
     *div->css = CORE::get_css_manager()->get_property( id );
 
     return div;
@@ -575,7 +575,7 @@ LAYOUT* LayoutTree::create_separator()
     LAYOUT* header = create_layout_div( classid );
     header->type = DBTREE::NODE_HEADER;
 
-    DBTREE::NODE* node = ( DBTREE::NODE* ) m_heap.heap_alloc( sizeof( DBTREE::NODE ) );
+    DBTREE::NODE* node = m_heap.heap_alloc<DBTREE::NODE>();
     node->fontid = FONT_DEFAULT; // デフォルトフォントを設定
     header->node = node;
 

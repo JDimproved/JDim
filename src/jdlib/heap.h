@@ -2,29 +2,41 @@
 
 // ヒープクラス
 
-#ifndef _HEAP_H
-#define _HEAP_H
+#ifndef HEAP_H
+#define HEAP_H
 
-#include <string>
 #include <list>
+#include <memory>
+
 
 namespace JDLIB
 {
     class HEAP
     {
-        std::list< unsigned char* >m_heap_list;
-        long m_max;  // ブロックサイズ
-        long m_used; // ブロック内の使用量
-        long m_total_size; // トータルサイズ
-        
+        std::list< std::unique_ptr<unsigned char[]> > m_heap_list;
+        std::size_t m_blocksize; // ブロックサイズ
+        std::size_t m_space_avail; // ブロックの未使用サイズ
+        void* m_ptr_head; // 検索開始位置
+
       public:
-        HEAP( long blocksize );
+        HEAP( std::size_t blocksize ) noexcept;
         ~HEAP();
+
+        HEAP( const HEAP& ) = delete;
+        HEAP& operator=( const HEAP& ) = delete;
+        HEAP( HEAP&& ) noexcept = default;
+        HEAP& operator=( HEAP&& ) = default;
 
         void clear();
 
-        unsigned char* heap_alloc( long n, long alignment = 8 );
-        unsigned char* heap_alloc_char( long n ) { return heap_alloc(n, 1); };
+        // 戻り値はunsigned char*のエイリアス
+        void* heap_alloc( std::size_t size_bytes, std::size_t alignment );
+
+        template<typename T>
+        T* heap_alloc( std::size_t length = 1 )
+        {
+            return reinterpret_cast<T*>( heap_alloc( sizeof(T) * length, alignof(T) ) );
+        }
     };
 }
 

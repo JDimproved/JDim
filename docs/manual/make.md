@@ -37,7 +37,7 @@ layout: default
 #### 必須
 - autoconf
 - automake
-- g++ 4.8.1 以上、または clang++ 3.3 以上
+- g++ 5 以上、または clang++ 3.3 以上
 - gnutls
 - gtkmm
 - libtool

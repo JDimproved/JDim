@@ -800,7 +800,7 @@ std::string NodeTreeBase::get_id_name( int number )
 //
 NODE* NodeTreeBase::create_node()
 {
-    NODE* tmpnode = ( NODE* ) m_heap.heap_alloc( sizeof( NODE ) );
+    NODE* tmpnode = m_heap.heap_alloc<NODE>();
 
     tmpnode->id_header = m_id_header;
     tmpnode->fontid = FONT_EMPTY; // フォントID未設定
@@ -828,7 +828,7 @@ NODE* NodeTreeBase::create_node_header()
     tmpnode->type =  NODE_HEADER;
 
     // ヘッダ情報
-    tmpnode->headinfo = ( HEADERINFO* )m_heap.heap_alloc( sizeof( HEADERINFO ) );
+    tmpnode->headinfo = m_heap.heap_alloc<HEADERINFO>();
     if( m_id_header >= 2 ) m_vec_header[ m_id_header -1 ]->headinfo->next_header = tmpnode;
     
     return tmpnode;
@@ -933,12 +933,12 @@ NODE* NodeTreeBase::create_node_link( const char* text, const int n, const char*
         tmpnode->type = NODE_LINK;
 
         // リンク情報作成
-        char *tmplink = ( char* )m_heap.heap_alloc_char( n_link + 1 );
+        char *tmplink = m_heap.heap_alloc<char>( n_link + 1 );
         memcpy( tmplink, link, n_link );
         tmplink[ n_link ] = '\0';
 
         // リンク情報セット
-        tmpnode->linkinfo = ( LINKINFO* )m_heap.heap_alloc( sizeof( LINKINFO ) );
+        tmpnode->linkinfo = m_heap.heap_alloc<LINKINFO>();
         tmpnode->linkinfo->link = tmplink;
     }
     
@@ -956,7 +956,7 @@ NODE* NodeTreeBase::create_node_anc( const char* text, const int n, const char* 
     NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold );
     if( tmpnode ){
 
-        tmpnode->linkinfo->ancinfo = ( ANCINFO* )m_heap.heap_alloc( sizeof( ANCINFO ) * ( lng_ancinfo + 1 ) );
+        tmpnode->linkinfo->ancinfo = m_heap.heap_alloc<ANCINFO>( lng_ancinfo + 1 );
         memcpy( tmpnode->linkinfo->ancinfo, ancinfo, sizeof( ANCINFO ) * lng_ancinfo );
     }
     
@@ -973,12 +973,12 @@ NODE* NodeTreeBase::create_node_sssp( const char* link, const int n_link )
     tmpnode->type = NODE_SSSP;
 
     // リンク情報作成
-    char *tmplink = ( char* )m_heap.heap_alloc_char( n_link + 1 );
+    char *tmplink = m_heap.heap_alloc<char>( n_link + 1 );
     memcpy( tmplink, link, n_link );
     tmplink[ n_link ] = '\0';
 
     // リンク情報セット
-    tmpnode->linkinfo = ( LINKINFO* )m_heap.heap_alloc( sizeof( LINKINFO ) );
+    tmpnode->linkinfo = m_heap.heap_alloc<LINKINFO>();
     tmpnode->linkinfo->link = tmplink;
     tmpnode->linkinfo->image = true;
     tmpnode->linkinfo->imglink = tmpnode->linkinfo->link;
@@ -1011,7 +1011,7 @@ NODE* NodeTreeBase::create_node_thumbnail( const char* text, const int n, const 
 
     if( tmpnode ){
         // サムネイル画像のURLをセット
-        char *tmpthumb = ( char* )m_heap.heap_alloc_char( n_thumb + 1 );
+        char *tmpthumb = m_heap.heap_alloc<char>( n_thumb + 1 );
         memcpy( tmpthumb, thumb, n_thumb );
         tmpthumb[ n_thumb ] = '\0';
 
@@ -1045,7 +1045,7 @@ NODE* NodeTreeBase::create_node_ntext( const char* text, const int n, const int 
     if( tmpnode ){
         tmpnode->type = NODE_TEXT;
 
-        tmpnode->text = ( char* )m_heap.heap_alloc_char( n + MAX_RES_DIGIT + 4 );
+        tmpnode->text = m_heap.heap_alloc<char>( n + MAX_RES_DIGIT + 4 );
         memcpy( tmpnode->text, text, n ); tmpnode->text[ n ] = '\0';
         tmpnode->color_text = color_text;
         tmpnode->bold = bold;
@@ -1755,7 +1755,7 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
     // plainな名前取得
     // 名前あぼーんや名前抽出などで使用する
     if( defaultname ){
-        header->headinfo->name = ( char* )m_heap.heap_alloc_char( lng +2 );
+        header->headinfo->name = m_heap.heap_alloc<char>( lng +2 );
         memcpy( header->headinfo->name, str, lng );
     }
     else{
@@ -1765,7 +1765,7 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
             if( node->text ) str_tmp += node->text;
             node = node->next_node;
         }
-        header->headinfo->name = ( char* )m_heap.heap_alloc_char( str_tmp.length() +2 );
+        header->headinfo->name = m_heap.heap_alloc<char>( str_tmp.length() +2 );
         memcpy( header->headinfo->name, str_tmp.c_str(), str_tmp.length() );
     }
 }
