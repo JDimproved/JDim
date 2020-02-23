@@ -213,9 +213,6 @@ namespace DBTREE
         // ref == true なら先頭に ">" を付ける
         std::string get_res_str( int number, bool ref = false );
 
-        // number　番のレスの生文字列を返す
-        std::string get_raw_res_str( int number );
-
         // 書き込み時の名前とメアド
         const std::string& get_write_name() const { return m_write_name; }
         void set_write_name( const std::string& str ){ m_save_info = true; m_write_name = str; }

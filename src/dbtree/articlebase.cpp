@@ -341,15 +341,6 @@ std::string ArticleBase::get_res_str( int number, bool ref )
 
 
 //
-// number　番のレスの生文字列を返す
-//
-std::string ArticleBase::get_raw_res_str( int number )
-{
-    return get_nodetree()->get_raw_res_str( number );
-}
-
-
-//
 // 更新時刻
 //
 time_t ArticleBase::get_time_modified()
