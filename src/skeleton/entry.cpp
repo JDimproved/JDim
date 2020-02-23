@@ -1,17 +1,12 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
-#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "entry.h"
 
 #include "control/controlid.h"
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-#include <gdk/gdkkeysyms-compat.h>
-#endif
-#include <gtk/gtkentry.h>
 
 using namespace SKELETON;
 
@@ -43,15 +38,14 @@ bool JDEntry::on_key_press_event( GdkEventKey* event )
 
     const guint key = event->keyval;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
-    const bool up = ( key == GDK_Up || ( ctrl && key == 'p' ) );
-    const bool down = ( key == GDK_Down || ( ctrl && key == 'n' ) );
-    const bool esc = ( key == GDK_Escape );
+    const bool up = ( key == GDK_KEY_Up || ( ctrl && key == 'p' ) );
+    const bool down = ( key == GDK_KEY_Down || ( ctrl && key == 'n' ) );
+    const bool esc = ( key == GDK_KEY_Escape );
 
     // 上下をキャンセル
     // gtkentry.cpp からのハック。環境やバージョンによっては問題が出るかもしれないので注意
     if( up || down || esc ){
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         if( im_context_filter_keypress( event ) ) {
 #ifdef _DEBUG
             std::cout << "gtk_im_context_filter_keypress\n";
@@ -59,18 +53,6 @@ bool JDEntry::on_key_press_event( GdkEventKey* event )
             reset_im_context();
             return TRUE;
         }
-#else
-        GtkEntry *entry = gobj();
-        if( gtk_im_context_filter_keypress( entry->im_context, event ) )
-        {
-#ifdef _DEBUG    
-            std::cout << "gtk_im_context_filter_keypress\n";
-#endif
-            entry->need_im_reset = TRUE;
-
-            return TRUE;
-        }
-#endif // GTKMM_CHECK_VERSION(3,0,0)
         else if( up || down ){
 
             if( up ) m_sig_operate.emit( CONTROL::Up );

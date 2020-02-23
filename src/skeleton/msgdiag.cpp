@@ -10,10 +10,6 @@
 #include "dispatchmanager.h"
 #include "global.h"
 
-#if !GTKMM_CHECK_VERSION(2,22,0)
-#include <gtk/gtkmessagedialog.h>
-#include <gtk/gtklabel.h>
-#endif
 
 using namespace SKELETON;
 
@@ -39,20 +35,12 @@ MsgDiag::MsgDiag( Gtk::Window* parent,
     if( parent ) set_transient_for( *parent );
     else set_transient_for( *CORE::get_mainwindow() );
 
-#if GTKMM_CHECK_VERSION(2,22,0)
+    // tab でラベルにフォーカスが移らないようにする
     const std::vector< Gtk::Widget* > area = get_message_area()->get_children();
     Gtk::Label* const primary_label = dynamic_cast< Gtk::Label* >( area.front() );
     if( primary_label ) {
         primary_label->set_can_focus( false );
     }
-#else
-    // tab でラベルにフォーカスが移らないようにする ( messagedialog.ccg をハックした )
-    Gtk::Widget* wdt = Glib::wrap( gobj()->label );
-    if( wdt ){
-        Gtk::Label* label = dynamic_cast< Gtk::Label* >( wdt );
-        if( label ) label->property_can_focus() = false;
-    }
-#endif // GTKMM_CHECK_VERSION(2,22,0)
 }
 
 

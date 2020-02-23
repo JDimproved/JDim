@@ -1,7 +1,6 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
-#include "gtkmmversion.h"
 #include "jddebug.h"
 
 #include "selectitempref.h"
@@ -11,10 +10,6 @@
 
 #include "global.h"
 #include "session.h"
-
-#if GTKMM_CHECK_VERSION(3,0,0)
-#include <gdk/gdkkeysyms-compat.h>
-#endif
 
 using namespace SKELETON;
 
@@ -339,10 +334,10 @@ bool SelectItemPref::on_key_press_event( GdkEventKey* event )
     bool hook = false;
 
     // "Gtk::Dialog"は"Esc"を押すと閉じられてしまうので
-    // "GDK_Escape"をキャンセルする
+    // "GDK_KEY_Escape"をキャンセルする
     switch( event->keyval )
     {
-        case GDK_Escape :
+        case GDK_KEY_Escape :
             hook = true;
             break;
     }
@@ -363,17 +358,17 @@ bool SelectItemPref::on_key_release_event( GdkEventKey* event )
 
     switch( event->keyval )
     {
-        case GDK_Escape :
+        case GDK_KEY_Escape :
             hook = true;
             m_tree_shown.get_selection()->unselect_all();
             m_tree_hidden.get_selection()->unselect_all();
             break;
 
-        case GDK_Right :
+        case GDK_KEY_Right :
             slot_delete();
             break;
 
-        case GDK_Left :
+        case GDK_KEY_Left :
             slot_add();
             break;
     }

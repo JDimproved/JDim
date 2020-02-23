@@ -422,12 +422,7 @@ void JDWindow::restore_status()
 // マウスジェスチャ表示
 void JDWindow::set_mginfo( const std::string& mginfo )
 {
-#if GTKMM_CHECK_VERSION(2,20,0)
-    const bool realized = m_mginfo.get_realized();
-#else
-    const bool realized = m_mginfo.is_realized();
-#endif
-    if( realized ) {
+    if( m_mginfo.get_realized() ) {
         m_mginfo.set_text( mginfo );
     }
 }
