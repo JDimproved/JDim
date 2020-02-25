@@ -3228,7 +3228,7 @@ void BBSListViewBase::save_xml_impl( const std::string& file, const std::string&
     if( ! remove_dir.empty() )
     {
         XML::Dom* domroot = m_document.get_root_element( root );
-        XML::DomList domlist = domroot->childNodes();
+        std::list<XML::Dom*> domlist = domroot->childNodes();
         std::list< XML::Dom* >::iterator it = domlist.begin();
         while( it != domlist.end() )
         {

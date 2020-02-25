@@ -117,7 +117,7 @@ Dom* Document::get_root_element( const std::string& node_name )
 {
     Dom* node = nullptr;
 
-    DomList children = childNodes();
+    std::list<Dom*> children = childNodes();
     std::list< Dom* >::iterator it = children.begin();
     while( it != children.end() )
     {

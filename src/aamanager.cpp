@@ -156,7 +156,7 @@ void AAManager::load_history()
     if( ! root ) return;
 
     std::list< std::string > tmp_history;
-    XML::DomList domlist = root->childNodes();
+    std::list<XML::Dom*> domlist = root->childNodes();
     std::list< XML::Dom* >::iterator it = domlist.begin();
     for( ; it != domlist.end() && (int) tmp_history.size() < CONFIG::get_aahistory_size(); ++it ){
 

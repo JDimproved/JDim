@@ -92,7 +92,7 @@ void Usrcmd_Manager::analyze_xml()
 
     m_list_cmd.clear();
 
-    XML::DomList usrcmds = m_document.getElementsByTagName( XML::get_name( TYPE_USRCMD ) );
+    std::list<XML::Dom*> usrcmds = m_document.getElementsByTagName( XML::get_name( TYPE_USRCMD ) );
 
     std::list< XML::Dom* >::iterator it = usrcmds.begin();
     while( it != usrcmds.end() )
@@ -452,7 +452,7 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
     std::string menu;
     if( ! dom ) return menu;
 
-    XML::DomList domlist = dom->childNodes();
+    std::list<XML::Dom*> domlist = dom->childNodes();
     std::list< XML::Dom* >::iterator it = domlist.begin();
     while( it != domlist.end() )
     {

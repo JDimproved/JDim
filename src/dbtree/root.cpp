@@ -413,7 +413,7 @@ void Root::bbsmenu2xml( const std::string& menu )
 
     // 現在の仕様では HTML > BODY > font[size="2"] の子要素が対象
     // 特定のサイト(2ch.sc、next2ch.net)のbbsmenu.htmlにはfontタグがないため別のタグを使う
-    XML::DomList targets = html.getElementsByTagName( "font" );
+    std::list<XML::Dom*> targets = html.getElementsByTagName( "font" );
     if( targets.empty() ) targets = html.getElementsByTagName( "small" );
     if( targets.empty() ) targets = html.getElementsByTagName( "body" );
     if( targets.empty() ) {
@@ -485,7 +485,7 @@ void Root::analyze_board_xml()
     m_analyzing_board_xml = true;
     m_analyzed_path_board.clear();
 
-    XML::DomList boards = m_xml_document.getElementsByTagName( "board" );
+    std::list<XML::Dom*> boards = m_xml_document.getElementsByTagName( "board" );
 
     std::list< XML::Dom* >::iterator it = boards.begin();
     while( it != boards.end() )
