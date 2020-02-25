@@ -36,6 +36,7 @@ layout: default
 
 #### 必須
 - autoconf
+- autoconf-archive
 - automake
 - g++ 5 以上、または clang++ 3.3 以上
 - gnutls
