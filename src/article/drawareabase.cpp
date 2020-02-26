@@ -143,6 +143,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 
     // フォント設定
     set_fontid( FONT_MAIN );
+    set_mailfontid( FONT_MAIL );
 
     // 文字色
     set_colorid_text( COLOR_CHAR );

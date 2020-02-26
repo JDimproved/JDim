@@ -296,6 +296,7 @@ namespace CORE
         void slot_setup_key();
         void slot_setup_button();
         void slot_changefont_main();
+        void slot_changefont_mail();
         void slot_changefont_popup();
         void slot_changefont_tree();
         void slot_changecolor_char();

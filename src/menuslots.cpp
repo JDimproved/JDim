@@ -808,6 +808,25 @@ void Core::slot_changefont_main()
     }
 }
 
+//
+// メールのフォント変更
+//
+void Core::slot_changefont_mail()
+{
+    FontSelectionDialog diag;
+    diag.set_font_name( CONFIG::get_fontname( FONT_MAIL ) );
+    diag.set_title( "メール欄のフォント" );
+    diag.set_transient_for( *CORE::get_mainwindow() );
+    if( diag.run() == Gtk::RESPONSE_OK ){
+
+        CONFIG::set_fontname( FONT_MAIL, diag.get_font_name() );
+        ARTICLE::get_admin()->set_command( "init_font" );
+        ARTICLE::get_admin()->set_command( "relayout_all" );
+
+        CONFIG::set_fontname( FONT_MESSAGE, diag.get_font_name() );
+        MESSAGE::get_admin()->set_command( "relayout_all" );
+    }
+}
 
 //
 // ポップアップフォント変更

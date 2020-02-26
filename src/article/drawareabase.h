@@ -177,10 +177,13 @@ namespace ARTICLE
         CORE::CSS_PROPERTY m_css_body; // body の cssプロパティ
         int m_fontid;
         int m_defaultfontid;
+        int m_mailfontid;
+        int m_defaultmailfontid;
         FONTINFO *m_font; // カレントフォント情報
         FONTINFO m_defaultfont; // デフォルトフォント情報
         bool m_aafont_initialized;
         FONTINFO m_aafont; // AA用フォント情報
+        FONTINFO m_mailfont; // メールフォント情報
 
         // スレビューで文字幅の近似を厳密にするか
         bool m_strict_of_char;
@@ -286,6 +289,8 @@ namespace ARTICLE
         // フォントID( fontid.h にある ID を指定)
         int get_fontid() const { return m_fontid; }
         void set_fontid( int id ){ m_fontid = id; m_defaultfontid = id; }
+        int get_mailfontid() const { return m_fontid; }
+        void set_mailfontid( int id ){ m_mailfontid = id; m_defaultmailfontid = id; }
 
         // 新着セパレータのあるレス番号の取得とセット
         int get_separator_new();

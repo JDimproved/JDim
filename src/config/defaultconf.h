@@ -180,6 +180,7 @@ namespace CONFIG
     };
 
 #define CONF_FONTSIZE_THREAD "12"
+#define CONF_FONTSIZE_MAIL   "12"
 #define CONF_FONTSIZE_POPUP  "10"
 #define CONF_FONTSIZE_TREE   "10"
 
