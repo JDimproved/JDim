@@ -8,6 +8,7 @@
 #define _NODETREEBASE_H
 
 #include "node.h"
+#include "fontid.h"
 
 #include "skeleton/loadable.h"
 
@@ -290,17 +291,19 @@ namespace DBTREE
         NODE* create_node_br();
         NODE* create_node_hr();
         NODE* create_node_space( const int type );
-        NODE* create_node_multispace( const char* text, const int n );
+        NODE* create_node_multispace( const char* text, const int n, const char fontid = FONT_MAIN );
         NODE* create_node_htab();
-        NODE* create_node_link( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold );
+        NODE* create_node_link( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold, const char fontid = FONT_MAIN );
         NODE* create_node_anc( const char* text, const int n, const char* link, const int n_link,
                                const int color_text, const bool bold,
-                               const ANCINFO* ancinfo, const int lng_ancinfo );
+                               const ANCINFO* ancinfo, const int lng_ancinfo, const char fontid = FONT_MAIN );
         NODE* create_node_sssp( const char* link, const int n_link );
-        NODE* create_node_img( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold );
-        NODE* create_node_text( const char* text, const int color_text, const bool bold = false );
-        NODE* create_node_ntext( const char* text, const int n, const int color_text, const bool bold = false );
-        NODE* create_node_thumbnail( const char* text, const int n, const char* link, const int n_link, const char* thumb, const int n_thumb, const int color_text, const bool bold );
+        NODE* create_node_img( const char* text, const int n, const char* link, const int n_link, const int color_text,
+                               const bool bold, const char fontid = FONT_MAIN );
+        NODE* create_node_text( const char* text, const int color_text, const bool bold = false, const char fontid = FONT_MAIN );
+        NODE* create_node_ntext( const char* text, const int n, const int color_text, const bool bold = false, const char fontid = FONT_MAIN );
+        NODE* create_node_thumbnail( const char* text, const int n, const char* link, const int n_link, const char* thumb, const int n_thumb,
+                                     const int color_text, const bool bold, const char fontid = FONT_MAIN );
 
         // 以下、構文解析用関数
         void add_raw_lines( char* rawines, size_t size );
@@ -316,7 +319,7 @@ namespace DBTREE
         // bold : ボールド表示
         // ahref : <a href=～></a> からリンクノードを作成する
         void parse_html( const char* str, const int lng, const int color_text,
-                         bool digitlink, const bool bold, const bool ahref );
+                         bool digitlink, const bool bold, const bool ahref, const char fontid = FONT_MAIN );
 
         // 書き込みログ比較用文字列作成
         // m_buffer_write に作成した文字列をセットする

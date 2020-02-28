@@ -423,6 +423,10 @@ void DrawAreaBase::init_font()
 #endif
     }
 
+    std::string mailfontname = CONFIG::get_fontname( m_defaultmailfontid );
+    if ( fontname.empty() ) mailfontname = fontname;
+    init_fontinfo( m_mailfont, mailfontname );
+
     // layoutにフォントをセット
     m_font = &m_defaultfont;
     m_pango_layout->set_font_description( m_font->pfd );
@@ -2747,6 +2751,10 @@ char DrawAreaBase::get_layout_fontid( LAYOUT* layout )
         }
         break;
 
+    case FONT_MAIL:
+        return layout->node->fontid;
+        break;
+
     case FONT_EMPTY: // フォントID未決定
     case FONT_DEFAULT:
     default:
@@ -2771,6 +2779,9 @@ void DrawAreaBase::set_node_font( LAYOUT* layout )
         switch( m_fontid ){
         case FONT_AA:
             m_font = &m_aafont;
+            break;
+        case FONT_MAIL:
+            m_font = &m_mailfont;
             break;
         default:
             m_font = &m_defaultfont;
