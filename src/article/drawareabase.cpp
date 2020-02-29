@@ -121,6 +121,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 #endif
     , m_ready_back_frame( false )
     , m_aafont_initialized( false )
+    , m_mailfont_initialized{ false }
     , m_strict_of_char( false )
     , m_configure_reserve( false )
     , m_configure_width( 0 )
@@ -424,8 +425,14 @@ void DrawAreaBase::init_font()
     }
 
     std::string mailfontname = CONFIG::get_fontname( m_defaultmailfontid );
-    if ( fontname.empty() ) mailfontname = fontname;
-    init_fontinfo( m_mailfont, mailfontname );
+    if( ! mailfontname.empty() && mailfontname != fontname ) {
+        m_mailfont_initialized = true;
+        init_fontinfo( m_mailfont, mailfontname );
+    }
+    else {
+        // メモリ節約のためデフォルトとメール欄のフォントが同じときはデフォルトを利用する
+        m_mailfont_initialized = false;
+    }
 
     // layoutにフォントをセット
     m_font = &m_defaultfont;
@@ -2752,7 +2759,12 @@ char DrawAreaBase::get_layout_fontid( LAYOUT* layout )
         break;
 
     case FONT_MAIL:
-        return layout->node->fontid;
+        if( m_mailfont_initialized ) {
+            return layout->node->fontid; // メール欄などのフォント情報
+        }
+        else {
+            return m_defaultfontid; // デフォルトフォント情報
+        }
         break;
 
     case FONT_EMPTY: // フォントID未決定

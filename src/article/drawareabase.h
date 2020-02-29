@@ -181,9 +181,10 @@ namespace ARTICLE
         int m_defaultmailfontid;
         FONTINFO *m_font; // カレントフォント情報
         FONTINFO m_defaultfont; // デフォルトフォント情報
-        bool m_aafont_initialized;
         FONTINFO m_aafont; // AA用フォント情報
         FONTINFO m_mailfont; // メールフォント情報
+        bool m_aafont_initialized;
+        bool m_mailfont_initialized;
 
         // スレビューで文字幅の近似を厳密にするか
         bool m_strict_of_char;
