@@ -177,10 +177,14 @@ namespace ARTICLE
         CORE::CSS_PROPERTY m_css_body; // body の cssプロパティ
         int m_fontid;
         int m_defaultfontid;
+        int m_mailfontid;
+        int m_defaultmailfontid;
         FONTINFO *m_font; // カレントフォント情報
         FONTINFO m_defaultfont; // デフォルトフォント情報
-        bool m_aafont_initialized;
         FONTINFO m_aafont; // AA用フォント情報
+        FONTINFO m_mailfont; // メールフォント情報
+        bool m_aafont_initialized;
+        bool m_mailfont_initialized;
 
         // スレビューで文字幅の近似を厳密にするか
         bool m_strict_of_char;
@@ -286,6 +290,8 @@ namespace ARTICLE
         // フォントID( fontid.h にある ID を指定)
         int get_fontid() const { return m_fontid; }
         void set_fontid( int id ){ m_fontid = id; m_defaultfontid = id; }
+        int get_mailfontid() const { return m_fontid; }
+        void set_mailfontid( int id ){ m_mailfontid = id; m_defaultmailfontid = id; }
 
         // 新着セパレータのあるレス番号の取得とセット
         int get_separator_new();
@@ -438,6 +444,7 @@ namespace ARTICLE
         void draw_string( LAYOUT* node, const CLIPINFO& ci,
                           const int color, const int color_back, const int byte_from, const int byte_to );
         bool draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci );
+        char get_layout_fontid(LAYOUT *layout);
         void set_node_font( LAYOUT* layout );
 
         // drawarea がリサイズ実行
@@ -452,7 +459,7 @@ namespace ARTICLE
         int get_vscr_maxval();
 
         // キャレット関係
-        bool is_pointer_on_rect( const RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
+        bool is_pointer_on_rect( const RECTANGLE* rect, LAYOUT* layout, const char* text, const int pos_start, const int pos_to,
                                  const int x, const int y,
                                  int& pos, int& width_line, int& char_width, int& byte_char );
         LAYOUT* set_caret( CARET_POSITION& caret_pos, int x, int y );

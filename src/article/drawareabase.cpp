@@ -121,6 +121,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 #endif
     , m_ready_back_frame( false )
     , m_aafont_initialized( false )
+    , m_mailfont_initialized{ false }
     , m_strict_of_char( false )
     , m_configure_reserve( false )
     , m_configure_width( 0 )
@@ -143,6 +144,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 
     // フォント設定
     set_fontid( FONT_MAIN );
+    set_mailfontid( FONT_MAIL );
 
     // 文字色
     set_colorid_text( COLOR_CHAR );
@@ -420,6 +422,16 @@ void DrawAreaBase::init_font()
 #ifdef _DEBUG
         std::cout << "DrawAreaBase::aa_fontname = " << aafontname << std::endl;
 #endif
+    }
+
+    std::string mailfontname = CONFIG::get_fontname( m_defaultmailfontid );
+    if( ! mailfontname.empty() && mailfontname != fontname ) {
+        m_mailfont_initialized = true;
+        init_fontinfo( m_mailfont, mailfontname );
+    }
+    else {
+        // メモリ節約のためデフォルトとメール欄のフォントが同じときはデフォルトを利用する
+        m_mailfont_initialized = false;
     }
 
     // layoutにフォントをセット
@@ -1476,7 +1488,7 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
                      || draw_head  ) ) {
 
             int byte_char;
-            width_line += get_width_of_one_char( layout->text + pos_to, byte_char, pre_char, wide_mode, get_fontid() );
+            width_line += get_width_of_one_char( layout->text + pos_to, byte_char, pre_char, wide_mode, get_layout_fontid( layout ) );
             pos_to += byte_char;
             n_byte += byte_char;
             ++n_ustr;
@@ -2730,37 +2742,58 @@ bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTION& se
     return true;
 }
 
-
 //
-// ノードのフォント設定
+// ノードで使うフォントを得る
 //
-void DrawAreaBase::set_node_font( LAYOUT* layout )
+char DrawAreaBase::get_layout_fontid( LAYOUT* layout )
 {
-    char layout_fontid;
-    if( ! layout->node ) return;
+    if( ! layout->node ) return m_fontid;
 
-    // フォント設定
     switch( layout->node->fontid ){
     case FONT_AA:
         if( m_aafont_initialized ){
-            layout_fontid = layout->node->fontid; // AA用フォント情報
+            return layout->node->fontid; // AA用フォント情報
         } else {
-            layout_fontid = m_defaultfontid; // デフォルトフォント情報
+            return m_defaultfontid; // デフォルトフォント情報
+        }
+        break;
+
+    case FONT_MAIL:
+        if( m_mailfont_initialized ) {
+            return layout->node->fontid; // メール欄などのフォント情報
+        }
+        else {
+            return m_defaultfontid; // デフォルトフォント情報
         }
         break;
 
     case FONT_EMPTY: // フォントID未決定
     case FONT_DEFAULT:
     default:
-        layout_fontid = m_defaultfontid; // デフォルトフォント情報
+        return m_defaultfontid; // デフォルトフォント情報
         break;
     }
 
+    return m_defaultfontid; // デフォルトフォント情報
+}
+
+//
+// ノードのフォント設定
+//
+void DrawAreaBase::set_node_font( LAYOUT* layout )
+{
+    if( ! layout->node ) return;
+
+    // フォント設定
+    char layout_fontid = get_layout_fontid( layout );
     if( m_fontid != layout_fontid ){
         m_fontid = layout_fontid; // 新しいフォントIDをセット
         switch( m_fontid ){
         case FONT_AA:
             m_font = &m_aafont;
+            break;
+        case FONT_MAIL:
+            m_font = &m_mailfont;
             break;
         default:
             m_font = &m_defaultfont;
@@ -3038,7 +3071,7 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
                 char pre_char = 0;
                 int byte_char;
                 while( pos_start < byte_from ){
-                    x += PANGO_PIXELS( get_width_of_one_char( node->text + pos_start, byte_char, pre_char, wide_mode, get_fontid() ) );
+                    x += PANGO_PIXELS( get_width_of_one_char( node->text + pos_start, byte_char, pre_char, wide_mode, get_layout_fontid( node ) ) );
                     pos_start += byte_char;
                 }
 
@@ -3050,7 +3083,7 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
                 n_byte = 0;
                 n_ustr = 0;
                 while( pos_to < byte_to_tmp ){
-                    width_line += get_width_of_one_char( node->text + pos_to, byte_char, pre_char, wide_mode, get_fontid() );
+                    width_line += get_width_of_one_char( node->text + pos_to, byte_char, pre_char, wide_mode, get_layout_fontid( node ) );
                     pos_to += byte_char;
                     n_byte += byte_char;
                     ++n_ustr;
@@ -4106,7 +4139,7 @@ void DrawAreaBase::update_live_speed( const int sec )
 // int& pos, int& width_line, int& char_width, int& byte_char
 // はそれぞれポインタの下の文字の位置(バイト)とその文字までの長さ(ピクセル)、文字の幅(ピクセル)、バイト
 //
-bool DrawAreaBase::is_pointer_on_rect( const RECTANGLE* rect, const char* text, const int pos_start, const int pos_to,
+bool DrawAreaBase::is_pointer_on_rect( const RECTANGLE* rect, LAYOUT* layout, const char* text, const int pos_start, const int pos_to,
                                        const int x, const int y,
                                        int& pos, int& width_line, int& char_width, int& byte_char )
 {
@@ -4123,7 +4156,7 @@ bool DrawAreaBase::is_pointer_on_rect( const RECTANGLE* rect, const char* text, 
 
     while( pos < pos_to ){
 
-        char_width = get_width_of_one_char( text + pos, byte_char, pre_char, wide_mode, get_fontid() );
+        char_width = get_width_of_one_char( text + pos, byte_char, pre_char, wide_mode, get_layout_fontid( layout ) );
 
         // マウスポインタの下にノードがある場合
         if( rect->x + PANGO_PIXELS( width_line ) <= x && x <= rect->x + PANGO_PIXELS( width_line + char_width ) ){
@@ -4214,7 +4247,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
                 int byte_char;
 
                 // テキストノードの中にある場合
-                if( is_pointer_on_rect( rect, layout->text, pos_start, pos_start + n_byte, x, y,
+                if( is_pointer_on_rect( rect, layout, layout->text, pos_start, pos_start + n_byte, x, y,
                                         pos, width_line, char_width, byte_char ) ){
 
 #ifdef _DEBUG_CARETMOVE
@@ -4437,7 +4470,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                     int char_width;
                     int byte_char;
 
-                    if( is_pointer_on_rect( rect, layout->text, rect->pos_start, rect->pos_start + rect->n_byte,
+                    if( is_pointer_on_rect( rect, layout, layout->text, rect->pos_start, rect->pos_start + rect->n_byte,
                                             x, y,
                                             pos, width_line, char_width, byte_char ) ) break;
 

@@ -667,6 +667,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "url_resp2", url_resp2 );
 
     cf.update( "fontname_main", fontname[ FONT_MAIN ] );
+    cf.update( "fontname_mail", fontname[ FONT_MAIL ] );
     cf.update( "fontname_popup", fontname[ FONT_POPUP ] );
     cf.update( "fontname_aa", fontname[ FONT_AA ] );
     cf.update( "fontname_bbs", fontname[ FONT_BBS ] );
@@ -950,6 +951,7 @@ void ConfigItems::set_fonts( JDLIB::ConfLoader& cf )
 
     // フォント
     fontname[ FONT_MAIN ] = cf.get_option_str( "fontname_main", defaultfont + " " + std::string( CONF_FONTSIZE_THREAD ) );
+    fontname[ FONT_MAIL ] = cf.get_option_str( "fontname_mail", defaultfont + " " + std::string( CONF_FONTSIZE_MAIL ) );
 
     // ポップアップのフォント
     fontname[ FONT_POPUP ] = cf.get_option_str( "fontname_popup", defaultfont + " " + std::string( CONF_FONTSIZE_POPUP ) );

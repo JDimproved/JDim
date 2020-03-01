@@ -6,6 +6,7 @@
 enum
 {
     FONT_MAIN = 0,   // スレッドビューなどの基本の物
+    FONT_MAIL,       // メールとか日付とかの部分
     FONT_POPUP,      // ポップアップ
     FONT_AA,         // AA(スレビュー)
 

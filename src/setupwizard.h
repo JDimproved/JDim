@@ -76,10 +76,12 @@ namespace CORE
         Gtk::Table m_table;
 
         Gtk::Label m_label_res;
+        Gtk::Label m_label_mail;
         Gtk::Label m_label_popup;
         Gtk::Label m_label_tree;
 
         Gtk::FontButton m_font_res;
+        Gtk::FontButton m_font_mail;
         Gtk::FontButton m_font_popup;
         Gtk::FontButton m_font_tree;
 
@@ -90,6 +92,7 @@ namespace CORE
       private:
 
         void slot_font_res();
+        void slot_font_mail();
         void slot_font_popup();
         void slot_font_tree();
     };

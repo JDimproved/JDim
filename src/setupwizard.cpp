@@ -106,15 +106,18 @@ void PageNet::slot_setup_browser()
 
 PageFont::PageFont() : Gtk::VBox(),
                        m_label( "３/５．フォントの設定をします", Gtk::ALIGN_START ),
-                       m_table( 2, 3 ),
+                       m_table( 2, 4 ),
                        m_label_res( "スレ(_T)", Gtk::ALIGN_START, Gtk::ALIGN_START, true ),
+                       m_label_mail( "メール(_U)", Gtk::ALIGN_START, Gtk::ALIGN_START, true ),
                        m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_START, Gtk::ALIGN_START, true ),
                        m_label_tree( "板／スレ一覧(_O)", Gtk::ALIGN_START, Gtk::ALIGN_START,  true ),
                        m_font_res( "スレフォント" ),
+                       m_font_mail( "メール欄フォント" ),
                        m_font_popup( "ポップアップフォント" ),
                        m_font_tree( "板／スレ一覧フォント" )
 {
     m_label_res.set_mnemonic_widget( m_font_res );
+    m_label_res.set_mnemonic_widget( m_font_mail );
     m_label_popup.set_mnemonic_widget( m_font_popup );
     m_label_tree.set_mnemonic_widget( m_font_tree );
 
@@ -124,21 +127,25 @@ PageFont::PageFont() : Gtk::VBox(),
     m_hbox_label.pack_start( m_label );
 
     m_font_res.set_font_name( CONFIG::get_fontname( FONT_MAIN ) );
+    m_font_mail.set_font_name( CONFIG::get_fontname( FONT_MAIL ) );
     m_font_popup.set_font_name( CONFIG::get_fontname( FONT_POPUP ) );
     m_font_tree.set_font_name( CONFIG::get_fontname( FONT_BBS ) );
 
     m_font_res.signal_font_set().connect( sigc::mem_fun( *this, &PageFont::slot_font_res ) ); 
+    m_font_mail.signal_font_set().connect( sigc::mem_fun( *this, &PageFont::slot_font_mail ) ); 
     m_font_popup.signal_font_set().connect( sigc::mem_fun( *this, &PageFont::slot_font_popup ) );
     m_font_tree.signal_font_set().connect( sigc::mem_fun( *this, &PageFont::slot_font_tree ) );
 
     m_table.set_spacings( 4 );
     m_table.attach( m_label_res, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK );
-    m_table.attach( m_label_popup, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK );
-    m_table.attach( m_label_tree, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK );
+    m_table.attach( m_label_mail, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK );
+    m_table.attach( m_label_popup, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK );
+    m_table.attach( m_label_tree, 0, 1, 3, 4, Gtk::FILL, Gtk::SHRINK );
 
     m_table.attach( m_font_res, 1, 2, 0, 1, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
-    m_table.attach( m_font_popup, 1, 2, 1, 2, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
-    m_table.attach( m_font_tree, 1, 2, 2, 3, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
+    m_table.attach( m_font_mail, 1, 2, 1, 2, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
+    m_table.attach( m_font_popup, 1, 2, 2, 3, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
+    m_table.attach( m_font_tree, 1, 2, 3, 4, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
 
     set_spacing( SPACING_SIZE );
     pack_start( m_hbox_label, Gtk::PACK_SHRINK );
@@ -150,6 +157,11 @@ void PageFont::slot_font_res()
 {
     CONFIG::set_fontname( FONT_MAIN, m_font_res.get_font_name() );
     CONFIG::set_fontname( FONT_MESSAGE, m_font_res.get_font_name() );
+}
+
+void PageFont::slot_font_mail()
+{
+    CONFIG::set_fontname( FONT_MAIL, m_font_mail.get_font_name() );
 }
 
 void PageFont::slot_font_popup()

@@ -680,6 +680,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "FontColor_Menu", "フォントと色(_F)" ) );
 
     m_action_group->add( Gtk::Action::create( "FontMain", "スレビューフォント(_T)..." ), sigc::mem_fun( *this, &Core::slot_changefont_main ) );
+    m_action_group->add( Gtk::Action::create( "FontMail", "メール欄フォント(_U)..." ), sigc::mem_fun( *this, &Core::slot_changefont_mail ) );
     m_action_group->add( Gtk::Action::create( "FontPopup", "ポップアップフォント(_P)..." ), sigc::mem_fun( *this, &Core::slot_changefont_popup ) );
     m_action_group->add( Gtk::Action::create( "FontTree", "板／スレ一覧フォント(_B)..." ), sigc::mem_fun( *this, &Core::slot_changefont_tree ) );
     m_action_group->add( Gtk::Action::create( "ColorChar", "スレビュー文字色(_C)..." ), sigc::mem_fun( *this, &Core::slot_changecolor_char ) );
@@ -788,6 +789,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     Glib::ustring menu_font = 
         "<menu action='FontColor_Menu'>"
             "<menuitem action='FontMain'/>"
+            "<menuitem action='FontMail'/>"
             "<menuitem action='FontPopup'/>"
             "<menuitem action='FontTree'/>"
             "<separator/>"
