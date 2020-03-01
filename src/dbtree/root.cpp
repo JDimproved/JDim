@@ -412,7 +412,15 @@ void Root::bbsmenu2xml( const std::string& menu )
     bool enabled = true;
 
     // 現在の仕様では HTML > BODY > font[size="2"] の子要素が対象
-    XML::DomList targets = html.getElementsByTagName( "font" )[0]->childNodes();
+    // 特定のサイト(2ch.sc、next2ch.net)のbbsmenu.htmlにはfontタグがないため別のタグを使う
+    XML::DomList targets = html.getElementsByTagName( "font" );
+    if( targets.empty() ) targets = html.getElementsByTagName( "small" );
+    if( targets.empty() ) targets = html.getElementsByTagName( "body" );
+    if( targets.empty() ) {
+        MISC::ERRMSG( "parse error for bbsmenu" );
+        return;
+    }
+    targets = targets.front()->childNodes();
     std::list< XML::Dom* >::iterator it = targets.begin();
     while( it != targets.end() )
     {
