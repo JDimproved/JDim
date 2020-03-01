@@ -1801,8 +1801,10 @@ void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_p
         const auto in1 = static_cast< unsigned char >( str1[ pos ] );
 
         if( in1 == 0xef ) {
-            const auto in2 = static_cast< unsigned char >( str1[ pos + 1 ] );
-            const auto in3 = static_cast< unsigned char >( str1[ pos + 2 ] );
+            unsigned char in2 = 0;
+            unsigned char in3 = 0;
+            if ( in1 ) in2 = static_cast< unsigned char >( str1[ pos + 1 ] );
+            if ( in2 ) in3 = static_cast< unsigned char >( str1[ pos + 2 ] );
 
             if( in2 == 0xbc ){
                 //  全角数字 (U+FF10 - U+FF19)
@@ -1838,10 +1840,13 @@ void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_p
                 size_t i = 0;
 
                 // 濁点、半濁点
-                const auto in4 = static_cast< unsigned char >( str1[ pos + 3 ] );
-                const auto in5 = static_cast< unsigned char >( str1[ pos + 4 ] );
+                unsigned char in4 = 0;
+                unsigned char in5 = 0;
+                if ( in3 ) in4 = static_cast< unsigned char >( str1[ pos + 3 ] );
+                if ( in4 ) in5 = static_cast< unsigned char >( str1[ pos + 4 ] );
                 if( in4 == 0xef && in5 == 0xbe ){
-                    const auto in6 = static_cast< unsigned char >( str1[ pos + 5 ] );
+                    unsigned char in6 = 0;
+                    if ( in5 ) in6 = static_cast< unsigned char >( str1[ pos + 5 ] );
 
                     // 濁点
                     if( in6 == 0x9e ){
