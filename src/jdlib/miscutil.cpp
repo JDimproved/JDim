@@ -1795,7 +1795,8 @@ bool MISC::has_widechar( const char* str )
 //
 void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_pos )
 {
-    for( int pos = 0; str1[ pos ] != '\0'; ) {
+    int pos = 0;
+    while( str1[ pos ] != '\0' ) {
         assert( pos >= 0 );
         assert( table_pos.max_size() > table_pos.size() );
         const auto in1 = static_cast< unsigned char >( str1[ pos ] );
@@ -1883,4 +1884,7 @@ void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_p
         table_pos.push_back( pos );
         ++pos;
     }
+    // 文字列の終端（ヌル文字）の位置を追加する。
+    // ヌル文字の位置がないと検索対象の末尾にマッチングしたとき範囲外アクセスが発生する。
+    table_pos.push_back( pos );
 }
