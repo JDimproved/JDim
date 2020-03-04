@@ -79,11 +79,11 @@ bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
         width_of_char[ mode ] = new WIDTH_DATA[ kMaxCacheCodePoint ]{} ;
     }
 
-    const int ucs2 = MISC::utf8toucs2( utfstr, byte );
-    if( byte && ucs2 < kMaxCacheCodePoint ){
+    const int c32 = MISC::utf8toucs2( utfstr, byte );
+    if( byte && c32 < kMaxCacheCodePoint ){
 
         // 全角モードの幅
-        width_wide = width_of_char[ mode ][ ucs2 ].width_wide;
+        width_wide = width_of_char[ mode ][ c32 ].width_wide;
 
         // 半角モードの幅
         width = width_wide;
@@ -91,18 +91,18 @@ bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
         // 厳密に求める場合
         if( byte == 1 && strict_of_char ){
 
-            if( ! width_of_char[ mode ][ ucs2 ].width ){
-                width_of_char[ mode ][ ucs2 ].width = new unsigned int[ 128 ]{} ;
+            if( ! width_of_char[ mode ][ c32 ].width ){
+                width_of_char[ mode ][ c32 ].width = new unsigned int[ 128 ]{} ;
             }
 
             const int pre_char_num = ( int ) pre_char;
-            if( pre_char_num < 128 ) width = width_of_char[ mode ][ ucs2 ].width[ pre_char_num ];
+            if( pre_char_num < 128 ) width = width_of_char[ mode ][ c32 ].width[ pre_char_num ];
         }
     }
     // Plane 14 追加特殊用途面(SSP)
     // 制御コードが追加されたら条件を追加する
-    else if( 0xE0001 == ucs2 || ( 0xE0020 <= ucs2 && ucs2 <= 0xE007F ) // タグ文字
-             || ( 0xE0100 <= ucs2 && ucs2 <= 0xE01EF )                 // 異字体セレクタ
+    else if( 0xE0001 == c32 || ( 0xE0020 <= c32 && c32 <= 0xE007F ) // タグ文字
+             || ( 0xE0100 <= c32 && c32 <= 0xE01EF )                // 異字体セレクタ
     ) {
         width = width_wide = 0;
         return true;
@@ -126,17 +126,17 @@ bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
 //
 void ARTICLE::set_width_of_char( const char* utfstr, int& byte, const char pre_char, const int width, const int width_wide, const int mode )
 {    
-    const int ucs2 = MISC::utf8toucs2( utfstr, byte );
+    const int c32 = MISC::utf8toucs2( utfstr, byte );
     if( ! byte ) return;
-    if( ucs2 >= kMaxCacheCodePoint ) return;
+    if( c32 >= kMaxCacheCodePoint ) return;
 
     // 半角モードの幅を厳密に求める場合
     if( byte == 1 && strict_of_char ){
 
         const int pre_char_num = ( int ) pre_char;
-        if( pre_char_num < 128 ) width_of_char[ mode ][ ucs2 ].width[ pre_char_num ] = width;
+        if( pre_char_num < 128 ) width_of_char[ mode ][ c32 ].width[ pre_char_num ] = width;
     }
 
     // 全角モードの幅
-    width_of_char[ mode ][ ucs2 ].width_wide = width_wide;
+    width_of_char[ mode ][ c32 ].width_wide = width_wide;
 }
