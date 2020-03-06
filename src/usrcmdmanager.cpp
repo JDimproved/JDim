@@ -92,21 +92,18 @@ void Usrcmd_Manager::analyze_xml()
 
     m_list_cmd.clear();
 
-    std::list<XML::Dom*> usrcmds = m_document.getElementsByTagName( XML::get_name( TYPE_USRCMD ) );
+    const std::list<XML::Dom*> usrcmds = m_document.getElementsByTagName( XML::get_name( TYPE_USRCMD ) );
 
-    std::list< XML::Dom* >::iterator it = usrcmds.begin();
-    while( it != usrcmds.end() )
+    for( XML::Dom* usrcmd : usrcmds )
     {
-        const std::string cmd = (*it)->getAttribute( "data" );
+        const std::string cmd = usrcmd->getAttribute( "data" );
 
 #ifdef _DEBUG
-        const std::string name = (*it)->getAttribute( "name" );
-        std::cout << (*it)->nodeName() << " " <<  name << " " << cmd << std::endl;
+        const std::string name = usrcmd->getAttribute( "name" );
+        std::cout << usrcmd->nodeName() << " " <<  name << " " << cmd << std::endl;
 #endif
 
         set_cmd( cmd );
-
-        ++it;
     }
 
     m_size = m_list_cmd.size();
@@ -452,20 +449,19 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
     std::string menu;
     if( ! dom ) return menu;
 
-    std::list<XML::Dom*> domlist = dom->childNodes();
-    std::list< XML::Dom* >::iterator it = domlist.begin();
-    while( it != domlist.end() )
+    const std::list<XML::Dom*> domlist = dom->childNodes();
+    for( XML::Dom* child : domlist )
     {
-        if( (*it)->nodeType() == XML::NODE_TYPE_ELEMENT )
+        if( child->nodeType() == XML::NODE_TYPE_ELEMENT )
         {
 #ifdef _DEBUG
-            std::cout << "name = " << (*it)->nodeName() << std::endl;
+            std::cout << "name = " << child->nodeName() << std::endl;
 #endif
-            const int type = XML::get_type( (*it)->nodeName() );
+            const int type = XML::get_type( child->nodeName() );
 
             if( type == TYPE_DIR ){
 
-                const std::string name = (*it)->getAttribute( "name" );
+                const std::string name = child->getAttribute( "name" );
 #ifdef _DEBUG
                 std::cout << "[" << dirno << "] " << name << std::endl;
 #endif
@@ -474,7 +470,7 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
                 ++dirno;
 
                 menu += "<menu action='" + dirname + "'>";
-                menu += create_usrcmd_menu( action_group, *it, dirno, cmdno );
+                menu += create_usrcmd_menu( action_group, child, dirno, cmdno );
                 menu += "</menu>";
             }
 
@@ -485,7 +481,7 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
 
             else if( type == TYPE_USRCMD ){
 
-                    const std::string name = (*it)->getAttribute( "name" );
+                    const std::string name = child->getAttribute( "name" );
 #ifdef _DEBUG
                     std::cout << "[" << cmdno << "] " << name << std::endl;
 #endif
@@ -496,9 +492,8 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
                     menu += "<menuitem action='" + cmdname + "'/>";
             }
 
-            else if( (*it)->hasChildNodes() ) menu += create_usrcmd_menu( action_group, *it, dirno, cmdno );
+            else if( child->hasChildNodes() ) menu += create_usrcmd_menu( action_group, child, dirno, cmdno );
         }
-        ++it;
     }
 
     return menu;
