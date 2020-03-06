@@ -156,16 +156,15 @@ void AAManager::load_history()
     if( ! root ) return;
 
     std::list< std::string > tmp_history;
-    std::list<XML::Dom*> domlist = root->childNodes();
-    std::list< XML::Dom* >::iterator it = domlist.begin();
-    for( ; it != domlist.end() && (int) tmp_history.size() < CONFIG::get_aahistory_size(); ++it ){
+    for( XML::Dom* child : root->childNodes() ){
+        if( static_cast<int>( tmp_history.size() ) >= CONFIG::get_aahistory_size() ) break;
 
-        if( ( *it )->nodeType() == XML::NODE_TYPE_ELEMENT ){
-            
-            const int type = XML::get_type( (*it)->nodeName() );
-            const std::string name = (*it)->getAttribute( "name" );
+        if( child->nodeType() == XML::NODE_TYPE_ELEMENT ){
 
-            if( type == TYPE_AA && ! name.empty() ) tmp_history.push_back( name );
+            const int type = XML::get_type( child->nodeName() );
+            std::string name = child->getAttribute( "name" );
+
+            if( type == TYPE_AA && ! name.empty() ) tmp_history.push_back( std::move( name ) );
         }
     }
 
