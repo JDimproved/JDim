@@ -3228,17 +3228,14 @@ void BBSListViewBase::save_xml_impl( const std::string& file, const std::string&
     if( ! remove_dir.empty() )
     {
         XML::Dom* domroot = m_document.get_root_element( root );
-        std::list<XML::Dom*> domlist = domroot->childNodes();
-        std::list< XML::Dom* >::iterator it = domlist.begin();
-        while( it != domlist.end() )
+        for( XML::Dom* child : domroot->childNodes() )
         {
-            if( (*it)->nodeName() == "subdir"
-                && (*it)->getAttribute( "name" ) == remove_dir )
+            if( child->nodeName() == "subdir"
+                && child->getAttribute( "name" ) == remove_dir )
             {
-                domroot->removeChild( *it );
+                domroot->removeChild( child );
                 break;
             }
-            ++it;
         }
     }
 
