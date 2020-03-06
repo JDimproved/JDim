@@ -57,21 +57,20 @@ void Linkfilter_Manager::xml2list( const std::string& xml )
 
     XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME_LINKFILTER ) );
     if( ! root ) return;
-    std::list<XML::Dom*> domlist = root->childNodes();
+    const std::list<XML::Dom*> domlist = root->childNodes();
 
 #ifdef _DEBUG
     std::cout << "Linkfilter_Manager::xml2list";
     std::cout << " children =" << document.childNodes().size() << std::endl;
 #endif
 
-    std::list< XML::Dom* >::iterator it = domlist.begin();
-    while( it != domlist.end() ){
+    for( XML::Dom* child : domlist ){
 
-        if( ( *it )->nodeType() == XML::NODE_TYPE_ELEMENT ){
+        if( child->nodeType() == XML::NODE_TYPE_ELEMENT ){
 
             LinkFilterItem item;
-            item.url = (*it)->getAttribute( "url" );
-            item.cmd = (*it)->getAttribute( "data" );
+            item.url = child->getAttribute( "url" );
+            item.cmd = child->getAttribute( "data" );
 
 #ifdef _DEBUG
             std::cout << "url = " << item.url
@@ -80,7 +79,6 @@ void Linkfilter_Manager::xml2list( const std::string& xml )
 
             if( ! item.url.empty() && ! item.cmd.empty() ) m_list_cmd.push_back( item );
         }
-        ++it;
     }
 }
 
