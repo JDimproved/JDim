@@ -16,8 +16,10 @@ layout: default
 
 <a name="stylesheet"></a>
 ### スタイルシート設定 (jd.css)
-スタイルシートはテーマフォルダ(デフォルトでは`$XDG_CACHE_HOME/jdim/theme`)を作成し、
+JDimはスタイルシートによるスレビュー表示のカスタマイズをサポートしている。
+スタイルシートは[キャッシュディレクトリ][cachepriority]内にテーマフォルダ(`theme/`)を作成し
 その中に「**jd.css**」という名前のファイルを作って設定する。
+スタイルシートを変更したときはJDimを再起動する。
 
 #### 対応しているプロバティ
 
@@ -60,9 +62,10 @@ layout: default
 #### 単位
 `px`, `em` のみに対応。単位を省略すると `px` になる。
 
+<a name="resstructure"></a>
 #### レスの構造
 スレ内のひとつひとつのレスは以下のような構造となっている。
-`NUMBER`や`NAME`などの要素については「レス構造設定」の項で説明する。
+`NUMBER`や`NAME`などの要素については「[レス構造設定](#reshtml)」の項で説明する。
 
 ```html
 <div class="res">
@@ -96,11 +99,14 @@ layout: default
 </dl>
 
 
+---
+
 <a name="reshtml"></a>
 ### レス構造設定 (Res.html)
-スレ内のひとつひとつのレスは「スタイルシート指定」の「定義済み要素、クラス」の項で示した構造となっている。
-この構造をテーマフォルダ(デフォルトでは`$XDG_CACHE_HOME/jdim/theme`)の中に
-**Res.html** という名前のファイルを作って指定することが出来る。
+スレ内のひとつひとつのレスは「[レスの構造](#resstructure)」の項で示した構造となっている。
+レスの構造は[キャッシュディレクトリ][cachepriority]内にテーマフォルダ(`theme/`)を作成し
+その中に「**Res.html**」という名前のファイルを作って指定することが出来る。
+レスの構造を変更したときはJDimを再起動する。
 
 #### 使用可能な要素
 `<div>` のみ
@@ -121,16 +127,18 @@ Res.htmlでは次のように定義済み要素を指定して文字列の置換
 
 #### 注意点
 
-1. `<div class="res">〜</div>`はRes.htmlで指定する必要が無い。
-   つまり Res.htmlに&quot;hoge&quot;とだけ指定した場合、レスの構造は以下のようになる。
-   ```html
-   <div class="res">
-   hoge
-   </div>
-   ```
-2. div の中に divを配置することは出来ない( 上の `<div class="res">` は例外 )。
-3.  クラス名は定義済みの物だけではなくて自由に指定できる。
+- `<div class="res">〜</div>`はRes.htmlで指定する必要が無い。
+  つまり Res.htmlに&quot;hoge&quot;とだけ指定した場合、レスの構造は以下のようになる。
+  ```html
+  <div class="res">
+  hoge
+  </div>
+  ```
+- div の中に div を配置することは出来ない( 上の `<div class="res">` は例外 )。
+- クラス名は定義済みの物だけではなくて自由に指定できる。
 
+
+---
 
 <a name="fonts"></a>
 ### フォント設定
@@ -149,23 +157,29 @@ Res.htmlでは次のように定義済み要素を指定して文字列の置換
 - &#x203B;1 -- バージョン0.3.0-20200301から追加。それより前は「スレビュー」の適用範囲に含まれる。
 
 
+---
+
 <a name="icons"></a>
 ### アイコン設定
-アイコンテーマのフォルダ(デフォルトでは `$XDG_CACHE_HOME/jdim/theme/icons` )に
-対応するアイコン画像を置くとJDimのアイコンが置き換わる。
+[キャッシュディレクトリ][cachepriority]内にアイコンテーマのフォルダ(`theme/icons/`)を作成し
+その中に対応するアイコン画像を置くとJDimのアイコンが置き換わる。
+アイコン画像を変更したときはJDimを再起動する。
 
-1. 画像形式は一般的な物なら大体使用可能 ( png, jpg, svg, gif, bmp, その他)
-2. 画像サイズは任意のサイズで良い( 16x16 がデフォルトサイズ)
-3. ファイル名は「アイコン名.拡張子 」(例) reload.jpg、 quit.png
-4. ファイル名の一覧はgitリポジトリにある [ヘッダファイル(iconfiles.h)][iconfiles] を参照すること
+- 画像形式は一般的な物なら大体使用可能 ( png, jpg, svg, gif, bmp, その他)
+- 画像サイズは任意のサイズで良い( 16x16 がデフォルトサイズ)
+- ファイル名は「アイコン名.拡張子 」(例) reload.jpg、 quit.png
+- ファイル名の一覧はgitリポジトリにある [ヘッダファイル(iconfiles.h)][iconfiles] を参照すること
 
+
+---
 
 <a name="example"></a>
 ### 使用例
 [![スキンサンプル][skin_sample_thumb]][skin_sample]
 クリックで拡大
 
-Res.html(下)と[jd.css][jdcss]
+[キャッシュディレクトリ][cachepriority]内にテーマフォルダ(`theme/`)を作成し
+その中にRes.html(下)と[jd.css][jdcss]をコピーしてJDimを起動する。
 
 ```html
 <div class="title"><NUMBER/> <NAMELINK/>：<NAME/> <MAIL/></div>
@@ -181,3 +195,4 @@ Res.html(下)と[jd.css][jdcss]
 [skin_sample_thumb]: ../assets/skin_sample_thumb.png
 [skin_sample]: ../assets/skin_sample.png "サンプルのスクリーンショット"
 [jdcss]: ../assets/jd.css "サンプルのcss"
+[cachepriority]:  ../start/#cachepriority "キャッシュディレクトリの優先順位"

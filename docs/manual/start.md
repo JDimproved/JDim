@@ -34,7 +34,7 @@ $ jdim ./12345.dat
 ```
 
 環境変数 `JDIM_CACHE` でキャッシュディレクトリの位置を変更・指定することが可能。
-指定しなければ下記の[優先順位](#キャッシュディレクトリの優先順位)の通りに決まる。
+指定しなければ下記の[優先順位](#cachepriority)の通りに決まる。
 ```
 $ JDIM_CACHE=~/.mycache jdim
 ```
@@ -45,6 +45,7 @@ $ JDIM_CACHE=~/.mycache jdim
 $ JDIM_LOCK=~/mylock jdim
 ```
 
+<a name="cachepriority"></a>
 #### キャッシュディレクトリの優先順位
 
 | `~/.jd` | `$XDG_CACHE_HOME/jdim` | 使われるのは… |
