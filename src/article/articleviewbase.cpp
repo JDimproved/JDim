@@ -72,6 +72,7 @@ ArticleViewBase::ArticleViewBase( const std::string& url, const std::string& url
       m_popup_win( nullptr ),
       m_popup_shown( false ),
       m_hidepopup_counter( 0 ),
+      m_search_invert( false ),
       m_enable_menuslot( true ),
       m_current_bm( 0 ),
       m_current_post( 0 ),
