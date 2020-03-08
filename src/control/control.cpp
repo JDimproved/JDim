@@ -417,6 +417,17 @@ int Control::MG_wheel_scroll( const GdkEventScroll* event )
 
     else if( ( mask & button ) && direction == GDK_SCROLL_DOWN ) control = CONTROL::TabRight;
 
+#if GTKMM_CHECK_VERSION(3,3,18)
+    else if( ( mask & button ) && direction == GDK_SCROLL_SMOOTH ) {
+        if( event->delta_y < 0.0 ) {
+            control = CONTROL::TabLeft;
+        }
+        else if( event->delta_y > 0.0 ) {
+            control = CONTROL::TabRight;
+        }
+    }
+#endif
+
 #ifdef _DEBUG
     std::cout << "Control::MG_wheel_scroll control = " << control << std::endl;
 #endif
