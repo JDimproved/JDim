@@ -21,7 +21,9 @@ enum
 using namespace JDLIB;
 
 Regex::Regex()
-    : m_compiled(false)
+    : m_compiled(false),
+      m_newline(false),
+      m_wchar(false)
 {
     m_results.clear();
     m_pos.clear();
