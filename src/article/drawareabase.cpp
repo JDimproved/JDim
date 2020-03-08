@@ -1523,10 +1523,8 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
 //                  << " w = " << layout->rect->width << " h = " << layout->rect->height << std::endl;
 #endif
 
-        // 改行位置を、フォントよりも大きく設定しておく
-        if( br_size < m_font->br_size ){
-            br_size = m_font->br_size;
-        }
+        // 一文字でも書いたので、改行位置をフォントにあわせて更新
+        br_size = m_font->br_size;
 
         x += rect->width;
         if( pos_to >= byte_to ) break;
@@ -1534,7 +1532,6 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
         // wrap 処理
         x = div ? div->rect->x + div->css->padding_left : 0;
         y += br_size;
-        br_size = m_font->br_size; // 次の行の改行位置をリセット
 
         pos_start = pos_to;
     }
