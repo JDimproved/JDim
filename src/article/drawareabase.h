@@ -107,18 +107,18 @@ namespace ARTICLE
 
         // HBoxに張り付けるウイジット
         Gtk::DrawingArea m_view;
-        Gtk::EventBox* m_event;
-        Gtk::VScrollbar* m_vscrbar;
+        Gtk::EventBox* m_event{};
+        Gtk::VScrollbar* m_vscrbar{};
 
         // レイアウトツリー
-        LayoutTree* m_layout_tree;
+        LayoutTree* m_layout_tree{};
 
         // 描画領域の幅、高さ( != ウィンドウサイズ )
-        int m_width_client; 
-        int m_height_client;
+        int m_width_client{};
+        int m_height_client{};
 
         //現在見ているレスの番号
-        int m_seen_current;
+        int m_seen_current{};
 
         // 描画用
         Glib::RefPtr< Gdk::Window > m_window;
@@ -133,9 +133,9 @@ namespace ARTICLE
 #endif
         Glib::RefPtr< Pango::Layout > m_pango_layout;
         Glib::RefPtr< Pango::Context > m_context;
-        RECTANGLE m_rect_backscreen; // バックスクリーンが描画されている範囲
+        RECTANGLE m_rect_backscreen{}; // バックスクリーンが描画されている範囲
         bool m_enable_draw;
-        DRAWINFO m_drawinfo;
+        DRAWINFO m_drawinfo{};
 
         // 高速スクロール描画実行
         // DrawingAreaの領域が全て表示されているときは Gdk::Window::scroll() を使ってスクロール
@@ -148,8 +148,8 @@ namespace ARTICLE
         CARET_POSITION m_caret_pos_dragstart; // ドラッグを開始したキャレット位置
 
         // 色
-        int m_colorid_text;     // デフォルトの文字色
-        int m_colorid_back;     // デフォルトの背景色
+        int m_colorid_text{}; // デフォルトの文字色
+        int m_colorid_back{}; // デフォルトの背景色
 #if GTKMM_CHECK_VERSION(3,0,0)
         std::vector< Gdk::RGBA > m_color;
 #else
@@ -157,7 +157,7 @@ namespace ARTICLE
 #endif
 
         // 枠
-        bool m_draw_frame;  // 枠を描画する
+        bool m_draw_frame{};  // 枠を描画する
 #if GTKMM_CHECK_VERSION(3,0,0)
         // 枠線に隠れる部分のバックアップを分ける
         std::unique_ptr< cairo_surface_t, void ( * )( cairo_surface_t* ) > m_back_frame_top;
@@ -165,66 +165,67 @@ namespace ARTICLE
 #else
         Glib::RefPtr< Gdk::Pixmap > m_back_frame; // 枠の背景
 #endif
-        bool m_ready_back_frame;
+        bool m_ready_back_frame{};
 
         // 範囲選択
-        SELECTION m_selection;
+        SELECTION m_selection{};
 
         // 検索結果のハイライト範囲
         std::list< SELECTION > m_multi_selection;
       
         // レイアウト用
         CORE::CSS_PROPERTY m_css_body; // body の cssプロパティ
-        int m_fontid;
-        int m_defaultfontid;
-        int m_mailfontid;
-        int m_defaultmailfontid;
-        FONTINFO *m_font; // カレントフォント情報
-        FONTINFO m_defaultfont; // デフォルトフォント情報
-        FONTINFO m_aafont; // AA用フォント情報
-        FONTINFO m_mailfont; // メールフォント情報
-        bool m_aafont_initialized;
-        bool m_mailfont_initialized;
+        int m_fontid{};
+        int m_defaultfontid{};
+        int m_mailfontid{};
+        int m_defaultmailfontid{};
+        FONTINFO *m_font{};       // カレントフォント情報
+        FONTINFO m_defaultfont{}; // デフォルトフォント情報
+        FONTINFO m_aafont{};      // AA用フォント情報
+        FONTINFO m_mailfont{};    // メールフォント情報
+        bool m_aafont_initialized{};
+        bool m_mailfont_initialized{};
 
         // スレビューで文字幅の近似を厳密にするか
-        bool m_strict_of_char;
+        bool m_strict_of_char{};
 
         // ビューのリサイズ用
-        bool m_configure_reserve; // true の時は再描画する前に再レイアウトする
-        int m_configure_width;
-        int m_configure_height;
+        bool m_configure_reserve{}; // true の時は再描画する前に再レイアウトする
+        int m_configure_width{};
+        int m_configure_height{};
 
         // スクロール情報
 #if GTKMM_CHECK_VERSION(3,3,18)
-        double m_smooth_dy; // GDK_SCROLL_SMOOTH のスクロール変化量
+        double m_smooth_dy{}; // GDK_SCROLL_SMOOTH のスクロール変化量
 #endif
         SCROLLINFO m_scrollinfo;
-        guint32 m_wheel_scroll_time; // 前回ホイールを回した時刻
-        int m_goto_num_reserve; // 初期化時のジャンプ予約(レス番号)
-        bool m_goto_bottom_reserve; // 初期化時のジャンプ予約(底)
+        guint32 m_wheel_scroll_time{}; // 前回ホイールを回した時刻
+        int m_goto_num_reserve{}; // 初期化時のジャンプ予約(レス番号)
+        bool m_goto_bottom_reserve{}; // 初期化時のジャンプ予約(底)
         int m_pre_pos_y; // ひとつ前のスクロールバーの位置。スクロールした時の差分量計算に使用する
         std::vector< int > m_jump_history;  // ジャンプ履歴
-        bool m_cancel_change_adjust; // adjust の値変更イベントをキャンセル
+        bool m_cancel_change_adjust{}; // adjust の値変更イベントをキャンセル
 #if GTKMM_CHECK_VERSION(3,0,0)
         std::unique_ptr< cairo_surface_t, void ( * )( cairo_surface_t* ) > m_back_marker;
 #else
         Glib::RefPtr< Gdk::Pixmap > m_back_marker; // オートスクロールマーカの背景
 #endif
-        RECTANGLE m_clip_marker;
-        bool m_ready_back_marker;
-        time_t m_wait_scroll;  // 処理落ちした時にスクロールにウエイトを入れる
-        struct timeval m_scroll_time;  // ウエイト時に最後にスクロールした時刻
+        RECTANGLE m_clip_marker{};
+        bool m_ready_back_marker{};
+        time_t m_wait_scroll{};  // 処理落ちした時にスクロールにウエイトを入れる
+        struct timeval m_scroll_time{};  // ウエイト時に最後にスクロールした時刻
 
         // 状態
-        int m_x_pointer, m_y_pointer;  // 現在のマウスポインタの位置
-        bool m_key_press; // キーを押している
-        bool m_key_locked; // 同じキーを押したままにしている
-        guint m_keyval;
-        bool m_clicked;
-        bool m_drugging;  // ドラッグ中
-        bool m_r_drugging; // 右ドラッグ中
+        int m_x_pointer{};
+        int m_y_pointer{};   // 現在のマウスポインタの位置
+        bool m_key_press{};  // キーを押している
+        bool m_key_locked{}; // 同じキーを押したままにしている
+        guint m_keyval{};
+        bool m_clicked{};
+        bool m_drugging{};   // ドラッグ中
+        bool m_r_drugging{}; // 右ドラッグ中
         std::string m_link_current; // 現在マウスポインタの下にあるリンクの文字列
-        LAYOUT* m_layout_current; // 現在マウスポインタの下にあるlayoutノード(下が空白ならnullptr)
+        LAYOUT* m_layout_current{}; // 現在マウスポインタの下にあるlayoutノード(下が空白ならnullptr)
         Gdk::CursorType m_cursor_type; // カーソルの形状
 
         // 入力コントローラ
@@ -249,7 +250,7 @@ namespace ARTICLE
         // タッチスクリーンのスクロール
         Glib::RefPtr< Gtk::GesturePan > m_gesture_pan;
         Glib::RefPtr< Gtk::GestureSwipe > m_gesture_swipe;
-        double m_drag_start_y;
+        double m_drag_start_y{};
 
         // 慣性スクロール
         struct DecelerationInfo
@@ -258,7 +259,7 @@ namespace ARTICLE
             double initial_dy; // スケーリングされた初速度(pixcels/frame)
             gint64 last_time; // 前回コールバックが呼び出された時間(frame)
             guint id = 0; // コールバックのID
-        } m_deceleration;
+        } m_deceleration{};
 #endif
 
       public:

@@ -100,42 +100,20 @@ struct LAYOUT_TABLE
 
 DrawAreaBase::DrawAreaBase( const std::string& url )
     : m_url( url )
-    , m_vscrbar( nullptr )
-    , m_layout_tree( nullptr )
-    , m_seen_current( 0 )
-    , m_window( nullptr )
 #if GTKMM_CHECK_VERSION(3,0,0)
     , m_cr( nullptr, cairo_destroy )
     , m_backscreen( nullptr, cairo_surface_destroy )
-#else
-    , m_gc( nullptr )
-    , m_backscreen( nullptr )
 #endif
-    , m_pango_layout( nullptr )
-    , m_draw_frame( false )
+    , m_enable_draw{ true }
+    , m_scroll_window{ true }
 #if GTKMM_CHECK_VERSION(3,0,0)
     , m_back_frame_top( nullptr, cairo_surface_destroy )
     , m_back_frame_bottom( nullptr, cairo_surface_destroy )
-#else
-    , m_back_frame( nullptr )
 #endif
-    , m_ready_back_frame( false )
-    , m_aafont_initialized( false )
-    , m_mailfont_initialized{ false }
-    , m_strict_of_char( false )
-    , m_configure_reserve( false )
-    , m_configure_width( 0 )
-    , m_configure_height( 0 )
-#if GTKMM_CHECK_VERSION(3,3,18)
-    , m_smooth_dy{ 0.0 }
-#endif
+    , m_pre_pos_y{ -1 }
 #if GTKMM_CHECK_VERSION(3,0,0)
     , m_back_marker( nullptr, cairo_surface_destroy )
-#else
-    , m_back_marker( nullptr )
 #endif
-    , m_ready_back_marker( false )
-    , m_wait_scroll( 0 )
     , m_cursor_type( Gdk::ARROW )
 {
 #ifdef _DEBUG
