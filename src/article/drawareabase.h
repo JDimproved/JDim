@@ -258,7 +258,7 @@ namespace ARTICLE
             double elapsed; // 換算された経過時間
             double initial_dy; // スケーリングされた初速度(pixcels/frame)
             gint64 last_time; // 前回コールバックが呼び出された時間(frame)
-            guint id = 0; // コールバックのID
+            guint id; // コールバックのID
         } m_deceleration{};
 #endif
 
