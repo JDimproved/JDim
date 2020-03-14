@@ -84,7 +84,6 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
       m_resume_cached( false ),
       m_broken( false ),
       m_heap( SIZE_OF_HEAP ),
-      m_buffer_lines( nullptr ),
       m_parsed_text( nullptr ),
       m_buffer_write( nullptr ),
       m_check_update( false ),
@@ -174,9 +173,8 @@ void NodeTreeBase::clear()
     std::cout << "NodeTreeBase::clear : " << m_url << std::endl;
 #endif
 
-    if( m_buffer_lines ) free( m_buffer_lines );
-    m_buffer_lines = nullptr;
-    m_byte_buffer_lines_left = 0;
+    m_buffer_lines.clear();
+    m_buffer_lines.shrink_to_fit();
 
     if( m_parsed_text ) free( m_parsed_text );
     m_parsed_text = nullptr;
@@ -1087,7 +1085,7 @@ void NodeTreeBase::load_cache()
             init_loading();
             const size_t str_length = str.length();
             while( size < str_length ){
-                size_t size_tmp = MIN( MAXSISE_OF_LINES - m_byte_buffer_lines_left, str_length - size );
+                size_t size_tmp = MIN( MAXSISE_OF_LINES - m_buffer_lines.size(), str_length - size );
                 receive_data( data + size, size_tmp );
                 size += size_tmp;
             }
@@ -1126,7 +1124,10 @@ void NodeTreeBase::init_loading()
     clear();
 
     // 一時バッファ作成
-    if( ! m_buffer_lines ) m_buffer_lines = ( char* ) malloc( MAXSISE_OF_LINES ); 
+    if( m_buffer_lines.capacity() < MAXSISE_OF_LINES ) {
+        m_buffer_lines.reserve( MAXSISE_OF_LINES );
+    }
+
     if( ! m_parsed_text ) m_parsed_text = ( char* ) malloc( MAXSISE_OF_LINES );
 }
 
@@ -1288,20 +1289,20 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
     size_t size_in = ( int )( pos - data );
     if( size_in > 0 ){
         size_in ++; // '\n'を加える
-        memcpy( m_buffer_lines + m_byte_buffer_lines_left , data, size_in );
-        m_buffer_lines[ m_byte_buffer_lines_left + size_in ] = '\0';
-        add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left + size_in );
+        m_buffer_lines.append( data, size_in );
+        add_raw_lines( &*m_buffer_lines.begin(), m_buffer_lines.size() );
+        // 送ったバッファをクリア
+        m_buffer_lines.clear();
     }
 
     // add_raw_lines() でレジュームに失敗したと判断したら、バッファをクリアする
     if( m_resume == RESUME_FAILED ){
-        m_byte_buffer_lines_left = 0;
+        m_buffer_lines.clear();
         return;
     }
 
-    // 残りの分をバッファにコピーしておく
-    m_byte_buffer_lines_left = size - size_in;
-    if( m_byte_buffer_lines_left ) memcpy( m_buffer_lines, data + size_in, m_byte_buffer_lines_left );
+    // 残りのデータをバッファにコピーしておく
+    m_buffer_lines.assign( data + size_in, size - size_in );
 }
 
 
@@ -1332,12 +1333,11 @@ void NodeTreeBase::receive_finish()
 
         if( ! is_error ){
             // 特殊スレのdatには、最後の行に'\n'がない場合がある
-            if( m_byte_buffer_lines_left > 0 ){
+            if( !m_buffer_lines.empty() ) {
                 // 正常に読込完了した場合で、バッファが残っていれば add_raw_lines()にデータを送る
-                m_buffer_lines[ m_byte_buffer_lines_left ] = '\0';
-                add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left );
+                add_raw_lines( &*m_buffer_lines.begin(), m_buffer_lines.size() );
                 // バッファをクリア
-                m_byte_buffer_lines_left = 0;
+                m_buffer_lines.clear();
             }
         }
 
