@@ -289,7 +289,7 @@ bool ConfigItems::load( const bool restore )
     // ツリービューのレベルインデント調整量(ピクセル)
     tree_level_indent = cf.get_option_int( "tree_level_indent", CONF_TREE_LEVEL_INDENT, -256, 256 );
 
-    // カテゴリを開いたときにツリービューをスクロールする
+    // カテゴリやディレクトリを開いたときにツリービューをスクロールする
     scroll_tree = cf.get_option_bool( "scroll_tree", CONF_SCROLL_TREE );
 
     // ツリービューの選択を表示中のビューと同期する
@@ -349,7 +349,7 @@ bool ConfigItems::load( const bool restore )
     // 板一覧でカテゴリを常にひとつだけ開く
     open_one_category = cf.get_option_bool( "open_one_category", CONF_OPEN_ONE_CATEGORY );
 
-    // お気に入りでカテゴリを常にひとつだけ開く
+    // お気に入りでディレクトリを常にひとつだけ開く
     open_one_favorite = cf.get_option_bool( "open_one_favorite", CONF_OPEN_ONE_FAVORITE );
 
     // デフォルトの書き込み名
