@@ -20,14 +20,12 @@ namespace ARTICLE
         SCROLL_AUTO     // マーカを中心にしてオートスクロール
     };
     
-    class SCROLLINFO
+    struct SCROLLINFO
     {
-      public:
-
-        int mode;
+        int mode = SCROLL_NOT;
         int dy; // スクロール量
         int res; // レス番号
-        
+
         // オートスクロールモード(マウスの中ボタン押し)用の変数
         int x; // 中心のx座標
         int y; // 中心のy座標
@@ -44,12 +42,6 @@ namespace ARTICLE
         bool live;
         double live_speed;
         int live_counter;
-
-        SCROLLINFO()
-        : live( false )
-        {
-            reset();
-        }
 
         void reset()
         {
