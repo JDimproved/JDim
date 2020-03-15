@@ -579,9 +579,9 @@ Dom* Dom::getElementById( const std::string& id ) const
 //
 // getElementsByTagName()
 //
-DomList Dom::getElementsByTagName( const std::string& name ) const
+std::list<Dom*> Dom::getElementsByTagName( const std::string& name ) const
 {
-    DomList domlist;
+    std::list<Dom*> domlist;
 
     std::list< Dom* >::const_iterator it = m_childNodes.cbegin();
     while( it != m_childNodes.cend() )
@@ -591,8 +591,8 @@ DomList Dom::getElementsByTagName( const std::string& name ) const
             if( (*it)->nodeName() == name ) domlist.push_back( *it );
 
             // 再帰
-            DomList sub_nodes = (*it)->getElementsByTagName( name );
-            domlist.splice( domlist.end(), sub_nodes );
+            std::list<Dom*> sub_nodes = (*it)->getElementsByTagName( name );
+            domlist.splice( domlist.end(), std::move( sub_nodes ) );
         }
         ++it;
     }
@@ -644,14 +644,9 @@ bool Dom::hasChildNodes()
 //
 // ノード：childNodes
 //
-DomList Dom::childNodes() const
+std::list<Dom*> Dom::childNodes() const
 {
-    DomList result;
-
-    // DomList に std::list< Dom* > を代入している
-    result = m_childNodes;
-
-    return result;
+    return m_childNodes;
 }
 
 
@@ -662,8 +657,7 @@ void Dom::copy_childNodes( const Dom& dom )
 {
     clear();
 
-    DomList children;
-    children = dom.m_childNodes;
+    std::list<Dom*> children = dom.m_childNodes;
 
     if( children.size() ){
 
@@ -800,7 +794,7 @@ Dom* Dom::previousSibling() const
 {
     Dom* previous = nullptr;
 
-    DomList brothers = m_parentNode->childNodes();
+    std::list<Dom*> brothers = m_parentNode->childNodes();
 
     std::list< Dom* >::iterator it = brothers.begin();
     while( it != brothers.end() )
@@ -824,7 +818,7 @@ Dom* Dom::nextSibling() const
 {
     Dom* next = nullptr;
 
-    DomList brothers = m_parentNode->childNodes();
+    std::list<Dom*> brothers = m_parentNode->childNodes();
 
     std::list< Dom* >::iterator it = brothers.begin();
     while( it != brothers.end() )

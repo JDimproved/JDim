@@ -117,20 +117,17 @@ Dom* Document::get_root_element( const std::string& node_name )
 {
     Dom* node = nullptr;
 
-    DomList children = childNodes();
-    std::list< Dom* >::iterator it = children.begin();
-    while( it != children.end() )
+    for( Dom* child : childNodes() )
     {
-        if( (*it)->nodeType() == NODE_TYPE_ELEMENT )
+        if( child->nodeType() == NODE_TYPE_ELEMENT )
         {
             // 要素名問わず
-            if( node_name.empty() ) node = *it;
+            if( node_name.empty() ) node = child;
             // 要素名限定
-            else if( (*it)->nodeName() == node_name ) node = *it;
+            else if( child->nodeName() == node_name ) node = child;
 
             break;
         }
-        ++it;
     }
 
     return node;

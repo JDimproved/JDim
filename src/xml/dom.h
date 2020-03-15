@@ -11,7 +11,6 @@
 #include <set>
 #include <gtkmm.h>
 
-#include "domlist.h"
 
 namespace SKELETON
 {
@@ -29,8 +28,6 @@ namespace XML
         NODE_TYPE_TEXT,
         NODE_TYPE_DOCUMENT
     };
-
-    class DomList;
 
     class Dom
     {
@@ -97,7 +94,7 @@ namespace XML
 
         // getElement(s)By*()
         Dom* getElementById( const std::string& id ) const;
-        DomList getElementsByTagName( const std::string& name ) const;
+        std::list<Dom*> getElementsByTagName( const std::string& name ) const;
 
         // プロパティを扱うアクセッサ
         int nodeType();
@@ -116,7 +113,7 @@ namespace XML
         Dom* ownerDocument() const;
         Dom* parentNode();
         bool hasChildNodes();
-        DomList childNodes() const;
+        std::list<Dom*> childNodes() const;
         Dom* firstChild() const;
         Dom* lastChild() const;
         Dom* appendChild( const int node_type, const std::string& node_name );

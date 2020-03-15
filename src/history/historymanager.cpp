@@ -224,21 +224,19 @@ void History_Manager::xml2viewhistory()
 
     XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME ) );
 
-    XML::DomList domlist;
-    domlist = root->childNodes();
+    const std::list<XML::Dom*> domlist = root->childNodes();
 
-    std::list< XML::Dom* >::iterator it = domlist.begin();
-    for( ; it != domlist.end(); ++it ){
+    for( XML::Dom* subdir : domlist ){
 
-        if( (*it)->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
+        if( subdir->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
 
         // viewhistory 作成
-        const int type = XML::get_type( (*it)->nodeName() );
+        const int type = XML::get_type( subdir->nodeName() );
         if( type != TYPE_DIR ) continue;
 
-        const int top = atoi( (*it)->getAttribute( "top" ).c_str() );
-        const int cur = atoi( (*it)->getAttribute( "cur" ).c_str() );
-        const int end = atoi( (*it)->getAttribute( "end" ).c_str() );
+        const int top = atoi( subdir->getAttribute( "top" ).c_str() );
+        const int cur = atoi( subdir->getAttribute( "cur" ).c_str() );
+        const int end = atoi( subdir->getAttribute( "end" ).c_str() );
 
 #ifdef _DEBUG
         std::cout << "\n---------------\nnew viewhistory\n"
@@ -252,18 +250,16 @@ void History_Manager::xml2viewhistory()
         m_view_histories.push_back( history );
 
         // viewhistory に item を append
-        XML::DomList domlist_hist;
-        domlist_hist = (*it)->childNodes();
-        std::list< XML::Dom* >::iterator it_hist = domlist_hist.begin();
-        for( ; it_hist != domlist_hist.end(); ++it_hist ){
+        const std::list<XML::Dom*> domlist_hist = subdir->childNodes();
+        for( XML::Dom* histitem : domlist_hist ){
 
-            if( (*it_hist)->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
+            if( histitem->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
 
-            const int type = XML::get_type( (*it_hist)->nodeName() );
+            const int type = XML::get_type( histitem->nodeName() );
             if( type != TYPE_HISTITEM ) continue;
 
-            const std::string name = (*it_hist)->getAttribute( "name" );
-            const std::string url = (*it_hist)->getAttribute( "url" );
+            const std::string name = histitem->getAttribute( "name" );
+            const std::string url = histitem->getAttribute( "url" );
 
 #ifdef _DEBUG
             std::cout << "type = " << type << std::endl
