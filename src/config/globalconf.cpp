@@ -106,7 +106,7 @@ bool CONFIG::get_tree_show_expanders(){ return get_confitem()->tree_show_expande
 // ツリービューのレベルインデント調整量(ピクセル)
 int CONFIG::get_tree_level_indent(){ return get_confitem()->tree_level_indent; }
 
-// カテゴリを開いたときにツリービューをスクロールする
+// カテゴリやディレクトリを開いたときにツリービューをスクロールする
 bool CONFIG::get_scroll_tree(){ return get_confitem()->scroll_tree; }
 
 // ツリービューの選択を表示中のビューと同期する ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )

@@ -149,7 +149,7 @@ void AboutConfig::append_rows()
     append_row( "ツリービューの行間スペース", get_confitem()->tree_ypad, CONF_TREE_YPAD );
     append_row( "ツリービューのエクスパンダを表示する", get_confitem()->tree_show_expanders, CONF_TREE_SHOW_EXPANDERS );
     append_row( "ツリービューのレベルインデント調整量(ピクセル)", get_confitem()->tree_level_indent, CONF_TREE_LEVEL_INDENT );
-    append_row( "カテゴリを開いたときにスクロールする", get_confitem()->scroll_tree, CONF_SCROLL_TREE );
+    append_row( "カテゴリやディレクトリを開いたときにスクロールする", get_confitem()->scroll_tree, CONF_SCROLL_TREE );
     append_row( "ツリービューの選択を表示中のビューと同期する ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )", get_confitem()->select_item_sync, CONF_SCROLL_TREE );
 
     // 板一覧、履歴ビュー
@@ -166,7 +166,7 @@ void AboutConfig::append_rows()
     // お気に入り
     append_row( "" );
     append_row( "■ お気に入り" );
-    append_row( "お気に入りでカテゴリを常にひとつだけ開く", get_confitem()->open_one_favorite, CONF_OPEN_ONE_FAVORITE );
+    append_row( "お気に入りでディレクトリを常にひとつだけ開く", get_confitem()->open_one_favorite, CONF_OPEN_ONE_FAVORITE );
     append_row( "スレをお気に入りに追加した時にしおりをセットする", get_confitem()->bookmark_drop, CONF_BOOKMARK_DROP );
     append_row( "起動時にお気に入りを自動でチェックする", get_confitem()->check_update_boot, CONF_CHECK_UPDATE_BOOT );
     append_row( "重複項目を登録する ( 0: 登録する 1: ダイアログ表示 2: 登録しない )", get_confitem()->check_favorite_dup, CONF_CHECK_FAVORITE_DUP );

@@ -47,7 +47,7 @@ namespace CONFIG
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
         CONF_TREE_SHOW_EXPANDERS = 1, // ツリービューにエクスパンダを表示
         CONF_TREE_LEVEL_INDENT = 0, // ツリービューのレベルインデント調整量(ピクセル)
-        CONF_SCROLL_TREE = 1,       // カテゴリを開いたときにツリービューをスクロールする
+        CONF_SCROLL_TREE = 1,       // カテゴリやディレクトリを開いたときにツリービューをスクロールする
         CONF_SELECT_ITEM_SYNC = 1,  // ツリービューの選択を表示中のビューと同期する ( 0: 同期しない 1: 同期する 2: 同期する(フォルダを開く) )
         CONF_VIEW_MARGIN = 0,       // 各ビューと枠との間の余白
         CONF_LEFT_SCRBAR = 0,       // スクロールバーを左に配置
@@ -66,7 +66,7 @@ namespace CONFIG
         CONF_LIVE_SPEED = 2,        // 実況速度
         CONF_LIVE_THRESHOLD = 10,   // 実況のスクロールモードを切り替えるしきい値
         CONF_OPEN_ONE_CATEGORY = 0, // 板一覧でカテゴリを常にひとつだけ開く
-        CONF_OPEN_ONE_FAVORITE = 0, // お気に入りでカテゴリを常にひとつだけ開く
+        CONF_OPEN_ONE_FAVORITE = 0, // お気に入りでディレクトリを常にひとつだけ開く
         CONF_ALWAYS_WRITE_OK = 0,   // 書き込み時に書き込み確認ダイアログを出さない
         CONF_SAVE_POSTLOG = 0,      //書き込みログを保存
         CONF_SAVE_POSTHIST = 1,      //書き込み履歴を保存
