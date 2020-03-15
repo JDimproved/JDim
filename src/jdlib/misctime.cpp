@@ -13,6 +13,8 @@
 #include <sstream>
 #include <cstdio>
 #include <cstring>
+#include <ctime>
+#include <iomanip>
 #include <sys/time.h>
 #include <vector>
 
@@ -128,50 +130,48 @@ time_t MISC::datetotime( const std::string& date )
 //
 std::string MISC::timettostr( const time_t time_from, const int mode )
 {
-    const int lng = 64;
-    struct tm tm_tmp;
-
-    char str_ret[ lng ];
-    str_ret[ 0 ] = '\0';
+    std::tm tm_tmp;
+    std::ostringstream ss;
 
     if( mode == MISC::TIME_NORMAL ){
-
-        if( localtime_r( &time_from, &tm_tmp ) )
-            snprintf( str_ret, lng, "%d/%02d/%02d %02d:%02d",
-                      ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday, tm_tmp.tm_hour, tm_tmp.tm_min );
+        if( localtime_r( &time_from, &tm_tmp ) ) {
+            ss << std::put_time( &tm_tmp, "%Y/%m/%d %H:%M" );
+        }
     }
     else if( mode == MISC::TIME_NO_YEAR ){
-
-        if( localtime_r( &time_from, &tm_tmp ) )
-            snprintf( str_ret, lng, "%02d/%02d %02d:%02d",
-                      ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday, tm_tmp.tm_hour, tm_tmp.tm_min );
+        if( localtime_r( &time_from, &tm_tmp ) ) {
+            ss << std::put_time( &tm_tmp, "%m/%d %H:%M" );
+        }
     }
     else if( mode == MISC::TIME_WEEK ){
 
-        const char week[][32] = { "日","月","火","水","木","金","土" };
+        constexpr char week[][32] = { "日","月","火","水","木","金","土" };
 
-        if( localtime_r( &time_from, &tm_tmp ) )
-            snprintf( str_ret, lng, "%d/%02d/%02d(%s) %02d:%02d:%02d",
-                      ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday,
-                      week[ tm_tmp.tm_wday ], tm_tmp.tm_hour, tm_tmp.tm_min, tm_tmp.tm_sec );
+        if( localtime_r( &time_from, &tm_tmp ) ) {
+            // ロケール依存の書式(%a)は使わない
+            ss << std::put_time( &tm_tmp, "%Y/%m/%d(" )
+               << week[ tm_tmp.tm_wday ]
+               << std::put_time( &tm_tmp, ") %H:%M:%S" );
+        }
     }
     else if( mode == MISC::TIME_SECOND ){
-
-        if( localtime_r( &time_from, &tm_tmp ) )
-            snprintf( str_ret, lng, "%d/%02d/%02d %02d:%02d:%02d",
-                      ( 1900 + tm_tmp.tm_year ), ( 1 + tm_tmp.tm_mon ), tm_tmp.tm_mday, tm_tmp.tm_hour, tm_tmp.tm_min, tm_tmp.tm_sec );
+        if( localtime_r( &time_from, &tm_tmp ) ) {
+            ss << std::put_time( &tm_tmp, "%Y/%m/%d %H:%M:%S" );
+        }
     }
     else if( mode == MISC::TIME_PASSED ){
 
-        const time_t tmp_t = time( nullptr ) - time_from;
+        const std::time_t duration = std::time( nullptr ) - time_from;
 
-        if( tmp_t < 0 ) snprintf( str_ret, lng, "未来" );
-        else if( tmp_t < 60 ) snprintf( str_ret, lng, "%d 秒前", (int) tmp_t );
-        else if( tmp_t < 60 * 60 ) snprintf( str_ret, lng, "%d 分前", (int)tmp_t / 60 );
-        else if( tmp_t < 60 * 60 * 24 ) snprintf( str_ret, lng, "%d 時間前", (int)tmp_t / ( 60 * 60 ) );
-        else if( tmp_t < 60 * 60 * 24 * 365 ) snprintf( str_ret, lng, "%d 日前", (int)tmp_t / ( 60 * 60 * 24 ) );
-        else snprintf( str_ret, lng, "%d 年前", (int)tmp_t / ( 60 * 60 * 24 * 365 ) );
+        if( duration < 0 ) ss << "未来";
+        else if( duration < 60 ) ss << duration << " 秒前";
+        else if( duration < 60 * 60 ) ss << ( duration / 60 )  << " 分前";
+        else if( duration < 60 * 60 * 24 ) ss << ( duration / ( 60 * 60 ) ) << " 時間前";
+        else if( duration < 60 * 60 * 24 * 365 ) ss << ( duration / ( 60 * 60 * 24 ) ) <<  " 日前";
+        else ss << ( duration / ( 60 * 60 * 24 * 365 ) ) <<  " 年前";
     }
+
+    std::string str_ret = ss.str();
 
 #ifdef _DEBUG
     std::cout << "MISC::timettostr " << time_from << " -> " << str_ret << std::endl;
