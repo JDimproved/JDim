@@ -55,6 +55,8 @@ constexpr size_t SIZE_OF_HEAP = MAXSISE_OF_LINES + 64;
 
 constexpr size_t INITIAL_RES_BUFSIZE = 128;  // レスの文字列を返すときの初期バッファサイズ
 
+constexpr std::size_t kMaxBytesOfUTF8Char = 4 + 1; // UTF-8文字の最大バイト数 + ヌル文字
+
 
 // レジュームのモード
 enum
@@ -84,9 +86,7 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
       m_resume_cached( false ),
       m_broken( false ),
       m_heap( SIZE_OF_HEAP ),
-      m_buffer_lines( nullptr ),
       m_parsed_text( nullptr ),
-      m_buffer_write( nullptr ),
       m_check_update( false ),
       m_check_write( false ),
       m_loading_newthread( false ),
@@ -174,16 +174,15 @@ void NodeTreeBase::clear()
     std::cout << "NodeTreeBase::clear : " << m_url << std::endl;
 #endif
 
-    if( m_buffer_lines ) free( m_buffer_lines );
-    m_buffer_lines = nullptr;
-    m_byte_buffer_lines_left = 0;
+    m_buffer_lines.clear();
+    m_buffer_lines.shrink_to_fit();
 
     if( m_parsed_text ) free( m_parsed_text );
     m_parsed_text = nullptr;
 
-    if( m_buffer_write ) free( m_buffer_write );
-    m_buffer_write = nullptr;
-    
+    m_buffer_write.clear();
+    m_buffer_write.shrink_to_fit();
+
     if( m_fout ) fclose( m_fout );
     m_fout = nullptr;
 
@@ -1087,7 +1086,7 @@ void NodeTreeBase::load_cache()
             init_loading();
             const size_t str_length = str.length();
             while( size < str_length ){
-                size_t size_tmp = MIN( MAXSISE_OF_LINES - m_byte_buffer_lines_left, str_length - size );
+                size_t size_tmp = MIN( MAXSISE_OF_LINES - m_buffer_lines.size(), str_length - size );
                 receive_data( data + size, size_tmp );
                 size += size_tmp;
             }
@@ -1126,7 +1125,10 @@ void NodeTreeBase::init_loading()
     clear();
 
     // 一時バッファ作成
-    if( ! m_buffer_lines ) m_buffer_lines = ( char* ) malloc( MAXSISE_OF_LINES ); 
+    if( m_buffer_lines.capacity() < MAXSISE_OF_LINES ) {
+        m_buffer_lines.reserve( MAXSISE_OF_LINES );
+    }
+
     if( ! m_parsed_text ) m_parsed_text = ( char* ) malloc( MAXSISE_OF_LINES );
 }
 
@@ -1288,20 +1290,20 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
     size_t size_in = ( int )( pos - data );
     if( size_in > 0 ){
         size_in ++; // '\n'を加える
-        memcpy( m_buffer_lines + m_byte_buffer_lines_left , data, size_in );
-        m_buffer_lines[ m_byte_buffer_lines_left + size_in ] = '\0';
-        add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left + size_in );
+        m_buffer_lines.append( data, size_in );
+        add_raw_lines( &*m_buffer_lines.begin(), m_buffer_lines.size() );
+        // 送ったバッファをクリア
+        m_buffer_lines.clear();
     }
 
     // add_raw_lines() でレジュームに失敗したと判断したら、バッファをクリアする
     if( m_resume == RESUME_FAILED ){
-        m_byte_buffer_lines_left = 0;
+        m_buffer_lines.clear();
         return;
     }
 
-    // 残りの分をバッファにコピーしておく
-    m_byte_buffer_lines_left = size - size_in;
-    if( m_byte_buffer_lines_left ) memcpy( m_buffer_lines, data + size_in, m_byte_buffer_lines_left );
+    // 残りのデータをバッファにコピーしておく
+    m_buffer_lines.assign( data + size_in, size - size_in );
 }
 
 
@@ -1332,12 +1334,11 @@ void NodeTreeBase::receive_finish()
 
         if( ! is_error ){
             // 特殊スレのdatには、最後の行に'\n'がない場合がある
-            if( m_byte_buffer_lines_left > 0 ){
+            if( !m_buffer_lines.empty() ) {
                 // 正常に読込完了した場合で、バッファが残っていれば add_raw_lines()にデータを送る
-                m_buffer_lines[ m_byte_buffer_lines_left ] = '\0';
-                add_raw_lines( m_buffer_lines, m_byte_buffer_lines_left );
+                add_raw_lines( &*m_buffer_lines.begin(), m_buffer_lines.size() );
                 // バッファをクリア
-                m_byte_buffer_lines_left = 0;
+                m_buffer_lines.clear();
             }
         }
 
@@ -1603,19 +1604,21 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     // 自分の書き込みかチェック
     if( m_check_write && MESSAGE::get_log_manager()->has_items( m_url, m_loading_newthread ) ){
 
-        if( ! m_buffer_write ) m_buffer_write = ( char* ) malloc( MAXSISE_OF_LINES ); 
+        if( m_buffer_write.capacity() < MAXSISE_OF_LINES ) {
+            m_buffer_write.reserve( MAXSISE_OF_LINES );
+        }
 
         // 簡易チェック
         // 最初の lng_check 文字だけ見る
         const bool newthread = ( header->id_header == 1 );
-        const int lng_check = MIN( section_lng[ 3 ], 32 );
+        const std::size_t lng_check = MIN( section_lng[ 3 ], 32 );
         parse_write( section[ 3 ], section_lng[ 3 ], lng_check );
-        if( MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write, lng_check ) ){
+        if( MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write.c_str(), lng_check ) ){
 
             // 全ての文字列で一致しているかチェック
             parse_write( section[ 3 ], section_lng[ 3 ], 0 );
 
-            const bool hit = MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write, 0 );
+            const bool hit = MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write.c_str(), 0 );
             if( hit ){
                 m_posts.insert( header->id_header );
             }
@@ -2373,10 +2376,8 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 //
 // max_lng_write > 0 のときは m_buffer_write の文字数が max_lng_write 以上になったら停止
 //
-void NodeTreeBase::parse_write( const char* str, const int lng, const int max_lng_write )
+void NodeTreeBase::parse_write( const char* str, const int lng, const std::size_t max_lng_write )
 {
-    if( ! m_buffer_write ) return;
-
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::parse_write lng = " << lng << " max = " << max_lng_write << std::endl;
 #endif
@@ -2388,13 +2389,13 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
     int offset_num;
     int lng_num;
 
-    char* pos_write = m_buffer_write;
+    m_buffer_write.clear();
 
     // 行頭の空白は全て除く
     while( *pos == ' ' ) ++pos;
     
     for( ; pos < pos_end
-         && ( max_lng_write == 0 || (int)( pos_write - m_buffer_write ) < max_lng_write )
+         && ( max_lng_write == 0 || m_buffer_write.size() < max_lng_write )
          ; ++pos ){
 
         // タグ
@@ -2404,7 +2405,7 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
             if( ( *( pos + 1 ) == 'b' || *( pos + 1 ) == 'B' )
                 && ( *( pos + 2 ) == 'r' || *( pos + 2 ) == 'R' )
                 ){
-                *(pos_write++) = '\n';
+                m_buffer_write.push_back( '\n' );
                 pos += 3;
             }
 
@@ -2417,7 +2418,7 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
         // gt
         else if( *pos == '&' && ( *( pos + 1 ) == 'g' && *( pos + 2 ) == 't' && *( pos + 3 ) == ';' ) ){
 
-            *(pos_write++) = '>';
+            m_buffer_write.push_back( '>' );
             pos += 3;
 
             continue;
@@ -2426,7 +2427,7 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
         // lt
         else if( *pos == '&' && ( *( pos + 1 ) == 'l' && *( pos + 2 ) == 't' && *( pos + 3 ) == ';' ) ){
 
-            *(pos_write++) = '<';
+            m_buffer_write.push_back( '<' );
             pos += 3;
 
             continue;
@@ -2435,7 +2436,7 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
         // amp
         else if( *pos == '&' && ( *( pos + 1 ) == 'a' && *( pos + 2 ) == 'm' && *( pos + 3 ) == 'p' && *( pos + 4 ) == ';' ) ){
 
-            *(pos_write++) = '&';
+            m_buffer_write.push_back( '&' );
             pos += 4;
 
             continue;
@@ -2444,7 +2445,7 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
         // quot
         else if( *pos == '&' && ( *( pos + 1 ) == 'q' && *( pos + 2 ) == 'u' && *( pos + 3 ) == 'o' && *( pos + 4 ) == 't' && *( pos + 5 ) == ';' ) ){
 
-            *(pos_write++) = '"';
+            m_buffer_write.push_back( '"' );
             pos += 5;
 
             continue;
@@ -2463,7 +2464,7 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
         else if( *pos == '\t' ){
 
             // 空白に置き換える
-            *(pos_write++) = ' ';
+            m_buffer_write.push_back( ' ' );
 
             continue;
         }
@@ -2472,18 +2473,17 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const int max_ln
         else if( *pos == '&' && *( pos + 1 ) == '#' && ( lng_num = MISC::spchar_number_ln( pos, offset_num ) ) != -1 ){
 
             const int num = MISC::decode_spchar_number( pos, offset_num, lng_num );
-            const int n_out = MISC::ucs2toutf8( num, pos_write );
-            pos_write += n_out;
+            char utf8[kMaxBytesOfUTF8Char]{};
+            const int n_out = MISC::ucs2toutf8( num, utf8 );
+            m_buffer_write.append( utf8, n_out );
             pos += offset_num + lng_num;
 
             continue;
         }
 
         head = false;
-        *(pos_write++) = *pos;
+        m_buffer_write.push_back( *pos );
     }
-
-    *pos_write = '\0';
 }
 
 

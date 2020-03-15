@@ -110,10 +110,9 @@ namespace DBTREE
         std::map< int, std::vector< int > > m_map_future_refer;
 
         // ロード用変数
-        char* m_buffer_lines;
-        size_t m_byte_buffer_lines_left;
+        std::string m_buffer_lines;
         char* m_parsed_text;
-        char* m_buffer_write; // 書き込みチェック用バッファ
+        std::string m_buffer_write; // 書き込みチェック用バッファ
         bool m_check_update; // HEADによる更新チェックのみ
         bool m_check_write; // 自分の書き込みかチェックする
         bool m_loading_newthread; // 新スレ読み込み中
@@ -323,7 +322,7 @@ namespace DBTREE
 
         // 書き込みログ比較用文字列作成
         // m_buffer_write に作成した文字列をセットする
-        void parse_write( const char* str, const int lng, const int max_lng_write );
+        void parse_write( const char* str, const int lng, const std::size_t max_lng_write );
 
         bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
         int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link );
