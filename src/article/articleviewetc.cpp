@@ -412,6 +412,82 @@ void ArticleViewPost::exec_reload()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// 高参照レス抽出ビュー
+
+ArticleViewHighRefRes::ArticleViewHighRefRes( const std::string& url )
+    : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewHighRefRes::ArticleViewHighRefRes " << get_url() << std::endl;
+#endif
+
+    setup_view();
+
+
+    // ラベル更新
+    set_label( " [ 高参照レス ] - " + DBTREE::article_subject( url_article() ));
+
+    // タブ更新
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+}
+
+
+
+ArticleViewHighRefRes::~ArticleViewHighRefRes()
+{
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewHighRefRes::~ArticleViewHighRefRes : " << get_url() << std::endl;
+#endif
+}
+
+
+//
+// 画面を消してレイアウトやりなおし & 再描画
+//
+void ArticleViewHighRefRes::relayout()
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewHighRefRes::relayout\n";
+#endif
+
+    drawarea()->clear_screen();
+    show_highly_referenced_res();
+    drawarea()->redraw_view();
+}
+
+
+//
+// 抽出表示
+//
+void ArticleViewHighRefRes::show_view()
+{
+    relayout();
+}
+
+
+//
+// 再読み込みボタンを押した
+//
+void ArticleViewHighRefRes::reload()
+{
+    exec_reload();
+}
+
+
+//
+// 再読み込み実行
+//
+// virtual
+void ArticleViewHighRefRes::exec_reload()
+{
+    relayout();
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // URL抽出ビュー
 
 ArticleViewURL::ArticleViewURL( const std::string& url )

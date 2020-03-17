@@ -89,7 +89,7 @@ SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY
             return new ARTICLE::ArticleViewPost( url );
 
         case VIEW_ARTICLEHIGHREFRES:
-            return /* new ARTICLE::ArticleViewHighRefRes( url ); */ nullptr; /* TODO: ArticleViewHighRefRes を後で実装 */
+            return new ARTICLE::ArticleViewHighRefRes( url );
 
         case VIEW_ARTICLEURL:
             return new ARTICLE::ArticleViewURL( url );
