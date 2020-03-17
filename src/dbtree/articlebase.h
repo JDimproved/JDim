@@ -196,6 +196,9 @@ namespace DBTREE
         // 書き込みしたレス番号をリストにして取得
         std::list< int > get_res_posted();
 
+        // 高参照レスをリストにして取得
+        std::list< int > get_highly_referenced_res();
+
         // number番のレスを参照しているレス番号をリストにして取得
         std::list< int > get_res_reference( const int number );
 

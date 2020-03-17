@@ -2089,6 +2089,25 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // 高参照レスを抽出
+    else if( command.command  == "open_article_highly_referened_res" ) { 
+
+        if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
+
+        ARTICLE::get_admin()->set_command( "open_view",
+                                           command.url, 
+
+                                           // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
+                                           // 詳しくは Admin::open_view() を参照せよ
+                                           "newtab", // 開く位置
+                                           "false", // command.url を開いてるかチェックする
+                                           "", // 開き方のモード
+
+                                           "HIGHREFRES" // 高参照レス抽出モード
+            );
+        return;
+    }
+
     // URL抽出
     else if( command.command  == "open_article_url" ) { 
 

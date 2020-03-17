@@ -13,6 +13,8 @@
 #define ID_SIGN      "_ID_"
 #define BOOKMK_SIGN  "_BM_"
 #define POST_SIGN    "_POST_"
+#define HIGHREFRES_SIGN \
+                     "_HIGH_REFRES_"
 #define URL_SIGN     "_URL_"
 #define REFER_SIGN   "_REF_"
 #define KEYWORD_SIGN "_KW_"
