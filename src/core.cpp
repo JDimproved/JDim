@@ -2090,7 +2090,7 @@ void Core::set_command( const COMMAND_ARGS& command )
     }
 
     // 高参照レスを抽出
-    else if( command.command  == "open_article_highly_referened_res" ) { 
+    else if( command.command  == "open_article_highly_referened_res" ) {
 
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
