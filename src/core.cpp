@@ -2095,7 +2095,7 @@ void Core::set_command( const COMMAND_ARGS& command )
         if( ! emp_mes ) m_vpaned_message.get_ctrl().set_mode( SKELETON::PANE_NORMAL );
 
         ARTICLE::get_admin()->set_command( "open_view",
-                                           command.url, 
+                                           command.url,
 
                                            // 以下 Admin::set_command() における COMMAND_ARGS::arg1, arg2,....
                                            // 詳しくは Admin::open_view() を参照せよ

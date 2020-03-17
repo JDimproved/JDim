@@ -3842,7 +3842,7 @@ void ArticleViewBase::slot_drawout_post()
 //
 void ArticleViewBase::slot_drawout_highly_referenced_res()
 {
-    CORE::core_set_command( "open_article_highly_referened_res" ,m_url_article );
+    CORE::core_set_command( "open_article_highly_referened_res", m_url_article );
 }
 
 
@@ -4288,4 +4288,3 @@ void ArticleViewBase::set_live( const bool live )
     if( m_live ) SESSION::append_live( m_url_article );
     else SESSION::remove_live( m_url_article );
 }
-
