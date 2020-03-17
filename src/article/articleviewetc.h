@@ -134,6 +134,31 @@ namespace ARTICLE
     /////////////////////////////////////////////////////////////////////////
 
 
+    // 高参照レス抽出ビュー
+    class ArticleViewHighRefRes : public ArticleViewBase
+    {
+        std::string m_str_id;
+
+      public:
+        ArticleViewHighRefRes( const std::string& url );
+        ~ArticleViewHighRefRes();
+
+        // SKELETON::View の関数のオーバロード
+        void relayout() override;
+
+        void show_view() override;
+        void reload() override;
+
+      private:
+
+        void exec_reload() override;
+    };
+
+
+
+    /////////////////////////////////////////////////////////////////////////
+
+
     // URL抽出ビュー
     class ArticleViewURL : public ArticleViewBase
     {

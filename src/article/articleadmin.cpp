@@ -255,6 +255,17 @@ COMMAND_ARGS ArticleAdmin::url_to_openarg( const std::string& url, const bool ta
         command_arg.arg4 = "POST";
     }
 
+    // 高参照レス抽出
+    else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + HIGHREFRES_SIGN, url, offset, icase, newline, usemigemo, wchar )){
+
+        command_arg.url = regex.str( 1 );
+        if( tab ) command_arg.arg1 = "true"; // タブで開く
+        command_arg.arg2 = "false"; // command.url を開いてるかチェックする
+        if( lock ) command_arg.arg3 = "lock";
+
+        command_arg.arg4 = "HIGHREFRES";
+    }
+
     // URL抽出
     else if( regex.exec( std::string( "(.*)" ) + ARTICLE_SIGN + URL_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
@@ -383,6 +394,8 @@ std::string ArticleAdmin::command_to_url( const COMMAND_ARGS& command )
 
     if( command.arg4 == "POST" ) return command.url + ARTICLE_SIGN + POST_SIGN;
 
+    if( command.arg4 == "HIGHREFRES" ) return command.url + ARTICLE_SIGN + HIGHREFRES_SIGN;
+
     if( command.arg4 == "URL" ) return command.url + ARTICLE_SIGN + URL_SIGN;
 
     if( command.arg4 == "REF" ) return command.url + ARTICLE_SIGN + REFER_SIGN + command.arg5;
@@ -504,6 +517,11 @@ SKELETON::View* ArticleAdmin::create_view( const COMMAND_ARGS& command )
     // 書き込み抽出ビュー
     else if( command.arg4 == "POST" ){
         type = CORE::VIEW_ARTICLEPOST;
+    }
+
+    // 高参照レス抽出ビュー
+    else if( command.arg4 == "HIGHREFRES" ){
+        type = CORE::VIEW_ARTICLEHIGHREFRES;
     }
 
     // URL抽出ビュー

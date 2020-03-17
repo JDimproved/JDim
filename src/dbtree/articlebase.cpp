@@ -287,6 +287,11 @@ std::list< int > ArticleBase::get_res_posted()
     return list_resnum;
 }
 
+// 高参照レスをリストにして取得
+std::list< int > ArticleBase::get_highly_referenced_res()
+{
+    return get_nodetree()->get_highly_referened_res();
+}
 
 //
 // number番のレスを参照しているレス番号をリストにして取得

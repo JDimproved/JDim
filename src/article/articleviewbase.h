@@ -201,6 +201,9 @@ namespace ARTICLE
         // 書き込みログを表示
         void show_postlog( const int num );
 
+        // 高参照レスを抽出して表示
+        void show_highly_referenced_res();
+
         // URLを含むレスを抽出して表示
         void show_res_with_url();
 
@@ -303,6 +306,7 @@ namespace ARTICLE
         void slot_drawout_id();
         void slot_drawout_bm();
         void slot_drawout_post();
+        void slot_drawout_highly_referenced_res();
         void slot_drawout_refer();
         void slot_drawout_url();
         void slot_abone_res();

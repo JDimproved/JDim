@@ -231,6 +231,7 @@ void ArticleViewBase::setup_action()
     action_group()->add( Gtk::Action::create( "DrawoutID", "ID抽出(_I)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_id ) );
     action_group()->add( Gtk::Action::create( "DrawoutBM", "しおり抽出(_B)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_bm ) );
     action_group()->add( Gtk::Action::create( "DrawoutPost", "書き込み抽出(_W)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_post ) );
+    action_group()->add( Gtk::Action::create( "DrawoutHighRefRes", "高参照レス抽出(_H)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_highly_referenced_res ) );
     action_group()->add( Gtk::Action::create( "DrawoutURL", "URL抽出(_U)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_url ) );
     action_group()->add( Gtk::Action::create( "DrawoutRefer", "参照抽出(_E)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_refer ) );
     action_group()->add( Gtk::Action::create( "DrawoutAround", "周辺抽出(_A)"), sigc::mem_fun( *this, &ArticleViewBase::slot_drawout_around ) );
@@ -535,6 +536,7 @@ const char* ArticleViewBase::get_menu_item( const int item )
             "<menuitem action='DrawoutWord'/>"
             "<menuitem action='DrawoutBM'/>"
             "<menuitem action='DrawoutPost'/>"
+            "<menuitem action='DrawoutHighRefRes'/>"
             "<menuitem action='DrawoutURL'/>"
             "<menuitem action='DrawoutTmp'/>"
             "</menu>"
@@ -1810,6 +1812,32 @@ void ArticleViewBase::show_postlog( const int num )
 
     append_html( html );
 }
+
+
+//
+// 高参照レスを抽出して表示
+//
+void ArticleViewBase::show_highly_referenced_res()
+{
+    assert( m_article );
+
+#ifdef _DEBUG
+    std::cout << "ArticleViewBase::show_highly_referenced_res " << std::endl;
+#endif
+
+    std::list< int > list_resnum = m_article->get_highly_referenced_res();
+
+    if( ! list_resnum.empty() ){
+
+        std::ostringstream comment;
+        comment << "高参照レス数：" << list_resnum.size() << " 件<br>";
+        append_html( comment.str() );
+
+        append_res( list_resnum );
+    }
+    else append_html( "このスレでは高参照レスはありません" );
+}
+
 
 
 //
@@ -3153,6 +3181,13 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         else act->set_sensitive( false );
     }
 
+    // 高参照レス抽出
+    act = action_group()->get_action( "DrawoutHighRefRes" );
+    if( act ){
+        if( nourl ) act->set_sensitive( false );
+        else act->set_sensitive( true );
+    }
+
     // 新着移動
     act = action_group()->get_action( "GotoNew" );
     if( act ){
@@ -3803,6 +3838,15 @@ void ArticleViewBase::slot_drawout_post()
 
 
 //
+// 別のタブを開いて高参照レスを抽出
+//
+void ArticleViewBase::slot_drawout_highly_referenced_res()
+{
+    CORE::core_set_command( "open_article_highly_referened_res", m_url_article );
+}
+
+
+//
 // 別のタブを開いて参照抽出
 //
 // 呼び出す前に m_str_num に対象のレス番号を入れておくこと
@@ -4244,4 +4288,3 @@ void ArticleViewBase::set_live( const bool live )
     if( m_live ) SESSION::append_live( m_url_article );
     else SESSION::remove_live( m_url_article );
 }
-

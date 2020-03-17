@@ -207,6 +207,9 @@ namespace DBTREE
         // res_num に含まれるレスを参照しているレス番号をリストにして取得
         std::list< int > get_res_reference( const std::list< int >& res_num );
 
+        // 高参照レスの番号をリストにして取得
+        std::list< int > get_highly_referened_res();
+
         // query を含むレス番号をリストにして取得
         // mode_or == true なら OR抽出
         std::list< int > get_res_query( const std::string& query, const bool mode_or );
