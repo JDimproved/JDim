@@ -498,6 +498,28 @@ EXIT_LOOP:;
 
 
 //
+// 高参照レスの番号をリストにして取得
+//
+std::list< int > NodeTreeBase::get_highly_referened_res()
+{
+    std::list< int > list_resnum;
+    for( int i = 1; i <= m_id_header; ++i ){
+
+        NODE* head = res_header( i );
+        if ( ! head ) continue;
+        if ( get_abone( i ) ) continue; // あぼーんしているものは飛ばす
+        if ( head->headinfo->num_reference < m_num_reference[ LINK_HIGH ] ) continue;
+
+        // リストに追加
+        list_resnum.push_back( i );
+    }
+
+    return list_resnum;
+}
+
+
+
+//
 // number番のレスに含まれるレスアンカーをリストにして取得
 //
 std::list< ANCINFO* > NodeTreeBase::get_res_anchors( const int number )
