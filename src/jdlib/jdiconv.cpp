@@ -181,9 +181,8 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                     // このblockの範囲で確認してから、脱出する。
 
 
-                    int byte;
-                    int is_converted_to_ucs2 = false;  // 数値文字参照に変換されたかどうか
-                    int is_handling_emoji_subdivision_flag = false;  // emoji subdivision flags の処理の途中か
+                    bool is_converted_to_ucs2 = false;  // 数値文字参照に変換されたかどうか
+                    bool is_handling_emoji_subdivision_flag = false;  // emoji subdivision flags の処理の途中か
 
                     for ( ; ; ) {
                         int byte;
