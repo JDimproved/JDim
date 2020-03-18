@@ -173,9 +173,29 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                 // 数値文字参照(&#????;)形式にする
                 if( m_coding_from == "UTF-8" ){
 
-                    int byte;
-                    const int ucs2 = MISC::utf8toucs2( m_buf_in_tmp, byte );
-                    if( byte != 1 ){
+                    // https://github.com/JDimproved/JDim/issues/214 （emoji subdivision flagの処理）について
+                    //
+                    // TAG LATIN SMALL LETTER と CANCEL TAG については、libcのiconv()関数にかけると、
+                    // エラーを返さず、なおかつこれらの文字を無視してしまうので、
+                    // U+1F3F4 WAVING BLACK FLAGが現れた時は、上の範囲のUTF-8文字が続いてないか、
+                    // このblockの範囲で確認してから、脱出する。
+
+
+                    bool is_converted_to_ucs2 = false;  // 数値文字参照に変換されたかどうか
+                    bool is_handling_emoji_subdivision_flag = false;  // emoji subdivision flags の処理の途中か
+
+                    for ( ; ; ) {
+                        int byte;
+                        const int ucs2 = MISC::utf8toucs2( m_buf_in_tmp, byte );
+                        if( byte <= 1 ) break;
+
+                        // emoji subdivision flags の処理
+                        if ( is_handling_emoji_subdivision_flag ) {
+                            // Tag Latin Small Letterの範囲か、Cancel Tagでなければ、処理中断
+                            if ( byte != 4 ) break;
+                            if ( ucs2 < 917601 ) break; // U+E0061 TAG LATIN SMALL LETTER A
+                            if ( ucs2 > 917631 ) break; // U+E007F CANCEL TAG
+                        }
 
                         const std::string ucs2_str = std::to_string( ucs2 );
 #ifdef _DEBUG
@@ -190,9 +210,25 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                         *(buf_out++) = ';';
 
                         byte_left_out -= ucs2_str.size() + 3;
+                        is_converted_to_ucs2 = true;  // 一度変換されたのでマーク
 
-                        continue;
+                        if ( ! is_handling_emoji_subdivision_flag ) {
+                            if ( ( byte == 4 ) && ( ucs2 == 127988 ) ){ // U+1F3F4 WAVING BLACK FLAG
+                                // emoji subdivision flags の処理開始
+                                is_handling_emoji_subdivision_flag = true;
+                                continue; // 連続処理
+                            }
+                        } else {
+                            // まだ emoji subdivision flags の処理中
+                            continue;
+                        }
+
+                        break;
                     }
+
+                    // 数値文字参照に変換された場合は、continueする
+                    if ( is_converted_to_ucs2 ) continue;
+
                 }
 
                 // 時々空白(0x20)で EILSEQ が出るときがあるのでもう一度トライする
