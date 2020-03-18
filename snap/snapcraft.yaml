@@ -80,12 +80,6 @@ parts:
       - ./usr/lib/**/libpcre2-8.so*
       - ./usr/lib/**/libsigc-2.0.so*
 
-slots:
-  dbus-daemon:
-    interface: dbus
-    bus: session
-    name: com.github.jdimproved.JDim
-
 apps:
   jdim:
     command: bin/jdim
@@ -98,7 +92,5 @@ apps:
       - home
       - network
       - unity7
-    slots:
-      - dbus-daemon
     command-chain:
       - snap/command-chain/desktop-launch
