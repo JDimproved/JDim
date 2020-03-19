@@ -415,7 +415,11 @@ void DrawAreaBase::init_font()
     // layoutにフォントをセット
     m_font = &m_defaultfont;
     m_pango_layout->set_font_description( m_font->pfd );
+#if GTKMM_CHECK_VERSION(3,0,0)
     m_context->set_font_description( m_font->pfd );
+#else
+    modify_font( m_font->pfd );
+#endif
 }
 
 
@@ -2779,7 +2783,11 @@ void DrawAreaBase::set_node_font( LAYOUT* layout )
 
         // layoutにフォントをセット
         m_pango_layout->set_font_description( m_font->pfd );
+#if GTKMM_CHECK_VERSION(3,0,0)
         m_context->set_font_description( m_font->pfd );
+#else
+        modify_font( m_font->pfd );
+#endif
     }
 }
 
