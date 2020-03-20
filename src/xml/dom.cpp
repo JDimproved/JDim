@@ -232,8 +232,8 @@ void Dom::parse( const std::string& str )
 
         // ノードを追加
         Dom* node = appendChild( type, name );
-        node->attributes( attributes_pair );
-        node->nodeValue( value );
+        node->m_attributes = std::move( attributes_pair );
+        node->m_nodeValue = std::move( value );
 
         // 再帰
         if( ! next_source.empty() ) node->parse( next_source );
@@ -600,9 +600,9 @@ void Dom::copy_childNodes( const Dom& dom )
         while( it != children.end() )
         {
             Dom* node = new Dom( (*it)->nodeType(), (*it)->nodeName() );
-            node->nodeValue( (*it)->nodeValue() );
-            node->parentNode( this );
-            node->attributes( (*it)->attributes() );
+            node->m_nodeValue = (*it)->nodeValue();
+            node->m_parentNode = this;
+            node->m_attributes = (*it)->m_attributes;
             node->copy_childNodes( *(*it) );
 
             m_childNodes.push_back( node );
@@ -634,7 +634,7 @@ Dom* Dom::appendChild( const int node_type, const std::string& node_name )
     {
         node = new Dom( node_type, node_name, m_html );
 
-        node->parentNode( this );
+        node->m_parentNode = this;
 
         m_childNodes.push_back( node );
     }
@@ -672,7 +672,7 @@ Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* 
     {
         if( *it == insNode )
         {
-            newNode->parentNode( insNode->parentNode() );
+            newNode->m_parentNode = insNode->m_parentNode;
             m_childNodes.insert( it, newNode );
             break;
         }
