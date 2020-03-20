@@ -52,7 +52,7 @@ namespace XML
       private:
 
         // このクラスの代入演算子は使わない
-        Dom& operator=( const Dom& );
+        Dom& operator=( const Dom& ) = delete;
 
         // 属性ペアのリストを作成
         std::map< std::string, std::string > create_attribute( const std::string& str ) const;
@@ -109,29 +109,31 @@ namespace XML
         // delete忘れを防ぐために外部でnewしない方が良いだろうという
         // 事で、メンバ関数の内部でnewして追加されたノードのポインタ
         // を返すようにしてあります。
+        //
+        // クラス外で使用していないメンバ関数は削除してあります。
 
-        Dom* ownerDocument() const noexcept;
+        Dom* ownerDocument() const noexcept = delete;
         Dom* parentNode() const noexcept;
         bool hasChildNodes() const noexcept;
         std::list<Dom*> childNodes() const;
         Dom* firstChild() const;
-        Dom* lastChild() const;
+        Dom* lastChild() const = delete;
         Dom* appendChild( const int node_type, const std::string& node_name );
         bool removeChild( Dom* node );
-        Dom* replaceChild( const int node_type, const std::string& node_name, Dom* oldNode );
+        Dom* replaceChild( const int node_type, const std::string& node_name, Dom* oldNode ) = delete;
         Dom* insertBefore( const int node_type, const std::string& node_name, Dom* insNode );
-        Dom* previousSibling() const;
-        Dom* nextSibling() const;
+        Dom* previousSibling() const = delete;
+        Dom* nextSibling() const = delete;
 
         // 属性
-        bool hasAttributes() const noexcept;
-        std::map< std::string, std::string > attributes() const;
-        void attributes( const std::map< std::string, std::string > attributes );
-        bool hasAttribute( const std::string& name ) const;
+        bool hasAttributes() const noexcept = delete;
+        std::map< std::string, std::string > attributes() const = delete;
+        void attributes( std::map< std::string, std::string > attributes ) = delete;
+        bool hasAttribute( const std::string& name ) const = delete;
         std::string getAttribute( const std::string& name ) const;
         bool setAttribute( const std::string& name, const std::string& value );
         bool setAttribute( const std::string& name, const int value );
-        bool removeAttribute( const std::string& name );
+        bool removeAttribute( const std::string& name ) = delete;
     };
 }
 

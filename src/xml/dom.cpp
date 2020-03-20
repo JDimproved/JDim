@@ -602,23 +602,6 @@ std::list<Dom*> Dom::getElementsByTagName( const std::string& name ) const
 
 
 //
-// ノード：ownerDocument
-//
-Dom* Dom::ownerDocument() const noexcept
-{
-    Dom* parent = m_parentNode;
-
-    while( parent )
-    {
-        if( parent->nodeType() == NODE_TYPE_DOCUMENT ) break;
-        else parent = parent->parentNode();
-    }
-
-    return parent;    
-}
-
-
-//
 // ノード：parentNode
 //
 Dom* Dom::parentNode() const noexcept
@@ -690,17 +673,6 @@ Dom* Dom::firstChild() const
 
 
 //
-// ノード：lastChild
-//
-Dom* Dom::lastChild() const
-{
-    if( m_childNodes.empty() ) return nullptr;
-
-    return m_childNodes.back();
-}
-
-
-//
 // ノード：appendChild()
 //
 Dom* Dom::appendChild( const int node_type, const std::string& node_name )
@@ -735,34 +707,6 @@ bool Dom::removeChild( Dom* node )
 
 
 //
-// ノード：replaceChild()
-//
-Dom* Dom::replaceChild( const int node_type, const std::string& node_name, Dom* oldNode )
-{
-    Dom* newNode = nullptr;
-
-    newNode = new Dom( node_type, node_name );
-
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
-    {
-        if( *it == oldNode )
-        {
-            newNode->parentNode( oldNode->parentNode() );
-            m_childNodes.erase( it );
-            m_childNodes.insert( it, newNode );
-            break;
-        }
-        ++it;
-    }
-
-    if( oldNode ) delete oldNode;
-
-    return newNode;
-}
-
-
-//
 // ノード：insertBefore()
 //
 Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* insNode )
@@ -784,89 +728,6 @@ Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* 
     }
 
     return newNode;
-}
-
-
-//
-// ノード：previousSibling
-//
-Dom* Dom::previousSibling() const
-{
-    Dom* previous = nullptr;
-
-    std::list<Dom*> brothers = m_parentNode->childNodes();
-
-    std::list< Dom* >::iterator it = brothers.begin();
-    while( it != brothers.end() )
-    {
-        if( it != brothers.begin() && *it == this )
-        {
-            previous = *( --it );
-            break;
-        }
-        ++it;
-    }
-
-    return previous;
-}
-
-
-//
-// ノード：nextSibling
-//
-Dom* Dom::nextSibling() const
-{
-    Dom* next = nullptr;
-
-    std::list<Dom*> brothers = m_parentNode->childNodes();
-
-    std::list< Dom* >::iterator it = brothers.begin();
-    while( it != brothers.end() )
-    {
-        if( *it == this )
-        {
-            ++it;
-            if( it != brothers.end() ) next = *it;
-            break;
-        }
-        ++it;
-    }
-
-    return next;
-}
-
-
-//
-// 属性：attributes
-//
-std::map< std::string, std::string > Dom::attributes() const
-{
-    return m_attributes;
-}
-
-void Dom::attributes( const std::map< std::string, std::string > attributes )
-{
-    if( ! attributes.empty() ) m_attributes = attributes;
-}
-
-
-//
-// 属性：hasAttributes()
-//
-bool Dom::hasAttributes() const noexcept
-{
-    return ! m_attributes.empty();
-}
-
-
-//
-// 属性：hasAttribute()
-//
-bool Dom::hasAttribute( const std::string& name ) const
-{
-    if( name.empty() ) return false;
-
-    return m_attributes.find( name ) != m_attributes.end();
 }
 
 
@@ -920,25 +781,3 @@ bool Dom::setAttribute( const std::string& name, const int value )
 
     return true;
 }
-
-
-//
-// 属性：removeAttribute()
-//
-bool Dom::removeAttribute( const std::string& name )
-{
-    bool result = false;
-
-    if( name.empty() ) return result;
-
-    std::map< std::string, std::string >::iterator it = m_attributes.find( name );
-
-    if( it != m_attributes.end() )
-    {
-        m_attributes.erase( it );
-        result = true;
-    }
-
-    return result;
-}
-
