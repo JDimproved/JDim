@@ -39,6 +39,69 @@ TEST_F(XML_DomProperty, node_value)
 }
 
 
+class XML_DomGetElement : public ::testing::Test {};
+
+TEST_F(XML_DomGetElement, empty_id)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    XML::Dom* result = dom.getElementById( "" );
+    EXPECT_EQ( nullptr, result );
+}
+
+TEST_F(XML_DomGetElement, not_found_id)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    XML::Dom* child = dom.appendChild( XML::NODE_TYPE_UNKNOWN, "unknown" );
+    child->setAttribute( "id", "the-id" );
+    child = dom.appendChild( XML::NODE_TYPE_TEXT, "text" );
+    child->setAttribute( "id", "the-id" );
+    child = dom.appendChild( XML::NODE_TYPE_DOCUMENT, "document" );
+    child->setAttribute( "id", "the-id" );
+    XML::Dom* result = dom.getElementById( "the-id" );
+    EXPECT_EQ( nullptr, result );
+}
+
+TEST_F(XML_DomGetElement, found_first_id)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    XML::Dom* child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "first" );
+    child->setAttribute( "id", "the-id" );
+    XML::Dom* expect = child;
+    child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "second" );
+    child->setAttribute( "id", "the-id" );
+    XML::Dom* result = dom.getElementById( "the-id" );
+    EXPECT_EQ( expect, result );
+}
+
+TEST_F(XML_DomGetElement, empty_tag_name)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    const std::list<XML::Dom*> result = dom.getElementsByTagName( "" );
+    EXPECT_TRUE( result.empty() );
+}
+
+TEST_F(XML_DomGetElement, not_found_tag_name)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    dom.appendChild( XML::NODE_TYPE_UNKNOWN, "the-tag" );
+    dom.appendChild( XML::NODE_TYPE_TEXT, "the-tag" );
+    dom.appendChild( XML::NODE_TYPE_DOCUMENT, "the-tag" );
+    const std::list<XML::Dom*> result = dom.getElementsByTagName( "" );
+    EXPECT_TRUE( result.empty() );
+}
+
+TEST_F(XML_DomGetElement, found_tag_name)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    XML::Dom* first = dom.appendChild( XML::NODE_TYPE_ELEMENT, "the-tag" );
+    dom.appendChild( XML::NODE_TYPE_ELEMENT, "another-tag" );
+    XML::Dom* second = dom.appendChild( XML::NODE_TYPE_ELEMENT, "the-tag" );
+    const std::list<XML::Dom*> expect = { first, second };
+    const std::list<XML::Dom*> result = dom.getElementsByTagName( "the-tag" );
+    EXPECT_EQ( expect, result );
+}
+
+
 class XML_DomChildren : public ::testing::Test {};
 
 TEST_F(XML_DomChildren, has_child_nodes)
