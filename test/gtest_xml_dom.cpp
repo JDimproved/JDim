@@ -39,6 +39,89 @@ TEST_F(XML_DomProperty, node_value)
 }
 
 
+class XML_DomChildren : public ::testing::Test {};
+
+TEST_F(XML_DomChildren, has_child_nodes)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    bool result = dom.hasChildNodes();
+    EXPECT_FALSE( result );
+
+    dom.appendChild( XML::NODE_TYPE_ELEMENT, "child" );
+    result = dom.hasChildNodes();
+    EXPECT_TRUE( result );
+}
+
+TEST_F(XML_DomChildren, child_nodes)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "unknown" };
+    XML::Dom* first = dom.appendChild( XML::NODE_TYPE_ELEMENT, "element" );
+    XML::Dom* second = dom.appendChild( XML::NODE_TYPE_TEXT, "text" );
+    XML::Dom* third = dom.appendChild( XML::NODE_TYPE_DOCUMENT, "document" );
+    const std::list<XML::Dom*> expect = { first, second, third };
+    const std::list<XML::Dom*> result = dom.childNodes();
+    EXPECT_EQ( expect, result );
+}
+
+TEST_F(XML_DomChildren, append_child)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    XML::Dom* child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "child" );
+    EXPECT_NE( nullptr, child );
+    EXPECT_EQ( XML::NODE_TYPE_ELEMENT, child->nodeType() );
+    EXPECT_EQ( "child", child->nodeName() );
+}
+
+
+TEST_F(XML_DomChildren, first_child)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    XML::Dom* child = dom.firstChild();
+    EXPECT_EQ( nullptr, child );
+
+    dom.appendChild( XML::NODE_TYPE_ELEMENT, "child" );
+    child = dom.firstChild();
+    EXPECT_NE( nullptr, child );
+    EXPECT_EQ( XML::NODE_TYPE_ELEMENT, child->nodeType() );
+    EXPECT_EQ( "child", child->nodeName() );
+}
+
+TEST_F(XML_DomChildren, remove_child)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    bool result = dom.removeChild( nullptr );
+    EXPECT_FALSE( result );
+
+    XML::Dom* child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "child" );
+    result = dom.removeChild( child );
+    EXPECT_TRUE( result );
+    EXPECT_FALSE( dom.hasChildNodes() );
+}
+
+TEST_F(XML_DomChildren, insert_before)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    XML::Dom* leak_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "null", nullptr );
+    EXPECT_NE( nullptr, leak_child );
+    EXPECT_FALSE( dom.hasChildNodes() );
+    delete leak_child;
+
+    XML::Dom* first_child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "child1" );
+    XML::Dom* second_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "child2", first_child );
+    XML::Dom* result = dom.firstChild();
+    EXPECT_EQ( second_child, result );
+}
+
+TEST_F(XML_DomChildren, children_clear)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    dom.appendChild( XML::NODE_TYPE_ELEMENT, "child1" );
+    dom.appendChild( XML::NODE_TYPE_ELEMENT, "child2" );
+    dom.clear();
+    EXPECT_FALSE( dom.hasChildNodes() );
+}
+
+
 class XML_DomAttribute : public ::testing::Test {};
 
 TEST_F(XML_DomAttribute, set_not_element_type)
