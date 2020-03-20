@@ -7,6 +7,38 @@
 
 namespace {
 
+class XML_DomProperty : public ::testing::Test {};
+
+TEST_F(XML_DomProperty, node_type)
+{
+    const auto types = {
+        XML::NODE_TYPE_UNKNOWN,
+        XML::NODE_TYPE_ELEMENT,
+        XML::NODE_TYPE_TEXT,
+        XML::NODE_TYPE_DOCUMENT,
+    };
+    for( const auto t : types ) {
+        XML::Dom dom{ t, "test" };
+        int result = dom.nodeType();
+        EXPECT_EQ( t, result );
+    }
+}
+
+TEST_F(XML_DomProperty, node_name)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    std::string name = dom.nodeName();
+    EXPECT_EQ( "test", name );
+}
+
+TEST_F(XML_DomProperty, node_value)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    std::string value = dom.nodeValue();
+    EXPECT_EQ( "", value );
+}
+
+
 class XML_DomAttribute : public ::testing::Test {};
 
 TEST_F(XML_DomAttribute, set_not_element_type)
