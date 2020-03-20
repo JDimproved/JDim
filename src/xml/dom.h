@@ -70,7 +70,7 @@ namespace XML
         void parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns& columns );
 
         // プロパティをセットするアクセッサ
-        void parentNode( Dom* parent );
+        void parentNode( Dom* parent ) { m_parentNode = parent; }
         void copy_childNodes( const Dom& dom ); // dom の子ノードをコピーする
 
         // ノードを分解して Gtk::TreeStore へ Gtk::TreeModel::Row を追加
@@ -97,10 +97,10 @@ namespace XML
         std::list<Dom*> getElementsByTagName( const std::string& name ) const;
 
         // プロパティを扱うアクセッサ
-        int nodeType() const noexcept;
-        std::string nodeName() const;
-        std::string nodeValue() const;
-        void nodeValue( const std::string& value );
+        int nodeType() const noexcept { return m_nodeType; }
+        std::string nodeName() const { return m_nodeName; }
+        std::string nodeValue() const { return m_nodeValue; }
+        void nodeValue( const std::string& value ) { m_nodeValue = value; }
 
         // ノード
         // 注意：appendChild(), replaceChild(), insertBefore() は
@@ -113,9 +113,9 @@ namespace XML
         // クラス外で使用していないメンバ関数は削除してあります。
 
         Dom* ownerDocument() const noexcept = delete;
-        Dom* parentNode() const noexcept;
+        Dom* parentNode() const noexcept { return m_parentNode; }
         bool hasChildNodes() const noexcept;
-        std::list<Dom*> childNodes() const;
+        std::list<Dom*> childNodes() const { return m_childNodes; }
         Dom* firstChild() const;
         Dom* lastChild() const = delete;
         Dom* appendChild( const int node_type, const std::string& node_name );
