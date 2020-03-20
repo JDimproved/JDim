@@ -55,7 +55,7 @@ namespace XML
         Dom& operator=( const Dom& );
 
         // 属性ペアのリストを作成
-        std::map< std::string, std::string > create_attribute( const std::string& str );
+        std::map< std::string, std::string > create_attribute( const std::string& str ) const;
 
       protected:
 
@@ -78,16 +78,16 @@ namespace XML
         void append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                                SKELETON::EditColumns& columns,
                                 std::list< Gtk::TreePath >& list_path_expand,
-                                const Gtk::TreeModel::Row& parnet = Gtk::TreeModel::Row() );
+                                const Gtk::TreeModel::Row& parnet = Gtk::TreeModel::Row() ) const;
 
       public:
 
         // コンストラクタ、デストラクタ
         Dom( const int type, const std::string& name, const bool html = false );
-        virtual ~Dom();
+        virtual ~Dom() noexcept;
 
         // クリア
-        void clear();
+        void clear() noexcept;
 
         // XMLタグ構造の文字列を生成
         std::string get_xml( const int n = 0 ) const;
@@ -97,9 +97,9 @@ namespace XML
         std::list<Dom*> getElementsByTagName( const std::string& name ) const;
 
         // プロパティを扱うアクセッサ
-        int nodeType();
-        std::string nodeName();
-        std::string nodeValue();
+        int nodeType() const noexcept;
+        std::string nodeName() const;
+        std::string nodeValue() const;
         void nodeValue( const std::string& value );
 
         // ノード
@@ -110,9 +110,9 @@ namespace XML
         // 事で、メンバ関数の内部でnewして追加されたノードのポインタ
         // を返すようにしてあります。
 
-        Dom* ownerDocument() const;
-        Dom* parentNode();
-        bool hasChildNodes();
+        Dom* ownerDocument() const noexcept;
+        Dom* parentNode() const noexcept;
+        bool hasChildNodes() const noexcept;
         std::list<Dom*> childNodes() const;
         Dom* firstChild() const;
         Dom* lastChild() const;
@@ -124,8 +124,8 @@ namespace XML
         Dom* nextSibling() const;
 
         // 属性
-        bool hasAttributes();
-        std::map< std::string, std::string > attributes();
+        bool hasAttributes() const noexcept;
+        std::map< std::string, std::string > attributes() const;
         void attributes( const std::map< std::string, std::string > attributes );
         bool hasAttribute( const std::string& name ) const;
         std::string getAttribute( const std::string& name ) const;

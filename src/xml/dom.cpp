@@ -46,7 +46,7 @@ Dom::Dom( const int type, const std::string& name, const bool html )
 }
 
 // デストラクタ
-Dom::~Dom()
+Dom::~Dom() noexcept
 {
 #ifdef _DEBUG
     std::cout << "~Dom() : " << m_nodeName << ", " << m_childNodes.size() << std::endl;
@@ -71,7 +71,7 @@ Dom::Dom( const Dom& dom )
 //
 // 子ノードのクリア
 //
-void Dom::clear()
+void Dom::clear() noexcept
 {
     std::list< Dom* >::iterator it = m_childNodes.begin();
     while( it != m_childNodes.end() )
@@ -244,7 +244,7 @@ void Dom::parse( const std::string& str )
 //
 // 属性ペアのリストを作成
 //
-std::map< std::string, std::string > Dom::create_attribute( const std::string& str )
+std::map< std::string, std::string > Dom::create_attribute( const std::string& str ) const
 {
     std::map< std::string, std::string > attributes_pair;
 
@@ -485,10 +485,10 @@ void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns
 void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                             SKELETON::EditColumns& columns,
                              std::list< Gtk::TreePath >& list_path_expand,
-                             const Gtk::TreeModel::Row& parent )
+                             const Gtk::TreeModel::Row& parent ) const
 {
     // ノードの子要素を走査
-    std::list< Dom* >::iterator it = m_childNodes.begin();
+    std::list< Dom* >::const_iterator it = m_childNodes.begin();
     while( it != m_childNodes.end() )
     {
         const int node_type = (*it)->nodeType();
@@ -530,17 +530,17 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
 //
 // プロパティを扱うアクセッサ
 //
-int Dom::nodeType()
+int Dom::nodeType() const noexcept
 {
     return m_nodeType;
 }
 
-std::string Dom::nodeName()
+std::string Dom::nodeName() const
 {
     return m_nodeName;
 }
 
-std::string Dom::nodeValue()
+std::string Dom::nodeValue() const
 {
     return m_nodeValue;
 }
@@ -604,7 +604,7 @@ std::list<Dom*> Dom::getElementsByTagName( const std::string& name ) const
 //
 // ノード：ownerDocument
 //
-Dom* Dom::ownerDocument() const
+Dom* Dom::ownerDocument() const noexcept
 {
     Dom* parent = m_parentNode;
 
@@ -621,7 +621,7 @@ Dom* Dom::ownerDocument() const
 //
 // ノード：parentNode
 //
-Dom* Dom::parentNode()
+Dom* Dom::parentNode() const noexcept
 {
     return m_parentNode;
 }
@@ -635,7 +635,7 @@ void Dom::parentNode( Dom* parent )
 //
 // ノード：hasChildNodes
 //
-bool Dom::hasChildNodes()
+bool Dom::hasChildNodes() const noexcept
 {
     return ! m_childNodes.empty();
 }
@@ -839,7 +839,7 @@ Dom* Dom::nextSibling() const
 //
 // 属性：attributes
 //
-std::map< std::string, std::string > Dom::attributes()
+std::map< std::string, std::string > Dom::attributes() const
 {
     return m_attributes;
 }
@@ -853,7 +853,7 @@ void Dom::attributes( const std::map< std::string, std::string > attributes )
 //
 // 属性：hasAttributes()
 //
-bool Dom::hasAttributes()
+bool Dom::hasAttributes() const noexcept
 {
     return ! m_attributes.empty();
 }
