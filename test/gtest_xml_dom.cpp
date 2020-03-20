@@ -7,6 +7,68 @@
 
 namespace {
 
+class XML_DomGetXml : public ::testing::Test {};
+
+TEST_F(XML_DomGetXml, xml_empty)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
+    std::string xml = dom.get_xml();
+    EXPECT_EQ( "", xml );
+}
+
+TEST_F(XML_DomGetXml, xml_empty_document)
+{
+    XML::Dom dom{ XML::NODE_TYPE_DOCUMENT, "document" };
+    std::string xml = dom.get_xml();
+    EXPECT_EQ( "", xml );
+}
+
+TEST_F(XML_DomGetXml, xml_single_element)
+{
+    XML::Dom dom{ XML::NODE_TYPE_DOCUMENT, "document" };
+    XML::Dom* root = dom.appendChild( XML::NODE_TYPE_ELEMENT, "root" );
+    root->setAttribute( "name", "value" );
+    std::string xml = dom.get_xml();
+    EXPECT_EQ( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root name=\"value\" />\n", xml );
+}
+
+TEST_F(XML_DomGetXml, xml_single_child_element)
+{
+    XML::Dom dom{ XML::NODE_TYPE_DOCUMENT, "document" };
+    XML::Dom* root = dom.appendChild( XML::NODE_TYPE_ELEMENT, "root" );
+    root->appendChild( XML::NODE_TYPE_ELEMENT, "child" );
+    std::string xml = dom.get_xml();
+    EXPECT_EQ( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n  <child />\n</root>\n", xml );
+}
+
+TEST_F(XML_DomGetXml, xml_single_child_text)
+{
+    XML::Dom dom{ XML::NODE_TYPE_DOCUMENT, "document" };
+    XML::Dom* root = dom.appendChild( XML::NODE_TYPE_ELEMENT, "root" );
+    XML::Dom* child = root->appendChild( XML::NODE_TYPE_TEXT, "child" );
+    child->nodeValue( "hello world" );
+    std::string xml = dom.get_xml();
+    EXPECT_EQ( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<root>\n  hello world\n</root>\n", xml );
+}
+
+TEST_F(XML_DomGetXml, xml_nesting_child_element)
+{
+    XML::Dom dom{ XML::NODE_TYPE_DOCUMENT, "document" };
+    XML::Dom* root = dom.appendChild( XML::NODE_TYPE_ELEMENT, "root" );
+    XML::Dom* child = root->appendChild( XML::NODE_TYPE_ELEMENT, "first" );
+    child->appendChild( XML::NODE_TYPE_ELEMENT, "second" );
+    std::string xml = dom.get_xml();
+    std::string expect = R"=(<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <first>
+    <second />
+  </first>
+</root>
+)=";
+    EXPECT_EQ( expect, xml );
+}
+
+
 class XML_DomProperty : public ::testing::Test {};
 
 TEST_F(XML_DomProperty, node_type)

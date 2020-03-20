@@ -100,7 +100,7 @@ namespace XML
         int nodeType() const noexcept { return m_nodeType; }
         std::string nodeName() const { return m_nodeName; }
         std::string nodeValue() const { return m_nodeValue; }
-        void nodeValue( const std::string& value ) = delete;
+        void nodeValue( const std::string& value ) { m_nodeValue = value; }
 
         // ノード
         // 注意：appendChild(), replaceChild(), insertBefore() は
