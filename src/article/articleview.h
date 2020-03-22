@@ -14,23 +14,23 @@ namespace ARTICLE
     class ArticleViewMain : public ArticleViewBase
     {
         // ジャンプ予約, goto_num() のコメント参照
-        int m_gotonum_reserve_to; 
-        int m_gotonum_reserve_from; 
+        int m_gotonum_reserve_to{};
+        int m_gotonum_reserve_from{};
 
-        int m_gotonum_seen; // 前回見ていた場所へのジャンプ用
+        int m_gotonum_seen{}; // 前回見ていた場所へのジャンプ用
 
-        bool m_set_history; // update_finish() で履歴を登録する
+        bool m_set_history{}; // update_finish() で履歴を登録する
 
-        bool m_show_instdialog;
+        bool m_show_instdialog{};
 
-        bool m_playsound;
+        bool m_playsound{};
 
-        bool m_show_closedialog;
+        bool m_show_closedialog{};
 
-        bool m_reload_reserve;
+        bool m_reload_reserve{};
 
         // 連続リロード防止用
-        int m_cancel_reload_counter;
+        int m_cancel_reload_counter{};
 
       public:
         ArticleViewMain( const std::string& url );

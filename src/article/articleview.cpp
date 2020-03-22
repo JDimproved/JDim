@@ -47,13 +47,7 @@ enum
 // メインビュー
 
 ArticleViewMain::ArticleViewMain( const std::string& url )
-    : ArticleViewBase( url, url ),
-      m_gotonum_reserve_to( 0 ),
-      m_gotonum_reserve_from( 0 ),
-      m_gotonum_seen( 0 ),
-      m_playsound( false ),
-      m_reload_reserve( false ),
-      m_cancel_reload_counter( 0 )
+    : ArticleViewBase( url, url )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::ArticleViewMain " << get_url() << " url_article = " << url_article() << std::endl;
