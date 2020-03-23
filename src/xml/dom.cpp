@@ -515,18 +515,16 @@ Dom* Dom::getElementById( const std::string& id ) const
 {
     Dom* node = nullptr;
 
-    std::list< Dom* >::const_iterator it = m_childNodes.cbegin();
-    while( it != m_childNodes.cend() )
+    for( Dom* child : m_childNodes )
     {
-        if( (*it)->nodeType() == NODE_TYPE_ELEMENT )
+        if( child->nodeType() == NODE_TYPE_ELEMENT )
         {
-            if( (*it)->getAttribute( "id" ) == id ) node = *it;
+            if( child->getAttribute( "id" ) == id ) node = child;
             // 再帰
-            else if( (*it)->hasChildNodes() ) node = (*it)->getElementById( id );
+            else if( child->hasChildNodes() ) node = child->getElementById( id );
 
             if( node ) break;
         }
-        ++it;
     }
 
     return node;
