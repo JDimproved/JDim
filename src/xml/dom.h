@@ -77,8 +77,8 @@ namespace XML
         // ただし列は SKELETON::EditColumns を継承したものであること
         void append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                                SKELETON::EditColumns& columns,
-                                std::list< Gtk::TreePath >& list_path_expand,
-                                const Gtk::TreeModel::Row& parnet = Gtk::TreeModel::Row() ) const;
+                               std::list< Gtk::TreePath >& list_path_expand,
+                               const Gtk::TreeModel::Row& parnet = Gtk::TreeModel::Row() ) const;
 
       public:
 

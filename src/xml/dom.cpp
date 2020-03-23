@@ -466,8 +466,8 @@ void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns
 //
 void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                             SKELETON::EditColumns& columns,
-                             std::list< Gtk::TreePath >& list_path_expand,
-                             const Gtk::TreeModel::Row& parent ) const
+                            std::list< Gtk::TreePath >& list_path_expand,
+                            const Gtk::TreeModel::Row& parent ) const
 {
     // ノードの子要素を走査
     for( const Dom* child : m_childNodes )
@@ -597,15 +597,9 @@ Dom* Dom::firstChild() const
 //
 Dom* Dom::appendChild( const int node_type, const std::string& node_name )
 {
-    Dom* node = nullptr;
-    
-    {
-        node = new Dom( node_type, node_name, m_html );
-
-        node->m_parentNode = this;
-
-        m_childNodes.push_back( node );
-    }
+    Dom* node = new Dom( node_type, node_name, m_html );
+    node->m_parentNode = this;
+    m_childNodes.push_back( node );
 
     return node;
 }
