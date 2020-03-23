@@ -625,13 +625,14 @@ bool Dom::removeChild( Dom* node )
 //
 Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* insNode )
 {
-    Dom* newNode = nullptr;
+    if( ! insNode ) return appendChild( node_type, node_name );
 
-    newNode = new Dom( node_type, node_name );
+    Dom* newNode = nullptr;
 
     const auto it = std::find( m_childNodes.begin(), m_childNodes.end(), insNode );
     if( it != m_childNodes.end() )
     {
+        newNode = new Dom( node_type, node_name );
         newNode->m_parentNode = insNode->m_parentNode;
         m_childNodes.insert( it, newNode );
     }

@@ -226,15 +226,17 @@ TEST_F(XML_DomChildren, remove_child)
 TEST_F(XML_DomChildren, insert_before)
 {
     XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
-    XML::Dom* leak_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "null", nullptr );
-    EXPECT_NE( nullptr, leak_child );
-    EXPECT_FALSE( dom.hasChildNodes() );
-    delete leak_child;
 
     XML::Dom* first_child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "child1" );
     XML::Dom* second_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "child2", first_child );
-    XML::Dom* result = dom.firstChild();
-    EXPECT_EQ( second_child, result );
+    EXPECT_EQ( dom.firstChild(), second_child );
+
+    XML::Dom* third_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "child2", nullptr );
+    EXPECT_EQ( dom.childNodes().back(), third_child );
+
+    XML::Dom not_child{ XML::NODE_TYPE_UNKNOWN, "test" };
+    XML::Dom* null_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "null", &not_child );
+    EXPECT_EQ( nullptr, null_child );
 }
 
 TEST_F(XML_DomChildren, children_clear)
