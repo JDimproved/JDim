@@ -583,23 +583,15 @@ void Dom::copy_childNodes( const Dom& dom )
 {
     clear();
 
-    std::list<Dom*> children = dom.m_childNodes;
+    for( const Dom* child : dom.m_childNodes )
+    {
+        Dom* node = new Dom( child->m_nodeType, child->m_nodeName );
+        node->m_nodeValue = child->m_nodeValue;
+        node->m_parentNode = this;
+        node->m_attributes = child->m_attributes;
+        node->copy_childNodes( *child );
 
-    if( children.size() ){
-
-        std::list< Dom* >::iterator it = children.begin();
-        while( it != children.end() )
-        {
-            Dom* node = new Dom( (*it)->nodeType(), (*it)->nodeName() );
-            node->m_nodeValue = (*it)->nodeValue();
-            node->m_parentNode = this;
-            node->m_attributes = (*it)->m_attributes;
-            node->copy_childNodes( *(*it) );
-
-            m_childNodes.push_back( node );
-
-            ++it;
-        }
+        m_childNodes.push_back( node );
     }
 }
 
