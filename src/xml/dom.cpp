@@ -73,13 +73,10 @@ Dom::Dom( const Dom& dom )
 //
 void Dom::clear() noexcept
 {
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    for( Dom* child : m_childNodes )
     {
-        if( *it ) delete *it;
-        ++it;
+        if( child ) delete child;
     }
-
     m_childNodes.clear();
 }
 
