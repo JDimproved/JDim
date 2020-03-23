@@ -45,7 +45,7 @@ namespace ARTICLE
         JDLIB::RefPtr_Lock< DBTREE::ArticleBase > m_article; 
 
         // widget
-        DrawAreaBase* m_drawarea;
+        DrawAreaBase* m_drawarea{};
 
         // slot呼び出し時にURLのやりとりに使う一時変数
         std::string m_url_tmp; // url
@@ -56,35 +56,35 @@ namespace ARTICLE
         std::string m_name;    // 名前
 
         // ポップアップ
-        SKELETON::PopupWin* m_popup_win;
-        bool m_popup_shown; // 表示されているならtrue, falseでもdeleteしない限りは m_popup_win != nullptrに注意
-        int m_hidepopup_counter; // ポップアップを消すまでのカウンタ
+        SKELETON::PopupWin* m_popup_win{};
+        bool m_popup_shown{}; // 表示されているならtrue, falseでもdeleteしない限りは m_popup_win != nullptrに注意
+        int m_hidepopup_counter{}; // ポップアップを消すまでのカウンタ
         std::string m_popup_url; // 表示中のポップアップのアドレス
 
         // 検索用
-        bool m_search_invert; // 逆方向検索モード
+        bool m_search_invert{}; // 逆方向検索モード
         std::string m_pre_query;  // 前回の検索で使ったクエリー
 
         // ポップアップメニュー表示のときにactivate_act_before_popupmenu()で使う変数
-        bool m_enable_menuslot;
+        bool m_enable_menuslot{};
 
         // ブックマーク移動時の現在の位置(レス番号)
-        int m_current_bm;
+        int m_current_bm{};
 
         // 書き込みマーク移動時の現在の位置(レス番号)
-        int m_current_post;
+        int m_current_post{};
 
         // 抽出ビューで荒らし報告用のURLを表示する
-        bool m_show_url4report;
+        bool m_show_url4report{};
 
         // URLをステータスバーに表示しているかどうか
-        bool m_url_show_status;
+        bool m_url_show_status{};
 
         // 実況モードが可能か
-        bool m_enable_live;
+        bool m_enable_live{};
 
         // ライブモードか
-        bool m_live;
+        bool m_live{};
 
         // メニューのユーザコマンド、 create_usrcmd_menu() で作成
         std::string m_usrcmd;
