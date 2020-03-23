@@ -218,11 +218,9 @@ void Dom::parse( const std::string& str )
         std::cout << "Dom:parse():---------------------------------------\n";
         std::cout << "nodeName : " << name << "\n";
         std::cout << "nodeType : " << type << "\n";
-        std::map< std::string, std::string >::iterator it = attributes_pair.begin();
-        while( it != attributes_pair.end() )
+        for( const auto& attr : attributes_pair )
         {
-            std::cout << "Attribute: " << "name=" << (*it).first << ", value=" << (*it).second << std::endl;
-            ++it;
+            std::cout << "Attribute: " << "name=" << attr.first << ", value=" << attr.second << std::endl;
         }
         std::cout << "nodeValue: " << value << std::endl;
 #endif
