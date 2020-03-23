@@ -347,9 +347,6 @@ std::string Dom::get_xml( const int n ) const
     // テキストノードの文字列
     std::string text;
 
-    // 属性
-    std::map< std::string, std::string >::const_iterator attr_it = m_attributes.cbegin();
-
     // 子要素
     std::list< Dom* >::const_iterator child_it = m_childNodes.cbegin();
 
@@ -366,10 +363,9 @@ std::string Dom::get_xml( const int n ) const
             xml << indent << "<" << m_nodeName;
 
             // 属性を追加
-            while( attr_it != m_attributes.cend() )
+            for( const auto& attr : m_attributes )
             {
-                xml << " " << (*attr_it).first << "=\"" << (*attr_it).second << "\"";
-                ++attr_it;
+                xml << " " << attr.first << "=\"" << attr.second << "\"";
             }
 
             // 子要素がある場合
