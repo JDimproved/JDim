@@ -650,18 +650,12 @@ Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* 
 
     newNode = new Dom( node_type, node_name );
 
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    const auto it = std::find( m_childNodes.begin(), m_childNodes.end(), insNode );
+    if( it != m_childNodes.end() )
     {
-        if( *it == insNode )
-        {
-            newNode->m_parentNode = insNode->m_parentNode;
-            m_childNodes.insert( it, newNode );
-            break;
-        }
-        ++it;
+        newNode->m_parentNode = insNode->m_parentNode;
+        m_childNodes.insert( it, newNode );
     }
-
     return newNode;
 }
 
