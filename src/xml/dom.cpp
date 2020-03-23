@@ -470,14 +470,13 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                              const Gtk::TreeModel::Row& parent ) const
 {
     // ノードの子要素を走査
-    std::list< Dom* >::const_iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    for( const Dom* child : m_childNodes )
     {
-        const int node_type = (*it)->nodeType();
+        const int node_type = child->nodeType();
 
         if( node_type == NODE_TYPE_ELEMENT )
         {
-            const int type = XML::get_type( (*it)->nodeName() );
+            const int type = XML::get_type( child->nodeName() );
 
             if( type != TYPE_UNKNOWN )
             {
@@ -488,22 +487,21 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                 else row = *( treestore->append() );
 
                 // 各値をセット
-                columns.setup_row( row, (*it)->getAttribute( "url" ), (*it)->getAttribute( "name" ), (*it)->getAttribute( "data" ), type, 0 );
+                columns.setup_row( row, child->getAttribute( "url" ), child->getAttribute( "name" ),
+                                   child->getAttribute( "data" ), type, 0 );
 
                 if( type == TYPE_DIR ){
 
-                    row[ columns.m_dirid ] = atoi( (*it)->getAttribute( "dirid" ).c_str() );
+                    row[ columns.m_dirid ] = atoi( child->getAttribute( "dirid" ).c_str() );
 
                     // 開いているツリーを追加
-                    if( (*it)->getAttribute( "open" ) == "y" ) list_path_expand.push_back( treestore->get_path( row ) );
+                    if( child->getAttribute( "open" ) == "y" ) list_path_expand.push_back( treestore->get_path( row ) );
                 }
 
                 // 再帰
-                if( (*it)->hasChildNodes() ) (*it)->append_treestore( treestore, columns, list_path_expand, row );
+                if( child->hasChildNodes() ) child->append_treestore( treestore, columns, list_path_expand, row );
             }
         }
-
-        ++it;
     }
 }
 
