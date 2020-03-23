@@ -433,16 +433,13 @@ void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns
     if( children.empty() ) return;
 
     // Gtk::TreeModel::Children を走査
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
+    for( const Gtk::TreeModel::Row& row : children )
     {
-        Gtk::TreeModel::Row row = *it;
-
         // 各値を取得( skeleton/editcolumns.h を参照 )
         const int type = row[ columns.m_type ];
-        const Glib::ustring url = row[ columns.m_url ];
-        const Glib::ustring data = row[ columns.m_data ];
-        const Glib::ustring name = row[ columns.m_name ];
+        const Glib::ustring& url = row[ columns.m_url ];
+        const Glib::ustring& data = row[ columns.m_data ];
+        const Glib::ustring& name = row[ columns.m_name ];
         const size_t dirid = row[ columns.m_dirid ];
         const bool expand = row[ columns.m_expand ];
 
@@ -461,11 +458,10 @@ void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns
                 if( dirid ) node->setAttribute( "dirid", dirid );
 
                 // 再帰
-                if( ! row.children().empty() ) node->parse( row.children(), columns );
+                const Gtk::TreeModel::Children sub_children = row.children();
+                if( ! sub_children.empty() ) node->parse( sub_children, columns );
             }
         }
-
-        ++it;
     }
 }
 
