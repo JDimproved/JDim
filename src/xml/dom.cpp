@@ -347,9 +347,6 @@ std::string Dom::get_xml( const int n ) const
     // テキストノードの文字列
     std::string text;
 
-    // 子要素
-    std::list< Dom* >::const_iterator child_it = m_childNodes.cbegin();
-
     // ノードの種類別に処理
     switch( m_nodeType )
     {
@@ -373,11 +370,10 @@ std::string Dom::get_xml( const int n ) const
             {
                 xml << ">\n";
 
-                while( child_it != m_childNodes.cend() )
+                for( const Dom* child : m_childNodes )
                 {
                     // 子要素をたどる
-                    xml << (*child_it)->get_xml( n + 2 );
-                    ++child_it;
+                    xml << child->get_xml( n + 2 );
                 }
 
                 xml << indent << "</" << m_nodeName << ">\n";
@@ -405,11 +401,10 @@ std::string Dom::get_xml( const int n ) const
 
             if( ! m_childNodes.empty() ) xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
-            while( child_it != m_childNodes.cend() )
+            for( const Dom* child : m_childNodes )
             {
                 // 子要素をたどる
-                xml << (*child_it)->get_xml();
-                ++child_it;
+                xml << child->get_xml();
             }
 
             break;
