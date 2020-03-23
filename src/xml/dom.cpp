@@ -538,18 +538,16 @@ std::list<Dom*> Dom::getElementsByTagName( const std::string& name ) const
 {
     std::list<Dom*> domlist;
 
-    std::list< Dom* >::const_iterator it = m_childNodes.cbegin();
-    while( it != m_childNodes.cend() )
+    for( Dom* child : m_childNodes )
     {
-        if( (*it)->nodeType() == NODE_TYPE_ELEMENT )
+        if( child->nodeType() == NODE_TYPE_ELEMENT )
         {
-            if( (*it)->nodeName() == name ) domlist.push_back( *it );
+            if( child->nodeName() == name ) domlist.push_back( child );
 
             // 再帰
-            std::list<Dom*> sub_nodes = (*it)->getElementsByTagName( name );
+            std::list<Dom*> sub_nodes = child->getElementsByTagName( name );
             domlist.splice( domlist.end(), std::move( sub_nodes ) );
         }
-        ++it;
     }
 
     return domlist;
