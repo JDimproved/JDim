@@ -94,7 +94,7 @@ std::string Document::remove_comments( const std::string& str )
 // list_path_expand = 後で Gtk::TreeView::expand_row() をするためのリスト
 //
 void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETON::EditColumns& columns,
-                              const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand )
+                              const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand ) const
 {
     treestore->clear();
 
@@ -113,7 +113,7 @@ void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETO
 //
 // ルート要素を取得
 //
-Dom* Document::get_root_element( const std::string& node_name )
+Dom* Document::get_root_element( const std::string& node_name ) const
 {
     Dom* node = nullptr;
 

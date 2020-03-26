@@ -399,7 +399,7 @@ void Root::bbsmenu2xml( const std::string& menu )
     const bool wchar = false;
 
     // menu のノードツリーを取得( menu がHTMLなので第二引数は true )
-    XML::Document html( menu, true );
+    const XML::Document html( menu, true );
 
     // XML用のノードツリーにルートノードを追加
     m_xml_document.clear();

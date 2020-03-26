@@ -53,7 +53,7 @@ void Linkfilter_Manager::xml2list( const std::string& xml )
     m_list_cmd.clear();
     if( xml.empty() ) return;
 
-    XML::Document document( xml );
+    const XML::Document document( xml );
 
     const XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME_LINKFILTER ) );
     if( ! root ) return;

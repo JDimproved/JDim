@@ -220,7 +220,7 @@ void History_Manager::xml2viewhistory()
 #endif
     if( xml.empty() ) return;
 
-    XML::Document document( xml );
+    const XML::Document document( xml );
 
     const XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME ) );
 
