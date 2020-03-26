@@ -94,7 +94,7 @@ void Usrcmd_Manager::analyze_xml()
 
     const std::list<XML::Dom*> usrcmds = m_document.getElementsByTagName( XML::get_name( TYPE_USRCMD ) );
 
-    for( XML::Dom* usrcmd : usrcmds )
+    for( const XML::Dom* usrcmd : usrcmds )
     {
         const std::string cmd = usrcmd->getAttribute( "data" );
 
@@ -444,13 +444,13 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
 
 // ユーザコマンドの登録とメニュー作成(再帰用)
 std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group,
-                                                XML::Dom* dom, int& dirno, int& cmdno )
+                                                const XML::Dom* dom, int& dirno, int& cmdno )
 {
     std::string menu;
     if( ! dom ) return menu;
 
     const std::list<XML::Dom*> domlist = dom->childNodes();
-    for( XML::Dom* child : domlist )
+    for( const XML::Dom* child : domlist )
     {
         if( child->nodeType() == XML::NODE_TYPE_ELEMENT )
         {

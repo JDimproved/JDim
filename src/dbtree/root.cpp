@@ -421,7 +421,7 @@ void Root::bbsmenu2xml( const std::string& menu )
         return;
     }
     targets = targets.front()->childNodes();
-    for( XML::Dom* child : targets )
+    for( const XML::Dom* child : targets )
     {
         // 要素b( カテゴリ名 )
         if( child->nodeName() == "b" )
@@ -483,7 +483,7 @@ void Root::analyze_board_xml()
 
     const std::list<XML::Dom*> boards = m_xml_document.getElementsByTagName( "board" );
 
-    for( XML::Dom* child : boards )
+    for( const XML::Dom* child : boards )
     {
         const std::string name = child->getAttribute( "name" );
         const std::string url = child->getAttribute( "url" );
@@ -509,7 +509,7 @@ void Root::analyze_board_xml()
         }
     }
 
-    XML::Dom* root = m_xml_document.get_root_element( std::string( ROOT_NODE_NAME ) );
+    const XML::Dom* root = m_xml_document.get_root_element( std::string( ROOT_NODE_NAME ) );
     if( root ) set_date_modified( root->getAttribute( "date_modified" ) );
 
     m_analyzing_board_xml = false;

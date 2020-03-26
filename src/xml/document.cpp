@@ -101,7 +101,7 @@ void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETO
     if( childNodes().size() )
     {
         // ルートの子要素以下が対象
-        Dom* root = get_root_element( root_name );
+        const Dom* root = get_root_element( root_name );
 
         // ルート要素の有無で処理を分ける( 旧様式=無, 新様式=有 )
         if( root ) root->append_treestore( treestore, columns, list_path_expand );

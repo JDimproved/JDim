@@ -222,11 +222,11 @@ void History_Manager::xml2viewhistory()
 
     XML::Document document( xml );
 
-    XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME ) );
+    const XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME ) );
 
     const std::list<XML::Dom*> domlist = root->childNodes();
 
-    for( XML::Dom* subdir : domlist ){
+    for( const XML::Dom* subdir : domlist ){
 
         if( subdir->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
 
@@ -251,7 +251,7 @@ void History_Manager::xml2viewhistory()
 
         // viewhistory に item を append
         const std::list<XML::Dom*> domlist_hist = subdir->childNodes();
-        for( XML::Dom* histitem : domlist_hist ){
+        for( const XML::Dom* histitem : domlist_hist ){
 
             if( histitem->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
 
