@@ -21,8 +21,8 @@ namespace IMAGE
 
     class ImageAreaIcon : public ImageAreaBase
     {
-        bool m_shown;
-        int m_imagetype; // dispatch()前に表示する画像を入れる
+        bool m_shown{};
+        int m_imagetype{}; // dispatch()前に表示する画像を入れる
 
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf;
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_loading;
