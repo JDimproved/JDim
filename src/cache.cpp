@@ -906,19 +906,17 @@ bool CACHE::jdcopy( const std::string& file_from, const std::string& file_to )
     }
 
     bool ret = false;
-    char* data = (char*)malloc( sizeof( char ) *  buf_stat.st_size );
+    std::string data( buf_stat.st_size, '\0' );
 
-    size_t readsize = load_rawdata( file_from, data, buf_stat.st_size );
+    const std::size_t readsize = load_rawdata( file_from, &*data.begin(), buf_stat.st_size );
     if( readsize ){
-        size_t savesize = save_rawdata( file_to, data, buf_stat.st_size );
+        const std::size_t savesize = save_rawdata( file_to, data );
         if( readsize == savesize ) ret = true;
 
 #ifdef _DEBUG
     std::cout << "save size = " << savesize << std::endl;
 #endif
     }
-    
-    free( data );
 
     return ret;
 }
