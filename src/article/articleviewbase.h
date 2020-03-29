@@ -66,7 +66,7 @@ namespace ARTICLE
         std::string m_pre_query;  // 前回の検索で使ったクエリー
 
         // ポップアップメニュー表示のときにactivate_act_before_popupmenu()で使う変数
-        bool m_enable_menuslot{};
+        bool m_enable_menuslot;
 
         // ブックマーク移動時の現在の位置(レス番号)
         int m_current_bm{};

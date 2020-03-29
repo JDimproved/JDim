@@ -69,6 +69,7 @@ using namespace ARTICLE;
 ArticleViewBase::ArticleViewBase( const std::string& url, const std::string& url_article )
     : SKELETON::View( url )
     , m_url_article( url_article )
+    , m_enable_menuslot{ true }
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::ArticleViewBase : " << get_url() << " : " << m_url_article << std::endl;
