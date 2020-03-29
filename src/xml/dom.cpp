@@ -73,13 +73,10 @@ Dom::Dom( const Dom& dom )
 //
 void Dom::clear() noexcept
 {
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    for( Dom* child : m_childNodes )
     {
-        if( *it ) delete *it;
-        ++it;
+        if( child ) delete child;
     }
-
     m_childNodes.clear();
 }
 
@@ -221,11 +218,9 @@ void Dom::parse( const std::string& str )
         std::cout << "Dom:parse():---------------------------------------\n";
         std::cout << "nodeName : " << name << "\n";
         std::cout << "nodeType : " << type << "\n";
-        std::map< std::string, std::string >::iterator it = attributes_pair.begin();
-        while( it != attributes_pair.end() )
+        for( const auto& attr : attributes_pair )
         {
-            std::cout << "Attribute: " << "name=" << (*it).first << ", value=" << (*it).second << std::endl;
-            ++it;
+            std::cout << "Attribute: " << "name=" << attr.first << ", value=" << attr.second << std::endl;
         }
         std::cout << "nodeValue: " << value << std::endl;
 #endif
@@ -352,12 +347,6 @@ std::string Dom::get_xml( const int n ) const
     // テキストノードの文字列
     std::string text;
 
-    // 属性
-    std::map< std::string, std::string >::const_iterator attr_it = m_attributes.cbegin();
-
-    // 子要素
-    std::list< Dom* >::const_iterator child_it = m_childNodes.cbegin();
-
     // ノードの種類別に処理
     switch( m_nodeType )
     {
@@ -371,10 +360,9 @@ std::string Dom::get_xml( const int n ) const
             xml << indent << "<" << m_nodeName;
 
             // 属性を追加
-            while( attr_it != m_attributes.cend() )
+            for( const auto& attr : m_attributes )
             {
-                xml << " " << (*attr_it).first << "=\"" << (*attr_it).second << "\"";
-                ++attr_it;
+                xml << " " << attr.first << "=\"" << attr.second << "\"";
             }
 
             // 子要素がある場合
@@ -382,11 +370,10 @@ std::string Dom::get_xml( const int n ) const
             {
                 xml << ">\n";
 
-                while( child_it != m_childNodes.cend() )
+                for( const Dom* child : m_childNodes )
                 {
                     // 子要素をたどる
-                    xml << (*child_it)->get_xml( n + 2 );
-                    ++child_it;
+                    xml << child->get_xml( n + 2 );
                 }
 
                 xml << indent << "</" << m_nodeName << ">\n";
@@ -414,11 +401,10 @@ std::string Dom::get_xml( const int n ) const
 
             if( ! m_childNodes.empty() ) xml << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
-            while( child_it != m_childNodes.cend() )
+            for( const Dom* child : m_childNodes )
             {
                 // 子要素をたどる
-                xml << (*child_it)->get_xml();
-                ++child_it;
+                xml << child->get_xml();
             }
 
             break;
@@ -438,16 +424,13 @@ void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns
     if( children.empty() ) return;
 
     // Gtk::TreeModel::Children を走査
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
+    for( const Gtk::TreeModel::Row& row : children )
     {
-        Gtk::TreeModel::Row row = *it;
-
         // 各値を取得( skeleton/editcolumns.h を参照 )
         const int type = row[ columns.m_type ];
-        const Glib::ustring url = row[ columns.m_url ];
-        const Glib::ustring data = row[ columns.m_data ];
-        const Glib::ustring name = row[ columns.m_name ];
+        const Glib::ustring& url = row[ columns.m_url ];
+        const Glib::ustring& data = row[ columns.m_data ];
+        const Glib::ustring& name = row[ columns.m_name ];
         const size_t dirid = row[ columns.m_dirid ];
         const bool expand = row[ columns.m_expand ];
 
@@ -466,11 +449,10 @@ void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns
                 if( dirid ) node->setAttribute( "dirid", dirid );
 
                 // 再帰
-                if( ! row.children().empty() ) node->parse( row.children(), columns );
+                const Gtk::TreeModel::Children sub_children = row.children();
+                if( ! sub_children.empty() ) node->parse( sub_children, columns );
             }
         }
-
-        ++it;
     }
 }
 
@@ -484,18 +466,17 @@ void Dom::parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns
 //
 void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                             SKELETON::EditColumns& columns,
-                             std::list< Gtk::TreePath >& list_path_expand,
-                             const Gtk::TreeModel::Row& parent ) const
+                            std::list< Gtk::TreePath >& list_path_expand,
+                            const Gtk::TreeModel::Row& parent ) const
 {
     // ノードの子要素を走査
-    std::list< Dom* >::const_iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    for( const Dom* child : m_childNodes )
     {
-        const int node_type = (*it)->nodeType();
+        const int node_type = child->nodeType();
 
         if( node_type == NODE_TYPE_ELEMENT )
         {
-            const int type = XML::get_type( (*it)->nodeName() );
+            const int type = XML::get_type( child->nodeName() );
 
             if( type != TYPE_UNKNOWN )
             {
@@ -506,22 +487,21 @@ void Dom::append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                 else row = *( treestore->append() );
 
                 // 各値をセット
-                columns.setup_row( row, (*it)->getAttribute( "url" ), (*it)->getAttribute( "name" ), (*it)->getAttribute( "data" ), type, 0 );
+                columns.setup_row( row, child->getAttribute( "url" ), child->getAttribute( "name" ),
+                                   child->getAttribute( "data" ), type, 0 );
 
                 if( type == TYPE_DIR ){
 
-                    row[ columns.m_dirid ] = atoi( (*it)->getAttribute( "dirid" ).c_str() );
+                    row[ columns.m_dirid ] = atoi( child->getAttribute( "dirid" ).c_str() );
 
                     // 開いているツリーを追加
-                    if( (*it)->getAttribute( "open" ) == "y" ) list_path_expand.push_back( treestore->get_path( row ) );
+                    if( child->getAttribute( "open" ) == "y" ) list_path_expand.push_back( treestore->get_path( row ) );
                 }
 
                 // 再帰
-                if( (*it)->hasChildNodes() ) (*it)->append_treestore( treestore, columns, list_path_expand, row );
+                if( child->hasChildNodes() ) child->append_treestore( treestore, columns, list_path_expand, row );
             }
         }
-
-        ++it;
     }
 }
 
@@ -533,18 +513,16 @@ Dom* Dom::getElementById( const std::string& id ) const
 {
     Dom* node = nullptr;
 
-    std::list< Dom* >::const_iterator it = m_childNodes.cbegin();
-    while( it != m_childNodes.cend() )
+    for( Dom* child : m_childNodes )
     {
-        if( (*it)->nodeType() == NODE_TYPE_ELEMENT )
+        if( child->nodeType() == NODE_TYPE_ELEMENT )
         {
-            if( (*it)->getAttribute( "id" ) == id ) node = *it;
+            if( child->getAttribute( "id" ) == id ) node = child;
             // 再帰
-            else if( (*it)->hasChildNodes() ) node = (*it)->getElementById( id );
+            else if( child->hasChildNodes() ) node = child->getElementById( id );
 
             if( node ) break;
         }
-        ++it;
     }
 
     return node;
@@ -558,18 +536,16 @@ std::list<Dom*> Dom::getElementsByTagName( const std::string& name ) const
 {
     std::list<Dom*> domlist;
 
-    std::list< Dom* >::const_iterator it = m_childNodes.cbegin();
-    while( it != m_childNodes.cend() )
+    for( Dom* child : m_childNodes )
     {
-        if( (*it)->nodeType() == NODE_TYPE_ELEMENT )
+        if( child->nodeType() == NODE_TYPE_ELEMENT )
         {
-            if( (*it)->nodeName() == name ) domlist.push_back( *it );
+            if( child->nodeName() == name ) domlist.push_back( child );
 
             // 再帰
-            std::list<Dom*> sub_nodes = (*it)->getElementsByTagName( name );
+            std::list<Dom*> sub_nodes = child->getElementsByTagName( name );
             domlist.splice( domlist.end(), std::move( sub_nodes ) );
         }
-        ++it;
     }
 
     return domlist;
@@ -592,23 +568,15 @@ void Dom::copy_childNodes( const Dom& dom )
 {
     clear();
 
-    std::list<Dom*> children = dom.m_childNodes;
+    for( const Dom* child : dom.m_childNodes )
+    {
+        Dom* node = new Dom( child->m_nodeType, child->m_nodeName );
+        node->m_nodeValue = child->m_nodeValue;
+        node->m_parentNode = this;
+        node->m_attributes = child->m_attributes;
+        node->copy_childNodes( *child );
 
-    if( children.size() ){
-
-        std::list< Dom* >::iterator it = children.begin();
-        while( it != children.end() )
-        {
-            Dom* node = new Dom( (*it)->nodeType(), (*it)->nodeName() );
-            node->m_nodeValue = (*it)->nodeValue();
-            node->m_parentNode = this;
-            node->m_attributes = (*it)->m_attributes;
-            node->copy_childNodes( *(*it) );
-
-            m_childNodes.push_back( node );
-
-            ++it;
-        }
+        m_childNodes.push_back( node );
     }
 }
 
@@ -629,15 +597,9 @@ Dom* Dom::firstChild() const
 //
 Dom* Dom::appendChild( const int node_type, const std::string& node_name )
 {
-    Dom* node = nullptr;
-    
-    {
-        node = new Dom( node_type, node_name, m_html );
-
-        node->m_parentNode = this;
-
-        m_childNodes.push_back( node );
-    }
+    Dom* node = new Dom( node_type, node_name, m_html );
+    node->m_parentNode = this;
+    m_childNodes.push_back( node );
 
     return node;
 }
@@ -667,18 +629,12 @@ Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* 
 
     newNode = new Dom( node_type, node_name );
 
-    std::list< Dom* >::iterator it = m_childNodes.begin();
-    while( it != m_childNodes.end() )
+    const auto it = std::find( m_childNodes.begin(), m_childNodes.end(), insNode );
+    if( it != m_childNodes.end() )
     {
-        if( *it == insNode )
-        {
-            newNode->m_parentNode = insNode->m_parentNode;
-            m_childNodes.insert( it, newNode );
-            break;
-        }
-        ++it;
+        newNode->m_parentNode = insNode->m_parentNode;
+        m_childNodes.insert( it, newNode );
     }
-
     return newNode;
 }
 
