@@ -20,7 +20,7 @@
 
 enum
 {
-    SIZE_OF_HEAP = 256 * 1024,
+    SIZE_OF_HEAP_DEFAULT = 256 * 1024,
 
     STEP_ID = 10,
     STEP_SEPARATOR = 1,
@@ -53,7 +53,7 @@ using namespace ARTICLE;
 // show_abone : true ならあぼーんしたレスも表示する
 // show_multispace : true なら連続空白ノードも表示
 LayoutTree::LayoutTree( const std::string& url, const bool show_abone, const bool show_multispace )
-    : m_heap( SIZE_OF_HEAP ),
+    : m_heap_default( SIZE_OF_HEAP_DEFAULT ),
       m_url( url ),
       m_local_nodetree( nullptr ),
       m_separator_header( nullptr ),
@@ -65,6 +65,7 @@ LayoutTree::LayoutTree( const std::string& url, const bool show_abone, const boo
     std::cout << "LayoutTree::LayoutTree : url = " << url << " show_abone = " << m_show_abone << std::endl;
 #endif    
 
+    m_heap = &m_heap_default;
     m_article = DBTREE::get_article( m_url );
     assert( m_article );
 
@@ -85,7 +86,7 @@ LayoutTree::~LayoutTree()
 
 void LayoutTree::clear()
 {
-    m_heap.clear();
+    m_heap_default.clear();
 
     m_map_header.clear();
     
@@ -110,7 +111,7 @@ void LayoutTree::clear()
 // RECTANGLE型のメモリ確保
 RECTANGLE* LayoutTree::create_rect()
 {
-    RECTANGLE* rect = m_heap.heap_alloc<RECTANGLE>();
+    RECTANGLE* rect = m_heap->heap_alloc<RECTANGLE>();
     rect->end = true;
 
     return rect;
@@ -122,7 +123,7 @@ RECTANGLE* LayoutTree::create_rect()
 //
 LAYOUT* LayoutTree::create_layout( const int type )
 {
-    LAYOUT* tmplayout = m_heap.heap_alloc<LAYOUT>();
+    LAYOUT* tmplayout = m_heap->heap_alloc<LAYOUT>();
     tmplayout->type = type;
     tmplayout->id_header = m_id_header; 
     tmplayout->id = m_id_layout++;
@@ -250,7 +251,7 @@ LAYOUT* LayoutTree::create_layout_div( const int id )
 
     m_last_div = div;
 
-    div->css = m_heap.heap_alloc<CORE::CSS_PROPERTY>();
+    div->css = m_heap->heap_alloc<CORE::CSS_PROPERTY>();
     *div->css = CORE::get_css_manager()->get_property( id );
 
     return div;
@@ -575,7 +576,7 @@ LAYOUT* LayoutTree::create_separator()
     LAYOUT* header = create_layout_div( classid );
     header->type = DBTREE::NODE_HEADER;
 
-    DBTREE::NODE* node = m_heap.heap_alloc<DBTREE::NODE>();
+    DBTREE::NODE* node = m_heap->heap_alloc<DBTREE::NODE>();
     node->fontid = FONT_DEFAULT; // デフォルトフォントを設定
     header->node = node;
 

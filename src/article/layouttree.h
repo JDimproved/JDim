@@ -81,7 +81,8 @@ namespace ARTICLE
         // 高速化のため直接アクセス
         JDLIB::RefPtr_Lock< DBTREE::ArticleBase > m_article; 
 
-        JDLIB::HEAP m_heap;
+        JDLIB::HEAP *m_heap; // 現在使っているheap
+        JDLIB::HEAP m_heap_default; // デフォルトのheap
         std::string m_url;
 
         std::unordered_map< int, LAYOUT* > m_map_header;  // ヘッダのポインタの連想配列
