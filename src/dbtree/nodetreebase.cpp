@@ -1506,6 +1506,9 @@ void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
 
     while( ( pos = add_one_dat_line( pos ) ) && *pos != '\0' ) ++pos;
 
+    // 新着返信履歴削除
+    m_refer_posts_from_newres.clear();
+
     if( num_before != m_id_header ){
 
         // あぼーん判定
@@ -3321,6 +3324,7 @@ void NodeTreeBase::check_reference( const int number )
                     NODE* tmphead = res_header( from );
                     if( tmphead && ! tmphead->headinfo->abone ){
                         m_refer_posts.insert( from );
+                        // 新着からチェックするので、 m_refer_posts_from_newres にはここでは追加しない
                     }
                 }
             }
@@ -3406,6 +3410,7 @@ void NodeTreeBase::check_reference( const int number )
                                 // 自分の書き込みに対するレス
                                 if( posted && m_posts.find( i ) != m_posts.end() ) {
                                     m_refer_posts.insert( number );
+                                    m_refer_posts_from_newres.insert( number );
 
 #ifdef _DEBUG
                                     std::cout << "ref " << i << " from " << number << std::endl;

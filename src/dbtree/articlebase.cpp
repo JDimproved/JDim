@@ -998,6 +998,13 @@ void ArticleBase::clear_post_history()
 }
 
 
+// 新着返信レス取得
+const std::set<int>& ArticleBase::get_refer_posts_from_newres ()
+{
+    return get_nodetree()->get_refer_posts_from_newres();
+}
+
+
 //
 // NodeTree作成
 //

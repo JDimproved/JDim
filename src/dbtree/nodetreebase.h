@@ -104,6 +104,8 @@ namespace DBTREE
 
         // 自分の書き込みにレスしているか
         std::unordered_set< int > m_refer_posts;
+        // 上記の中で、新着のレスの内、自分の書き込みにレスをしているレス番号（新着返信）
+        std::set< int > m_refer_posts_from_newres; // ordered
 
         // 未来のレスに対するアンカーがある時に使用する
         // check_reference() を参照
@@ -261,6 +263,9 @@ namespace DBTREE
 
         // 書き込み履歴のリセット
         void clear_post_history();
+
+        // 新着返信レス取得
+        const std::set<int>& get_refer_posts_from_newres () const noexcept { return m_refer_posts_from_newres; }
 
       protected:
 

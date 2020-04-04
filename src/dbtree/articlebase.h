@@ -19,6 +19,7 @@
 #include <sys/time.h>
 #include <unordered_set>
 #include <vector>
+#include <set>
 
 namespace DBTREE
 {
@@ -262,6 +263,9 @@ namespace DBTREE
 
         // 書き込み履歴のリセット
         void clear_post_history();
+
+        // 新着返信レス取得
+        const std::set<int>& get_refer_posts_from_newres ();
 
         // スレ立て時刻
         time_t get_since_time() const { return m_since_time; };
