@@ -926,7 +926,14 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
     // 新着セパレータの挿入
     // 実況時は新着セパレータを表示しない(スクロールがガタガタするから)
-    if( ! m_scrollinfo.live ) m_layout_tree->move_separator();
+    // 新着返信は、とにかく一度隠す（layoutの木を正すため）
+    m_layout_tree->hide_layout_refer_posts_from_newres();
+    if( ! m_scrollinfo.live )
+    {
+        m_layout_tree->move_separator();
+        m_layout_tree->create_layout_refer_posts_from_newres();
+        m_layout_tree->insert_layout_refer_posts_from_newres();
+    }
 
     m_width_client = 0;
     m_height_client = 0;
