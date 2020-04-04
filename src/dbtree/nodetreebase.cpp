@@ -78,14 +78,14 @@ enum
 using namespace DBTREE;
 
 
-NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified )
+NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified, const size_t heap_size )
     : SKELETON::Loadable(),
       m_url( url ),
       m_lng_dat( 0 ),
       m_resume ( RESUME_NO ),
       m_resume_cached( false ),
       m_broken( false ),
-      m_heap( SIZE_OF_HEAP ),
+      m_heap( heap_size ),
       m_check_update( false ),
       m_check_write( false ),
       m_loading_newthread( false ),
@@ -123,6 +123,11 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
     std::cout << "NodeTreeBase::NodeTreeBase url = " << m_url << " modified = " << get_date_modified()
               << " noname = " << m_default_noname << std::endl;
 #endif
+}
+
+NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified )
+    : NodeTreeBase( url, modified, SIZE_OF_HEAP )
+{
 }
 
 

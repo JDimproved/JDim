@@ -143,6 +143,7 @@ namespace DBTREE
 
       public:
 
+        NodeTreeBase( const std::string& url, const std::string& date_modified, const size_t heap_size );
         NodeTreeBase( const std::string& url, const std::string& date_modified );
         ~NodeTreeBase();
 
