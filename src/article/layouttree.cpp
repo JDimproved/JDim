@@ -21,9 +21,12 @@
 enum
 {
     SIZE_OF_HEAP_DEFAULT = 256 * 1024,
+    SIZE_OF_HEAP_REFER_POSTS_LAYOUTTREE = 4096,
+    SIZE_OF_HEAP_REFER_POSTS_LOCAL_NODE = 512,
 
     STEP_ID = 10,
     STEP_SEPARATOR = 1,
+    STEP_REFER_POSTS = 5,
 
     MAX_IMGITEM = 512 // struct IMGDATA.item[] のサイズ
 };
@@ -54,6 +57,7 @@ using namespace ARTICLE;
 // show_multispace : true なら連続空白ノードも表示
 LayoutTree::LayoutTree( const std::string& url, const bool show_abone, const bool show_multispace )
     : m_heap_default( SIZE_OF_HEAP_DEFAULT ),
+      m_heap_refer_posts_from_newres( SIZE_OF_HEAP_REFER_POSTS_LAYOUTTREE ),
       m_url( url ),
       m_local_nodetree( nullptr ),
       m_separator_header( nullptr ),
@@ -105,6 +109,13 @@ void LayoutTree::clear()
     m_separator_new = 0;
     m_separator_new_reserve = 0;
     m_separator_header = create_separator();
+
+    // 新着返信関連削除
+    if ( m_local_nodetree_newres ) m_local_nodetree_newres->~NodeTreeBase();
+    m_local_nodetree_newres = nullptr;
+    m_heap_refer_posts_from_newres.clear();
+    m_refer_posts_from_newres_number = 0;
+    m_refer_posts_from_newres_header = nullptr;
 }
 
 
@@ -659,3 +670,157 @@ void LayoutTree::hide_separator()
 
     m_separator_new = 0;
 }
+
+
+//
+// 新着返信を表示するlayoutを作成
+//
+void LayoutTree::create_layout_refer_posts_from_newres()
+{
+    if ( m_refer_posts_from_newres_header ) return;
+
+    // 新着返信のレス取得
+    const std::set<int>& refer_posts_from_newres = m_article->get_refer_posts_from_newres();
+#ifdef _DEBUG
+    std::cout << "LayoutTree::create_layout_refer_posts_from_newres m_separator_new_reserve = " 
+        << m_separator_new_reserve << std::endl;
+#endif
+    if ( m_separator_new_reserve <= 0 ) return;
+
+    std::vector<int> v_newres;
+    for ( const int& res_number : refer_posts_from_newres )
+    {
+        if ( res_number >= m_separator_new_reserve ) v_newres.push_back( res_number );
+    }
+    if ( v_newres.empty() ) return;
+
+    // 内部 heap切り替え
+    m_heap = &m_heap_refer_posts_from_newres;
+
+    // layoutの履歴保存
+    LAYOUT* last_layout_preserve = m_last_layout;
+    LAYOUT* last_div_preserve = m_last_div;
+    int id_layout_preserve = m_id_layout;
+    m_last_layout = nullptr;
+    m_id_layout = 0;
+
+    // CSSはセパレータのものを流用
+    int classid = CORE::get_css_manager()->get_classid( "separator" );
+    LAYOUT* header = create_layout_div( classid );
+    header->type = DBTREE::NODE_HEADER;
+
+    DBTREE::NODE* node = m_heap->heap_alloc<DBTREE::NODE>();
+    node->fontid = FONT_DEFAULT; // デフォルトフォントを設定
+    header->node = node;
+
+    if( header->css->bg_color < 0 ) header->css->bg_color = COLOR_SEPARATOR_NEW;
+
+    std::string html;
+    html += "新着返信があります";
+    for ( const int& res_number : v_newres )
+    {
+        html += " &gt;&gt;";
+        html += std::to_string( res_number );
+    }
+
+
+    m_local_nodetree_newres = m_heap->heap_alloc<DBTREE::NodeTreeBase>();
+    m_local_nodetree_newres = new( m_local_nodetree_newres ) DBTREE::NodeTreeBase( m_url, std::string(), SIZE_OF_HEAP_REFER_POSTS_LOCAL_NODE );
+    DBTREE::NODE* node_header = m_local_nodetree_newres->append_html( html );
+
+    append_block( node_header->headinfo->block[ DBTREE::BLOCK_MES ], 0 );
+
+    // RECTANGLEのメモリを予め確保
+    LAYOUT* layout = header;
+    while( layout ){
+        layout->rect = create_rect();
+        layout = layout->next_layout;
+    }
+
+    // heap, layout履歴を元に戻す
+    m_heap = &m_heap_default;
+    m_last_layout = last_layout_preserve;
+    m_last_div = last_div_preserve;
+    m_id_layout = id_layout_preserve;
+
+    m_refer_posts_from_newres_header = header;
+}
+
+
+//
+// 新着返信表示の削除
+//
+void LayoutTree::hide_layout_refer_posts_from_newres()
+{
+    if ( ! m_refer_posts_from_newres_header ) return;
+    // 表示中なら取り除く
+    if ( ! m_refer_posts_from_newres_number ) return;
+#ifdef _DEBUG
+    std::cout << "LayoutTree::hide_layout_refer_posts_from_newres num = " << m_refer_posts_from_newres_number << std::endl;
+#endif
+
+    // あぼーんしているレスは飛ばす
+    LAYOUT* header_before;
+    LAYOUT* header_after;
+    int num_tmp;
+
+    // 次のレスが読み込まれていて、headerの木構造が変わっているかもしれないので、
+    // 後のレスもここで確認する
+    num_tmp =  m_refer_posts_from_newres_number;
+    while( ! ( header_before = get_header_of_res( num_tmp ) ) && num_tmp-- > 1 );
+    num_tmp =  m_refer_posts_from_newres_number + 1;
+    while( ! ( header_after = get_header_of_res( num_tmp ) ) && num_tmp++ < m_max_res_number );
+
+    if( header_before )
+    {
+        if ( header_after ) header_before->next_header = header_after;
+        else header_before->next_header = m_refer_posts_from_newres_header->next_header;
+    }
+
+    m_refer_posts_from_newres_number = 0;
+    m_refer_posts_from_newres_header = nullptr;
+
+    // 内部 heap 清掃
+    if ( m_local_nodetree_newres ) m_local_nodetree_newres->~NodeTreeBase();
+    m_local_nodetree_newres = nullptr;
+    m_heap_refer_posts_from_newres.clear();
+}
+
+//
+//  新着返信表示の挿入
+//
+void LayoutTree::insert_layout_refer_posts_from_newres()
+{
+    if ( ! m_refer_posts_from_newres_header ) return;
+
+#ifdef _DEBUG
+    std::cout << "LayoutTree::insert_layout_refer_posts_from_newres max = " << m_max_res_number << std::endl;
+#endif
+
+    // header_before の直後につなげる。header_beforeは一番最後のレス。
+    LAYOUT* header_before;
+
+    // 透明あぼーんしているレスは飛ばす
+    int num_tmp = m_max_res_number;
+    while ( ! ( header_before = get_header_of_res( num_tmp ) ) && num_tmp-- > 1 );
+    if ( ! header_before ) return;
+
+    m_refer_posts_from_newres_number = num_tmp;
+
+    // ヘッダの木構造をつなぎかえ
+    m_refer_posts_from_newres_header->next_header = header_before->next_header;
+    header_before->next_header = m_refer_posts_from_newres_header;
+
+    // 新着返信ヘッダID変更
+    int id_header = header_before->id_header + STEP_REFER_POSTS;
+    LAYOUT* layout = m_refer_posts_from_newres_header;
+    while( layout ){
+        layout->id_header = id_header;
+        layout = layout->next_layout;
+    }
+
+#ifdef _DEBUG
+    std::cout << "inserted before = " << num_tmp << std::endl;
+#endif
+}
+

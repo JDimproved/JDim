@@ -83,12 +83,14 @@ namespace ARTICLE
 
         JDLIB::HEAP *m_heap; // 現在使っているheap
         JDLIB::HEAP m_heap_default; // デフォルトのheap
+        JDLIB::HEAP m_heap_refer_posts_from_newres; // 新着返信用のheap
         std::string m_url;
 
         std::unordered_map< int, LAYOUT* > m_map_header;  // ヘッダのポインタの連想配列
 
         // コメントノードやプレビュー表示時に使うローカルなノードツリー
         DBTREE::NodeTreeBase* m_local_nodetree; 
+        DBTREE::NodeTreeBase* m_local_nodetree_newres{};
 
         LAYOUT* m_root_header;
         LAYOUT* m_last_header;
@@ -97,10 +99,15 @@ namespace ARTICLE
 
         // 新着セパレータ
         LAYOUT* m_separator_header;
+        // 新着返信表示
+        LAYOUT* m_refer_posts_from_newres_header{};
 
         // 新着セパレータの位置(レス番号), 0の時は表示していない
         int m_separator_new;
         int m_separator_new_reserve; // これにレス番号をセットしてから move_separator()を呼ぶ
+
+        // 新着返信表示の位置（レス番号）, 0の時は表示していない
+        int m_refer_posts_from_newres_number{};
 
         // 表示中の最大のレス番号
         int m_max_res_number; 
@@ -156,6 +163,11 @@ namespace ARTICLE
         void move_separator();
         void hide_separator();
         int get_separator_new() const { return m_separator_new; }
+
+        // 新着返信表示関連
+        void create_layout_refer_posts_from_newres();
+        void hide_layout_refer_posts_from_newres();
+        void insert_layout_refer_posts_from_newres();
 
       private:
         
