@@ -44,14 +44,7 @@ using namespace IMAGE;
 
 
 ImageViewMain::ImageViewMain( const std::string& url )
-    : ImageViewBase( url ),
-      m_scrwin( nullptr ),
-      m_length_prev( 0 ),
-      m_show_status( false ),
-      m_update_status( false ),
-      m_show_label( false ),
-      m_do_resizing( false ),
-      m_scrolled( false )
+    : ImageViewBase( url )
 {
 #ifdef _DEBUG    
     std::cout << "ImageViewMain::ImageViewMain : " << get_url() << std::endl;

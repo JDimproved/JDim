@@ -13,23 +13,23 @@ namespace IMAGE
 {
     class ImageViewMain : public ImageViewBase
     {
-        Gtk::ScrolledWindow* m_scrwin;
+        Gtk::ScrolledWindow* m_scrwin{};
         Gtk::Label m_label;
-        gdouble m_x_motion;
-        gdouble m_y_motion;
-        size_t m_length_prev;
-        bool m_show_status;
-        bool m_update_status;
-        bool m_show_label;
+        gdouble m_x_motion{};
+        gdouble m_y_motion{};
+        size_t m_length_prev{};
+        bool m_show_status{};
+        bool m_update_status{};
+        bool m_show_label{};
 
         std::string m_status_local;
 
-        int m_pre_width;
-        int m_pre_height;
-        int m_redraw_count;
+        int m_pre_width{};
+        int m_pre_height{};
+        int m_redraw_count{};
 
-        bool m_do_resizing;
-        bool m_scrolled;
+        bool m_do_resizing{};
+        bool m_scrolled{};
 
       public:
         ImageViewMain( const std::string& url );
