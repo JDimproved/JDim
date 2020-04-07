@@ -207,6 +207,7 @@ namespace CONTROL
         PopupWarpButton, // 以下、マウスボタン専用の設定
         ReferResButton, 
         BmResButton,
+        PostedMarkButton,
         PopupmenuResButton,
 
         DrawoutAncButton,

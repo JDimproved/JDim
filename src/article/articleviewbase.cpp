@@ -2643,6 +2643,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             // ブックマークセット
             else if( control.button_alloted( event, CONTROL::BmResButton ) ) slot_bookmark();
 
+            // 書き込みマークの設定/解除
+            else if( control.button_alloted( event, CONTROL::PostedMarkButton ) ) slot_postedmark();
+
             // 参照ポップアップ表示
             else if( control.button_alloted( event, CONTROL::ReferResButton ) ){
 

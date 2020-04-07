@@ -61,6 +61,7 @@ void ButtonConfig::load_conf()
 
     load_motions( cf, "ReferResButton", BUTTONCONF_ReferResButton );
     load_motions( cf, "BmResButton", BUTTONCONF_BmResButton );
+    load_motions( cf, "PostedMarkButton", BUTTONCONF_PostedMarkButton );
     load_motions( cf, "PopupmenuResButton", BUTTONCONF_PopupmenuResButton );
 
     load_motions( cf, "DrawoutAncButton", BUTTONCONF_DrawoutAncButton );

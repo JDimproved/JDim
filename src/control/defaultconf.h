@@ -269,6 +269,7 @@ namespace CONTROL
 
 #define BUTTONCONF_ReferResButton "Right"
 #define BUTTONCONF_BmResButton "Mid"
+#define BUTTONCONF_PostedMarkButton "Ctrl+Left"
 #define BUTTONCONF_PopupmenuResButton "Left"
 
 #define BUTTONCONF_DrawoutAncButton "Mid"
