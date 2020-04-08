@@ -96,6 +96,7 @@ ButtonPref::ButtonPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::PopupWarpButton );
     append_row( CONTROL::ReferResButton );
     append_row( CONTROL::BmResButton );
+    append_row( CONTROL::PostedMarkButton );
     append_row( CONTROL::PopupmenuResButton );
     append_row( CONTROL::DrawoutAncButton );
     append_row( CONTROL::PopupmenuAncButton );

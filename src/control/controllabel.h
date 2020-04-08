@@ -215,6 +215,7 @@ namespace CONTROL
         { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },
         { "BmResButton", "ブックマーク" },
+        { "PostedMarkButton", "書き込みマークの設定/解除" },
         { "PopupmenuResButton", "レス番号メニュー表示" },
 
         { "DrawoutAncButton", "レスの周辺を抽出" },
