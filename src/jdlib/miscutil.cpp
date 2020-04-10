@@ -1888,3 +1888,19 @@ void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_p
     // ヌル文字の位置がないと検索対象の末尾にマッチングしたとき範囲外アクセスが発生する。
     table_pos.push_back( pos );
 }
+
+
+//
+// selfの先頭部分がstartsと等しいか（ヌル終端文字列バージョン）
+// Unicode正規化は行わなずバイト列として比較する
+//
+// self : 対象の文字列
+// starts : 先頭部分
+//
+bool MISC::starts_with( const char* self, const char* starts )
+{
+    for( std::size_t i = 0; starts[i] != '\0'; ++i ) {
+        if( self[i] == '\0' || self[i] != starts[i] ) return false;
+    }
+    return true;
+}

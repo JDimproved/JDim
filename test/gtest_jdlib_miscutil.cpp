@@ -525,4 +525,21 @@ TEST_F(MISC_AscTest, fullwidth_hiragana_combining_voiced_sound_mark)
     }
 }
 
+
+class MISC_StartsWith : public ::testing::Test {};
+
+TEST_F(MISC_StartsWith, null_terminated_string_with_zero_length)
+{
+    EXPECT_TRUE( MISC::starts_with( "", "" ) );
+    EXPECT_TRUE( MISC::starts_with( "helloworld", "" ) );
+    EXPECT_FALSE( MISC::starts_with( "", "helloworld" ) );
+}
+
+TEST_F(MISC_StartsWith, null_terminated_string)
+{
+    EXPECT_TRUE( MISC::starts_with( "hello", "hello" ) );
+    EXPECT_TRUE( MISC::starts_with( "helloworld", "hello" ) );
+    EXPECT_FALSE( MISC::starts_with( "hello", "helloworld" ) );
+}
+
 } // namespace

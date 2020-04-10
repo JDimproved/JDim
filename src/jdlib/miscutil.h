@@ -271,6 +271,10 @@ namespace MISC
 
         return is_url_scheme_impl( str_in, length );
     }
+
+    // selfの先頭部分がstartsと等しいか（ヌル終端文字列バージョン）
+    // Unicode正規化は行わなずバイト列として比較する
+    bool starts_with( const char* self, const char* starts );
 }
 
 
