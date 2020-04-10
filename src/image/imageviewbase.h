@@ -40,11 +40,11 @@ namespace IMAGE
         // Gtk::manage で作っているのでdeleteしなくても良い
         JDLIB::ConstPtr< ImageAreaBase > m_imagearea;
 
-        bool m_wait;
-        bool m_loading;
+        bool m_wait{};
+        bool m_loading{};
         Gtk::EventBox m_event;
-        bool m_dblclick;
-        bool m_under_mouse;
+        bool m_dblclick{};
+        bool m_under_mouse{};
 
         bool m_enable_menuslot;
 
