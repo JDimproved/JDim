@@ -373,15 +373,14 @@ dnl checking gthread (deprecated option)
 dnl
 AC_ARG_WITH(gthread,
 AS_HELP_STRING([--with-gthread], [DEPRECATED. use --with-thread=glib]),
-[AC_MSG_WARN([--with-gthread is deprecated. Use --with-thread=glib instead.])
- with_thread=glib])
+[with_thread=glib])
 
 dnl
 dnl checking std::thread (deprecated option)
 dnl
 AC_ARG_WITH(stdthread,
 AS_HELP_STRING([--with-stdthread], [DEPRECATED. use --with-thread=std]),
-[AC_MSG_WARN([--with-stdthread is deprecated. Use --with-thread=std instead.])
+[AC_MSG_WARN([Thread options will be removed in the future release.])
  with_thread=std])
 
 dnl
@@ -396,10 +395,10 @@ AC_MSG_RESULT($with_thread)
 
 AS_IF(
   [test "x$with_thread" = xposix],
-  [],
+  [AC_MSG_WARN([Thread options will be removed in the future release.])],
 
   [test "x$with_thread" = xglib],
-  [AC_MSG_WARN([--with-thread=glib is deprecated. Use --with-thread=std instead.])
+  [AC_MSG_WARN([Thread options will be removed in the future release.])
    AC_DEFINE(USE_GTHREAD, , [Use gthread instead of pthread])],
 
   [test "x$with_thread" = xstd],
