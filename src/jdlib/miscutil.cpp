@@ -931,28 +931,27 @@ int MISC::is_url_scheme_impl( const char* str_in, int* length )
     int len = 0;
 
     // http https
-    if( *str_in == 'h' && *( str_in + 1 ) == 't'
-        && *( str_in + 2 ) == 't' && *( str_in + 3 ) == 'p' )
+    if( MISC::starts_with( str_in, "http" ) )
     {
         scheme = SCHEME_HTTP;
         len = 4;
         if( *( str_in + len ) == 's' ) ++len;
     }
     // ftp
-    else if( *str_in == 'f' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p' )
+    else if( MISC::starts_with( str_in, "ftp" ) )
     {
         scheme = SCHEME_FTP;
         len = 3;
     }
     // ttp ttps
-    else if( *str_in == 't' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p' )
+    else if( MISC::starts_with( str_in, "ttp" ) )
     {
         scheme = SCHEME_TTP;
         len = 3;
         if( *( str_in + len ) == 's' ) ++len;
     }
     // tp tps
-    else if( *str_in == 't' && *( str_in + 1 ) == 'p' )
+    else if( MISC::starts_with( str_in, "tp" ) )
     {
         scheme = SCHEME_TP;
         len = 2;
@@ -971,8 +970,7 @@ int MISC::is_url_scheme_impl( const char* str_in, int* length )
     }
 
     // 各スキーム後に続く共通の"://"
-    if( *( str_in + len ) == ':' && *( str_in + len + 1 ) == '/'
-        && *( str_in + len + 2 ) == '/' )
+    if( MISC::starts_with( str_in + len, "://" ) )
     {
         len += 3;
         if( length ) *length = len;
