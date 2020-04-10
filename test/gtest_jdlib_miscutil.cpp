@@ -146,7 +146,7 @@ TEST_F(IsUrlSchemeTest, url_sssp)
     EXPECT_EQ( MISC::SCHEME_SSSP, MISC::is_url_scheme( "sssp://img.2ch", &length ) );
     EXPECT_EQ( 7, length );
 
-    EXPECT_EQ( MISC::SCHEME_HTTP, MISC::is_url_scheme( "sssp://img.5ch", &length ) );
+    EXPECT_EQ( MISC::SCHEME_SSSP, MISC::is_url_scheme( "sssp://img.5ch", &length ) );
     EXPECT_EQ( 7, length );
 }
 
