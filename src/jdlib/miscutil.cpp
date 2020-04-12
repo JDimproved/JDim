@@ -931,49 +931,46 @@ int MISC::is_url_scheme_impl( const char* str_in, int* length )
     int len = 0;
 
     // http https
-    if( *str_in == 'h' && *( str_in + 1 ) == 't'
-        && *( str_in + 2 ) == 't' && *( str_in + 3 ) == 'p' )
+    if( MISC::starts_with( str_in, "http" ) )
     {
         scheme = SCHEME_HTTP;
         len = 4;
         if( *( str_in + len ) == 's' ) ++len;
     }
     // ftp
-    else if( *str_in == 'f' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p' )
+    else if( MISC::starts_with( str_in, "ftp" ) )
     {
         scheme = SCHEME_FTP;
         len = 3;
     }
     // ttp ttps
-    else if( *str_in == 't' && *( str_in + 1 ) == 't' && *( str_in + 2 ) == 'p' )
+    else if( MISC::starts_with( str_in, "ttp" ) )
     {
         scheme = SCHEME_TTP;
         len = 3;
         if( *( str_in + len ) == 's' ) ++len;
     }
     // tp tps
-    else if( *str_in == 't' && *( str_in + 1 ) == 'p' )
+    else if( MISC::starts_with( str_in, "tp" ) )
     {
         scheme = SCHEME_TP;
         len = 2;
         if( *( str_in + len ) == 's' ) ++len;
     }
     // sssp
-    else if( *str_in == 's' && *( str_in + 1 ) == 's' && *( str_in + 2 ) == 's' && *( str_in + 3 ) == 'p' ){
-        if( *( str_in + 7 ) == 'i' && *( str_in + 8 ) == 'm' && *( str_in + 9 ) == 'g' && *( str_in + 10 ) == '.'
-             && *( str_in + 11 ) == '2' && *( str_in + 12 ) == 'c' && *( str_in + 13 ) == 'h'){
+    else if( MISC::starts_with( str_in, "sssp" ) ) {
+        if( MISC::starts_with( str_in + 7, "img.5ch" ) || MISC::starts_with( str_in + 7, "img.2ch" ) ) {
             scheme = SCHEME_SSSP;
         }
         else{
-            // XXX img.2ch以外のアドレスはHTTPスキームにする
+            // XXX img.[25]ch以外のアドレスはHTTPスキームにする
             scheme = SCHEME_HTTP;
         }
         len = 4;
     }
 
     // 各スキーム後に続く共通の"://"
-    if( *( str_in + len ) == ':' && *( str_in + len + 1 ) == '/'
-        && *( str_in + len + 2 ) == '/' )
+    if( MISC::starts_with( str_in + len, "://" ) )
     {
         len += 3;
         if( length ) *length = len;
@@ -1887,4 +1884,20 @@ void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_p
     // 文字列の終端（ヌル文字）の位置を追加する。
     // ヌル文字の位置がないと検索対象の末尾にマッチングしたとき範囲外アクセスが発生する。
     table_pos.push_back( pos );
+}
+
+
+//
+// selfの先頭部分がstartsと等しいか（ヌル終端文字列バージョン）
+// Unicode正規化は行わなずバイト列として比較する
+//
+// self : 対象の文字列
+// starts : 先頭部分
+//
+bool MISC::starts_with( const char* self, const char* starts )
+{
+    for( std::size_t i = 0; starts[i] != '\0'; ++i ) {
+        if( self[i] == '\0' || self[i] != starts[i] ) return false;
+    }
+    return true;
 }

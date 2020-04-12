@@ -146,7 +146,7 @@ TEST_F(IsUrlSchemeTest, url_sssp)
     EXPECT_EQ( MISC::SCHEME_SSSP, MISC::is_url_scheme( "sssp://img.2ch", &length ) );
     EXPECT_EQ( 7, length );
 
-    EXPECT_EQ( MISC::SCHEME_HTTP, MISC::is_url_scheme( "sssp://img.5ch", &length ) );
+    EXPECT_EQ( MISC::SCHEME_SSSP, MISC::is_url_scheme( "sssp://img.5ch", &length ) );
     EXPECT_EQ( 7, length );
 }
 
@@ -523,6 +523,23 @@ TEST_F(MISC_AscTest, fullwidth_hiragana_combining_voiced_sound_mark)
     for( int i = 0, size = table.size(); i < size; ++i ) {
         EXPECT_EQ( i, table.at( i ) );
     }
+}
+
+
+class MISC_StartsWith : public ::testing::Test {};
+
+TEST_F(MISC_StartsWith, null_terminated_string_with_zero_length)
+{
+    EXPECT_TRUE( MISC::starts_with( "", "" ) );
+    EXPECT_TRUE( MISC::starts_with( "helloworld", "" ) );
+    EXPECT_FALSE( MISC::starts_with( "", "helloworld" ) );
+}
+
+TEST_F(MISC_StartsWith, null_terminated_string)
+{
+    EXPECT_TRUE( MISC::starts_with( "hello", "hello" ) );
+    EXPECT_TRUE( MISC::starts_with( "helloworld", "hello" ) );
+    EXPECT_FALSE( MISC::starts_with( "hello", "helloworld" ) );
 }
 
 } // namespace
