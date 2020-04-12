@@ -2278,7 +2278,7 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
     m_treeview.xml2tree( m_document, m_treestore, root_name );
 
     // ルート要素を取り出す
-    XML::Dom* root = m_document.get_root_element( root_name );
+    const XML::Dom* root = m_document.get_root_element( root_name );
     if( root ){
 
 	// ルート要素から属性( date_modified, path, y )の値を取得

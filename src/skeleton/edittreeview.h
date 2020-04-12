@@ -104,7 +104,7 @@ namespace SKELETON
         void set_treestore( const Glib::RefPtr< Gtk::TreeStore >& treestore );
 
         // xml -> tree 展開して treestore をセットする
-        void xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeStore >& treestore, const std::string& root_name );
+        void xml2tree( const XML::Document& document, Glib::RefPtr< Gtk::TreeStore >& treestore, const std::string& root_name );
 
         // tree -> XML 変換
         void tree2xml( XML::Document& document, const std::string& root_name );

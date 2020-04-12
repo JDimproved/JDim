@@ -151,12 +151,12 @@ void AAManager::load_history()
     std::cout << xml << std::endl;
 #endif
 
-    XML::Document document( xml );
-    XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME ) );
+    const XML::Document document( xml );
+    const XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME ) );
     if( ! root ) return;
 
     std::list< std::string > tmp_history;
-    for( XML::Dom* child : root->childNodes() ){
+    for( const XML::Dom* child : root->childNodes() ){
         if( static_cast<int>( tmp_history.size() ) >= CONFIG::get_aahistory_size() ) break;
 
         if( child->nodeType() == XML::NODE_TYPE_ELEMENT ){

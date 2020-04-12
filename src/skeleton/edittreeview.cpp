@@ -333,7 +333,7 @@ void EditTreeView::set_treestore( const Glib::RefPtr< Gtk::TreeStore >& treestor
 //
 // xml -> tree 展開して treestore をセットする
 //
-void EditTreeView::xml2tree( XML::Document& document, Glib::RefPtr< Gtk::TreeStore >& treestore, const std::string& root_name )
+void EditTreeView::xml2tree( const XML::Document& document, Glib::RefPtr< Gtk::TreeStore >& treestore, const std::string& root_name )
 {
 #ifdef _DEBUG
     std::cout << "EditTreeView::xml2tree ";

@@ -63,7 +63,7 @@ namespace CORE
         // ユーザコマンドメニューの作成
         std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group );
         std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group,
-                                        XML::Dom* dom, int& dirno, int& cmdno );
+                                        const XML::Dom* dom, int& dirno, int& cmdno );
 
         Glib::RefPtr< Gtk::Action > get_action( Glib::RefPtr< Gtk::ActionGroup >& action_group, const int num );
 
