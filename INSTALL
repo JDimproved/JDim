@@ -128,18 +128,11 @@
     --with-thread=[posix|glib|std]
 
        使用するスレッドライブラリを設定する。デフォルトでは std::thread を使用する。(v0.3.0以降)
-
-    --with-thread=posix
-
-       std::thread のかわりに pthread を使用する。
-
-    --with-thread=glib
-
-       非推奨: かわりに --with-thread=std を使用してください。
+       非推奨: スレッドライブラリを設定するオプションは将来のリリースで削除される予定です。
 
     --with-[gthread|stdthread]
 
-       非推奨: かわりに --with-thread=[glib|std] を使用してください。
+       非推奨: スレッドライブラリを設定するオプションは将来のリリースで削除される予定です。
 
     --with-gtkmm3=no
 
