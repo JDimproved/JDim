@@ -2232,8 +2232,10 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             pos += n_in; 
 
             // , や = や +が続くとき
+            // MAX_ANCINFOを超えた部分はリンクに含めない
             mode = 1;
-            while( check_anchor( mode, pos, n_in, tmpstr + lng_str, tmplink + lng_link ,
+            while( lng_anc < static_cast<int>( MAX_ANCINFO ) &&
+                   check_anchor( mode, pos, n_in, tmpstr + lng_str, tmplink + lng_link ,
                                  LNG_LINK - lng_link, ancinfo + lng_anc ) ){
 
                 lng_str += strlen( tmpstr ) - lng_str;
