@@ -14,7 +14,7 @@ namespace SKELETON
     class MsgDiag : public Gtk::MessageDialog
     {
 
-        JDLIB::Timeout* m_conn_timer;
+        JDLIB::Timeout* m_conn_timer{};
 
       public:
 
