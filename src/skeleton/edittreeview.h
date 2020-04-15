@@ -44,39 +44,39 @@ namespace SKELETON
         SIG_DROPPED_FROM_OTHER m_sig_dropped_from_other;
 
         std::string m_url;
-        Gtk::Window* m_parent_win;
+        Gtk::Window* m_parent_win{};
 
         EditColumns& m_columns;
         JDLIB::ConstPtr< Gtk::CellRendererText > m_ren_text;
 
         // 編集可能
-        bool m_editable;  
+        bool m_editable{};
 
         // UNDO 用のバッファ
-        UNDO_BUFFER* m_undo_buffer;
+        UNDO_BUFFER* m_undo_buffer{};
 
         // D&D用変数
         Gtk::TreePath m_drag_path_uline; // D&D時に下線を引いている行
-        int m_dnd_counter; // D&D時のスクロールのタイミング用
-        bool m_exec_drop; // D&D時のドロップ処理で挿入するか
-        Gtk::TreeRow m_row_dest; // ドロップ先
-        bool m_row_dest_before; // m_row_dest の前に挿入するか
-        bool m_dropped_from_other; // 他のwidgetからドロップされた
+        int m_dnd_counter{}; // D&D時のスクロールのタイミング用
+        bool m_exec_drop{}; // D&D時のドロップ処理で挿入するか
+        Gtk::TreeRow m_row_dest{}; // ドロップ先
+        bool m_row_dest_before{}; // m_row_dest の前に挿入するか
+        bool m_dropped_from_other{}; // 他のwidgetからドロップされた
 
         // スクロール用変数
         // 詳しくは EditTreeView::clock_in() を参照
-        int m_pre_adjust_upper;
+        int m_pre_adjust_upper{};
         Gtk::TreePath m_jump_path;
-        int m_jump_count;
+        int m_jump_count{};
 
         // 更新された
-        bool m_updated;
+        bool m_updated{};
 
         // ドラッグがこのツリー上で行われている
-        bool m_dragging_on_tree;
+        bool m_dragging_on_tree{};
 
         // ディレクトリIDの最大値
-        size_t m_max_dirid;
+        size_t m_max_dirid{};
 
       public:
 
@@ -208,8 +208,6 @@ namespace SKELETON
 
         // set_model()をprivate化して使用不可にする。代わりにset_treestore()を使用すること
         void set_model( const Glib::RefPtr< Gtk::TreeModel >& model ){ Gtk::TreeView::set_model( model ); }
-
-        void setup();
 
         // ディレクトリIDの最大値を取得
         void get_max_dirid();
