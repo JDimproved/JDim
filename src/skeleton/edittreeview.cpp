@@ -172,39 +172,14 @@ EditTreeView::EditTreeView( const std::string& url, const std::string& dndtarget
     : DragTreeView( url, dndtarget, use_usr_fontcolor, fontname, colorid_text, colorid_bg, colorid_bg_even ),
       m_url( url ),
       m_columns( columns )
-{
-    setup();
-}
+{}
 
 
 EditTreeView::EditTreeView( const std::string& url, const std::string& dndtarget, EditColumns& columns )
     : DragTreeView( url, dndtarget, false, "", 0, 0, 0 ),
       m_url( url ),
       m_columns( columns )
-{
-    setup();
-}
-
-
-void EditTreeView::setup()
-{
-#ifdef _DEBUG
-    std::cout << "EditTreeView::Setup url = " << m_url << std::endl;
-#endif
-
-    m_parent_win = nullptr;
-
-    m_updated = false;
-    m_dragging_on_tree = false;
-    m_editable = false;
-    m_undo_buffer = nullptr;
-    m_dnd_counter = 0;
-    m_row_dest = Gtk::TreeRow();
-
-    m_pre_adjust_upper = 0;
-    m_jump_path = Gtk::TreePath();
-}
-
+{}
 
 
 EditTreeView::~EditTreeView()
