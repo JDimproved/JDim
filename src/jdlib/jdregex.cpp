@@ -95,28 +95,21 @@ bool Regex::compile( const std::string reg, const bool icase, const bool newline
     }
 
 #ifdef HAVE_MIGEMO_H
+    std::string migemo_regex;
 
     if( use_migemo ){
 
-        if( jd_migemo_regcomp( &m_reg, asc_reg, cflags ) != 0 ){
-
-            if( regcomp( &m_reg, asc_reg, cflags ) != 0 ){
-                regfree( &m_reg );
-                return false;
-            }
+        migemo_regex = jdmigemo::convert( asc_reg );
+        if( ! migemo_regex.empty() ) {
+            asc_reg = migemo_regex.c_str();
         }
     }
-    else{
 #endif
 
     if( regcomp( &m_reg, asc_reg, cflags ) != 0 ){
         regfree( &m_reg );
         return false;
     }
-
-#ifdef HAVE_MIGEMO_H
-    }
-#endif
 
     m_compiled = true;
     return true;

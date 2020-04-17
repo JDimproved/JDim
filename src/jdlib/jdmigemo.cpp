@@ -17,80 +17,56 @@
 
 #include "jdmigemo.h"
 
-#include <stdlib.h>
-#include <string>
-#include <cstring>
-
-migemo *migemo_object;
+#include <migemo.h>
 
 
-int jd_migemo_regcomp(regex_t *preg,const char *regex,int cflags)
+static migemo* migemo_object{};
+
+
+std::string jdmigemo::convert(const char* input)
 {
-    migemo *m;
-    int retval,i;
-    size_t len;
-    unsigned char *p,*utmp;
-    char *ctmp;
-    m=migemo_object;
-    if(!m){
-        return -1;
+    if(! migemo_is_enable(migemo_object)) return {};
+
+    std::basic_string<unsigned char> query;
+    while( *input != '\n' && *input != '\0' ) {
+        query.push_back( static_cast<unsigned char>( *input ) );
+        ++input;
     }
-    //migemo_load(m,MIGEMO_DICTID_MIGEMO,JD_MIGEMO_DICTNAME);
-    if(!migemo_is_enable(m)){
-        return -1;
-    }
-    utmp=(unsigned char *)calloc(sizeof(unsigned char),strlen(regex)+1);
-    memcpy(utmp,regex,strlen(regex));
-    for(i=0;utmp[i]!='\0';i++){
-        if(utmp[i]=='\n'){
-            utmp[i]='\0';
-            break;
-        }
-    }
-    p=migemo_query(m,utmp);
-    free(utmp);
-    for(len=0;p[len]!='\0';len++);
-    ctmp=(char *)calloc(sizeof(char),len+1);
-    memcpy(ctmp,p,len);
+
+    unsigned char* result = migemo_query(migemo_object, query.c_str());
+    std::string output = reinterpret_cast<const char*>( result );
+    migemo_release(migemo_object, result);
 
 #ifdef _DEBUG
-    std::cout << "migemo comp:" << ctmp << std::endl;
+    std::cout << "migemo converted: " << output << std::endl;
 #endif
-
-    retval=regcomp(preg,ctmp,cflags);
-    free(ctmp);
-    if(retval!=0){
-        regfree(preg);
-    }
-    migemo_release(m,p);
-    return retval;
+    return output;
 }
 
 
-
-int jd_migemo_init(const char *filename)
+bool jdmigemo::init(const std::string& filename)
 {
+    if(migemo_is_enable(migemo_object)) return true;
+
 #ifdef _DEBUG
-	std::cout << "migemo-dict: " << filename << std::endl;
+    std::cout << "migemo-dict: " << filename << std::endl;
 #endif
-    migemo_object=migemo_open(filename);
-    if(migemo_is_enable(migemo_object)){
-        return 1;
-    }else{
+    migemo_object = migemo_open(filename.c_str());
+    if(migemo_is_enable(migemo_object)) {
+        return true;
+    }
+    else {
         migemo_close(migemo_object);
-        migemo_object=nullptr;
-        return 0;
+        migemo_object = nullptr;
+        return false;
     }
 }
 
 
-int jd_migemo_close(void)
+void jdmigemo::close()
 {
     migemo_close(migemo_object);
-    migemo_object=nullptr;
-    return 1;
+    migemo_object = nullptr;
 }
 
-#endif
-
-
+#endif // HAVE_MIGEMO_H

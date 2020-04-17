@@ -1,32 +1,31 @@
 // ライセンス: GPL2
 
 //
+// ローマ字入力を日本語検索のための正規表現に変換する
 // Thanks to 「テスト運用中」スレの18氏
 //
 // http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1149945056/18
 //
 
-#ifndef __JD_MIGEMO_H__
-#define __JD_MIGEMO_H__
+#ifndef JD_MIGEMO_H
+#define JD_MIGEMO_H
 
 #ifdef HAVE_MIGEMO_H
 
-#include <migemo.h>
-#include "jdregex.h"
+#include <string>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace jdmigemo {
 
-    int jd_migemo_regcomp(regex_t *preg,const char *regex,int cflags);
-    int jd_migemo_init(const char *filename);
-    int jd_migemo_close(void);
+// inputのヌル文字'\0'または改行'\n'までを変換して返す
+std::string convert(const char* input);
 
-#ifdef __cplusplus
-}
-#endif
+// 辞書を読み込めたらtrueを返す
+// 既に読み込んでる場合は何もせずtrueを返す
+bool init(const std::string& filename);
 
-#define JD_MIGEMO_DICTNAME ("/usr/share/migemo/utf-8/migemo-dict")
+void close();
 
-#endif /* #ifdef HAVE_MIGEMO_H */
-#endif /* #ifndef __JD_MIGEMO_H__ */
+} // namespace jdmigemo
+
+#endif // HAVE_MIGEMO_H
+#endif // JD_MIGEMO_H
