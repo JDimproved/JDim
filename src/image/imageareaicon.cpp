@@ -21,7 +21,6 @@ using namespace IMAGE;
 
 ImageAreaIcon::ImageAreaIcon( const std::string& url )
     : ImageAreaBase( url, 0 ) // アイコンは常に Gdk::INTERP_NEAREST
-    , m_shown( false )
 {
 #ifdef _DEBUG    
     std::cout << "ImageAreaIcon::ImageAreaIcon url = " << url << std::endl;
