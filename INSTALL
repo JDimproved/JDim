@@ -5,16 +5,16 @@
 
   必須環境
 
-  ・gtkmm-2.24.0 以上
-  ・gtkmm-3.0.0 以上 (GTK3版)
-  ・zlib-1.2 以上
-  ・gnutls-3.3.8 以上
+  ・gtkmm 2.24.0 以上 ( GTK2版は将来のリリースで廃止される )
+  ・gtkmm 3.0.0 以上 (GTK3版)
+  ・glibmm 2.46.0 以上
+  ・zlib 1.2 以上
+  ・gnutls 3.3.8 以上 ( 3.4.10未満のサポートは将来のリリースで廃止される )
 
   推奨環境
 
   ・Linux Kernel 3.10以上
-  ・gtkmm-2.24.0 以上
-  ・gtkmm-3.18.0 以上
+  ・gtkmm 3.18.0 以上
   ・UTF-8環境 ( EUC環境では LANG="ja_JP.UTF-8" を指定する必要がある )
 
 * makeに必要なツール、ライブラリ
@@ -137,6 +137,7 @@
     --with-gtkmm3=no
 
        gtkmm3のかわりにgtkmm2を使用する。
+       非推奨: GTK2版は将来のリリースで削除される予定です。
 
     --disable-compat-cache-dir
 
