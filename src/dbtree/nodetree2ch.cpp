@@ -25,7 +25,6 @@ enum
 {
     MODE_NORMAL = 0,
     MODE_OFFLAW,
-    MODE_OFFLAW2,
     MODE_KAKO_GZ,
     MODE_KAKO,
     MODE_OLDURL
@@ -102,7 +101,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
     data.url = std::string();
     data.byte_readfrom = 0;
 
-    //rokka使用 (旧offlawは廃止)
+    //rokka使用 (旧offlaw, offlaw2は廃止)
     if( m_mode == MODE_OFFLAW ){
 
         JDLIB::Regex regex;
@@ -121,32 +120,6 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 
         std::string sid = CORE::get_login2ch()->get_sessionid();
         ss << "/?sid=" << MISC::url_encode( sid.c_str(), sid.length() );
-
-        // レジューム設定
-        // レジュームを有りにして、サーバが range を無視して送ってきた場合と同じ処理をする
-        if( get_lng_dat() ) {
-            set_resume( true );
-        }
-        else set_resume( false );
-
-        data.url = ss.str();
-    }
-
-    //offlaw2 使用
-    else if( m_mode == MODE_OFFLAW2 ){
-
-        JDLIB::Regex regex;
-        const size_t offset = 0;
-        const bool icase = false;
-        const bool newline = true;
-        const bool usemigemo = false;
-        const bool wchar = false;
-
-        if( ! regex.exec( "(https?://[^/]*)/(.*)/dat/(.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
-
-        std::ostringstream ss;
-        ss << regex.str( 1 ) << "/test/offlaw2.so?shiro=kuma&sid=ERROR&bbs=" << regex.str( 2 )
-           << "&key=" << regex.str( 3 );
 
         // レジューム設定
         // レジュームを有りにして、サーバが range を無視して送ってきた場合と同じ処理をする
@@ -238,8 +211,7 @@ void NodeTree2ch::receive_finish()
     if( ! is_checking_update()
         && SESSION::is_online()
         && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM || get_code() == HTTP_NOT_FOUND
-             || ( ( m_mode == MODE_OFFLAW || m_mode == MODE_OFFLAW2 )
-                     && ! get_ext_err().empty() ) // rokka or offlaw2 読み込み失敗
+             || ( m_mode == MODE_OFFLAW && ! get_ext_err().empty() ) // rokka 読み込み失敗
             )
         ){
 
@@ -284,12 +256,8 @@ void NodeTree2ch::receive_finish()
         // ログインしている場合は rokka 経由で旧URLで再取得
         if( m_mode == MODE_NORMAL && CORE::get_login2ch()->login_now() ) m_mode = MODE_OFFLAW;
 
-        // offlaw2.so 経由で再取得 ( bbspink を除く )
-        else if( m_mode == MODE_NORMAL && CONFIG::get_use_offlaw2_2ch()
-                && get_url().find( ".bbspink.com" ) == std::string::npos ) m_mode = MODE_OFFLAW2;
-
         // 旧URLがある場合、そのURLで再取得
-        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OFFLAW || m_mode == MODE_OFFLAW2 ) && get_url() != m_org_url ) m_mode = MODE_OLDURL;
+        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OFFLAW ) && get_url() != m_org_url ) m_mode = MODE_OLDURL;
 
         // 過去ログ倉庫(gz圧縮)
         // ただし 2008年1月1日以降に立てられたスレは除く

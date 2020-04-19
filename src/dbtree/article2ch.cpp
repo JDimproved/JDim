@@ -116,7 +116,5 @@ NodeTreeBase* Article2ch::create_nodetree()
 bool Article2ch::is_load_olddat()
 {
     // 2chにログインしている場合
-    // または、offlaw2を使う設定の場合 ( bbspinkを除く )
-    return CORE::get_login2ch()->login_now()
-            || ( CONFIG::get_use_offlaw2_2ch() && get_url().find( ".bbspink.com" ) == std::string::npos );
+    return CORE::get_login2ch()->login_now();
 }

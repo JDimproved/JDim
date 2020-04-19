@@ -140,7 +140,6 @@ void AboutConfig::append_rows()
     append_row( "2chのクッキー:HAPを保存する", get_confitem()->use_cookie_hap, CONF_USE_COOKIE_HAP );
     append_row( "2chのクッキー:HAP", get_confitem()->cookie_hap, CONF_COOKIE_HAP );
     append_row( "BBSPINKのクッキー:HAP", get_confitem()->cookie_hap_bbspink, CONF_COOKIE_HAP_BBSPINK );
-    append_row( "2chの過去ログ取得時にofflaw2を使用する", get_confitem()->use_offlaw2_2ch, CONF_USE_OFFLAW2_2CH );
 
     // ツリービュー
     append_row( "" );
