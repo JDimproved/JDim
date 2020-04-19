@@ -97,7 +97,7 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag,
 
     // migemo 初期化
 #ifdef HAVE_MIGEMO_H
-    jd_migemo_init( CONFIG::get_migemodict_path().c_str() );
+    jdmigemo::init( CONFIG::get_migemodict_path() );
 #endif
 
     // 後はcoreを作って任せる
@@ -123,7 +123,7 @@ JDWinMain::~JDWinMain()
 
     // migemo のクローズ
 #ifdef HAVE_MIGEMO_H
-    jd_migemo_close();
+    jdmigemo::close();
 #endif
 
     // アイコンマネージャ削除
