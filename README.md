@@ -5,10 +5,12 @@
 [![Snap Status](https://build.snapcraft.io/badge/JDimproved/JDim.svg)](https://build.snapcraft.io/user/JDimproved/JDim)
 [![jdim](https://snapcraft.io//jdim/badge.svg)](https://snapcraft.io/jdim)
 
-ここに書かれていない詳細については[オンラインマニュアル][manual]や[リポジトリ][repository]を参照してください。
+ここに書かれていない詳細は [オンラインマニュアル][manual] を、
+開発に参加するための手順については [CONTRIBUTING][contrib] や [RFC][rfcs] を参照してください。
 
 [manual]: https://jdimproved.github.io/JDim/
 [repository]: https://github.com/JDimproved/JDim
+[rfcs]: https://github.com/JDimproved/rfcs "Request for Comments"
 
 * [概要](#概要)
 * [動作プラットフォーム](#動作プラットフォーム)

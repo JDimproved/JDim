@@ -24,6 +24,7 @@ layout: default
 
 - [FAQ][wiki-faq] (JD wiki)
 - [Tips][wiki-tips] (JD wiki)
+- [開発ドキュメント][wiki-rfcs] (GitHub wiki)
 - [その他]({{ site.baseurl }}/info/)
 - [更新履歴]({{ site.baseurl }}/history/)
 
@@ -38,4 +39,5 @@ layout: default
 [wiki-install]: https://ja.osdn.net/projects/jd4linux/wiki/OS%2F%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95
 [wiki-faq]: https://ja.osdn.net/projects/jd4linux/wiki/FAQ
 [wiki-tips]: https://ja.osdn.net/projects/jd4linux/wiki/Tips
+[wiki-rfcs]: https://github.com/JDimproved/rfcs/wiki/rfc-index "Request for Comments"
 [jd-289]: https://jd4linux.osdn.jp/manual/289/
