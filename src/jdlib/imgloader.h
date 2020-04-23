@@ -30,12 +30,12 @@ namespace JDLIB
         
         std::string m_file;
         std::string m_errmsg;
-        int m_width;
-        int m_height;
-        
-        bool m_stop;
-        int m_y;
-        int m_loadlevel;
+        int m_width{};
+        int m_height{};
+
+        bool m_stop{};
+        int m_y{};
+        int m_loadlevel{};
         int m_loadedlevel;
         
     public:
