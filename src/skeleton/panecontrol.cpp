@@ -13,16 +13,12 @@ enum
 };
 
 PaneControl::PaneControl( Gtk::Paned& paned, int fixmode )
-    : m_paned( paned ),
-      m_click_fold( PANE_CLICK_NORMAL ),
-      m_clicked( false ),
-      m_drag( false ),
-      m_on_paned( false ),
-      m_fixmode( fixmode ),
-      m_mode( PANE_NORMAL )
-{
-    m_pre_size = -1;
-}
+    : m_paned( paned )
+    , m_click_fold( PANE_CLICK_NORMAL )
+    , m_fixmode( fixmode )
+    , m_mode( PANE_NORMAL )
+    , m_pre_size{ -1 }
+{}
 
 
 PaneControl::~PaneControl() noexcept = default;

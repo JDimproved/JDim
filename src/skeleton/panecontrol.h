@@ -43,13 +43,13 @@ namespace SKELETON
 
         int m_click_fold;
 
-        bool m_clicked;
-        bool m_drag;
-        bool m_on_paned;
+        bool m_clicked{};
+        bool m_drag{};
+        bool m_on_paned{};
 
         int m_fixmode;
         int m_mode;
-        int m_pos;
+        int m_pos{};
 
         int m_pre_size;
 
