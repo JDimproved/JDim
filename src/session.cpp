@@ -26,7 +26,7 @@ int mode_pane;
 bool mode_online;
 bool mode_login2ch;
 bool mode_loginbe;
-bool mode_loginp2;
+enum { mode_loginp2 }; // Removed in v0.3.0 (2020-05)
 
 int win_hpane_main_pos;
 int win_vpane_main_pos;
@@ -338,9 +338,6 @@ void SESSION::init_session()
     // beログイン
     mode_loginbe = cf.get_option_bool( "mode_loginbe", false );
 
-    // p2ログイン
-    mode_loginp2 = cf.get_option_bool( "mode_loginp2", false );
-
     // paneのモード
     mode_pane = cf.get_option_int( "mode_pane", MODE_2PANE, 0, MODE_PANE_NUM -1 );
 
@@ -612,7 +609,6 @@ void SESSION::save_session()
         << "mode_online = " << mode_online << std::endl
         << "mode_login2ch = " << mode_login2ch << std::endl
         << "mode_loginbe = " << mode_loginbe << std::endl
-        << "mode_loginp2 = " << mode_loginp2 << std::endl
         << "x = " << x_win_main << std::endl
         << "y = " << y_win_main << std::endl
         << "width = " << width_win_main << std::endl
@@ -746,9 +742,6 @@ void SESSION::set_login2ch( const bool login ){ mode_login2ch = login; }
 
 bool SESSION::loginbe(){ return mode_loginbe; }
 void SESSION::set_loginbe( const bool login ){ mode_loginbe = login; }
-
-bool SESSION::loginp2(){ return mode_loginp2; }
-void SESSION::set_loginp2( const bool login ){ mode_loginp2 = login; }
 
 bool SESSION::show_sidebar(){ return win_show_sidebar; }
 

@@ -180,8 +180,7 @@ namespace CONFIG
         // 2chの認証サーバのアドレス
         std::string url_login2ch;
 
-        // p2の認証サーバのアドレス
-        std::string url_loginp2;
+        enum { url_loginp2 }; // Removed in v0.3.0 (2020-05)
 
         // BEの認証サーバのアドレス
         std::string url_loginbe;

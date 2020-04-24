@@ -102,9 +102,8 @@ namespace SESSION
     bool loginbe();
     void set_loginbe( const bool login );
 
-    // P2ログイン中
-    bool loginp2();
-    void set_loginp2( const bool login );
+    bool loginp2() = delete; // Removed in v0.3.0 (2020-05)
+    void set_loginp2( const bool login ) = delete; // Removed in v0.3.0 (2020-05)
 
     // サイドバー表示中
     bool show_sidebar();

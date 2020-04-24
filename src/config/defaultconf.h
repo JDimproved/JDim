@@ -208,9 +208,6 @@ namespace CONFIG
 // 2chの認証サーバのアドレス
 #define CONF_LOGIN2CH "https://2chv.tora3.net/futen.cgi"
 
-// p2の認証サーバのアドレス
-#define CONF_LOGINP2 "http://p2.2ch.sc/p2/"
-
 // BEの認証サーバのアドレス
 #define CONF_LOGINBE "http://be.2ch.net/test/login.php"
 

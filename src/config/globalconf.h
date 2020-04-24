@@ -105,9 +105,8 @@ namespace CONFIG
     // 2chの認証サーバのアドレス
     const std::string& get_url_login2ch();
 
-    // p2の認証サーバのアドレス
-    const std::string& get_url_loginp2();
-    void set_url_loginp2( const std::string& url );
+    const std::string& get_url_loginp2() = delete; // Removed in v0.3.0 (2020-05)
+    void set_url_loginp2( const std::string& url ) = delete; // Removed in v0.3.0 (2020-05)
 
     // BEの認証サーバのアドレス
     const std::string& get_url_loginbe();

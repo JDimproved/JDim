@@ -131,19 +131,6 @@ void Core::slot_toggle_loginbe()
 
 
 //
-// p2にログイン
-//
-void Core::slot_toggle_loginp2()
-{
-    if( ! m_enable_menuslot ) return;
-
-#ifdef _DEBUG
-    std::cout << "Core::slot_toggle_loginp2\n";
-#endif
-}
-
-
-//
 // 板リスト再読込
 //
 void Core::slot_reload_list()

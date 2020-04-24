@@ -329,8 +329,6 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン(_B)", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_loginbe ) );
-    m_action_group->add( Gtk::ToggleAction::create( "LoginP2", "p2にログイン(_P)", std::string(), false ),
-                        sigc::mem_fun( *this, &Core::slot_toggle_loginp2 ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
     m_action_group->add( Gtk::Action::create( "SaveSession", "セッション保存(_S)"), sigc::mem_fun( *this, &Core::save_session ) );
@@ -804,7 +802,6 @@ void Core::run( const bool init, const bool skip_setupdiag )
             "<separator/>"
             "<menuitem action='Login2ch'/>"
             "<menuitem action='LoginBe'/>"
-            "<menuitem action='LoginP2'/>"
             "<separator/>"
             "<menuitem action='SaveSession'/>"
             "<separator/>"
@@ -3156,9 +3153,6 @@ void Core::exec_command()
     // 2chへのログイン処理が完了した
     else if( command.command  == "login2ch_finished" ) set_maintitle();
 
-    // p2へのログイン処理が完了した
-    else if( command.command  == "loginp2_finished" ) set_maintitle();
-
     // BEへのログイン処理が完了した
     else if( command.command  == "loginbe_finished" ) set_maintitle();
 
@@ -3360,9 +3354,6 @@ void Core::exec_command_after_boot()
 
     // BEログイン
     if( SESSION::loginbe() ) slot_toggle_loginbe();
-
-    // p2ログイン
-    if( SESSION::loginp2() ) slot_toggle_loginp2();
 
     // タイトル表示
     set_maintitle();
