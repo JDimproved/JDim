@@ -22,7 +22,6 @@
 #include "updatemanager.h"
 #include "login2ch.h"
 #include "loginbe.h"
-#include "loginp2.h"
 #include "environment.h"
 #include "setupwizard.h"
 #include "cache.h"
@@ -109,9 +108,6 @@ Core::Core( JDWinMain& win_main )
 
     // BEログインマネージャ作成
     CORE::get_loginbe();
-
-    // p2ログインマネージャ作成
-    CORE::get_loginp2();
 
     // マウス、キー設定読み込み
     CONTROL::load_conf();
@@ -221,9 +217,6 @@ Core::~Core()
 
     // BEログインマネージャ削除
     CORE::delete_loginbe();
-
-    // p2ログインマネージャ削除
-    CORE::delete_loginp2();
 
     // データベース削除
     DBTREE::delete_root();
@@ -1381,7 +1374,6 @@ void Core::set_maintitle()
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
-    if( CORE::get_loginp2()->login_now() ) title +=" [ p2 ]";
     if( ! SESSION::is_online() ) title += " [ offline ]";
     m_win_main.set_title( title );
 }
@@ -1518,15 +1510,6 @@ void Core::slot_activate_menubar()
     if( tact ){
 
         if( CORE::get_loginbe()->login_now() ) tact->set_active( true );
-        else tact->set_active( false );
-    }
-
-    // P2ログイン
-    act = m_action_group->get_action( "LoginP2" );
-    tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
-    if( tact ){
-
-        if( CORE::get_loginp2()->login_now() ) tact->set_active( true );
         else tact->set_active( false );
     }
 

@@ -283,6 +283,7 @@ void Post::receive_finish()
     }
 
     // p2 型
+    // XXX: p2ログイン機能を削除したのでもう不要か？
     else if( title.find( "error" ) != std::string::npos ){
 
         icase = true;

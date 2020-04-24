@@ -10,7 +10,6 @@
 
 #include "login2ch.h"
 #include "loginbe.h"
-#include "loginp2.h"
 
 #include "jdlib/miscutil.h"
 
@@ -134,10 +133,6 @@ namespace CORE
             // BE
             CORE::get_loginbe()->set_username( MISC::remove_space( m_frame_be.entry_id.get_text() ) );
             CORE::get_loginbe()->set_passwd( MISC::remove_space( m_frame_be.entry_passwd.get_text() ) );
-
-            // p2
-            CORE::get_loginp2()->set_username( MISC::remove_space( m_frame_p2.entry_id.get_text() ) );
-            CORE::get_loginp2()->set_passwd( MISC::remove_space( m_frame_p2.entry_passwd.get_text() ) );
         }
 
       public:
@@ -159,10 +154,6 @@ namespace CORE
 
             set_activate_entry( m_frame_be.entry_id );
             set_activate_entry( m_frame_be.entry_passwd );
-
-            // p2ログイン用
-            m_frame_p2.entry_id.set_text( CORE::get_loginp2()->get_username() );
-            m_frame_p2.entry_passwd.set_text( CORE::get_loginp2()->get_passwd() );
 
             set_activate_entry( m_frame_p2.entry_id );
             set_activate_entry( m_frame_p2.entry_passwd );
