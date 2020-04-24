@@ -254,10 +254,6 @@ bool ConfigItems::load( const bool restore )
     menu_search_title = cf.get_option_str( "menu_search_title", CONF_MENU_SEARCH_TITLE );
     url_search_title = cf.get_option_str( "url_search_title", CONF_URL_SEARCH_TITLE );
 
-    // p2 書き込み用アドレス
-    url_writep2 = cf.get_option_str( "url_writep2", CONF_URL_WRITEP2 );
-    url_resp2 = cf.get_option_str( "url_resp2", CONF_URL_RESP2 );
-
     // スレタイ検索用正規表現
     regex_search_title = cf.get_option_str( "regex_search_title", CONF_REGEX_SEARCH_TITLE );
 
@@ -656,8 +652,6 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "regex_search_title", regex_search_title );
     cf.update( "menu_search_web", menu_search_web );
     cf.update( "url_search_web", url_search_web );
-    cf.update( "url_writep2", url_writep2 );
-    cf.update( "url_resp2", url_resp2 );
 
     cf.update( "fontname_main", fontname[ FONT_MAIN ] );
     cf.update( "fontname_mail", fontname[ FONT_MAIL ] );
