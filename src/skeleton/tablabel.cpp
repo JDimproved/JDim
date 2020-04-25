@@ -20,7 +20,8 @@ enum
 
 
 TabLabel::TabLabel( const std::string& url )
-    : m_url( url ), m_id_icon( ICON::NUM_ICONS ), m_image( nullptr )
+    : m_url( url )
+    , m_id_icon( ICON::NUM_ICONS )
 {
 #ifdef _DEBUG
     std::cout << "TabLabel::TabLabel " << m_url << std::endl;
