@@ -26,10 +26,10 @@ namespace SKELETON
         SIG_TAB_DRAG_DATA_GET m_sig_tab_drag_data_get;
         SIG_TAB_DRAG_END m_sig_tab_drag_end;
 
-        int m_x;
-        int m_y;
-        int m_width;
-        int m_height;
+        int m_x{};
+        int m_y{};
+        int m_width{};
+        int m_height{};
 
         std::string m_url;
         Gtk::HBox m_hbox;
@@ -38,7 +38,7 @@ namespace SKELETON
         Gtk::Label m_label;
 
         // アイコン画像
-        Gtk::Image* m_image;
+        Gtk::Image* m_image{};
 
         // ラベルに表示する文字列の全体
         std::string m_fulltext;
