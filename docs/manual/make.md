@@ -27,7 +27,7 @@ layout: default
 
 #### 推奨環境
 - Linux Kernel 3.10 以上
-- gtkmm 3.18 以上 ( GTK3版 )
+- gtkmm 3.18.0 以上 ( 3.22.0未満は将来のリリースで推奨環境から外れる )
 - UTF-8環境 ( EUC環境では `LANG="ja_JP.UTF-8"` を指定する必要がある )
 
 
