@@ -1723,7 +1723,7 @@ std::string MISC::recover_path( const std::string& str )
 #endif
 }
 
-std::vector< std::string > MISC::recover_path( std::vector< std::string >&& list_str )
+std::vector< std::string > MISC::recover_path( std::vector< std::string > list_str )
 {
 #ifdef _WIN32
     std::vector< std::string > list_ret;
