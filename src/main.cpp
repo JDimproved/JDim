@@ -460,23 +460,6 @@ int main( int argc, char **argv )
     }
 #endif
 
-#if !GLIB_CHECK_VERSION(2,45,5)
-#ifdef _DEBUG_MEM_PROFILE
-    g_mem_set_vtable( glib_mem_profiler_table );
-    atexit( g_mem_profile );
-#else
-    GMemVTable vtable;
-    vtable = *glib_mem_profiler_table;
-    vtable.malloc = malloc;
-    vtable.realloc = realloc;
-    vtable.free = free;
-    vtable.calloc = calloc;
-    vtable.try_malloc = malloc;
-    vtable.try_realloc = realloc;
-    g_mem_set_vtable( &vtable );
-#endif
-#endif
-
     Gtk::Main m( &argc, &argv );
 
     // XSMPによるセッション管理
