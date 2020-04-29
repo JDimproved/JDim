@@ -250,55 +250,46 @@ void Search_Manager::search_fin_title()
 
     if( ! m_searchloader ) return;
 
-    // 行ごとに分割し、regexを使ってurl取得
-    if( ! m_searchloader->get_data().empty() ){
+    // 正規表現を使ってURLを抜き出していく
+    const std::string& source = m_searchloader->get_data();
+    if( ! source.empty() ){
+
+        // 正規表現の設定には改行は "\\n" で保存されているので "\n"　に変換する
+        const std::string pattern = MISC::replace_str( CONFIG::get_regex_search_title(), "\\n", "\n" );
 
         JDLIB::Regex regex;
-        size_t offset = 0;
         const bool icase = false;
         const bool newline = true;
         const bool usemigemo = false;
         const bool wchar = false;
-        regex.compile( CONFIG::get_regex_search_title(), icase, newline, usemigemo, wchar );
+        regex.compile( pattern, icase, newline, usemigemo, wchar );
 
-        std::list< std::string > lines = MISC::get_lines( m_searchloader->get_data() );
-        std::list< std::string >::iterator it;
-        for( it = lines.begin(); it != lines.end(); ++it ){
+        std::size_t offset = 0;
+        while( regex.exec( source, offset ) ){
 
-            std::string line = MISC::remove_space( *it );
+            SEARCHDATA data;
+            data.url_readcgi = DBTREE::url_readcgi( regex.str( 1 ), 0, 0 );
+            data.subject = MISC::html_unescape( regex.str( 2 ) );
+            data.num = std::atoi( regex.str( 3 ).c_str() ); // マッチしていなければ 0 になる
+            data.bookmarked = false;
+            data.num_bookmarked = 0;
 
-            if( line.empty() ) continue;
+            if( ! data.url_readcgi.empty() ){
 
-            // & が &amp; に置き換わっているので直す
-            if( line.find( "&" ) != std::string::npos ) line = MISC::replace_str( line, "&amp;", "&" );
-
-            offset = 0;
-            while( regex.exec( line, offset ) ){
-
-                SEARCHDATA data;
-                data.url_readcgi = DBTREE::url_readcgi( regex.str( 1 ), 0, 0 );
-                data.subject = MISC::html_unescape( regex.str( 2 ) );
-                data.num = atoi( regex.str( 3 ).c_str() );
-                data.bookmarked = false;
-                data.num_bookmarked = 0;
-
-                if( ! data.url_readcgi.empty() ){
-
-                    data.boardname = DBTREE::board_name( data.url_readcgi );
+                data.boardname = DBTREE::board_name( data.url_readcgi );
 
 #ifdef _DEBUG
-                    std::cout << "url = " << data.url_readcgi << std::endl
-                              << "board = " << data.boardname << std::endl
-                              << "subject = " << data.subject << std::endl
-                              << "num = " << data.num << std::endl << std::endl;
+                std::cout << "url = " << data.url_readcgi << std::endl
+                          << "board = " << data.boardname << std::endl
+                          << "subject = " << data.subject << std::endl
+                          << "num = " << data.num << std::endl << std::endl;
 #endif
 
-                    m_list_data.push_back( data );
-                }
-
-                // 1行に複数の検索結果が返ってくる場合があるので、オフセットを設定して再検索する
-                offset = regex.pos( 0 ) + regex.str( 0 ).length();
+                m_list_data.push_back( data );
             }
+
+            // オフセットを設定して再検索する
+            offset = regex.pos( 0 ) + regex.str( 0 ).length();
         }
     }
 
