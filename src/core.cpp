@@ -660,7 +660,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::ToggleAction::create( "ToggleTab", "スレ一覧／スレビューを開く時に常に新しいタブで開く(_T)", std::string(), toggled ),
                          sigc::mem_fun( *this, &Core::slot_toggle_tabbutton ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "スレビューでアンカーをクリックして多重ポップアップモードに移行する(_W)", std::string(),
+    m_action_group->add( Gtk::ToggleAction::create( "TogglePopupWarp", "{X11} スレビューでアンカーをクリックして多重ポップアップモードに移行する(_W)", std::string(),
                                                     CONTROL::is_popup_warpmode() ),
                          sigc::mem_fun( *this, &Core::slot_toggle_popupwarpmode ) );
 
