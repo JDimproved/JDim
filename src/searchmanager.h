@@ -51,24 +51,24 @@ namespace CORE
 
         JDLIB::Thread m_thread;
 
-        int m_searchmode;
+        int m_searchmode{};
         std::string m_id;
         std::string m_url;
         std::string m_query;
-        bool m_mode_or;
-        bool m_bm;
-        bool m_calc_data;
+        bool m_mode_or{};
+        bool m_bm{};
+        bool m_calc_data{};
 
         std::vector< DBTREE::ArticleBase* > m_list_article;
         std::list< SEARCHDATA > m_list_data;
 
         // 検索実行中
-        bool m_searching;
+        bool m_searching{};
 
-        bool m_stop;
+        bool m_stop{};
 
         // スレタイ検索ローダ
-        SearchLoader* m_searchloader;
+        SearchLoader* m_searchloader{};
 
       public:
 
