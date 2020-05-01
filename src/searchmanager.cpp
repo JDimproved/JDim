@@ -36,10 +36,7 @@ void CORE::delete_search_manager()
 
 using namespace CORE;
 
-Search_Manager::Search_Manager()
-    : m_searching( false ),
-      m_searchloader( nullptr )
-{}
+Search_Manager::Search_Manager() = default;
 
 
 Search_Manager::~Search_Manager()
