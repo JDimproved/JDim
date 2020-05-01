@@ -30,8 +30,8 @@ namespace CORE
         std::list< CheckItem > m_list_item;
         std::list< std::string > m_list_open;
 
-        bool m_running;
-        int m_total;
+        bool m_running{};
+        int m_total{};
         std::string m_url_checking;
 
       public:
