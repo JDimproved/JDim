@@ -17,22 +17,11 @@
 using namespace SKELETON;
 
 View::View( const std::string& url, const std::string& arg1 ,const std::string& arg2 )
-    : m_url( url ),
-      m_parent_win( nullptr ),
-      m_status( std::string() ),
-      m_enable_mg( false ),
-      m_enable_autoreload( false ),
-      m_autoreload_mode( AUTORELOAD_NOT ),
-      m_autoreload_sec( 0 ),
-      m_autoreload_counter( 0 ),
-      m_keyjump_counter( 0 ),
-      m_keyjump_num( 0 ),
-      m_lockable( true ),
-      m_locked( false ),
-      m_writeable( true ),
-      m_id_toolbar( 0 ),
-      m_popup_upside( false ),
-      m_reget( false )
+    : m_url( url )
+    , m_autoreload_mode( AUTORELOAD_NOT )
+    , m_lockable( true )
+    , m_writeable( true )
+    , m_id_toolbar( 0 ) // 派生クラスでコンテキストが異なる
 {}
 
 
