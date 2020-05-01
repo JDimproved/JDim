@@ -20,7 +20,6 @@ using namespace SOUND;
 
 
 Play_Sound::Play_Sound()
-    : m_playing( false )
 {
 #ifdef _DEBUG
     std::cout << "Play_Sound::Play_Sound\n";
