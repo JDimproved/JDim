@@ -27,11 +27,11 @@ namespace SKELETON
         SIG_RESIZE_POPUP m_sig_resize_popup;
 
         std::string m_url;
-        Gtk::Window* m_parent_win;
+        Gtk::Window* m_parent_win{};
 
         // クライアント領域の幅、高さ
-        int m_width_client;
-        int m_height_client;
+        int m_width_client{};
+        int m_height_client{};
 
         // 入力コントローラ
         CONTROL::Control m_control;
@@ -51,38 +51,38 @@ namespace SKELETON
         std::string m_status;
 
         // true ならマウスジェスチャ使用
-        bool m_enable_mg; 
+        bool m_enable_mg{};
 
         // オートリロード
-        bool m_enable_autoreload; // true ならオートリロード可能(デフォルト:off)
+        bool m_enable_autoreload{}; // true ならオートリロード可能(デフォルト:off)
         int m_autoreload_mode; // モード
-        int m_autoreload_sec; // 何秒おきにリロードするか
-        int m_autoreload_counter; // オートリロード用のカウンタ
+        int m_autoreload_sec{}; // 何秒おきにリロードするか
+        int m_autoreload_counter{}; // オートリロード用のカウンタ
 
         // キーボード数字入力ジャンプ用
-        int m_keyjump_counter;
-        int m_keyjump_num;
+        int m_keyjump_counter{};
+        int m_keyjump_num{};
 
         // ロック可能か
         bool m_lockable;
 
         // ロック状態
-        bool m_locked;
+        bool m_locked{};
 
         // 書き込み可能か
         bool m_writeable;
 
-        // ツールバーのID
+        // ツールバーのID (派生クラスでコンテキストが異なる)
         int m_id_toolbar;
 
         // 検索文字列
         std::string m_search_query;
 
         // ポップアップ時に全ての領域を表示できないならカーソルの上に表示
-        bool m_popup_upside;
+        bool m_popup_upside{};
 
         // ロード時にキャッシュを削除してからviewを再読み込みする
-        bool m_reget;
+        bool m_reget{};
 
       protected:
 
