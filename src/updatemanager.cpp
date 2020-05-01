@@ -35,11 +35,7 @@ void CORE::delete_checkupdate_manager()
 
 using namespace CORE;
 
-CheckUpdate_Manager::CheckUpdate_Manager()
-    : m_running( false )
-{
-    m_list_open.clear();
-}
+CheckUpdate_Manager::CheckUpdate_Manager() = default;
 
 
 CheckUpdate_Manager::~CheckUpdate_Manager() noexcept
