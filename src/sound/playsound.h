@@ -50,8 +50,8 @@ namespace SOUND
     {
         JDLIB::Thread m_thread;
         std::string m_wavfile;
-        bool m_stop;
-        bool m_playing;
+        bool m_stop{};
+        bool m_playing{};
 
       public:
 
