@@ -52,20 +52,11 @@ constexpr const char* JDWindow::s_css_stat_label;
 
 // メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
-    : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
-      m_gtkwidget( nullptr ),
-      m_gtkwindow( nullptr ),
-      m_grand_parent_class( nullptr ),
-      m_win_moved( false ),
-      m_fold_when_focusout( fold_when_focusout ),
-      m_boot( true ),
-      m_enable_fold( m_fold_when_focusout ),
-      m_transient( false ),
-      m_mode( JDWIN_INIT ),
-      m_count_focusout( 0 ),
-      m_dummywin( nullptr ),
-      m_scrwin( nullptr ),
-      m_vbox_view( nullptr )
+    : Gtk::Window( Gtk::WINDOW_TOPLEVEL )
+    , m_fold_when_focusout( fold_when_focusout )
+    , m_boot( true )
+    , m_enable_fold( m_fold_when_focusout )
+    , m_mode( JDWIN_INIT )
 {
     // ステータスバー
     m_label_stat.set_size_request( 0, -1 );

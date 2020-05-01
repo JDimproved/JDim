@@ -16,26 +16,26 @@ namespace SKELETON
 {
     class JDWindow : public Gtk::Window
     {
-        GtkWidget* m_gtkwidget;
-        GtkWindow *m_gtkwindow;
-        gpointer m_grand_parent_class;
+        GtkWidget* m_gtkwidget{};
+        GtkWindow* m_gtkwindow{};
+        gpointer m_grand_parent_class{};
 
-        bool m_win_moved;
+        bool m_win_moved{};
 
         // フォーカスアウト時の折りたたみ処理で用いるメンバ変数
         bool m_fold_when_focusout; // フォーカスアウトしたときにウィンドウを畳むか
         bool m_boot;
         bool m_enable_fold; // 「一時的に」折りたたみ可能かどうか切り替える
-        bool m_transient;
+        bool m_transient{};
         int m_mode;
-        int m_counter;
-        int m_count_focusout; // フォーカス制御用カウンタ
-        Gtk::Window* m_dummywin; // set_transient()で使うダミーwindow
+        int m_counter{};
+        int m_count_focusout{}; // フォーカス制御用カウンタ
+        Gtk::Window* m_dummywin{}; // set_transient()で使うダミーwindow
 
         SKELETON::JDVBox m_vbox;
 
-        Gtk::ScrolledWindow* m_scrwin;
-        SKELETON::JDVBox* m_vbox_view;
+        Gtk::ScrolledWindow* m_scrwin{};
+        SKELETON::JDVBox* m_vbox_view{};
 
         // ステータスバー
         std::string m_status;
