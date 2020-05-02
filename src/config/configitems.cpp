@@ -60,11 +60,9 @@ std::string get_default_font()
 
 
 ConfigItems::ConfigItems()
-    : m_loaded( false )
-{
-    str_color.resize( COLOR_NUM );
-    fontname.resize( FONT_NUM );
-}
+    : fontname( FONT_NUM )
+    , str_color( COLOR_NUM )
+{}
 
 ConfigItems::~ConfigItems() noexcept = default;
 
