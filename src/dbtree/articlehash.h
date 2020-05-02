@@ -20,15 +20,15 @@ namespace DBTREE
     {
         friend class ArticleHashIterator;
 
-        size_t m_size;
+        size_t m_size{};
         size_t m_min_hash;
         ArticleHashIterator* m_iterator;
         std::vector< std::vector< ArticleBase* > > m_table;
 
         // iterator 用変数
-        size_t m_it_hash;
-        size_t m_it_pos;
-        size_t m_it_size;
+        size_t m_it_hash{};
+        size_t m_it_pos{};
+        size_t m_it_size{};
 
       public:
 
