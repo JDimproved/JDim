@@ -15,7 +15,6 @@
 
 #include "login2ch.h"
 #include "loginbe.h"
-#include "loginp2.h"
 
 #include <sstream>
 
@@ -44,8 +43,6 @@ const std::string& Board2ch::get_agent()
 // 書き込み用
 const std::string& Board2ch::get_agent_w()
 {
-    if( CORE::get_loginp2()->login_now() ) return CONFIG::get_agent_for_data();
-
     return CONFIG::get_agent_for2ch();
 }
 
@@ -88,12 +85,6 @@ std::string Board2ch::get_proxy_basicauth()
 // 書き込み用プロキシ
 std::string Board2ch::get_proxy_host_w()
 {
-    if( CORE::get_loginp2()->login_now() ){
-
-        if( CONFIG::get_use_proxy_for_data() ) return CONFIG::get_proxy_for_data();
-        else return std::string();
-    }
-
     const int mode = get_mode_local_proxy_w();
 
     if( mode == DBTREE::PROXY_GLOBAL ){
@@ -106,8 +97,6 @@ std::string Board2ch::get_proxy_host_w()
 
 int Board2ch::get_proxy_port_w()
 {
-    if( CORE::get_loginp2()->login_now() ) return CONFIG::get_proxy_port_for_data();
-
     const int mode = get_mode_local_proxy_w();
 
     if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_port_for2ch_w();
@@ -119,8 +108,6 @@ int Board2ch::get_proxy_port_w()
 
 std::string Board2ch::get_proxy_basicauth_w()
 {
-    if( CORE::get_loginp2()->login_now() ) return CONFIG::get_proxy_basicauth_for_data();
-
     const int mode = get_mode_local_proxy_w();
 
     if( mode == DBTREE::PROXY_GLOBAL ) return CONFIG::get_proxy_basicauth_for2ch_w();
@@ -140,14 +127,8 @@ std::string Board2ch::cookie_for_write()
     std::string cookie = Board2chCompati::cookie_for_write();
 
 
-    // p2 ログイン中
-    if( CORE::get_loginp2()->login_now() ){
-        if( ! cookie.empty() ) cookie += "; ";
-        cookie += "cid=" + CORE::get_loginp2()->get_sessionid();
-    }
-
     // BE ログイン中
-    else if( CORE::get_loginbe()->login_now() ){
+    if( CORE::get_loginbe()->login_now() ){
         if( ! cookie.empty() ) cookie += "; ";
         cookie += "DMDM=" + CORE::get_loginbe()->get_sessionid() + "; MDMD=" + CORE::get_loginbe()->get_sessiondata();
     }
@@ -162,9 +143,6 @@ std::string Board2ch::cookie_for_write()
 
 std::string Board2ch::get_write_referer()
 {
-    // p2ログインの場合はとりあえず空文字
-    if( CORE::get_loginp2()->login_now() ) return std::string();
-
     return Board2chCompati::get_write_referer();
 }
 
@@ -187,7 +165,7 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
 
     // 2chログイン中
     // sidを送る
-    if( ! CORE::get_loginp2()->login_now() && CORE::get_login2ch()->login_now() ){
+    if( CORE::get_login2ch()->login_now() ){
         std::string sid = CORE::get_login2ch()->get_sessionid();
         ss_post << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
     }
@@ -197,18 +175,6 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
             << "&FROM="    << MISC::charset_url_encode( name, get_charset() )
             << "&mail="    << MISC::charset_url_encode( mail, get_charset() )
             << "&MESSAGE=" << MISC::charset_url_encode( msg, get_charset() );
-
-    if( CORE::get_loginp2()->login_now() ){
-
-        ss_post << "&detect_hint=" << MISC::charset_url_encode( "◎◇", get_charset() )
-                << "&host=" << MISC::url_encode( MISC::get_hostname( get_root(), false ) )
-                << "&key="
-                << "&popup=1"
-                << "&rescount=1"
-                << "&ttitle_en="
-                << "&csrfid=" << MISC::url_encode( CORE::get_loginp2()->get_sessiondata() )
-                << "&newthread=1";
-    }
 
 #ifdef _DEBUG
     std::cout << "Board2ch::create_newarticle_message " << ss_post.str() << std::endl;
@@ -226,8 +192,6 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
 //
 std::string Board2ch::url_bbscgi_new()
 {
-    if( CORE::get_loginp2()->login_now() ) return CONFIG::get_url_loginp2() + "post.php";
-
     return Board2chCompati::url_bbscgi_new();
 }
 
@@ -239,8 +203,6 @@ std::string Board2ch::url_bbscgi_new()
 //
 std::string Board2ch::url_subbbscgi_new()
 {
-    if( CORE::get_loginp2()->login_now() ) return CONFIG::get_url_loginp2() + "post.php";
-
     return Board2chCompati::url_subbbscgi_new();
 }
 

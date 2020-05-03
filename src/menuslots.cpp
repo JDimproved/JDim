@@ -11,7 +11,6 @@
 #include "session.h"
 #include "login2ch.h"
 #include "loginbe.h"
-#include "loginp2.h"
 #include "winmain.h"
 #include "fontid.h"
 #include "colorid.h"
@@ -128,28 +127,6 @@ void Core::slot_toggle_loginbe()
     else CORE::get_loginbe()->start_login();
 
     set_maintitle();
-}
-
-
-//
-// p2にログイン
-//
-void Core::slot_toggle_loginp2()
-{
-    if( ! m_enable_menuslot ) return;
-
-#ifdef _DEBUG
-    std::cout << "Core::slot_toggle_loginp2\n";
-#endif
-
-    // ログイン中ならログアウト
-    if( CORE::get_loginp2()->login_now() ){
-        CORE::get_loginp2()->logout();
-        set_maintitle();
-    }
-
-    // ログオフ中ならログイン開始
-    else CORE::get_loginp2()->start_login();
 }
 
 

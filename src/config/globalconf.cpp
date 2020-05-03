@@ -161,10 +161,6 @@ const std::string& CONFIG::get_url_jdimhp() { return get_confitem()->url_jdimhp;
 // 2chの認証サーバのアドレス
 const std::string& CONFIG::get_url_login2ch() { return get_confitem()->url_login2ch; }
 
-// p2の認証サーバのアドレス
-const std::string& CONFIG::get_url_loginp2() { return get_confitem()->url_loginp2; }
-void CONFIG::set_url_loginp2( const std::string& url ) { get_confitem()->url_loginp2 = url; }
-
 // BEの認証サーバのアドレス
 const std::string& CONFIG::get_url_loginbe() { return get_confitem()->url_loginbe; }
 
@@ -181,9 +177,6 @@ const std::string& CONFIG::get_regex_search_title(){ return get_confitem()->rege
 
 const std::string& CONFIG::get_menu_search_web(){ return get_confitem()->menu_search_web; }
 const std::string& CONFIG::get_url_search_web(){ return get_confitem()->url_search_web; }
-
-const std::string& CONFIG::get_url_writep2(){ return get_confitem()->url_writep2; }
-const std::string& CONFIG::get_url_resp2(){ return get_confitem()->url_resp2; }
 
 const std::string& CONFIG::get_agent_for2ch() { return get_confitem()->agent_for2ch; }
 

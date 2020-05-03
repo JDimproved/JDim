@@ -238,9 +238,6 @@ bool ConfigItems::load( const bool restore )
     // 2chの認証サーバのアドレス
     url_login2ch = cf.get_option_str( "url_login2ch", CONF_LOGIN2CH );
 
-    // p2の認証サーバのアドレス
-    url_loginp2 = cf.get_option_str( "url_loginp2", CONF_LOGINP2 );
-
     // BEの認証サーバのアドレス
     url_loginbe = cf.get_option_str( "url_loginbe", CONF_LOGINBE );
 
@@ -256,10 +253,6 @@ bool ConfigItems::load( const bool restore )
     // スレタイ検索用メニュータイトルアドレス
     menu_search_title = cf.get_option_str( "menu_search_title", CONF_MENU_SEARCH_TITLE );
     url_search_title = cf.get_option_str( "url_search_title", CONF_URL_SEARCH_TITLE );
-
-    // p2 書き込み用アドレス
-    url_writep2 = cf.get_option_str( "url_writep2", CONF_URL_WRITEP2 );
-    url_resp2 = cf.get_option_str( "url_resp2", CONF_URL_RESP2 );
 
     // スレタイ検索用正規表現
     regex_search_title = cf.get_option_str( "regex_search_title", CONF_REGEX_SEARCH_TITLE );
@@ -650,7 +643,6 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "url_jdhp", url_jdhp );
     cf.update( "url_jdimhp", url_jdimhp );
     cf.update( "url_login2ch", url_login2ch );
-    cf.update( "url_loginp2", url_loginp2 );
     cf.update( "url_loginbe", url_loginbe );
     cf.update( "url_bbsmenu", url_bbsmenu );
     cf.update( "use_link_as_board", use_link_as_board );
@@ -660,8 +652,6 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "regex_search_title", regex_search_title );
     cf.update( "menu_search_web", menu_search_web );
     cf.update( "url_search_web", url_search_web );
-    cf.update( "url_writep2", url_writep2 );
-    cf.update( "url_resp2", url_resp2 );
 
     cf.update( "fontname_main", fontname[ FONT_MAIN ] );
     cf.update( "fontname_mail", fontname[ FONT_MAIL ] );

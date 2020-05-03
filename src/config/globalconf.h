@@ -105,9 +105,8 @@ namespace CONFIG
     // 2chの認証サーバのアドレス
     const std::string& get_url_login2ch();
 
-    // p2の認証サーバのアドレス
-    const std::string& get_url_loginp2();
-    void set_url_loginp2( const std::string& url );
+    const std::string& get_url_loginp2() = delete; // Removed in v0.3.0 (2020-05)
+    void set_url_loginp2( const std::string& url ) = delete; // Removed in v0.3.0 (2020-05)
 
     // BEの認証サーバのアドレス
     const std::string& get_url_loginbe();
@@ -133,9 +132,8 @@ namespace CONFIG
     const std::string& get_menu_search_web();
     const std::string& get_url_search_web();
 
-    // p2 書き込み用アドレス
-    const std::string& get_url_writep2();
-    const std::string& get_url_resp2();
+    const std::string& get_url_writep2() = delete; // Removed in v0.3.0 (2020-05)
+    const std::string& get_url_resp2() = delete; // Removed in v0.3.0 (2020-05)
 
     // 2ch にアクセスするときのエージェント名
     const std::string& get_agent_for2ch();

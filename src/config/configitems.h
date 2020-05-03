@@ -180,8 +180,7 @@ namespace CONFIG
         // 2chの認証サーバのアドレス
         std::string url_login2ch;
 
-        // p2の認証サーバのアドレス
-        std::string url_loginp2;
+        enum { url_loginp2 }; // Removed in v0.3.0 (2020-05)
 
         // BEの認証サーバのアドレス
         std::string url_loginbe;
@@ -206,9 +205,8 @@ namespace CONFIG
         std::string menu_search_web;
         std::string url_search_web;
 
-        // p2 書き込み用アドレス
-        std::string url_writep2;
-        std::string url_resp2;
+        enum { url_writep2 }; // Removed in v0.3.0 (2020-05)
+        enum { url_resp2 }; // Removed in v0.3.0 (2020-05)
 
         // 色
         std::vector< std::string > str_color;

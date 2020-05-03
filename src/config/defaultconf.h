@@ -208,9 +208,6 @@ namespace CONFIG
 // 2chの認証サーバのアドレス
 #define CONF_LOGIN2CH "https://2chv.tora3.net/futen.cgi"
 
-// p2の認証サーバのアドレス
-#define CONF_LOGINP2 "http://p2.2ch.sc/p2/"
-
 // BEの認証サーバのアドレス
 #define CONF_LOGINBE "http://be.2ch.net/test/login.php"
 
@@ -227,11 +224,6 @@ namespace CONFIG
 // WEB検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"
 #define CONF_URL_SEARCH_WEB "http://www.google.co.jp/search?hl=ja&q=$TEXTU&btnG=Google+%E6%A4%9C%E7%B4%A2&lr="
-
-// p2 書き込み用アドレス
-
-#define CONF_URL_WRITEP2 "http://p2.2ch.sc/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME"
-#define CONF_URL_RESP2 "http://p2.2ch.sc/p2/post_form.php?host=$HOST&bbs=$BBSNAME&key=$DATNAME&popup=1&inyou=2&resnum=$NUMBER"
 
 // 2chのクッキー:HAP
 #define CONF_COOKIE_HAP ""

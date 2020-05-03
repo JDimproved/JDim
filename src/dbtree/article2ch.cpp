@@ -13,7 +13,6 @@
 #include "config/globalconf.h"
 
 #include "login2ch.h"
-#include "loginp2.h"
 
 #include <sstream>
 
@@ -56,16 +55,6 @@ std::string Article2ch::create_write_message( const std::string& name, const std
             << "&mail="    << MISC::charset_url_encode( mail, charset )
             << "&MESSAGE=" << MISC::charset_url_encode( msg, charset );
 
-    if( CORE::get_loginp2()->login_now() ){
-
-        ss_post << "&detect_hint=" << MISC::charset_url_encode( "◎◇", charset )
-                << "&host=" << MISC::url_encode( MISC::get_hostname( get_url(), false ) )
-                << "&popup=1"
-                << "&rescount=" << get_number_load()
-                << "&ttitle_en=" << MISC::url_encode( MISC::base64( MISC::Iconv( MISC::remove_space( get_subject() ), "UTF-8", charset ) ) )
-                << "&csrfid=" << MISC::url_encode( CORE::get_loginp2()->get_sessiondata() );
-    }
-
 #ifdef _DEBUG
     std::cout << "Article2chCompati::create_write_message " << ss_post.str() << std::endl;
 #endif
@@ -82,8 +71,6 @@ std::string Article2ch::create_write_message( const std::string& name, const std
 //
 std::string Article2ch::url_bbscgi()
 {
-    if( CORE::get_loginp2()->login_now() ) return CONFIG::get_url_loginp2() + "post.php";
-
     return Article2chCompati::url_bbscgi();
 }
 
@@ -96,8 +83,6 @@ std::string Article2ch::url_bbscgi()
 //
 std::string Article2ch::url_subbbscgi()
 {
-    if( CORE::get_loginp2()->login_now() ) return CONFIG::get_url_loginp2() + "post.php";
-
     return Article2chCompati::url_subbbscgi();
 }
 
