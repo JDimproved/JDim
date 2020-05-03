@@ -212,7 +212,7 @@ namespace CONTROL
         { "AboneSelectImage", "あぼ〜んする" },
         { "AboneSelectionRes", ITEM_NAME_ABONE_SELECTION },
 
-        { "PopupWarpButton", "クリックで多重ポップアップモードに移行" },
+        { "PopupWarpButton", "{X11} クリックで多重ポップアップモードに移行" },
         { "ReferResButton", "参照レスポップアップ表示" },
         { "BmResButton", "しおりの設定/解除" },
         { "PostedMarkButton", "書き込みマークの設定/解除" },

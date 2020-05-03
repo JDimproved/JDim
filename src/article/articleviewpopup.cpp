@@ -42,7 +42,9 @@ ArticleViewPopup::~ArticleViewPopup()
 void ArticleViewPopup::show_instruct_popup()
 {
     if( CONFIG::get_instruct_popup() )
-        append_html( "ヒント：マウスの右ボタンを押しながらポインタを移動すると多重ポップアップが可能<br>または設定メニューの「シングルクリックで多重ポップアップモードに移行する」<br>をチェックしてからアンカーをクリックする" );
+        append_html( "ヒント：マウスの右ボタンを押しながらポインタを移動すると多重ポップアップが可能<br>"
+                     "または設定メニューの「シングルクリックで多重ポップアップモードに移行する」<br>"
+                     "をチェックしてからアンカーをクリックする（X11環境のみ）" );
 }
 
 

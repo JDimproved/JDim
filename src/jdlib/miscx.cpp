@@ -23,7 +23,13 @@
 void MISC::WarpPointer( Glib::RefPtr< Gdk::Window > src, Glib::RefPtr< Gdk::Window > dest, int x, int y ){
 
 #ifndef _WIN32
-    XWarpPointer( GDK_WINDOW_XDISPLAY( Glib::unwrap( src ) ), 
+    GdkDisplay* display = gdk_window_get_display( Glib::unwrap( src ) );
+#if GTKMM_CHECK_VERSION(3,0,0)
+    // X11環境でない場合は何もしない
+    if( ! GDK_IS_X11_DISPLAY( display ) ) return;
+#endif
+    // XXX: X11やXwaylandがインストールされていない環境ではコンパイルエラーになるかもしれない
+    XWarpPointer( gdk_x11_display_get_xdisplay( display ),
                   None,
                   GDK_WINDOW_XWINDOW( Glib::unwrap( dest ) )
                   , 0, 0, 0, 0, x, y );
