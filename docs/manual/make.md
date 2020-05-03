@@ -98,7 +98,10 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
   <dd>ALSA による効果音再生機能を有効にする。
   詳しくは<a href="{{ site.baseurl }}/sound/">効果音の再生</a>の項を参照すること。</dd>
   <dt>--with-xdgopen</dt>
-  <dd>デフォルトブラウザとしてxdg-openを使用する。</dd>
+  <dd>
+    デフォルトブラウザとしてxdg-openを使用する。<br>
+    xdg-openは将来のリリースでデフォルトブラウザになりこのオプションは廃止される予定です。
+  </dd>
   <dt>--enable-gprof</dt>
   <dd>
     gprof によるプロファイリングを行う。

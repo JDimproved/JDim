@@ -95,6 +95,7 @@
     --with-xdgopen
 
        デフォルトブラウザとしてxdg-openを使用する。
+       xdg-openは将来のリリースでデフォルトブラウザになりこのオプションは廃止される予定です。
 
     --enable-gprof
 

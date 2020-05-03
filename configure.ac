@@ -342,7 +342,8 @@ AC_MSG_RESULT($with_xdgopen)
 
 AS_IF(
   [test "x$with_xdgopen" = xyes],
-  [AC_DEFINE(XDGOPEN, , [use xdg-open])]
+  [AC_DEFINE(XDGOPEN, , [use xdg-open])
+   AC_MSG_WARN([--with-xdgopen will be removed and as default in the future release.])]
 )
 
 
