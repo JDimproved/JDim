@@ -33,7 +33,7 @@ NodeTree2chCompati::~NodeTree2chCompati()
     std::cout << "NodeTree2chCompati::~NodeTree2chCompati : " << get_url() << std::endl;
 #endif
 
-    clear();
+    NodeTree2chCompati::clear();
 }
 
 

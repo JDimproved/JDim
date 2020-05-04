@@ -43,7 +43,7 @@ NodeTreeMachi::~NodeTreeMachi()
     std::cout << "NodeTreeMachi::~NodeTreeMachi : " << get_url() << std::endl;
 #endif
 
-    clear();
+    NodeTreeMachi::clear();
 }
 
 

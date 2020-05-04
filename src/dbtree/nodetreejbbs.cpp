@@ -42,7 +42,7 @@ NodeTreeJBBS::~NodeTreeJBBS()
     std::cout << "NodeTreeJBBS::~NodeTreeJBBS : " << get_url() << std::endl;
 #endif
 
-    clear();
+    NodeTreeJBBS::clear();
 }
 
 
