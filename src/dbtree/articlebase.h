@@ -122,7 +122,7 @@ namespace DBTREE
         ArticleBase( const std::string& datbase, const std::string& id, bool cached );
         ~ArticleBase();
 
-        bool empty();
+        bool empty() const noexcept { return m_url.empty(); }
 
         const std::string& get_url() const { return m_url; }
 
