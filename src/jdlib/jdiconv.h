@@ -20,11 +20,11 @@ namespace JDLIB
     {
         iconv_t m_cd;
 
-        size_t m_byte_left_in;
-        char* m_buf_in;
-        char* m_buf_in_tmp;
+        size_t m_byte_left_in{};
+        char* m_buf_in{};
+        char* m_buf_in_tmp{};
 
-        char* m_buf_out;
+        char* m_buf_out{};
 
         std::string m_coding_from;
 
