@@ -33,7 +33,10 @@ namespace DBTREE
       public:
 
         ArticleHash();
+        ArticleHash( const ArticleHash& ) = delete;
         virtual ~ArticleHash();
+
+        ArticleHash& operator=( const ArticleHash& ) = delete;
 
         size_t size() const { return m_size; }
 
