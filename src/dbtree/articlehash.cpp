@@ -18,8 +18,7 @@ enum
 
 
 ArticleHash::ArticleHash()
-    : m_size( 0 ),
-      m_min_hash( HASH_TBLSIZE + 1 )
+    : m_min_hash( HASH_TBLSIZE + 1 )
 {
     m_iterator = new ArticleHashIterator( this );
 }
