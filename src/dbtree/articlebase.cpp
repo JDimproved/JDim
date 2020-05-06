@@ -121,12 +121,6 @@ ArticleBase::~ArticleBase()
 }
 
 
-bool ArticleBase::empty()
-{
-    return  m_url.empty();
-}
-
-
 // ID がこのスレのものかどうか
 bool ArticleBase::equal( const std::string& datbase, const std::string& id )
 {
