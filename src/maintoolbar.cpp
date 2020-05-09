@@ -61,8 +61,8 @@ MainToolBar::MainToolBar()
     set_tooltip( m_button_image, std::string( ITEM_NAME_IMAGEVIEW )
                  + "\n\nスレビューに切替 "
                  + CONTROL::get_str_motions( CONTROL::ToggleArticle ) + " , " + CONTROL::get_str_motions( CONTROL::Left ) );
-        
-    pack_buttons();
+
+    MainToolBar::pack_buttons();
 }
 
 

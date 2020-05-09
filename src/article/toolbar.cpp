@@ -44,7 +44,7 @@ ArticleToolBar::ArticleToolBar() :
     m_button_drawout_or.signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_drawout_or ) );
     m_button_drawout_and.signal_clicked().connect( sigc::mem_fun(*this, &ArticleToolBar::slot_drawout_and ) );
 
-    pack_buttons();
+    ArticleToolBar::pack_buttons();
 }
         
 
