@@ -15,6 +15,7 @@ libjdlib_a_SOURCES = \
 	imgloader.cpp \
 	ssl.cpp \
 	loaderdata.cpp \
+	cookiemanager.cpp \
 	confloader.cpp \
 	jdregex.cpp \
 	jdmigemo.cpp \
@@ -38,6 +39,7 @@ noinst_HEADERS = \
 	imgloader.h \
 	ssl.h \
 	loaderdata.h \
+	cookiemanager.h \
 	confloader.h \
 	jdregex.h \
 	jdmigemo.h \
