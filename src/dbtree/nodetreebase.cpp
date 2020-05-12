@@ -1402,7 +1402,13 @@ void NodeTreeBase::receive_finish()
 
     if( ! m_check_update
         && ( get_code() == HTTP_OK || get_code() == HTTP_PARTIAL_CONTENT )
-        && ! get_date_modified().empty() ) CACHE::set_filemtime( CACHE::path_dat( m_url ), get_time_modified() );
+        && ! get_date_modified().empty()
+    ) {
+        CACHE::set_filemtime( CACHE::path_dat( m_url ), get_time_modified() );
+        // クッキーのセット
+        DBTREE::board_set_list_cookies_for_write( m_url, SKELETON::Loadable::cookies() );
+    }
+
 
     m_check_update = false;
     m_check_write = false;

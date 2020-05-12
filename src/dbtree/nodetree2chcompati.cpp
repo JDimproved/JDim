@@ -165,6 +165,7 @@ void NodeTree2chCompati::create_loaderdata( JDLIB::LOADERDATA& data )
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
     data.basicauth = DBTREE::board_basicauth( get_url() );
+    data.cookie_for_write = DBTREE::board_cookie_for_write( get_url() );
 
     if( ! get_date_modified().empty() ) data.modified = get_date_modified();
 }

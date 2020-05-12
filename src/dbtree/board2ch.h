@@ -39,7 +39,7 @@ namespace DBTREE
         std::string get_proxy_basicauth_w() override;
 
         // 書き込み用クッキー
-        std::string cookie_for_write() override;
+        std::string cookie_for_write() const override;
 
         // 書き込み時のリファラ
         std::string get_write_referer() override;
@@ -60,7 +60,7 @@ namespace DBTREE
       protected:
 
         // クッキー:HAP
-        std::string get_hap() override;
+        std::string get_hap() const override;
         void set_hap( const std::string& hap ) override;
 
         // クッキー:HAPの更新 (クッキーをセットした時に実行)

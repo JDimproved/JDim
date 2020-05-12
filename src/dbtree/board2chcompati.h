@@ -25,7 +25,7 @@ namespace DBTREE
         ~Board2chCompati();
 
         // 書き込み用クッキー
-        std::string cookie_for_write() override;
+        std::string cookie_for_write() const override;
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
         // 確認画面のhtmlから解析する      

@@ -37,6 +37,7 @@
 #include "config/globalconf.h"
 #include "config/defaultconf.h"
 
+#include "jdlib/cookiemanager.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/misctime.h"
@@ -131,6 +132,9 @@ Core::Core( JDWinMain& win_main )
     // ログ検索マネージャ作成
     CORE::get_search_manager();
 
+    // HTTPクッキー管理マネージャ作成
+    JDLIB::get_cookie_manager();
+
 #if !GTKMM_CHECK_VERSION(3,0,0)
     m_vbox_article.signal_realize().connect( sigc::mem_fun(*this, &Core::slot_realize ) );
     m_vbox_article.signal_style_changed().connect( sigc::mem_fun(*this, &Core::slot_style_changed ) );
@@ -171,6 +175,9 @@ Core::~Core()
     }
 
     save_session();
+
+    // HTTPクッキー管理マネージャ削除
+    JDLIB::delete_cookie_manager();
 
     // ログ検索マネージャ削除
     CORE::delete_search_manager();

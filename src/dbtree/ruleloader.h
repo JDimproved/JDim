@@ -37,6 +37,10 @@ namespace DBTREE
 
         // ロード後に呼び出される
         void parse_data() override;
+
+      private:
+
+        void receive_cookies() override;
     };
 }
 

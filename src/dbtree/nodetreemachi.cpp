@@ -141,6 +141,7 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
     data.basicauth_proxy = DBTREE::get_proxy_basicauth( get_url() );
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout();
+    data.cookie_for_write = DBTREE::board_cookie_for_write( get_url() );
 
     if( ! get_date_modified().empty() ) data.modified = get_date_modified();
 
