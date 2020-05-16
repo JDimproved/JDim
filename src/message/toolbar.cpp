@@ -79,7 +79,7 @@ MessageToolBar::MessageToolBar() :
     m_tool_new_subject( nullptr ),
     m_entry_new_subject( nullptr )
 {
-    pack_buttons();
+    MessageToolBar::pack_buttons();
 }
 
 
@@ -239,7 +239,7 @@ void MessageToolBar::slot_insert_draft_clicked()
 MessageToolBarPreview::MessageToolBarPreview() :
     MessageToolBarBase()
 {
-    pack_buttons();
+    MessageToolBarPreview::pack_buttons();
 }
 
 

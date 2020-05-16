@@ -19,7 +19,7 @@ using namespace BOARD;
 BoardToolBar::BoardToolBar() :
     SKELETON::ToolBar( BOARD::get_admin() )
 {
-    pack_buttons();
+    BoardToolBar::pack_buttons();
 
     // JDEntry::on_key_release_event()で
     // CONTROL::SearchCache を有効にする

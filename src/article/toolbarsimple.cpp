@@ -20,7 +20,7 @@ ArticleToolBarSimple::ArticleToolBarSimple() :
     get_searchbar()->append( *get_button_up_search() );
     get_searchbar()->append( *get_button_close_searchbar() );
 
-    pack_buttons();
+    ArticleToolBarSimple::pack_buttons();
 }
 
 

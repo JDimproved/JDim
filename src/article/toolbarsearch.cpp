@@ -33,7 +33,7 @@ SearchToolBar::SearchToolBar() :
     get_searchbar()->append( m_tool_bm );
     get_searchbar()->append( *get_button_close_searchbar() );
 
-    pack_buttons();
+    SearchToolBar::pack_buttons();
 }
 
 

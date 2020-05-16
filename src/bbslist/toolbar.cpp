@@ -56,7 +56,7 @@ BBSListToolBar::BBSListToolBar() :
     m_tool_label.append( *get_button_close() );
     pack_start( m_tool_label, Gtk::PACK_SHRINK );
 
-    pack_buttons();
+    BBSListToolBar::pack_buttons();
     add_search_control_mode( CONTROL::MODE_BBSLIST );
 }
 
@@ -232,7 +232,7 @@ void BBSListToolBar::slot_check_update_open_root()
 EditListToolBar::EditListToolBar() :
     SKELETON::ToolBar( nullptr )
 {
-    pack_buttons();
+    EditListToolBar::pack_buttons();
 }
 
 
