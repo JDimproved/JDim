@@ -343,7 +343,6 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
         int lng_id_dat = 0;
         const char* str_subject;
         int lng_subject = 0;
-        char str_num[ 16 ];
 
         while( *pos == ' ' ) ++pos;
 
@@ -382,21 +381,20 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
             break;
         }
         lng_subject = ( int )( pos - str_subject );
-        
-        // レス数取得
+
+        // レス数取得 (符号付き32bit整数より大きいと未定義)
         ++pos;
-        int i = 0;
-        while( '0' <= *pos && *pos <= '9' && i < 16 ) str_num[ i++ ] = *( pos++ );
+        std::string str_num;
+        while( '0' <= *pos && *pos <= '9' ) str_num.push_back( *( pos++ ) );
 
         // 壊れてる
-        if( i == 0 ){
+        if( str_num.empty() ){
             MISC::ERRMSG( "subject.txt is broken (res)" );
             break;
         }
         if( *pos == '\0' ) break;
         if( *pos == '\n' ) { ++pos; continue; }
 
-        str_num[ i ] = '\0';
         ++pos;
 
         // id, subject, number 取得
@@ -414,7 +412,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
             artinfo.subject = MISC::replace_str( artinfo.subject, "&gt;", ">" );
         }
 
-        const auto num = std::atoi( str_num );
+        const auto num = std::atoi( str_num.c_str() );
         artinfo.number = ( num < CONFIG::get_max_resnumber() ) ? num : CONFIG::get_max_resnumber();
 
         get_list_artinfo().push_back( artinfo );
