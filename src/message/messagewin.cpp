@@ -22,8 +22,8 @@ MessageWin::MessageWin()
 {
 #ifdef _DEBUG
     std::cout << "MessageWin::MessageWin x y w h = "
-              << get_x_win() << " " << get_y_win()
-              << " " << get_width_win() << " " << get_height_win() << std::endl;
+              << MessageWin::get_x_win() << " " << MessageWin::get_y_win()
+              << " " << MessageWin::get_width_win() << " " << MessageWin::get_height_win() << std::endl;
 #endif
 
     get_vbox().pack_remove_end( false, get_statbar(), Gtk::PACK_SHRINK );
@@ -38,8 +38,9 @@ MessageWin::MessageWin()
 MessageWin::~MessageWin()
 {
 #ifdef _DEBUG
-    std::cout << "MessageWin::~MessageWin window size : x = " << get_x_win() << " y = " << get_y_win()
-              << " w = " << get_width_win() << " h = " << get_height_win() << " max = " << is_maximized_win() << std::endl;
+    std::cout << "MessageWin::~MessageWin window size : x = " << MessageWin::get_x_win()
+              << " y = " << MessageWin::get_y_win() << " w = " << MessageWin::get_width_win()
+              << " h = " << MessageWin::get_height_win() << " max = " << MessageWin::is_maximized_win() << std::endl;
 #endif
 
     set_shown_win( false );
