@@ -1699,7 +1699,7 @@ std::string MISC::getenv_limited( const char *name, const size_t size )
     strncpy( env.data(), getenv( name ), size );
 
 #ifdef _WIN32
-    return recover_path( Glib::locale_to_utf8( std::string( env.data() ) );
+    return recover_path( Glib::locale_to_utf8( std::string( env.data() ) ) );
 #else
     return env.data();
 #endif
