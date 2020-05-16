@@ -135,7 +135,7 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
     }
 
     // ビューの wrap 切り替え
-    else if( "toggle_wrap" ){
+    else if( command.command == "toggle_wrap" ){
 
         if( view ) view->set_command( command.command );
     }
