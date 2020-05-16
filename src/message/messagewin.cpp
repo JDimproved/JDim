@@ -42,7 +42,7 @@ MessageWin::~MessageWin()
               << " w = " << get_width_win() << " h = " << get_height_win() << " max = " << is_maximized_win() << std::endl;
 #endif
 
-    set_shown_win( false );
+    MessageWin::set_shown_win( false );
     CORE::core_set_command( "restore_focus" );
 }
 
