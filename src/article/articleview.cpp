@@ -84,7 +84,7 @@ ArticleViewMain::~ArticleViewMain()
 
     CORE::core_set_command( "close_message" ,url_article() );
 
-    if( get_live() ) live_stop();
+    if( get_live() ) ArticleViewMain::live_stop();
 }
 
 
