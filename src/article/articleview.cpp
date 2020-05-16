@@ -75,7 +75,7 @@ ArticleViewMain::~ArticleViewMain()
     std::cout << "ArticleViewMain::~ArticleViewMain : " << get_url() << " url_article = " << url_article() << std::endl;
 #endif
 
-    save_session();
+    ArticleViewMain::save_session();
 
     // 閉じたタブ履歴更新
     HISTORY::append_history( URL_HISTCLOSEVIEW,

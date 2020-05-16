@@ -51,7 +51,7 @@ BoardView::~BoardView()
                              DBTREE::board_name( get_url() ), TYPE_BOARD );
 
 
-    if( ! SESSION::is_quitting() ) save_session();
+    if( ! SESSION::is_quitting() ) BoardView::save_session();
 }
 
 
