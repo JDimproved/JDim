@@ -117,7 +117,7 @@ ArticleBase::~ArticleBase()
     assert( get_lock() == 0 );
 
     // nodetreeのクリアと情報保存
-    unlock_impl();
+    ArticleBase::unlock_impl();
 }
 
 
