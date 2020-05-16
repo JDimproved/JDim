@@ -11,6 +11,7 @@
 
 #include <gtkmm.h>
 #include <list>
+#include <memory>
 #include <string>
 
 #include "skeleton/dispatchable.h"
@@ -49,6 +50,11 @@ namespace ARTICLE
 namespace IMAGE
 {
     class ImageAdmin;
+}
+
+namespace JDLIB
+{
+    class Timeout;
 }
 
 
@@ -114,6 +120,8 @@ namespace CORE
 
         // セッション保存までのカウンタ
         int m_count_savesession;
+
+        std::unique_ptr<JDLIB::Timeout> m_conn_timer;
 
     public:
 

@@ -70,7 +70,7 @@ ArticleAdmin::ArticleAdmin( const std::string& url )
     // オートスクロール時など、スムースにスクロールをするため描画用タイマーを
     // メインタイマと別にする。DrawAreaBase::clock_in_smooth_scroll() も参照すること
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &ArticleAdmin::clock_in_smooth_scroll ), 0 );
-    JDLIB::Timeout::connect( slot_timeout, TIMER_TIMEOUT_SMOOTH_SCROLL );
+    m_conn_timer = JDLIB::Timeout::connect( slot_timeout, TIMER_TIMEOUT_SMOOTH_SCROLL );
 }
 
 

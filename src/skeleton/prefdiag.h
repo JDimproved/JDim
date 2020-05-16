@@ -22,7 +22,7 @@ namespace SKELETON
         Gtk::Button* m_bt_ok;
         Gtk::Button m_bt_apply;
 
-        JDLIB::Timeout* m_conn_timer;
+        std::unique_ptr<JDLIB::Timeout> m_conn_timer;
 
       public:
 

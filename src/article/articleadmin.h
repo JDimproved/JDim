@@ -10,8 +10,16 @@
 
 #include "sign.h"
 
-#include <string>
+#include <memory>
 #include <set>
+#include <string>
+
+
+namespace JDLIB
+{
+    class Timeout;
+}
+
 
 namespace ARTICLE
 {
@@ -31,6 +39,8 @@ namespace ARTICLE
         ArticleToolBar* m_toolbar;
         ArticleToolBarSimple* m_toolbarsimple;
         SearchToolBar* m_search_toolbar;
+
+        std::unique_ptr<JDLIB::Timeout> m_conn_timer;
 
       public:
         ArticleAdmin( const std::string& url );
