@@ -107,7 +107,7 @@ Admin::~Admin()
     }
     m_list_command.clear();
 
-    close_window();
+    Admin::close_window();
     delete_jdwin();
 
     if( m_notebook ) delete m_notebook;
