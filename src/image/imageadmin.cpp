@@ -90,7 +90,7 @@ ImageAdmin::~ImageAdmin()
     std::cout << "ImageAdmin::~ImageAdmin\n";
 #endif 
 
-    close_window();
+    ImageAdmin::close_window();
 }
 
 
