@@ -22,8 +22,8 @@ ImageWin::ImageWin()
 {
 #ifdef _DEBUG
     std::cout << "ImageWin::ImageWin x y w h = "
-              << get_x_win() << " " << get_y_win()
-              << " " << get_width_win() << " " << get_height_win() << std::endl;
+              << ImageWin::get_x_win() << " " << ImageWin::get_y_win()
+              << " " << ImageWin::get_width_win() << " " << ImageWin::get_height_win() << std::endl;
 #endif
 
     init_win();
@@ -38,8 +38,9 @@ ImageWin::ImageWin()
 ImageWin::~ImageWin()
 {
 #ifdef _DEBUG
-    std::cout << "ImageWin::~ImageWin window size : x = " << get_x_win() << " y = " << get_y_win()
-              << " w = " << get_width_win() << " h = " << get_height_win() << " max = " << is_maximized_win() << std::endl;
+    std::cout << "ImageWin::~ImageWin window size : x = " << ImageWin::get_x_win() << " y = " << ImageWin::get_y_win()
+              << " w = " << ImageWin::get_width_win() << " h = " << ImageWin::get_height_win()
+              << " max = " << ImageWin::is_maximized_win() << std::endl;
 #endif
 
     ImageWin::set_shown_win( false );
