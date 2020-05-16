@@ -37,13 +37,7 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_
 }
 
 
-PrefDiag::~PrefDiag()
-{
-    if( m_conn_timer != nullptr )
-    {
-        delete m_conn_timer;
-    }
-}
+PrefDiag::~PrefDiag() = default;
 
 
 //

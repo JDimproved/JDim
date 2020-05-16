@@ -49,7 +49,7 @@ Timeout::~Timeout()
 }
 
 // static
-Timeout* Timeout::connect( const sigc::slot< bool > slot_timeout, unsigned int interval )
+std::unique_ptr<Timeout> Timeout::connect( const sigc::slot< bool > slot_timeout, unsigned int interval )
 {
     Timeout* timeout = new Timeout( slot_timeout );
 #ifdef _WIN32
@@ -68,7 +68,7 @@ Timeout* Timeout::connect( const sigc::slot< bool > slot_timeout, unsigned int i
 #else
     timeout->m_connection = Glib::signal_timeout().connect( slot_timeout, interval );
 #endif
-    return timeout;
+    return std::unique_ptr<Timeout>( timeout );
 }
 
 #ifdef _WIN32

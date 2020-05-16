@@ -10,6 +10,9 @@
 #include <mutex>
 #endif
 
+#include <memory>
+
+
 namespace JDLIB
 {
     class Timeout
@@ -28,7 +31,7 @@ namespace JDLIB
     public:
         ~Timeout();
         
-        static Timeout* connect( const sigc::slot< bool > slot_timeout, unsigned int interval );
+        static std::unique_ptr<Timeout> connect( const sigc::slot< bool > slot_timeout, unsigned int interval );
 
     private:
         Timeout( const sigc::slot< bool > slot_timeout );

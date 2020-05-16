@@ -3347,7 +3347,7 @@ void Core::exec_command_after_boot()
 
     // タイマーセット
     sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &Core::slot_timeout), 0 );
-    JDLIB::Timeout::connect( slot_timeout, TIMER_TIMEOUT );
+    m_conn_timer = JDLIB::Timeout::connect( slot_timeout, TIMER_TIMEOUT );
 
     // 2chログイン
     if( SESSION::login2ch() ) slot_toggle_login2ch();
