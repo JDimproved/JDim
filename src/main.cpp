@@ -501,10 +501,10 @@ int main( int argc, char **argv )
     // メッセージをログファイルに出力
     if( logfile_mode && CACHE::mkdir_logroot() ){
         FILE *tmp; // warning 消し
-        const char *logfile = to_locale_cstr( CACHE::path_msglog() );
-        tmp = freopen( logfile, "ab", stdout );
+        const std::string logfile = Glib::locale_from_utf8( CACHE::path_msglog() );
+        tmp = freopen( logfile.c_str(), "ab", stdout );
         setbuf( tmp, nullptr );
-        tmp = freopen( logfile, "ab", stderr );
+        tmp = freopen( logfile.c_str(), "ab", stderr );
         setbuf( tmp, nullptr );
     }
 
