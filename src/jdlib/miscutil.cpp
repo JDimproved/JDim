@@ -1651,7 +1651,7 @@ std::string MISC::get_hostname( const std::string& path, bool protocol )
 
     size_t i = path.find( "/", lng ); 
 
-    if( i == std::string::npos ) path.substr( pos );
+    if( i == std::string::npos ) return path.substr( pos );
 
     return path.substr( pos, i - pos );
 }
