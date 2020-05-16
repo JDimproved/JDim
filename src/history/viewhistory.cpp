@@ -79,7 +79,7 @@ void ViewHistory::set_end( const int end )
 }
 
 
-const std::string& ViewHistory::get_current_url()
+const std::string& ViewHistory::get_current_url() const
 {
 #ifdef _DEBUG
     std::cout << "ViewHistory::get_current_url" << std::endl
@@ -94,7 +94,7 @@ const std::string& ViewHistory::get_current_url()
 }
 
 
-const std::string& ViewHistory::get_current_title()
+const std::string& ViewHistory::get_current_title() const
 {
     return m_items[ m_history_current ]->title;
 }
@@ -162,7 +162,7 @@ void ViewHistory::replace_current_title( const std::string& title )
 
 
 // item の取得
-std::vector< ViewHistoryItem* >& ViewHistory::get_items_back( const int count )
+std::vector< ViewHistoryItem* >& ViewHistory::get_items_back( const int count ) const
 {
     static std::vector< ViewHistoryItem* > items;
     items.clear();
@@ -181,7 +181,7 @@ std::vector< ViewHistoryItem* >& ViewHistory::get_items_back( const int count )
 }
 
 
-std::vector< ViewHistoryItem* >& ViewHistory::get_items_forward( const int count )
+std::vector< ViewHistoryItem* >& ViewHistory::get_items_forward( const int count ) const
 {
     static std::vector< ViewHistoryItem* > items;
     items.clear();
@@ -203,7 +203,7 @@ std::vector< ViewHistoryItem* >& ViewHistory::get_items_forward( const int count
 //
 // 「戻る」可能
 //
-bool ViewHistory::can_back( const int count )
+bool ViewHistory::can_back( const int count ) const noexcept
 {
     if( count <= 0 ) return false;
 
@@ -221,7 +221,7 @@ bool ViewHistory::can_back( const int count )
 //
 // 「進む」可能
 //
-bool ViewHistory::can_forward( const int count )
+bool ViewHistory::can_forward( const int count ) const noexcept
 {
     if( count <= 0 ) return false;
 

@@ -26,19 +26,19 @@ namespace HISTORY
         ViewHistory();
         virtual ~ViewHistory();
 
-        int get_size() const { return m_items.size(); }
-        const ViewHistoryItem* get_item( const int pos ){ return m_items[ pos ]; }
+        int get_size() const noexcept { return m_items.size(); }
+        const ViewHistoryItem* get_item( const int pos ) const { return m_items[ pos ]; }
 
-        int get_top() const { return m_history_top; }
-        int get_cur() const { return m_history_current; }
-        int get_end() const { return m_history_end; }
+        int get_top() const noexcept { return m_history_top; }
+        int get_cur() const noexcept { return m_history_current; }
+        int get_end() const noexcept { return m_history_end; }
 
         void set_top( const int top );
         void set_cur( const int cur );
         void set_end( const int end );
 
-        const std::string& get_current_url();
-        const std::string& get_current_title();
+        const std::string& get_current_url() const;
+        const std::string& get_current_title() const;
 
         // URL更新
         void replace_current_url( const std::string& url ); // 現在のアドレス
@@ -48,12 +48,12 @@ namespace HISTORY
         void replace_current_title( const std::string& title );
 
         // item の取得
-        std::vector< ViewHistoryItem* >& get_items_back( const int count );
-        std::vector< ViewHistoryItem* >& get_items_forward( const int count );
+        std::vector< ViewHistoryItem* >& get_items_back( const int count ) const;
+        std::vector< ViewHistoryItem* >& get_items_forward( const int count ) const;
 
         // 戻る / 進む 可能かの判定
-        bool can_back( const int count );
-        bool can_forward( const int count );
+        bool can_back( const int count ) const noexcept;
+        bool can_forward( const int count ) const noexcept;
 
         // 追加
         void append( const std::string& url );
