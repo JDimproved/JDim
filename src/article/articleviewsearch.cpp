@@ -59,7 +59,7 @@ ArticleViewSearch::~ArticleViewSearch()
     std::cout << "ArticleViewSearch::~ArticleViewSearch : " << get_url() << std::endl;
 #endif
 
-    stop();
+    ArticleViewSearch::stop();
 }
 
 
