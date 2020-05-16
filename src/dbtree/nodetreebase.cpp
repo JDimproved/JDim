@@ -93,8 +93,6 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
 {
     set_date_modified( modified );
 
-    clear();
-
     // ルートヘッダ作成。中は空。
     m_id_header = -1; // ルートヘッダIDが 0 になるように -1
     NODE* tmpnode = create_node_header();
@@ -131,8 +129,8 @@ NodeTreeBase::~NodeTreeBase()
 #ifdef _DEBUG    
     std::cout << "NodeTreeBase::~NodeTreeBase : " << m_url << std::endl;
 #endif
-    
-    clear();
+
+    NodeTreeBase::clear();
 }
 
 
