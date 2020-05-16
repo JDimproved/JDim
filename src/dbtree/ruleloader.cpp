@@ -22,7 +22,7 @@ RuleLoader::RuleLoader( const std::string& url_boadbase )
       m_url_boadbase( url_boadbase )
 {
 #ifdef _DEBUG
-    std::cout << "RuleLoader::RuleLoader : " << get_url() << std::endl;
+    std::cout << "RuleLoader::RuleLoader : " << RuleLoader::get_url() << std::endl;
 #endif
 
     set_date_modified( DBTREE::board_get_modified_localrule( m_url_boadbase ) );
@@ -32,7 +32,7 @@ RuleLoader::RuleLoader( const std::string& url_boadbase )
 RuleLoader::~RuleLoader()
 {
 #ifdef _DEBUG
-    std::cout << "RuleLoader::~RuleLoader : " << get_url() << std::endl;
+    std::cout << "RuleLoader::~RuleLoader : " << RuleLoader::get_url() << std::endl;
 #endif
 }
 
