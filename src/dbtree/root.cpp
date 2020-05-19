@@ -583,7 +583,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
     // ローカルファイル
     else if( is_local( url ) ){
 
-        root = URL_BOARD_LOCAL;
+        root = "file://";
         path_board = "/local";
 
         type = TYPE_BOARD_LOCAL;

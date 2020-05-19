@@ -23,6 +23,7 @@ namespace DBTREE
 
         std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ) override;
         std::string url_readcgi( const std::string& url, int num_from, int num_to ) override;
+        std::string url_datpath() override { return {}; }
 
         void download_subject( const std::string& url_update_view, const bool ) override;
 
