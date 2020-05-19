@@ -40,7 +40,7 @@
 #include "cssmanager.h"
 #include "session.h"
 
-#include <math.h>
+#include <cmath>
 #include <sstream>
 #include <cstring>
 
@@ -4963,8 +4963,9 @@ void DrawAreaBase::configure_impl()
 
     if( height < LAYOUT_MIN_HEIGHT ) return;
 
-    // サイズが変わっていないときは再レイアウトしない
-    if( m_configure_width == width &&  m_configure_height == height ) return;
+    // サイズがほぼ変わっていないときは再レイアウトしない
+    // 値が微妙に変化していることがあり == による比較ではスクロールしてしまうバグがあった
+    if( std::abs( m_configure_width - width ) < 2 && std::abs( m_configure_height - height ) < 2 ) return;
 
     // リサイズする前のレス番号を保存しておいて
     // redrawした後にジャンプ
