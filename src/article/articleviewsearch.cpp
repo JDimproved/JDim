@@ -160,6 +160,8 @@ void ArticleViewSearch::update_label()
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 

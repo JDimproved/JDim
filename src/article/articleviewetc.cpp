@@ -41,6 +41,8 @@ ArticleViewRes::ArticleViewRes( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -122,6 +124,8 @@ ArticleViewName::ArticleViewName( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -200,6 +204,8 @@ ArticleViewID::ArticleViewID( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -276,6 +282,8 @@ ArticleViewBM::ArticleViewBM( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -353,6 +361,8 @@ ArticleViewPost::ArticleViewPost( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -429,6 +439,8 @@ ArticleViewHighRefRes::ArticleViewHighRefRes( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -504,6 +516,8 @@ ArticleViewURL::ArticleViewURL( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -583,6 +597,8 @@ ArticleViewRefer::ArticleViewRefer( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -670,6 +686,8 @@ ArticleViewDrawout::ArticleViewDrawout( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
@@ -752,6 +770,8 @@ ArticleViewPostlog::ArticleViewPostlog( const std::string& url )
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
+    // タブのアイコン状態を更新
+    ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 }
 
 
