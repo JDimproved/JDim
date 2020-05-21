@@ -298,20 +298,20 @@ std::string DBTREE::board_charset( const std::string& url )
 }
 
 
-std::string DBTREE::board_cookie_for_write( const std::string& url )
+std::string DBTREE::board_cookie_for_request( const std::string& url )
 {
-    return DBTREE::get_board( url )->cookie_for_write();
+    return DBTREE::get_board( url )->cookie_for_request();
 }
 
 
-void DBTREE::board_set_list_cookies_for_write( const std::string& url, const std::list< std::string>& list_cookies )
+void DBTREE::board_set_list_cookies_for_request( const std::string& url, const std::list< std::string>& list_cookies )
 {
-    DBTREE::get_board( url )->set_list_cookies_for_write( list_cookies );
+    DBTREE::get_board( url )->set_list_cookies_for_request( list_cookies );
 }
 
-void DBTREE::board_delete_cookies_for_write( const std::string& url )
+void DBTREE::board_delete_cookies_for_request( const std::string& url )
 {
-    DBTREE::get_board( url )->delete_cookies_for_write();
+    DBTREE::get_board( url )->delete_cookies_for_request();
 }
 
 std::string DBTREE::board_keyword_for_write( const std::string& url )

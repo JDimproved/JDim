@@ -104,7 +104,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     // cookie と 書き込みキーワード の設定
     std::string str_cookies;
-    const std::string temp_cookies = DBTREE::board_cookie_for_write( get_url() );
+    const std::string temp_cookies = DBTREE::board_cookie_for_request( get_url() );
     if( temp_cookies.empty() ) {
         str_cookies = "クッキー:\n未取得\n";
     }
@@ -416,7 +416,7 @@ void Preferences::slot_set_default_namemail()
 
 void Preferences::slot_delete_cookie()
 {
-    DBTREE::board_delete_cookies_for_write( get_url() );
+    DBTREE::board_delete_cookies_for_request( get_url() );
     DBTREE::board_set_keyword_for_write( get_url(), std::string() );
 
     m_edit_cookies.set_text( "クッキー:\n未取得\n" );

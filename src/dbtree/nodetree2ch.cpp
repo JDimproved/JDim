@@ -191,7 +191,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
     data.basicauth_proxy = DBTREE::get_proxy_basicauth( get_url() );
     // プロキシの読み込み用設定がonのときスレ読み込みではcookieを送信しない
     if( ! CONFIG::get_use_proxy_for2ch() ) {
-        data.cookie_for_write = DBTREE::board_cookie_for_write( get_url() );
+        data.cookie_for_request = DBTREE::board_cookie_for_request( get_url() );
     }
 
     data.size_buf = CONFIG::get_loader_bufsize();

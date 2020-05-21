@@ -38,8 +38,8 @@ namespace DBTREE
         int get_proxy_port_w() override;
         std::string get_proxy_basicauth_w() override;
 
-        // 書き込み用クッキー
-        std::string cookie_for_write() const override;
+        // 読み書き用クッキー
+        std::string cookie_for_request() const override;
 
         // 書き込み時のリファラ
         std::string get_write_referer() override;

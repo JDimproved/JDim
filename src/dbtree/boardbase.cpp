@@ -275,8 +275,8 @@ std::string BoardBase::get_unicode()
 }
 
 
-//書き込み用クッキー
-std::string BoardBase::cookie_for_write() const
+// 板のホストを指定してクッキーを取得
+std::string BoardBase::cookie_for_request() const
 {
     const JDLIB::CookieManager* cookie_manager = JDLIB::get_cookie_manager();
     const std::string hostname = MISC::get_hostname( get_root(), false );
@@ -285,11 +285,11 @@ std::string BoardBase::cookie_for_write() const
 }
 
 
-//書き込み用クッキーのセット
-void BoardBase::set_list_cookies_for_write( const std::list< std::string >& list_cookies )
+// 板のホストを指定してクッキーを追加
+void BoardBase::set_list_cookies_for_request( const std::list< std::string >& list_cookies )
 {
 #ifdef _DEBUG
-    std::cout << "BoardBase::set_list_cookies_for_write\n";
+    std::cout << "BoardBase::set_list_cookies_for_request\n";
 #endif
 
     JDLIB::CookieManager* cookie_manager = JDLIB::get_cookie_manager();
@@ -303,8 +303,8 @@ void BoardBase::set_list_cookies_for_write( const std::list< std::string >& list
 }
 
 
-// 書き込み用クッキーの削除
-void BoardBase::delete_cookies_for_write()
+// 板のホストを指定してクッキーを削除
+void BoardBase::delete_cookies_for_request()
 {
     JDLIB::CookieManager* cookie_manager = JDLIB::get_cookie_manager();
     const std::string hostname = MISC::get_hostname( get_root(), false );
@@ -1038,7 +1038,7 @@ void BoardBase::create_loaderdata( JDLIB::LOADERDATA& data )
     data.timeout = CONFIG::get_loader_timeout();
     data.basicauth = get_basicauth();
     data.modified = get_date_modified();
-    data.cookie_for_write = cookie_for_write();
+    data.cookie_for_request = cookie_for_request();
 }
 
 
@@ -1412,7 +1412,7 @@ bool BoardBase::start_checkking_if_board_moved()
     JDLIB::LOADERDATA data;
     data.init_for_data();
     data.url = url_boardbase();
-    data.cookie_for_write = cookie_for_write();
+    data.cookie_for_request = cookie_for_request();
 
     if( start_load( data ) ){
         m_read_url_boardbase = true;

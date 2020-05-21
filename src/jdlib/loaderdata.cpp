@@ -50,7 +50,7 @@ void LOADERDATA::init()
     date.clear();
     modified.clear();
     byte_readfrom = 0;
-    cookie_for_write.clear();
+    cookie_for_request.clear();
     list_cookies.clear();
     contenttype.clear();
     basicauth.clear();

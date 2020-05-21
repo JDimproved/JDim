@@ -168,7 +168,7 @@ void Post::post_msg()
     data.basicauth_proxy = DBTREE::get_proxy_basicauth_w( m_url );
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout_post();
-    data.cookie_for_write = DBTREE::board_cookie_for_write( m_url );
+    data.cookie_for_request = DBTREE::board_cookie_for_request( m_url );
     data.basicauth = DBTREE::board_basicauth( m_url );
 
 #ifdef _DEBUG
@@ -177,7 +177,7 @@ void Post::post_msg()
               << "contenttype = " << data.contenttype << std::endl
               << "agent = " << data.agent << std::endl
               << "referer = " << data.referer << std::endl
-              << "cookie = " << data.cookie_for_write << std::endl
+              << "cookie = " << data.cookie_for_request << std::endl
               << "proxy = " << data.host_proxy << ":" << data.port_proxy << std::endl
               << m_msg << std::endl;
 #endif
@@ -359,8 +359,8 @@ void Post::receive_finish()
 #endif
 
     // クッキーのセット
-    const bool empty_cookies = DBTREE::board_cookie_for_write( m_url ).empty();
-    if( list_cookies.size() ) DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
+    const bool empty_cookies = DBTREE::board_cookie_for_request( m_url ).empty();
+    if( list_cookies.size() ) DBTREE::board_set_list_cookies_for_request( m_url, list_cookies );
 
     // 成功
     if( title.find( "書きこみました" ) != std::string::npos

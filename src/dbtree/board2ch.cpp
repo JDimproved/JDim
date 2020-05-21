@@ -116,14 +116,14 @@ std::string Board2ch::get_proxy_basicauth_w()
 }
 
 
-//書き込み用クッキー作成
-std::string Board2ch::cookie_for_write() const
+// 読み書き用クッキー作成
+std::string Board2ch::cookie_for_request() const
 {
 #ifdef _DEBUG
-    std::cout << "Board2ch::cookie_for_write\n";
+    std::cout << "Board2ch::cookie_for_request\n";
 #endif
 
-    std::string cookie = Board2chCompati::cookie_for_write();
+    std::string cookie = Board2chCompati::cookie_for_request();
     if( cookie.empty() ) cookie = get_hap();
 
     // BE ログイン中
@@ -255,7 +255,7 @@ void Board2ch::update_hap()
 {
     if( ! CONFIG::get_use_cookie_hap() ) return;
 
-    const std::string new_cookie = Board2chCompati::cookie_for_write();
+    const std::string new_cookie = Board2chCompati::cookie_for_request();
 
     if( ! new_cookie.empty() ) {
         const std::string old_cookie = get_hap();

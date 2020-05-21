@@ -74,7 +74,7 @@ void RuleLoader::create_loaderdata( JDLIB::LOADERDATA& data )
         data.timeout = CONFIG::get_loader_timeout();
         if( ! get_date_modified().empty() ) data.modified = get_date_modified();
         data.basicauth = DBTREE::board_basicauth( m_url_boadbase );
-        data.cookie_for_write = DBTREE::board_cookie_for_write( m_url_boadbase );
+        data.cookie_for_request = DBTREE::board_cookie_for_request( m_url_boadbase );
     }
 }
 
@@ -88,5 +88,5 @@ void RuleLoader::parse_data()
 
 void RuleLoader::receive_cookies()
 {
-    DBTREE::board_set_list_cookies_for_write( m_url_boadbase, SKELETON::Loadable::cookies() );
+    DBTREE::board_set_list_cookies_for_request( m_url_boadbase, SKELETON::Loadable::cookies() );
 }

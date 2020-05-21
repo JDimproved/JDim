@@ -324,10 +324,10 @@ namespace DBTREE
         // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
         virtual std::string get_unicode();
 
-        // 書き込み用クッキー
-        virtual std::string cookie_for_write() const;
-        void set_list_cookies_for_write( const std::list< std::string >& list_cookies );
-        void delete_cookies_for_write();
+        // 板のホストを指定してクッキーのやり取り
+        virtual std::string cookie_for_request() const;
+        void set_list_cookies_for_request( const std::list< std::string >& list_cookies );
+        void delete_cookies_for_request();
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
         // 書き込み時のメッセージに付加する

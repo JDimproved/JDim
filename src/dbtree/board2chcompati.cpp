@@ -87,10 +87,10 @@ bool Board2chCompati::is_valid( const std::string& filename )
 }
 
 
-//書き込み用クッキー作成
-std::string Board2chCompati::cookie_for_write() const
+// 読み書き用クッキー作成
+std::string Board2chCompati::cookie_for_request() const
 {
-    return BoardBase::cookie_for_write();
+    return BoardBase::cookie_for_request();
 }
 
 
