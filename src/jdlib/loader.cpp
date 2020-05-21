@@ -64,6 +64,18 @@ bool initialized_loader = false;
 #endif
 
 
+namespace {
+
+std::string get_error_message( int err_code )
+{
+    std::string result = " [Errno " + std::to_string( err_code ) + "] ";
+    result.append( std::strerror( err_code ) );
+    return result;
+}
+
+} // namespace
+
+
 //
 // トークンとスレッド起動待ちキュー
 //
@@ -600,6 +612,7 @@ bool Loader::send_connect( const int soc, std::string& errmsg )
 
             m_data.code = HTTP_ERR;
             errmsg = "send failed : " + m_data.url;
+            errmsg.append( get_error_message( errno ) );
             return false;
         }
 
@@ -622,6 +635,7 @@ bool Loader::send_connect( const int soc, std::string& errmsg )
         if( tmpsize < 0 && errno != EINTR ){
             m_data.code = HTTP_ERR;
             errmsg = "CONNECT: recv() failed";
+            errmsg.append( get_error_message( errno ) );
             return false;
         }
 
@@ -725,6 +739,7 @@ void Loader::run_main()
             m_data.code = HTTP_ERR;
             if( ! use_proxy ) errmsg = "connect failed : " + m_data.host;
             else errmsg = "connect failed : " + m_data.host_proxy;
+            errmsg.append( get_error_message( errno ) );
             goto EXIT_LOADING;
         }
     }
@@ -821,6 +836,7 @@ void Loader::run_main()
 
                 m_data.code = HTTP_ERR;
                 errmsg = "send failed : " + m_data.url;
+                errmsg.append( get_error_message( errno ) );
                 goto EXIT_LOADING;
             }
 
@@ -887,6 +903,7 @@ void Loader::run_main()
                 if( tmpsize < 0 && errno != EINTR ){
                     m_data.code = HTTP_ERR;         
                     errmsg = "recv() failed";
+                    errmsg.append( get_error_message( errno ) );
                     goto EXIT_LOADING;
                 }
 
