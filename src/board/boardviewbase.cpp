@@ -578,6 +578,9 @@ void BoardViewBase::update_columns()
         ++num;
     }
 
+    // 高さを取得するためのcolumn番号をリセット
+    m_treeview.set_column_for_height( 0 );
+
     // サイズを調整しつつソートの設定
     for( guint i = 0; i < COL_VISIBLE_END; i++ ){
 
@@ -605,7 +608,7 @@ void BoardViewBase::update_columns()
 
         case COL_SUBJECT:
             width = SESSION::col_subject();
-            m_treeview.set_column_for_height( id );
+            m_treeview.set_column_for_height( i );
             break;
 
         case COL_RES:
