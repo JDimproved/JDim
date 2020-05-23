@@ -230,7 +230,7 @@ ArticleBase* Board2ch::append_article( const std::string& datbase, const std::st
 
 
 
-// 2chのクッキー:HAP
+// 2chのクッキー
 std::string Board2ch::get_hap() const
 {
     if( ! CONFIG::get_use_cookie_hap() ) return std::string();
@@ -249,7 +249,7 @@ void Board2ch::set_hap( const std::string& hap )
 
 
 //
-// 2chのクッキー:HAPの更新
+// 2chのクッキーの更新
 //
 void Board2ch::update_hap()
 {

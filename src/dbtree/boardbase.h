@@ -231,11 +231,11 @@ namespace DBTREE
         // m_url_update_views に登録されている view に update_board コマンドを送る
         void send_update_board();
 
-        // クッキー:HAP
+        // クッキー
         virtual std::string get_hap() const { return {}; }
         virtual void set_hap( const std::string& hap ){}
 
-        // クッキー:HAPの更新 (クッキーをセットした時に実行)
+        // クッキーの更新 (クッキーをセットした時に実行)
         virtual void update_hap(){}
 
       public:

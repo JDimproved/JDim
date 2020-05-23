@@ -191,7 +191,7 @@ namespace CONFIG
     // 同一ホストに対する最大コネクション数( 1 または 2 )
     int get_connection_num();
 
-    // 2chのクッキー:HAP
+    // 2chのクッキー (互換性のため設定名は旧名称を使う)
     bool get_use_cookie_hap();
     const std::string& get_cookie_hap();
     const std::string& get_cookie_hap_bbspink();

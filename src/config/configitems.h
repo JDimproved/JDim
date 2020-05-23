@@ -90,10 +90,10 @@ namespace CONFIG
         // 同一ホストに対する最大コネクション数( 1 または 2 )
         int connection_num{};
 
-        // 2chのクッキー:HAPを保存する
+        // 2chのクッキーを保存する (互換性のため設定名は旧名称を使う)
         bool use_cookie_hap{};
 
-        // 2chのクッキー:HAP
+        // 2chのクッキー (互換性のため設定名は旧名称を使う)
         std::string cookie_hap;
         std::string cookie_hap_bbspink;
 

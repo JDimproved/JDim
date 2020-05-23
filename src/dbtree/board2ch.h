@@ -59,11 +59,11 @@ namespace DBTREE
 
       protected:
 
-        // クッキー:HAP
+        // クッキー
         std::string get_hap() const override;
         void set_hap( const std::string& hap ) override;
 
-        // クッキー:HAPの更新 (クッキーをセットした時に実行)
+        // クッキーの更新 (クッキーをセットした時に実行)
         void update_hap() override;
 
       private:

@@ -150,10 +150,10 @@ bool ConfigItems::load( const bool restore )
     // 同一ホストに対する最大コネクション数( 1 または 2 )
     connection_num = cf.get_option_int( "connection_num", CONF_CONNECTION_NUM, 1, 2 );
 
-    // 2chのクッキー:HAPを保存する
+    // 2chのクッキーを保存する (互換性のため設定名は旧名称を使う)
     use_cookie_hap = cf.get_option_bool( "use_cookie_hap", CONF_USE_COOKIE_HAP );
 
-    // 2chのクッキー:HAP
+    // 2chのクッキー (互換性のため設定名は旧名称を使う)
     cookie_hap = cf.get_option_str( "cookie_hap", CONF_COOKIE_HAP );
     cookie_hap_bbspink = cf.get_option_str( "cookie_hap_bbspink", CONF_COOKIE_HAP_BBSPINK );
 
