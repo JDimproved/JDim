@@ -36,12 +36,14 @@ void ToolMenuButton::setup( SKELETON::MenuButton* button, const std::string& lab
 {
     m_button = button;
     assert( m_button != nullptr );
-    assert( m_button->get_label_widget() != nullptr );
+
+    Gtk::Widget* label_widget = m_button->get_label_widget();
+    assert( label_widget );
 
     Gtk::MenuItem* item = nullptr;
 
     // アイコンの場合はアイコン表示
-    Gtk::Image* image = dynamic_cast< Gtk::Image* >( m_button->get_label_widget() );
+    Gtk::Image* image = dynamic_cast< Gtk::Image* >( label_widget );
     if( image ){
         const Gtk::ImageType type = image->get_storage_type();
         if( type == Gtk::IMAGE_STOCK ) {
