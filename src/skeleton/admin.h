@@ -67,6 +67,10 @@ namespace SKELETON
         Admin( const std::string& url );
         ~Admin();
 
+        // コピー禁止
+        Admin( const Admin& ) = delete;
+        Admin& operator=( const Admin& ) = delete;
+
         virtual void save_session();
 
         void setup_menu();
