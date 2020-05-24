@@ -128,14 +128,16 @@ void Dom::parse( const std::string& str )
 
             // 開始タグの中身( <element attr="value"> )を取り出す
             std::string open_tag = str.substr( tag_lt_pos + 1, tag_gt_pos - tag_lt_pos - 1 );
+            if( open_tag.empty() ) continue;
 
-            // タグの中身がアルファベットで始まっているか
-            bool is_alpha = ( ( open_tag[0] >= 'A' && open_tag[0] <= 'Z' ) || ( open_tag[0] >= 'a' && open_tag[0] <= 'z' ) );
+            // タグの中身がアルファベットで始まっているかチェック
+            if( !( open_tag[0] >= 'A' && open_tag[0] <= 'Z' ) && !( open_tag[0] >= 'a' && open_tag[0] <= 'z' ) ) {
+                continue;
+            }
 
             // タグ構造が壊れてる場合
             size_t broken_pos = 0;
-            if( open_tag.empty() || ! is_alpha ) continue;
-            else if( ( broken_pos = open_tag.find( '<' ) ) != std::string::npos )
+            if( ( broken_pos = open_tag.find( '<' ) ) != std::string::npos )
             {
                  current_pos += broken_pos;
                  continue;
