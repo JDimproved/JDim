@@ -188,9 +188,6 @@ namespace DBTREE
         // 移転を調査するために url_boardbase を読んでいる
         bool m_read_url_boardbase;
 
-        // クッキー, 書き込み時に必要
-        std::list< std::string > m_list_cookies_for_write;
-
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
         // 書き込み時のメッセージに付加する
         std::string m_keyword_for_write;   
@@ -234,12 +231,12 @@ namespace DBTREE
         // m_url_update_views に登録されている view に update_board コマンドを送る
         void send_update_board();
 
-        // クッキー:HAP
-        virtual std::string get_hap(){ return std::string(); }
-        virtual void set_hap( const std::string& hap ){}
+        // クッキー
+        virtual std::string get_cookie() const { return {}; }
+        virtual void set_cookie( const std::string& cookie ) {}
 
-        // クッキー:HAPの更新 (クッキーをセットした時に実行)
-        virtual void update_hap(){}
+        // クッキーの更新 (クッキーをセットした時に実行)
+        virtual void update_cookie() {}
 
       public:
 
@@ -327,11 +324,10 @@ namespace DBTREE
         // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
         virtual std::string get_unicode();
 
-        // 書き込み用クッキー
-        virtual std::string cookie_for_write();
-        const std::list< std::string >& list_cookies_for_write() { return m_list_cookies_for_write; }
-        void set_list_cookies_for_write( const std::list< std::string >& list_cookies );
-        void reset_list_cookies_for_write(){ m_list_cookies_for_write.clear(); }
+        // 板のホストを指定してクッキーのやり取り
+        virtual std::string cookie_for_request() const;
+        void set_list_cookies_for_request( const std::list< std::string >& list_cookies );
+        void delete_cookies_for_request();
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
         // 書き込み時のメッセージに付加する

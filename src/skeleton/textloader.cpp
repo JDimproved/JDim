@@ -182,5 +182,7 @@ void TextLoader::receive_finish()
 //    std::cout << m_data << std::endl;
 #endif
 
+    receive_cookies();
+
     parse_data();
 }

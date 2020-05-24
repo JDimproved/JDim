@@ -168,7 +168,7 @@ void Post::post_msg()
     data.basicauth_proxy = DBTREE::get_proxy_basicauth_w( m_url );
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout_post();
-    data.cookie_for_write = DBTREE::board_cookie_for_write( m_url );
+    data.cookie_for_request = DBTREE::board_cookie_for_request( m_url );
     data.basicauth = DBTREE::board_basicauth( m_url );
 
 #ifdef _DEBUG
@@ -177,7 +177,7 @@ void Post::post_msg()
               << "contenttype = " << data.contenttype << std::endl
               << "agent = " << data.agent << std::endl
               << "referer = " << data.referer << std::endl
-              << "cookie = " << data.cookie_for_write << std::endl
+              << "cookie = " << data.cookie_for_request << std::endl
               << "proxy = " << data.host_proxy << ":" << data.port_proxy << std::endl
               << m_msg << std::endl;
 #endif
@@ -358,6 +358,10 @@ void Post::receive_finish()
     std::cout << "location: [" << location() << "]\n";
 #endif
 
+    // クッキーのセット
+    const bool empty_cookies = DBTREE::board_cookie_for_request( m_url ).empty();
+    if( list_cookies.size() ) DBTREE::board_set_list_cookies_for_request( m_url, list_cookies );
+
     // 成功
     if( title.find( "書きこみました" ) != std::string::npos
         || tag_2ch.find( "true" ) != std::string::npos
@@ -368,9 +372,6 @@ void Post::receive_finish()
         std::cout << "write ok" << std::endl;
 #endif        
 
-        // クッキーのセット
-        DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
-
         DBTREE::article_update_writetime( m_url );
         emit_sigfin();
         return;
@@ -380,7 +381,7 @@ void Post::receive_finish()
     else if( m_count < 1 && // 永久ループ防止
         ( title.find( "書き込み確認" ) != std::string::npos
           || tag_2ch.find( "cookie" ) != std::string::npos
-          || ( ! DBTREE::board_list_cookies_for_write( m_url ).size() && list_cookies.size() )
+          || ( empty_cookies && list_cookies.size() )
             ) ){
 
         clear();
@@ -413,9 +414,6 @@ void Post::receive_finish()
         const std::string keyword = DBTREE::board_keyword_for_write( m_url );
         if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
 
-        // クッキーのセット
-        DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
-
         ++m_count; // 永久ループ防止
         post_msg();
 
@@ -433,9 +431,6 @@ void Post::receive_finish()
         const std::string keyword = DBTREE::board_keyword_for_write( m_url );
         if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
 
-        // クッキーのセット
-        DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
-
         // subbbs.cgi にポスト先を変更してもう一回ポスト
         m_subbbs = true;
         ++m_count; // 永久ループ防止
@@ -449,9 +444,6 @@ void Post::receive_finish()
     std::cout << "Error" << std::endl;
     std::cout << m_errmsg << std::endl;
 #endif        
-
-    // クッキー関係のエラーの時はクッキーをセット
-    if( tag_2ch.find( "cookie" ) != std::string::npos ) DBTREE::board_set_list_cookies_for_write( m_url, list_cookies );
 
     MISC::ERRMSG( m_return_html );
 

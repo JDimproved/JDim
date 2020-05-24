@@ -46,7 +46,7 @@ namespace JDLIB
         std::string date;
         std::string modified;
         size_t byte_readfrom;
-        std::string cookie_for_write;
+        std::string cookie_for_request;
         std::list< std::string > list_cookies;
         std::string location;
         std::string contenttype;

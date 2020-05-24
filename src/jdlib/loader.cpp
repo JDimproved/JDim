@@ -64,6 +64,18 @@ bool initialized_loader = false;
 #endif
 
 
+namespace {
+
+std::string get_error_message( int err_code )
+{
+    std::string result = " [Errno " + std::to_string( err_code ) + "] ";
+    result.append( std::strerror( err_code ) );
+    return result;
+}
+
+} // namespace
+
+
 //
 // トークンとスレッド起動待ちキュー
 //
@@ -367,7 +379,7 @@ void Loader::stop()
 // byte_readfrom ( != 0 ならその位置からレジューム)
 // agent
 // referer
-// cookie_for_write
+// cookie_for_request
 // host_proxy ( != empty ならproxy使用 )
 // port_proxy ( == 0 なら 8080 )
 // basicauth_proxy
@@ -492,7 +504,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     m_data.contenttype = data_in.contenttype;
     m_data.agent = data_in.agent;
     m_data.referer = data_in.referer;
-    m_data.cookie_for_write = data_in.cookie_for_write;
+    m_data.cookie_for_request = data_in.cookie_for_request;
     m_data.timeout = MAX( TIMEOUT_MIN, data_in.timeout );
     m_data.ex_field = data_in.ex_field;
     m_data.basicauth = data_in.basicauth;
@@ -508,7 +520,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     std::cout << "contenttype: " << m_data.contenttype << std::endl;
     std::cout << "agent: " << m_data.agent << std::endl;
     std::cout << "referer: " << m_data.referer << std::endl;
-    std::cout << "cookie: " << m_data.cookie_for_write << std::endl;
+    std::cout << "cookie: " << m_data.cookie_for_request << std::endl;
     std::cout << "proxy: " << m_data.host_proxy << std::endl;
     std::cout << "port of proxy: " << m_data.port_proxy << std::endl;
     std::cout << "proxy basicauth : " << m_data.basicauth_proxy << std::endl;
@@ -600,6 +612,7 @@ bool Loader::send_connect( const int soc, std::string& errmsg )
 
             m_data.code = HTTP_ERR;
             errmsg = "send failed : " + m_data.url;
+            errmsg.append( get_error_message( errno ) );
             return false;
         }
 
@@ -622,6 +635,7 @@ bool Loader::send_connect( const int soc, std::string& errmsg )
         if( tmpsize < 0 && errno != EINTR ){
             m_data.code = HTTP_ERR;
             errmsg = "CONNECT: recv() failed";
+            errmsg.append( get_error_message( errno ) );
             return false;
         }
 
@@ -725,6 +739,7 @@ void Loader::run_main()
             m_data.code = HTTP_ERR;
             if( ! use_proxy ) errmsg = "connect failed : " + m_data.host;
             else errmsg = "connect failed : " + m_data.host_proxy;
+            errmsg.append( get_error_message( errno ) );
             goto EXIT_LOADING;
         }
     }
@@ -821,6 +836,7 @@ void Loader::run_main()
 
                 m_data.code = HTTP_ERR;
                 errmsg = "send failed : " + m_data.url;
+                errmsg.append( get_error_message( errno ) );
                 goto EXIT_LOADING;
             }
 
@@ -887,6 +903,7 @@ void Loader::run_main()
                 if( tmpsize < 0 && errno != EINTR ){
                     m_data.code = HTTP_ERR;         
                     errmsg = "recv() failed";
+                    errmsg.append( get_error_message( errno ) );
                     goto EXIT_LOADING;
                 }
 
@@ -1133,7 +1150,7 @@ std::string Loader::create_msg_send()
     // proxy basic認証
     if( use_proxy && ! m_data.basicauth_proxy.empty() ) msg << "Proxy-Authorization: Basic " << MISC::base64( m_data.basicauth_proxy ) << "\r\n";
 
-    if( ! m_data.cookie_for_write.empty() ) msg << "Cookie: " << m_data.cookie_for_write << "\r\n";
+    if( ! m_data.cookie_for_request.empty() ) msg << "Cookie: " << m_data.cookie_for_request << "\r\n";
 
     if( ! m_data.modified.empty() ) msg << "If-Modified-Since: " << m_data.modified << "\r\n";
 

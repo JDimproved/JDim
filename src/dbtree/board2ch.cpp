@@ -11,7 +11,6 @@
 
 #include "jdlib/miscutil.h"
 #include "jdlib/misctime.h"
-#include "jdlib/jdregex.h"
 
 #include "login2ch.h"
 #include "loginbe.h"
@@ -117,15 +116,15 @@ std::string Board2ch::get_proxy_basicauth_w()
 }
 
 
-//書き込み用クッキー作成
-std::string Board2ch::cookie_for_write()
+// 読み書き用クッキー作成
+std::string Board2ch::cookie_for_request() const
 {
 #ifdef _DEBUG
-    std::cout << "Board2ch::cookie_for_write\n";
+    std::cout << "Board2ch::cookie_for_request\n";
 #endif
 
-    std::string cookie = Board2chCompati::cookie_for_write();
-
+    std::string cookie = Board2chCompati::cookie_for_request();
+    if( cookie.empty() ) cookie = get_cookie();
 
     // BE ログイン中
     if( CORE::get_loginbe()->login_now() ){
@@ -231,8 +230,8 @@ ArticleBase* Board2ch::append_article( const std::string& datbase, const std::st
 
 
 
-// 2chのクッキー:HAP
-std::string Board2ch::get_hap()
+// 2chのクッキー
+std::string Board2ch::get_cookie() const
 {
     if( ! CONFIG::get_use_cookie_hap() ) return std::string();
 
@@ -240,56 +239,30 @@ std::string Board2ch::get_hap()
     return CONFIG::get_cookie_hap();
 }
 
-void Board2ch::set_hap( const std::string& hap )
+void Board2ch::set_cookie( const std::string& cookie )
 {
     if( ! CONFIG::get_use_cookie_hap() )  return;
 
-    if( get_root().find( ".bbspink.com" ) != std::string::npos ) CONFIG::set_cookie_hap_bbspink( hap );
-    else CONFIG::set_cookie_hap( hap );
+    if( get_root().find( ".bbspink.com" ) != std::string::npos ) CONFIG::set_cookie_hap_bbspink( cookie );
+    else CONFIG::set_cookie_hap( cookie );
 }
 
 
 //
-// 2chのクッキー:HAPの更新
+// 2chのクッキーの更新
 //
-void Board2ch::update_hap()
+void Board2ch::update_cookie()
 {
     if( ! CONFIG::get_use_cookie_hap() ) return;
 
-    const std::list< std::string > list_cookies = BoardBase::list_cookies_for_write();
-    if( list_cookies.empty() ) return;
+    const std::string new_cookie = Board2chCompati::cookie_for_request();
 
+    if( ! new_cookie.empty() ) {
+        const std::string old_cookie = get_cookie();
+        set_cookie( new_cookie );
 #ifdef _DEBUG
-    std::cout << "Board2ch::update_hap\n";
+        std::cout << "Board2ch::update_cookie old = " << old_cookie << std::endl;
+        std::cout << "Board2ch::update_cookie new = " << new_cookie << std::endl;
 #endif
-
-    JDLIB::Regex regex;
-    const size_t offset = 0;
-    const bool icase = false;
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = false;
-
-    const std::string query_hap = "HAP=([^;]*)?";
-
-    std::list< std::string >::const_iterator it = list_cookies.begin();
-    for( ; it != list_cookies.end(); ++it ){
-
-        const std::string cookie = (*it);
-#ifdef _DEBUG
-        std::cout << cookie << std::endl;
-#endif
-        if( regex.exec( query_hap, cookie, offset, icase, newline, usemigemo, wchar ) ){
-
-            const std::string tmp_hap = regex.str( 1 );
-            if( ! tmp_hap.empty() && tmp_hap != get_hap() ){
-#ifdef _DEBUG
-                std::cout << "old = " << get_hap() << std::endl;
-                std::cout << "new = " << tmp_hap << std::endl;
-#endif
-                set_hap( tmp_hap );
-                return;
-            }
-        }
     }
 }

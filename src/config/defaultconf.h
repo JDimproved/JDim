@@ -36,7 +36,7 @@ namespace CONFIG
         CONF_LOADER_TIMEOUT_CHECKUPDATE = 10,  // 更新チェックのタイムアウト値
         CONF_USE_IPV6 = 1,          // ipv6使用
         CONF_CONNECTION_NUM = 2,    // 同一ホストに対する最大コネクション数( 1 または 2 )
-        CONF_USE_COOKIE_HAP = 0,    // 2chのクッキー:HAPを保存する
+        CONF_USE_COOKIE_HAP = 0,    // 2chのクッキーを保存する (互換性のため設定名は旧名称を使う)
         CONF_REFPOPUP_BY_MO = 0,    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
         CONF_NAMEPOPUP_BY_MO = 0,   // 名前の上にマウスオーバーしたときにポップアップ表示する
         CONF_IDPOPUP_BY_MO = 0,     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
@@ -225,7 +225,7 @@ namespace CONFIG
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"
 #define CONF_URL_SEARCH_WEB "http://www.google.co.jp/search?hl=ja&q=$TEXTU&btnG=Google+%E6%A4%9C%E7%B4%A2&lr="
 
-// 2chのクッキー:HAP
+// 2chのクッキー (互換性のため設定名は旧名称を使う)
 #define CONF_COOKIE_HAP ""
 #define CONF_COOKIE_HAP_BBSPINK ""
 

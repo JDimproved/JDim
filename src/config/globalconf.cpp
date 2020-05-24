@@ -225,7 +225,7 @@ void CONFIG::set_use_ipv6( const bool set ){ get_confitem()->use_ipv6 = set; }
 // 同一ホストに対する最大コネクション数( 1 または 2 )
 int CONFIG::get_connection_num(){ return get_confitem()->connection_num; }
 
-// 2chのクッキー:HAP
+// 2chのクッキー (互換性のため設定名は旧名称を使う)
 bool CONFIG::get_use_cookie_hap(){ return get_confitem()->use_cookie_hap; }
 const std::string& CONFIG::get_cookie_hap(){ return get_confitem()->cookie_hap; }
 const std::string& CONFIG::get_cookie_hap_bbspink(){ return get_confitem()->cookie_hap_bbspink; }

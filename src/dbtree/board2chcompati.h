@@ -24,8 +24,8 @@ namespace DBTREE
         Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name, const std::string& basicauth );
         ~Board2chCompati();
 
-        // 書き込み用クッキー
-        std::string cookie_for_write() override;
+        // 読み書き用クッキー
+        std::string cookie_for_request() const override;
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
         // 確認画面のhtmlから解析する      
