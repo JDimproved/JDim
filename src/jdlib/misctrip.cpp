@@ -126,7 +126,7 @@ std::string create_trip_newtype( const std::string& key )
                 size_t n;
 
                 // salt 候補の17〜18文字目を検証
-                for( n = 17; key[n] && n < 19; ++n )
+                for( n = 17; n < 19 && key[n]; ++n )
                 {
                     // [./0-9A-Za-z]
                     if( isalnum( key[n] ) != 0 || (unsigned char)( key[n] - 0x2e ) < 2 )

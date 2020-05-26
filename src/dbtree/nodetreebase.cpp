@@ -1769,7 +1769,7 @@ void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
     int color = COLOR_CHAR;
     int i = 0;
     NODE *node;
-    while( str[ i ] != 's' && i < lng ) ++i;
+    while( i < lng && str[ i ] != 's' ) ++i;
     if( str[ i ] != 's' || str[ i+1 ] != 'a' || str[ i+2 ] != 'g' || str[ i+3 ] != 'e' ){
         color = COLOR_CHAR_AGE;
         header->headinfo->sage = FALSE;
