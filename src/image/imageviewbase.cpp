@@ -43,10 +43,9 @@ using namespace IMAGE;
 
 ImageViewBase::ImageViewBase( const std::string& url, const std::string& arg1, const std::string& arg2 )
     : SKELETON::View( url )
+    , m_img{ DBIMG::get_img( get_url() ) } // 高速化のためデータベースに直接アクセス
     , m_enable_menuslot( true )
 {
-    // 高速化のためデータベースに直接アクセス
-    m_img =  DBIMG::get_img( get_url() );
     assert( m_img );
 
     // マウスジェスチャ可能
