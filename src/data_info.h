@@ -19,26 +19,14 @@ namespace CORE
     {
       public:
 
-        int type; // type.h で定義されているタイプ
-        Gtk::Window* parent;
+        int type{}; // type.h で定義されているタイプ
+        Gtk::Window* parent{};
         std::string url;
         std::string name;
         std::string path; // treeview の path
         std::string data;
-        size_t dirid;  // ディレクトリID、ディレクトリで無い場合は0
-        bool expanded;
-
-        DATA_INFO()
-        {
-            type = 0;
-            parent = nullptr;
-            url = std::string();
-            name = std::string();
-            path = std::string();
-            data = std::string();
-            dirid = 0;
-            expanded = false;
-        }
+        size_t dirid{};  // ディレクトリID、ディレクトリで無い場合は0
+        bool expanded{};
     };
 
     typedef std::vector< CORE::DATA_INFO > DATA_INFO_LIST;
