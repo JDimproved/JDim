@@ -20,8 +20,8 @@ using namespace ARTICLE;
 
 ArticleViewPreview::ArticleViewPreview( const std::string& url )
     : ArticleViewBase( url, url )
+    , m_url_messageview{ url }
 {
-    m_url_messageview = url;
 
 #ifdef _DEBUG
     std::cout << "ArticleViewPreview::ArticleViewPreview " << get_url() << std::endl;
