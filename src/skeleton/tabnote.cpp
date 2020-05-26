@@ -353,12 +353,10 @@ public:
 
 
 TabNotebook::TabNotebook( DragableNoteBook* parent )
-    : Gtk::Notebook(),
-      m_parent( parent ),
-      m_fixtab( false ),
-      m_str_empty( std::string() )
+    : Gtk::Notebook()
+    , m_parent( parent )
+    , m_layout_tab{ create_pango_layout( "" ) }
 {
-    m_layout_tab = create_pango_layout( "" );
 
     set_border_width( 0 );
     set_size_request( 1, -1 ); // これが無いと最大化を解除したときにウィンドウが勝手にリサイズする
