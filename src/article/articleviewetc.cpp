@@ -109,8 +109,8 @@ void ArticleViewRes::exec_reload()
 
 ArticleViewName::ArticleViewName( const std::string& url )
     : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
+    , m_str_name{ url.substr( url.find( NAME_SIGN ) + strlen( NAME_SIGN ) ) }
 {
-    m_str_name = url.substr( url.find( NAME_SIGN ) + strlen( NAME_SIGN ) );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewName::ArticleViewName " << get_url()
@@ -190,8 +190,8 @@ void ArticleViewName::exec_reload()
 
 ArticleViewID::ArticleViewID( const std::string& url )
     : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
+    , m_str_id{ url.substr( url.find( ID_SIGN ) + strlen( ID_SIGN ) ) }
 {
-    m_str_id = url.substr( url.find( ID_SIGN ) + strlen( ID_SIGN ) );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewID::ArticleViewID " << get_url() << " ID = " << m_str_id << std::endl;
@@ -582,8 +582,8 @@ void ArticleViewURL::exec_reload()
 
 ArticleViewRefer::ArticleViewRefer( const std::string& url )
     : ArticleViewBase( url, url.substr( 0, url.find( ARTICLE_SIGN ) ) )
+    , m_str_num{ url.substr( url.find( REFER_SIGN ) + strlen( REFER_SIGN ) ) }
 {
-    m_str_num = url.substr( url.find( REFER_SIGN ) + strlen( REFER_SIGN ) );
 
 #ifdef _DEBUG
     std::cout << "ArticleViewRefer::ArticleViewRefer " << get_url()
