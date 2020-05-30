@@ -33,9 +33,9 @@ void MISC::tfidf_create_vec_words( VEC_WORDS& vec_words, const Glib::ustring& do
     for( int i = 0; i < n; ++i ){
 
         Glib::ustring word = document.substr( i, 2 );
-        if( set_words.find( word ) == set_words.end() ){
-
-            set_words.insert( word );
+        const auto result = set_words.insert( word );
+        if( result.second ) {
+            // 重複しないように単語をvec_wordsへ追加する
             vec_words.push_back( word );
         }
     }

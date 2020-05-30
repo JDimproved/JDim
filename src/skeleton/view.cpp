@@ -198,9 +198,8 @@ void View::show_popupmenu( const std::string& url, bool use_slot )
         std::cout << "View::show_popupmenu\n";
 #endif
 
-        if( m_url_popup.find( url ) == m_url_popup.end() ){
-
-            m_url_popup.insert( url );
+        const auto result = m_url_popup.insert( url );
+        if( result.second ) {
             popupmenu->signal_map().connect( sigc::mem_fun( *this, &View::slot_map_popupmenu ) ); 
             popupmenu->signal_hide().connect( sigc::mem_fun( *this, &View::slot_hide_popupmenu ) );
         }
