@@ -286,12 +286,8 @@ std::string BoardBase::cookie_for_request() const
 
 
 // 板のホストを指定してクッキーを追加
-void BoardBase::set_list_cookies_for_request( const std::list< std::string >& list_cookies )
+void BoardBase::set_list_cookies( const std::list< std::string >& list_cookies )
 {
-#ifdef _DEBUG
-    std::cout << "BoardBase::set_list_cookies_for_request\n";
-#endif
-
     JDLIB::CookieManager* cookie_manager = JDLIB::get_cookie_manager();
     const std::string hostname = MISC::get_hostname( get_root(), false );
 

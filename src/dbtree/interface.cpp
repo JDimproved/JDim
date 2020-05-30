@@ -304,9 +304,9 @@ std::string DBTREE::board_cookie_for_request( const std::string& url )
 }
 
 
-void DBTREE::board_set_list_cookies_for_request( const std::string& url, const std::list< std::string>& list_cookies )
+void DBTREE::board_set_list_cookies( const std::string& url, const std::list< std::string>& list_cookies )
 {
-    DBTREE::get_board( url )->set_list_cookies_for_request( list_cookies );
+    DBTREE::get_board( url )->set_list_cookies( list_cookies );
 }
 
 void DBTREE::board_delete_cookies_for_request( const std::string& url )

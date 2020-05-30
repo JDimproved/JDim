@@ -88,5 +88,5 @@ void RuleLoader::parse_data()
 
 void RuleLoader::receive_cookies()
 {
-    DBTREE::board_set_list_cookies_for_request( m_url_boadbase, SKELETON::Loadable::cookies() );
+    DBTREE::board_set_list_cookies( m_url_boadbase, SKELETON::Loadable::cookies() );
 }
