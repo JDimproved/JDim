@@ -300,7 +300,7 @@ void BoardBase::set_list_cookies( const std::list< std::string >& list_cookies )
 
 
 // 板のホストを指定してクッキーを削除
-void BoardBase::delete_cookies_for_request()
+void BoardBase::delete_cookies()
 {
     JDLIB::CookieManager* cookie_manager = JDLIB::get_cookie_manager();
     const std::string hostname = MISC::get_hostname( get_root(), false );

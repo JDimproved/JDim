@@ -327,7 +327,7 @@ namespace DBTREE
         // 板のホストを指定してクッキーのやり取り
         virtual std::string cookie_for_request() const;
         void set_list_cookies( const std::list< std::string >& list_cookies );
-        void delete_cookies_for_request();
+        void delete_cookies();
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
         // 書き込み時のメッセージに付加する
