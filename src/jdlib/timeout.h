@@ -20,8 +20,8 @@ namespace JDLIB
         sigc::slot< bool > m_slot_timeout;
 #ifdef _WIN32
         Glib::RefPtr<Glib::MainContext> m_context;
-        UINT_PTR m_identifer;
-        
+        UINT_PTR m_identifer{};
+
         static std::mutex s_lock;
         static std::map< UINT_PTR, Timeout* > s_timeouts;
 #else

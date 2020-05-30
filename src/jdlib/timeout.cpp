@@ -27,11 +27,10 @@ std::map< UINT_PTR, Timeout* > Timeout::s_timeouts;
 // private
 Timeout::Timeout( const sigc::slot< bool > slot_timeout )
     : m_slot_timeout( slot_timeout )
-{
 #ifdef _WIN32
-    m_identifer = 0;
-    m_context = Glib::MainContext::get_default();
+    , m_context{ Glib::MainContext::get_default() }
 #endif
+{
 }
 
 Timeout::~Timeout()

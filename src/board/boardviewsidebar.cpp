@@ -23,10 +23,10 @@ using namespace BOARD;
 
 
 BoardViewSidebar::BoardViewSidebar( const std::string& url, const bool set_history  )
-    : BoardViewBase( url, true ),
-      m_set_history( set_history )
+    : BoardViewBase( url, true )
+    , m_sidebar_url{ url.substr( 0, url.find( SIDEBAR_SIGN ) ) }
+    , m_set_history( set_history )
 {
-    m_sidebar_url = url.substr( 0, url.find( SIDEBAR_SIGN ) );
     m_dirid = atoi( url.substr( url.find( SIDEBAR_SIGN ) + strlen( SIDEBAR_SIGN ) ).c_str() );
 
     set_writeable( false );

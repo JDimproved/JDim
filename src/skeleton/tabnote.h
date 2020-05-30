@@ -54,7 +54,7 @@ namespace SKELETON
         Glib::RefPtr< Pango::Layout > m_layout_tab;
 
         int m_pre_width;
-        bool m_fixtab;
+        bool m_fixtab{};
         int m_tab_mrg;
 
         const std::string m_str_empty;
