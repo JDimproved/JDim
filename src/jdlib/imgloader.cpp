@@ -250,17 +250,14 @@ ImgProvider& ImgProvider::get_provider()
 Glib::RefPtr< ImgLoader > ImgProvider::get_loader( const std::string& file )
 {
     // ImgLoaderキャッシュをサーチ
-    for( std::list< Glib::RefPtr< ImgLoader > >::iterator it = m_cache.begin();
-            it != m_cache.end(); it++ ) {
-        if( (*it)->equals( file ) ) {
-            Glib::RefPtr< ImgLoader > ret = *it;
-            // LRU: キャッシュをlistの先頭に移動
-            if( it != m_cache.begin() ) {
-                m_cache.erase( it );
-                m_cache.push_front( ret );
-            }
-            return ret;
-        }
+    auto it = std::find_if( m_cache.begin(), m_cache.end(),
+                            [&file]( const Glib::RefPtr<ImgLoader>& loader ) { return loader->equals( file ); } );
+    if( it != m_cache.begin() && it != m_cache.end() ) {
+        Glib::RefPtr<ImgLoader> ret = *it;
+        // LRU: キャッシュをlistの先頭に移動
+        m_cache.erase( it );
+        m_cache.push_front( ret );
+        return ret;
     }
     return Glib::RefPtr< ImgLoader >(); //null
 }
