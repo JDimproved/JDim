@@ -237,7 +237,7 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
                 set_broken( true );
 
                 // その行は飛ばす
-                while( lines[ pos ] != '\n' && pos < byte_lines ) ++pos;
+                while( pos < byte_lines && lines[ pos ] != '\n' ) ++pos;
                 ++pos;
                 section = 0;
                 memset( lng_sec, 0, sizeof( int ) * MAX_SECTION );
