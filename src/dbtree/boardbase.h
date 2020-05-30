@@ -232,11 +232,11 @@ namespace DBTREE
         void send_update_board();
 
         // クッキー
-        virtual std::string get_cookie() const { return {}; }
-        virtual void set_cookie( const std::string& cookie ) {}
+        virtual std::string get_hap() const { return {}; }
+        virtual void set_hap( const std::string& hap ){}
 
         // クッキーの更新 (クッキーをセットした時に実行)
-        virtual void update_cookie() {}
+        virtual void update_hap(){}
 
       public:
 

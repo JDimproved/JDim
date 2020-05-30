@@ -299,7 +299,7 @@ void BoardBase::set_list_cookies_for_request( const std::list< std::string >& li
         cookie_manager->feed( hostname, MISC::remove_space( input ) );
     }
 
-    update_cookie();
+    update_hap();
 }
 
 
