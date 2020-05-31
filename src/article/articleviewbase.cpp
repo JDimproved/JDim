@@ -2176,7 +2176,7 @@ bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
 //
 // drawareaのsig_on_url()シグナルとつなぐ
 //
-void ArticleViewBase::slot_on_url( std::string url, std::string imgurl, int res_number )
+void ArticleViewBase::slot_on_url( const std::string& url, const std::string& imgurl, int res_number )
 {
 
 #ifdef _DEBUG

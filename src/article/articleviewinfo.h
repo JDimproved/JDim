@@ -30,7 +30,7 @@ namespace ARTICLE
         bool slot_button_press( const std::string& url, int res_number, GdkEventButton* ) override { return true; }
 
         // ポップアップ表示キャンセル
-        void slot_on_url( std::string url, std::string imgurl, int res_number ) override {}
+        void slot_on_url( const std::string& url, const std::string& imgurl, int res_number ) override {}
 
         DrawAreaBase* create_drawarea() override;
     };
