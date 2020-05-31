@@ -781,12 +781,11 @@ bool Root::move_board( const std::string& url_old, const std::string& url_new, c
 // 板移転処理実行
 //
 bool Root::exec_move_board( BoardBase* board,
-                       const std::string old_root,
-                       const std::string old_path_board,
-                       const std::string new_root,
-                       const std::string new_path_board
-    ){
-
+                            const std::string& old_root,
+                            const std::string& old_path_board,
+                            const std::string& new_root,
+                            const std::string& new_path_board )
+{
     if( ! board ) return false;
 
 #ifdef _SHOW_BOARD
@@ -863,11 +862,10 @@ bool Root::exec_move_board( BoardBase* board,
 //
 // 板移転テーブルを更新
 //
-void Root::push_movetable( const std::string old_root,
-                           const std::string old_path_board,
-                           const std::string new_root,
-                           const std::string new_path_board
-    )
+void Root::push_movetable( const std::string& old_root,
+                           const std::string& old_path_board,
+                           const std::string& new_root,
+                           const std::string& new_path_board )
 {
 #ifdef _DEBUG
     std::cout << "Root::push_movetable : " << old_root << old_path_board << " -> " << new_root << new_path_board << std::endl;

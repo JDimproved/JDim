@@ -256,7 +256,7 @@ std::string Img::get_cache_path()
 // mosaic : モザイク表示するか
 // waitsec: 指定した秒数経過後にロード開始
 //
-void Img::download_img( const std::string refurl, const bool mosaic, const int waitsec )
+void Img::download_img( const std::string& refurl, const bool mosaic, const int waitsec )
 {
     // ダウンロード初回(リダイレクトでは無い)
     if( ! m_count_redirect ) m_url_alt = std::string();

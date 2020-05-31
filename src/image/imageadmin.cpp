@@ -698,7 +698,7 @@ void ImageAdmin::close_right_views( const std::string& url )
 //
 // エラーになっている画像を閉じる
 //
-void ImageAdmin::close_error_views( const std::string mode )
+void ImageAdmin::close_error_views( const std::string& mode )
 {
 #ifdef _DEBUG
     std::cout << "ImageAdmin::close_error_views\n";

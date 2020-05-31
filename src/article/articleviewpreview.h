@@ -22,7 +22,7 @@ namespace ARTICLE
 
       private:
 
-        bool slot_button_press( std::string url, int res_number, GdkEventButton* event ) override;
+        bool slot_button_press( const std::string& url, int res_number, GdkEventButton* event ) override;
 
         void goto_num( const int num_to, const int num_from ) override {}
     };
