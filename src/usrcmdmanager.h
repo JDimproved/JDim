@@ -43,7 +43,7 @@ namespace CORE
                    const int number // レス番号
             );
 
-        void exec( const std::string command, // コマンド
+        void exec( const std::string& command, // コマンド
                    const std::string& url,
                    const std::string& link,
                    const std::string& selection, // 選択文字

@@ -157,7 +157,7 @@ void Usrcmd_Manager::exec( const int comnum, // コマンド番号
 }
 
 
-void Usrcmd_Manager::exec( const std::string command, // コマンド
+void Usrcmd_Manager::exec( const std::string& command, // コマンド
                            const std::string& url,
                            const std::string& link,
                            const std::string& selection, // 選択文字
