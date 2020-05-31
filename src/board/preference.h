@@ -148,7 +148,7 @@ namespace BOARD
         SKELETON::EditView m_edit_settingtxt;
 
       public:
-        Preferences( Gtk::Window* parent, const std::string& url, const std::string command );
+        Preferences( Gtk::Window* parent, const std::string& url, const std::string& command );
         ~Preferences();
 
       private:
