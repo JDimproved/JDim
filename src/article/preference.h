@@ -63,7 +63,7 @@ namespace ARTICLE
 
       public:
 
-        Preferences( Gtk::Window* parent, const std::string& url, const std::string command );
+        Preferences( Gtk::Window* parent, const std::string& url, const std::string& command );
         ~Preferences() noexcept;
 
       private:

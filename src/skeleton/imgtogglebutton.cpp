@@ -9,14 +9,14 @@
 
 using namespace SKELETON;
 
-ImgToggleButton::ImgToggleButton( const int id, const std::string label )
+ImgToggleButton::ImgToggleButton( const int id, const std::string& label )
 {
     m_img = Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) );
     set( label );
 }
 
 
-ImgToggleButton::ImgToggleButton( const Gtk::StockID& stock_id, const std::string label,
+ImgToggleButton::ImgToggleButton( const Gtk::StockID& stock_id, const std::string& label,
                                   const Gtk::BuiltinIconSize icon_size )
 {
 

@@ -22,7 +22,7 @@
 
 using namespace BOARD;
 
-Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string command )
+Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string& command )
     : SKELETON::PrefDiag( parent, url ),
       m_frame_write( "書き込み設定" ),
       m_entry_writename( true, "名前：" ),

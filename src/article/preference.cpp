@@ -20,7 +20,7 @@
 
 using namespace ARTICLE;
 
-Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string command )
+Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string& command )
     : SKELETON::PrefDiag( parent, url )
     ,m_label_name( false, "スレタイトル : ", DBTREE::article_subject( get_url() ) )
     ,m_label_url( false, "スレのURL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )

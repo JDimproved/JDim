@@ -18,10 +18,10 @@ namespace SKELETON
 
       public:
 
-        ImgButton( const int id, const std::string label = std::string() );
+        ImgButton( const int id, const std::string& label = {} );
 
         ImgButton( const Gtk::StockID& stock_id,
-                   const std::string label = std::string(),
+                   const std::string& label = {},
                    const Gtk::BuiltinIconSize icon_size = Gtk::ICON_SIZE_MENU );
 
         ~ImgButton() noexcept;
