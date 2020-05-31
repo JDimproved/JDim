@@ -114,7 +114,7 @@ namespace DBIMG
         // refurl : 参照元のスレのアドレス
         // mosaic : モザイク表示するか
         // waitsec: 指定した秒数経過後にロード開始
-        void download_img( const std::string refurl, const bool mosaic, const int waitsec );
+        void download_img( const std::string& refurl, const bool mosaic, const int waitsec );
 
         // ロード停止
         void stop_load() override;
