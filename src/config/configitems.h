@@ -49,18 +49,21 @@ namespace CONFIG
 
         // 読み込み用プロクシとポート番号
         bool use_proxy_for2ch{};
+        bool send_cookie_to_proxy_for2ch{};
         std::string proxy_for2ch;
         int proxy_port_for2ch{};
         std::string proxy_basicauth_for2ch;
 
         // 書き込み用プロクシとポート番号
         bool use_proxy_for2ch_w{};
+        bool send_cookie_to_proxy_for2ch_w{};
         std::string proxy_for2ch_w;
         int proxy_port_for2ch_w{};
         std::string proxy_basicauth_for2ch_w;
 
         // 2chの外にアクセスするときのプロクシとポート番号
         bool use_proxy_for_data{};
+        bool send_cookie_to_proxy_for_data{};
         std::string proxy_for_data;
         int proxy_port_for_data{};
         std::string proxy_basicauth_for_data;

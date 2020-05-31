@@ -109,18 +109,23 @@ bool ConfigItems::load( const bool restore )
 
     // 読み込み用プロクシとポート番号
     use_proxy_for2ch = cf.get_option_bool( "use_proxy_for2ch", CONF_USE_PROXY_FOR2CH );
+    send_cookie_to_proxy_for2ch = cf.get_option_bool( "send_cookie_to_proxy_for2ch", CONF_SEND_COOKIE_TO_PROXY_FOR2CH );
     str_tmp = cf.get_option_str( "proxy_for2ch", "" );
     set_proxy_for2ch( str_tmp );
     proxy_port_for2ch = cf.get_option_int( "proxy_port_for2ch", CONF_PROXY_PORT_FOR2CH, 1, 65535 );
 
     // 書き込み用プロクシとポート番号
     use_proxy_for2ch_w = cf.get_option_bool( "use_proxy_for2ch_w", CONF_USE_PROXY_FOR2CH_W );
+    send_cookie_to_proxy_for2ch_w = cf.get_option_bool( "send_cookie_to_proxy_for2ch_w",
+                                                        CONF_SEND_COOKIE_TO_PROXY_FOR2CH_W );
     str_tmp = cf.get_option_str( "proxy_for2ch_w", "" );
     set_proxy_for2ch_w( str_tmp );
     proxy_port_for2ch_w = cf.get_option_int( "proxy_port_for2ch_w", CONF_PROXY_PORT_FOR2CH_W, 1, 65535 );
 
     // 2chの外にアクセスするときのプロクシとポート番号
     use_proxy_for_data = cf.get_option_bool( "use_proxy_for_data", CONF_USE_PROXY_FOR_DATA );
+    send_cookie_to_proxy_for_data = cf.get_option_bool( "send_cookie_to_proxy_for_data",
+                                                        CONF_SEND_COOKIE_TO_PROXY_FOR_DATA );
     str_tmp = cf.get_option_str( "proxy_for_data", "" );
     set_proxy_for_data( str_tmp );
     proxy_port_for_data = cf.get_option_int( "proxy_port_for_data", CONF_PROXY_PORT_FOR_DATA, 1, 65535 );
@@ -670,12 +675,14 @@ void ConfigItems::save_impl( const std::string& path )
     if( proxy_basicauth_for2ch.empty() ) tmp_proxy = proxy_for2ch;
     else tmp_proxy = proxy_basicauth_for2ch + "@" + proxy_for2ch;
     cf.update( "use_proxy_for2ch", use_proxy_for2ch );
+    cf.update( "send_cookie_to_proxy_for2ch", send_cookie_to_proxy_for2ch );
     cf.update( "proxy_for2ch", tmp_proxy );
     cf.update( "proxy_port_for2ch", proxy_port_for2ch );
 
     if( proxy_basicauth_for2ch_w.empty() ) tmp_proxy = proxy_for2ch_w;
     else tmp_proxy = proxy_basicauth_for2ch_w + "@" + proxy_for2ch_w;
     cf.update( "use_proxy_for2ch_w", use_proxy_for2ch_w );
+    cf.update( "send_cookie_to_proxy_for2ch_w", send_cookie_to_proxy_for2ch_w );
     cf.update( "proxy_for2ch_w", tmp_proxy );
     cf.update( "proxy_port_for2ch_w", proxy_port_for2ch_w );
 
@@ -684,6 +691,7 @@ void ConfigItems::save_impl( const std::string& path )
     if( proxy_basicauth_for_data.empty() ) tmp_proxy = proxy_for_data;
     else tmp_proxy = proxy_basicauth_for_data + "@" + proxy_for_data;
     cf.update( "use_proxy_for_data", use_proxy_for_data );
+    cf.update( "send_cookie_to_proxy_for_data", send_cookie_to_proxy_for_data );
     cf.update( "proxy_for_data", tmp_proxy );
     cf.update( "proxy_port_for_data", proxy_port_for_data );
 

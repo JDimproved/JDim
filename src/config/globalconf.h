@@ -143,21 +143,25 @@ namespace CONFIG
 
     // 2ch 読み込み用プロクシとポート番号
     bool get_use_proxy_for2ch();
+    bool get_send_cookie_to_proxy_for2ch();
     const std::string& get_proxy_for2ch();
     int get_proxy_port_for2ch();
     const std::string& get_proxy_basicauth_for2ch();
 
     void set_use_proxy_for2ch( const bool set );
+    void set_send_cookie_to_proxy_for2ch( bool set );
     void set_proxy_for2ch( const std::string& proxy );
     void set_proxy_port_for2ch( const int port );
 
     // 2ch 書き込み用プロクシとポート番号
     bool get_use_proxy_for2ch_w();
+    bool get_send_cookie_to_proxy_for2ch_w();
     const std::string& get_proxy_for2ch_w();
     int get_proxy_port_for2ch_w();
     const std::string& get_proxy_basicauth_for2ch_w();
 
     void set_use_proxy_for2ch_w( const bool set );
+    void set_send_cookie_to_proxy_for2ch_w( bool set );
     void set_proxy_for2ch_w( const std::string& proxy );
     void set_proxy_port_for2ch_w( const int port );
 
@@ -166,11 +170,13 @@ namespace CONFIG
 
     // 2chの外にアクセスするときのプロクシとポート番号
     bool get_use_proxy_for_data();
+    bool get_send_cookie_to_proxy_for_data();
     const std::string& get_proxy_for_data();
     int get_proxy_port_for_data();
     const std::string& get_proxy_basicauth_for_data();
 
     void set_use_proxy_for_data( const bool set );
+    void set_send_cookie_to_proxy_for_data( bool set );
     void set_proxy_for_data( const std::string& proxy );
     void set_proxy_port_for_data( const int port );
 
