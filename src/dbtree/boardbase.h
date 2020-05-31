@@ -325,7 +325,9 @@ namespace DBTREE
         virtual std::string get_unicode();
 
         // 板のホストを指定してクッキーのやり取り
+        std::string cookie_by_host() const;
         virtual std::string cookie_for_request() const;
+        virtual std::string cookie_for_post() const;
         void set_list_cookies( const std::list< std::string >& list_cookies );
         void delete_cookies();
 

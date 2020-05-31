@@ -168,7 +168,7 @@ void Post::post_msg()
     data.basicauth_proxy = DBTREE::get_proxy_basicauth_w( m_url );
     data.size_buf = CONFIG::get_loader_bufsize();
     data.timeout = CONFIG::get_loader_timeout_post();
-    data.cookie_for_request = DBTREE::board_cookie_for_request( m_url );
+    data.cookie_for_request = DBTREE::board_cookie_for_post( m_url );
     data.basicauth = DBTREE::board_basicauth( m_url );
 
 #ifdef _DEBUG

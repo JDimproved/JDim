@@ -298,9 +298,21 @@ std::string DBTREE::board_charset( const std::string& url )
 }
 
 
+std::string DBTREE::board_cookie_by_host( const std::string& url )
+{
+    return DBTREE::get_board( url )->cookie_by_host();
+}
+
+
 std::string DBTREE::board_cookie_for_request( const std::string& url )
 {
     return DBTREE::get_board( url )->cookie_for_request();
+}
+
+
+std::string DBTREE::board_cookie_for_post( const std::string& url )
+{
+    return DBTREE::get_board( url )->cookie_for_post();
 }
 
 
