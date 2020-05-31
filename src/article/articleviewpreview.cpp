@@ -109,7 +109,7 @@ bool ArticleViewPreview::operate_view( const int control )
 //
 // ArticleViewBase::slot_button_press()をオーパロードしてマウスジェスチャを無効にする
 //
-bool ArticleViewPreview::slot_button_press( std::string url, int res_number, GdkEventButton* event )
+bool ArticleViewPreview::slot_button_press( const std::string& url, int res_number, GdkEventButton* event )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewPreview::slot_button_press url = " << get_url() << std::endl;

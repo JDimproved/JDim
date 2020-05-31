@@ -27,7 +27,7 @@ namespace ARTICLE
       private:
 
         // ボタンプレスキャンセル
-        bool slot_button_press( std::string url, int res_number, GdkEventButton* event ) override { return true; }
+        bool slot_button_press( const std::string& url, int res_number, GdkEventButton* ) override { return true; }
 
         // ポップアップ表示キャンセル
         void slot_on_url( std::string url, std::string imgurl, int res_number ) override {}

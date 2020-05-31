@@ -2013,7 +2013,7 @@ bool ArticleViewBase::slot_leave_notify( GdkEventCrossing* event )
 //
 // drawarea のクリックイベント
 //
-bool ArticleViewBase::slot_button_press( std::string url, int res_number, GdkEventButton* event )
+bool ArticleViewBase::slot_button_press( const std::string& url, int res_number, GdkEventButton* event )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::slot_button_press url = " << get_url() << std::endl;
