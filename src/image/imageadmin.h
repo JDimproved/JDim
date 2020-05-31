@@ -101,7 +101,7 @@ namespace IMAGE
 
         void close_left_views( const std::string& url );
         void close_right_views( const std::string& url );
-        void close_error_views( const std::string mode );
+        void close_error_views( const std::string& mode );
         void close_noerror_views();
         void reorder( const std::string& url_from, const std::string& url_to );
         void update_status_of_all_views();
