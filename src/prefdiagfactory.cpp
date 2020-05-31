@@ -35,7 +35,8 @@
 
 #include "config/aboutconfig.h"
 
-SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, const std::string& url, const std::string command )
+SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, const std::string& url,
+                                           const std::string& command )
 {
     switch( type )
     {
