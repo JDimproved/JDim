@@ -4642,7 +4642,7 @@ bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANGLE* re
 
     RECTANGLE* rect_from = layout->rect;
     RECTANGLE* rect_to = layout_to->rect;
-    if( ! rect_from | ! rect_to ) return false;
+    if( ! rect_from || ! rect_to ) return false;
     while( rect_to->next_rect ) rect_to = rect_to->next_rect;
 
     // 範囲外
