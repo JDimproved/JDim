@@ -194,7 +194,7 @@ void ice_watch_proc( IceConn ice_connect,
                      Bool opening,
                      IcePointer *watch_data )
 {
-    XSMPDATA *xsmpdata = ( XSMPDATA* ) client_data;
+    XSMPDATA *xsmpdata = reinterpret_cast<XSMPDATA*>( client_data );
     xsmpdata->ice_connect = ice_connect;
 
     if( xsmpdata->id_process_message ){
