@@ -116,26 +116,61 @@ std::string Board2ch::get_proxy_basicauth_w()
 }
 
 
-// 読み書き用クッキー作成
-std::string Board2ch::cookie_for_request() const
+// BE 用クッキー作成
+void Board2ch::set_cookie_for_be( std::string& cookie ) const
 {
-#ifdef _DEBUG
-    std::cout << "Board2ch::cookie_for_request\n";
-#endif
-
-    std::string cookie = Board2chCompati::cookie_for_request();
-    if( cookie.empty() ) cookie = get_hap();
-
     // BE ログイン中
-    if( CORE::get_loginbe()->login_now() ){
+    if( CORE::get_loginbe()->login_now() ) {
         if( ! cookie.empty() ) cookie += "; ";
         cookie += "DMDM=" + CORE::get_loginbe()->get_sessionid() + "; MDMD=" + CORE::get_loginbe()->get_sessiondata();
     }
+}
+
+
+//
+// 読み込み用クッキー作成
+//
+// プロキシの2ch読み込み用設定がoffのとき
+// またはプロキシにクッキーを送る設定のときは対象サイトにcookieを送信する
+//
+std::string Board2ch::cookie_for_request() const
+{
+    std::string cookie;
+
+    if( ! CONFIG::get_use_proxy_for2ch() || CONFIG::get_send_cookie_to_proxy_for2ch() ) {
+        cookie = cookie_by_host();
+        if( cookie.empty() ) cookie = get_hap();
+    }
+
+    set_cookie_for_be( cookie );
 
 #ifdef _DEBUG
-    std::cout << "cookie = " << cookie << std::endl;
-#endif 
+    std::cout << "Board2ch::cookie_for_request cookie = " << cookie << std::endl;
+#endif
+    return cookie;
+}
 
+
+//
+// 書き込み用クッキー作成
+//
+// プロキシの2ch書き込み用設定がoffのとき
+// またはプロキシにクッキーを送る設定のときは対象サイトにcookieを送信する
+//
+std::string Board2ch::cookie_for_post() const
+{
+    std::string cookie;
+
+    if( ! CONFIG::get_use_proxy_for2ch_w() || CONFIG::get_send_cookie_to_proxy_for2ch_w() ) {
+        cookie = cookie_by_host();
+        if( cookie.empty() ) cookie = get_hap();
+    }
+
+    set_cookie_for_be( cookie );
+
+#ifdef _DEBUG
+    std::cout << "Board2ch::cookie_for_post cookie = " << cookie << std::endl;
+#endif
     return cookie;
 }
 

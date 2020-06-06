@@ -104,7 +104,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     // cookie と 書き込みキーワード の設定
     std::string str_cookies;
-    const std::string temp_cookies = DBTREE::board_cookie_for_request( get_url() );
+    const std::string temp_cookies = DBTREE::board_cookie_by_host( get_url() );
     if( temp_cookies.empty() ) {
         str_cookies = "クッキー:\n未取得\n";
     }

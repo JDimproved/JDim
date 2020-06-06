@@ -23,10 +23,13 @@ namespace CONFIG
 #endif
         CONF_REF_PREFIX_SPACE = 1, // 参照文字( CONF_REF_PREFIX ) の後のスペースの数
         CONF_USE_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシを使用するか
+        CONF_SEND_COOKIE_TO_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシにクッキーを送信するか
         CONF_PROXY_PORT_FOR2CH = 8080, // 2ch 読み込み用プロクシポート番号
         CONF_USE_PROXY_FOR2CH_W = 0, // 2ch 書き込み用プロクシを使用するか
+        CONF_SEND_COOKIE_TO_PROXY_FOR2CH_W = 0, // 2ch 書き込み用プロクシにクッキーを送信するか
         CONF_PROXY_PORT_FOR2CH_W = 8080, // 2ch 書き込み用プロクシポート番号
         CONF_USE_PROXY_FOR_DATA = 0, // 2ch 以外にアクセスするときにプロクシを使用するか
+        CONF_SEND_COOKIE_TO_PROXY_FOR_DATA = 0, // 2ch 以外にアクセスするときのプロクシにクッキーを送信するか
         CONF_PROXY_PORT_FOR_DATA = 8080, // 2ch 以外にアクセスするときのプロクシポート番号
         CONF_LOADER_BUFSIZE = 32,   // ローダのバッファサイズ (一般)
         CONF_LOADER_BUFSIZE_BOARD = 2,   // ローダのバッファサイズ (スレ一覧用)

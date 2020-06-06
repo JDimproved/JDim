@@ -38,8 +38,10 @@ namespace DBTREE
         int get_proxy_port_w() override;
         std::string get_proxy_basicauth_w() override;
 
-        // 読み書き用クッキー
+        // 読み込み用クッキー
         std::string cookie_for_request() const override;
+        // 書き込み用クッキー
+        std::string cookie_for_post() const override;
 
         // 書き込み時のリファラ
         std::string get_write_referer() override;
@@ -72,6 +74,8 @@ namespace DBTREE
         int get_default_number_max_res() override { return DEFAULT_NUMBER_MAX_2CH; }
 
         ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
+
+        void set_cookie_for_be( std::string& cookie ) const;
     };
 }
 

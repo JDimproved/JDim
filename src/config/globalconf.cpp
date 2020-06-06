@@ -181,26 +181,31 @@ const std::string& CONFIG::get_url_search_web(){ return get_confitem()->url_sear
 const std::string& CONFIG::get_agent_for2ch() { return get_confitem()->agent_for2ch; }
 
 bool CONFIG::get_use_proxy_for2ch() { return get_confitem()->use_proxy_for2ch; }
+bool CONFIG::get_send_cookie_to_proxy_for2ch() { return get_confitem()->send_cookie_to_proxy_for2ch; }
 const std::string& CONFIG::get_proxy_for2ch() { return get_confitem()->proxy_for2ch; }
 int CONFIG::get_proxy_port_for2ch() { return get_confitem()->proxy_port_for2ch; }
 const std::string& CONFIG::get_proxy_basicauth_for2ch() { return get_confitem()->proxy_basicauth_for2ch; }
 
 void CONFIG::set_use_proxy_for2ch( bool set ){ get_confitem()->use_proxy_for2ch = set; }
+void CONFIG::set_send_cookie_to_proxy_for2ch( bool set ){ get_confitem()->send_cookie_to_proxy_for2ch = set; }
 void CONFIG::set_proxy_for2ch( const std::string& proxy ){ get_confitem()->set_proxy_for2ch( proxy ); }
 void CONFIG::set_proxy_port_for2ch( int port ){ get_confitem()->proxy_port_for2ch = port; }
 
 bool CONFIG::get_use_proxy_for2ch_w() { return get_confitem()->use_proxy_for2ch_w; }
+bool CONFIG::get_send_cookie_to_proxy_for2ch_w() { return get_confitem()->send_cookie_to_proxy_for2ch_w; }
 const std::string& CONFIG::get_proxy_for2ch_w() { return get_confitem()->proxy_for2ch_w; }
 int CONFIG::get_proxy_port_for2ch_w() { return get_confitem()->proxy_port_for2ch_w; }
 const std::string& CONFIG::get_proxy_basicauth_for2ch_w() { return get_confitem()->proxy_basicauth_for2ch_w; }
 
 void CONFIG::set_use_proxy_for2ch_w( bool set ){ get_confitem()->use_proxy_for2ch_w = set; }
+void CONFIG::set_send_cookie_to_proxy_for2ch_w( bool set ){ get_confitem()->send_cookie_to_proxy_for2ch_w = set; }
 void CONFIG::set_proxy_for2ch_w( const std::string& proxy ){ get_confitem()->set_proxy_for2ch_w( proxy ); }
 void CONFIG::set_proxy_port_for2ch_w( int port ){ get_confitem()->proxy_port_for2ch_w = port; }
 
 const std::string& CONFIG::get_agent_for_data() { return get_confitem()->agent_for_data; }
 
 bool CONFIG::get_use_proxy_for_data() { return get_confitem()->use_proxy_for_data; }
+bool CONFIG::get_send_cookie_to_proxy_for_data() { return get_confitem()->send_cookie_to_proxy_for_data; }
 const std::string& CONFIG::get_proxy_for_data() { return get_confitem()->proxy_for_data; }
 int CONFIG::get_proxy_port_for_data() { return get_confitem()->proxy_port_for_data; }
 const std::string& CONFIG::get_proxy_basicauth_for_data() { return get_confitem()->proxy_basicauth_for_data; }
@@ -208,6 +213,7 @@ const std::string& CONFIG::get_proxy_basicauth_for_data() { return get_confitem(
 const std::string& CONFIG::get_x_2ch_ua() { return get_confitem()->x_2ch_ua; }
 
 void CONFIG::set_use_proxy_for_data( bool set ){ get_confitem()->use_proxy_for_data = set; }
+void CONFIG::set_send_cookie_to_proxy_for_data( bool set ){ get_confitem()->send_cookie_to_proxy_for_data = set; }
 void CONFIG::set_proxy_for_data( const std::string& proxy ){ get_confitem()->set_proxy_for_data( proxy ); }
 void CONFIG::set_proxy_port_for_data( int port ){ get_confitem()->proxy_port_for_data = port; }
 

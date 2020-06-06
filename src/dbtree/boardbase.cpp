@@ -276,12 +276,46 @@ std::string BoardBase::get_unicode()
 
 
 // 板のホストを指定してクッキーを取得
-std::string BoardBase::cookie_for_request() const
+std::string BoardBase::cookie_by_host() const
 {
     const JDLIB::CookieManager* cookie_manager = JDLIB::get_cookie_manager();
     const std::string hostname = MISC::get_hostname( get_root(), false );
 
     return cookie_manager->get_cookie_by_host( hostname );
+}
+
+
+//
+// 読み込み用クッキー作成
+//
+// プロキシの読み込み用設定がoffのとき
+// またはプロキシにクッキーを送る設定がonのときはサイトにcookieを送信する
+//
+std::string BoardBase::cookie_for_request() const
+{
+    std::string cookie;
+
+    if( ! CONFIG::get_use_proxy_for_data() || CONFIG::get_send_cookie_to_proxy_for_data() ) {
+        cookie = cookie_by_host();
+    }
+    return cookie;
+}
+
+
+//
+// 書き込み用クッキー作成
+//
+// プロキシの書き込み用設定がoffのとき
+// またはプロキシにクッキーを送る設定がonのときはサイトにcookieを送信する
+//
+std::string BoardBase::cookie_for_post() const
+{
+    std::string cookie;
+
+    if( ! CONFIG::get_use_proxy_for_data() || CONFIG::get_send_cookie_to_proxy_for_data() ) {
+        cookie = cookie_by_host();
+    }
+    return cookie;
 }
 
 
