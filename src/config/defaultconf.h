@@ -219,7 +219,7 @@ namespace CONFIG
 #define CONF_URL_SEARCH_TITLE "https://ff5ch.syoboi.jp/?q=$TEXTU"
 
 // スレタイ検索用正規表現
-#define CONF_REGEX_SEARCH_TITLE R"=(<a class="thread" href="(http[^"]+)">([^<]+)</a><span\n +class="count"> \(([0-9]+)\))="
+#define CONF_REGEX_SEARCH_TITLE R"=(<a [^>]*?href="(http[^"]+)">([^<]+)</a><span[[:space:]]+class="count"> \(([0-9]+)\))="
 
 // WEB検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"
