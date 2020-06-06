@@ -1406,7 +1406,7 @@ void NodeTreeBase::receive_finish()
     ) {
         CACHE::set_filemtime( CACHE::path_dat( m_url ), get_time_modified() );
         // クッキーのセット
-        DBTREE::board_set_list_cookies_for_request( m_url, SKELETON::Loadable::cookies() );
+        DBTREE::board_set_list_cookies( m_url, SKELETON::Loadable::cookies() );
     }
 
 

@@ -60,11 +60,11 @@ namespace DBTREE
       protected:
 
         // クッキー
-        std::string get_cookie() const override;
-        void set_cookie( const std::string& cookie ) override;
+        std::string get_hap() const override;
+        void set_hap( const std::string& hap ) override;
 
         // クッキーの更新 (クッキーをセットした時に実行)
-        void update_cookie() override;
+        void update_hap() override;
 
       private:
 

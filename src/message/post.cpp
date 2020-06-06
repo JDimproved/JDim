@@ -360,7 +360,7 @@ void Post::receive_finish()
 
     // クッキーのセット
     const bool empty_cookies = DBTREE::board_cookie_for_request( m_url ).empty();
-    if( list_cookies.size() ) DBTREE::board_set_list_cookies_for_request( m_url, list_cookies );
+    if( list_cookies.size() ) DBTREE::board_set_list_cookies( m_url, list_cookies );
 
     // 成功
     if( title.find( "書きこみました" ) != std::string::npos

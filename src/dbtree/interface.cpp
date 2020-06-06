@@ -304,14 +304,14 @@ std::string DBTREE::board_cookie_for_request( const std::string& url )
 }
 
 
-void DBTREE::board_set_list_cookies_for_request( const std::string& url, const std::list< std::string>& list_cookies )
+void DBTREE::board_set_list_cookies( const std::string& url, const std::list< std::string>& list_cookies )
 {
-    DBTREE::get_board( url )->set_list_cookies_for_request( list_cookies );
+    DBTREE::get_board( url )->set_list_cookies( list_cookies );
 }
 
-void DBTREE::board_delete_cookies_for_request( const std::string& url )
+void DBTREE::board_delete_cookies( const std::string& url )
 {
-    DBTREE::get_board( url )->delete_cookies_for_request();
+    DBTREE::get_board( url )->delete_cookies();
 }
 
 std::string DBTREE::board_keyword_for_write( const std::string& url )

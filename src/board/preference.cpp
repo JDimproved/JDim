@@ -416,7 +416,7 @@ void Preferences::slot_set_default_namemail()
 
 void Preferences::slot_delete_cookie()
 {
-    DBTREE::board_delete_cookies_for_request( get_url() );
+    DBTREE::board_delete_cookies( get_url() );
     DBTREE::board_set_keyword_for_write( get_url(), std::string() );
 
     m_edit_cookies.set_text( "クッキー:\n未取得\n" );

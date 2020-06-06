@@ -124,7 +124,7 @@ std::string Board2ch::cookie_for_request() const
 #endif
 
     std::string cookie = Board2chCompati::cookie_for_request();
-    if( cookie.empty() ) cookie = get_cookie();
+    if( cookie.empty() ) cookie = get_hap();
 
     // BE ログイン中
     if( CORE::get_loginbe()->login_now() ){
@@ -231,7 +231,7 @@ ArticleBase* Board2ch::append_article( const std::string& datbase, const std::st
 
 
 // 2chのクッキー
-std::string Board2ch::get_cookie() const
+std::string Board2ch::get_hap() const
 {
     if( ! CONFIG::get_use_cookie_hap() ) return std::string();
 
@@ -239,30 +239,30 @@ std::string Board2ch::get_cookie() const
     return CONFIG::get_cookie_hap();
 }
 
-void Board2ch::set_cookie( const std::string& cookie )
+void Board2ch::set_hap( const std::string& hap )
 {
     if( ! CONFIG::get_use_cookie_hap() )  return;
 
-    if( get_root().find( ".bbspink.com" ) != std::string::npos ) CONFIG::set_cookie_hap_bbspink( cookie );
-    else CONFIG::set_cookie_hap( cookie );
+    if( get_root().find( ".bbspink.com" ) != std::string::npos ) CONFIG::set_cookie_hap_bbspink( hap );
+    else CONFIG::set_cookie_hap( hap );
 }
 
 
 //
 // 2chのクッキーの更新
 //
-void Board2ch::update_cookie()
+void Board2ch::update_hap()
 {
     if( ! CONFIG::get_use_cookie_hap() ) return;
 
     const std::string new_cookie = Board2chCompati::cookie_for_request();
 
     if( ! new_cookie.empty() ) {
-        const std::string old_cookie = get_cookie();
-        set_cookie( new_cookie );
+        const std::string old_cookie = get_hap();
+        set_hap( new_cookie );
 #ifdef _DEBUG
-        std::cout << "Board2ch::update_cookie old = " << old_cookie << std::endl;
-        std::cout << "Board2ch::update_cookie new = " << new_cookie << std::endl;
+        std::cout << "Board2ch::update_hap old = " << old_cookie << std::endl;
+        std::cout << "Board2ch::update_hap new = " << new_cookie << std::endl;
 #endif
     }
 }

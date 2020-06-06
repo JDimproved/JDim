@@ -232,11 +232,11 @@ namespace DBTREE
         void send_update_board();
 
         // クッキー
-        virtual std::string get_cookie() const { return {}; }
-        virtual void set_cookie( const std::string& cookie ) {}
+        virtual std::string get_hap() const { return {}; }
+        virtual void set_hap( const std::string& hap ){}
 
         // クッキーの更新 (クッキーをセットした時に実行)
-        virtual void update_cookie() {}
+        virtual void update_hap(){}
 
       public:
 
@@ -326,8 +326,8 @@ namespace DBTREE
 
         // 板のホストを指定してクッキーのやり取り
         virtual std::string cookie_for_request() const;
-        void set_list_cookies_for_request( const std::list< std::string >& list_cookies );
-        void delete_cookies_for_request();
+        void set_list_cookies( const std::list< std::string >& list_cookies );
+        void delete_cookies();
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
         // 書き込み時のメッセージに付加する
