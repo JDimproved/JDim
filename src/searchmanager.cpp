@@ -254,8 +254,7 @@ void Search_Manager::search_fin_title()
     const std::string& source = m_searchloader->get_data();
     if( ! source.empty() ){
 
-        // 正規表現の設定には改行は "\\n" で保存されているので "\n"　に変換する
-        const std::string pattern = MISC::replace_str( CONFIG::get_regex_search_title(), "\\n", "\n" );
+        const std::string pattern = CONFIG::get_regex_search_title();
 
         JDLIB::Regex regex;
         const bool icase = false;
