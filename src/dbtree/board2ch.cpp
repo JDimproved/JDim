@@ -202,14 +202,24 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
 {
     if( subject.empty() ) return std::string();
     if( msg.empty() ) return std::string();
+    if( ! m_frontloader || m_frontloader->get_data().empty() ) {
+        // フロントページを読み込んでない場合はメッセージ作成を中断してダウンロードする
+        set_keyword_for_write( "" );
+        Board2ch::download_front();
+        return {};
+    }
 
     std::stringstream ss_post;
-    ss_post.clear();
-    ss_post << "bbs="      << get_id()
-            << "&subject=" << MISC::charset_url_encode( subject, get_charset() );
+    ss_post << "submit="   << MISC::charset_url_encode( "新規スレッド作成", get_charset() )
+            << "&subject=" << MISC::charset_url_encode( subject, get_charset() )
+            << "&FROM="    << MISC::charset_url_encode( name, get_charset() )
+            << "&mail="    << MISC::charset_url_encode( mail, get_charset() )
+            << "&MESSAGE=" << MISC::charset_url_encode( msg, get_charset() )
+            << "&bbs="     << get_id()
+            << "&time="    << m_frontloader->get_time_modified();
 
-    // キーワード( hana=mogera や suka=pontan など )
-    const std::string keyword = get_keyword_for_write();
+    // キーワード
+    const std::string keyword = get_keyword_for_newarticle();
     if( ! keyword.empty() ) ss_post << "&" << keyword;
 
     // 2chログイン中
@@ -219,15 +229,13 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
         ss_post << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
     }
 
-    ss_post << "&time="    << get_time_modified()
-            << "&submit="  << MISC::charset_url_encode( "新規スレッド作成", get_charset() )
-            << "&FROM="    << MISC::charset_url_encode( name, get_charset() )
-            << "&mail="    << MISC::charset_url_encode( mail, get_charset() )
-            << "&MESSAGE=" << MISC::charset_url_encode( msg, get_charset() );
-
 #ifdef _DEBUG
     std::cout << "Board2ch::create_newarticle_message " << ss_post.str() << std::endl;
 #endif
+
+    // 書き込みメッセージを作成したらキーワードとフロントページの読み込み状況はリセットする
+    set_keyword_for_write( "" );
+    m_frontloader->reset();
 
     return ss_post.str();
 }
