@@ -364,13 +364,10 @@ void ImageViewMain::show_status()
 
             m_length_prev = get_img()->current_length();
 
-            char tmpstr[ 256 ];
-#ifdef _WIN32
-            snprintf( tmpstr, sizeof( tmpstr ), "%u / %u KiB", m_length_prev/1024, get_img()->total_length()/1024 );
-#else
-            snprintf( tmpstr, sizeof( tmpstr ), "%zu / %zu KiB", m_length_prev/1024, get_img()->total_length()/1024 );
-#endif
-            tmpstr[ sizeof( tmpstr ) - 1 ] = '\0';
+            std::string tmpstr = std::to_string( m_length_prev / 1024 );
+            tmpstr.append( " / " );
+            tmpstr.append( std::to_string( get_img()->total_length() / 1024 ) );
+            tmpstr.append( " KiB" );
             set_status_local( tmpstr );
             add_tab_number();
 
