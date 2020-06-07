@@ -3052,7 +3052,7 @@ void BBSListViewBase::remove_item( const std::string& url )
     for( ; ! it.end(); ++it ){
 
         Gtk::TreeModel::Row row = *it;
-        const Glib::ustring url = row[ m_columns.m_url ];
+        const Glib::ustring& url_row = row[ m_columns.m_url ];
         const int type = row[ m_columns.m_type ];
 
         switch( type ){
@@ -3066,9 +3066,9 @@ void BBSListViewBase::remove_item( const std::string& url )
 
             case TYPE_IMAGE: // 画像
 
-                if( url == url_target ){
+                if( url_row.raw() == url_target ){
 #ifdef _DEBUG
-                    std::cout << "hit " << url << " == " << url_target << std::endl;
+                    std::cout << "hit " << url_row << " == " << url_target << std::endl;
                     std::cout << row2name( row ) << std::endl;
 #endif
                     list_path.push_back( it.get_path() );
