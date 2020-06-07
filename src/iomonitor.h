@@ -48,8 +48,10 @@ namespace CORE
         // 初期化
         void init();
 
+#ifndef _WIN32
         // FIFOを削除する
         void delete_fifo();
+#endif
 
         // FIFOに書き込まれたら呼び出される
         bool slot_ioin( Glib::IOCondition io_condition );
