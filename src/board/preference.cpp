@@ -112,8 +112,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         str_cookies = "クッキー:\n" + MISC::Iconv( temp_cookies, DBTREE::board_charset( get_url() ), "UTF-8" ) + "\n";
     }
 
-    const std::string keyword = DBTREE::board_keyword_for_write( get_url() );
-    if( ! keyword.empty() ) str_cookies += "\nキーワード: " + keyword + "\n";
+    std::string keyword = DBTREE::board_keyword_for_write( get_url() );
+    if( ! keyword.empty() ) str_cookies.append( "\n書き込み用キーワード: " + keyword + "\n" );
+
+    keyword = DBTREE::board_keyword_for_newarticle( get_url() );
+    if( ! keyword.empty() ) str_cookies.append( "\nスレ立て用キーワード: " + keyword + "\n" );
 
     m_edit_cookies.set_text( str_cookies );
 
@@ -418,6 +421,7 @@ void Preferences::slot_delete_cookie()
 {
     DBTREE::board_delete_cookies( get_url() );
     DBTREE::board_set_keyword_for_write( get_url(), std::string() );
+    DBTREE::board_set_keyword_for_newarticle( get_url(), std::string() );
 
     m_edit_cookies.set_text( "クッキー:\n未取得\n" );
 }

@@ -24,6 +24,43 @@
 #include <cstring>
 
 
+namespace {
+
+// PostStrategyの実装
+// newするのは大げさなので静的変数を定義した
+
+// 書き込み用のインターフェース
+struct WriteStrategy : public MESSAGE::PostStrategy
+{
+    std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi( url ); }
+    std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi( url ); }
+
+    void analyze_keyword( const std::string& url, const std::string& html ) override
+    {
+        DBTREE::board_analyze_keyword_for_write( url, html );
+    }
+    std::string get_keyword( const std::string& url ) override { return DBTREE::board_keyword_for_write( url ); }
+
+} s_write_strategy;
+
+
+// スレ立て用のインターフェース
+struct NewArticleStrategy : public MESSAGE::PostStrategy
+{
+    std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi_new( url ); }
+    std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi_new( url ); }
+
+    void analyze_keyword( const std::string& url, const std::string& html ) override
+    {
+        DBTREE::board_analyze_keyword_for_newarticle( url, html );
+    }
+    std::string get_keyword( const std::string& url ) override { return DBTREE::board_keyword_for_newarticle( url ); }
+
+} s_new_article_strategy;
+
+} // namespace
+
+
 using namespace MESSAGE;
 
 enum
@@ -44,6 +81,9 @@ Post::Post( Gtk::Widget* parent, const std::string& url, const std::string& msg,
 #ifdef _DEBUG
     std::cout << "Post::Post " << m_url << std::endl;
 #endif
+
+    if( new_article ) m_post_strategy = &s_new_article_strategy;
+    else m_post_strategy = &s_write_strategy;
 
     clear();
 }
@@ -143,17 +183,8 @@ void Post::post_msg()
 
     JDLIB::LOADERDATA data;
 
-    // 通常書き込み
-    if( ! m_new_article ){
-        if( ! m_subbbs ) data.url = DBTREE::url_bbscgi( m_url );  // 1回目の投稿先
-        else data.url = DBTREE::url_subbbscgi( m_url ); // 2回目の投稿先
-    }
-
-    // 新スレ作成
-    else{
-        if( ! m_subbbs ) data.url = DBTREE::url_bbscgi_new( m_url );  // 1回目の投稿先
-        else data.url = DBTREE::url_subbbscgi_new( m_url ); // 2回目の投稿先
-    }
+    if( ! m_subbbs ) data.url = m_post_strategy->url_bbscgi( m_url ); // 1回目の投稿先
+    else data.url = m_post_strategy->url_subbbscgi( m_url ); // 2回目の投稿先
 
     // Content-Type (2009/02/18に報告された"したらば"に書き込めない問題で追加)
     // http://www.asahi-net.or.jp/~sd5a-ucd/rec-html401j/interact/forms.html#h-17.13.4.1
@@ -407,11 +438,11 @@ void Post::receive_finish()
             if( mdiag.get_chkbutton().get_active() ) CONFIG::set_always_write_ok( true );
         }
 
-        // 書き込み用キーワード( hana=mogera や suka=pontan など )をセット
-        DBTREE::board_analyze_keyword_for_write( m_url, m_return_html );
+        // キーワードを解析してセット
+        m_post_strategy->analyze_keyword( m_url, m_return_html );
 
         // 現在のメッセージにキーワードが付加されていない時は付け加える
-        const std::string keyword = DBTREE::board_keyword_for_write( m_url );
+        const std::string keyword = m_post_strategy->get_keyword( m_url );
         if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
 
         ++m_count; // 永久ループ防止
@@ -424,11 +455,11 @@ void Post::receive_finish()
     else if( m_count < 1 // 永久ループ防止
              && ! m_subbbs && conf.find( "書き込み確認" ) != std::string::npos ){
 
-        // 書き込み用キーワード( hana=mogera や suka=pontan など )をセット
-        DBTREE::board_analyze_keyword_for_write( m_url, m_return_html );
+        // キーワードを解析してセット
+        m_post_strategy->analyze_keyword( m_url, m_return_html );
 
         // 現在のメッセージにキーワードが付加されていない時は付け加える
-        const std::string keyword = DBTREE::board_keyword_for_write( m_url );
+        const std::string keyword = m_post_strategy->get_keyword( m_url );
         if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
 
         // subbbs.cgi にポスト先を変更してもう一回ポスト

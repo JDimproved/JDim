@@ -344,6 +344,24 @@ void DBTREE::board_analyze_keyword_for_write( const std::string& url, const std:
 }
 
 
+std::string DBTREE::board_keyword_for_newarticle( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_keyword_for_newarticle();
+}
+
+
+void DBTREE::board_set_keyword_for_newarticle( const std::string& url, const std::string& keyword )
+{
+    DBTREE::get_board( url )->set_keyword_for_newarticle( keyword );
+}
+
+
+void DBTREE::board_analyze_keyword_for_newarticle( const std::string& url, const std::string& html )
+{
+    DBTREE::get_board( url )->analyze_keyword_for_newarticle( html );
+}
+
+
 std::string DBTREE::board_basicauth( const std::string& url )
 {
     return DBTREE::get_board( url )->get_basicauth();

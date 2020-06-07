@@ -87,35 +87,29 @@ bool Board2chCompati::is_valid( const std::string& filename )
 }
 
 
-// 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
-// 確認画面のhtmlから解析する      
-void Board2chCompati::analyze_keyword_for_write( const std::string& html )
+std::string Board2chCompati::analyze_keyword_impl( const std::string& html )
 {
     std::string keyword;
 
-#ifdef _DEBUG
-    std::cout << "Board2chCompati::analyze_keyword_for_write\n";
-    std::cout << html << std::endl << "--------------------\n";
-#endif
-
     JDLIB::Regex regex;
-    size_t offset = 0;
-    const bool icase = true; // 大文字小文字区別しない
-    const bool newline = false;  // . に改行をマッチさせる
-    const bool usemigemo = false;
-    const bool wchar = false;
+    std::size_t offset = 0;
+    constexpr bool icase = true; // 大文字小文字区別しない
+    constexpr bool newline = false;  // . に改行をマッチさせる
+    constexpr bool usemigemo = false;
+    constexpr bool wchar = false;
 
     for(;;){
 
         // <input type=hidden> のタグを解析して name と value を取得
-        if( ! regex.exec( "<input +type=hidden +name=([^ ]*) +value=([^>]*)>", html, offset, icase, newline, usemigemo, wchar ) ) break;
+        constexpr const char regex_input[] = R"(<input +type=("hidden"|hidden) +name=([^ ]*) +value=([^>]*)>)";
+        if( ! regex.exec( regex_input, html, offset, icase, newline, usemigemo, wchar ) ) break;
 
-        offset = html.find( regex.str( 0 ) );
+        offset = regex.pos( 0 );
 
-        std::string name = MISC::remove_space( regex.str( 1 ) );
+        std::string name = MISC::remove_space( regex.str( 2 ) );
         if( name[ 0 ] == '\"' ) name = MISC::cut_str( name, "\"", "\"" );
 
-        std::string value = MISC::remove_space( regex.str( 2 ) );
+        std::string value = MISC::remove_space( regex.str( 3 ) );
         if( value[ 0 ] == '\"' ) value = MISC::cut_str( value, "\"", "\"" );
 
 #ifdef _DEBUG
@@ -142,10 +136,37 @@ void Board2chCompati::analyze_keyword_for_write( const std::string& html )
     }
 
 #ifdef _DEBUG
-    std::cout << "keyword = " << keyword << std::endl;
+    std::cout << "Board2chCompati::analyze_keyword_impl keyword = " << keyword << std::endl;
 #endif
 
+    return keyword;
+}
+
+
+// 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
+// 確認画面のhtmlから解析する
+void Board2chCompati::analyze_keyword_for_write( const std::string& html )
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::analyze_keyword_for_write\n";
+    std::cout << html << std::endl << "--------------------\n";
+#endif
+
+    std::string keyword = analyze_keyword_impl( html );
     set_keyword_for_write( keyword );
+}
+
+
+// スレ立て時に必要なキーワードをフロントページのhtmlから解析する
+void Board2chCompati::analyze_keyword_for_newarticle( const std::string& html )
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::analyze_keyword_for_newarticle\n";
+    std::cout << html << std::endl << "--------------------\n";
+#endif
+
+    std::string keyword = analyze_keyword_impl( html );
+    set_keyword_for_newarticle( keyword );
 }
 
 
