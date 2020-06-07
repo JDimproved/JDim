@@ -132,7 +132,6 @@ void EmbeddedImage::resize_thread()
     const int width = m_img->get_width_emb();
     const int height = m_img->get_height_emb();
 
-    std::string errmsg;
     bool pixbufonly = true;
 
     if( m_img->get_type() == DBIMG::T_BMP ) pixbufonly = false; // BMP の場合 pixbufonly = true にすると真っ黒になる

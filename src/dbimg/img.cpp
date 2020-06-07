@@ -777,8 +777,6 @@ void Img::read_info()
 */
         // TODO : JDLIB::ConfLoaderFast を作る
         std::string str_info, str_tmp;
-        std::list< std::string > list_tmp;
-        std::list< std::string >::iterator it_tmp;
         CACHE::load_rawdata( path_info, str_info );
 
         std::list< std::string > lines = MISC::get_lines( str_info );

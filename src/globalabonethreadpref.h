@@ -62,7 +62,7 @@ namespace CORE
         GlobalAboneThreadPref( Gtk::Window* parent, const std::string& url )
         : SKELETON::PrefDiag( parent, url )
         {
-            std::string str_name, str_word, str_regex;
+            std::string str_word, str_regex;
             std::list< std::string >::iterator it;
 
             // スレ数、時間

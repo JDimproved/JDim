@@ -482,9 +482,6 @@ bool ConfigItems::load( const bool restore )
     // ツールバーの背景描画
     draw_toolbarback = cf.get_option_bool( "draw_toolbarback", CONF_DRAW_TOOLBARBACK );
 
-    std::list< std::string > list_tmp;
-    std::list< std::string >::iterator it_tmp;
-
     // スレ あぼーん word
     str_tmp = cf.get_option_str( "abonewordthread", "" );
     if( ! str_tmp.empty() ) list_abone_word_thread = MISC::strtolist( str_tmp );
