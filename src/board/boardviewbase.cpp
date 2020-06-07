@@ -973,7 +973,7 @@ void BoardViewBase::slot_col_clicked( const int col )
 //
 // row_a が上か　row_b　が上かを返す。同じ状態なら 0
 //
-int BoardViewBase::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+int BoardViewBase::compare_drawbg( const Gtk::TreeModel::Row& row_a, const Gtk::TreeModel::Row& row_b ) const
 {
     const bool draw_a = row_a[ m_columns.m_col_drawbg ];
     const bool draw_b = row_b[ m_columns.m_col_drawbg ];
@@ -990,7 +990,8 @@ int BoardViewBase::compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::R
 //
 // row_a が上か　row_b　が上かを返す。同じなら 0
 //
-int BoardViewBase::compare_col( const int col, const int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b )
+int BoardViewBase::compare_col( const int col, const int sortmode,
+                                const Gtk::TreeModel::Row& row_a, const Gtk::TreeModel::Row& row_b ) const
 {
     int num_a = 0, num_b = 0;
     int ret = 0;
@@ -2438,7 +2439,7 @@ void BoardViewBase::slot_open_browser()
 //
 // 記事を開く
 //
-bool BoardViewBase::open_row( Gtk::TreePath& path, const bool tab, const bool reget )
+bool BoardViewBase::open_row( const Gtk::TreePath& path, const bool tab, const bool reget )
 {
     std::string str_tab = "false";
     if( tab ) str_tab = "opentab";

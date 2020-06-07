@@ -22,7 +22,7 @@ enum
 };
 
 
-EditListWin::EditListWin( const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore )
+EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeStore >& treestore )
     : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
       m_label( "マウスの中ボタンドラッグで行の複数選択が可能です。" )
 {

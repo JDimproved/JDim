@@ -117,7 +117,7 @@ namespace SKELETON
         void set_editable_view( const bool editable );
 
         // 指定した path のタイプは ディレクトリか
-        bool is_dir( Gtk::TreeModel::iterator& it );
+        bool is_dir( const Gtk::TreeModel::iterator& it ) const;
         bool is_dir( const Gtk::TreePath& path );
 
         // 次のディレクトリに移動

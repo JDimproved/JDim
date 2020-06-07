@@ -1039,7 +1039,7 @@ void BBSListViewBase::next_dir()
 //
 // 他のviewのtreestoreをcopyして表示
 //
-void BBSListViewBase::copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store )
+void BBSListViewBase::copy_treestore( const Glib::RefPtr< Gtk::TreeStore >& store )
 {
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::copy_treestore\n";

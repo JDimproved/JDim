@@ -907,7 +907,7 @@ void EditTreeView::draw_underline( const Gtk::TreePath& path, const bool draw )
 //
 // path は ディレクトリか
 //
-bool EditTreeView::is_dir( Gtk::TreeModel::iterator& it )
+bool EditTreeView::is_dir( const Gtk::TreeModel::iterator& it ) const
 {
     const Gtk::TreeRow row = ( *it );
     if( ! row ) return false;
