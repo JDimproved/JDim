@@ -69,7 +69,7 @@ void ConfLoader::save()
     std::string str_conf;
 
     for( const ConfData& conf : m_data ) {
-        str_conf += conf.name + " = " + conf.value + "\n";
+        str_conf.append( conf.name + " = " + conf.value + "\n" );
     }
 
 #ifdef _DEBUG
@@ -88,11 +88,11 @@ void ConfLoader::update( const std::string& name, const std::string& value )
 {
     if( name.empty() ) return;
 
-    for( ConfData& conf : m_data ) {
-        if( conf.name == name ) {
-            conf.value = value;
-            return;
-        }
+    auto it = std::find_if( m_data.begin(), m_data.end(),
+                            [&name]( const ConfData& c ) { return c.name == name; } );
+    if( it != m_data.end() ) {
+        it->value = value;
+        return;
     }
 
     // 追加
