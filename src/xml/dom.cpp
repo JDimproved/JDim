@@ -615,8 +615,7 @@ bool Dom::removeChild( Dom* node )
     if( ! node ) return false;
 
     m_childNodes.remove( node );
-
-    if( node ) delete node;
+    delete node;
 
     return true;
 }

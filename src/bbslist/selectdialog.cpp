@@ -49,7 +49,7 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
 
     name = "お気に入りの先頭に追加";
     m_combo_dirs.append( name );
-    if( ! active_row && name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
+    if( name == SESSION::get_dir_select_favorite() ) active_row = m_vec_path.size();
     m_vec_path.push_back( "-1" );
 
     name = "お気に入りの最後に追加";
