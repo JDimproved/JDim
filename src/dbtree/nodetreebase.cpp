@@ -576,13 +576,10 @@ std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bo
     const bool wchar = true; // 全角半角の区別をしない
 
     const std::list< std::string > list_query = MISC::split_line( query );
-    std::list< std::string >::const_iterator it_query;
-    for( it_query = list_query.begin(); it_query != list_query.end() ; ++it_query ){
+    for( const std::string& keyword : list_query ) {
 
-        const std::string &query = ( *it_query );
-        
         list_regex.push_back( JDLIB::Regex() );
-        list_regex.back().compile( query, icase, newline, usemigemo, wchar );
+        list_regex.back().compile( keyword, icase, newline, usemigemo, wchar );
     }
 
     for( int i = 1; i <= m_id_header ; ++i ){
