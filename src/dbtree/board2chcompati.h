@@ -28,6 +28,9 @@ namespace DBTREE
         // 確認画面のhtmlから解析する      
         void analyze_keyword_for_write( const std::string& html ) override;
 
+        // スレ立て時に必要なキーワードをフロントページのhtmlから解析する
+        void analyze_keyword_for_newarticle( const std::string& html ) override;
+
         // 新スレ作成用のメッセージ変換
         std::string create_newarticle_message( const std::string& subject, const std::string& name,
                                                const std::string& mail, const std::string& msg ) override;
@@ -61,6 +64,9 @@ namespace DBTREE
 
         // レス数であぼーん(グローバル)
         int get_abone_number_global() override;
+
+        // htmlからキーワードを解析する
+        std::string analyze_keyword_impl( const std::string& html );
     };
 }
 

@@ -192,6 +192,10 @@ namespace DBTREE
         // 書き込み時のメッセージに付加する
         std::string m_keyword_for_write;   
 
+        // スレ立て時に必要なキーワード
+        // スレ立て時のメッセージに付加する
+        std::string m_keyword_for_newarticle;
+
         // basic 認証用の「ユーザID:パスワード」の組
         std::string m_basicauth;
 
@@ -336,9 +340,17 @@ namespace DBTREE
         const std::string& get_keyword_for_write() const { return m_keyword_for_write; }
         void set_keyword_for_write( const std::string& keyword ){ m_keyword_for_write = keyword; }
 
+        // スレ立て時に必要なキーワード
+        // スレ立て時のメッセージに付加する
+        const std::string& get_keyword_for_newarticle() const { return m_keyword_for_newarticle; }
+        void set_keyword_for_newarticle( const std::string& keyword ){ m_keyword_for_newarticle = keyword; }
+
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
         // 確認画面のhtmlから解析する      
         virtual void analyze_keyword_for_write( const std::string& html ){}
+
+        // スレ立て時に必要なキーワードをフロントページのhtmlから解析する
+        virtual void analyze_keyword_for_newarticle( const std::string& html ) {}
 
         // 書き込み時のリファラ
         virtual std::string get_write_referer(){ return url_boardbase(); }

@@ -87,9 +87,7 @@ bool Board2chCompati::is_valid( const std::string& filename )
 }
 
 
-// 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
-// 確認画面のhtmlから解析する
-void Board2chCompati::analyze_keyword_for_write( const std::string& html )
+std::string Board2chCompati::analyze_keyword_impl( const std::string& html )
 {
     std::string keyword;
 
@@ -138,10 +136,37 @@ void Board2chCompati::analyze_keyword_for_write( const std::string& html )
     }
 
 #ifdef _DEBUG
-    std::cout << "keyword = " << keyword << std::endl;
+    std::cout << "Board2chCompati::analyze_keyword_impl keyword = " << keyword << std::endl;
 #endif
 
+    return keyword;
+}
+
+
+// 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )を
+// 確認画面のhtmlから解析する
+void Board2chCompati::analyze_keyword_for_write( const std::string& html )
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::analyze_keyword_for_write\n";
+    std::cout << html << std::endl << "--------------------\n";
+#endif
+
+    std::string keyword = analyze_keyword_impl( html );
     set_keyword_for_write( keyword );
+}
+
+
+// スレ立て時に必要なキーワードをフロントページのhtmlから解析する
+void Board2chCompati::analyze_keyword_for_newarticle( const std::string& html )
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::analyze_keyword_for_newarticle\n";
+    std::cout << html << std::endl << "--------------------\n";
+#endif
+
+    std::string keyword = analyze_keyword_impl( html );
+    set_keyword_for_newarticle( keyword );
 }
 
 
