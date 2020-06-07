@@ -6,6 +6,7 @@
 #include "board2ch.h"
 #include "article2ch.h"
 #include "articlehash.h"
+#include "frontloader.h"
 
 #include "config/globalconf.h"
 
@@ -29,7 +30,12 @@ Board2ch::Board2ch( const std::string& root, const std::string& path_board, cons
 }
 
 
-Board2ch::~Board2ch() noexcept = default;
+Board2ch::~Board2ch() noexcept
+{
+    if( m_frontloader ) {
+        m_frontloader->terminate_load();
+    }
+}
 
 
 // ユーザエージェント
@@ -178,6 +184,15 @@ std::string Board2ch::cookie_for_post() const
 std::string Board2ch::get_write_referer()
 {
     return Board2chCompati::get_write_referer();
+}
+
+
+// フロントページのダウンロード
+void Board2ch::download_front()
+{
+    if( ! m_frontloader ) m_frontloader.reset( new FrontLoader( url_boardbase() ) );
+    m_frontloader->reset();
+    m_frontloader->download_text();
 }
 
 

@@ -9,8 +9,13 @@
 
 #include "board2chcompati.h"
 
+#include <memory>
+
+
 namespace DBTREE
 {
+    class FrontLoader;
+
     enum
     {
         DEFAULT_NUMBER_MAX_2CH = 1000,  // デフォルト最大レス数
@@ -19,6 +24,8 @@ namespace DBTREE
 
     class Board2ch : public Board2chCompati
     {
+        std::unique_ptr<FrontLoader> m_frontloader;
+
       public:
 
         Board2ch( const std::string& root, const std::string& path_board,const std::string& name );
@@ -45,6 +52,9 @@ namespace DBTREE
 
         // 書き込み時のリファラ
         std::string get_write_referer() override;
+
+        // フロントページのダウンロード
+        void download_front() override;
 
         // 新スレ作成用のメッセージ変換
         std::string create_newarticle_message( const std::string& subject, const std::string& name,
