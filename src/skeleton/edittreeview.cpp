@@ -66,13 +66,13 @@ int get_uptodate_type( const std::string& url, const int type_org )
     if( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ){
 
         if( DBTREE::board_status( url ) & STATUS_UPDATE ) type = TYPE_BOARD_UPDATE;
-        else if( type != TYPE_BOARD ) type = TYPE_BOARD;
+        else type = TYPE_BOARD;
     }
     else if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE || type == TYPE_THREAD_OLD ){
 
         if( DBTREE::article_status( url ) & STATUS_OLD ) type = TYPE_THREAD_OLD;
         else if( DBTREE::article_status( url ) & STATUS_UPDATE ) type = TYPE_THREAD_UPDATE;
-        else if( type != TYPE_THREAD ) type = TYPE_THREAD;
+        else type = TYPE_THREAD;
     }
 
     return type;

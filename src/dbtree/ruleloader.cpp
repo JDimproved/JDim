@@ -62,8 +62,7 @@ void RuleLoader::create_loaderdata( JDLIB::LOADERDATA& data )
     else{
 
         // 移転処理
-        std::string url_boardbase = DBTREE::url_boardbase( m_url_boadbase );
-        if( m_url_boadbase != url_boardbase ) m_url_boadbase = url_boardbase;
+        m_url_boadbase = DBTREE::url_boardbase( m_url_boadbase );
 
         data.url = get_url();
         data.agent = DBTREE::get_agent( m_url_boadbase );
