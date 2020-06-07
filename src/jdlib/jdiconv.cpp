@@ -235,7 +235,7 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
 
                 //その他、1文字を空白にして続行
 #ifdef _DEBUG_ICONV
-                snprintf( str_tmp, 256, "iconv EILSEQ left = %zd code = %x %x %x", m_byte_left_in, code0, code1, code2 );
+                snprintf( str_tmp, 256, "iconv EILSEQ left = %zu code = %x %x %x", m_byte_left_in, code0, code1, code2 );
                 MISC::ERRMSG( str_tmp );
 #endif
                 *m_buf_in_tmp = 0x20;
