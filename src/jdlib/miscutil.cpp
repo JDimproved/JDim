@@ -61,7 +61,7 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
     while( data[ pos ] != '\0' ){
 
         // 空白削除
-        while( data[ pos ] == ' ' && data[ pos ] != '\0' ) ++pos;
+        while( data[ pos ] == ' ' ) ++pos;
         if( data[ pos ] == '\0' ) break;
 
         length = 1;
