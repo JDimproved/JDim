@@ -205,7 +205,7 @@ void Dom::parse( const std::string& str )
                     else if( close_tag.compare( 0, name.length() + 1, "/" + name ) == 0 ) --count;
 
                     // 終了タグを見つける必要数が 0 になったらループを抜ける
-                    if( count <= 0 ) break;
+                    if( count == 0 ) break;
                 }
 
                 // 必要な終了タグが見付からないまま上記のループを抜けた場合は、全体のループを抜ける
