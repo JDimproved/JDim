@@ -120,6 +120,7 @@ namespace DBTREE
     int board_code( const std::string& url );
     std::string board_str_code( const std::string& url );
     void board_save_info( const std::string& url );
+    void board_download_front( const std::string& url );
     void board_download_subject( const std::string& url, const std::string& url_update_view );
     void board_read_subject_from_cache( const std::string& url );
     bool board_is_loading( const std::string& url );

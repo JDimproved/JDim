@@ -404,6 +404,10 @@ void Post::receive_finish()
 #endif        
 
         DBTREE::article_update_writetime( m_url );
+        if( m_new_article ) {
+            // 板のフロントページをダウンロードしてスレ立てに使うキーワードを更新する
+            DBTREE::board_download_front( m_url );
+        }
         emit_sigfin();
         return;
     }

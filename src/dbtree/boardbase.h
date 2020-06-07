@@ -412,6 +412,9 @@ namespace DBTREE
         // article クラスのポインタ取得
         ArticleBase* get_article_fromURL( const std::string& url );
 
+        // フロントページのダウンロード
+        virtual void download_front() {}
+
         // subject.txt ダウンロード
         // url_update_view : CORE::core_set_command( "update_board" ) を送信するビューのアドレス
         // read_from_cache : まだスレ一覧を開いていないときにキャッシュのsubject.txtを読み込む

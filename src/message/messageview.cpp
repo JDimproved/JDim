@@ -153,6 +153,9 @@ void MessageViewMain::reload()
 
     // メインウィンドウのタイトルに表示する文字
     set_title( "[ 新スレ作成 ] " + DBTREE::article_subject( get_url() ) );
+
+    // 板のフロントページをダウンロードしてスレ立てに使うキーワードを更新する
+    DBTREE::board_download_front( get_url() );
 }
 
 

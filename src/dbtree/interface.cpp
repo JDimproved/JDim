@@ -398,6 +398,12 @@ void DBTREE::board_save_info( const std::string& url )
 }
 
 
+void DBTREE::board_download_front( const std::string& url )
+{
+    DBTREE::get_board( url )->download_front();
+}
+
+
 void DBTREE::board_download_subject( const std::string& url, const std::string& url_update_view )
 {
     DBTREE::get_board( url )->download_subject( url_update_view, false );
