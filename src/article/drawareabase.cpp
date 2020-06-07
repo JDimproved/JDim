@@ -3507,8 +3507,11 @@ void DrawAreaBase::exec_scroll()
 
                 // この辺の式は経験的に決定
                 if( -AUTOSCR_CIRCLE/4 <= dy && dy <= AUTOSCR_CIRCLE/4 ) dy = 0;
-                else dy =  ( dy / fabs( dy ) ) * MIN( ( exp( ( fabs( dy ) - AUTOSCR_CIRCLE/4 ) /50 ) -1 ) * 5,
-                                                      adjust->get_page_size() * 3 );
+                else {
+                    dy = std::copysign( std::fmin( std::expm1( ( std::fabs( dy ) - AUTOSCR_CIRCLE/4 ) /50 ) * 5,
+                                                   adjust->get_page_size() * 3 ),
+                                        dy );
+                }
                 if( m_drugging ) dy *= 4;  // 範囲選択中ならスピード上げる
             }
 
