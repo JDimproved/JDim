@@ -89,9 +89,11 @@ AC_MSG_RESULT($with_gtkmm3)
 
 AS_IF([test "x$with_gtkmm3" = xno],
       [PKG_CHECK_MODULES(GTKMM, [gtkmm-2.4 >= 2.24.0])
-       AC_MSG_WARN([JDim will require gtkmm-3.0 >= 3.0.0 in the future release.])],
-      [PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.0.0], [], [])
-       AC_DEFINE(WITH_GTKMM_3_0, 1, [Use gtkmm-3.0 instead of gtkmm-2.4])])
+       AC_MSG_WARN([JDim will require gtkmm-3.0 >= 3.18.0 in the future release.])],
+      [PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.18.0], [], [
+         AC_MSG_WARN([JDim will require gtkmm-3.0 >= 3.18.0 in the future release.])
+         PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.0.0])
+       ])])
 
 AC_SUBST(GTKMM_CFLAGS)
 AC_SUBST(GTKMM_LIBS)
