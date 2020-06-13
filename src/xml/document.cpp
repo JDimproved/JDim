@@ -113,22 +113,15 @@ void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETO
 //
 // ルート要素を取得
 //
+// node_name : 要素名で限定、空の時は要素名問わず取得
+//
 Dom* Document::get_root_element( const std::string& node_name ) const
 {
-    Dom* node = nullptr;
+    const std::list<Dom*> children = childNodes();
+    auto it = std::find_if( children.cbegin(), children.cend(),
+                            []( const Dom* c ) { return c->nodeType() == NODE_TYPE_ELEMENT; } );
 
-    for( Dom* child : childNodes() )
-    {
-        if( child->nodeType() == NODE_TYPE_ELEMENT )
-        {
-            // 要素名問わず
-            if( node_name.empty() ) node = child;
-            // 要素名限定
-            else if( child->nodeName() == node_name ) node = child;
-
-            break;
-        }
-    }
-
-    return node;
+    if( it != children.cend()
+        && ( node_name.empty() || (*it)->nodeName() == node_name ) ) return *it;
+    return nullptr;
 }
