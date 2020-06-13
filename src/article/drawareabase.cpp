@@ -5442,8 +5442,8 @@ bool DrawAreaBase::slot_motion_notify_event( GdkEventMotion* event )
                m_scrollinfo.counter_nomotion - abs( m_scrollinfo.x - m_x_pointer ) - abs( m_scrollinfo.y - m_y_pointer )
             );
 
-        if( m_scrollinfo.x != m_x_pointer ) m_scrollinfo.x = m_x_pointer;
-        if( m_scrollinfo.y != m_y_pointer ) m_scrollinfo.y = m_y_pointer;
+        m_scrollinfo.x = m_x_pointer;
+        m_scrollinfo.y = m_y_pointer;
 
 #ifdef _DEBUG
         std::cout << " -> " << m_scrollinfo.counter_nomotion << std::endl;
