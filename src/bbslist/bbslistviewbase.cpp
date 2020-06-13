@@ -3001,8 +3001,6 @@ void BBSListViewBase::get_threads( const size_t dirid, std::vector< std::string 
     std::cout << "BBSListViewBase::get_threads " << dirid << std::endl;
 #endif
 
-    std::list< Gtk::TreePath > list_path;
-
     Gtk::TreePath path = m_treeview.dirid_to_path( dirid );
     if( dirid && path.empty() ) return;
 
