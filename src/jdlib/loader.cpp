@@ -29,6 +29,8 @@
 
 #include "httpcode.h"
 
+#include <algorithm>
+#include <array>
 #include <cstring>
 #include <mutex>
 #include <sstream>
@@ -470,12 +472,14 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     }
 
     // ssl使用指定
-    // HACK: don't use SSL to access 2ch via a scraping proxy
+    // HACK: httpsから始まるURLで プロキシを使わない or 2ch系サイトでない 場合はhttpsで送信する
+    constexpr std::array<const char*, 3> domains{ ".5ch.net", ".2ch.net", ".bbspink.com" };
+    const std::string& hostname = m_data.host;
+    const auto has_domain = [&hostname]( const char* d ) { return hostname.find( d ) != std::string::npos; };
+
     if( data_in.use_ssl
         || ( m_data.protocol.find( "https://" ) != std::string::npos
-             && m_data.host.find( ".2ch.net" ) == std::string::npos
-             && m_data.host.find( ".5ch.net" ) == std::string::npos
-             && m_data.host.find( ".bbspink.com" ) == std::string::npos
+             && ( data_in.host_proxy.empty() || std::none_of( domains.cbegin(), domains.cend(), has_domain ) )
            )
       ){
         m_data.use_ssl = true;
