@@ -143,7 +143,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         int save = 0;
         for( const int res : tmp_set ) {
             if( !pre_res ) {
-                pre_res = save = res;
+                save = res;
             }
             else if( res - pre_res > 1 ) {
                 str_res.append( std::to_string( save ) );

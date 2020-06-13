@@ -368,7 +368,7 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
             {
                 css.border_left_width_em = size;
                 css.border_right_width_em = size;
-                css.border_right_width_em = size;
+                css.border_top_width_em = size;
                 css.border_bottom_width_em = size;
             }
             else
@@ -421,7 +421,7 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
             {
                 css.mrg_left_em = size;
                 css.mrg_right_em = size;
-                css.mrg_right_em = size;
+                css.mrg_top_em = size;
                 css.mrg_bottom_em = size;
             }
             else

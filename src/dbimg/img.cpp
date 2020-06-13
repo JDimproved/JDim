@@ -864,7 +864,7 @@ void Img::save_info()
     }
 
     if( m_protect ) path_info = CACHE::path_img_protect_info( m_url );
-    if( m_abone ) path_info = CACHE::path_img_abone( m_url );
+    else if( m_abone ) path_info = CACHE::path_img_abone( m_url );
     else path_info = CACHE::path_img_info( m_url );
 
     std::ostringstream oss;
