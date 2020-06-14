@@ -1192,8 +1192,8 @@ void EditTreeView::delete_selected_rows( const bool force )
 
     // 削除する行を取得
     CORE::DATA_INFO_LIST list_info;
-    const bool dir = true;
-    get_info_in_selection( list_info, dir );
+    constexpr bool scan_in_dir = true;
+    get_info_in_selection( list_info, scan_in_dir );
 
     // カーソルを最後の行の次の行に移動するため、あらかじめ削除範囲の最後の行に移動しておく
     const Gtk::TreePath next = next_path( Gtk::TreePath( ( list_info.back() ).path ), true );
@@ -1207,8 +1207,8 @@ void EditTreeView::delete_selected_rows( const bool force )
         m_undo_buffer->set_list_info( CORE::DATA_INFO_LIST(), list_info );
 
         CORE::DATA_INFO_LIST list_info_selected;
-        const bool dir = false;
-        get_info_in_selection( list_info_selected, dir );
+        constexpr bool not_scan_in_dir = false;
+        get_info_in_selection( list_info_selected, not_scan_in_dir );
         m_undo_buffer->set_list_info_selected( list_info_selected );  // redo したときに選択する列
 
         m_undo_buffer->commit();
