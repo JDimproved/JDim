@@ -480,7 +480,7 @@ void DragableNoteBook::focus_toolbar_search()
 //
 // ツールバーURL更新
 //
-void DragableNoteBook::update_toolbar_url( std::string& url_old, std::string& url_new )
+void DragableNoteBook::update_toolbar_url( const std::string& url_old, const std::string& url_new )
 {
     for( int i = 0; i < m_notebook_toolbar.get_n_pages(); ++i ){
         SKELETON::ToolBar* toolbar = get_toolbar( i );

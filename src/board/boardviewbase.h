@@ -245,8 +245,9 @@ namespace BOARD
         // ヘッダをクリックしたときのslot関数
         void slot_col_clicked( const int col );
 
-        int compare_drawbg( Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
-        int compare_col( const int col, const int sortmode, Gtk::TreeModel::Row& row_a, Gtk::TreeModel::Row& row_b );
+        int compare_drawbg( const Gtk::TreeModel::Row& row_a, const Gtk::TreeModel::Row& row_b ) const;
+        int compare_col( const int col, const int sortmode,
+                         const Gtk::TreeModel::Row& row_a, const Gtk::TreeModel::Row& row_b ) const;
         int slot_compare_row( const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b );
 
         // UI
@@ -277,7 +278,7 @@ namespace BOARD
                                  Gtk::SelectionData& selection_data, guint info, guint time );
         void slot_dropped_url_list( const std::list< std::string >& );
 
-        bool open_row( Gtk::TreePath& path, const bool tab, const bool reget );
+        bool open_row( const Gtk::TreePath& path, const bool tab, const bool reget );
         void open_selected_rows( const bool reget );
         std::string path2daturl( const Gtk::TreePath& path );
         std::string path2url_board( const Gtk::TreePath& path );

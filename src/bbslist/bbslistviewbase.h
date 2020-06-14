@@ -246,7 +246,7 @@ namespace BBSLIST
 
         // selectdialogで使う
         Gtk::TreePath get_current_path() { return m_treeview.get_current_path(); }
-        void copy_treestore( Glib::RefPtr< Gtk::TreeStore >& store );
+        void copy_treestore( const Glib::RefPtr< Gtk::TreeStore >& store );
 
         // undo, redo
         void undo();
