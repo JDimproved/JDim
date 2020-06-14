@@ -78,7 +78,7 @@ HistorySubMenu::HistorySubMenu( const std::string& url_history )
         hbox->pack_start( *label, Gtk::PACK_SHRINK );
         hbox->pack_end( *label_motion, Gtk::PACK_SHRINK );
 
-        Gtk::MenuItem* item = Gtk::manage( new Gtk::MenuItem( *hbox ) );
+        item = Gtk::manage( new Gtk::MenuItem( *hbox ) );
         append( *item );
         item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_active ), i ) );
         item->signal_button_press_event().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_button_press ), i ) );
