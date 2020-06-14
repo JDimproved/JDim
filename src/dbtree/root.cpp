@@ -11,6 +11,7 @@
 #include "boardbase.h"
 #include "articlebase.h"
 
+#include "jdlib/cookiemanager.h"
 #include "jdlib/jdiconv.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/miscutil.h"
@@ -309,6 +310,36 @@ void Root::download_bbsmenu()
     data.init_for_data();
     data.url = CONFIG::get_url_bbsmenu();
     data.modified = get_date_modified();
+
+    bool send_cookie = true;
+
+    constexpr bool protocol = false;
+    const std::string host = MISC::get_hostname( data.url, protocol );
+    if( host.find( ".5ch.net" ) != std::string::npos || host.find( ".2ch.net" ) != std::string::npos ) {
+        data.agent = CONFIG::get_agent_for2ch();
+        if( CONFIG::get_use_proxy_for2ch() ) {
+            data.host_proxy = CONFIG::get_proxy_for2ch();
+            data.port_proxy = CONFIG::get_proxy_port_for2ch();
+            data.basicauth_proxy = CONFIG::get_proxy_basicauth_for2ch();
+            data.basicauth = CONFIG::get_proxy_basicauth_for2ch();
+            send_cookie = CONFIG::get_send_cookie_to_proxy_for2ch();
+        }
+    }
+    else {
+        data.agent = CONFIG::get_agent_for_data();
+        if( CONFIG::get_use_proxy_for_data() ) {
+            data.host_proxy = CONFIG::get_proxy_for_data();
+            data.port_proxy = CONFIG::get_proxy_port_for_data();
+            data.basicauth_proxy = CONFIG::get_proxy_basicauth_for_data();
+            data.basicauth = CONFIG::get_proxy_basicauth_for_data();
+            send_cookie = CONFIG::get_send_cookie_to_proxy_for_data();
+        }
+    }
+
+    if( send_cookie ) {
+        const JDLIB::CookieManager* cookie_manager = JDLIB::get_cookie_manager();
+        data.cookie_for_request = cookie_manager->get_cookie_by_host( data.url );
+    }
 
     start_load( data );
 }
