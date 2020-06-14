@@ -255,14 +255,14 @@ void History_Manager::xml2viewhistory()
 
             if( histitem->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
 
-            const int type = XML::get_type( histitem->nodeName() );
-            if( type != TYPE_HISTITEM ) continue;
+            const int item_type = XML::get_type( histitem->nodeName() );
+            if( item_type != TYPE_HISTITEM ) continue;
 
             const std::string name = histitem->getAttribute( "name" );
             const std::string url = histitem->getAttribute( "url" );
 
 #ifdef _DEBUG
-            std::cout << "type = " << type << std::endl
+            std::cout << "type = " << item_type << std::endl
                       << "name = " << name << std::endl
                       << "url = " << url << std::endl;
 #endif
