@@ -2523,10 +2523,10 @@ void BBSListViewBase::select_item( const std::string& url )
     }
 
     // 現在選択しているものと一致する場合は何もしない
-    Gtk::TreePath path = m_treeview.get_current_path();
-    if( ! path.empty() ){
+    Gtk::TreePath current_path = m_treeview.get_current_path();
+    if( ! current_path.empty() ){
         // 板一覧やお気に入りに、該当するURLが2つある場合がある
-        if( url_item == path2rawurl( path ) || url_item == path2url( path ) ) return;
+        if( url_item == path2rawurl( current_path ) || url_item == path2url( current_path ) ) return;
     }
 
     Gtk::TreePath closed_path;
