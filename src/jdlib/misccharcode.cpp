@@ -40,7 +40,7 @@
 // 2バイト目 0xA1〜0xFE
 #define EUC_RANGE_MULTI( target ) ( (unsigned char)( target - 0xA1 ) < 0x5E )
 //
-bool MISC::is_euc( const char* input, size_t& read_byte )
+bool MISC::is_euc( const char* input, size_t read_byte )
 {
     if( ! input ) return false;
 
@@ -131,7 +131,7 @@ bool MISC::is_jis( const char* input, size_t& byte )
 // 0x80〜0xFC
 #define SJIS_RANGE_2_T( target ) ( (unsigned char)( target - 0x80 ) < 0x7D )
 //
-bool MISC::is_sjis( const char* input, size_t& read_byte )
+bool MISC::is_sjis( const char* input, size_t read_byte )
 {
     if( ! input ) return false;
 
@@ -187,7 +187,7 @@ bool MISC::is_sjis( const char* input, size_t& read_byte )
 // [ 2バイト目以降 ] 0x80〜0xBF
 #define UTF_RANGE_MULTI_BYTE( target ) ( (unsigned char)( target - 0x80 ) < 0x40 )
 //
-bool MISC::is_utf( const char* input, size_t& read_byte )
+bool MISC::is_utf( const char* input, size_t read_byte )
 {
     if( ! input ) return false;
 
@@ -258,6 +258,7 @@ int MISC::judge_char_code( const std::string& str )
     if( is_jis( str.c_str(), read_byte ) ) code = CHARCODE_JIS;
     // JISの判定で最後まで進んでいたら制御文字かアスキー
     else if( read_byte == str.length() ) code = CHARCODE_ASCII;
+    // is_jis()でASCII範囲外のバイトが現れた箇所から判定する
     // UTF-8の範囲
     else if( is_utf( str.c_str(), read_byte ) ) code = CHARCODE_UTF;
     // EUC-JPの範囲
