@@ -2361,8 +2361,10 @@ std::list< std::string > BoardBase::get_check_update_articles()
     if( empty() ) return list_url;
     if( is_loading() ) return list_url;
     if( m_status & STATUS_UPDATE ) return list_url;
-    if( ! m_list_subject_created ) download_subject( std::string(), true );
-    if( ! m_list_subject_created ) return list_url;
+    if( ! m_list_subject_created ) {
+        download_subject( std::string(), true );
+        return list_url;
+    }
 
 #ifdef _DEBUG
     std::cout << "BoardBase::get_check_update_articles url = " << url_boardbase() << std::endl;

@@ -670,11 +670,13 @@ const char* ArticleViewBase::get_menu_item( const int item )
 //
 int ArticleViewBase::width_client() const
 {
+    if( m_drawarea ) {
+        const int width_client = m_drawarea->width_client();
 #ifdef _DEBUG
-    if( m_drawarea ) std::cout << "ArticleViewBase::width_client : " << m_drawarea->width_client() << std::endl;
+        std::cout << "ArticleViewBase::width_client : " << width_client << std::endl;
 #endif
-
-    if( m_drawarea ) return m_drawarea->width_client();
+        return width_client;
+    }
 
     return SKELETON::View::width_client();
 }
@@ -685,11 +687,15 @@ int ArticleViewBase::width_client() const
 //
 int ArticleViewBase::height_client() const
 {
+    if( m_drawarea ) {
+        const int height_client = m_drawarea->height_client();
 #ifdef _DEBUG
-    if( m_drawarea ) std::cout << "ArticleViewBase::height_client : " << m_drawarea->height_client() << std::endl;
+        std::cout << "ArticleViewBase::height_client : " << height_client << std::endl;
 #endif
+        return height_client;
+    }
 
-    if( m_drawarea ) return m_drawarea->height_client();
+
 
     return SKELETON::View::height_client();
 }
