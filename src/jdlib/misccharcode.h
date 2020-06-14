@@ -19,10 +19,10 @@ namespace MISC
         CHARCODE_UTF
     };
 
-    bool is_euc( const char* input, size_t& read_byte );
+    bool is_euc( const char* input, size_t read_byte );
     bool is_jis( const char* input, size_t& read_byte );
-    bool is_sjis( const char* input, size_t& read_byte );
-    bool is_utf( const char* input, size_t& read_byte );
+    bool is_sjis( const char* input, size_t read_byte );
+    bool is_utf( const char* input, size_t read_byte );
     int judge_char_code( const std::string& str );
 }
 
