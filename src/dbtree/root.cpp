@@ -970,7 +970,7 @@ void Root::push_movetable( std::string old_root,
             str += str_tmp;
 
             m_movetable.erase( it_move );
-            m_movetable.push_back( movetable );
+            m_movetable.push_back( std::move( movetable ) );
             it_move = m_movetable.begin();
             continue;
         }
@@ -981,11 +981,11 @@ void Root::push_movetable( std::string old_root,
     if( ! str.empty() ) MISC::MSG( "\n" + str );
 
     MOVETABLE movetable;
-    movetable.old_root = old_root;
-    movetable.old_path_board = old_path_board;
-    movetable.new_root = new_root;
-    movetable.new_path_board = new_path_board;
-    m_movetable.push_back( movetable );
+    movetable.old_root = std::move( old_root );
+    movetable.old_path_board = std::move( old_path_board );
+    movetable.new_root = std::move( new_root );
+    movetable.new_path_board = std::move( new_path_board );
+    m_movetable.push_back( std::move( movetable ) );
 }
 
 
