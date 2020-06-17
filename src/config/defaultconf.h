@@ -215,7 +215,7 @@ namespace CONFIG
 #define CONF_LOGINBE "http://be.2ch.net/test/login.php"
 
 // bbsmenu.htmlのURL
-#define CONF_URL_BBSMENU "http://menu.5ch.net/bbsmenu.html"
+#define CONF_URL_BBSMENU "https://menu.5ch.net/bbsmenu.html"
 
 // スレタイ検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (ff5ch.syoboi.jp)"
