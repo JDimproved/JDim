@@ -112,7 +112,8 @@ namespace CONFIG
     const std::string& get_url_loginbe();
 
     // bbsmenu.htmlのURL
-    const std::string& get_url_bbsmenu();    
+    const std::string& get_url_bbsmenu();
+    void set_url_bbsmenu( std::string url );
 
     // bbsmenu.html内にあるリンクは全て板とみなす
     bool use_link_as_board();
