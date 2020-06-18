@@ -930,7 +930,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
     m_width_client = 0;
     m_height_client = 0;
-    int x, y = 0;
+    int y = 0;
     LAYOUT* header = m_layout_tree->top_header();
 
     // フォント設定
@@ -957,7 +957,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
         // div の位置と幅を計算
         // 高さは子ノードのレイアウトが全て済んでから計算
         if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD ); // 最低でもブックマークのアイコン分だけ左のスペース開ける
-        x = MAX( 1 + m_pixbuf_bkmk->get_width() + 1, m_css_body.padding_left + header->css->mrg_left );
+        int x = MAX( 1 + m_pixbuf_bkmk->get_width() + 1, m_css_body.padding_left + header->css->mrg_left );
         y += header->css->mrg_top;
 
         if( ! header->rect ) header->rect = m_layout_tree->create_rect();
@@ -3247,13 +3247,13 @@ bool DrawAreaBase::set_scroll( const int control )
         return true;
     }
 
-    double dy = 0;
-
-    const int y = get_vscr_val();
-    const bool enable_down = ( y < get_vscr_maxval() );
-    const bool enable_up = ( y > 0 );
-
     if( m_scrollinfo.mode == SCROLL_NOT ){
+
+        double dy = 0;
+
+        const int y = get_vscr_val();
+        const bool enable_down = ( y < get_vscr_maxval() );
+        const bool enable_up = ( y > 0 );
 
         switch( control ){
 
