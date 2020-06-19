@@ -306,10 +306,10 @@ std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std:
 
                 // num_from から num_to まで表示
                 int num_from = MAX( 1, atol( ( *it_pl ).c_str() ) );
-                int num_to = 0;
 
                 if( num_from <= m_id_header  ){
 
+                    int num_to = 0;
                     size_t i;
                     if( ( i = ( *it_pl ).find( "-" ) ) != std::string::npos ) num_to = atol( ( *it_pl ).substr( i +1 ).c_str() );
                     num_to = MIN( MAX( num_to, num_from ), m_id_header );
@@ -2210,7 +2210,6 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
         ///////////////////////
         // アンカーのチェック
         int n_in = 0;
-        int n_out = 0;
         char tmpstr[ LNG_LINK +16 ]; // 画面に表示する文字列
         char tmplink[ LNG_LINK +16 ]; // 編集したリンク文字列
         int lng_str = 0, lng_link = strlen( PROTO_ANCHORE );
@@ -2345,6 +2344,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
         // 特殊文字デコード
         if( *pos == '&' ){
 
+            int n_out = 0;
             char out_char[kMaxBytesOfUTF8Char]{};
             const int ret_decode = DBTREE::decode_char( pos, n_in, out_char, n_out, false );
 
@@ -3221,12 +3221,10 @@ bool NodeTreeBase::check_abone_chain( const int number )
             if( node->type == NODE_LINK && node->linkinfo->ancinfo ){
 
                 int anc = 0;
-                int anc_from;
-                int anc_to;
                 for(;;){
 
-                    anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
-                    anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
+                    int anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
+                    int anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
                     if( anc_from == 0 ) break;
                     ++anc;
 
@@ -3348,12 +3346,10 @@ void NodeTreeBase::check_reference( const int number )
                 if( node->linkinfo->ancinfo ){
 
                     int anc = 0;
-                    int anc_from;
-                    int anc_to;
                     for(;;){
 
-                        anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
-                        anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
+                        int anc_from = node->linkinfo->ancinfo[ anc ].anc_from;
+                        int anc_to = node->linkinfo->ancinfo[ anc ].anc_to;
                         if( anc_from == 0 ) break;
                         ++anc;
 
