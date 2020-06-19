@@ -93,12 +93,15 @@ void JDTreeViewBase::get_cell_xy_wh( int& cell_x, int& cell_y, int& cell_w, int&
 
     Gtk::TreeModel::Path path;
     Gtk::TreeViewColumn* column;
-    int x, y, o_x, o_y;
+    int x, y;
     Gdk::Rectangle rect;
 
     get_pointer( x, y );
     get_path_at_pos( x, y, path, column, cell_x, cell_y );
-    if( column ) column->cell_get_size( rect, o_x, o_y, cell_w, cell_h );
+    if( column ) {
+        int o_x, o_y;
+        column->cell_get_size( rect, o_x, o_y, cell_w, cell_h );
+    }
 }
 
 
