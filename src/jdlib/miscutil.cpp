@@ -24,9 +24,9 @@
 std::list< std::string > MISC::get_lines( const std::string& str ){
         
     std::list< std::string > lines;
-    size_t i = 0, i2 = 0, r = 0;
+    size_t i = 0, i2 = 0;
     while ( ( i2 = str.find( '\n', i ) ) != std::string::npos ){
-        r = 0;
+        std::size_t r = 0;
         if( (i2 >= 1) && (str[ i2 - 1 ] == '\r') ) r = 1;
         if( i2 - i > 0 ){
             lines.push_back( str.substr( i, i2 - i - r ) );
@@ -51,12 +51,11 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 #endif 
    
     std::list< std::string > lists;
-    size_t pos = 0, length = 0;
     std::string str2 = remove_space( str );
     const char* data = str2.c_str();
     if( data[ 0 ] != '(' ) return lists;
 
-    pos = 1;
+    std::size_t pos = 1;
 
     while( data[ pos ] != '\0' ){
 
@@ -64,7 +63,7 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
         while( data[ pos ] == ' ' ) ++pos;
         if( data[ pos ] == '\0' ) break;
 
-        length = 1;
+        std::size_t length = 1;
 
         // (が現れた
         if( data[ pos ] == '(' ){
@@ -113,11 +112,10 @@ std::list< std::string > MISC::split_line( const std::string& str )
 {
     constexpr const char* str_space = u8"\u3000"; // "\xE3\x80\x80" 全角スペース
     constexpr size_t lng_space = 3;
-    bool dquote;
 
     std::list< std::string > list_str;
 
-    size_t i = 0, i2 = 0, lng = str.length();
+    size_t i = 0, lng = str.length();
     for(;;){
 
         // 空白を取る
@@ -135,14 +133,14 @@ std::list< std::string > MISC::split_line( const std::string& str )
         }
 
         // " から始まる ( \"は除く )
-        dquote = false;
+        bool dquote = false;
         if( (i < 1 || str[ i -1 ] != '\\') && str[ i ] == '\"' ){
             dquote = true;
             ++i;
         }
 
         // 空白か " を探す
-        i2 = i;
+        std::size_t i2 = i;
         size_t lng_tmp = 1;
         while( i2 < lng ){
 
