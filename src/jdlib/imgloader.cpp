@@ -122,9 +122,6 @@ bool ImgLoader::load_imgfile( const int loadlevel )
 
     bool ret = true;
     FILE* f = nullptr;
-    const size_t bufsize = 8192;
-    size_t readsize = 0;
-    guint8 data[ bufsize ];
 
     f = fopen( to_locale_cstr( m_file ), "rb" );
     if( ! f ){
@@ -138,9 +135,12 @@ bool ImgLoader::load_imgfile( const int loadlevel )
         m_loader->signal_size_prepared().connect( sigc::mem_fun( *this, &ImgLoader::slot_size_prepared ) );
         m_loader->signal_area_updated().connect( sigc::mem_fun( *this, &ImgLoader::slot_area_updated ) );
 
+        constexpr std::size_t bufsize = 8192;
+        guint8 data[ bufsize ];
+
         while( ! m_stop ){
 
-            readsize = fread( data, 1, bufsize, f );
+            const std::size_t readsize = fread( data, 1, bufsize, f );
             if( readsize ) m_loader->write( data, readsize );
 
 #ifdef _DEBUG
