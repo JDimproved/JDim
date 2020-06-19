@@ -1095,11 +1095,6 @@ void ImageAdmin::save_all()
     std::cout << "ImageAdmin::save_all\n";
 #endif
 
-    int overwrite = Gtk::RESPONSE_NO;
-    bool use_name_in_cache = false;
-
-    std::list< std::string > list_urls = get_URLs();
-
     // ディレクトリ選択
     SKELETON::FileDiag diag( get_win(), "保存先選択", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER );
 
@@ -1121,10 +1116,12 @@ void ImageAdmin::save_all()
 
             SESSION::set_dir_img_save( path_dir );
 
-            std::list< std::string >::iterator it = list_urls.begin();
-            for( ; it != list_urls.end(); ++it ){
+            int overwrite = Gtk::RESPONSE_NO;
+            bool use_name_in_cache = false;
 
-                std::string url = (*it);
+            const std::list<std::string> list_urls = get_URLs();
+            for( const std::string& url : list_urls ) {
+
                 if( ! DBIMG::is_cached( url ) || DBIMG::get_mosaic( url ) ) continue;
 
                 std::string path_from = DBIMG::get_cache_path( url );
