@@ -1151,7 +1151,18 @@ void BoardBase::receive_finish()
         set_date_modified( std::string() );
         send_update_board();
 
-        if( !m_rawdata.empty() && get_code() == HTTP_OK
+        // Locationヘッダーで移転先を指定された場合
+        if( get_code() == HTTP_MOVED_PERM && ! location().empty() ) {
+
+            // location() は url_boardbase() の移転先 (start_checkking_if_board_moved() を参照)
+            if( DBTREE::move_board( url_boardbase(), location() ) ) {
+                // 再読み込み
+                const std::string str_tab = "false";
+                CORE::core_set_command( "open_board", url_subject(), str_tab );
+            }
+        }
+        // HTMLの埋め込みスクリプトで移動を指示された場合
+        else if( !m_rawdata.empty() && get_code() == HTTP_OK
                 && m_rawdata.find( "window.location.href" ) != std::string::npos ) {
 
 #ifdef _DEBUG
