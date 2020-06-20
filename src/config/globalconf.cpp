@@ -165,6 +165,7 @@ const std::string& CONFIG::get_url_login2ch() { return get_confitem()->url_login
 const std::string& CONFIG::get_url_loginbe() { return get_confitem()->url_loginbe; }
 
 const std::string& CONFIG::get_url_bbsmenu() { return get_confitem()->url_bbsmenu; }
+void CONFIG::set_url_bbsmenu( std::string url ) { get_confitem()->url_bbsmenu = std::move( url ); }
 
 bool CONFIG::use_link_as_board(){ return get_confitem()->use_link_as_board; }
 

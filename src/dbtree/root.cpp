@@ -378,6 +378,19 @@ void Root::receive_finish()
         return;
     }
 
+    if( get_code() == HTTP_MOVED_PERM && ! location().empty() ){
+
+        const std::string msg = get_str_code() + "\n\n板一覧が " + location() + " に移転しました。更新しますか？";
+        SKELETON::MsgDiag mdiag( nullptr, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+        mdiag.set_default_response( Gtk::RESPONSE_YES );
+        if( mdiag.run() == Gtk::RESPONSE_YES ){
+            set_date_modified( std::string() );
+            CONFIG::set_url_bbsmenu( location() );
+            download_bbsmenu();
+        }
+        return;
+    }
+
     if( get_code() != HTTP_OK ){
 
         std::string msg = get_str_code() + "\n\n板一覧の読み込みに失敗したため板一覧は更新されませんでした。\n\nプロキシ設定や板一覧を取得するサーバのアドレスを確認して、ファイルメニューから板一覧の再読み込みをして下さい。\n板一覧取得サーバのアドレスはabout:configで確認出来ます。";
