@@ -3616,8 +3616,8 @@ void DrawAreaBase::exec_scroll()
         }
 
         // カーソル形状の更新
-        CARET_POSITION caret_pos;
-        m_layout_current = set_caret( caret_pos, m_x_pointer , m_y_pointer + get_vscr_val() );
+        CARET_POSITION unused_caret_pos;
+        m_layout_current = set_caret( unused_caret_pos, m_x_pointer , m_y_pointer + get_vscr_val() );
         change_cursor( get_cursor_type() );
     }
 }

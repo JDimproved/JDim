@@ -211,11 +211,11 @@ void CONTROL::set_menu_motion( Gtk::Menu* menu )
                 label->set_text_with_mnemonic( str_label + ( str_motions.empty() ? "" : "\t" + str_motions ) );
 #else
                 item->remove();
-                Gtk::Label *label = Gtk::manage( new Gtk::Label( str_label + ( str_motions.empty() ? "" : "  " ), true ) );
+                Gtk::Label *label_subject = Gtk::manage( new Gtk::Label( str_label + ( str_motions.empty() ? "" : "  " ), true ) );
                 Gtk::Label *label_motion = Gtk::manage( new Gtk::Label( str_motions ) );
                 Gtk::HBox *box = Gtk::manage( new Gtk::HBox() );
 
-                box->pack_start( *label, Gtk::PACK_SHRINK );
+                box->pack_start( *label_subject, Gtk::PACK_SHRINK );
                 box->pack_end( *label_motion, Gtk::PACK_SHRINK );
                 item->add( *box );
                 box->show_all();

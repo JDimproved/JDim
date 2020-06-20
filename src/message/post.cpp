@@ -431,9 +431,9 @@ void Post::receive_finish()
             }
 
             ConfirmDiag mdiag( m_url, diagmsg );
-            const int ret = mdiag.run();
+            const int response = mdiag.run();
             mdiag.hide();
-            if( ret != Gtk::RESPONSE_OK ){
+            if( response != Gtk::RESPONSE_OK ){
 
                 set_code( HTTP_CANCEL );
                 emit_sigfin();
