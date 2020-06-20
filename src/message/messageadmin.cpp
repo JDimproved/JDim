@@ -128,7 +128,6 @@ void MessageAdmin::command_local( const COMMAND_ARGS& command )
     // かつ書き込みビューが空なら閉じる
     else if( command.command == "close_message" ){
 
-        SKELETON::View *view = get_current_view();
         if( view && view->set_command( "empty" ) && view->get_url().find( command.url ) != std::string::npos ){
             close_current_view();
         }

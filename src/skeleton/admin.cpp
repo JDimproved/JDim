@@ -355,7 +355,7 @@ void Admin::clock_in()
     const int pages = m_notebook->get_n_pages();
     if( pages ){
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< SKELETON::View* >( m_notebook->get_nth_page( i ) );
+            view = dynamic_cast< SKELETON::View* >( m_notebook->get_nth_page( i ) );
             if( view ) view->clock_in_always();
         }
     }
@@ -1952,7 +1952,7 @@ View* Admin::get_view( const std::string& url )
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+            view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
             if( view && view->get_url() == url ) return view;
         }
     }
