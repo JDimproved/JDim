@@ -786,8 +786,8 @@ bool Root::move_board( const std::string& url_old, const std::string& url_new, c
     if( ! exec_move_board( board,
                            board->get_root(),
                            board->get_path_board(),
-                           root,
-                           path_board
+                           std::move( root ),
+                           std::move( path_board )
             ) ) return false;
 
     // キャッシュを移動した
@@ -811,11 +811,13 @@ bool Root::move_board( const std::string& url_old, const std::string& url_new, c
 //
 // 板移転処理実行
 //
+// 引数を参照渡し(const std::string&)するとDB更新で値が変わるため値渡しする
+//
 bool Root::exec_move_board( BoardBase* board,
-                            const std::string& old_root,
-                            const std::string& old_path_board,
-                            const std::string& new_root,
-                            const std::string& new_path_board )
+                            std::string old_root,
+                            std::string old_path_board,
+                            std::string new_root,
+                            std::string new_path_board )
 {
     if( ! board ) return false;
 
@@ -880,7 +882,8 @@ bool Root::exec_move_board( BoardBase* board,
                   << "old_path_board = " << old_path_board << std::endl
                   << "new_path_board = " << new_path_board << std::endl;
 #endif
-        push_movetable( old_root, old_path_board, new_root, new_path_board );
+        push_movetable( std::move( old_root ), std::move( old_path_board ),
+                        std::move( new_root ), std::move( new_path_board ) );
 
         // この板に関連する表示中のviewのURLを更新
         CORE::core_set_command( "update_url", old_url, new_url );
@@ -893,10 +896,10 @@ bool Root::exec_move_board( BoardBase* board,
 //
 // 板移転テーブルを更新
 //
-void Root::push_movetable( const std::string& old_root,
-                           const std::string& old_path_board,
-                           const std::string& new_root,
-                           const std::string& new_path_board )
+void Root::push_movetable( std::string old_root,
+                           std::string old_path_board,
+                           std::string new_root,
+                           std::string new_path_board )
 {
 #ifdef _DEBUG
     std::cout << "Root::push_movetable : " << old_root << old_path_board << " -> " << new_root << new_path_board << std::endl;
@@ -967,7 +970,7 @@ void Root::push_movetable( const std::string& old_root,
             str += str_tmp;
 
             m_movetable.erase( it_move );
-            m_movetable.push_back( movetable );
+            m_movetable.push_back( std::move( movetable ) );
             it_move = m_movetable.begin();
             continue;
         }
@@ -978,11 +981,11 @@ void Root::push_movetable( const std::string& old_root,
     if( ! str.empty() ) MISC::MSG( "\n" + str );
 
     MOVETABLE movetable;
-    movetable.old_root = old_root;
-    movetable.old_path_board = old_path_board;
-    movetable.new_root = new_root;
-    movetable.new_path_board = new_path_board;
-    m_movetable.push_back( movetable );
+    movetable.old_root = std::move( old_root );
+    movetable.old_path_board = std::move( old_path_board );
+    movetable.new_root = std::move( new_root );
+    movetable.new_path_board = std::move( new_path_board );
+    m_movetable.push_back( std::move( movetable ) );
 }
 
 
