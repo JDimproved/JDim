@@ -1189,7 +1189,6 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     m_enable_menuslot = false;
 
     Glib::RefPtr< Gtk::Action > act;
-    Glib::RefPtr< Gtk::ToggleAction > tact;
 
     bool current_protect = m_img->is_protected();
 
@@ -1197,7 +1196,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     act = action_group()->get_action( "LockTab" );
     if( act ){
 
-        Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+        auto tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
         if( is_locked() ) tact->set_active( true );
         else tact->set_active( false );
     }
@@ -1264,7 +1263,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
 
             act->set_sensitive( true );
 
-            tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
+            auto tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act );
             if( tact ){
                 if( current_protect ) tact->set_active( true );
                 else tact->set_active( false );
