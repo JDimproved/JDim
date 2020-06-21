@@ -84,16 +84,12 @@ MESSAGE::get_admin()->set_command_immediately( "focus_out" ); \
 
 
 Core::Core( JDWinMain& win_main )
-    : m_win_main( win_main ),
-      m_hpaned( SKELETON::PANE_FIXSIZE_PAGE1 ),
-      m_vpaned_r( SKELETON::PANE_FIXSIZE_PAGE1 ),
-      m_hpaned_r( SKELETON::PANE_FIXSIZE_PAGE1 ),
-      m_imagetab_shown( 0 ),
-      m_vpaned_message( SKELETON::PANE_FIXSIZE_PAGE2 ),
-      m_toolbar( nullptr ),
-      m_enable_menuslot( true ),
-      m_init( false ),
-      m_count_savesession( 0 )
+    : m_win_main( win_main )
+    , m_hpaned( SKELETON::PANE_FIXSIZE_PAGE1 )
+    , m_vpaned_r( SKELETON::PANE_FIXSIZE_PAGE1 )
+    , m_hpaned_r( SKELETON::PANE_FIXSIZE_PAGE1 )
+    , m_vpaned_message( SKELETON::PANE_FIXSIZE_PAGE2 )
+    , m_enable_menuslot( true )
 {
     // ディスパッチマネージャ作成
     CORE::get_dispmanager();
