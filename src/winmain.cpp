@@ -271,13 +271,13 @@ bool JDWinMain::on_delete_event( GdkEventAny* event )
 // 最大、最小化
 bool JDWinMain::on_window_state_event( GdkEventWindowState* event )
 {
-#ifdef _DEBUG
-    std::cout << "JDWinMain::on_window_state_event\n";
-    if( m_cancel_state_event ) std::cout << "cancel\n";
-#endif     
-
     // キャンセル ( JDWinMain::on_delete_even() の説明を参照せよ )
-    if( m_cancel_state_event ) return Gtk::Window::on_window_state_event( event );
+    if( m_cancel_state_event ) {
+#ifdef _DEBUG
+        std::cout << "JDWinMain::on_window_state_event cancel" << std::endl;
+#endif
+        return Gtk::Window::on_window_state_event( event );
+    }
 
     return SKELETON::JDWindow::on_window_state_event( event );
 }
@@ -285,13 +285,13 @@ bool JDWinMain::on_window_state_event( GdkEventWindowState* event )
 
 bool JDWinMain::on_configure_event( GdkEventConfigure* event )
 {
-#ifdef _DEBUG
-    std::cout << "JDWinMain::on_configure_event\n";
-    if( m_cancel_state_event ) std::cout << "cancel\n";
-#endif     
-
     // キャンセル ( JDWinMain::on_delete_event() の説明を参照せよ )
-    if( m_cancel_state_event ) return Gtk::Window::on_configure_event( event );
+    if( m_cancel_state_event ) {
+#ifdef _DEBUG
+        std::cout << "JDWinMain::on_configure_event cancel" << std::endl;
+#endif
+        return Gtk::Window::on_configure_event( event );
+    }
 
     return SKELETON::JDWindow::on_configure_event( event );
 }
