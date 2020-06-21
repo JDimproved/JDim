@@ -184,10 +184,8 @@ BoardBase* Root::get_board( const std::string& url, const int count )
     }
 
     // サーチ
-    std::list< BoardBase* >::iterator it;
-    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
+    for( BoardBase* board : m_list_board ) {
 
-        BoardBase* board = *( it );
         if( board->equal( url ) ){
 
             board->read_info(); // 板情報の取得( 詳しくはBoardBase::read_info()をみること )
@@ -216,10 +214,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
         if( is_2ch( url ) ){
 
             // 全ての板をサーチして移転先の板を探す
-            std::list< BoardBase* >::iterator it;
-            for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
-
-                BoardBase* board = *( it );
+            for( BoardBase* board : m_list_board ) {
 
                 // 板パスを見て一致したら移転したと見なす
                 // TODO : 板パスが同じ板が2つ以上あるときどうするか？
@@ -243,7 +238,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
                         CORE::core_set_command( "update_sidebar_item" );
                     }
 
-                    BoardBase* board = get_board( url, count + 1 );
+                    board = get_board( url, count + 1 );
                     m_get_board_url = url;
                     return board;
                 }
@@ -1309,10 +1304,10 @@ void Root::load_movetable()
 #endif 
    
     std::string file_move = CACHE::path_movetable();
-    std::string movetable;
-    if( CACHE::load_rawdata( file_move, movetable ) ){
+    std::string movetable_rawdata;
+    if( CACHE::load_rawdata( file_move, movetable_rawdata ) ){
 
-        std::list< std::string > list_table = MISC::get_lines( movetable );
+        std::list< std::string > list_table = MISC::get_lines( movetable_rawdata );
         std::list< std::string >::iterator it;
         for( it = list_table.begin(); it != list_table.end(); ++it ){
 
