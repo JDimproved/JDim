@@ -109,7 +109,7 @@ namespace JDLIB
 
         // unzip 用
         bool init_unzip();
-        bool unzip( char* buf, size_t& read_size );
+        bool unzip( char* buf, std::size_t read_size );
     };
 
     // ローダの起動待ちキューにあるスレッドを実行しない
