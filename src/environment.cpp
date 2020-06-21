@@ -206,11 +206,6 @@ std::string ENVIRONMENT::get_distname()
     std::string dist_name;
 
 #ifdef _WIN32
-    LONG rc;
-    DWORD dwSize;
-    HKEY hKey;
-    char *regVal;
-
     std::ostringstream vstr;
     vstr << "Windows";
 
@@ -218,6 +213,9 @@ std::string ENVIRONMENT::get_distname()
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
     if (GetVersionEx((OSVERSIONINFO *)&osvi) != 0)
     {
+        LONG rc;
+        HKEY hKey;
+
         switch (osvi.dwPlatformId)
         {
         case VER_PLATFORM_WIN32_NT:
@@ -227,13 +225,15 @@ std::string ENVIRONMENT::get_distname()
                     0, KEY_READ | KEY_WOW64_64KEY, &hKey );
             if( rc == ERROR_SUCCESS )
             {
+                DWORD dwSize;
+
                 // read size of ProductName
                 rc = RegQueryValueEx( hKey, "ProductName",
                         nullptr, nullptr, nullptr, &dwSize );
                 if( rc == ERROR_SUCCESS && dwSize > 0 )
                 {
                     // get buffer
-                    regVal = (char *)malloc( dwSize );
+                    char* regVal = (char *)malloc( dwSize );
                     if( regVal != nullptr )
                     {
                         // read ProductName
@@ -255,7 +255,7 @@ std::string ENVIRONMENT::get_distname()
                 if( rc == ERROR_SUCCESS && dwSize > 0 )
                 {
                     // get buffer
-                    regVal = (char *)malloc( dwSize );
+                    char* regVal = (char *)malloc( dwSize );
                     if( regVal != nullptr )
                     {
                         // read CSDVersion
