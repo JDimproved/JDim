@@ -88,7 +88,7 @@ void Dom::parse( const std::string& str )
 {
     if( str.empty() || str.size() > SIZE_OF_RAWDATA ) return;
 
-    size_t current_pos = 0, tag_lt_pos = 0, tag_gt_pos = 0;
+    size_t current_pos = 0;
     const size_t str_length = str.length();
 
     while( current_pos < str_length )
@@ -101,7 +101,7 @@ void Dom::parse( const std::string& str )
         std::string next_source;
 
         // "<"を探す
-        tag_lt_pos = str.find( '<', current_pos );
+        const std::size_t tag_lt_pos = str.find( '<', current_pos );
 
         // タグの前のテキストノード
         if( current_pos < tag_lt_pos )
@@ -122,7 +122,7 @@ void Dom::parse( const std::string& str )
         // 要素ノード
         else if( current_pos == tag_lt_pos )
         {
-            tag_gt_pos = str.find( '>', tag_lt_pos + 1 );
+            const std::size_t tag_gt_pos = str.find( '>', tag_lt_pos + 1 );
 
             current_pos = tag_gt_pos + 1;
 
