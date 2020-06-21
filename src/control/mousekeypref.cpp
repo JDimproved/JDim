@@ -475,16 +475,13 @@ void MouseKeyDiag::slot_reset()
     // デフォルト設定が既に使われていないか確認
     std::list< std::string > list_motions = MISC::StringTokenizer( default_motions, ' ' );
     std::list< std::string > list_defaults;
-    std::list< std::string >::iterator it = list_motions.begin();
-    for( ; it != list_motions.end() ; ++it ){
+    for( const std::string& raw_motion : list_motions ) {
 
-        const std::string motion = MISC::remove_space( *it );
+        std::string motion = MISC::remove_space( raw_motion );
 
         bool conflict = false;
         const std::vector< int > vec_ids = check_conflict( m_controlmode, motion );
-        std::vector< int >::const_iterator it = vec_ids.begin();
-        for( ; it != vec_ids.end(); ++it ){
-            const int id = *it;
+        for( const int id : vec_ids ) {
 
             if( id != CONTROL::None && id != m_id ){
                 SKELETON::MsgDiag mdiag( nullptr, motion + "\n\nは「" + CONTROL::get_label( id ) + "」で使用されています" );
@@ -494,13 +491,12 @@ void MouseKeyDiag::slot_reset()
             }
         }
 
-        if( ! conflict ) list_defaults.push_back( motion );
+        if( ! conflict ) list_defaults.push_back( std::move( motion ) );
     }
 
     // クリアして再登録
     m_liststore->clear();
-    it = list_defaults.begin();
-    for( ; it != list_defaults.end() ; ++it ) append_row( ( *it ) );
+    for( const std::string& motion : list_defaults ) append_row( motion );
 }
 
 
