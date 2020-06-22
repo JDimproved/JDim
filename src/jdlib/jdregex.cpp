@@ -19,15 +19,6 @@ constexpr std::size_t REGEX_MAX_NMATCH = 32;
 
 using namespace JDLIB;
 
-Regex::Regex()
-    : m_compiled(false),
-      m_newline(false),
-      m_wchar(false)
-{
-    m_results.clear();
-    m_pos.clear();
-}
-
 
 Regex::~Regex()
 {

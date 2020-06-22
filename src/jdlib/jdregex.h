@@ -38,9 +38,9 @@ namespace JDLIB
         GRegex* m_reg{};
 #endif
 
-        bool m_compiled;
-        bool m_newline;
-        bool m_wchar;
+        bool m_compiled{};
+        bool m_newline{};
+        bool m_wchar{};
 
         // 全角半角を区別しないときに使う変換用バッファ
         // 処理可能なバッファ長は regoff_t (= int) のサイズに制限される
@@ -49,7 +49,7 @@ namespace JDLIB
 
     public:
 
-        Regex();
+        Regex() = default;
         ~Regex();
 
         void dispose();
