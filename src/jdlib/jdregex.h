@@ -10,13 +10,19 @@
 #include "config.h"
 #endif
 
-#ifdef USE_ONIG
+#if defined(HAVE_ONIGPOSIX_H)
 #include <onigposix.h>
-#elif defined( USE_PCRE )
+#elif defined(HAVE_PCREPOSIX_H)
 #include <pcreposix.h>
-#else
+#elif defined(HAVE_REGEX_H)
 #include <regex.h>
-#endif	/** USE_ONIG **/
+#else
+#include <glib.h>
+#endif
+
+#if defined(HAVE_ONIGPOSIX_H) || defined(HAVE_PCREPOSIX_H) || defined(HAVE_REGEX_H)
+#define POSIX_STYLE_REGEX_API 1
+#endif
 
 
 namespace JDLIB
@@ -25,7 +31,13 @@ namespace JDLIB
     {
         std::vector< int > m_pos;
         std::vector< std::string > m_results;
+
+#ifdef POSIX_STYLE_REGEX_API
         regex_t m_reg;
+#else
+        GRegex* m_reg{};
+#endif
+
         bool m_compiled;
         bool m_newline;
         bool m_wchar;

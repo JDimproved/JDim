@@ -10,13 +10,12 @@
 #include "jdmigemo.h"
 #endif
 
-#include <cstring>
 
-enum
-{
-    MAX_TARGET_SIZE = 64 * 1024,   // 全角半角変換のバッファサイズ
-    REGEX_MAX_NMATCH = 32
-};
+constexpr std::size_t MAX_TARGET_SIZE = 64 * 1024;  // 全角半角変換のバッファサイズ
+#ifdef POSIX_STYLE_REGEX_API
+constexpr std::size_t REGEX_MAX_NMATCH = 32;
+#endif
+
 
 using namespace JDLIB;
 
@@ -39,7 +38,12 @@ Regex::~Regex()
 void Regex::dispose()
 {
     if ( m_compiled ) {
+#ifdef POSIX_STYLE_REGEX_API
         regfree( &m_reg );
+#else
+        g_regex_unref( m_reg );
+        m_reg = nullptr;
+#endif
         m_compiled = false;
     }
 }
@@ -59,10 +63,11 @@ bool Regex::compile( const std::string& reg, const bool icase, const bool newlin
 #endif
 
     dispose();
-    
+
     if( reg.empty() ) return false;
-    
-#ifdef USE_PCRE
+
+#if POSIX_STYLE_REGEX_API
+#ifdef HAVE_PCREPOSIX_H
     int cflags = REG_UTF8;
     if( ! newline ) cflags |= REG_DOTALL; // . を改行にマッチさせる
 #else
@@ -70,6 +75,12 @@ bool Regex::compile( const std::string& reg, const bool icase, const bool newlin
 #endif
     if( newline ) cflags |= REG_NEWLINE;
     if( icase ) cflags |= REG_ICASE;
+#else
+    int cflags = G_REGEX_OPTIMIZE;
+    if( newline ) cflags |= G_REGEX_MULTILINE;
+    else cflags |= G_REGEX_DOTALL; // . を改行にマッチさせる
+    if( icase ) cflags |= G_REGEX_CASELESS;
+#endif // POSIX_STYLE_REGEX_API
 
     m_newline = newline;
     m_wchar = wchar;
@@ -106,10 +117,17 @@ bool Regex::compile( const std::string& reg, const bool icase, const bool newlin
     }
 #endif
 
+#ifdef POSIX_STYLE_REGEX_API
     if( regcomp( &m_reg, asc_reg, cflags ) != 0 ){
         regfree( &m_reg );
         return false;
     }
+#else
+    m_reg = g_regex_new( asc_reg, GRegexCompileFlags( cflags ), GRegexMatchFlags( 0 ), nullptr );
+    if( m_reg == nullptr ){
+        return false;
+    }
+#endif
 
     m_compiled = true;
     return true;
@@ -118,10 +136,6 @@ bool Regex::compile( const std::string& reg, const bool icase, const bool newlin
 
 bool Regex::exec( const std::string& target, const size_t offset )
 {
-    regmatch_t pmatch[ REGEX_MAX_NMATCH ];
-
-    memset(pmatch, 0, sizeof(pmatch));
-
     if ( ! m_compiled ) return false;
 
     if( target.empty() ) return false;
@@ -158,30 +172,48 @@ bool Regex::exec( const std::string& target, const size_t offset )
 #endif
     }
 
-#ifdef USE_ONIG    
+#ifdef HAVE_ONIGPOSIX_H
+    std::string target_copy;
 
     // 鬼車はnewlineを無視するようなので、文字列のコピーを取って
     // 改行をスペースにしてから実行する
     if( ! m_newline ){
-
-        std::string target_copy = asc_target;
-        for( size_t i = 0; i < target_copy.size(); ++i ) if( target_copy[ i ] == '\n' ) target_copy[ i ] = ' ';
-        if( regexec( &m_reg, target_copy.c_str(), REGEX_MAX_NMATCH, pmatch, 0 ) != 0 ){
-            return false;
-        }
+        target_copy = asc_target;
+        std::replace( target_copy.begin(), target_copy.end(), '\n', ' ' );
+        asc_target = target_copy.c_str();
     }
-    else
-
 #endif
 
+#ifdef POSIX_STYLE_REGEX_API
+    regmatch_t pmatch[ REGEX_MAX_NMATCH ]{};
+#else
+    GMatchInfo* pmatch{};
+#endif
+
+#ifdef POSIX_STYLE_REGEX_API
     if( regexec( &m_reg, asc_target, REGEX_MAX_NMATCH, pmatch, 0 ) != 0 ){
         return false;
     }
+    constexpr int match_count = REGEX_MAX_NMATCH;
+#else
+    if( ! g_regex_match( m_reg, asc_target, GRegexMatchFlags( 0 ), &pmatch ) ){
+        g_match_info_free( pmatch );
+        return false;
+    }
+    const int match_count = g_match_info_get_match_count( pmatch ) + 1;
+#endif
 
-    for( int i = 0; i < REGEX_MAX_NMATCH; ++i ){
+    for( int i = 0; i < match_count; ++i ){
 
+#ifdef POSIX_STYLE_REGEX_API
         int so = pmatch[ i ].rm_so;
         int eo = pmatch[ i ].rm_eo;
+#else
+        int so;
+        int eo;
+        if( ! g_match_info_fetch_pos( pmatch, i, &so, &eo ) ) so = eo = -1;
+#endif
+
         if( exec_asc && so >= 0 && eo >= 0 ){
 #ifdef _DEBUG
             std::cout << "so = " << so << " eo = " << eo;
@@ -200,7 +232,11 @@ bool Regex::exec( const std::string& target, const size_t offset )
         if( so >= 0 && eo >= 0 ) m_results.push_back( target.substr( so, eo - so ) );
         else m_results.push_back( std::string() );
     }
-    
+
+#ifndef POSIX_STYLE_REGEX_API
+    g_match_info_free( pmatch );
+#endif
+
     return true;
 }
 
