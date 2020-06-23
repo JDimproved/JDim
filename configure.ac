@@ -240,7 +240,8 @@ AS_IF(
    AC_SUBST(PCRE_CFLAGS)
    AC_SUBST(PCRE_LIBS)
    AC_CHECK_HEADERS([pcreposix.h], , [AC_MSG_ERROR([pcreposix.h not found])])
-   AC_CHECK_LIB([pcreposix], [regexec], , [AC_MSG_ERROR([libpcreposix.a not found])])],
+   AC_CHECK_LIB([pcreposix], [regexec], , [AC_MSG_ERROR([libpcreposix.a not found])])
+   AC_MSG_WARN([--with-regex=pcre will be removed in the future release.])],
 
   [test "x$with_regex" = xoniguruma],
   [PKG_CHECK_MODULES(ONIG, [oniguruma])
