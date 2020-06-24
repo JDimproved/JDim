@@ -24,11 +24,6 @@
 #include <netdb.h>
 #endif
 
-// zlibのバージョンが1.2.0以上か判定する
-#if ! defined(ZLIB_VERNUM) || ZLIB_VERNUM < 0x1200
-#error "require zlib version >= 1.2.0."
-#endif
-
 
 namespace SKELETON
 {
