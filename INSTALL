@@ -102,7 +102,7 @@
        gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDimを実行すると
        gmon.out が出来るのでgprof./jdgmon.out で解析できる。CPUの最適化は効かなくなるので注意する。
 
-    --with-regex=[posix|oniguruma|pcre]
+    --with-regex=[posix|oniguruma|pcre|glib]
 
        使用する正規表現ライブラリを設定する。デフォルトでは POSIX regex を使用する。
 
@@ -117,6 +117,12 @@
        PCREはBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
        UTF-8が有効な ( --enable-utf オプションを用いて make する ) PCRE 6.5 以降が必要となる。
        Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
+
+    --with-regex=glib
+
+       POSIX regex のかわりに GRegex を使用する。
+       Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
+       (v0.3.0+から追加)
 
     --with-oniguruma
 

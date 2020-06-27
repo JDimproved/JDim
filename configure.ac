@@ -225,7 +225,7 @@ dnl 正規表現ライブラリ
 dnl
 AC_MSG_CHECKING(for --with-regex)
 AC_ARG_WITH(regex,
-AC_HELP_STRING([--with-regex=@<:@posix|pcre|oniguruma@:>@],
+AC_HELP_STRING([--with-regex=@<:@posix|pcre|oniguruma|glib@:>@],
                [use regular expression library @<:@default=posix@:>@]),
 [], [with_regex=posix])
 AC_MSG_RESULT($with_regex)
@@ -237,7 +237,6 @@ AS_IF(
 
   [test "x$with_regex" = xpcre],
   [PKG_CHECK_MODULES(PCRE, [libpcre >= 6.5])
-   AC_DEFINE(USE_PCRE, , [use PCRE])
    AC_SUBST(PCRE_CFLAGS)
    AC_SUBST(PCRE_LIBS)
    AC_CHECK_HEADERS([pcreposix.h], , [AC_MSG_ERROR([pcreposix.h not found])])
@@ -245,11 +244,13 @@ AS_IF(
 
   [test "x$with_regex" = xoniguruma],
   [PKG_CHECK_MODULES(ONIG, [oniguruma])
-   AC_DEFINE(USE_ONIG, , [use oniguruma regular expressions library])
    AC_SUBST(ONIG_CFLAGS)
    AC_SUBST(ONIG_LIBS)
    AC_CHECK_HEADERS([onigposix.h], , [AC_MSG_ERROR([onigposix.h not found])])
    AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])],
+
+  [test "x$with_regex" = xglib],
+  [PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.14.0])],
 
   [AC_MSG_ERROR([regular expression library not found])]
 )

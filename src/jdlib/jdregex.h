@@ -10,13 +10,19 @@
 #include "config.h"
 #endif
 
-#ifdef USE_ONIG
+#if defined(HAVE_ONIGPOSIX_H)
 #include <onigposix.h>
-#elif defined( USE_PCRE )
+#elif defined(HAVE_PCREPOSIX_H)
 #include <pcreposix.h>
-#else
+#elif defined(HAVE_REGEX_H)
 #include <regex.h>
-#endif	/** USE_ONIG **/
+#else
+#include <glib.h>
+#endif
+
+#if defined(HAVE_ONIGPOSIX_H) || defined(HAVE_PCREPOSIX_H) || defined(HAVE_REGEX_H)
+#define POSIX_STYLE_REGEX_API 1
+#endif
 
 
 namespace JDLIB
@@ -25,10 +31,16 @@ namespace JDLIB
     {
         std::vector< int > m_pos;
         std::vector< std::string > m_results;
+
+#ifdef POSIX_STYLE_REGEX_API
         regex_t m_reg;
-        bool m_compiled;
-        bool m_newline;
-        bool m_wchar;
+#else
+        GRegex* m_reg{};
+#endif
+
+        bool m_compiled{};
+        bool m_newline{};
+        bool m_wchar{};
 
         // 全角半角を区別しないときに使う変換用バッファ
         // 処理可能なバッファ長は regoff_t (= int) のサイズに制限される
@@ -37,7 +49,7 @@ namespace JDLIB
 
     public:
 
-        Regex();
+        Regex() = default;
         ~Regex();
 
         void dispose();
