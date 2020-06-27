@@ -61,10 +61,8 @@ CPPFLAGS += -isystem $(GTEST_DIR)/include -I../src
 TEST_SRCS = $(wildcard gtest_*.cpp)
 TEST_OBJS = $(addprefix $(BUILD_DIR)/,$(TEST_SRCS:.cpp=.o))
 
-$(BUILD_DIR):
+$(BUILD_DIR)/%.o: %.cpp
 	@$(MKDIR_P) $(BUILD_DIR)
-
-$(BUILD_DIR)/%.o: %.cpp $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(AM_CXXFLAGS) -c -o $@ $<
 
 
@@ -78,7 +76,8 @@ GTEST_SRCS = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 # conservative and not optimized.  This is fine as Google Test
 # compiles fast and for ordinary users its source rarely changes.
 
-$(BUILD_DIR)/%.o: $(GTEST_DIR)/src/%.cc $(GTEST_SRCS) $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(GTEST_DIR)/src/%.cc $(GTEST_SRCS)
+	@$(MKDIR_P) $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c -o $@ $<
 
 $(BUILD_DIR)/gtest_main.a: $(BUILD_DIR)/gtest-all.o $(BUILD_DIR)/gtest_main.o
