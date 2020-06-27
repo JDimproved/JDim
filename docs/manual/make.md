@@ -49,7 +49,7 @@ layout: default
 - alsa-lib (`--with-alsa`)
 - openssl (`--with-tls=openssl`)
 - oniguruma (`--with-regex=oniguruma`)
-- libpcre (`--with-regex=pcre`)
+- libpcre (`--with-regex=pcre`, 非推奨)
 - migemo (`--with-migemo`)
 
 OSやディストリビューション別の解説は[OS/ディストリビューション別インストール方法][wiki-install] (JD wiki) を参照。
@@ -122,6 +122,7 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
     PCREはBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
     UTF-8が有効な ( <code>--enable-utf</code> オプションを用いて make する ) PCRE 6.5 以降が必要となる。
     Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
+    <br><strong>非推奨</strong>: かわりに <code>--with-regex=glib</code> を使用してください。
   </dd>
   <dt>--with-regex=glib</dt>
   <dd>
@@ -132,7 +133,7 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
   <dt>--with-oniguruma</dt>
   <dd><strong>非推奨</strong>: かわりに <code>--with-regex=oniguruma</code> を使用してください。</dd>
   <dt>--with-pcre</dt>
-  <dd><strong>非推奨</strong>: かわりに <code>--with-regex=pcre</code> を使用してください。</dd>
+  <dd><strong>非推奨</strong>: かわりに <code>--with-regex=glib</code> を使用してください。</dd>
 
   <dt>--with-thread=[posix|glib|std]</dt>
   <dd>
