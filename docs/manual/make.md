@@ -83,7 +83,15 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
   <dt>--with-pangolayout</dt>
   <dd>描画に PangoLayout を使う。デフォルトでは PangoGlyphString を使用する。</dd>
   <dt>--with-migemo</dt>
-  <dd>migemo による検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。</dd>
+  <dd>
+    migemo による検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
+    有効にすると正規表現のメタ文字が期待通りに動作しない場合があるので注意すること。
+  </dd>
+  <dt>--with-migemodict=PATH</dt>
+  <dd>
+    (<code>--with-migemo</code> 限定) migemo の辞書ファイルの場所を設定する。
+    about:config で変更が可能、空欄にした場合は migemo が無効になる。(変更後は要再起動)
+  </dd>
   <dt>--with-native</dt>
   <dd>CPUに合わせた最適化。CPUを指定する場合は <code>./configure CXXFLAGS="-march=ARCH"</code> を利用する。</dd>
 

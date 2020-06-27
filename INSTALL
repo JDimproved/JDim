@@ -70,6 +70,12 @@
     --with-migemo
 
        migemoによる検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
+       有効にすると正規表現のメタ文字が期待通りに動作しない場合があるので注意すること。
+
+    --with-migemodict=PATH
+
+       (--with-migemo 限定) migemo の辞書ファイルの場所を設定する。
+       about:config で変更が可能、空欄にした場合は migemo が無効になる。(変更後は要再起動)
 
     --with-native
 
