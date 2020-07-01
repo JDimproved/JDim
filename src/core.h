@@ -87,7 +87,7 @@ namespace CORE
         SKELETON::JDHPaned m_hpaned;
 
         // サイドバー
-        Gtk::Widget* m_sidebar;
+        Gtk::Widget* m_sidebar{};
 
         // (縦/横) 3ペーンモード時の右側ペーン
         SKELETON::JDVPaned m_vpaned_r; 
@@ -97,29 +97,29 @@ namespace CORE
         SKELETON::JDVBox m_vbox_article;
         SKELETON::JDVBox m_vbox_toolbar;
         SKELETON::JDNotebook m_notebook_right;
-        bool m_imagetab_shown;
+        bool m_imagetab_shown{};
         SKELETON::JDVPaned m_vpaned_message; // 埋め込み書き込みビュー用
 
         // ツールバー
-        MainToolBar* m_toolbar;
+        MainToolBar* m_toolbar{};
 
         // タイトルに表示する文字列
         // set_maintitle() 参照
         std::string m_title;
 
-        Gtk::MenuBar* m_menubar;
-        Gtk::MenuItem *m_menuitem_prevview;
-        Gtk::MenuItem *m_menuitem_nextview;
+        Gtk::MenuBar* m_menubar{};
+        Gtk::MenuItem* m_menuitem_prevview{};
+        Gtk::MenuItem* m_menuitem_nextview{};
 
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
         bool m_enable_menuslot;
 
         // 初期設定中
-        bool m_init;
+        bool m_init{};
 
         // セッション保存までのカウンタ
-        int m_count_savesession;
+        int m_count_savesession{};
 
         std::unique_ptr<JDLIB::Timeout> m_conn_timer;
 
