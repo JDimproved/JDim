@@ -27,7 +27,7 @@ namespace SKELETON
 
       public:
 
-        Login( const std::string& url );
+        explicit Login( const std::string& url );
         ~Login();
 
         bool login_now() const { return m_login_now; }

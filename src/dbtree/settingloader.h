@@ -35,7 +35,7 @@ namespace DBTREE
 
       public:
 
-        SettingLoader( const std::string& url_boardbase );
+        explicit SettingLoader( const std::string& url_boardbase );
         ~SettingLoader();
 
         const std::string& default_noname() const { return m_default_noname; }

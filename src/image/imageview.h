@@ -32,7 +32,7 @@ namespace IMAGE
         bool m_scrolled{};
 
       public:
-        ImageViewMain( const std::string& url );
+        explicit ImageViewMain( const std::string& url );
         ~ImageViewMain();
 
         void clock_in() override;

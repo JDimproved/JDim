@@ -53,7 +53,7 @@ namespace DBIMG
         
       public:
 
-        Img( const std::string& url );
+        explicit Img( const std::string& url );
         ~Img();
 
         void clock_in();

@@ -30,7 +30,7 @@ namespace SKELETON
 
       public:
 
-        TabSwitchButton( DragableNoteBook* parent );
+        explicit TabSwitchButton( DragableNoteBook* parent );
         ~TabSwitchButton() noexcept;
 
         Gtk::Button& get_button(){ return m_button; }

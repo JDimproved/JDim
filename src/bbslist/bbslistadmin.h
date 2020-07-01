@@ -29,7 +29,7 @@ namespace BBSLIST
 
       public:
 
-        BBSListAdmin( const std::string& url );
+        explicit BBSListAdmin( const std::string& url );
         ~BBSListAdmin();
 
         void save_session() override;

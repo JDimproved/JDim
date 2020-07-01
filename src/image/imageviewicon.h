@@ -16,7 +16,7 @@ namespace IMAGE
         Gtk::EventBox* m_event_frame;
 
       public:
-        ImageViewIcon( const std::string& url );
+        explicit ImageViewIcon( const std::string& url );
         ~ImageViewIcon();
 
         void clock_in() override;

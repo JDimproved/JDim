@@ -13,7 +13,7 @@ namespace ARTICLE
     class ArticleViewInfo : public ArticleViewBase
     {
       public:
-        ArticleViewInfo( const std::string& url );
+        explicit ArticleViewInfo( const std::string& url );
         ~ArticleViewInfo();
 
         // viewの操作をキャンセル

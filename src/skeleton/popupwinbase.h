@@ -34,7 +34,7 @@ namespace SKELETON
       public:
 
         // draw_frame == true なら枠を描画する
-        PopupWinBase( bool draw_frame );
+        explicit PopupWinBase( bool draw_frame );
         ~PopupWinBase() noexcept;
 
         SIG_CONFIGURED_POPUP sig_configured(){ return m_sig_configured; }

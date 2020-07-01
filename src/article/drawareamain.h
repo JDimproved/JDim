@@ -12,7 +12,7 @@ namespace ARTICLE
     class DrawAreaMain : public ARTICLE::DrawAreaBase
     {
       public:
-        DrawAreaMain( const std::string& url );
+        explicit DrawAreaMain( const std::string& url );
     };
 }
 

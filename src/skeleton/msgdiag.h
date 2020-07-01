@@ -88,7 +88,7 @@ namespace SKELETON
     {
       public:
 
-        MsgOverwriteDiag( Gtk::Window* parent );
+        explicit MsgOverwriteDiag( Gtk::Window* parent );
         ~MsgOverwriteDiag() noexcept;
     };
 }

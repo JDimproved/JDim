@@ -28,7 +28,7 @@ namespace BOARD
         SKELETON::LabelEntry entry_host;
         SKELETON::LabelEntry entry_port;
 
-        ProxyFrame( const std::string& title )
+        explicit ProxyFrame( const std::string& title )
         : rd_global( "全体設定を使用する" ), rd_disable( "全体設定を無効にする" ), rd_local( "ローカル設定を使用する" ),
         entry_host( true, "ホスト：" ), entry_port( true, "ポート：" )
         {

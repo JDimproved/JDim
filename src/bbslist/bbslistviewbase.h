@@ -182,7 +182,7 @@ namespace BBSLIST
 
       public:
 
-        BBSListViewBase( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit BBSListViewBase( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
         ~BBSListViewBase();
 
         //

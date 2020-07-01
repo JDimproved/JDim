@@ -22,7 +22,7 @@ namespace IMAGE
 
       public:
 
-        ImageViewPopup( const std::string& url );
+        explicit ImageViewPopup( const std::string& url );
         ~ImageViewPopup();
 
         void clock_in() override;

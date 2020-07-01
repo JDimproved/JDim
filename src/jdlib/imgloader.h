@@ -54,7 +54,7 @@ namespace JDLIB
         bool equals( const std::string& file ) const;
         
     private:
-        ImgLoader( const std::string& file );
+        explicit ImgLoader( const std::string& file );
         bool load_imgfile( const int loadlevel );
         
         void slot_size_prepared( int w, int h );

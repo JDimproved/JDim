@@ -21,7 +21,7 @@ namespace BOARD
         BoardToolBar* m_toolbar;
 
       public:
-        BoardAdmin( const std::string& url );
+        explicit BoardAdmin( const std::string& url );
         ~BoardAdmin();
 
         void save_session() override;

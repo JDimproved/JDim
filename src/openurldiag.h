@@ -18,7 +18,7 @@ namespace CORE
 
       public:
 
-        OpenURLDialog( const std::string& url );
+        explicit OpenURLDialog( const std::string& url );
         ~OpenURLDialog() noexcept = default;
 
       protected:

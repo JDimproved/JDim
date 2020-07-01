@@ -41,7 +41,7 @@ namespace MESSAGE
 
       public:
 
-        MessageAdmin( const std::string& url );
+        explicit MessageAdmin( const std::string& url );
         ~MessageAdmin();
 
         void save_session() override {}

@@ -22,7 +22,7 @@ namespace BBSLIST
 
       public:
 
-        SelectListView( const std::string& url, const std::string& arg1 = std::string() , const std::string& arg2 = std::string() );
+        explicit SelectListView( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
         ~SelectListView() noexcept;
 
         SIG_CLOSE_DIALOG sig_close_dialog() { return m_sig_close_dialog; }

@@ -23,7 +23,7 @@ namespace DBTREE
 
       public:
 
-        RuleLoader( const std::string& url_boardbase );
+        explicit RuleLoader( const std::string& url_boardbase );
         ~RuleLoader();
 
       protected:

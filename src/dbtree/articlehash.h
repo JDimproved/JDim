@@ -67,7 +67,7 @@ namespace DBTREE
 
       public:
 
-        ArticleHashIterator( ArticleHash* hashtable );
+        explicit ArticleHashIterator( ArticleHash* hashtable );
 
         ArticleBase* operator * ();
         ArticleBase* operator ++ ();

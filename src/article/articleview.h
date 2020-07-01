@@ -33,7 +33,7 @@ namespace ARTICLE
         int m_cancel_reload_counter{};
 
       public:
-        ArticleViewMain( const std::string& url );
+        explicit ArticleViewMain( const std::string& url );
         ~ArticleViewMain();
 
         void clock_in() override;

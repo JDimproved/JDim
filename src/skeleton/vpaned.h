@@ -18,7 +18,7 @@ namespace SKELETON
 
       public:
 
-        JDVPaned( const int fixmode );
+        explicit JDVPaned( const int fixmode );
         ~JDVPaned() noexcept;
 
         VPaneControl& get_ctrl(){ return m_pctrl; }

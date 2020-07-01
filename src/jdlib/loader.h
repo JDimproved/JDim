@@ -70,7 +70,7 @@ namespace JDLIB
     public:
 
         // low_priority = true の時はスレッド起動待ち状態になった時に、起動順のプライオリティを下げる
-        Loader( const bool low_priority );
+        explicit Loader( const bool low_priority );
         ~Loader();
 
         bool is_loading() const { return m_loading; }

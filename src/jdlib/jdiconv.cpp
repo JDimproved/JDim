@@ -20,7 +20,7 @@ struct iconv_cast
 {
     char** const m_t;
     iconv_cast() = delete;
-    iconv_cast( char** t ) noexcept : m_t{ t } {}
+    explicit iconv_cast( char** t ) noexcept : m_t{ t } {}
     ~iconv_cast() noexcept = default;
 
     // POSIX-1.2008 : https://pubs.opengroup.org/onlinepubs/9699919799/functions/iconv.html

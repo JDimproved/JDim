@@ -21,7 +21,7 @@ namespace XML
       public:
 
         // 文字列を元にノードツリーを作る場合( html = HTMLモード )
-        Document( const std::string& str, const bool html = false );
+        explicit Document( const std::string& str, const bool html = false );
 
         // Gtk::TreeStore を元にノードツリーを作る場合
         // ただし列は SKELETON::EditColumns を継承したものであること

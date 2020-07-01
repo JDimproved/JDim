@@ -79,7 +79,7 @@ namespace MESSAGE
 
       public:
 
-        MessageViewBase( const std::string& url );
+        explicit MessageViewBase( const std::string& url );
         ~MessageViewBase();
 
         //

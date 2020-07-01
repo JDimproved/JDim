@@ -15,7 +15,7 @@ namespace DBTREE
     {
       public:
 
-        NodeTreeDummy( const std::string& url );
+        explicit NodeTreeDummy( const std::string& url );
         ~NodeTreeDummy();
 
         // ダウンロードしない

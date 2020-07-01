@@ -163,7 +163,7 @@ namespace SKELETON
         SIG_HIDE_POPUP sig_hide_popup(){ return m_sig_hide_popup; }
         SIG_RESIZE_POPUP sig_resize_popup(){ return m_sig_resize_popup; }
         
-        View( const std::string& url, const std::string& arg1 = std::string(), const std::string& arg2 = std::string() );
+        explicit View( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
         ~View() noexcept = default;
 
         virtual void save_session() = 0;

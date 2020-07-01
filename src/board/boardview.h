@@ -13,7 +13,7 @@ namespace BOARD
     {
       public:
 
-        BoardView( const std::string& url );
+        explicit BoardView( const std::string& url );
         ~BoardView();
 
         // SKELETON::View の関数のオーバロード

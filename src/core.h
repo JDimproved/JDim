@@ -125,7 +125,7 @@ namespace CORE
 
     public:
 
-        Core( JDWinMain& win_main );
+        explicit Core( JDWinMain& win_main );
         ~Core();
 
         Gtk::Widget* get_toplevel();

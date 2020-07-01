@@ -45,7 +45,7 @@ namespace SKELETON
 
       public:
 
-        TabLabel( const std::string& url );
+        explicit TabLabel( const std::string& url );
         ~TabLabel();
 
         SIG_TAB_MOTION_EVENT sig_tab_motion_event(){ return  m_sig_tab_motion_event; }

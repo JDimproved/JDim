@@ -34,7 +34,7 @@ namespace JDLIB
         static std::unique_ptr<Timeout> connect( const sigc::slot< bool > slot_timeout, unsigned int interval );
 
     private:
-        Timeout( const sigc::slot< bool > slot_timeout );
+        explicit Timeout( const sigc::slot< bool > slot_timeout );
         
 #ifdef _WIN32
         void slot_timeout_callback();

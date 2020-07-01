@@ -18,7 +18,7 @@ namespace ARTICLE
         std::string m_str_center;
 
       public:
-        ArticleViewRes( const std::string& url );
+        explicit ArticleViewRes( const std::string& url );
         ~ArticleViewRes();
 
         // SKELETON::View の関数のオーバロード
@@ -42,7 +42,7 @@ namespace ARTICLE
         std::string m_str_name;
 
       public:
-        ArticleViewName( const std::string& url );
+        explicit ArticleViewName( const std::string& url );
         ~ArticleViewName();
 
         // SKELETON::View の関数のオーバロード
@@ -66,7 +66,7 @@ namespace ARTICLE
         std::string m_str_id;
 
       public:
-        ArticleViewID( const std::string& url );
+        explicit ArticleViewID( const std::string& url );
         ~ArticleViewID();
 
         // SKELETON::View の関数のオーバロード
@@ -90,7 +90,7 @@ namespace ARTICLE
         std::string m_str_id;
 
       public:
-        ArticleViewBM( const std::string& url );
+        explicit ArticleViewBM( const std::string& url );
         ~ArticleViewBM();
 
         // SKELETON::View の関数のオーバロード
@@ -115,7 +115,7 @@ namespace ARTICLE
         std::string m_str_id;
 
       public:
-        ArticleViewPost( const std::string& url );
+        explicit ArticleViewPost( const std::string& url );
         ~ArticleViewPost();
 
         // SKELETON::View の関数のオーバロード
@@ -140,7 +140,7 @@ namespace ARTICLE
         std::string m_str_id;
 
       public:
-        ArticleViewHighRefRes( const std::string& url );
+        explicit ArticleViewHighRefRes( const std::string& url );
         ~ArticleViewHighRefRes();
 
         // SKELETON::View の関数のオーバロード
@@ -163,7 +163,7 @@ namespace ARTICLE
     class ArticleViewURL : public ArticleViewBase
     {
       public:
-        ArticleViewURL( const std::string& url );
+        explicit ArticleViewURL( const std::string& url );
         ~ArticleViewURL();
 
         // SKELETON::View の関数のオーバロード
@@ -187,7 +187,7 @@ namespace ARTICLE
         std::string m_str_num;
 
       public:
-        ArticleViewRefer( const std::string& url );
+        explicit ArticleViewRefer( const std::string& url );
         ~ArticleViewRefer();
 
         // SKELETON::View の関数のオーバロード
@@ -213,7 +213,7 @@ namespace ARTICLE
         bool m_mode_or;
 
       public:
-        ArticleViewDrawout( const std::string& url );
+        explicit ArticleViewDrawout( const std::string& url );
         ~ArticleViewDrawout();
 
         // SKELETON::View の関数のオーバロード
@@ -236,7 +236,7 @@ namespace ARTICLE
         int m_num;
 
       public:
-        ArticleViewPostlog( const std::string& url );
+        explicit ArticleViewPostlog( const std::string& url );
         ~ArticleViewPostlog();
 
         // SKELETON::View の関数のオーバロード

@@ -23,7 +23,7 @@ namespace DBTREE
 
       public:
 
-        FrontLoader( const std::string& url_boardbase );
+        explicit FrontLoader( const std::string& url_boardbase );
         ~FrontLoader() = default;
 
       protected:
