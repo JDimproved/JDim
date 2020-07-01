@@ -436,7 +436,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     }
     
     m_data.host = m_data.url.substr( i, i2 - i );
-    i = i2; m_data.path = m_data.url.substr( i2 );
+    m_data.path = m_data.url.substr( i2 );
 
     // ポートセット
 
@@ -1334,11 +1334,10 @@ bool Loader::analyze_header()
 //
 std::string Loader::analyze_header_option( const std::string& option )
 {
-    size_t i = 0, i2 = 0;
-    i = m_data.str_header.find( option, 0 );    
+    const std::size_t i = m_data.str_header.find( option, 0 );
     if( i != std::string::npos ){
-        const size_t option_length = option.length();
-        i2 = m_data.str_header.find( "\r\n", i );
+        const std::size_t option_length = option.length();
+        std::size_t i2 = m_data.str_header.find( "\r\n", i );
         if( i2 == std::string::npos ) i2 = m_data.str_header.find( "\n", i );
         if( i2 != std::string::npos ) return m_data.str_header.substr( i + option_length, i2 - ( i + option_length ) );
     }
@@ -1354,13 +1353,13 @@ std::string Loader::analyze_header_option( const std::string& option )
 std::list< std::string > Loader::analyze_header_option_list( const std::string& option )
 {
     std::list< std::string > str_list;
-    
-    size_t i = 0, i2 = 0;
-    const size_t option_length = option.length();
 
+    const std::size_t option_length = option.length();
+
+    std::size_t i2 = 0;
     for(;;){
 
-        i = m_data.str_header.find( option, i2 );    
+        const std::size_t i = m_data.str_header.find( option, i2 );
         if( i == std::string::npos ) break;
 
         i2 = m_data.str_header.find( "\r\n", i );
@@ -1530,7 +1529,7 @@ bool Loader::init_unzip()
 //
 // unzipしてコールバック呼び出し
 //
-bool Loader::unzip( char* buf, size_t& read_size )
+bool Loader::unzip( char* buf, std::size_t read_size )
 {
     // zlibの入力バッファに値セット
     if( m_zstream.avail_in + read_size > m_lng_buf_zlib_in ){ // オーバーフローのチェック
