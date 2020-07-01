@@ -213,35 +213,41 @@ BoardBase* Root::get_board( const std::string& url, const int count )
         // 2ch型の場合、板パスを見てもし一致したら新ホストに移転したと判断して移転テーブルを更新する
         if( is_2ch( url ) ){
 
+            // 板パスを見て一致したら移転したと見なす
+            // TODO : 板パスが同じ板が2つ以上あるときどうするか？
+            const auto match_path = [&url, this]( const BoardBase* b ) {
+                return is_2ch( b->get_root() ) && url.find( b->get_path_board() + "/" ) != std::string::npos;
+            };
+
             // 全ての板をサーチして移転先の板を探す
-            for( BoardBase* board : m_list_board ) {
+            auto it = std::find_if( m_list_board.begin(), m_list_board.end(), match_path );
+            if( it != m_list_board.end() ) {
+                BoardBase* board = *it;
 
-                // 板パスを見て一致したら移転したと見なす
-                // TODO : 板パスが同じ板が2つ以上あるときどうするか？
-                if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
+                const std::string hostname = MISC::get_hostname( url );
+                const std::string& path_board = board->get_path_board();
 
-                    // 板移転テーブルを更新
-                    push_movetable( MISC::get_hostname( url ), board->get_path_board(), board->get_root(), board->get_path_board() );
-                    
-                    std::ostringstream ss;
-                    ss << board->get_name() << std::endl
-                       << "旧 URL = " << MISC::get_hostname( url ) + board->get_path_board() << "/" << std::endl
-                       << "新 URL  = " << board->url_boardbase() << std::endl;
-                    MISC::MSG( ss.str() );
+                // 板移転テーブルを更新
+                push_movetable( hostname, path_board, board->get_root(), path_board );
 
-                    if( m_enable_save_movetable ){
+                std::ostringstream ss;
+                ss << board->get_name() << '\n'
+                   << "旧 URL = " << hostname + path_board << '/' << '\n'
+                   << "新 URL  = " << board->url_boardbase() << std::endl;
+                MISC::MSG( ss.str() );
 
-                        //移転テーブル保存
-                        save_movetable();
+                if( m_enable_save_movetable ){
 
-                        // サイドバーに登録されているURL更新
-                        CORE::core_set_command( "update_sidebar_item" );
-                    }
+                    //移転テーブル保存
+                    save_movetable();
 
-                    board = get_board( url, count + 1 );
-                    m_get_board_url = url;
-                    return board;
+                    // サイドバーに登録されているURL更新
+                    CORE::core_set_command( "update_sidebar_item" );
                 }
+
+                board = get_board( url, count + 1 );
+                m_get_board_url = url;
+                return board;
             }
         }
 
