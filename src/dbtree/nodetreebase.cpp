@@ -1661,7 +1661,6 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 //
 void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, const int color_name )
 {
-    bool digitlink = true;
     const bool bold = true;
     const bool ahref = false;
     NODE *node;
@@ -1683,7 +1682,7 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
 
     // デフォルト名無しと同じときはアンカーを作らない
     if( defaultname ){
-        digitlink = false;
+        constexpr bool digitlink = false;
         parse_html( str, lng, color_name, digitlink, bold, ahref, FONT_MAIL );
     }
     else{
@@ -1704,7 +1703,7 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
             // </b>の前までパース
             if( i != pos ){
                 // デフォルト名無しと同じときはアンカーを作らない
-                digitlink = ( strncmp( m_default_noname.data(), str + pos, i - pos ) != 0 );
+                const bool digitlink = ( strncmp( m_default_noname.data(), str + pos, i - pos ) != 0 );
                 parse_html( str + pos, i - pos, color_name, digitlink, bold, ahref, FONT_MAIL );
             }
             if( i >= lng ) break;
@@ -1731,7 +1730,7 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
 #endif
 
             // </b><b>の中をパース
-            digitlink = false; // 数字が入ってもリンクしない
+            constexpr bool digitlink = false; // 数字が入ってもリンクしない
             parse_html( str + pos, pos_end - pos, COLOR_CHAR_NAME_B, digitlink, bold, ahref, FONT_MAIL );
 
             pos = pos_end + 3; // 3 = strlen( "<b>" );
