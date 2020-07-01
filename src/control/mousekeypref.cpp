@@ -212,9 +212,7 @@ std::string InputDiag::get_key_label()
     for( int mode = CONTROL::MODE_START; mode <= CONTROL::MODE_END; ++mode ){
 
         const std::vector< int > vec_ids = CONTROL::check_key_conflict( mode, m_str_motion );
-        std::vector< int >::const_iterator it = vec_ids.begin();
-        for( ; it != vec_ids.end(); ++it ){
-            const int id = *it;
+        for( const int id : vec_ids ) {
             label += "\n" + CONTROL::get_label( id ) + " ( " + CONTROL::get_mode_label( mode ) + " )";
             if( mode == m_controlmode && id != m_id ) label += " ×";
         }
@@ -232,9 +230,7 @@ std::string InputDiag::get_mouse_label()
     for( int mode = CONTROL::MODE_START; mode <= CONTROL::MODE_END; ++mode ){
 
         const std::vector< int > vec_ids = CONTROL::check_mouse_conflict( mode, m_str_motion );
-        std::vector< int >::const_iterator it = vec_ids.begin();
-        for( ; it != vec_ids.end(); ++it ){
-            const int id = *it;
+        for( const int id : vec_ids ) {
             label += "\n" + CONTROL::get_label( id ) + " ( " + CONTROL::get_mode_label( mode ) + " )";
             if( mode == m_controlmode && id != m_id ) label += " ×";
         }
@@ -251,10 +247,8 @@ std::string InputDiag::get_button_label()
     for( int mode = CONTROL::MODE_START; mode <= CONTROL::MODE_END; ++mode ){
 
         const std::vector< int > vec_ids = CONTROL::check_button_conflict( mode, m_str_motion );
-        std::vector< int >::const_iterator it = vec_ids.begin();
-        for( ; it != vec_ids.end(); ++it ){
-            const int id = *it;
-            label += "\n" + CONTROL::get_label( id ) + " ( " + CONTROL::get_mode_label( mode ) + " )";
+        for( const int id : vec_ids ) {
+            label.append( "\n" + CONTROL::get_label( id ) + " ( " + CONTROL::get_mode_label( mode ) + " )" );
         }
     }
 
@@ -379,15 +373,13 @@ std::string MouseKeyDiag::show_inputdiag( bool is_append )
         // 設定が重複していないかチェック
         bool conflict = false;
         const std::vector< int > vec_ids = check_conflict( m_controlmode, diag->get_str_motion() );
-        std::vector< int >::const_iterator it = vec_ids.begin();
-        for( ; it != vec_ids.end(); ++it ){
-            const int id = *it;
-            if( id != CONTROL::None && id != m_id ){
-                SKELETON::MsgDiag mdiag( nullptr, diag->get_str_motion() + "\n\nは「" + CONTROL::get_label( id ) + "」で使用されています" );
-                mdiag.run();
-                conflict = true;
-                break;
-            }
+        auto it = std::find_if( vec_ids.cbegin(), vec_ids.cend(),
+                                [this]( int id ) { return id != CONTROL::None && id != m_id; } );
+        if( it != vec_ids.cend() ) {
+            const std::string label = CONTROL::get_label( *it );
+            SKELETON::MsgDiag mdiag( nullptr, diag->get_str_motion() + "\n\nは「" + label + "」で使用されています" );
+            mdiag.run();
+            conflict = true;
         }
 
         if( ! conflict ){
@@ -485,14 +477,13 @@ void MouseKeyDiag::slot_reset()
 
         bool conflict = false;
         const std::vector< int > vec_ids = check_conflict( m_controlmode, motion );
-        for( const int id : vec_ids ) {
-
-            if( id != CONTROL::None && id != m_id ){
-                SKELETON::MsgDiag mdiag( nullptr, motion + "\n\nは「" + CONTROL::get_label( id ) + "」で使用されています" );
-                mdiag.run();
-                conflict = true;
-                break;
-            }
+        auto it = std::find_if( vec_ids.cbegin(), vec_ids.cend(),
+                                [this]( int id ) { return id != CONTROL::None && id != m_id; } );
+        if( it != vec_ids.cend() ) {
+            const std::string label = CONTROL::get_label( *it );
+            SKELETON::MsgDiag mdiag( nullptr, motion + "\n\nは「" + label + "」で使用されています" );
+            mdiag.run();
+            conflict = true;
         }
 
         if( ! conflict ) list_defaults.push_back( std::move( motion ) );
