@@ -1153,7 +1153,6 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
     if( m_treeview.get_path_at_pos( x, y, path, column, cell_x, cell_y ) && m_treeview.get_row( path ) ){
 
         Gtk::TreeModel::Row row = m_treeview.get_row( path );
-        Glib::ustring subject = row[ m_columns.m_name ];
         Glib::ustring url = row[ m_columns.m_url ];
         int type = row[ m_columns.m_type ];
 

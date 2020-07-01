@@ -100,7 +100,7 @@ void DelImgCacheDiag::main_thread()
     std::cout << "DelImgCacheDiag::main_thread start\n";
 #endif
 
-    time_t days = 0;
+    std::time_t days{};
 
     // info と 画像キャッシュ
     std::list< std::string >list_infofile;

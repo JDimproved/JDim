@@ -1963,7 +1963,6 @@ std::string BoardBase::import_dat( const std::string& filename )
         return std::string();
     }
 
-    const std::string dir = MISC::get_dir( filename );
     const std::string id = MISC::get_filename( filename );
     if( id.empty() || ! is_valid( id ) ){
         SKELETON::MsgDiag mdiag( nullptr, "ファイル名が正しくありません" );
@@ -2148,7 +2147,7 @@ void BoardBase::save_jdboard_info()
 #endif
 
     // あぼーん情報
-    std::string str_abone_id = MISC::listtostr( m_list_abone_id );
+//    std::string str_abone_id = MISC::listtostr( m_list_abone_id );
     std::string str_abone_name = MISC::listtostr( m_list_abone_name );
     std::string str_abone_word = MISC::listtostr( m_list_abone_word );
     std::string str_abone_regex = MISC::listtostr( m_list_abone_regex );

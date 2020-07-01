@@ -280,8 +280,6 @@ void Post::receive_finish()
     std::string msg;
     std::string conf;
 
-    bool ret;
-
     // タイトル
     icase = true;
     newline = false; // . に改行をマッチさせる
@@ -366,12 +364,10 @@ void Post::receive_finish()
     // 2ch 型
     icase = false;
     newline = false; // . に改行をマッチさせる
-    ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", m_return_html, offset, icase, newline, usemigemo, wchar );
-
-    // 0ch 型
-    icase = false;
-    newline = false; // . に改行をマッチさせる
-    if( ! ret ) ret = regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", m_return_html, offset, icase, newline, usemigemo, wchar );
+    if( ! regex.exec( ".*</ul>.*<b>(.*)</b>.*<form.*", m_return_html, offset, icase, newline, usemigemo, wchar ) ) {
+        // 0ch 型
+        regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", m_return_html, offset, icase, newline, usemigemo, wchar );
+    }
 
     msg = MISC::remove_space( regex.str( 1 ) );
     const::std::list< std::string > list_cookies = SKELETON::Loadable::cookies();

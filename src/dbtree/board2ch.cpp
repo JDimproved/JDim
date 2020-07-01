@@ -316,7 +316,9 @@ void Board2ch::update_hap()
     const std::string new_cookie = Board2chCompati::cookie_for_request();
 
     if( ! new_cookie.empty() ) {
+#ifdef _DEBUG
         const std::string old_cookie = get_hap();
+#endif
         set_hap( new_cookie );
 #ifdef _DEBUG
         std::cout << "Board2ch::update_hap old = " << old_cookie << std::endl;

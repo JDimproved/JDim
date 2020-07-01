@@ -838,11 +838,6 @@ void BoardViewBase::save_column_width()
 void BoardViewBase::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
 {
     Gtk::TreeModel::Row row = *it;
-    Gtk::TreePath path = GET_PATH( row );
-
-#ifdef _DEBUG
-//    std::cout << "BoardViewBase::slot_cell_data path = " << path.to_string() << std::endl;
-#endif
 
     // ハイライト色 ( 抽出状態 )
     if( row[ m_columns.m_col_drawbg ] ){
