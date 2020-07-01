@@ -350,6 +350,7 @@ void AboutConfig::append_row( const std::string& comment )
 
     row[ m_columns.m_col_name ]  = comment;
     row[ m_columns.m_col_type ] = CONFTYPE_COMMENT;
+    static_cast<void>( row ); // cppcheck: unreadVariable
 }
 
 

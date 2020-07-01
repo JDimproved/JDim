@@ -901,6 +901,7 @@ void EditTreeView::draw_underline( const Gtk::TreePath& path, const bool draw )
     if( ! row ) return;
 
     row[ m_columns.m_underline ] = draw;
+    static_cast<void>( row ); // cppcheck: unreadVariable
 }
 
 
