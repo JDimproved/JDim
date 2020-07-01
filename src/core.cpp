@@ -1384,7 +1384,8 @@ void Core::set_maintitle()
 
 
 
-static inline void toggle_sidebar_action( Glib::RefPtr< Gtk::ActionGroup >& group, const std::string& action, const std::string url )
+static inline void toggle_sidebar_action( Glib::RefPtr< Gtk::ActionGroup >& group,
+                                          const std::string& action, const std::string& url )
 {
     Glib::RefPtr< Gtk::Action > act;
     Glib::RefPtr< Gtk::ToggleAction > tact;
