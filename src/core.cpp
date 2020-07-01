@@ -1118,9 +1118,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     // メニューにショートカットキーやマウスジェスチャを表示
     for( auto&& widget : items ) {
-        auto item = dynamic_cast< Gtk::MenuItem* >( widget );
-        CONTROL::set_menu_motion( item->get_submenu() );
-        item->signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
+        auto menu_item = dynamic_cast< Gtk::MenuItem* >( widget );
+        CONTROL::set_menu_motion( menu_item->get_submenu() );
+        menu_item->signal_activate().connect( sigc::mem_fun( *this, &Core::slot_activate_menubar ) );
     }
 
     // ツールバー作成

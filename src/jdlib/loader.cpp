@@ -935,14 +935,14 @@ void Loader::run_main()
                 // ヘッダ取得
                 if( receiving_header ){
 
-                    const int ret = receive_header( m_buf, read_size );
-                    if( ret == HTTP_ERR ){
+                    const int http_code = receive_header( m_buf, read_size );
+                    if( http_code == HTTP_ERR ){
 
                         m_data.code = HTTP_ERR;
                         errmsg = "invalid header : " + m_data.url;
                         goto EXIT_LOADING;
                     }
-                    else if( ret == HTTP_OK ) receiving_header = false;
+                    else if( http_code == HTTP_OK ) receiving_header = false;
                 }
 
                 if( m_data.length && m_data.length <= m_data.length_current + read_size ) break;
