@@ -11,9 +11,8 @@
 
 #include "session.h"
 
-#ifndef MIN
-#define MIN( a, b ) ( a < b ? a : b )
-#endif
+#include <cmath>
+
 
 using namespace IMAGE;
 
@@ -67,7 +66,6 @@ void ImageAreaMain::show_image()
     int size = get_img()->get_size();
 
     // スケール調整
-    double scale = 1;
     int w_org = get_img()->get_width();
     int h_org = get_img()->get_height();
     set_width( w_org );
@@ -78,8 +76,8 @@ void ImageAreaMain::show_image()
         double scale_w = ( double ) width_max / w_org;
         double scale_h = ( double ) height_max / h_org;
 
-        if( SESSION::get_img_fit_mode() == SESSION::IMG_FIT_NORMAL ) scale = MIN( scale_w, scale_h );
-        else scale = scale_w;
+        const double scale = ( SESSION::get_img_fit_mode() == SESSION::IMG_FIT_NORMAL ) ? std::fmin( scale_w, scale_h )
+                                                                                        : scale_w;
 
         if( scale < 1 ){
             set_width( (int)( w_org * scale ) );
@@ -89,7 +87,7 @@ void ImageAreaMain::show_image()
 
     // サイズ変更
     else if( size != 100 ){
-        scale = size/100.;
+        const double scale = size / 100.0;
         set_width( (int)( w_org * scale ) );
         set_height( (int)( h_org * scale ) );
     }

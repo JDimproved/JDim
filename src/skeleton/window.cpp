@@ -186,12 +186,10 @@ void JDWindow::clock_in()
     // 折りたたみ処理
     if( m_fold_when_focusout ){
 
-        int waitcount = 0;
-
         // 遅延リサイズ( focus_in()にある説明を参照 )
         if( m_mode == JDWIN_EXPANDING ){
 
-            waitcount = FOCUS_TIME / TIMER_TIMEOUT;
+            constexpr int waitcount = FOCUS_TIME / TIMER_TIMEOUT;
             ++m_counter;
             if( m_counter > waitcount && ! ( m_counter % waitcount ) ){
 
@@ -237,7 +235,7 @@ void JDWindow::clock_in()
             && ! SESSION::is_iconified_win_main() // メインウィンドウが最小化しているときに transient を外すとウィンドウが表示されなくなる
             && ! SESSION::is_focus_win_main() && ! is_focus_win() ){
 
-            waitcount = FOCUSOUT_TIMEOUT / TIMER_TIMEOUT;
+            constexpr int waitcount = FOCUSOUT_TIMEOUT / TIMER_TIMEOUT;
 
             if( m_count_focusout < waitcount  ) ++m_count_focusout;
             if( m_count_focusout == waitcount ){
