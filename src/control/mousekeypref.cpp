@@ -412,7 +412,10 @@ void MouseKeyDiag::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tr
     if( ! row ) return;
 
     std::string str_motion = show_inputdiag( false );
-    if( ! str_motion.empty() ) row[ m_columns.m_col_motion ] = str_motion;
+    if( ! str_motion.empty() ) {
+        row[ m_columns.m_col_motion ] = str_motion;
+        static_cast<void>( row ); // cppcheck: unreadVariable
+    }
 }
 
 
@@ -460,6 +463,7 @@ void MouseKeyDiag::slot_add()
 
     Gtk::TreeModel::iterator it_new = m_liststore->append();
     ( *it_new )[ m_columns.m_col_motion ] = str_motion;
+    static_cast<void>( *it_new ); // cppcheck: unreadVariable
 }
 
 
@@ -581,6 +585,7 @@ void MouseKeyPref::append_comment_row( const std::string& comment )
         row[ m_columns.m_col_motions ] = std::string();
         row[ m_columns.m_col_id ] = CONTROL::None;
         row[ m_columns.m_col_drawbg ] = false;
+        static_cast<void>( row ); // cppcheck: unreadVariable
     }
 }
 

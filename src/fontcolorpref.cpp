@@ -401,6 +401,7 @@ void FontColorPref::set_color_settings( const int colorid, const std::string& na
     row[ m_columns_color.m_col_color ] = std::string();
     row[ m_columns_color.m_col_colorid ] = colorid;
     row[ m_columns_color.m_col_default ] = defaultval;
+    static_cast<void>( row ); // cppcheck: unreadVariable
 }
 
 

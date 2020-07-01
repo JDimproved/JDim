@@ -1544,6 +1544,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
             if( row ){
                 row[ m_columns.m_url ] = url;
                 row[ m_columns.m_name ] = name;
+                static_cast<void>( row ); // cppcheck: unreadVariable
             }
         }
 

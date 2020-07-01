@@ -322,6 +322,7 @@ void AboutDiag::set_environment_list()
     row[ column_name ] = "主なオプション";
     row[ column_value ] = ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_OMITTED );
 
+    static_cast<void>( row ); // cppcheck: unreadVariable
     m_scrollwindow_environment.add( m_treeview_environment );
 }
 

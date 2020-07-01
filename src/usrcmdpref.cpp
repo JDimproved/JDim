@@ -372,5 +372,6 @@ void UsrCmdPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tree
     if( diag.run() == Gtk::RESPONSE_OK ){
         row[ m_columns.m_name ] = diag.get_name();
         row[ m_columns.m_data ] = diag.get_cmd();
+        static_cast<void>( row ); // cppcheck: unreadVariable
     }
 }

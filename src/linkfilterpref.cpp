@@ -233,6 +233,7 @@ void LinkFilterPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::
     if( diag.run() == Gtk::RESPONSE_OK ){
         row[ m_columns.m_col_url ] = diag.get_url();
         row[ m_columns.m_col_cmd ] = diag.get_cmd();
+        static_cast<void>( row ); // cppcheck: unreadVariable
     }
 }
 
