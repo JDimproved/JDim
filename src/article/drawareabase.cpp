@@ -2355,7 +2355,6 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const CLIPINFO& ci )
                             paint_backscreen( m_pixbuf_refer_post, 0, s_top, 1, y - ci.pos_y + s_top,
                                               m_pixbuf_refer_post->get_width(), height );
                         }
-                        y += height_refer_post;
                     }
                 }
 
@@ -3984,7 +3983,10 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
     if( ! reverse ){
         if( it != m_multi_selection.end() ) ( *it ).select = false;
         if( it == m_multi_selection.begin() )  m_multi_selection.back().select = true;
-        else ( *( --it ) ).select = true;
+        else {
+            --it;
+            it->select = true;
+        }
     }
 
     redraw_view_force();

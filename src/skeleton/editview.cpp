@@ -290,9 +290,6 @@ void EditTextView::undo()
     std::cout << udata.str_diff << std::endl;
 #endif
 
-    Glib::ustring text;
-    Glib::ustring text_head = get_buffer()->get_text().substr( 0, udata.pos );
-
     m_cancel_change = true; // slot_buffer_changed() の呼出をキャンセル
 
     // 追加と削除を逆転

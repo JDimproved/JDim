@@ -207,7 +207,6 @@ bool MISC::is_utf( const char* input, size_t read_byte )
         // UTF-8の1バイト目の範囲ではない
         else if( ! UTF_RANGE_1( input[ byte ] ) )
         {
-            byte = 0;
             return false;
         }
 
