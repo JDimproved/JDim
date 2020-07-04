@@ -33,8 +33,8 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag,
 {
 #ifdef _DEBUG
     std::cout << "JDWinMain::JDWinMain init = " << init << std::endl
-              << "x y w h = " << get_x_win() << " " << get_y_win()
-              << " " << get_width_win() << " " << get_height_win() << std::endl;
+              << "x y w h = " << JDWinMain::get_x_win() << " " << JDWinMain::get_y_win()
+              << " " << JDWinMain::get_width_win() << " " << JDWinMain::get_height_win() << std::endl;
 #endif
 
     setlocale( LC_ALL, "ja_JP.UTF-8" );
@@ -61,23 +61,23 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag,
     bool cancel_maximize = false;
     if( init_w >= 0 ){
         cancel_maximize = true;
-        set_width_win( init_w );
+        JDWinMain::set_width_win( init_w );
     }
     if( init_h >= 0 ){
         cancel_maximize = true;
-        set_height_win( init_h );
+        JDWinMain::set_height_win( init_h );
     }
     if( init_x >= 0 ){
         cancel_maximize = true;
-        set_x_win( init_x );
+        JDWinMain::set_x_win( init_x );
     }
     if( init_y >= 0 ){
         cancel_maximize = true;
-        set_y_win( init_y );
+        JDWinMain::set_y_win( init_y );
     }
     if( cancel_maximize ){
-        set_maximized_win( false );
-        set_full_win( false );
+        JDWinMain::set_maximized_win( false );
+        JDWinMain::set_full_win( false );
     }
 
     // サイズ変更
@@ -109,8 +109,9 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag,
 JDWinMain::~JDWinMain()
 {
 #ifdef _DEBUG
-    std::cout << "JDWinMain::~JDWinMain window size : x = " << get_x_win() << " y = " << get_y_win()
-              << " w = " << get_width_win() << " h = " << get_height_win() << " max = " << is_maximized_win() << std::endl;
+    std::cout << "JDWinMain::~JDWinMain window size : x = " << JDWinMain::get_x_win()
+              << " y = " << JDWinMain::get_y_win() << " w = " << JDWinMain::get_width_win()
+              << " h = " << JDWinMain::get_height_win() << " max = " << JDWinMain::is_maximized_win() << std::endl;
 #endif
 
     if( m_core ){
