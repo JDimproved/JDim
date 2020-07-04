@@ -985,11 +985,9 @@ void MessageViewBase::show_status()
 
     std::stringstream ss;
 
-    int line_count = 0;
-    if( m_text_message ){
-        line_count = m_text_message->get_buffer()->get_line_count();
-        ss << " [ 行数 " << line_count;
-    }
+    const int line_count = m_text_message->get_buffer()->get_line_count();
+    ss << " [ 行数 " << line_count;
+
     if( m_max_line ){
         ss << "/ " << m_max_line;
         if( m_max_line < line_count ) m_over_lines = true;
