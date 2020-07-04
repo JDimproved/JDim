@@ -561,25 +561,28 @@ void EditTextView::slot_convert_space()
     }
     else
     {
-        size_t rpos = std::string::npos;
-        size_t nlpos = std::string::npos;
+        std::list<std::string> lines = MISC::get_lines( text );
+        for( std::string& line : lines ) {
 
-        // 改行前のスペースを取り除く
-        while( ( nlpos = text.rfind( "\n", rpos ) ) != std::string::npos )
-        {
-            if( nlpos == 0 ) break;
-            rpos = nlpos;
-            while( text[ rpos - 1 ] == ' ' ) rpos--;
-            text.erase( rpos, nlpos - rpos );
-            rpos--;
+            if( ! line.empty() ) {
+
+                // 行末のスペースを取り除く
+                line.erase( line.find_last_not_of( ' ' ) + 1 );
+
+                // 行頭のスペースを&nbsp;に変換する
+                if( line.front() == ' ' ) {
+                    line.replace( 0, 1, "&nbsp;" );
+                }
+
+                // 連続スペースを&nbsp;に変換する
+                converted.append( MISC::replace_str( line, "  ", " &nbsp;" ) );
+            }
+
+            converted.push_back( '\n' );
         }
 
-        // 最後のスペースを取り除く
-        rpos = text.length();
-        while( text[ rpos - 1 ] == ' ' ) rpos--;
-        text.erase( rpos, std::string::npos );
-
-        converted = MISC::replace_str( text, " ", "&nbsp;" );
+        // 最後の改行を取り除く
+        converted.pop_back();
     }
 
     buffer->set_text( converted );
