@@ -7,7 +7,7 @@ base: core18
 grade: stable
 icon: jdim.png
 
-# https://snapcraft.io/blog/gnome-3-34-snapcraft-extension
+# https://forum.snapcraft.io/t/gtk3-applications/13483
 parts:
   jdim:
     plugin: autotools
@@ -17,6 +17,7 @@ parts:
     source-depth: 1
     configflags:
       - --disable-compat-cache-dir
+      - --with-gtkmm3
       - --with-pangolayout
       - --with-xdgopen
     build-environment:
@@ -26,19 +27,16 @@ parts:
       - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
       - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
     build-packages:
-      - autoconf-archive
-      - build-essential
-      - git
+      # https://packages.ubuntu.com/source/focal/jdim
       - libgnutls28-dev
-      - libsigc++-2.0-dev
-    stage-packages:
-      # gnome-3-34 extension does not bundle the shared library.
-      - libsigc++-2.0-0v5
+      - libgtkmm-3.0-dev
+      - zlib1g-dev
+      - autoconf-archive
     override-build: |
       set -eu
       snapcraftctl build
       strip -s ${SNAPCRAFT_PART_INSTALL}/bin/jdim
-      VER="$(${SNAPCRAFT_PART_INSTALL}/bin/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\)(git:\([0-9a-f]\+\).*$%\1-\2-\3%p')"
+      VER="$(./src/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\)(git:\([0-9a-f]\+\).*$%\1-\2-\3%p')"
       echo "version ${VER}"
       snapcraftctl set-version "${VER}"
     override-prime: |
@@ -48,14 +46,51 @@ parts:
       ${SNAPCRAFT_PRIME}/share/applications/jdim.desktop
     parse-info: [jdim.metainfo.xml]
 
+  # gnome-3-28 extension does not bundle shared objects for C++ library.
+  jdim-depends:
+    plugin: nil
+    stage-packages:
+      # Exclude packages provided by gnome-3-28 extension and core18.
+      # https://gitlab.gnome.org/Community/Ubuntu/gnome-3-28-1804/blob/master/snapcraft.yaml
+      - libatkmm-1.6-1v5
+      - libcairomm-1.0-1v5
+      - libfribidi0
+      - libglibmm-2.4-1v5
+      - libgtkmm-3.0-1v5
+      - libpangomm-1.4-1v5
+      - libpcre2-8-0
+      - libsigc++-2.0-0v5
+    prime:
+      - -./etc
+      - -./lib
+      - -./usr/bin
+      - -./usr/sbin
+      - -./usr/share
+      - -./var
+      # Include shared objects for C++ library and a few missings.
+      - ./usr/lib/**/libatkmm-1.6.so*
+      - ./usr/lib/**/libcairomm-1.0.so*
+      - ./usr/lib/**/libfribidi.so*
+      - ./usr/lib/**/libgdkmm-3.0.so*
+      - ./usr/lib/**/libgiomm-2.4.so*
+      - ./usr/lib/**/libglibmm-2.4.so*
+      - ./usr/lib/**/libglibmm_generate_extra_defs-2.4.so*
+      - ./usr/lib/**/libgtkmm-3.0.so*
+      - ./usr/lib/**/libpangomm-1.4.so*
+      - ./usr/lib/**/libpcre2-8.so*
+      - ./usr/lib/**/libsigc-2.0.so*
+
 apps:
   jdim:
     command: bin/jdim
     common-id: com.github.jdimproved.JDim
     desktop: share/applications/jdim.desktop
-    extensions: [gnome-3-34]
+    # https://forum.snapcraft.io/t/the-gnome-3-28-extension/13485
+    extensions: [gnome-3-28]
     plugs:
+      - gsettings
       - home
       - network
+      - unity7
     command-chain:
       - snap/command-chain/desktop-launch
