@@ -32,6 +32,8 @@ namespace {
 // 書き込み用のインターフェース
 struct WriteStrategy : public MESSAGE::PostStrategy
 {
+    WriteStrategy() noexcept = default;
+    ~WriteStrategy() noexcept = default;
     std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi( url ); }
     std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi( url ); }
 
@@ -47,6 +49,8 @@ struct WriteStrategy : public MESSAGE::PostStrategy
 // スレ立て用のインターフェース
 struct NewArticleStrategy : public MESSAGE::PostStrategy
 {
+    NewArticleStrategy() noexcept = default;
+    ~NewArticleStrategy() noexcept = default;
     std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi_new( url ); }
     std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi_new( url ); }
 
