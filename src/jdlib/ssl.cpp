@@ -72,18 +72,20 @@ bool JDSSL::connect( const int soc, const char *host )
     }
 
 #if GNUTLS_VERSION_NUMBER >= 0x030406
+    auto failure = [this]( int err ) { m_errmsg = gnutls_strerror( err ); return false; };
+
     ret = gnutls_certificate_allocate_credentials( &m_cred );
-    assert( ret == GNUTLS_E_SUCCESS );
+    if( ret != GNUTLS_E_SUCCESS ) return failure( ret );
     ret = gnutls_certificate_set_x509_system_trust( m_cred );
-    assert( ret >= 0 );
+    if( ret < 0 ) return failure( ret );
 
     ret = gnutls_server_name_set( m_session, GNUTLS_NAME_DNS, host, strlen( host ) );
-    assert( ret == GNUTLS_E_SUCCESS );
+    if( ret != GNUTLS_E_SUCCESS ) return failure( ret );
 
     ret = gnutls_set_default_priority( m_session );
-    assert( ret == GNUTLS_E_SUCCESS );
+    if( ret != GNUTLS_E_SUCCESS ) return failure( ret );
     ret = gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
-    assert( ret == GNUTLS_E_SUCCESS );
+    if( ret != GNUTLS_E_SUCCESS ) return failure( ret );
 
     gnutls_session_set_verify_cert( m_session, host, 0 );
 
