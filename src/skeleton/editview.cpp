@@ -570,7 +570,7 @@ void EditTextView::slot_convert_space()
                 line.erase( line.find_last_not_of( ' ' ) + 1 );
 
                 // 行頭のスペースを&nbsp;に変換する
-                if( line.front() == ' ' ) {
+                if( ! line.empty() && line.front() == ' ' ) {
                     line.replace( 0, 1, "&nbsp;" );
                 }
 
