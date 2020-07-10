@@ -2610,7 +2610,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
     for( ; ! it.end(); ++it ){
 
         Gtk::TreeModel::Row row = *it;
-        const Glib::ustring url_row = row[ m_columns.m_url ];
+        const Glib::ustring& ustr_url = row[ m_columns.m_url ];
 
         switch( row[ m_columns.m_type ] ){
 
@@ -2618,7 +2618,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
 
-                if( urldat == url_row || urlcgi == url_row ){
+                if( urldat == ustr_url.raw() ){
 
                     if( show_diag ){
 
@@ -2663,11 +2663,11 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 
                         // 名前が古いものであったら更新
                         // 手動で変更されていたらそのまま
-                        const Glib::ustring name_row = row[ m_columns.m_name ];
+                        const Glib::ustring& ustr_name = row[ m_columns.m_name ];
 #ifdef _DEBUG
-                        std::cout << "name_row = " << name_row << std::endl;
+                        std::cout << "name_row = " << ustr_name << std::endl;
 #endif
-                        if( MISC::remove_space( name_row ) == name_old ){
+                        if( ustr_name.raw() == name_old ){
 #ifdef _DEBUG
                             std::cout << "replace name\n";
 #endif
