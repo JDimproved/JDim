@@ -1153,20 +1153,20 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
     if( m_treeview.get_path_at_pos( x, y, path, column, cell_x, cell_y ) && m_treeview.get_row( path ) ){
 
         Gtk::TreeModel::Row row = m_treeview.get_row( path );
-        Glib::ustring url = row[ m_columns.m_url ];
+        const Glib::ustring& ustr_url = row[ m_columns.m_url ];
         int type = row[ m_columns.m_type ];
 
-        m_treeview.reset_pre_popupurl( url );
+        m_treeview.reset_pre_popupurl( ustr_url.raw() );
 
         // 画像ポップアップ
         if( type == TYPE_IMAGE ){
 
-            if( DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && DBIMG::get_code( url ) != HTTP_INIT ){
+            if( DBIMG::get_type_ext( ustr_url.raw() ) != DBIMG::T_UNKNOWN && DBIMG::get_code( ustr_url.raw() ) != HTTP_INIT ){
 
-                if( m_treeview.pre_popup_url() != url ){
+                if( m_treeview.pre_popup_url() != ustr_url.raw() ){
 
-                    SKELETON::View* view = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP,  url );
-                    m_treeview.show_popup( url, view );
+                    SKELETON::View* view = CORE::ViewFactory( CORE::VIEW_IMAGEPOPUP, ustr_url.raw() );
+                    m_treeview.show_popup( ustr_url.raw(), view );
                 }
             }
             else m_treeview.hide_popup();
