@@ -222,11 +222,12 @@ conf.set('XDGOPEN', 1)
 # gprof support
 if get_option('gprof').enabled()
   args = ['-pg']
-  found = cpp_compiler.has_multi_arguments(args)
-  if found
+  if cpp_compiler.has_multi_arguments(args)
     add_project_arguments(args, language: 'cpp')
     add_project_link_arguments(args,  language: 'cpp')
     configure_args += '\'--enable-gprof\''
+  else
+    error('not support -pg')
   endif
   message('Output profile information for gprof : YES')
 endif
