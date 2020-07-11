@@ -1852,14 +1852,10 @@ void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
     // 読み込み数
 
     if( load ){
-        const int tmpsize = 32;
-        char tmp[ tmpsize ];
-        snprintf( tmp, tmpsize, "%d", load );
-        row[ m_columns.m_col_str_load ] = tmp;
-        snprintf( tmp, tmpsize, "%d", res - load );
-        row[ m_columns.m_col_str_new ] = tmp;
-
-        row[ m_columns.m_col_new ] = res - load;
+        row[ m_columns.m_col_str_load ] = Glib::ustring::compose( "%1", load );
+        const int new_arrival = res - load;
+        row[ m_columns.m_col_str_new ] = Glib::ustring::compose( "%1", new_arrival );;
+        row[ m_columns.m_col_new ] = new_arrival;
     }
     else{
         row[ m_columns.m_col_str_load ] = "";
