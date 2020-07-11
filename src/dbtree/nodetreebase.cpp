@@ -1551,13 +1551,12 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     m_vec_header.push_back( header );
 
     // レス番号
-    char tmplink[ LNG_RES ], tmpstr[ LNG_RES ];
-    snprintf( tmpstr, LNG_RES, "%d", header->id_header );
-    snprintf( tmplink, LNG_RES,"%s%d", PROTO_RES, header->id_header );    
+    const std::string tmpstr = std::to_string( header->id_header );
+    const std::string tmplink = PROTO_RES + tmpstr;
 
     node = header->headinfo->block[ BLOCK_NUMBER ] = create_node_block();
     node->fontid = FONT_MAIL;
-    create_node_link( tmpstr, strlen( tmpstr ) , tmplink, strlen( tmplink ), COLOR_CHAR_LINK_RES, true, FONT_MAIL );
+    create_node_link( tmpstr.c_str(), tmpstr.size(), tmplink.c_str(), tmplink.size(), COLOR_CHAR_LINK_RES, true, FONT_MAIL );
 
     const char* section[ SECTION_NUM ];
     int section_lng[ SECTION_NUM ];
