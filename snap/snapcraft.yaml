@@ -7,6 +7,10 @@ base: core18
 grade: stable
 icon: jdim.png
 
+# https://snapcraft.io/gnome-3-34-1804
+# Snap Store does not provide gnome-3-34-1804 package for i386, ppc64el and s390x
+architectures: [amd64, arm64, armhf]
+
 # https://snapcraft.io/blog/gnome-3-34-snapcraft-extension
 parts:
   jdim:
