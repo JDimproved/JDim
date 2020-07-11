@@ -1098,15 +1098,13 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, const int po
 
     int ret;
     struct addrinfo hints, *res;
-    const int poststrlng = 256;
-    char port_str[ poststrlng ];
     memset( &hints, 0, sizeof( addrinfo ) );
     if( m_data.use_ipv6 ) hints.ai_family = AF_UNSPEC;
     else hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
 
-    snprintf( port_str, poststrlng, "%d", port );
-    ret = getaddrinfo( hostname.c_str(), port_str, &hints, &res );
+    const std::string port_str = std::to_string( port );
+    ret = getaddrinfo( hostname.c_str(), port_str.c_str(), &hints, &res );
     if( ret ) {
         MISC::ERRMSG( m_data.str_code );
         return nullptr;
