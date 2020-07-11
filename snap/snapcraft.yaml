@@ -11,11 +11,11 @@ icon: jdim.png
 # Snap Store does not provide gnome-3-34-1804 package for i386, ppc64el and s390x
 architectures:
   - build-on: amd64
-    runs-on: amd64
+    run-on: amd64
   - build-on: arm64
-    runs-on: arm64
+    run-on: arm64
   - build-on: armhf
-    runs-on: armhf
+    run-on: armhf
 
 # https://snapcraft.io/blog/gnome-3-34-snapcraft-extension
 parts:
