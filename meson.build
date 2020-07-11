@@ -10,7 +10,7 @@
 # Fedora
 #   ディストロのパッケージをインストールする
 #   ```
-#   dnf meson ninja-build
+#   dnf install meson ninja-build
 #   ```
 #
 # Debian Buster, Ubuntu 20.04
