@@ -48,7 +48,6 @@ DelImgCacheDiag::~DelImgCacheDiag()
 }
 
 
-#if GTKMM_CHECK_VERSION(3,0,0)
 bool DelImgCacheDiag::on_draw( const Cairo::RefPtr< Cairo::Context >& cr )
 {
 #ifdef _DEBUG
@@ -58,17 +57,6 @@ bool DelImgCacheDiag::on_draw( const Cairo::RefPtr< Cairo::Context >& cr )
     launch_thread();
     return Gtk::Dialog::on_draw( cr );
 }
-#else
-bool DelImgCacheDiag::on_expose_event( GdkEventExpose* event )
-{
-#ifdef _DEBUG
-    std::cout << "DelImgCacheDiag::on_expose_event\n";
-#endif
-
-    launch_thread();
-    return Gtk::Dialog::on_expose_event( event );
-}
-#endif // GTKMM_CHECK_VERSION(3,0,0)
 
 
 void DelImgCacheDiag::launch_thread()
