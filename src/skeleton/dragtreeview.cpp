@@ -170,11 +170,7 @@ void DragTreeView::init_font( const std::string& fontname )
 {
     Pango::FontDescription pfd( fontname );
     pfd.set_weight( Pango::WEIGHT_NORMAL );
-#if GTKMM_CHECK_VERSION(3,0,0)
     override_font( pfd );
-#else
-    modify_font( pfd );
-#endif
 }
 
 

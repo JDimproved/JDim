@@ -165,6 +165,7 @@ void AboutDiag::set_version( const Glib::ustring& version )
 {
     m_label_version.set_label( version );
 
+    // TODO: GTKのcssで設定するか？
 #if GTKMM_CHECK_VERSION(3,0,0)
     Pango::FontDescription font_discription_version = m_label_version.get_style_context()->get_font();
 #else
@@ -173,11 +174,7 @@ void AboutDiag::set_version( const Glib::ustring& version )
     const int label_version_font_size = font_discription_version.get_size();
     font_discription_version.set_size( label_version_font_size * 5 / 3 );
     font_discription_version.set_weight( Pango::WEIGHT_BOLD );
-#if GTKMM_CHECK_VERSION(3,0,0)
     m_label_version.override_font( font_discription_version );
-#else
-    m_label_version.modify_font( font_discription_version );
-#endif
 }
 
 Glib::ustring AboutDiag::get_version()
