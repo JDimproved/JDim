@@ -5,37 +5,42 @@
 # Autotoolsからの移行はGNOMEのガイドラインを参考にする
 # https://wiki.gnome.org/Initiatives/GnomeGoals/MesonPorting
 
-# mesonの導入方法
+# mesonを使ってJDimをビルドする方法
 #
 # Fedora
 #   ディストロのパッケージをインストールする
 #   ```
-#   dnf install meson ninja-build
+#   dnf install git libtool meson ninja-build
+#   dnf install gnutls-devel gtkmm30-devel libSM-devel
 #   ```
 #
 # Debian Buster, Ubuntu 20.04
 #   ディストロのパッケージをインストールする
 #   ```
-#   sudo apt install meson ninja-build
+#   sudo apt install build-essential git libtool meson ninja-build
+#   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
 #   ```
 #
 # Debian Stretch, Ubuntu 18.04
 #   ディストロのmesonパッケージはバージョンが古いためpypiからインストールする
 #   $HOME/.local/bin にパスを通す
 #   ```
-#   sudo apt install ninja-build python3 python3-pip
+#   sudo apt install build-essential git libtool ninja-build python3 python3-pip
 #   pip3 install --user meson
+#   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
 #   ```
 
 # ビルドの手順
 #   ```
+#   git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
+#   cd jdim
 #   meson builddir
 #   cd builddir
 #   ninja
 #   ```
 # Tips
 #   - JDimのビルドオプションは `meson configure` で確認できる
-#   - ビルドオプションは `meson builddir -Dfoo=bar` のように指定する
+#   - ビルドオプションは `meson builddir -Dregex=glib` のように指定する
 #   - 生成された実行ファイルの場所は builddir/src/jdim
 
 project('jdim', 'cpp',

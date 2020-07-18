@@ -56,6 +56,11 @@ Ubuntu 16.04 LTS(2016年)より前にリリースされたディストリビュ�
 ソースコードからJDimをビルドします。**デフォルトの設定ではGTK3版がビルド**されますのでご注意ください。
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
+ビルドツール [meson][mesonbuild] の実験的なサポートを追加しました。
+configure のかわりに meson を使ってビルドする方法は <https://github.com/JDimproved/JDim/pull/388> を参照してください。
+
+[mesonbuild]: https://mesonbuild.com
+
 
 ### 事前準備
 
