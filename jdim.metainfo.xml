@@ -30,8 +30,16 @@
       <image>https://user-images.githubusercontent.com/15698961/72191765-39568200-33fb-11ea-9b2d-f8a997cf9ae8.png</image>
     </screenshot>
     <screenshot>
-      <caption>Extracting a keyword (highlight "観光")</caption>
-      <image>https://user-images.githubusercontent.com/15698961/72191766-39ef1880-33fb-11ea-84ad-b903408c2e5f.png</image>
+      <caption>Extracting a keyword (highlight "地球")</caption>
+      <image>https://user-images.githubusercontent.com/15698961/87845408-ec032200-c901-11ea-84cd-8090b0e418f6.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Editing message to post</caption>
+      <image>https://user-images.githubusercontent.com/15698961/87845409-edcce580-c901-11ea-9a35-28ae3242c42b.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Extracting posts which have much referenced</caption>
+      <image>https://user-images.githubusercontent.com/15698961/87845410-ee657c00-c901-11ea-85c7-0438e7f5ecf9.png</image>
     </screenshot>
   </screenshots>
 
@@ -45,6 +53,12 @@
   </provides>
 
   <releases>
+    <release version="0.4.0" date="2020-07-18">
+      <description>
+        <p>Switch default version to GTK3</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.4.0</url>
+    </release>
     <release version="0.3.0" date="2020-01-18">
       <description>
         <p>Improve GTK3 support</p>

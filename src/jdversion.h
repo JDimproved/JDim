@@ -17,8 +17,8 @@
 #define MAJORVERSION 0
 #define MINORVERSION 4
 #define MICROVERSION 0
-#define JDDATE_FALLBACK    "20200627"
-#define JDTAG     "beta"
+#define JDDATE_FALLBACK    "20200718"
+#define JDTAG     ""
 
 //---------------------------------
 
