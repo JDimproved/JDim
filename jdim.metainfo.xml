@@ -45,6 +45,12 @@
   </provides>
 
   <releases>
+    <release version="0.4.0" date="2020-07-18">
+      <description>
+        <p>Switch default version to GTK3</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.4.0</url>
+    </release>
     <release version="0.3.0" date="2020-01-18">
       <description>
         <p>Improve GTK3 support</p>
