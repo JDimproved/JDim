@@ -99,8 +99,6 @@ OSやディストリビューション別の解説は[OS/ディストリビュ�
   <dd>使用するSSL/TLSライブラリを設定する。デフォルトでは GnuTLS を使用する。</dd>
   <dt>--with-tls=openssl</dt>
   <dd>GnuTLS のかわりに OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。</dd>
-  <dt>--with-openssl</dt>
-  <dd><strong>非推奨</strong>: かわりに <code>--with-tls=openssl</code> を使用してください。</dd>
 
   <dt>--with-alsa</dt>
   <dd>ALSA による効果音再生機能を有効にする。

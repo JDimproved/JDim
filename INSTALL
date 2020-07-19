@@ -90,10 +90,6 @@
 
        GnuTLS のかわりに OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。
 
-    --with-openssl
-
-       非推奨: かわりに --with-tls=openssl を使用してください。
-
     --with-alsa
 
        ALSAによる効果音再生機能を有効にする。詳しくは"https://jdimproved.github.io/JDim/"の項を参照すること。
