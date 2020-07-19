@@ -71,10 +71,6 @@ LIBSM_LIBS=""
 dnl
 dnl パッケージのチェック
 dnl
-PKG_CHECK_MODULES(GTHREAD, [gthread-2.0 >= 2.0] )
-
-AC_SUBST(GTHREAD_CFLAGS)
-AC_SUBST(GTHREAD_LIBS)
 
 
 dnl
@@ -372,43 +368,21 @@ esac
 
 
 dnl
-dnl checking gthread (deprecated option)
+dnl thread (removed)
 dnl
 AC_ARG_WITH(gthread,
-AS_HELP_STRING([--with-gthread], [DEPRECATED. use --with-thread=glib]),
-[with_thread=glib])
+AS_HELP_STRING([--with-gthread], [NO LONGER AVAILABLE]),
+[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
 
-dnl
-dnl checking std::thread (deprecated option)
-dnl
 AC_ARG_WITH(stdthread,
-AS_HELP_STRING([--with-stdthread], [DEPRECATED. use --with-thread=std]),
-[AC_MSG_WARN([Thread options will be removed in the future release.])
- with_thread=std])
+AS_HELP_STRING([--with-stdthread], [NO LONGER AVAILABLE]),
+[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
 
-dnl
-dnl thread
-dnl
-AC_MSG_CHECKING(for --with-thread)
 AC_ARG_WITH(thread,
-AC_HELP_STRING([--with-thread=@<:@posix|glib|std@:>@],
-               [use thread library @<:@default=std@:>@]),
-[with_thread="$withval"], [with_thread=std])
-AC_MSG_RESULT($with_thread)
+AC_HELP_STRING([--with-thread=@<:@posix|glib|std@:>@], [NO LONGER AVAILABLE]),
+[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
 
-AS_IF(
-  [test "x$with_thread" = xposix],
-  [AC_MSG_WARN([Thread options will be removed in the future release.])],
-
-  [test "x$with_thread" = xglib],
-  [AC_MSG_WARN([Thread options will be removed in the future release.])
-   AC_DEFINE(USE_GTHREAD, , [Use gthread instead of pthread])],
-
-  [test "x$with_thread" = xstd],
-  [AC_DEFINE(WITH_STD_THREAD, 1, [Use std::thread instead of pthread])],
-
-  [AC_MSG_ERROR([thread library not found])]
-)
+AC_DEFINE(WITH_STD_THREAD, 1, [std::thread is now default.])
 
 
 dnl

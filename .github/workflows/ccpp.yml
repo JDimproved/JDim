@@ -136,13 +136,13 @@ jobs:
             cxx: clang++-6.0
             package: clang-6.0
         deps:
-          - config_args: --with-gtkmm3 --with-thread=posix --with-tls=gnutls --with-regex=posix --with-sessionlib=no --disable-compat-cache-dir
+          - config_args: --with-gtkmm3 --with-tls=gnutls --with-regex=posix --with-sessionlib=no --disable-compat-cache-dir
             packages: libgtkmm-3.0-dev libgnutls28-dev
-          - config_args: --with-gtkmm3 --with-thread=posix --with-tls=openssl --with-regex=oniguruma --with-migemo --with-pangolayout
+          - config_args: --with-gtkmm3 --with-tls=openssl --with-regex=oniguruma --with-migemo --with-pangolayout
             packages: libgtkmm-3.0-dev libssl-dev libonig-dev libmigemo-dev
-          - config_args: --with-gtkmm3 --with-thread=std --with-tls=gnutls --with-regex=pcre --with-alsa
+          - config_args: --with-gtkmm3 --with-tls=gnutls --with-regex=pcre --with-alsa
             packages: libgtkmm-3.0-dev libgnutls28-dev libpcre3-dev libasound2-dev
-          - config_args: --with-gtkmm3 --with-thread=std --with-tls=openssl --with-regex=glib --with-xdgopen
+          - config_args: --with-gtkmm3 --with-tls=openssl --with-regex=glib --with-xdgopen
             packages: libgtkmm-3.0-dev libssl-dev
     steps:
     - uses: actions/checkout@v2
