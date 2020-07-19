@@ -19,16 +19,17 @@ layout: default
 ### 動作環境
 
 #### 必須環境
-- gtkmm 2.24.0 以上 ( GTK2版は将来のリリースで廃止される )
-- gtkmm 3.0.0 以上 ( GTK3版, 3.18.0未満のサポートは将来のリリースで廃止される )
+- gtkmm 3.18.0 以上
 - glibmm 2.46.0 以上
 - zlib 1.2 以上
 - gnutls 3.3.8 以上 ( 3.4.10未満のサポートは将来のリリースで廃止される )
 
 #### 推奨環境
 - Linux Kernel 3.10 以上
-- gtkmm 3.18.0 以上 ( 3.22.0未満は将来のリリースで推奨環境から外れる )
+- gtkmm 3.22.0 以上
 - UTF-8環境 ( EUC環境では `LANG="ja_JP.UTF-8"` を指定する必要がある )
+
+※ GTK2版はv0.4.0リリースをもって廃止 ( <https://github.com/JDimproved/JDim/issues/229> を参照 )
 
 
 <a name="requirement"></a>
@@ -67,7 +68,6 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
 
 <a name="make-configure"></a>
 ### make 方法( configure + make の場合 )
-デフォルトの設定では**GTK3版をビルド**する。(バージョン0.3.0以降)
 
 1. `autoreconf -i` ( 又は `./autogen.sh` )
 2. `./configure`
@@ -139,9 +139,6 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
     Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
     <small>(v0.3.0+から追加)</small>
   </dd>
-
-  <dt>--with-gtkmm3=no</dt>
-  <dd>gtkmm3のかわりにgtkmm2を使用する。<br><strong>非推奨</strong>: GTK2版は将来のリリースで削除される予定です。</dd>
 
   <dt>--disable-compat-cache-dir</dt>
   <dd>JDのキャッシュディレクトリ <code>~/.jd</code> を読み込む互換機能を無効化する。</dd>

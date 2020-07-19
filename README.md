@@ -17,11 +17,11 @@
 * [導入方法](#導入方法)
   * [事前準備](#事前準備)
   * [ビルド](#ビルド)
-  * [GTK3版について](#GTK3版について)
   * [Snapパッケージ](#Snapパッケージ)
 * [通常の起動](#通常の起動)
   * [コマンドライン オプション](#コマンドライン-オプション)
 * [多重起動について](#多重起動について)
+* [実行時の注意事項](#precaution)
 * [JDとの互換性](#JDとの互換性)
   * [JDから移行する](#JDから移行する)
 * [著作権](#著作権)
@@ -47,13 +47,13 @@ LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報�
 WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定していないようです。
 
 ##### サポートの最新情報
-GTK2版はサポートを終了する予定となりました。
+GTK2版はサポートを終了しました。
 Ubuntu 16.04 LTS(2016年)より前にリリースされたディストリビューションを利用されている場合は更新をお願いいたします。
 
 
 ## 導入方法
 
-ソースコードからJDimをビルドします。**デフォルトの設定ではGTK3版がビルド**されますのでご注意ください。
+ソースコードからJDimをビルドします。**GTK3版がビルド**されますのでご注意ください。
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
 ビルドツール [meson][mesonbuild] の実験的なサポートを追加しました。
@@ -67,14 +67,8 @@ configure のかわりに meson を使ってビルドする方法は <https://gi
 ツールチェーンとライブラリをインストールします。一度インストールすれば次回から事前準備はいりません。
 
 #### Redhat系
-*GTK3版*
 ```sh
 dnf install gtkmm30-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
-```
-
-*GTK2版* - `gtkmm30-devel` のかわりに `gtkmm24-devel` をインストールします。
-```sh
-dnf install gtkmm24-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
 ```
 
 #### Debian (stretch-backportsあるいはbuster以降)
@@ -95,20 +89,13 @@ sudo apt install build-essential automake autoconf-archive git libtool
 
 必要なライブラリを入れます。(抜けがあるかも)
 
-*GTK3版*
 ```sh
 sudo apt install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev
-```
-
-*GTK2版* - `libgtkmm-3.0-dev` のかわりに `libgtkmm-2.4-dev` をインストールします。
-```sh
-sudo apt install libgtkmm-2.4-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev
 ```
 
 
 ### ビルド
 
-*GTK3版 (デフォルト)*
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 cd jdim
@@ -117,19 +104,10 @@ autoreconf -i
 make
 ```
 
-*GTK2版* - ./configure にオプション `--with-gtkmm3=no` を追加します。
-```sh
-git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
-cd jdim
-autoreconf -i
-./configure --with-gtkmm3=no
-make
-```
-
 実行するには直接 src/jdim を起動するか手動で /usr/bin あたりに src/jdim を cp します。
 
 #### Arch Linux
-GTK3版のビルドファイルはAURで公開されています。(Thanks to @naniwaKun.)  
+ビルドファイルはAURで公開されています。(Thanks to @naniwaKun.)  
 https://aur.archlinux.org/packages/jdim-git/
 
 AUR Helper [yay](https://github.com/Jguer/yay) でインストール
@@ -178,49 +156,8 @@ yay -S jdim-git
 [gentoo-gcc]: https://wiki.gentoo.org/wiki/GCC_optimization/ja#-march
 
 
-### GTK3版について
-
-GTK3版はGTK2版同様のルック・アンド・フィールになるように実装していますが、
-技術的な問題やテスト不足から完全な再現はできていません。
-もしお気づきの点などがございましたらご指摘いただけると幸いです。
-
-#### Wayland対応
-JDim GTK3版はWayland環境で起動しますが動作は安定していません。
-GTKのバックエンドにWaylandを使うかわりに互換レイヤーのXWaylandをインストールして使うことをお薦めします。
-環境変数 `GDK_BACKEND=x11` を設定してjdimを起動してください。
-```sh
-# シェルからJDimを起動する場合
-GDK_BACKEND=x11 ./src/jdim
-```
-
-WaylandやXWaylandではX11限定の機能を使うことができないため注意してください。
-
-#### GTK2版から変更/追加された部分
-* GTK+ 3.14以上の環境でタッチスクリーンによる操作に対応した。
-  スレビューのタッチ操作については[マニュアル][manual-touch]を参照。
-* 書き込みビューの配色にGTKテーマを使う設定が追加された。
-  1. メニューバーの`設定(C) > フォントと色(F) > 詳細設定(R)...`からフォントと色の詳細設定を開く
-  2. `色の設定`タブにある`書き込みビューの配色設定に GTKテーマ を用いる(W)`をチェックして適用する
-* GTK 3.16以上の環境で書き込みビューのダブルクリックによる単語の範囲選択、
-  トリプルクリックによる行の範囲選択に対応した。
-
-[manual-touch]: https://jdimproved.github.io/JDim/operation/#threadview_touch "操作方法について | JDim"
-
-#### GTK3版の既知の問題
-* タブのドラッグ・アンド・ドロップの矢印ポップアップの背景が透過しない環境がある。
-  (アルファチャンネルが利用できない環境)
-* ~~マウスジェスチャー（右クリック）中にマウスホイール操作してもタブを切り替える機能が動作しない。~~
-  **0.3.0-20200308以降のバージョンで修正された。**
-* ~~「スレビューでアンカーをクリックして多重ポップアップモードに移行する」を有効にして
-  Wayland環境下でアンカーをクリックすると異常終了する。~~
-  **0.3.0-20200503以降のバージョンで修正された。**
-* Wayland上で起動したときポップアップ内のアンカーからポップアップを出すとマウスポインターから離れた位置に表示される。
-* Weston(Waylandコンポジタ)環境でXWaylandをバックエンドに指定して起動した場合、右クリックしながらポップアップ内に
-  マウスポインターを動かすとポップアップ内容ではなくポップアップに隠れたスレビューに反応する。
-
-
 ### Snapパッケージ
-JDim GTK3版はSnapパッケージとして[Snap Storeで公開][snapcraft]されています。
+JDim はSnapパッケージとして[Snap Storeで公開][snapcraft]されています。
 詳細は[マニュアル][manual-snap]を参照してください。
 
 [snapcraft]: https://snapcraft.io/jdim
@@ -292,6 +229,48 @@ NOTE:
 [マニュアル][manual-multiple]を参照してください。
 
 [manual-multiple]: https://jdimproved.github.io/JDim/start/#multiple "起動について | JDim"
+
+
+<a name="precaution"></a>
+## 実行時の注意事項
+
+廃止されたGTK2版同様のルック・アンド・フィールになるように実装していますが、
+技術的な問題やテスト不足から完全な再現はできていません。
+もしお気づきの点などがございましたらご指摘いただけると幸いです。
+
+### Wayland対応
+JDim はWayland環境で起動しますが動作は安定していません。
+GTKのバックエンドにWaylandを使うかわりに互換レイヤーのXWaylandをインストールして使うことをお薦めします。
+環境変数 `GDK_BACKEND=x11` を設定してjdimを起動してください。
+```sh
+# シェルからJDimを起動する場合
+GDK_BACKEND=x11 ./src/jdim
+```
+
+WaylandやXWaylandではX11限定の機能を使うことができないため注意してください。
+
+### GTK2版から変更/追加された部分
+* GTK+ 3.14以上の環境でタッチスクリーンによる操作に対応した。
+  スレビューのタッチ操作については[マニュアル][manual-touch]を参照。
+* 書き込みビューの配色にGTKテーマを使う設定が追加された。
+  1. メニューバーの`設定(C) > フォントと色(F) > 詳細設定(R)...`からフォントと色の詳細設定を開く
+  2. `色の設定`タブにある`書き込みビューの配色設定に GTKテーマ を用いる(W)`をチェックして適用する
+* GTK 3.16以上の環境で書き込みビューのダブルクリックによる単語の範囲選択、
+  トリプルクリックによる行の範囲選択に対応した。
+
+[manual-touch]: https://jdimproved.github.io/JDim/operation/#threadview_touch "操作方法について | JDim"
+
+### 既知の問題
+* タブのドラッグ・アンド・ドロップの矢印ポップアップの背景が透過しない環境がある。
+  (アルファチャンネルが利用できない環境)
+* ~~マウスジェスチャー（右クリック）中にマウスホイール操作してもタブを切り替える機能が動作しない。~~
+  **0.3.0-20200308以降のバージョンで修正された。**
+* ~~「スレビューでアンカーをクリックして多重ポップアップモードに移行する」を有効にして
+  Wayland環境下でアンカーをクリックすると異常終了する。~~
+  **0.3.0-20200503以降のバージョンで修正された。**
+* Wayland上で起動したときポップアップ内のアンカーからポップアップを出すとマウスポインターから離れた位置に表示される。
+* Weston(Waylandコンポジタ)環境でXWaylandをバックエンドに指定して起動した場合、右クリックしながらポップアップ内に
+  マウスポインターを動かすとポップアップ内容ではなくポップアップに隠れたスレビューに反応する。
 
 
 ## JDとの互換性

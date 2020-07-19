@@ -5,8 +5,7 @@
 
   必須環境
 
-  ・gtkmm 2.24.0 以上 ( GTK2版は将来のリリースで廃止される )
-  ・gtkmm 3.0.0 以上 ( GTK3版, 3.18.0未満のサポートは将来のリリースで廃止される )
+  ・gtkmm 3.18.0 以上
   ・glibmm 2.46.0 以上
   ・zlib 1.2 以上
   ・gnutls 3.3.8 以上 ( 3.4.10未満のサポートは将来のリリースで廃止される )
@@ -14,8 +13,10 @@
   推奨環境
 
   ・Linux Kernel 3.10以上
-  ・gtkmm 3.18.0 以上 ( 3.22.0未満は将来のリリースで推奨環境から外れる )
+  ・gtkmm 3.22.0 以上
   ・UTF-8環境 ( EUC環境では LANG="ja_JP.UTF-8" を指定する必要がある )
+
+  ※ GTK2版はv0.4.0リリースをもって廃止 ( https://github.com/JDimproved/JDim/issues/229 を参照 )
 
 * makeに必要なツール、ライブラリ
 
@@ -51,8 +52,6 @@
     3. 起動はメニューから起動するか、端末で jdim と打ち込んでエンターを押す。
 
 * make 方法( configure + make の場合 )
-
-    デフォルトの設定ではGTK3版をビルドする。(バージョン0.3.0以降)
 
     1. autoreconf -i ( 又は ./autogen.sh )
     2. ./configure
@@ -129,11 +128,6 @@
        POSIX regex のかわりに GRegex を使用する。
        Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
        (v0.3.0+から追加)
-
-    --with-gtkmm3=no
-
-       gtkmm3のかわりにgtkmm2を使用する。
-       非推奨: GTK2版は将来のリリースで削除される予定です。
 
     --disable-compat-cache-dir
 
