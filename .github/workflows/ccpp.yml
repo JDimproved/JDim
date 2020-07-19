@@ -83,8 +83,8 @@ jobs:
       run: git clone --branch=release-1.10.0 --depth 1 https://github.com/google/googletest.git test/googletest
     - name: autoreconf -i
       run: autoreconf -i
-    - name: ./configure --with-gtkmm3=yes
-      run: ./configure --with-gtkmm3=yes
+    - name: ./configure
+      run: ./configure
     - name: make -j$(nproc)
       run: make -j$(nproc)
     - name: make check -j$(nproc)
@@ -136,20 +136,20 @@ jobs:
             cxx: clang++-6.0
             package: clang-6.0
         deps:
-          - config_args: --with-gtkmm3 --with-tls=gnutls --with-regex=posix --with-sessionlib=no --disable-compat-cache-dir
-            packages: libgtkmm-3.0-dev libgnutls28-dev
-          - config_args: --with-gtkmm3 --with-tls=openssl --with-regex=oniguruma --with-migemo --with-pangolayout
-            packages: libgtkmm-3.0-dev libssl-dev libonig-dev libmigemo-dev
-          - config_args: --with-gtkmm3 --with-tls=gnutls --with-regex=pcre --with-alsa
-            packages: libgtkmm-3.0-dev libgnutls28-dev libpcre3-dev libasound2-dev
-          - config_args: --with-gtkmm3 --with-tls=openssl --with-regex=glib --with-xdgopen
-            packages: libgtkmm-3.0-dev libssl-dev
+          - config_args: --with-tls=gnutls --with-regex=posix --with-sessionlib=no --disable-compat-cache-dir
+            packages: libgnutls28-dev
+          - config_args: --with-tls=openssl --with-regex=oniguruma --with-migemo --with-pangolayout
+            packages: libssl-dev libonig-dev libmigemo-dev
+          - config_args: --with-tls=gnutls --with-regex=pcre --with-alsa
+            packages: libgnutls28-dev libpcre3-dev libasound2-dev
+          - config_args: --with-tls=openssl --with-regex=glib --with-xdgopen
+            packages: libssl-dev
     steps:
     - uses: actions/checkout@v2
     - name: dependencies installation (${{ matrix.deps.packages }})
       run: |
         sudo apt update
-        sudo apt install autoconf-archive libgtest-dev libtool libltdl-dev ${{ matrix.deps.packages }} ${{ matrix.compiler.package }}
+        sudo apt install autoconf-archive libgtest-dev libtool libltdl-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} ${{ matrix.compiler.package }}
     - name: autoreconf -i
       run: autoreconf -i
     - name: ./configure ${{ matrix.deps.config_args }}

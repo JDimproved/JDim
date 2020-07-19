@@ -19,7 +19,7 @@ matrix:
           update: true
           packages:
             - autoconf-archive
-            - libgtkmm-2.4-dev
+            - libgtkmm-3.0-dev
             - zlib1g-dev
             - libgnutls28-dev
             - libmigemo-dev
@@ -33,7 +33,7 @@ matrix:
           update: true
           packages:
             - autoconf-archive
-            - libgtkmm-2.4-dev
+            - libgtkmm-3.0-dev
             - zlib1g-dev
             - libssl-dev
             - libpcre3-dev
@@ -48,7 +48,7 @@ matrix:
           update: true
           packages:
             - autoconf-archive
-            - libgtkmm-2.4-dev
+            - libgtkmm-3.0-dev
             - zlib1g-dev
             - libgnutls28-dev
             - libonig-dev
@@ -58,7 +58,7 @@ install:
 
 script:
   - autoreconf -i
-  - ./configure --with-gtkmm3=no $CONFIG_ARG
+  - ./configure $CONFIG_ARG
   - make -j$(nproc)
   - make test -j$(nproc)
   - ./src/jdim -V
