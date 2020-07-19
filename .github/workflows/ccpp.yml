@@ -142,7 +142,7 @@ jobs:
             packages: libssl-dev libonig-dev libmigemo-dev
           - config_args: --with-tls=gnutls --with-regex=pcre --with-alsa
             packages: libgnutls28-dev libpcre3-dev libasound2-dev
-          - config_args: --with-tls=openssl --with-regex=glib --with-xdgopen
+          - config_args: --with-tls=openssl --with-regex=glib
             packages: libssl-dev
     steps:
     - uses: actions/checkout@v2

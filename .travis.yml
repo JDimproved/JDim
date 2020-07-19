@@ -10,10 +10,10 @@ cache:
 
 matrix:
   include:
-    - name: "CONFIG_ARG=\"--with-tls=gnutls --with-regex=posix --with-migemo --with-xdgopen\""
+    - name: "CONFIG_ARG=\"--with-tls=gnutls --with-regex=posix --with-migemo\""
       os: linux
       compiler: gcc
-      env: CONFIG_ARG="--with-tls=gnutls --with-regex=posix --with-migemo --with-xdgopen"
+      env: CONFIG_ARG="--with-tls=gnutls --with-regex=posix --with-migemo"
       addons:
         apt:
           update: true
