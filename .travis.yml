@@ -24,10 +24,10 @@ matrix:
             - libgnutls28-dev
             - libmigemo-dev
 
-    - name: "CONFIG_ARG=\"--with-tls=openssl --with-regex=pcre --with-alsa --with-compat-cache-dir\""
+    - name: "CONFIG_ARG=\"--with-tls=openssl --with-regex=glib --with-alsa --with-compat-cache-dir\""
       os: linux
       compiler: gcc
-      env: CONFIG_ARG="--with-tls=openssl --with-regex=pcre --with-alsa --with-compat-cache-dir"
+      env: CONFIG_ARG="--with-tls=openssl --with-regex=glib --with-alsa --with-compat-cache-dir"
       addons:
         apt:
           update: true
@@ -36,7 +36,6 @@ matrix:
             - libgtkmm-3.0-dev
             - zlib1g-dev
             - libssl-dev
-            - libpcre3-dev
             - libasound2-dev
 
     - name: "CONFIG_ARG=\"--with-tls=gnutls --with-regex=oniguruma --with-sessionlib=no --with-pangolayout\""

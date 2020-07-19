@@ -50,7 +50,6 @@ layout: default
 - alsa-lib (`--with-alsa`)
 - openssl (`--with-tls=openssl`)
 - oniguruma (`--with-regex=oniguruma`)
-- libpcre (`--with-regex=pcre`, 非推奨)
 - migemo (`--with-migemo`)
 
 OSやディストリビューション別の解説は[OS/ディストリビューション別インストール方法][wiki-install] (JD wiki) を参照。
@@ -113,20 +112,12 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
     <code>gprof  ./jdim  gmon.out</code> で解析できる。CPUの最適化は効かなくなるので注意する。
   </dd>
 
-  <dt>--with-regex=[posix|oniguruma|pcre|glib]</dt>
+  <dt>--with-regex=[posix|oniguruma|glib]</dt>
   <dd>使用する正規表現ライブラリを設定する。デフォルトでは POSIX regex を使用する。</dd>
   <dt>--with-regex=oniguruma</dt>
   <dd>
     POSIX regex のかわりに鬼車を使用する。
     鬼車はBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
-  </dd>
-  <dt>--with-regex=pcre</dt>
-  <dd>
-    POSIX regex のかわりに PCRE を使用する。
-    PCREはBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
-    UTF-8が有効な ( <code>--enable-utf</code> オプションを用いて make する ) PCRE 6.5 以降が必要となる。
-    Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
-    <br><strong>非推奨</strong>: かわりに <code>--with-regex=glib</code> を使用してください。
   </dd>
   <dt>--with-regex=glib</dt>
   <dd>

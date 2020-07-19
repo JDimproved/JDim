@@ -58,12 +58,7 @@ bool Regex::compile( const std::string& reg, const bool icase, const bool newlin
     if( reg.empty() ) return false;
 
 #if POSIX_STYLE_REGEX_API
-#ifdef HAVE_PCREPOSIX_H
-    int cflags = REG_UTF8;
-    if( ! newline ) cflags |= REG_DOTALL; // . を改行にマッチさせる
-#else
     int cflags = REG_EXTENDED;
-#endif
     if( newline ) cflags |= REG_NEWLINE;
     if( icase ) cflags |= REG_ICASE;
 #else
