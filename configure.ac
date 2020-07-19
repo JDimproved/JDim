@@ -200,8 +200,8 @@ dnl
 dnl checking PCRE (removed)
 dnl
 AC_ARG_WITH(pcre,
-AS_HELP_STRING([--with-pcre], [NO LONGER AVAILABLE. use --with-regex=pcre]),
-[AC_MSG_ERROR([--with-pcre has been removed. Use --with-regex=pcre instead.])])
+AS_HELP_STRING([--with-pcre], [NO LONGER AVAILABLE. use --with-regex=glib]),
+[AC_MSG_ERROR([--with-pcre has been removed. Use --with-regex=glib instead.])])
 
 
 dnl
@@ -209,7 +209,7 @@ dnl 正規表現ライブラリ
 dnl
 AC_MSG_CHECKING(for --with-regex)
 AC_ARG_WITH(regex,
-AC_HELP_STRING([--with-regex=@<:@posix|pcre|oniguruma|glib@:>@],
+AC_HELP_STRING([--with-regex=@<:@posix|oniguruma|glib@:>@],
                [use regular expression library @<:@default=posix@:>@]),
 [], [with_regex=posix])
 AC_MSG_RESULT($with_regex)
@@ -220,12 +220,7 @@ AS_IF(
    AC_CHECK_LIB([regex], [regexec])],
 
   [test "x$with_regex" = xpcre],
-  [PKG_CHECK_MODULES(PCRE, [libpcre >= 6.5])
-   AC_SUBST(PCRE_CFLAGS)
-   AC_SUBST(PCRE_LIBS)
-   AC_CHECK_HEADERS([pcreposix.h], , [AC_MSG_ERROR([pcreposix.h not found])])
-   AC_CHECK_LIB([pcreposix], [regexec], , [AC_MSG_ERROR([libpcreposix.a not found])])
-   AC_MSG_WARN([--with-regex=pcre will be removed in the future release.])],
+  [AC_MSG_ERROR([--with-regex=pcre has been removed. Use --with-regex=glib instead.])],
 
   [test "x$with_regex" = xoniguruma],
   [PKG_CHECK_MODULES(ONIG, [oniguruma])
