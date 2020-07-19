@@ -140,14 +140,6 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
     <small>(v0.3.0+から追加)</small>
   </dd>
 
-  <dt>--with-thread=[posix|glib|std]</dt>
-  <dd>
-    使用するスレッドライブラリを設定する。デフォルトでは std::thread を使用する。(v0.3.0以降)<br>
-    <strong>非推奨</strong>: スレッドライブラリを設定するオプションは将来のリリースで削除される予定です。
-  </dd>
-  <dt>--with-[gthread|stdthread]</dt>
-  <dd><strong>非推奨</strong>: スレッドライブラリを設定するオプションは将来のリリースで削除される予定です。</dd>
-
   <dt>--with-gtkmm3=no</dt>
   <dd>gtkmm3のかわりにgtkmm2を使用する。<br><strong>非推奨</strong>: GTK2版は将来のリリースで削除される予定です。</dd>
 

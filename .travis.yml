@@ -10,10 +10,10 @@ cache:
 
 matrix:
   include:
-    - name: "CONFIG_ARG=\"--with-thread=std --with-tls=gnutls --with-regex=posix --with-migemo --with-xdgopen\""
+    - name: "CONFIG_ARG=\"--with-tls=gnutls --with-regex=posix --with-migemo --with-xdgopen\""
       os: linux
       compiler: gcc
-      env: CONFIG_ARG="--with-thread=std --with-tls=gnutls --with-regex=posix --with-migemo --with-xdgopen"
+      env: CONFIG_ARG="--with-tls=gnutls --with-regex=posix --with-migemo --with-xdgopen"
       addons:
         apt:
           update: true
@@ -24,10 +24,10 @@ matrix:
             - libgnutls28-dev
             - libmigemo-dev
 
-    - name: "CONFIG_ARG=\"--with-thread=posix --with-tls=openssl --with-regex=pcre --with-alsa --with-compat-cache-dir\""
+    - name: "CONFIG_ARG=\"--with-tls=openssl --with-regex=pcre --with-alsa --with-compat-cache-dir\""
       os: linux
       compiler: gcc
-      env: CONFIG_ARG="--with-thread=posix --with-tls=openssl --with-regex=pcre --with-alsa --with-compat-cache-dir"
+      env: CONFIG_ARG="--with-tls=openssl --with-regex=pcre --with-alsa --with-compat-cache-dir"
       addons:
         apt:
           update: true
@@ -39,10 +39,10 @@ matrix:
             - libpcre3-dev
             - libasound2-dev
 
-    - name: "CONFIG_ARG=\"--with-thread=std --with-tls=gnutls --with-regex=oniguruma --with-sessionlib=no --with-pangolayout\""
+    - name: "CONFIG_ARG=\"--with-tls=gnutls --with-regex=oniguruma --with-sessionlib=no --with-pangolayout\""
       os: linux
       compiler: gcc
-      env: CONFIG_ARG="--with-thread=std --with-tls=gnutls --with-regex=oniguruma --with-sessionlib=no --with-pangolayout"
+      env: CONFIG_ARG="--with-tls=gnutls --with-regex=oniguruma --with-sessionlib=no --with-pangolayout"
       addons:
         apt:
           update: true
