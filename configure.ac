@@ -258,12 +258,11 @@ AS_IF(
 
 
 dnl
-dnl checking OpenSSL (deprecated option)
+dnl checking OpenSSL (removed)
 dnl
 AC_ARG_WITH(openssl,
-AS_HELP_STRING([--with-openssl], [DEPRECATED. use --with-tls=openssl]),
-[AC_MSG_WARN([--with-openssl is deprecated. Use --with-tls=openssl instead.])
- with_tls=openssl])
+AS_HELP_STRING([--with-openssl], [NO LONGER AVAILABLE. use --with-tls=openssl]),
+[AC_MSG_ERROR([--with-openssl has been removed. Use --with-tls=openssl instead.])])
 
 dnl
 dnl TLS
