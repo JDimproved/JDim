@@ -139,10 +139,6 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
     Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
     <small>(v0.3.0+から追加)</small>
   </dd>
-  <dt>--with-oniguruma</dt>
-  <dd><strong>非推奨</strong>: かわりに <code>--with-regex=oniguruma</code> を使用してください。</dd>
-  <dt>--with-pcre</dt>
-  <dd><strong>非推奨</strong>: かわりに <code>--with-regex=glib</code> を使用してください。</dd>
 
   <dt>--with-thread=[posix|glib|std]</dt>
   <dd>

@@ -130,14 +130,6 @@
        Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
        (v0.3.0+から追加)
 
-    --with-oniguruma
-
-       非推奨: かわりに --with-regex=oniguruma を使用してください。
-
-    --with-pcre
-
-       非推奨: かわりに --with-regex=glib を使用してください。
-
     --with-thread=[posix|glib|std]
 
        使用するスレッドライブラリを設定する。デフォルトでは std::thread を使用する。(v0.3.0以降)

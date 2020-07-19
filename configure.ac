@@ -204,20 +204,18 @@ AS_IF(
 
 
 dnl
-dnl checking oniguruma (deprecated option)
+dnl checking oniguruma (removed)
 dnl
 AC_ARG_WITH(oniguruma,
-AS_HELP_STRING([--with-oniguruma], [DEPRECATED. use --with-regex=oniguruma]),
-[AC_MSG_WARN([--with-oniguruma is deprecated. Use --with-regex=oniguruma instead.])
- with_regex=oniguruma])
+AS_HELP_STRING([--with-oniguruma], [NO LONGER AVAILABLE. use --with-regex=oniguruma]),
+[AC_MSG_ERROR([--with-oniguruma has been removed. Use --with-regex=oniguruma instead.])])
 
 dnl
-dnl checking PCRE (deprecated option)
+dnl checking PCRE (removed)
 dnl
 AC_ARG_WITH(pcre,
-AS_HELP_STRING([--with-pcre], [DEPRECATED. use --with-regex=pcre]),
-[AC_MSG_WARN([--with-pcre is deprecated. Use --with-regex=pcre instead.])
- with_regex=pcre])
+AS_HELP_STRING([--with-pcre], [NO LONGER AVAILABLE. use --with-regex=pcre]),
+[AC_MSG_ERROR([--with-pcre has been removed. Use --with-regex=pcre instead.])])
 
 
 dnl
