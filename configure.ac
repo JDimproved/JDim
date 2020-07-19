@@ -255,7 +255,7 @@ AC_MSG_RESULT($with_tls)
 
 AS_IF(
   [test "x$with_tls" = xgnutls],
-  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 3.3.8])
+  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 3.4.10])
    AC_DEFINE(USE_GNUTLS, , [use gnutls])
    AC_SUBST(GNUTLS_CFLAGS)
    AC_SUBST(GNUTLS_LIBS)],

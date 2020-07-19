@@ -30,13 +30,7 @@ namespace JDLIB
 
 #ifdef USE_GNUTLS
         gnutls_session_t m_session;
-
-#if GNUTLS_VERSION_NUMBER >= 0x020000
         gnutls_certificate_credentials_t m_cred;
-#else // GNUTLS_VERSION_NUMBER >= 0x020000
-        // DEPRECATED (gnutls >= 2.x)
-        gnutls_certificate_credentials m_cred;
-#endif // GNUTLS_VERSION_NUMBER >= 0x020000
 
 #else // USE_GNUTLS
         SSL_CTX *m_ctx;

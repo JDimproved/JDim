@@ -22,7 +22,7 @@ layout: default
 - gtkmm 3.18.0 以上
 - glibmm 2.46.0 以上
 - zlib 1.2 以上
-- gnutls 3.3.8 以上 ( 3.4.10未満のサポートは将来のリリースで廃止される )
+- gnutls 3.4.10 以上
 
 #### 推奨環境
 - Linux Kernel 3.10 以上
