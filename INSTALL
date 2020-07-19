@@ -96,11 +96,6 @@
 
        ALSAによる効果音再生機能を有効にする。詳しくは"https://jdimproved.github.io/JDim/"の項を参照すること。
 
-    --with-xdgopen
-
-       デフォルトブラウザとしてxdg-openを使用する。
-       xdg-openは将来のリリースでデフォルトブラウザになりこのオプションは廃止される予定です。
-
     --enable-gprof
 
        gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDimを実行すると

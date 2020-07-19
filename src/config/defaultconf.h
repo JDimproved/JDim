@@ -167,18 +167,11 @@ namespace CONFIG
     };
 
 // browsers.cpp のデフォルトのラベル番号
-// configure で --with-xdg-open を指定すると xdg-open をデフォルトにする
 // browsers.cpp のブラウザの順番に気をつけること
     enum{
-#ifndef _WIN32
-#ifdef XDGOPEN
-        CONF_BROWSER_NO = 1  // xdg-open をデフォルトにする
-#else
-        CONF_BROWSER_NO = 2  // firefox をデフォルトにする
-#endif
-#else /* _WIN32 */
-        CONF_BROWSER_NO = 1  // ie をデフォルトにする
-#endif /* _WIN32 */
+        // _WIN32 : ie をデフォルトにする
+        // not _WIN32 : xdg-open をデフォルトにする
+        CONF_BROWSER_NO = 1
     };
 
 #define CONF_FONTSIZE_THREAD "12"

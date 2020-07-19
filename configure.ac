@@ -319,22 +319,6 @@ AS_IF(
 
 
 dnl
-dnl checking xdg-open
-dnl
-AC_MSG_CHECKING(for --with-xdgopen)
-AC_ARG_WITH(xdgopen,
-AC_HELP_STRING([--with-xdgopen],[use xdg-open as default browser]),
-[with_xdgopen="$withval"], [with_xdgopen=no])
-AC_MSG_RESULT($with_xdgopen)
-
-AS_IF(
-  [test "x$with_xdgopen" = xyes],
-  [AC_DEFINE(XDGOPEN, , [use xdg-open])
-   AC_MSG_WARN([--with-xdgopen will be removed and as default in the future release.])]
-)
-
-
-dnl
 dnl checking alsa
 dnl
 case "${host_os}" in

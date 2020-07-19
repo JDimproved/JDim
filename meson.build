@@ -216,9 +216,6 @@ else
   message('Use compatible cache directory: NO')
 endif
 
-# xdg-open
-conf.set('XDGOPEN', 1)
-
 
 #
 # コンパイラーの追加オプション
