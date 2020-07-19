@@ -71,7 +71,6 @@ bool JDSSL::connect( const int soc, const char *host )
         return false;
     }
 
-#if GNUTLS_VERSION_NUMBER >= 0x030406
     auto failure = [this]( int err ) { m_errmsg = gnutls_strerror( err ); return false; };
 
     ret = gnutls_certificate_allocate_credentials( &m_cred );
@@ -92,27 +91,6 @@ bool JDSSL::connect( const int soc, const char *host )
     gnutls_transport_set_int( m_session, soc );
     gnutls_handshake_set_timeout( m_session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT );
 
-#else // GNUTLS_VERSION_NUMBER < 0x030406
-
-#if GNUTLS_VERSION_NUMBER >= 0x020108
-    // gnutls >= 2.1.7 (unreleased)
-    gnutls_priority_set_direct( m_session, "NORMAL:%COMPAT", nullptr );
-#else // GNUTLS_VERSION_NUMBER >= 0x020108
-    static const int priority_prot[] = { GNUTLS_SSL3, 0 };
-    // DEPRECATED (gnutls >= 2.1.4 gnutls =< 2.1.6)
-    // UNDEPRECATED (gnutls >= 2.1.7)
-    gnutls_set_default_priority( m_session );
-    // _GNUTLS_GCC_ATTR_DEPRECATE (gnutls >= 2.12.0)
-    gnutls_protocol_set_priority( m_session, priority_prot );
-#endif // GNUTLS_VERSION_NUMBER >= 0x020108
-
-    gnutls_transport_set_ptr( m_session, (gnutls_transport_ptr_t)(long) soc );
-    gnutls_certificate_allocate_credentials( &m_cred );
-    gnutls_credentials_set( m_session, GNUTLS_CRD_CERTIFICATE, m_cred );
-    gnutls_server_name_set( m_session, GNUTLS_NAME_DNS, host, strlen( host ) );
-
-#endif // GNUTLS_VERSION_NUMBER >= 0x030406
-
     do {
         ret = gnutls_handshake( m_session );
     } while( ret < 0 && gnutls_error_is_fatal( ret ) == 0 );
@@ -120,7 +98,7 @@ bool JDSSL::connect( const int soc, const char *host )
     if( ret < 0 ) {
         m_errmsg = "JDSSL::connect(gnutls) *** Handshake failed: ";
         m_errmsg += gnutls_strerror( ret );
-#if GNUTLS_VERSION_NUMBER >= 0x030406
+
         if( ret == GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR ) {
             gnutls_certificate_type_t type = gnutls_certificate_type_get( m_session );
             const unsigned status = gnutls_session_get_verify_cert_status( m_session );
@@ -132,19 +110,14 @@ bool JDSSL::connect( const int soc, const char *host )
                 gnutls_free( out.data );
             }
         }
-#endif
         return false;
     }
 
 #ifdef _DEBUG
-#if GNUTLS_VERSION_NUMBER >= 0x030110
     char* desc = gnutls_session_get_desc( m_session );
     assert( desc );
     std::cout << "JDSSL::connect(gnutls) - Session info: " << desc << std::endl;
     gnutls_free( desc );
-#else
-    std::cout << "JDSSL::connect(gnutls)" << std::endl;
-#endif
 #endif // _DEBUG
 
     return true;
@@ -199,13 +172,11 @@ int JDSSL::read( char* buf, const size_t bufsize )
     std::cout << "JDSSL::read(gnutls) tmpsize = " << tmpsize << "; bufsize = " << bufsize << std::endl;
 #endif
 
-#ifdef GNUTLS_E_PREMATURE_TERMINATION
     if( tmpsize == GNUTLS_E_PREMATURE_TERMINATION || tmpsize == GNUTLS_E_INVALID_SESSION ) {
         // Transfer-Encoding: chuncked のときはデータの長さが分からない
         // そのため受信エラーをデータ無しに置き換えて受信終了を判断する
         return 0;
     }
-#endif
     if( tmpsize < 0 ) m_errmsg = "gnutls_record_recv failed";
 
     return tmpsize;

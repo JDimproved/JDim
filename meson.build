@@ -156,7 +156,7 @@ endif
 # TLS
 tls_opt = get_option('tls')
 if tls_opt == 'gnutls'
-  tls_dep = dependency('gnutls', version : '>= 3.3.8')
+  tls_dep = dependency('gnutls', version : '>= 3.4.10')
   conf.set('USE_GNUTLS', 1)
 elif tls_opt == 'openssl'
   tls_dep = dependency('openssl', version : '>= 0.9.0')
