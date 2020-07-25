@@ -887,7 +887,7 @@ void MessageViewBase::post_fin()
 //
 // タブのページが切り替わったら呼ばれるslot
 //
-void MessageViewBase::slot_switch_page( GtkNotebookPage*, guint page )
+void MessageViewBase::slot_switch_page( Gtk::Widget*, guint page )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::slot_switch_page : " << get_url() << " page = " << page << std::endl;

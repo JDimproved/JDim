@@ -17,9 +17,6 @@
 
 #include "command_args.h"
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-using GtkNotebookPage = Gtk::Widget;
-#endif
 
 namespace SKELETON
 {
@@ -268,7 +265,7 @@ namespace SKELETON
         void reload_all_tabs( const int from_page );
 
         // notebookのタブが切り替わったときに呼ばれるslot
-        void slot_switch_page( GtkNotebookPage*, guint page );
+        void slot_switch_page( Gtk::Widget*, guint page );
 
         // タブをクリックした
         void slot_tab_clicked( const int page );

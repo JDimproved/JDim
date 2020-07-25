@@ -2065,7 +2065,7 @@ std::string Admin::get_current_url()
 //
 // notebookのタブのページが切り替わったら呼ばれるslot
 //
-void Admin::slot_switch_page( GtkNotebookPage*, guint page )
+void Admin::slot_switch_page( Gtk::Widget*, guint page )
 {
     // 起動中とシャットダウン中は処理しない
     if( SESSION::is_booting() ) return;

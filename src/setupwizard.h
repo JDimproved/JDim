@@ -11,9 +11,6 @@
 
 #include <gtkmm.h>
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-using GtkNotebookPage = Gtk::Widget;
-#endif
 
 namespace CORE
 {
@@ -166,7 +163,7 @@ namespace CORE
         ~SetupWizard();
 
       private:
-        void slot_switch_page( GtkNotebookPage* notebookpage, guint page );
+        void slot_switch_page( Gtk::Widget* notebookpage, guint page );
 
         void slot_back();
         void slot_next();

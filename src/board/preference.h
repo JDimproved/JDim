@@ -11,10 +11,6 @@
 #include "skeleton/label_entry.h"
 
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-using GtkNotebookPage = Gtk::Widget;
-#endif
-
 namespace BOARD
 {
     class ProxyFrame : public Gtk::Frame
@@ -159,7 +155,7 @@ namespace BOARD
         void slot_delete_cookie();
         void slot_check_live();
         void slot_remove_old_title();
-        void slot_switch_page( GtkNotebookPage*, guint page );
+        void slot_switch_page( Gtk::Widget*, guint page );
         void slot_ok_clicked() override;
         void timeout() override;
     };

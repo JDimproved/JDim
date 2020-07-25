@@ -564,7 +564,7 @@ bool DragableNoteBook::adjust_tabwidth()
 //
 // notebook_tabのタブが切り替わったときに呼ばれるslot
 //
-void DragableNoteBook::slot_switch_page_tab( GtkNotebookPage* bookpage, guint page )
+void DragableNoteBook::slot_switch_page_tab( Gtk::Widget* bookpage, guint page )
 {
     // view も切り替える
     m_notebook_view.set_current_page( page );

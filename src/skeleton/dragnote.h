@@ -27,7 +27,7 @@ namespace SKELETON
     class TabLabel;
     class IconPopup;
 
-    typedef sigc::signal< void, GtkNotebookPage*, int > SIG_SWITCH_PAGE;
+    typedef sigc::signal< void, Gtk::Widget*, int > SIG_SWITCH_PAGE;
     typedef sigc::signal< void, int > SIG_TAB_CLICKED;
     typedef sigc::signal< void, int > SIG_TAB_CLOSE;
     typedef sigc::signal< void, int > SIG_TAB_RELOAD;
@@ -183,7 +183,7 @@ namespace SKELETON
         SKELETON::TabLabel* create_tablabel( const std::string& url );
 
         // notebook_tabのタブが切り替わったときに呼び出されるslot
-        void slot_switch_page_tab( GtkNotebookPage*, guint page );
+        void slot_switch_page_tab( Gtk::Widget*, guint page );
 
         // notebook_tab の上でボタンを押した/離した
         bool slot_button_press_event( GdkEventButton* event );

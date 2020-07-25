@@ -3493,7 +3493,7 @@ bool Core::slot_timeout( int timer_number )
 //
 // 右ペーンのnotebookのタブの切替え
 //
-void Core::slot_switch_page( GtkNotebookPage*, guint )
+void Core::slot_switch_page( Gtk::Widget*, guint )
 {
     const bool present = false;
     const int page = get_right_current_page();
