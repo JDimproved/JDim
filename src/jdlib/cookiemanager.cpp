@@ -121,9 +121,6 @@ bool SimpleCookieParser::parse( const std::string& input, SimpleCookie& result )
 
     // クオート(")やエスケープ(\)が含まれているクッキーは解析失敗にする
     if( regex.exec( R"-(([^"\=;]+)=([^"\=;]*))-", input, offset, icase, newline, usemigemo, wchar ) ) {
-        // 値のないクッキーは解析失敗にする
-        if( regex.str( 2 ).empty() ) return false;
-
         result.name = regex.str( 1 );
         result.value = regex.str( 0 );
         offset = regex.str( 0 ).size();
