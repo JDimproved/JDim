@@ -1,7 +1,13 @@
-buildinfo_h = configure_file(output : 'buildinfo.h',
-                             configuration : buildinfo)
 config_h = configure_file(output : 'config.h',
                           configuration : conf)
+
+# 作業ディレクトリの状態を反映するためにビルド毎に更新する
+buildinfo_h = custom_target('buildinfo.h',
+                            build_always_stale : true,
+                            capture : true,
+                            command : ['sh', '@INPUT@'],
+                            input : 'buildinfo.h.sh',
+                            output : 'buildinfo.h')
 
 
 subdir('article')
