@@ -255,22 +255,7 @@ conf.set('HAVE_BUILDINFO_H', 1)
 buildinfo = configuration_data()
 
 if configure_args.length() > 0
-  buildinfo.set_quoted('CONFIGURE_ARGS', ' '.join(configure_args))
-endif
-
-git = find_program('git', required : false)
-if git.found()
-  # NOTE: meson v0.50 から run_command() に env キーワードを指定できる (LANG=C.utf8)
-  git_hash = run_command(git, 'log', '--pretty=format:%h', '--abbrev=10', '-n', '1')
-  buildinfo.set_quoted('GIT_HASH', git_hash.stdout().strip())
-  git_date = run_command(git, 'log', '--pretty=format:%ad', '--date=format:%Y%m%d', '-n', '1')
-  buildinfo.set_quoted('GIT_DATE', git_date.stdout().strip())
-  git_status = run_command(git, 'status', '-uno', '-s')
-  buildinfo.set10('GIT_DIRTY', git_status.stdout().split(' ').contains('M')) # boolean to 1 or 0
-else
-  buildinfo.set_quoted('GIT_HASH', '')
-  buildinfo.set_quoted('GIT_DATE', '')
-  buildinfo.set('GIT_DIRTY', 0)
+  conf.set_quoted('CONFIGURE_ARGS', ' '.join(configure_args))
 endif
 
 
