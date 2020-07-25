@@ -130,11 +130,6 @@ Core::Core( JDWinMain& win_main )
 
     // HTTPクッキー管理マネージャ作成
     JDLIB::get_cookie_manager();
-
-#if !GTKMM_CHECK_VERSION(3,0,0)
-    m_vbox_article.signal_realize().connect( sigc::mem_fun(*this, &Core::slot_realize ) );
-    m_vbox_article.signal_style_changed().connect( sigc::mem_fun(*this, &Core::slot_style_changed ) );
-#endif
 }
 
 
@@ -278,29 +273,6 @@ void Core::save_session()
 
     SESSION::save_session();
 }
-
-
-// 右ペーンのnotebookのparentであるvboxがrealizeしたらnotebookのstyleを変更する
-// テーマによっては notebook の中に notebook を配置すると背景色が正しく
-// 出ない問題があるため。開発スレ 493 参照
-#if !GTKMM_CHECK_VERSION(3,0,0)
-void Core::slot_realize()
-{
-#ifdef _DEBUG
-    std::cout << "Core::slot_realize\n";
-#endif
-
-    slot_style_changed( m_vbox_article.get_style() );
-}
-#endif // !GTKMM_CHECK_VERSION(3,0,0)
-
-
-#if !GTKMM_CHECK_VERSION(3,0,0)
-void Core::slot_style_changed( Glib::RefPtr< Gtk::Style > )
-{
-    m_notebook_right.set_style( m_vbox_article.get_style() );
-}
-#endif // !GTKMM_CHECK_VERSION(3,0,0)
 
 
 Gtk::Widget* Core::get_toplevel()
