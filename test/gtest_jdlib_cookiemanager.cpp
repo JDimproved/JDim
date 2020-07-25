@@ -27,7 +27,7 @@ public:
 
 class CookieManager_GetCookieByHost : public CookieManager_TestBase {};
 
-TEST_F(CookieManager_GetCookieByHost, empty_value)
+TEST_F(CookieManager_GetCookieByHost, no_data)
 {
     const std::string expect = "";
     EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "example.com" ) );
@@ -46,6 +46,14 @@ TEST_F(CookieManager_GetCookieByHost, multiple_values)
     the_cookie_manager->feed( "example.com", "baz=qux" );
     // 現在の実装ではクッキー名を辞書順でソートする
     const std::string expect = "baz=qux; foo=bar";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "example.com" ) );
+}
+
+TEST_F(CookieManager_GetCookieByHost, empty_values)
+{
+    the_cookie_manager->feed( "example.com", "foo=" );
+    the_cookie_manager->feed( "example.com", "bar=" );
+    const std::string expect = "bar=; foo=";
     EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "example.com" ) );
 }
 
