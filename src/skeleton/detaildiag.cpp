@@ -51,7 +51,7 @@ void DetailDiag::timeout()
 }
 
 
-void DetailDiag::slot_switch_page( GtkNotebookPage*, guint page )
+void DetailDiag::slot_switch_page( Gtk::Widget*, guint page )
 {
     if( get_notebook().get_nth_page( page ) == m_detail ) m_detail->redraw_view();
 }

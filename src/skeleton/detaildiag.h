@@ -9,9 +9,6 @@
 
 #include "prefdiag.h"
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-using GtkNotebookPage = Gtk::Widget;
-#endif
 
 namespace SKELETON
 {
@@ -39,7 +36,7 @@ namespace SKELETON
 
       private:
 
-        virtual void slot_switch_page( GtkNotebookPage*, guint page );
+        virtual void slot_switch_page( Gtk::Widget*, guint page );
         void timeout() override;
     };
 }

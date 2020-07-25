@@ -459,7 +459,7 @@ void Preferences::slot_remove_old_title()
 }
 
 
-void Preferences::slot_switch_page( GtkNotebookPage*, guint page )
+void Preferences::slot_switch_page( Gtk::Widget*, guint page )
 {
     if( m_notebook.get_nth_page( page ) == m_localrule ){
         m_localrule->set_command( "clear_screen" );

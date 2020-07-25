@@ -34,7 +34,7 @@ ConfirmDiag::ConfirmDiag( const std::string& url, const std::string& message )
 ConfirmDiag::~ConfirmDiag() noexcept = default;
 
 
-void ConfirmDiag::slot_switch_page( GtkNotebookPage*, guint page )
+void ConfirmDiag::slot_switch_page( Gtk::Widget*, guint page )
 {
     if( get_notebook().get_nth_page( page ) == get_detail() ){
         get_detail()->set_command( "clear_screen" );

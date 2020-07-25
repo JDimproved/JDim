@@ -10,10 +10,6 @@
 #include "skeleton/compentry.h"
 #include "skeleton/jdtoolbar.h"
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-using GtkNotebookPage = Gtk::Widget;
-#endif
-
 
 namespace JDLIB
 {
@@ -150,7 +146,7 @@ namespace MESSAGE
         void insert_draft();
 
         bool slot_button_press( GdkEventButton* event );
-        void slot_switch_page( GtkNotebookPage*, guint page );
+        void slot_switch_page( Gtk::Widget*, guint page );
         void slot_text_changed();
 
         virtual std::string create_message() = 0;

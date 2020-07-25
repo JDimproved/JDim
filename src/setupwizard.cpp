@@ -306,7 +306,7 @@ SetupWizard::~SetupWizard()
 }
 
 
-void SetupWizard::slot_switch_page( GtkNotebookPage* notebookpage, guint page )
+void SetupWizard::slot_switch_page( Gtk::Widget* notebookpage, guint page )
 {
     switch( page ){
 

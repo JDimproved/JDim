@@ -25,10 +25,6 @@
 
 class JDWinMain;
 
-#if GTKMM_CHECK_VERSION(3,0,0)
-using GtkNotebookPage = Gtk::Widget;
-#endif
-
 
 namespace BOARD
 {
@@ -200,7 +196,7 @@ namespace CORE
         bool slot_timeout( int timer_number );
 
         // 右ペーンのnotebookのタブの切替え
-        void slot_switch_page( GtkNotebookPage*, guint page );
+        void slot_switch_page( Gtk::Widget*, guint page );
 
         // 右ペーンのnotebookのページ番号
         int get_right_current_page();
