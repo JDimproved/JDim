@@ -116,9 +116,6 @@ if cpp_compiler.has_header('sys/utsname.h')
   conf.set('HAVE_SYS_UTSNAME_H', 1)
 endif
 
-# thread
-conf.set('WITH_STD_THREAD', 1)
-
 
 #
 # オプションのパッケージ

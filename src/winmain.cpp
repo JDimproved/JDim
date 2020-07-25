@@ -39,12 +39,6 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag,
 
     setlocale( LC_ALL, "ja_JP.UTF-8" );
 
-#ifndef WITH_STD_THREAD
-    // GLIBのスレッドシステム初期化
-    if( !Glib::thread_supported() ) Glib::thread_init();
-    assert( Glib::thread_supported() );
-#endif
-
 #ifndef _WIN32
     // アイコンをセット
     // WindowsはwindresのデフォルトICONが初期適用されるので不要

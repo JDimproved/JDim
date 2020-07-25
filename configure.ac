@@ -351,8 +351,6 @@ AC_ARG_WITH(thread,
 AC_HELP_STRING([--with-thread=@<:@posix|glib|std@:>@], [NO LONGER AVAILABLE]),
 [AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
 
-AC_DEFINE(WITH_STD_THREAD, 1, [std::thread is now default.])
-
 
 dnl
 dnl checking pangolayout
