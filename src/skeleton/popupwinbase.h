@@ -3,6 +3,7 @@
 //
 // ポップアップウィンドウの基底クラス
 //
+// TODO: 枠線はcssで設定する
 
 #ifndef POPUPWINBASE_H
 #define POPUPWINBASE_H
@@ -25,10 +26,6 @@ namespace SKELETON
     class PopupWinBase : public Gtk::Window
     {
         SIG_CONFIGURED_POPUP m_sig_configured;
-#if !GTKMM_CHECK_VERSION(3,0,0)
-        Glib::RefPtr< Gdk::GC > m_gc;
-#endif
-
         const bool m_draw_frame;
 
       public:
@@ -41,12 +38,7 @@ namespace SKELETON
 
       protected:
 
-        void on_realize() override;
-#if GTKMM_CHECK_VERSION(3,0,0)
         bool on_draw( const Cairo::RefPtr< Cairo::Context >& cr ) override;
-#else
-        bool on_expose_event( GdkEventExpose* event ) override;
-#endif
         bool on_configure_event( GdkEventConfigure* event ) override;
     };
 }
