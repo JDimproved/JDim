@@ -4,6 +4,8 @@
 //
 // (注) DragableNoteBookにappendするのは SKELETON::ToolBar
 //
+// TODO: クライアント側で Gtk::Toolbar に置き換える
+// TODO: CONFIG::(set|get)_draw_toolbarback() を削除する
 
 #ifndef JDTOOLBAR_H
 #define JDTOOLBAR_H
@@ -17,12 +19,6 @@ namespace SKELETON
     public:
         JDToolbar();
         ~JDToolbar() noexcept;
-
-        // GTK+3ではデフォルトの描画処理に任せる
-#if !GTKMM_CHECK_VERSION(3,0,0)
-    protected:
-        bool on_expose_event( GdkEventExpose* event ) override;
-#endif
     };
 }
 
