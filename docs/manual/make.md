@@ -83,7 +83,10 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
     セッション管理を無効にするには <code>no</code> を選択する。デフォルトでは XSMP を使用する。
   </dd>
   <dt>--with-pangolayout</dt>
-  <dd>描画に PangoLayout を使う。デフォルトでは PangoGlyphString を使用する。</dd>
+  <dd>
+    描画に PangoLayout を使う。デフォルトでは PangoGlyphString を使用する。
+    スレビューのテキスト表示に問題があるときはこのオプションを試してみてください。
+  </dd>
   <dt>--with-migemo</dt>
   <dd>
     migemo による検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
