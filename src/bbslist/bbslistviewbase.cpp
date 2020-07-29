@@ -172,9 +172,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1
     m_treeview.set_show_expanders( CONFIG::get_tree_show_expanders() );
     m_treeview.set_level_indentation( CONFIG::get_tree_level_indent() );
 
-#if GTKMM_CHECK_VERSION(3,3,18)
     m_treeview.add_events( Gdk::SMOOTH_SCROLL_MASK );
-#endif
 
     // treeviewのシグナルにコネクト
     m_treeview.signal_row_expanded().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_row_exp ) );

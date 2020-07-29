@@ -162,9 +162,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     m_liststore->set_sort_func( COL_SPEED, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
     m_liststore->set_sort_func( COL_DIFF, sigc::mem_fun( *this, &BoardViewBase::slot_compare_row ) );
 
-#if GTKMM_CHECK_VERSION(3,3,18)
     m_treeview.add_events( Gdk::SMOOTH_SCROLL_MASK );
-#endif
 
     m_treeview.sig_button_press().connect( sigc::mem_fun(*this, &BoardViewBase::slot_button_press ) );
     m_treeview.sig_button_release().connect( sigc::mem_fun(*this, &BoardViewBase::slot_button_release ) );

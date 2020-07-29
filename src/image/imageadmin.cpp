@@ -70,9 +70,7 @@ ImageAdmin::ImageAdmin( const std::string& url )
 
     // マウスホイールによる画像ビューのタブ切り替えを設定する
     m_tab.add_events( Gdk::SCROLL_MASK );
-#if GTKMM_CHECK_VERSION(3,3,18)
     m_tab.add_events( Gdk::SMOOTH_SCROLL_MASK );
-#endif
     m_tab.signal_scroll_event().connect( sigc::mem_fun( *this, &ImageAdmin::slot_scroll_event ) );
 
     m_tab.pack_start( m_scrwin );
@@ -1035,7 +1033,6 @@ bool ImageAdmin::slot_scroll_event( GdkEventScroll* event )
     const char* command_name = nullptr;
     if( event->direction == GDK_SCROLL_UP ) command_name = "tab_left";
     else if( event->direction == GDK_SCROLL_DOWN ) command_name = "tab_right";
-#if GTKMM_CHECK_VERSION(3,3,18)
     else if( event->direction == GDK_SCROLL_SMOOTH ) {
         constexpr double smooth_scroll_factor{ 2.0 };
         m_smooth_dy += smooth_scroll_factor * event->delta_y;
@@ -1048,7 +1045,6 @@ bool ImageAdmin::slot_scroll_event( GdkEventScroll* event )
             m_smooth_dy = 0.0;
         }
     }
-#endif // GTKMM_CHECK_VERSION(3,3,18)
 
     if( command_name ) set_command( command_name );
     set_command( "switch_admin" );

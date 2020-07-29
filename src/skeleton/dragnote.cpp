@@ -522,7 +522,6 @@ bool DragableNoteBook::slot_scroll_event( GdkEventScroll* event )
         next_page = ( get_current_page() + 1 ) % get_n_pages();
         ret = true;
     }
-#if GTKMM_CHECK_VERSION(3,3,18)
     else if( event->direction == GDK_SCROLL_SMOOTH ) {
         constexpr double smooth_scroll_factor{ 4.0 };
         m_smooth_dy += smooth_scroll_factor * event->delta_y;
@@ -537,7 +536,6 @@ bool DragableNoteBook::slot_scroll_event( GdkEventScroll* event )
             m_smooth_dy = 0.0;
         }
     }
-#endif // GTKMM_CHECK_VERSION(3,3,18)
 
     if( ret ) {
         set_current_page( next_page );

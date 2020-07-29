@@ -195,9 +195,7 @@ namespace ARTICLE
         int m_configure_height{};
 
         // スクロール情報
-#if GTKMM_CHECK_VERSION(3,3,18)
         double m_smooth_dy{}; // GDK_SCROLL_SMOOTH のスクロール変化量
-#endif
         SCROLLINFO m_scrollinfo{};
         guint32 m_wheel_scroll_time{}; // 前回ホイールを回した時刻
         int m_goto_num_reserve{}; // 初期化時のジャンプ予約(レス番号)

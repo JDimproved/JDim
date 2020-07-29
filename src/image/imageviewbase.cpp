@@ -91,9 +91,7 @@ void ImageViewBase::setup_common()
     // focus 可、モーションキャプチャ可
     m_event.set_can_focus( true );
     m_event.add_events( Gdk::POINTER_MOTION_MASK );
-#if GTKMM_CHECK_VERSION(3,3,18)
     m_event.add_events( Gdk::SMOOTH_SCROLL_MASK );
-#endif
 
     m_event.signal_button_press_event().connect( sigc::mem_fun( *this, &ImageViewBase::slot_button_press ) );
     m_event.signal_button_release_event().connect( sigc::mem_fun( *this, &ImageViewBase::slot_button_release ) );

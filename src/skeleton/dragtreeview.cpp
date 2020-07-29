@@ -504,7 +504,6 @@ void DragTreeView::wheelscroll( GdkEventScroll* event )
 
     if( event->direction == GDK_SCROLL_UP ) val = MAX( 0, val - scr_inc );
     else if( event->direction == GDK_SCROLL_DOWN ) val = MIN( adj->get_upper() - adj->get_page_size(), val + scr_inc );
-#if GTKMM_CHECK_VERSION(3,3,18)
     else if( event->direction == GDK_SCROLL_SMOOTH ) {
         constexpr double smooth_scroll_factor = 4.0;
         m_smooth_dy += smooth_scroll_factor * event->delta_y;
@@ -518,7 +517,6 @@ void DragTreeView::wheelscroll( GdkEventScroll* event )
         auto hadj = get_hadjustment();
         hadj->set_value( hadj->get_value() + scr_inc * smooth_scroll_factor_x * event->delta_x );
     }
-#endif
     adj->set_value( val );
 
 #ifdef _DEBUG
