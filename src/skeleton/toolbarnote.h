@@ -2,6 +2,7 @@
 //
 // DragableNoteBookを構成するツールバー表示用の Notebook
 //
+// TODO: 使われなくなったコンストラクタの引数を整理する
 
 #ifndef _TOOLBARNOTE_H
 #define _TOOLBARNOTE_H
@@ -14,20 +15,10 @@ namespace SKELETON
 
     class ToolBarNotebook : public Gtk::Notebook
     {
-#if !GTKMM_CHECK_VERSION(3,0,0)
-        DragableNoteBook* m_parent;
-#endif
-
       public:
 
-        explicit ToolBarNotebook( DragableNoteBook* parent );
+        explicit ToolBarNotebook( DragableNoteBook* );
         ~ToolBarNotebook() noexcept;
-
-#if !GTKMM_CHECK_VERSION(3,0,0)
-      protected:
-
-        bool on_expose_event( GdkEventExpose* event ) override;
-#endif
     };
 }
 
