@@ -141,6 +141,13 @@ WaylandやXWaylandではX11限定の機能を使うことができないため�
 * Wayland上で起動したときポップアップ内のアンカーからポップアップを出すとマウスポインターから離れた位置に表示される。
 * Weston(Waylandコンポジタ)環境でXWaylandをバックエンドに指定して起動した場合、右クリックしながらポップアップ内に
   マウスポインターを動かすとポップアップ内容ではなくポップアップに隠れたスレビューに反応する。
+* 32bit OSの古いMATE環境（バージョン[1.10][mate-1-10]から[1.16][mate-1-16]？）でJDim GTK3版を実行したとき
+  スレビューの上に別のウインドウを重ねて移動させると残像でスレビュー内のみ描画が乱れる。
+  スレビューをスクロール等させて再描画すると直る。([背景事情][mate-background])
+
+[mate-1-10]: https://mate-desktop.org/blog/2015-06-11-mate-1-10-released/ "GTK3の実験的なサポート追加"
+[mate-1-16]: https://mate-desktop.org/blog/2016-09-21-mate-1-16-released/ "GTK3に移行途中"
+[mate-background]: https://github.com/JDimproved/JDim/commit/ffbce60ede#commitcomment-40911816 "別の不具合が再発する"
 
 
 <a name="compatibility"></a>
