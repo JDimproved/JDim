@@ -33,9 +33,7 @@ namespace IMAGE
         int m_scroll;
         int m_counter_scroll;
 
-#if GTKMM_CHECK_VERSION(3,3,18)
         double m_smooth_dy{ 0.0 }; // GDK_SCROLL_SMOOTH のスクロール変化量
-#endif
 
       public:
 

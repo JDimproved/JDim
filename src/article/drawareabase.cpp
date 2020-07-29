@@ -178,9 +178,7 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_view.add_events( Gdk::BUTTON_PRESS_MASK );
     m_view.add_events( Gdk::BUTTON_RELEASE_MASK );
     m_view.add_events( Gdk::SCROLL_MASK );
-#if GTKMM_CHECK_VERSION(3,3,18)
     m_view.add_events( Gdk::SMOOTH_SCROLL_MASK );
-#endif
     m_view.add_events( Gdk::POINTER_MOTION_MASK );
     m_view.add_events( Gdk::LEAVE_NOTIFY_MASK );
     m_view.add_events( Gdk::VISIBILITY_NOTIFY_MASK );
@@ -3364,7 +3362,6 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 
             if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() * speed;
             else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
-#if GTKMM_CHECK_VERSION(3,3,18)
             else if( event->direction == GDK_SCROLL_SMOOTH ) {
                 constexpr double smooth_scroll_factor = 4.0;
                 m_smooth_dy += smooth_scroll_factor * event->delta_y;
@@ -3374,7 +3371,6 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
                     m_smooth_dy = 0.0;
                 }
             }
-#endif
 
             exec_scroll();
 

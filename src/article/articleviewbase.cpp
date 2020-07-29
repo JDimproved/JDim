@@ -139,9 +139,7 @@ void ArticleViewBase::setup_view()
     assert( m_article );
     assert( m_drawarea );
 
-#if GTKMM_CHECK_VERSION(3,3,18)
     m_drawarea->add_events( Gdk::SMOOTH_SCROLL_MASK );
-#endif
 
     m_drawarea->sig_button_press().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_button_press ));
     m_drawarea->sig_button_release().connect(  sigc::mem_fun( *this, &ArticleViewBase::slot_button_release ));
