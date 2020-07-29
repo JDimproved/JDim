@@ -67,6 +67,7 @@
     --with-pangolayout
 
        描画にPangoLayoutを使う。デフォルトでは PangoGlyphString を使用する。
+       スレビューのテキスト表示に問題があるときはこのオプションを試してみてください。
 
     --with-migemo
 
