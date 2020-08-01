@@ -22,11 +22,9 @@
 
 
 // 枠を描く
-#if GTKMM_CHECK_VERSION(3,0,0)
+// TODO: GTKのcssで設定する
 #define DRAW_FRAME( color ) m_event_frame->override_background_color( Gdk::RGBA( color ), Gtk::STATE_FLAG_NORMAL )
-#else
-#define DRAW_FRAME( color ) m_event_frame->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) )
-#endif
+
 
 using namespace IMAGE;
 
