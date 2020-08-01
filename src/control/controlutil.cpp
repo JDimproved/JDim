@@ -137,7 +137,6 @@ bool CONTROL::is_ascii( const guint keysym )
 }
 
 
-#if GTKMM_CHECK_VERSION(3,6,0)
 static void slot_set_menu_motion( Gtk::Widget& widget )
 {
     const auto item = dynamic_cast< Gtk::MenuItem* >( &widget );
@@ -179,7 +178,6 @@ static void slot_set_menu_motion( Gtk::Widget& widget )
         CONTROL::set_menu_motion( item->get_submenu() );
     }
 }
-#endif // GTKMM_CHECK_VERSION(3,6,0)
 
 
 // メニューにショートカットキーやマウスジェスチャを表示
@@ -187,45 +185,7 @@ void CONTROL::set_menu_motion( Gtk::Menu* menu )
 {
     if( !menu ) return;
 
-#if GTKMM_CHECK_VERSION(3,6,0)
     menu->foreach( &slot_set_menu_motion );
-#else
-    menu->foreach( []( Gtk::Widget& w ) {
-        auto* const item = dynamic_cast< Gtk::MenuItem* >( &w );
-
-        // menuitemの中の名前を読み込んで ID を取得し、CONTROL::Noneでなかったら
-        // ラベルを置き換える
-        auto* const label = dynamic_cast< Gtk::Label* >( item->get_child() );
-        if( label ){
-#ifdef _DEBUG
-            std::cout << label->get_text() << std::endl;
-#endif
-            int id = CONTROL::get_id( label->get_text() );
-            if( id != CONTROL::None ){
-
-                std::string str_label = CONTROL::get_label_with_mnemonic( id );
-                std::string str_motions = CONTROL::get_str_motions( id );
-
-#if GTKMM_CHECK_VERSION(3,0,0)
-                // Gtk::MenuItemにGtk::HBoxを追加する方法は動作しなくなった
-                label->set_text_with_mnemonic( str_label + ( str_motions.empty() ? "" : "\t" + str_motions ) );
-#else
-                item->remove();
-                Gtk::Label *label_subject = Gtk::manage( new Gtk::Label( str_label + ( str_motions.empty() ? "" : "  " ), true ) );
-                Gtk::Label *label_motion = Gtk::manage( new Gtk::Label( str_motions ) );
-                Gtk::HBox *box = Gtk::manage( new Gtk::HBox() );
-
-                box->pack_start( *label_subject, Gtk::PACK_SHRINK );
-                box->pack_end( *label_motion, Gtk::PACK_SHRINK );
-                item->add( *box );
-                box->show_all();
-#endif
-            }
-        }
-
-        if( item->has_submenu() ) CONTROL::set_menu_motion( item->get_submenu() );
-    } );
-#endif // GTKMM_CHECK_VERSION(3,6,0)
 }
 
 
