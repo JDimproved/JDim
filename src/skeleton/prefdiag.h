@@ -48,9 +48,7 @@ namespace SKELETON
         virtual void slot_cancel_clicked(){}
         virtual void slot_apply_clicked(){}
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         void set_default_size_ratio( double ratio );
-#endif
 
       private:
 
