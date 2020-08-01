@@ -22,7 +22,6 @@ namespace SKELETON
         {
             m_img.set( m_pixbuf );
 
-#if GTKMM_CHECK_VERSION(3,0,0)
             // NOTE: アルファチャンネルが利用できない環境では背景を透過できない
             set_decorated( false );
             set_app_paintable( true );
@@ -31,13 +30,6 @@ namespace SKELETON
             if( visual && screen->is_composited() ) {
                 gtk_widget_set_visual( GTK_WIDGET( gobj() ), visual->gobj() );
             }
-#else
-            Glib::RefPtr< Gdk::Pixmap > pixmap;
-            Glib::RefPtr< Gdk::Bitmap > bitmap;
-
-            m_pixbuf->render_pixmap_and_mask( pixmap, bitmap, 255 );
-            shape_combine_mask( bitmap, 0, 0 );
-#endif // GTKMM_CHECK_VERSION(3,0,0)
 
             add( m_img );
             show_all_children();
