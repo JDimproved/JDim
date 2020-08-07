@@ -41,7 +41,6 @@ std::string MISC::color_to_str( const int* l_rgb )
     return str_value;
 }
 
-#if GTKMM_CHECK_VERSION(3,0,0)
 // Gdk::RGBA -> 16進数表記の文字列
 std::string MISC::color_to_str( const Gdk::RGBA& rgba )
 {
@@ -51,7 +50,6 @@ std::string MISC::color_to_str( const Gdk::RGBA& rgba )
     l_rgb[ 2 ] = rgba.get_blue_u();
     return color_to_str( l_rgb );
 }
-#endif // GTKMM_CHECK_VERSION(3,0,0)
 
 
 // htmlカラー (#ffffffなど) -> 16進数表記の文字列
@@ -132,11 +130,7 @@ std::set< std::string > MISC::get_font_families()
 std::string MISC::get_entry_font()
 {
     Gtk::Entry entry;
-#if GTKMM_CHECK_VERSION(3,0,0)
     return entry.get_style_context()->get_font().to_string();
-#else
-    return entry.get_style()->get_font().to_string();
-#endif
 }
 
 
@@ -144,19 +138,8 @@ std::string MISC::get_entry_font()
 std::string MISC::get_entry_color_text()
 {
     Gtk::Entry entry;
-#if GTKMM_CHECK_VERSION(3,0,0)
     auto rgba = entry.get_style_context()->get_color( Gtk::STATE_FLAG_NORMAL );
     return color_to_str( rgba );
-#else
-    Gtk::Window win( Gtk::WINDOW_POPUP );
-
-    win.add( entry );
-    win.move( 0,0 );
-    win.resize( 1,1 );
-    win.show_all();
-
-    return color_to_str( entry.get_style()->get_text( Gtk::STATE_NORMAL ) );
-#endif
 }
 
 
@@ -164,7 +147,6 @@ std::string MISC::get_entry_color_text()
 std::string MISC::get_entry_color_base()
 {
     Gtk::Entry entry;
-#if GTKMM_CHECK_VERSION(3,0,0)
     // REVIEW: get_background_color()が期待通りに背景色を返さない環境があった
     auto context = entry.get_style_context();
     Gdk::RGBA rgba;
@@ -175,16 +157,6 @@ std::string MISC::get_entry_color_base()
 #endif
     }
     return color_to_str( rgba );
-#else
-    Gtk::Window win( Gtk::WINDOW_POPUP );
-
-    win.add( entry );
-    win.move( 0,0 );
-    win.resize( 1,1 );
-    win.show_all();
-
-    return color_to_str( entry.get_style()->get_base( Gtk::STATE_NORMAL ) );
-#endif
 }
 
 

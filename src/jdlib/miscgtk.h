@@ -19,10 +19,8 @@ namespace MISC
     // int[3] -> 16進数表記の文字列
     std::string color_to_str( const int* l_rgb );
 
-#if GTKMM_CHECK_VERSION(3,0,0)
     // Gdk::RGBA -> 16進数表記の文字列
     std::string color_to_str( const Gdk::RGBA& rgba );
-#endif
 
     // htmlカラー (#ffffffなど) -> 16進数表記の文字列
     std::string htmlcolor_to_str( const std::string& htmlcolor );
