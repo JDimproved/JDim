@@ -229,7 +229,6 @@ void MessageViewBase::init_color()
 {
     if( m_text_message ){
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         if( CONFIG::get_use_message_gtktheme() ) {
             m_text_message->update_style( u8"" );
         }
@@ -253,12 +252,6 @@ void MessageViewBase::init_color()
                 )",
                 classname, fg, bg, caret_prop, sel_fg, sel_bg ) );
         }
-#else
-        m_text_message->modify_text( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE ) ) );
-        m_text_message->modify_text( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ) );
-        m_text_message->modify_base( Gtk::STATE_NORMAL, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE ) ) );
-        m_text_message->modify_base( Gtk::STATE_SELECTED, Gdk::Color( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ) );
-#endif // GTKMM_CHECK_VERSION(3,0,0)
     }
 }
 

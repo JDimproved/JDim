@@ -46,10 +46,8 @@ namespace SKELETON
         Gtk::EventBox m_mginfo_ebox;
         Gtk::Label m_mginfo;
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         static constexpr const char* s_css_stat_label = u8"jd-stat-label";
         Glib::RefPtr< Gtk::CssProvider > m_stat_provider = Gtk::CssProvider::create();
-#endif
 
       public:
 

@@ -38,20 +38,14 @@ namespace SKELETON
         Gtk::TreeModel::Path m_path_dragstart;
         Gtk::TreeModel::Path m_path_dragpre;
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         static constexpr const char* s_css_classname = u8"jd-dragtreeview";
         Glib::RefPtr< Gtk::CssProvider > m_provider = Gtk::CssProvider::create();
 
-        using Color = Gdk::RGBA;
-#else
-        using Color = Gdk::Color;
-#endif
-
         // 色
         bool m_use_bg_even;
-        Color m_color_text;
-        Color m_color_bg;
-        Color m_color_bg_even;
+        Gdk::RGBA m_color_text;
+        Gdk::RGBA m_color_bg;
+        Gdk::RGBA m_color_bg_even;
 
         // ポップアップウィンドウ用
         PopupWin* m_popup_win;

@@ -780,11 +780,9 @@ EditView::EditView()
 {
     set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
     add( m_textview );
-#if GTKMM_CHECK_VERSION(3,0,0)
     auto context = m_textview.get_style_context();
     context->add_class( s_css_classname );
     context->add_provider( m_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
-#endif
     show_all_children();
 }
 
@@ -792,14 +790,11 @@ EditView::EditView()
 EditView::~EditView() noexcept = default;
 
 
-#if GTKMM_CHECK_VERSION(3,0,0)
 constexpr const char* EditView::s_css_classname;
-#endif
 
 //
 // EditTextViewのスタイルを更新する
 //
-#if GTKMM_CHECK_VERSION(3,0,0)
 void EditView::update_style( const Glib::ustring& custom_css )
 {
 #ifdef _DEBUG
@@ -814,4 +809,3 @@ void EditView::update_style( const Glib::ustring& custom_css )
 #endif
     }
 }
-#endif // GTKMM_CHECK_VERSION(3,0,0)

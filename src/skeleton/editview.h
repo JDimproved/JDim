@@ -123,10 +123,8 @@ namespace SKELETON
     class EditView : public Gtk::ScrolledWindow
     {
         EditTextView m_textview;
-#if GTKMM_CHECK_VERSION(3,0,0)
         static constexpr const char* s_css_classname = u8"jd-editview";
         Glib::RefPtr< Gtk::CssProvider > m_provider = Gtk::CssProvider::create();
-#endif
 
     public:
 
@@ -150,14 +148,9 @@ namespace SKELETON
 
         void set_wrap_mode( Gtk::WrapMode wrap_mode ){ m_textview.set_wrap_mode( wrap_mode ); }
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         const char* get_css_classname() const noexcept { return s_css_classname; }
         // EditTextViewのスタイルを更新する
         void update_style( const Glib::ustring& custom_css );
-#else
-        void modify_text( Gtk::StateType state, const Gdk::Color& color ){ m_textview.modify_text( state, color ); }
-        void modify_base( Gtk::StateType state, const Gdk::Color& color ){ m_textview.modify_base( state, color ); }
-#endif
 
         void insert_str( const std::string& str, bool use_br ){ m_textview.insert_str( str, use_br ); }
 
