@@ -47,19 +47,6 @@
 using namespace CORE;
 
 
-namespace {
-#if GTKMM_CHECK_VERSION(3,1,16)
-struct FontSelectionDialog : public Gtk::FontChooserDialog
-{
-    Glib::ustring get_font_name() const { return get_font(); }
-    void set_font_name( const Glib::ustring& name ) { set_font( name ); }
-};
-#else
-using FontSelectionDialog = Gtk::FontSelectionDialog;
-#endif
-} // namespace
-
-
 //
 // URLを開く
 //
@@ -770,17 +757,17 @@ void Core::slot_setup_button()
 //
 void Core::slot_changefont_main()
 {
-    FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname( FONT_MAIN ) );
+    Gtk::FontChooserDialog diag;
+    diag.set_font( CONFIG::get_fontname( FONT_MAIN ) );
     diag.set_title( "スレビューフォント" );
     diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
-        CONFIG::set_fontname( FONT_MAIN, diag.get_font_name() );
+        CONFIG::set_fontname( FONT_MAIN, diag.get_font() );
         ARTICLE::get_admin()->set_command( "init_font" );
         ARTICLE::get_admin()->set_command( "relayout_all" );
 
-        CONFIG::set_fontname( FONT_MESSAGE, diag.get_font_name() );
+        CONFIG::set_fontname( FONT_MESSAGE, diag.get_font() );
         MESSAGE::get_admin()->set_command( "relayout_all" );
     }
 }
@@ -790,17 +777,17 @@ void Core::slot_changefont_main()
 //
 void Core::slot_changefont_mail()
 {
-    FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname( FONT_MAIL ) );
+    Gtk::FontChooserDialog diag;
+    diag.set_font( CONFIG::get_fontname( FONT_MAIL ) );
     diag.set_title( "メール欄のフォント" );
     diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
-        CONFIG::set_fontname( FONT_MAIL, diag.get_font_name() );
+        CONFIG::set_fontname( FONT_MAIL, diag.get_font() );
         ARTICLE::get_admin()->set_command( "init_font" );
         ARTICLE::get_admin()->set_command( "relayout_all" );
 
-        CONFIG::set_fontname( FONT_MESSAGE, diag.get_font_name() );
+        CONFIG::set_fontname( FONT_MESSAGE, diag.get_font() );
         MESSAGE::get_admin()->set_command( "relayout_all" );
     }
 }
@@ -810,13 +797,13 @@ void Core::slot_changefont_mail()
 //
 void Core::slot_changefont_popup()
 {
-    FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname( FONT_POPUP ) );
+    Gtk::FontChooserDialog diag;
+    diag.set_font( CONFIG::get_fontname( FONT_POPUP ) );
     diag.set_title( "ポップアップフォント" );
     diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
-        CONFIG::set_fontname( FONT_POPUP, diag.get_font_name() );
+        CONFIG::set_fontname( FONT_POPUP, diag.get_font() );
         ARTICLE::get_admin()->set_command( "init_font" );
     }
 }
@@ -827,16 +814,16 @@ void Core::slot_changefont_popup()
 //
 void Core::slot_changefont_tree()
 {
-    FontSelectionDialog diag;
-    diag.set_font_name( CONFIG::get_fontname( FONT_BBS ) );
+    Gtk::FontChooserDialog diag;
+    diag.set_font( CONFIG::get_fontname( FONT_BBS ) );
     diag.set_title( "板／スレ一覧フォント" );
     diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
 
-        CONFIG::set_fontname( FONT_BBS, diag.get_font_name() );
+        CONFIG::set_fontname( FONT_BBS, diag.get_font() );
         BBSLIST::get_admin()->set_command( "relayout_all" );
 
-        CONFIG::set_fontname( FONT_BOARD, diag.get_font_name() );
+        CONFIG::set_fontname( FONT_BOARD, diag.get_font() );
         BOARD::get_admin()->set_command( "relayout_all" );
     }
 }
