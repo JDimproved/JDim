@@ -25,7 +25,6 @@ enum
     MIN_AAMENU_LINES = 12
 };
 
-#if GTKMM_CHECK_VERSION(3,16,0)
 // extend-selectionのハンドラーはC APIを利用するためヘッダーには公開しない
 static gboolean EditTextView_slot_extend_selection( GtkTextView*,
                                                     GtkTextExtendSelection granularity,
@@ -41,7 +40,6 @@ static inline bool is_separate_char( char32_t c )
 {
     return g_unichar_isspace( c ) || g_unichar_ispunct( c );
 }
-#endif // GTKMM_CHECK_VERSION(3,16,0)
 
 
 EditTextView::EditTextView() :
@@ -57,11 +55,9 @@ EditTextView::EditTextView() :
 
     get_buffer()->signal_changed().connect( sigc::mem_fun( *this, &EditTextView::slot_buffer_changed ) );
 
-#if GTKMM_CHECK_VERSION(3,16,0)
     // NOTE: gtkmmでextend-selectionシグナルが公開されていなかった
     g_signal_connect( G_OBJECT( gobj() ), "extend-selection",
                       G_CALLBACK( &EditTextView_slot_extend_selection ), nullptr );
-#endif
 }
 
 
@@ -725,7 +721,6 @@ void EditTextView::slot_hide_aamenu()
 }
 
 
-#if GTKMM_CHECK_VERSION(3,16,0)
 //
 // 範囲選択を実行する
 //
@@ -770,7 +765,6 @@ static gboolean EditTextView_slot_extend_selection( GtkTextView*,
     }
     return GDK_EVENT_PROPAGATE;
 }
-#endif // GTKMM_CHECK_VERSION(3,16,0)
 
 
 //////////////////////////////////////////////
