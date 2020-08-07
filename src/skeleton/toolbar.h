@@ -69,10 +69,8 @@ namespace SKELETON
         SKELETON::ToolBackForwardButton* m_button_back;
         SKELETON::ToolBackForwardButton* m_button_forward;
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         static constexpr const char* s_css_label = u8"jd-toolbar-label";
         Glib::RefPtr< Gtk::CssProvider > m_label_provider = Gtk::CssProvider::create();
-#endif
 
       public:
 
@@ -176,15 +174,11 @@ namespace SKELETON
         void set_color( const std::string& color );
 
         // 書き込みボタン関係
-        void drawframe_button_write( const bool draw );
         bool slot_focusout_write_button( GdkEventFocus* event );
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         // 閉じるボタン関係
         static constexpr const char* s_css_leave = u8"jd-leave";
         void setup_manual_styling( Gtk::ToolButton& toolbutton );
-#endif
-
 
         // 検索関係
         void slot_toggle_searchbar();

@@ -46,9 +46,7 @@ enum
 
 using namespace SKELETON;
 
-#if GTKMM_CHECK_VERSION(3,0,0)
 constexpr const char* JDWindow::s_css_stat_label;
-#endif
 
 // メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
@@ -87,7 +85,6 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     gpointer parent_class = g_type_class_peek_parent( G_OBJECT_GET_CLASS( gobj() ) );
     m_grand_parent_class = g_type_class_peek_parent( parent_class );
 
-#if GTKMM_CHECK_VERSION(3,0,0)
     auto context = m_label_stat.get_style_context();
     context->add_class( s_css_stat_label );
     context->add_provider( m_stat_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
@@ -97,7 +94,6 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
         context->add_class( s_css_stat_label );
         context->add_provider( m_stat_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
     }
-#endif // GTKMM_CHECK_VERSION(3,0,0)
 }
 
 
@@ -424,7 +420,7 @@ void JDWindow::set_status_color( const std::string& color )
     std::cout << "JDWindow::set_status_color " << color << std::endl;
 #endif
 
-#if GTKMM_CHECK_VERSION(3,0,0)
+    // TODO: 色を毎回指定するかわりにcssクラスの交換でスタイルを変更する
     Glib::ustring css;
     if( color.empty() ) {
         // テキスト部分が上手く配色されないGTKテーマがあるので明示的に設定する
@@ -443,32 +439,6 @@ void JDWindow::set_status_color( const std::string& color )
         std::cout << "ERROR:JDWindow::set_status_color fail " << err.what() << std::endl;
 #endif
     }
-
-#else
-    if( color.empty() ){
-
-        if( m_label_stat_ebox.get_visible_window() ){
-            m_label_stat.unset_fg( Gtk::STATE_NORMAL );
-            m_mginfo.unset_fg( Gtk::STATE_NORMAL );
-
-            m_label_stat_ebox.set_visible_window( false );
-            m_mginfo_ebox.set_visible_window( false );
-        }
-    }
-    else{
-
-        m_label_stat.modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
-        m_mginfo.modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
-
-        m_label_stat_ebox.set_visible_window( true );
-        m_label_stat_ebox.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) );
-        m_label_stat_ebox.modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( color ) );
-
-        m_mginfo_ebox.set_visible_window( true );
-        m_mginfo_ebox.modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) );
-        m_mginfo_ebox.modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( color ) );
-    }
-#endif
 }
 
 

@@ -26,17 +26,12 @@
 #include "command.h"
 #include "prefdiagfactory.h"
 
-#if !GTKMM_CHECK_VERSION(3,0,0)
-#include <gtk/gtkbutton.h>
-#endif
 
 using namespace SKELETON;
 
 
-#if GTKMM_CHECK_VERSION(3,0,0)
 constexpr const char* ToolBar::s_css_label;
 constexpr const char* ToolBar::s_css_leave;
-#endif
 
 ToolBar::ToolBar( Admin* admin )
     : m_admin( admin ),
@@ -80,11 +75,9 @@ ToolBar::ToolBar( Admin* admin )
     m_buttonbar.set_icon_size( Gtk::ICON_SIZE_MENU );
     m_buttonbar.set_toolbar_style( Gtk::TOOLBAR_ICONS );
 
-#if GTKMM_CHECK_VERSION(3,0,0)
     // ツールバーの子ウィジェットのコンテキストメニューの配色がGTKテーマと違うことがある。
     // ツールバーのcssクラスを削除しコンテキストメニューの配色を修正する。
     m_buttonbar.get_style_context()->remove_class( GTK_STYLE_CLASS_TOOLBAR );
-#endif
 }
 
 
@@ -316,11 +309,9 @@ Gtk::ToolItem* ToolBar::get_label()
         m_tool_label->add( *m_ebox_label );
         m_tool_label->set_expand( true );
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         auto context = m_label->get_style_context();
         context->add_class( s_css_label );
         context->add_provider( m_label_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
-#endif
     }
 
     return m_tool_label;
@@ -341,7 +332,7 @@ void ToolBar::set_color( const std::string& color )
 {
     if( ! m_ebox_label ) return;
 
-#if GTKMM_CHECK_VERSION(3,0,0)
+    // TODO: 色を毎回指定するかわりにcssクラスの交換でスタイルを変更する
     Glib::ustring css;
     if( color.empty() ) {
         css = Glib::ustring::compose( u8".%1:not(:selected) { color: unset; }", s_css_label );
@@ -360,23 +351,6 @@ void ToolBar::set_color( const std::string& color )
         std::cout << "ERROR:ToolBar::set_color fail " << err.what() << std::endl;
 #endif
     }
-
-#else // !GTKMM_CHECK_VERSION(3,0,0)
-    if( color.empty() ){
-
-        if( m_ebox_label->get_visible_window() ){
-            m_ebox_label->set_visible_window( false );
-            m_label->unset_fg( Gtk::STATE_NORMAL );
-        }
-    }
-    else{
-
-        m_ebox_label->set_visible_window( true );
-        m_label->modify_fg( Gtk::STATE_NORMAL, Gdk::Color( "white" ) );
-        m_ebox_label->modify_bg( Gtk::STATE_NORMAL, Gdk::Color( color ) );
-        m_ebox_label->modify_bg( Gtk::STATE_ACTIVE, Gdk::Color( color ) );
-    }
-#endif // GTKMM_CHECK_VERSION(3,0,0)
 }
 
 
@@ -741,38 +715,15 @@ void ToolBar::slot_clicked_write()
 void ToolBar::focus_button_write()
 {
     get_button_write()->get_child()->grab_focus();
-    drawframe_button_write( true );
 }
 
 
-// 書き込みボタンの廻りに枠を描く
-void ToolBar::drawframe_button_write( const bool draw )
-{
-#if !GTKMM_CHECK_VERSION(3,0,0)
-    if( CONFIG::get_flat_button() ){
-
-        // relief が Gtk:: RELIEF_NONE のときにボタンに枠を描画
-        // gtk+-2.12.9/gtk/gtkbutton.c の gtk_button_enter_notify()
-        // とgtk_button_leave_notify() をハック
-        Gtk::Button* button = dynamic_cast< Gtk::Button* >( get_button_write()->get_child() );
-        if( button ){
-            GtkButton* gtkbutton = button->gobj();
-            gtkbutton->in_button = draw;
-            if( draw ) gtk_button_enter( gtkbutton );
-            else gtk_button_leave( gtkbutton );
-        }
-    }
-#endif // !GTKMM_CHECK_VERSION(3,0,0)
-}
-
-
-bool ToolBar::slot_focusout_write_button( GdkEventFocus* event )
+bool ToolBar::slot_focusout_write_button( GdkEventFocus* )
 {
 #ifdef _DEBUG
     std::cout << "ToolBar::slot_focusout_write_button\n";
 #endif
 
-    drawframe_button_write( false );
     return true;
 }
 
@@ -846,10 +797,8 @@ Gtk::ToolButton* ToolBar::get_button_close()
 
         m_button_close->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_close ) );
 
-#if GTKMM_CHECK_VERSION(3,0,0)
         // 閉じるボタンのスタイルを制御可能にするためのセットアップ
         setup_manual_styling( *m_button_close );
-#endif
     }
 
     return m_button_close;
@@ -870,16 +819,9 @@ void ToolBar::slot_clicked_close()
     // 枠が残ったままになる
     if( m_admin->get_tab_nums() == 1 ){
         Gtk::Button* button = dynamic_cast< Gtk::Button* >( m_button_close->get_child() );
-#if GTKMM_CHECK_VERSION(3,0,0)
         // cssクラスセレクタ leave を追加して枠を消す
         // Gtk::RELIEF_NORMAL のときは影響を受けない
         button->get_style_context()->add_class( s_css_leave );
-#else
-        // gtk+-2.12.9/gtk/gtkbutton.c の gtk_button_leave_notify() をハックして
-        // gtkbutton->in_button = false にすると枠が消えることが分かった
-        GtkButton* gtkbutton = button->gobj();
-        gtkbutton->in_button = false;
-#endif
     }
 
     m_admin->set_command( "toolbar_close_view", m_url );
@@ -1085,7 +1027,6 @@ void ToolBar::slot_lock_clicked()
 }
 
 
-#if GTKMM_CHECK_VERSION(3,0,0)
 void ToolBar::setup_manual_styling( Gtk::ToolButton& toolbutton )
 {
     auto* const button = dynamic_cast< Gtk::Button* >( toolbutton.get_child() );
@@ -1126,4 +1067,3 @@ void ToolBar::setup_manual_styling( Gtk::ToolButton& toolbutton )
         return CONFIG::get_flat_button();
     } );
 }
-#endif // GTKMM_CHECK_VERSION(3,0,0)
