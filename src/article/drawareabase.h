@@ -227,7 +227,6 @@ namespace ARTICLE
         // 自分の書き込みに対するレスマークアイコン
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_refer_post;
 
-#if GTKMM_CHECK_VERSION(3,14,0)
         // マウスのクリックとタッチスクリーンのタップ
         Glib::RefPtr< Gtk::GestureMultiPress > m_gesture_multipress;
 
@@ -244,7 +243,6 @@ namespace ARTICLE
             gint64 last_time; // 前回コールバックが呼び出された時間(frame)
             guint id; // コールバックのID
         } m_deceleration{};
-#endif
 
       public:
 
@@ -495,7 +493,6 @@ namespace ARTICLE
         bool slot_key_press_event( GdkEventKey* event );
         bool slot_key_release_event( GdkEventKey* event );
 
-#if GTKMM_CHECK_VERSION(3,14,0)
         void setup_event_controller();
 
         void slot_multipress_pressed( int n_press, double x, double y );
@@ -511,7 +508,6 @@ namespace ARTICLE
         static gboolean deceleration_tick_cb( GtkWidget* cwidget, GdkFrameClock* clock, gpointer );
         gboolean deceleration_tick_impl( GdkFrameClock* clock );
         void cancel_deceleration();
-#endif
     };
 
 
