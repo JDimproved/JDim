@@ -167,13 +167,6 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_article = DBTREE::get_article( m_url );
     m_layout_tree = new LayoutTree( m_url, show_abone, show_multispace );
 
-#if !GTKMM_CHECK_VERSION(3,9,2)
-    // GTK+ 3.9.2からGTK/GDKのダブルバッファ処理が再構成された
-    // この影響でスレビューのスクロール時に画面のちらつきが発生するようになった
-    // ちらつきを抑えるため3.9.2以降の環境ではデフォルトのダブルバッファを使う
-    m_view.set_double_buffered( false );
-#endif
-
     // デフォルトではoffになってるイベントを追加
     m_view.add_events( Gdk::BUTTON_PRESS_MASK );
     m_view.add_events( Gdk::BUTTON_RELEASE_MASK );
@@ -1815,82 +1808,21 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     const int height_view = m_view.get_height();
     const int pos_y = get_vscr_val();
 
-    // スクロール量
-    int dy = 0;
+    // 全画面再描画
 
     // 画面上の描画開始領域のy座標と高さ
-    int y_screen = y_redraw;
-    int height_screen = height_redraw;
+    constexpr int y_screen = 0;
+    const int height_screen = height_view;
 
     // 描画範囲の上限、下限
-    int upper = pos_y + y_screen;
-    int lower = upper + height_screen;
-
-#if GTKMM_CHECK_VERSION(3,9,2)
-    {
-        // 全画面再描画
-        dy = 0;
-        y_screen = 0;
-        height_screen = height_view;
-        upper = pos_y;
-        lower = pos_y + height_screen;
-    }
-#else // !GTKMM_CHECK_VERSION(3,9,2)
-    if( m_pre_pos_y == -1 // 初回呼び出し時
-
-        // 高速スクロールモードでなく、バックスクリーンが全て描画されていない場合
-        || ( ! m_scroll_window && ( m_rect_backscreen.y != 0 || m_rect_backscreen.height != height_view ) )
-
-        ){
-
-        // 全画面再描画
-        dy = 0;
-        y_screen = 0;
-        height_screen = height_view;
-        upper = pos_y;
-        lower = pos_y + height_screen;
-    }
-
-    // スクロール中
-    else if( ! height_redraw ){
-
-        dy = pos_y - m_pre_pos_y;
-        upper = pos_y;
-        lower = pos_y + height_view;
-
-        // 上にスクロールした
-        if( dy > 0 ){
-
-            if( dy < height_view ) upper += ( height_view - dy );
-            y_screen = MAX( 0, height_view - dy );
-            height_screen = height_view - y_screen;
-        }
-
-        // 下にスクロールした
-        else if( dy < 0 ){
-
-            if( -dy < height_view ) lower = upper - dy;
-            y_screen = 0;
-            height_screen = MIN( -dy, height_view );
-        }
-
-        // 変化無し
-        else{
-
-#ifdef _DEBUG
-            std::cout << "DrawAreaBase::exec_draw_screen canceled\n";
-#endif
-            return;
-        }
-    }
-#endif // GTKMM_CHECK_VERSION(3,9,2)
+    const int upper = pos_y;
+    const int lower = pos_y + height_screen;
 
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::exec_draw_screen "
               << " y_redraw = " << y_redraw
               << " height_redraw " << height_redraw << std::endl
               << "pos_y = " << pos_y
-              << " dy = " << dy
               << " y_screen = " << y_screen << " h_screen = " << height_screen
               << " upper = " << upper << " lower = " << lower
               << " scrollmode = " << m_scrollinfo.mode
@@ -1910,52 +1842,6 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     Gdk::Rectangle rect_clip( 0, y_screen, width_view, height_screen );
     m_gc->set_clip_rectangle( rect_clip );
 #endif
-
-    // バックスクリーンをスクロール処理する
-    if( ! m_scroll_window ){
-
-#if GTKMM_CHECK_VERSION(3,0,0)
-        cairo_t* const scroll_cr = cairo_create( m_backscreen.get() );
-        cairo_rectangle( scroll_cr, 0.0, 0.0, width_view, height_view );
-        cairo_clip( scroll_cr );
-#else
-        rect_clip.set_y( 0 );
-        rect_clip.set_height( height_view );
-        m_gc->set_clip_rectangle( rect_clip );
-#endif
-
-        // 上にスクロールした
-        if( dy > 0 && dy < height_view ) {
-#if GTKMM_CHECK_VERSION(3,0,0)
-            cairo_push_group( scroll_cr );
-            cairo_set_source_surface( scroll_cr, m_backscreen.get(), 0.0, dy );
-            cairo_paint( scroll_cr );
-            cairo_pop_group_to_source( scroll_cr );
-            cairo_paint( scroll_cr );
-#else
-            m_backscreen->draw_drawable( m_gc, m_backscreen, 0, dy, 0, 0, width_view , height_view - dy );
-#endif
-        }
-
-        // 下にスクロールした
-        else if( dy < 0 && -dy < height_view ) {
-#if GTKMM_CHECK_VERSION(3,0,0)
-            cairo_push_group( scroll_cr );
-            cairo_set_source_surface( scroll_cr, m_backscreen.get(), 0.0, dy );
-            cairo_paint( scroll_cr );
-            cairo_pop_group_to_source( scroll_cr );
-            cairo_paint( scroll_cr );
-#else
-            m_backscreen->draw_drawable( m_gc, m_backscreen, 0, 0, 0, -dy, width_view , height_view + dy );
-#endif
-        }
-#if GTKMM_CHECK_VERSION(3,0,0)
-        cairo_destroy( scroll_cr );
-#endif
-
-        m_rect_backscreen.y = 0;
-        m_rect_backscreen.height = height_view;
-    }
 
     // 一番最後のレスが半分以上表示されていたら最後のレス番号をm_seen_currentにセット
     m_seen_current = 0;
@@ -2159,15 +2045,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 #endif
         }
 
-
-        // ウィンドウをスクロール
-        if( dy ){
-
-            m_window->scroll( 0, -dy );
-            m_window->get_update_area();  // スクロールすると expose イベントが生じるのでキャンセルする
-        }
-
-        // 更新した所だけバックスクリーンをウィンドウにコピー
+        // バックスクリーンをウィンドウにコピー
 #if GTKMM_CHECK_VERSION(3,0,0)
         cairo_save( m_cr.get() );
         cairo_rectangle( m_cr.get(), 0.0, y_screen, width_view, height_screen );
