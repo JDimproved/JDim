@@ -136,9 +136,8 @@ DrawAreaBase::~DrawAreaBase()
     std::cout << "DrawAreaBase::~DrawAreaBase " << m_url << std::endl;;
 #endif
 
-#if GTKMM_CHECK_VERSION(3,14,0)
     cancel_deceleration();
-#endif
+
     if( m_layout_tree ) delete m_layout_tree;
     m_layout_tree = nullptr;
     clear();
@@ -181,12 +180,7 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_view.signal_configure_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_configure_event ));
     m_view.signal_draw().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_draw ) );
     m_view.signal_scroll_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_scroll_event ));
-#if GTKMM_CHECK_VERSION(3,14,0)
     setup_event_controller();
-#else
-    m_view.signal_button_press_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_button_press_event ));
-    m_view.signal_button_release_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_button_release_event ));
-#endif
     m_view.signal_motion_notify_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_motion_notify_event ));
     m_view.signal_key_press_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_press_event ));
     m_view.signal_key_release_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_release_event ));
@@ -4951,11 +4945,9 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 
                 set_selection( caret_left, caret_right );
                 redraw_force = true;
-#if GTKMM_CHECK_VERSION(3,14,0)
                 // GtkGestureMultiPressは指を離す度にreleasedが発行される
                 // ダブルクリックの途中でfalseに戻らないように設定する
                 m_drugging = true;
-#endif
             }
         }
     }
@@ -5283,7 +5275,6 @@ bool DrawAreaBase::slot_key_release_event( GdkEventKey* event )
 
 
 
-#if GTKMM_CHECK_VERSION(3,14,0)
 void DrawAreaBase::setup_event_controller()
 {
     m_view.add_events( Gdk::TOUCH_MASK );
@@ -5505,4 +5496,3 @@ void DrawAreaBase::cancel_deceleration()
         m_deceleration.id = 0;
     }
 }
-#endif // GTKMM_CHECK_VERSION(3,14,0)
