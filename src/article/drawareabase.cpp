@@ -274,7 +274,7 @@ void DrawAreaBase::create_scrbar()
 
     // そのままHBoxにスクロールバーをパックすると、スクロールしたときに何故かHBox全体が
     // 再描画されて負荷が高くなるのでEventBoxを間に挟む
-    m_vscrbar = Gtk::manage( new Gtk::VScrollbar() );
+    m_vscrbar = Gtk::manage( new Gtk::Scrollbar( Glib::RefPtr<Gtk::Adjustment>{}, Gtk::ORIENTATION_VERTICAL ) );
     m_event = Gtk::manage( new Gtk::EventBox() );
     assert( m_vscrbar );
     assert( m_event );

@@ -108,7 +108,7 @@ namespace ARTICLE
         // HBoxに張り付けるウイジット
         Gtk::DrawingArea m_view;
         Gtk::EventBox* m_event{};
-        Gtk::VScrollbar* m_vscrbar{};
+        Gtk::Scrollbar* m_vscrbar{};
 
         // レイアウトツリー
         LayoutTree* m_layout_tree{};
@@ -389,7 +389,7 @@ namespace ARTICLE
         virtual bool slot_configure_event( GdkEventConfigure* event );
 
         Gtk::DrawingArea* get_view(){ return &m_view; }
-        Gtk::VScrollbar* get_vscrbar(){ return m_vscrbar; }
+        Gtk::Scrollbar* get_vscrbar(){ return m_vscrbar; }
 
       private:
 
