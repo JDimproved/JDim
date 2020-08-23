@@ -13,18 +13,6 @@ enum
 };
 
 
-// Gdk::Color -> 16進数表記の文字列
-std::string MISC::color_to_str( const Gdk::Color& color )
-{
-    // R,G,Bを取得
-    int l_rgb[3];
-    l_rgb[0] = color.get_red();
-    l_rgb[1] = color.get_green();
-    l_rgb[2] = color.get_blue();
-
-    return color_to_str( l_rgb );
-}
-
 // int[3] -> 16進数表記の文字列
 std::string MISC::color_to_str( const int* l_rgb )
 {
@@ -96,12 +84,12 @@ std::string MISC::htmlcolor_to_str( const std::string& _htmlcolor )
 }
 
 
-// Gdk::Color -> int 変換
-guint32 MISC::color_to_int( const Gdk::Color& color )
+// Gdk::RGBA -> int 変換
+guint32 MISC::color_to_int( const Gdk::RGBA& color )
 {
-    guint32 red = color.get_red() >> 8;
-    guint32 green = color.get_green() >> 8;
-    guint32 blue = color.get_blue() >> 8;
+    guint32 red = color.get_red_u() >> 8;
+    guint32 green = color.get_green_u() >> 8;
+    guint32 blue = color.get_blue_u() >> 8;
 
     return ( red << 24 ) + ( green << 16 ) + ( blue << 8 );
 }

@@ -167,8 +167,8 @@ void ImageAreaIcon::show_indicator( bool loading )
         assert( m_pixbuf_loading );
 
         m_pixbuf->fill( 0xffffff00 );
-        m_pixbuf_loading->fill( MISC::color_to_int( Gdk::Color( CONFIG::get_color( COLOR_IMG_LOADING ) ) ) );
-        m_pixbuf_err->fill( MISC::color_to_int( Gdk::Color( CONFIG::get_color( COLOR_IMG_ERR ) ) ) );
+        m_pixbuf_loading->fill( MISC::color_to_int( Gdk::RGBA( CONFIG::get_color( COLOR_IMG_LOADING ) ) ) );
+        m_pixbuf_err->fill( MISC::color_to_int( Gdk::RGBA( CONFIG::get_color( COLOR_IMG_ERR ) ) ) );
     }
 
     // 読み込み中

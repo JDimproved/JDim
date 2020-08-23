@@ -13,9 +13,6 @@
 
 namespace MISC
 {
-    // Gdk::Color -> 16進数表記の文字列
-    std::string color_to_str( const Gdk::Color& color );
-
     // int[3] -> 16進数表記の文字列
     std::string color_to_str( const int* l_rgb );
 
@@ -25,8 +22,8 @@ namespace MISC
     // htmlカラー (#ffffffなど) -> 16進数表記の文字列
     std::string htmlcolor_to_str( const std::string& htmlcolor );
 
-    // Gdk::Color -> int 変換
-    guint32 color_to_int( const Gdk::Color& color );
+    // Gdk::RGBA -> int 変換
+    guint32 color_to_int( const Gdk::RGBA& color );
 
     // 使用可能なフォントの一覧を取得
     std::set< std::string > get_font_families();
