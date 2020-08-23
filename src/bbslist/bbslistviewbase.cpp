@@ -614,7 +614,7 @@ void BBSListViewBase::set_fgcolor_of_comment( const Gtk::TreeModel::Children& ch
         Gtk::TreeModel::Row row = *it;
 
         const int type = row2type( row );
-        if( type == TYPE_COMMENT ) row[ m_columns.m_fgcolor ] = Gdk::Color( CONFIG::get_color( COLOR_CHAR_BBS_COMMENT ) );
+        if( type == TYPE_COMMENT ) row[ m_columns.m_fgcolor ] = Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_BBS_COMMENT ) );
         else if( type == TYPE_DIR ) set_fgcolor_of_comment( row.children() );
     }
 }

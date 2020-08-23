@@ -45,7 +45,7 @@ namespace SKELETON
         Gtk::TreeModelColumn< Glib::ustring > m_data; // ユーザデータ
         Gtk::TreeModelColumn< bool > m_underline; // 行に下線を引く
         Gtk::TreeModelColumn< bool > m_expand; // Dom::parse() で使用
-        Gtk::TreeModelColumn< Gdk::Color > m_fgcolor; // 文字色
+        Gtk::TreeModelColumn< Gdk::RGBA > m_fgcolor; // 文字色
         Gtk::TreeModelColumn< size_t > m_dirid; // ディレクトリID
 
         EditColumns();

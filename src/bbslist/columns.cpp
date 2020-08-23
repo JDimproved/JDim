@@ -23,5 +23,5 @@ void TreeColumns::setup_row( Gtk::TreeModel::Row& row,
 {
     SKELETON::EditColumns::setup_row( row, url, name, data, type, dirid );
 
-    if( type == TYPE_COMMENT ) row[ m_fgcolor ] = Gdk::Color( CONFIG::get_color( COLOR_CHAR_BBS_COMMENT ) );
+    if( type == TYPE_COMMENT ) row[ m_fgcolor ] = Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_BBS_COMMENT ) );
 }

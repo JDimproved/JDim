@@ -466,7 +466,7 @@ Gtk::TreeViewColumn* EditTreeView::create_column( const int ypad )
     col->pack_start( *m_ren_text, true );
     col->add_attribute( *m_ren_text, "text", EDITCOL_NAME );
     col->add_attribute( *m_ren_text, "underline", EDITCOL_UNDERLINE );
-    col->add_attribute( *m_ren_text, "foreground_gdk", EDITCOL_FGCOLOR );
+    col->add_attribute( *m_ren_text, "foreground_rgba", EDITCOL_FGCOLOR );
     col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
 
     // 実際の描画時に偶数行に色を塗る
