@@ -210,7 +210,7 @@ namespace ARTICLE
         bool m_r_drugging{}; // 右ドラッグ中
         std::string m_link_current; // 現在マウスポインタの下にあるリンクの文字列
         LAYOUT* m_layout_current{}; // 現在マウスポインタの下にあるlayoutノード(下が空白ならnullptr)
-        Gdk::CursorType m_cursor_type; // カーソルの形状
+        Glib::ustring m_cursor_type; // カーソルの形状
 
         // 入力コントローラ
         CONTROL::Control m_control;
@@ -460,10 +460,10 @@ namespace ARTICLE
         bool motion_mouse();
 
         // 現在のポインターの下のノードからカーソルのタイプを決定する
-        Gdk::CursorType get_cursor_type();
+        Glib::ustring get_cursor_type();
 
         // カーソルの形状の変更
-        void change_cursor( const Gdk::CursorType type );
+        void change_cursor( const Glib::ustring& cursor_type );
 
         // スクロールマーカの描画
         void draw_marker();

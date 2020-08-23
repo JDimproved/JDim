@@ -74,6 +74,20 @@ enum
 };
 
 
+namespace {
+namespace cursor_names {
+
+// カーソル名の入力ミスを予防するため文字列リテラルのかわりに定数を使う
+// 参考: https://developer.gnome.org/gdk3/stable/gdk3-Cursors.html#gdk-cursor-new-from-name
+constexpr const char kAllScroll[] = "all-scroll";
+constexpr const char kDefault[] = "default";
+constexpr const char kPointer[] = "pointer";
+constexpr const char kText[] = "text";
+
+} // namespace cursor_names
+} // namespace
+
+
 #define SCROLLSPEED_FAST ( m_vscrbar ? \
                            m_vscrbar->get_adjustment()->get_page_size() \
                            - m_vscrbar->get_adjustment()->get_step_increment()*CONFIG::get_key_fastscroll_size() \
@@ -108,7 +122,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_back_frame_bottom( nullptr, cairo_surface_destroy )
     , m_pre_pos_y{ -1 }
     , m_back_marker( nullptr, cairo_surface_destroy )
-    , m_cursor_type( Gdk::ARROW )
+    , m_cursor_type( cursor_names::kDefault )
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;;
@@ -465,7 +479,7 @@ void DrawAreaBase::focus_out()
     std::cout << "DrawAreaBase::focus_out\n";
 #endif
 
-    change_cursor( Gdk::ARROW );
+    change_cursor( cursor_names::kDefault );
 
     m_key_press = false;
     m_key_locked = false;
@@ -4896,7 +4910,7 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
         // 直後に slot_button_release_event() が呼び出されて m_scrollinfo がリセットされる
         m_scrollinfo.autoscroll_finished = true;
 
-        change_cursor( Gdk::ARROW );
+        change_cursor( cursor_names::kDefault );
     }
     else {
 
@@ -4923,7 +4937,7 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 
             if ( ! ( m_layout_current && m_layout_current->link ) ){ // リンク上で無いなら
 
-                change_cursor( Gdk::DOUBLE_ARROW );
+                change_cursor( cursor_names::kAllScroll );
 
                 m_scrollinfo.reset();
                 m_scrollinfo.mode = SCROLL_AUTO;
@@ -5195,16 +5209,16 @@ bool DrawAreaBase::motion_mouse()
 //
 // 現在のポインターの下のノードからカーソルのタイプを決定する
 //
-Gdk::CursorType DrawAreaBase::get_cursor_type()
+Glib::ustring DrawAreaBase::get_cursor_type()
 {
-    Gdk::CursorType cursor_type = Gdk::ARROW;
+    Glib::ustring cursor_type = cursor_names::kDefault;
     if( m_layout_current ){
 
         // テキストの上ではカーソルを I に変える
-        if( m_layout_current->text && ! m_layout_current->link ) cursor_type = Gdk::XTERM;
+        if( m_layout_current->text && ! m_layout_current->link ) cursor_type = cursor_names::kText;
 
         // リンクの上にポインタがある
-        if( m_layout_current->link ) cursor_type = Gdk::HAND2;
+        if( m_layout_current->link ) cursor_type = cursor_names::kPointer;
     }
 
     return cursor_type;
@@ -5214,16 +5228,16 @@ Gdk::CursorType DrawAreaBase::get_cursor_type()
 //
 // カーソルの形状の変更
 //
-void DrawAreaBase::change_cursor( const Gdk::CursorType type )
+void DrawAreaBase::change_cursor( const Glib::ustring& cursor_type )
 {
     //オートスクロール中
     if( m_scrollinfo.mode == SCROLL_AUTO ) return;
 
-    if( m_cursor_type != type ){
-        m_cursor_type = type;
-        if( m_cursor_type == Gdk::ARROW ) m_window->set_cursor();
+    if( m_cursor_type != cursor_type ){
+        m_cursor_type = cursor_type;
+        if( m_cursor_type == cursor_names::kDefault ) m_window->set_cursor();
         else {
-            m_window->set_cursor( Gdk::Cursor::create( m_cursor_type ) );
+            m_window->set_cursor( Gdk::Cursor::create( m_window->get_display(), m_cursor_type ) );
         }
     }
 }
