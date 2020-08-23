@@ -17,6 +17,7 @@ noinst_HEADERS = \
 	messageview.h \
 	post.h \
 	toolbar.h \
+	logitem.h \
 	logmanager.h \
 	confirmdiag.h \
 	logitem.h
