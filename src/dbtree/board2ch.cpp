@@ -204,7 +204,7 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
     if( msg.empty() ) return std::string();
     if( ! m_frontloader || m_frontloader->get_data().empty() ) {
         // フロントページを読み込んでない場合はメッセージ作成を中断してダウンロードする
-        set_keyword_for_write( "" );
+        set_keyword_for_newarticle( std::string{} );
         Board2ch::download_front();
         return {};
     }
@@ -233,8 +233,8 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
     std::cout << "Board2ch::create_newarticle_message " << ss_post.str() << std::endl;
 #endif
 
-    // 書き込みメッセージを作成したらキーワードとフロントページの読み込み状況はリセットする
-    set_keyword_for_write( "" );
+    // スレ立てのメッセージを作成したらキーワードとフロントページの読み込み状況はリセットする
+    set_keyword_for_newarticle( std::string{} );
     m_frontloader->reset();
 
     return ss_post.str();
