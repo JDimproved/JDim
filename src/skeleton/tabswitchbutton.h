@@ -17,7 +17,7 @@ namespace SKELETON
     {
         Gtk::VBox m_vbox;
         Gtk::Button m_button;
-        Gtk::Arrow m_arrow{ Gtk::ARROW_DOWN, Gtk::SHADOW_NONE };
+        Gtk::Image m_arrow;
 
         bool m_shown = false;
 

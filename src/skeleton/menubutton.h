@@ -25,7 +25,7 @@ namespace SKELETON
         std::vector< Gtk::MenuItem* > m_menuitems;
         Gtk::Widget* m_label;
 
-        Gtk::Arrow* m_arrow;
+        Gtk::Image* m_arrow{};
 
         bool m_on_arrow;
         bool m_enable_sig_clicked;
