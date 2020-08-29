@@ -140,6 +140,7 @@ endif
 # 正規表現ライブラリ
 regex_opt = get_option('regex')
 if regex_opt == 'posix'
+  configure_args += '\'--with-regex=posix\''
   regex_dep = dependency('', required : false)
   conf.set('HAVE_REGEX_H', 1)
 elif regex_opt == 'oniguruma'
@@ -150,7 +151,6 @@ elif regex_opt == 'oniguruma'
   conf.set('HAVE_ONIGPOSIX_H', 1)
   configure_args += '\'--with-regex=oniguruma\''
 elif regex_opt == 'glib'
-  configure_args += '\'--with-regex=glib\''
   regex_dep = dependency('glib-2.0', version : '>= 2.14.0')
 endif
 

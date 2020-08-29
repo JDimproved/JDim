@@ -213,8 +213,8 @@ dnl
 AC_MSG_CHECKING(for --with-regex)
 AC_ARG_WITH(regex,
 AC_HELP_STRING([--with-regex=@<:@posix|oniguruma|glib@:>@],
-               [use regular expression library @<:@default=posix@:>@]),
-[], [with_regex=posix])
+               [use regular expression library @<:@default=glib@:>@]),
+[], [with_regex=glib])
 AC_MSG_RESULT($with_regex)
 
 AS_IF(
