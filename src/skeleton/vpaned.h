@@ -12,7 +12,7 @@
 
 namespace SKELETON
 {
-    class JDVPaned : public Gtk::VPaned
+    class JDVPaned : public Gtk::Paned
     {
         VPaneControl m_pctrl;
 
