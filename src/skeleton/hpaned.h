@@ -12,7 +12,7 @@
 
 namespace SKELETON
 {
-    class JDHPaned : public Gtk::HPaned
+    class JDHPaned : public Gtk::Paned
     {
         HPaneControl m_pctrl;
 
