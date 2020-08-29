@@ -21,14 +21,14 @@ enum
 
 
 MenuButton::MenuButton( const bool show_arrow, Gtk::Widget& label )
-    : m_label( nullptr ), m_arrow( nullptr )
+    : m_label( nullptr )
 {
     setup( show_arrow, &label );
 }
 
 
 MenuButton::MenuButton( const bool show_arrow, const int id )
-    : m_label( nullptr ), m_arrow( nullptr )
+    : m_label( nullptr )
 {
     setup( show_arrow, Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) ), Gtk::PACK_SHRINK );
 }
@@ -49,7 +49,8 @@ void MenuButton::setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOpti
     if( m_label ) hbox->pack_start( *m_label, options, padding );
 
     if( show_arrow ){
-        m_arrow = Gtk::manage( new Gtk::Arrow( Gtk::ARROW_DOWN, Gtk::SHADOW_NONE ) );
+        m_arrow = Gtk::manage( new Gtk::Image() );
+        m_arrow->set_from_icon_name( "pan-down-symbolic", Gtk::ICON_SIZE_SMALL_TOOLBAR );
         hbox->pack_start( *m_arrow, Gtk::PACK_SHRINK );
     }
     else m_enable_sig_clicked = false;

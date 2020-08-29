@@ -14,6 +14,7 @@ TabSwitchButton::TabSwitchButton( DragableNoteBook* )
 {
     set_border_width( 0 );
 
+    m_arrow.set_from_icon_name( "pan-down-symbolic", Gtk::ICON_SIZE_SMALL_TOOLBAR );
     m_button.add( m_arrow );
     m_button.show_all_children();
     m_button.set_relief( Gtk::RELIEF_NONE );
