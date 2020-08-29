@@ -80,7 +80,10 @@ AC_ARG_WITH(gtkmm3,
 [AS_HELP_STRING([--with-gtkmm3], [NO LONGER AVAILABLE. gtkmm3 is now default.])],
 [AC_MSG_ERROR([gtkmm3 is now default. see https://github.com/JDimproved/JDim/issues/229])])
 
-PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.18.0])
+PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.22.0], [], [
+  AC_MSG_WARN([JDim will require gtkmm-3.0 >= 3.22.0 in the future release.])
+  PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.18.0])
+])
 AC_SUBST(GTKMM_CFLAGS)
 AC_SUBST(GTKMM_LIBS)
 

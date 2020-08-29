@@ -5,15 +5,15 @@
 
   必須環境
 
-  ・gtkmm 3.18.0 以上
-  ・glibmm 2.46.0 以上
+  ・gtkmm 3.18.0 以上 ( 3.22.0 未満のサポートは将来のリリースで廃止される )
+  ・glibmm 2.46.0 以上 ( 2.50.0 未満のサポートは将来のリリースで廃止される )
   ・zlib 1.2 以上
-  ・gnutls 3.4.10 以上
+  ・gnutls 3.4.10 以上 ( 3.5.8 未満のサポートは将来のリリースで廃止される )
 
   推奨環境
 
   ・Linux Kernel 3.10以上
-  ・gtkmm 3.22.0 以上
+  ・gtkmm 3.22.0 以上 ( 3.24.0 未満は将来のリリースで推奨環境から外れる )
   ・UTF-8環境 ( EUC環境では LANG="ja_JP.UTF-8" を指定する必要がある )
 
   ※ GTK2版はv0.4.0リリースをもって廃止 ( https://github.com/JDimproved/JDim/issues/229 を参照 )
@@ -25,7 +25,7 @@
   ・autoconf
   ・autoconf-archive
   ・automake
-  ・g++ 5 以上、または clang++ 3.3 以上
+  ・g++ 5 以上、または clang++ 3.3 以上 ( 将来のリリースで g++ 6 以上、または clang++ 4.0 以上になる )
   ・gnutls
   ・gtkmm
   ・libtool

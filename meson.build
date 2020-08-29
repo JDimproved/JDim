@@ -77,7 +77,11 @@ endif
 #
 # 必須パッケージのチェック
 #
-gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.18.0')
+gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.22.0', required : false)
+if not gtkmm_dep.found()
+  warning('JDim will require gtkmm-3.0 >= 3.22.0 in the future release.')
+  gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.18.0')
+endif
 threads_dep = dependency('threads')
 x11_dep = dependency('x11')
 zlib_dep = dependency('zlib', version : '>= 1.2.0')
