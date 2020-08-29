@@ -103,7 +103,8 @@
 
     --with-regex=[posix|oniguruma|glib]
 
-       使用する正規表現ライブラリを設定する。デフォルトでは POSIX regex を使用する。
+       使用する正規表現ライブラリを設定する。
+       デフォルトでは Glib Regex(GRegex) を使用する。(v0.4.0+から変更)
 
     --with-regex=oniguruma
 
