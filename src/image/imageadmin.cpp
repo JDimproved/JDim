@@ -59,10 +59,12 @@ ImageAdmin::ImageAdmin( const std::string& url )
     m_left.set_focus_on_click( false );
     m_right.set_focus_on_click( false );
 
-    m_left.signal_pressed().connect( sigc::mem_fun( *this, &ImageAdmin::slot_press_left ) );
-    m_right.signal_pressed().connect( sigc::mem_fun( *this, &ImageAdmin::slot_press_right ) );
-    m_left.signal_released().connect( sigc::mem_fun( *this, &ImageAdmin::slot_release_left ) );
-    m_right.signal_released().connect( sigc::mem_fun( *this, &ImageAdmin::slot_release_right ) );
+    m_gesture_press_left = Gtk::GestureMultiPress::create( m_left );
+    m_gesture_press_right = Gtk::GestureMultiPress::create( m_right );
+    m_gesture_press_left->signal_pressed().connect( sigc::mem_fun( *this, &ImageAdmin::slot_press_left ) );
+    m_gesture_press_right->signal_pressed().connect( sigc::mem_fun( *this, &ImageAdmin::slot_press_right ) );
+    m_gesture_press_left->signal_released().connect( sigc::mem_fun( *this, &ImageAdmin::slot_release_left ) );
+    m_gesture_press_right->signal_released().connect( sigc::mem_fun( *this, &ImageAdmin::slot_release_right ) );
 
     // マウスホイールによる画像ビューのタブ切り替えを設定する
     m_tab.add_events( Gdk::SCROLL_MASK );
@@ -991,7 +993,7 @@ void ImageAdmin::scroll_tab( int scroll )
 
 
 //左押した
-void ImageAdmin::slot_press_left()
+void ImageAdmin::slot_press_left( int, double, double )
 {
     m_scroll = SCROLL_LEFT;
     m_counter_scroll = 0;
@@ -999,7 +1001,7 @@ void ImageAdmin::slot_press_left()
 }
 
 //右押した
-void ImageAdmin::slot_press_right()
+void ImageAdmin::slot_press_right( int, double, double )
 {
     m_scroll = SCROLL_RIGHT;
     m_counter_scroll = 0;
@@ -1008,13 +1010,13 @@ void ImageAdmin::slot_press_right()
 
 
 //左離した
-void ImageAdmin::slot_release_left()
+void ImageAdmin::slot_release_left( int, double, double )
 {
     m_scroll = SCROLL_NO;
 }
 
 // 右離した
-void ImageAdmin::slot_release_right()
+void ImageAdmin::slot_release_right( int, double, double )
 {
     m_scroll = SCROLL_NO;
 }

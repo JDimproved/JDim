@@ -35,6 +35,9 @@ namespace IMAGE
 
         double m_smooth_dy{ 0.0 }; // GDK_SCROLL_SMOOTH のスクロール変化量
 
+        Glib::RefPtr<Gtk::GestureMultiPress> m_gesture_press_left;
+        Glib::RefPtr<Gtk::GestureMultiPress> m_gesture_press_right;
+
       public:
 
         explicit ImageAdmin( const std::string& url );
@@ -115,10 +118,10 @@ namespace IMAGE
         void scroll_tab( int scroll );
 
         // スクロールボタン
-        void slot_press_left();
-        void slot_press_right();
-        void slot_release_left();
-        void slot_release_right();
+        void slot_press_left( int, double, double );
+        void slot_press_right( int, double, double );
+        void slot_release_left( int, double, double );
+        void slot_release_right( int, double, double );
         // マウスホイールによるタブ切り替え
         bool slot_scroll_event( GdkEventScroll* event );
 
