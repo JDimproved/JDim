@@ -165,7 +165,11 @@ void Board2chCompati::analyze_keyword_for_newarticle( const std::string& html )
     std::cout << html << std::endl << "--------------------\n";
 #endif
 
-    std::string keyword = analyze_keyword_impl( html );
+    // XXX: スレ立てフォームはページの最後にあると決め打ちしている
+    std::size_t i = html.rfind( "<form" );
+    if( i == std::string::npos ) i = 0;
+
+    std::string keyword = analyze_keyword_impl( html.substr( i ) );
     set_keyword_for_newarticle( keyword );
 }
 
