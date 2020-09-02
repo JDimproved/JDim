@@ -2,8 +2,7 @@
 
 [![Build Status](https://travis-ci.com/JDimproved/JDim.svg?branch=master)](https://travis-ci.com/JDimproved/JDim)
 ![GitHub Actions CI](https://github.com/JDimproved/JDim/workflows/CI/badge.svg)
-[![Snap Status](https://build.snapcraft.io/badge/JDimproved/JDim.svg)](https://build.snapcraft.io/user/JDimproved/JDim)
-[![jdim](https://snapcraft.io//jdim/badge.svg)](https://snapcraft.io/jdim)
+[![Snap Store](https://snapcraft.io/jdim/badge.svg)](https://snapcraft.io/jdim)
 
 ここに書かれていない詳細は [オンラインマニュアル][manual] を、
 開発に参加するための手順については [CONTRIBUTING][contrib] や [RFC][rfcs] を参照してください。
