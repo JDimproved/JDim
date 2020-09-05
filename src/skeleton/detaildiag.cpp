@@ -21,7 +21,7 @@ DetailDiag::DetailDiag( Gtk::Window* parent, const std::string& url,
 {
     m_message.set_width_chars( 60 );
     m_message.set_line_wrap( true );
-    m_message.set_padding( 8, 8 );
+    m_message.property_margin() = 8;
     m_message.set_selectable( true );
     m_message.property_can_focus() = false;
 
