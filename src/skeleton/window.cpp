@@ -58,7 +58,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
 {
     // ステータスバー
     m_label_stat.set_size_request( 0, -1 );
-    m_label_stat.set_alignment( Gtk::ALIGN_START );
+    m_label_stat.set_xalign( 0 );
     m_label_stat.set_selectable( true );
     m_label_stat.set_single_line_mode( true );
     m_label_stat.set_ellipsize( Pango::ELLIPSIZE_END );
@@ -74,7 +74,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     }
 
     m_mginfo.set_width_chars( MGINFO_CHARS );
-    m_mginfo.set_alignment( Gtk::ALIGN_START );
+    m_mginfo.set_xalign( 0 );
 
     m_statbar.show_all_children();
 
