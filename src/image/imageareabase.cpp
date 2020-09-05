@@ -65,7 +65,8 @@ ImageAreaBase::ImageAreaBase( const std::string& url, const int interptype )
     if( interptype == 1 ) m_interptype = Gdk::INTERP_BILINEAR;
     else if( interptype >= 2 ) m_interptype = Gdk::INTERP_HYPER;
 
-    set_alignment( Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER );
+    set_halign( Gtk::ALIGN_CENTER );
+    set_valign( Gtk::ALIGN_CENTER );
 }
 
 
