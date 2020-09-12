@@ -37,12 +37,6 @@ struct WriteStrategy : public MESSAGE::PostStrategy
     std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi( url ); }
     std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi( url ); }
 
-    void analyze_keyword( const std::string& url, const std::string& html ) override
-    {
-        DBTREE::board_analyze_keyword_for_write( url, html );
-    }
-    std::string get_keyword( const std::string& url ) override { return DBTREE::board_keyword_for_write( url ); }
-
     std::string get_referer( const std::string& url ) const override { return DBTREE::get_write_referer( url ); }
 
 } s_write_strategy;
@@ -55,12 +49,6 @@ struct NewArticleStrategy : public MESSAGE::PostStrategy
     ~NewArticleStrategy() noexcept = default;
     std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi_new( url ); }
     std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi_new( url ); }
-
-    void analyze_keyword( const std::string& url, const std::string& html ) override
-    {
-        DBTREE::board_analyze_keyword_for_newarticle( url, html );
-    }
-    std::string get_keyword( const std::string& url ) override { return DBTREE::board_keyword_for_newarticle( url ); }
 
     std::string get_referer( const std::string& url ) const override { return DBTREE::get_newarticle_referer( url ); }
 
@@ -446,12 +434,9 @@ void Post::receive_finish()
             if( mdiag.get_chkbutton().get_active() ) CONFIG::set_always_write_ok( true );
         }
 
-        // キーワードを解析してセット
-        m_post_strategy->analyze_keyword( m_url, m_return_html );
-
-        // 現在のメッセージにキーワードが付加されていない時は付け加える
-        const std::string keyword = m_post_strategy->get_keyword( m_url );
-        if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
+        // HTMLからフォームデータを取得できたらメッセージボディを更新する
+        std::string msg_body = DBTREE::board_parse_form_data( m_url, m_return_html );
+        if( ! msg_body.empty() ) m_msg = std::move( msg_body );
 
         ++m_count; // 永久ループ防止
         post_msg();
@@ -463,12 +448,9 @@ void Post::receive_finish()
     else if( m_count < 1 // 永久ループ防止
              && ! m_subbbs && conf.find( "書き込み確認" ) != std::string::npos ){
 
-        // キーワードを解析してセット
-        m_post_strategy->analyze_keyword( m_url, m_return_html );
-
-        // 現在のメッセージにキーワードが付加されていない時は付け加える
-        const std::string keyword = m_post_strategy->get_keyword( m_url );
-        if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
+        // HTMLからフォームデータを取得できたらメッセージボディを更新する
+        std::string msg_body = DBTREE::board_parse_form_data( m_url, m_return_html );
+        if( ! msg_body.empty() ) m_msg = std::move( msg_body );
 
         // subbbs.cgi にポスト先を変更してもう一回ポスト
         m_subbbs = true;

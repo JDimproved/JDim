@@ -352,6 +352,9 @@ namespace DBTREE
         // スレ立て時に必要なキーワードをフロントページのhtmlから解析する
         virtual void analyze_keyword_for_newarticle( const std::string& html ) {}
 
+        // 確認画面のHTMLから書き込み、スレ立て時に使うフォームデータを取得する
+        virtual std::string parse_form_data( const std::string& html ) { return {}; }
+
         // 書き込み時のリファラ
         virtual std::string get_write_referer( const std::string& url ){ return url_boardbase(); }
         // スレ立て時のリファラ

@@ -27,8 +27,6 @@ namespace MESSAGE
         virtual ~PostStrategy() noexcept = default;
         virtual std::string url_bbscgi( const std::string& url ) = 0; // 1回目の投稿先
         virtual std::string url_subbbscgi( const std::string& url ) = 0; // 2回目の投稿先
-        virtual void analyze_keyword( const std::string& url, const std::string& html ) = 0; // キーワードを解析
-        virtual std::string get_keyword( const std::string& url ) = 0; // キーワードをゲット
         virtual std::string get_referer( const std::string& url ) const = 0; // リファラを取得
     };
 
