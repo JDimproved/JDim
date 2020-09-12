@@ -91,52 +91,35 @@ std::string Board2chCompati::analyze_keyword_impl( const std::string& html )
 {
     std::string keyword;
 
-    JDLIB::Regex regex;
-    std::size_t offset = 0;
-    constexpr bool icase = true; // 大文字小文字区別しない
-    constexpr bool newline = false;  // . に改行をマッチさせる
-    constexpr bool usemigemo = false;
-    constexpr bool wchar = false;
-
-    for(;;){
-
-        // <input type=hidden> のタグを解析して name と value を取得
-        constexpr const char regex_input[] = R"(<input +type=("hidden"|hidden) +name=([^ ]*) +value=([^>]*)>)";
-        if( ! regex.exec( regex_input, html, offset, icase, newline, usemigemo, wchar ) ) break;
-
-        offset = regex.pos( 0 );
-
-        std::string name = MISC::remove_space( regex.str( 2 ) );
-        if( name[ 0 ] == '\"' ) name = MISC::cut_str( name, "\"", "\"" );
-
-        std::string value = MISC::remove_space( regex.str( 3 ) );
-        if( value[ 0 ] == '\"' ) value = MISC::cut_str( value, "\"", "\"" );
-
-#ifdef _DEBUG
-        std::cout << "offset = " << offset << " "
-                  << regex.str( 0 ) << std::endl
-                  << "name = " << name << " value = " << value << std::endl;
-#endif
-        ++offset;
+    std::vector<MISC::FormDatum> data = MISC::parse_html_form_data( html );
+    for( MISC::FormDatum& d : data ) {
 
         // 除外する name の判定
         // 2ch の仕様が変わったら項目を追加すること
-        const std::string lowname = MISC::tolower_str( name );
+        const std::string lowname = MISC::tolower_str( d.name );
         if( lowname == "subject"
             || lowname == "from"
             || lowname == "mail"
             || lowname == "message"
             || lowname == "bbs"
             || lowname == "time"
-            || lowname == "key" ) continue;
+            || lowname == "key"
+            || lowname == "submit" ) continue;
+
+        if( lowname == "message" ) {
+            // アンカー記号(>>)などがエスケープされる(&gt;&gt;)ため
+            // 一度HTMLエスケープされた文字をデコードする
+            d.value = MISC::html_unescape( d.value );
+        }
 
         // キーワード取得
-        if( ! keyword.empty() ) keyword += "&";
-        keyword += MISC::charset_url_encode( name, get_charset() ) + "=" + MISC::charset_url_encode( value, get_charset() );
+        if( ! keyword.empty() ) keyword.push_back( '&' );
+        keyword.append( MISC::charset_url_encode( d.name, get_charset() ) );
+        keyword.push_back( '=' );
+        keyword.append( MISC::charset_url_encode( d.value, get_charset() ) );
     }
-
 #ifdef _DEBUG
-    std::cout << "Board2chCompati::analyze_keyword_impl keyword = " << keyword << std::endl;
+    std::cout << "Board2chCompati::analyze_keyword_impl form data = " << keyword << std::endl;
 #endif
 
     return keyword;
