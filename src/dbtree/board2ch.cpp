@@ -181,9 +181,9 @@ std::string Board2ch::cookie_for_post() const
 }
 
 
-std::string Board2ch::get_write_referer()
+std::string Board2ch::get_write_referer( const std::string& url )
 {
-    return Board2chCompati::get_write_referer();
+    return url_readcgi( url, 0, 0 );
 }
 
 

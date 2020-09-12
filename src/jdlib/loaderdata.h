@@ -38,6 +38,7 @@ namespace JDLIB
         std::string basicauth_proxy; // proxy 認証
 
         std::string agent;
+        std::string origin;
         std::string referer;
         std::string ex_field;  // 送信時にヘッダに追加するフィールド
         std::string str_header;

@@ -41,6 +41,7 @@ void LOADERDATA::init()
     basicauth_proxy.clear();
 
     agent.clear();
+    origin.clear();
     referer.clear();
     ex_field.clear();
             

@@ -37,11 +37,7 @@ struct WriteStrategy : public MESSAGE::PostStrategy
     std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi( url ); }
     std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi( url ); }
 
-    void analyze_keyword( const std::string& url, const std::string& html ) override
-    {
-        DBTREE::board_analyze_keyword_for_write( url, html );
-    }
-    std::string get_keyword( const std::string& url ) override { return DBTREE::board_keyword_for_write( url ); }
+    std::string get_referer( const std::string& url ) const override { return DBTREE::get_write_referer( url ); }
 
 } s_write_strategy;
 
@@ -54,11 +50,7 @@ struct NewArticleStrategy : public MESSAGE::PostStrategy
     std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi_new( url ); }
     std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi_new( url ); }
 
-    void analyze_keyword( const std::string& url, const std::string& html ) override
-    {
-        DBTREE::board_analyze_keyword_for_newarticle( url, html );
-    }
-    std::string get_keyword( const std::string& url ) override { return DBTREE::board_keyword_for_newarticle( url ); }
+    std::string get_referer( const std::string& url ) const override { return DBTREE::get_newarticle_referer( url ); }
 
 } s_new_article_strategy;
 
@@ -196,7 +188,11 @@ void Post::post_msg()
     data.contenttype = "application/x-www-form-urlencoded";
 
     data.agent = DBTREE::get_agent_w( m_url );
-    data.referer = DBTREE::get_write_referer( m_url );
+    data.referer = m_count < 1 ? m_post_strategy->get_referer( m_url ) : m_post_strategy->url_bbscgi( m_url );
+    // WebブラウザのUAならOriginを含める
+    if( data.agent.compare( 0, 11, "Mozilla/5.0" ) == 0 ) {
+        data.origin = MISC::get_hostname( m_url );
+    }
     data.str_post = m_msg;
     data.host_proxy = DBTREE::get_proxy_host_w( m_url );
     data.port_proxy = DBTREE::get_proxy_port_w( m_url );
@@ -211,6 +207,7 @@ void Post::post_msg()
               << "url = " << data.url << std::endl
               << "contenttype = " << data.contenttype << std::endl
               << "agent = " << data.agent << std::endl
+              << "origin = " << data.origin << std::endl
               << "referer = " << data.referer << std::endl
               << "cookie = " << data.cookie_for_request << std::endl
               << "proxy = " << data.host_proxy << ":" << data.port_proxy << std::endl
@@ -442,13 +439,12 @@ void Post::receive_finish()
             if( mdiag.get_chkbutton().get_active() ) CONFIG::set_always_write_ok( true );
         }
 
-        // キーワードを解析してセット
-        m_post_strategy->analyze_keyword( m_url, m_return_html );
+        // HTMLからフォームデータを取得できたらメッセージボディを更新する
+        std::string msg_body = DBTREE::board_parse_form_data( m_url, m_return_html );
+        if( ! msg_body.empty() ) m_msg = std::move( msg_body );
 
-        // 現在のメッセージにキーワードが付加されていない時は付け加える
-        const std::string keyword = m_post_strategy->get_keyword( m_url );
-        if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
-
+        // subbbs.cgi にポスト先を変更してもう一回ポスト
+        m_subbbs = true;
         ++m_count; // 永久ループ防止
         post_msg();
 
@@ -459,12 +455,9 @@ void Post::receive_finish()
     else if( m_count < 1 // 永久ループ防止
              && ! m_subbbs && conf.find( "書き込み確認" ) != std::string::npos ){
 
-        // キーワードを解析してセット
-        m_post_strategy->analyze_keyword( m_url, m_return_html );
-
-        // 現在のメッセージにキーワードが付加されていない時は付け加える
-        const std::string keyword = m_post_strategy->get_keyword( m_url );
-        if( ! keyword.empty() && m_msg.find( keyword ) == std::string::npos ) m_msg += "&" + keyword;
+        // HTMLからフォームデータを取得できたらメッセージボディを更新する
+        std::string msg_body = DBTREE::board_parse_form_data( m_url, m_return_html );
+        if( ! msg_body.empty() ) m_msg = std::move( msg_body );
 
         // subbbs.cgi にポスト先を変更してもう一回ポスト
         m_subbbs = true;

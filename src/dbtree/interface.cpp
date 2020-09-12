@@ -362,6 +362,12 @@ void DBTREE::board_analyze_keyword_for_newarticle( const std::string& url, const
 }
 
 
+std::string DBTREE::board_parse_form_data( const std::string& url, const std::string& html )
+{
+    return DBTREE::get_board( url )->parse_form_data( html );
+}
+
+
 std::string DBTREE::board_basicauth( const std::string& url )
 {
     return DBTREE::get_board( url )->get_basicauth();
@@ -1116,7 +1122,13 @@ std::string DBTREE::create_newarticle_message( const std::string& url, const std
 
 std::string DBTREE::get_write_referer( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_write_referer();
+    return DBTREE::get_board( url )->get_write_referer( url );
+}
+
+
+std::string DBTREE::get_newarticle_referer( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_newarticle_referer( url );
 }
 
 

@@ -114,6 +114,7 @@ namespace DBTREE
     std::string board_keyword_for_newarticle( const std::string& url );
     void board_set_keyword_for_newarticle( const std::string& url, const std::string& keyword );
     void board_analyze_keyword_for_newarticle( const std::string& url, const std::string& html );
+    std::string board_parse_form_data( const std::string& url, const std::string& html );
     std::string board_basicauth( const std::string& url );
     std::string board_ext( const std::string& url );
     int board_status( const std::string& url );
@@ -304,6 +305,8 @@ namespace DBTREE
 
     // 書き込み時のリファラ
     std::string get_write_referer( const std::string& url );
+    // スレ立て時のリファラ
+    std::string get_newarticle_referer( const std::string& url );
 
     // あぼーん関係
 

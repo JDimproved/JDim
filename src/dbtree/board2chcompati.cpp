@@ -87,56 +87,50 @@ bool Board2chCompati::is_valid( const std::string& filename )
 }
 
 
-std::string Board2chCompati::analyze_keyword_impl( const std::string& html )
+std::string Board2chCompati::analyze_keyword_impl( const std::string& html, bool full_parse )
 {
     std::string keyword;
 
-    JDLIB::Regex regex;
-    std::size_t offset = 0;
-    constexpr bool icase = true; // 大文字小文字区別しない
-    constexpr bool newline = false;  // . に改行をマッチさせる
-    constexpr bool usemigemo = false;
-    constexpr bool wchar = false;
-
-    for(;;){
-
-        // <input type=hidden> のタグを解析して name と value を取得
-        constexpr const char regex_input[] = R"(<input +type=("hidden"|hidden) +name=([^ ]*) +value=([^>]*)>)";
-        if( ! regex.exec( regex_input, html, offset, icase, newline, usemigemo, wchar ) ) break;
-
-        offset = regex.pos( 0 );
-
-        std::string name = MISC::remove_space( regex.str( 2 ) );
-        if( name[ 0 ] == '\"' ) name = MISC::cut_str( name, "\"", "\"" );
-
-        std::string value = MISC::remove_space( regex.str( 3 ) );
-        if( value[ 0 ] == '\"' ) value = MISC::cut_str( value, "\"", "\"" );
-
+    // form要素から action属性(送信先URLのパス) を取得する
+    const std::string path = MISC::parse_html_form_action( html );
+    // action属性が見つかったら m_path_subbbscgi に設定する
+    if( ! path.empty() ) {
 #ifdef _DEBUG
-        std::cout << "offset = " << offset << " "
-                  << regex.str( 0 ) << std::endl
-                  << "name = " << name << " value = " << value << std::endl;
+        std::cout << "Board2chCompati::analyze_keyword_impl update subbbscgi path = " << path << std::endl;
 #endif
-        ++offset;
-
-        // 除外する name の判定
-        // 2ch の仕様が変わったら項目を追加すること
-        const std::string lowname = MISC::tolower_str( name );
-        if( lowname == "subject"
-            || lowname == "from"
-            || lowname == "mail"
-            || lowname == "message"
-            || lowname == "bbs"
-            || lowname == "time"
-            || lowname == "key" ) continue;
-
-        // キーワード取得
-        if( ! keyword.empty() ) keyword += "&";
-        keyword += MISC::charset_url_encode( name, get_charset() ) + "=" + MISC::charset_url_encode( value, get_charset() );
+        set_path_subbbscgi( path );
     }
 
+    std::vector<MISC::FormDatum> data = MISC::parse_html_form_data( html );
+    for( MISC::FormDatum& d : data ) {
+
+        const std::string lowname = MISC::tolower_str( d.name );
+        if( ! full_parse ) {
+            // 除外する name の判定
+            // 2ch の仕様が変わったら項目を追加すること
+            if( lowname == "subject"
+                || lowname == "from"
+                || lowname == "mail"
+                || lowname == "message"
+                || lowname == "bbs"
+                || lowname == "time"
+                || lowname == "key"
+                || lowname == "submit" ) continue;
+        }
+        if( lowname == "message" ) {
+            // アンカー記号(>>)などがエスケープされる(&gt;&gt;)ため
+            // 一度HTMLエスケープされた文字をデコードする
+            d.value = MISC::html_unescape( d.value );
+        }
+
+        // キーワード取得
+        if( ! keyword.empty() ) keyword.push_back( '&' );
+        keyword.append( MISC::charset_url_encode( d.name, get_charset() ) );
+        keyword.push_back( '=' );
+        keyword.append( MISC::charset_url_encode( d.value, get_charset() ) );
+    }
 #ifdef _DEBUG
-    std::cout << "Board2chCompati::analyze_keyword_impl keyword = " << keyword << std::endl;
+    std::cout << "Board2chCompati::analyze_keyword_impl form data = " << keyword << std::endl;
 #endif
 
     return keyword;
@@ -152,7 +146,8 @@ void Board2chCompati::analyze_keyword_for_write( const std::string& html )
     std::cout << html << std::endl << "--------------------\n";
 #endif
 
-    std::string keyword = analyze_keyword_impl( html );
+    constexpr bool full_parse{ false };
+    std::string keyword = analyze_keyword_impl( html, full_parse );
     set_keyword_for_write( keyword );
 }
 
@@ -169,8 +164,22 @@ void Board2chCompati::analyze_keyword_for_newarticle( const std::string& html )
     std::size_t i = html.rfind( "<form" );
     if( i == std::string::npos ) i = 0;
 
-    std::string keyword = analyze_keyword_impl( html.substr( i ) );
+    constexpr bool full_parse{ false };
+    std::string keyword = analyze_keyword_impl( html.substr( i ), full_parse );
     set_keyword_for_newarticle( keyword );
+}
+
+
+// 確認画面のHTMLから書き込み、スレ立て時に使うフォームデータを取得する
+std::string Board2chCompati::parse_form_data( const std::string& html )
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::parse_form_data\n";
+    std::cout << html << std::endl << "--------------------\n";
+#endif
+
+    constexpr bool full_parse{ true };
+    return analyze_keyword_impl( html, full_parse );
 }
 
 
