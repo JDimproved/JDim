@@ -35,9 +35,15 @@ std::string Article2ch::create_write_message( const std::string& name, const std
     const std::string charset = DBTREE::board_charset( get_url() );
 
     std::stringstream ss_post;
-    ss_post.clear();
-    ss_post << "bbs="      << DBTREE::board_id( get_url() )
-            << "&key="     << get_key();
+    ss_post << "FROM=" << MISC::charset_url_encode( name, charset )
+            << "&mail=" << MISC::charset_url_encode( mail, charset )
+            << "&MESSAGE=" << MISC::charset_url_encode( msg, charset )
+            << "&bbs=" << DBTREE::board_id( get_url() )
+            << "&key=" << get_key()
+            << "&time=" << get_time_modified()
+            << "&submit=" << MISC::charset_url_encode( "書き込む", charset )
+            // XXX: ブラウザの種類に関係なく含めて問題ないか？
+            << "&oekaki_thread1=";
 
     // キーワード( hana=mogera や suka=pontan など )
     const std::string keyword = DBTREE::board_keyword_for_write( get_url() );
@@ -49,15 +55,12 @@ std::string Article2ch::create_write_message( const std::string& name, const std
                 ss_post << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
     }
 
-    ss_post << "&time="    << get_time_modified()
-            << "&submit="  << MISC::charset_url_encode( "書き込む", charset )
-            << "&FROM="    << MISC::charset_url_encode( name, charset )
-            << "&mail="    << MISC::charset_url_encode( mail, charset )
-            << "&MESSAGE=" << MISC::charset_url_encode( msg, charset );
-
 #ifdef _DEBUG
     std::cout << "Article2chCompati::create_write_message " << ss_post.str() << std::endl;
 #endif
+
+    // 書き込みメッセージを作成したらキーワードはリセットする
+    DBTREE::board_set_keyword_for_write( get_url(), std::string{} );
 
     return ss_post.str();
 }
