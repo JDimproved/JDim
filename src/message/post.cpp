@@ -438,6 +438,8 @@ void Post::receive_finish()
         std::string msg_body = DBTREE::board_parse_form_data( m_url, m_return_html );
         if( ! msg_body.empty() ) m_msg = std::move( msg_body );
 
+        // subbbs.cgi にポスト先を変更してもう一回ポスト
+        m_subbbs = true;
         ++m_count; // 永久ループ防止
         post_msg();
 
