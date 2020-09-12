@@ -354,6 +354,8 @@ namespace DBTREE
 
         // 書き込み時のリファラ
         virtual std::string get_write_referer(){ return url_boardbase(); }
+        // スレ立て時のリファラ
+        virtual std::string get_newarticle_referer() { return url_boardbase(); }
 
         // basic認証
         const std::string& get_basicauth() const { return m_basicauth; }

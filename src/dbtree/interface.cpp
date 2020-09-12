@@ -1120,6 +1120,12 @@ std::string DBTREE::get_write_referer( const std::string& url )
 }
 
 
+std::string DBTREE::get_newarticle_referer( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_newarticle_referer();
+}
+
+
 // キャッシュ削除
 void DBTREE::delete_article( const std::string& url, const bool cache_only )
 {

@@ -43,6 +43,8 @@ struct WriteStrategy : public MESSAGE::PostStrategy
     }
     std::string get_keyword( const std::string& url ) override { return DBTREE::board_keyword_for_write( url ); }
 
+    std::string get_referer( const std::string& url ) const override { return DBTREE::get_write_referer( url ); }
+
 } s_write_strategy;
 
 
@@ -59,6 +61,8 @@ struct NewArticleStrategy : public MESSAGE::PostStrategy
         DBTREE::board_analyze_keyword_for_newarticle( url, html );
     }
     std::string get_keyword( const std::string& url ) override { return DBTREE::board_keyword_for_newarticle( url ); }
+
+    std::string get_referer( const std::string& url ) const override { return DBTREE::get_newarticle_referer( url ); }
 
 } s_new_article_strategy;
 
@@ -196,7 +200,7 @@ void Post::post_msg()
     data.contenttype = "application/x-www-form-urlencoded";
 
     data.agent = DBTREE::get_agent_w( m_url );
-    data.referer = DBTREE::get_write_referer( m_url );
+    data.referer = m_count < 1 ? m_post_strategy->get_referer( m_url ) : m_post_strategy->url_bbscgi( m_url );
     data.str_post = m_msg;
     data.host_proxy = DBTREE::get_proxy_host_w( m_url );
     data.port_proxy = DBTREE::get_proxy_port_w( m_url );
