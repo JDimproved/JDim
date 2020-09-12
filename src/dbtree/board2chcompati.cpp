@@ -160,6 +160,19 @@ void Board2chCompati::analyze_keyword_for_newarticle( const std::string& html )
 }
 
 
+// 確認画面のHTMLから書き込み、スレ立て時に使うフォームデータを取得する
+std::string Board2chCompati::parse_form_data( const std::string& html )
+{
+#ifdef _DEBUG
+    std::cout << "Board2chCompati::parse_form_data\n";
+    std::cout << html << std::endl << "--------------------\n";
+#endif
+
+    constexpr bool full_parse{ true };
+    return analyze_keyword_impl( html, full_parse );
+}
+
+
 // 新スレ作成時の書き込みメッセージ作成
 std::string Board2chCompati::create_newarticle_message( const std::string& subject,
                                                        const std::string& name, const std::string& mail, const std::string& msg )

@@ -31,6 +31,9 @@ namespace DBTREE
         // スレ立て時に必要なキーワードをフロントページのhtmlから解析する
         void analyze_keyword_for_newarticle( const std::string& html ) override;
 
+        // 確認画面のHTMLから書き込み、スレ立て時に使うフォームデータを取得する
+        std::string parse_form_data( const std::string& html ) override;
+
         // 新スレ作成用のメッセージ変換
         std::string create_newarticle_message( const std::string& subject, const std::string& name,
                                                const std::string& mail, const std::string& msg ) override;
