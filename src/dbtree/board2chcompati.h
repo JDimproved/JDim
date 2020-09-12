@@ -66,7 +66,7 @@ namespace DBTREE
         int get_abone_number_global() override;
 
         // htmlからキーワードを解析する
-        std::string analyze_keyword_impl( const std::string& html );
+        std::string analyze_keyword_impl( const std::string& html, bool full_parse );
     };
 }
 

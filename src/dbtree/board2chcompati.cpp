@@ -87,25 +87,26 @@ bool Board2chCompati::is_valid( const std::string& filename )
 }
 
 
-std::string Board2chCompati::analyze_keyword_impl( const std::string& html )
+std::string Board2chCompati::analyze_keyword_impl( const std::string& html, bool full_parse )
 {
     std::string keyword;
 
     std::vector<MISC::FormDatum> data = MISC::parse_html_form_data( html );
     for( MISC::FormDatum& d : data ) {
 
-        // 除外する name の判定
-        // 2ch の仕様が変わったら項目を追加すること
         const std::string lowname = MISC::tolower_str( d.name );
-        if( lowname == "subject"
-            || lowname == "from"
-            || lowname == "mail"
-            || lowname == "message"
-            || lowname == "bbs"
-            || lowname == "time"
-            || lowname == "key"
-            || lowname == "submit" ) continue;
-
+        if( ! full_parse ) {
+            // 除外する name の判定
+            // 2ch の仕様が変わったら項目を追加すること
+            if( lowname == "subject"
+                || lowname == "from"
+                || lowname == "mail"
+                || lowname == "message"
+                || lowname == "bbs"
+                || lowname == "time"
+                || lowname == "key"
+                || lowname == "submit" ) continue;
+        }
         if( lowname == "message" ) {
             // アンカー記号(>>)などがエスケープされる(&gt;&gt;)ため
             // 一度HTMLエスケープされた文字をデコードする
@@ -135,7 +136,8 @@ void Board2chCompati::analyze_keyword_for_write( const std::string& html )
     std::cout << html << std::endl << "--------------------\n";
 #endif
 
-    std::string keyword = analyze_keyword_impl( html );
+    constexpr bool full_parse{ false };
+    std::string keyword = analyze_keyword_impl( html, full_parse );
     set_keyword_for_write( keyword );
 }
 
@@ -152,7 +154,8 @@ void Board2chCompati::analyze_keyword_for_newarticle( const std::string& html )
     std::size_t i = html.rfind( "<form" );
     if( i == std::string::npos ) i = 0;
 
-    std::string keyword = analyze_keyword_impl( html.substr( i ) );
+    constexpr bool full_parse{ false };
+    std::string keyword = analyze_keyword_impl( html.substr( i ), full_parse );
     set_keyword_for_newarticle( keyword );
 }
 
