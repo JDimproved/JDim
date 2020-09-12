@@ -683,4 +683,90 @@ TEST_F(MISC_ParseHtmlFormData, textarea_empty_value_by_double_quotes)
     EXPECT_EQ( result, expect );
 }
 
+
+class MISC_ParseHtmlFormActionTest : public ::testing::Test {};
+
+TEST_F(MISC_ParseHtmlFormActionTest, empty_html)
+{
+    std::string result = MISC::parse_html_form_action( std::string{} );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, unquote_post)
+{
+    const std::string html = R"(<form method=POST action="/test/bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, "/test/bbs.cgi" );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, quote_post)
+{
+    const std::string html = R"(<form method="POST" action="/test/bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, "/test/bbs.cgi" );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, subbbscgi)
+{
+    const std::string html = R"(<form method="POST" action="/test/subbbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, "/test/subbbs.cgi" );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, with_parameter)
+{
+    const std::string html = R"(<form method="POST" action="/test/bbs.cgi?foo=bar">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, "/test/bbs.cgi?foo=bar" );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, ignore_attributes)
+{
+    const std::string html = R"(<form method="POST" accept-charset="Shift_JIS" action="/test/bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, "/test/bbs.cgi" );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, relative_path_an_upper_order)
+{
+    const std::string html = R"(<form method="POST" action="../test/bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, "/test/bbs.cgi" );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, relative_path_double_upper_orders)
+{
+    const std::string html = R"(<form method="POST" action="../../test/bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, relative_path_middle_upper_order)
+{
+    const std::string html = R"(<form method="POST" action="/test/../bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, absolute_path_without_scheme)
+{
+    const std::string html = R"(<form method="POST" action="//example.test/test/bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, http_url)
+{
+    const std::string html = R"(<form method="POST" action="http://example.test/test/bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(MISC_ParseHtmlFormActionTest, https_url)
+{
+    const std::string html = R"(<form method="POST" action="https://example.test/test/bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, std::string{} );
+}
+
 } // namespace

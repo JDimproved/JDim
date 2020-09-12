@@ -1953,3 +1953,25 @@ std::vector<MISC::FormDatum> MISC::parse_html_form_data( const std::string& html
     }
     return data;
 }
+
+
+// HTMLのform要素から action属性(送信先URLのパス) を取得する
+// 2ch互換板に特化して実装しているため他の掲示板で期待した結果を返す保証はない
+// 詳細は実装やテストコードを参照
+//
+std::string MISC::parse_html_form_action( const std::string& html )
+{
+    const char pattern[] = R"(<form +method=("POST"|POST)[^>]* action="(\.\.)?(/test/(sub)?bbs\.cgi(\?[^"]*)?))";
+    JDLIB::Regex regex;
+    constexpr std::size_t offset = 0;
+    constexpr bool icase = true; // 大文字小文字区別しない
+    constexpr bool newline = false;  // . に改行をマッチさせる
+    constexpr bool usemigemo = false;
+    constexpr bool wchar = false;
+
+    std::string path;
+    if( regex.exec( pattern, html, offset, icase, newline, usemigemo, wchar ) ) {
+        path = regex.str( 3 );
+    }
+    return path;
+}

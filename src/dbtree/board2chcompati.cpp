@@ -91,6 +91,16 @@ std::string Board2chCompati::analyze_keyword_impl( const std::string& html, bool
 {
     std::string keyword;
 
+    // form要素から action属性(送信先URLのパス) を取得する
+    const std::string path = MISC::parse_html_form_action( html );
+    // action属性が見つかったら m_path_subbbscgi に設定する
+    if( ! path.empty() ) {
+#ifdef _DEBUG
+        std::cout << "Board2chCompati::analyze_keyword_impl update subbbscgi path = " << path << std::endl;
+#endif
+        set_path_subbbscgi( path );
+    }
+
     std::vector<MISC::FormDatum> data = MISC::parse_html_form_data( html );
     for( MISC::FormDatum& d : data ) {
 

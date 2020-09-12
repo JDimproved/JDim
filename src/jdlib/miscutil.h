@@ -287,6 +287,11 @@ namespace MISC
 
     // HTMLからform要素を解析してinput,textarea要素の名前と値を返す
     std::vector<FormDatum> parse_html_form_data( const std::string& html );
+
+    // HTMLのform要素から action属性(送信先URLのパス) を取得する
+    // 2ch互換板に特化して実装しているため他の掲示板で期待した結果を返す保証はない
+    // 詳細は実装やテストコードを参照
+    std::string parse_html_form_action( const std::string& html );
 }
 
 
