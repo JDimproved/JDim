@@ -1116,13 +1116,13 @@ std::string DBTREE::create_newarticle_message( const std::string& url, const std
 
 std::string DBTREE::get_write_referer( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_write_referer();
+    return DBTREE::get_board( url )->get_write_referer( url );
 }
 
 
 std::string DBTREE::get_newarticle_referer( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_newarticle_referer();
+    return DBTREE::get_board( url )->get_newarticle_referer( url );
 }
 
 

@@ -51,7 +51,7 @@ namespace DBTREE
         std::string cookie_for_post() const override;
 
         // 書き込み時のリファラ
-        std::string get_write_referer() override;
+        std::string get_write_referer( const std::string& url ) override;
 
         // フロントページのダウンロード
         void download_front() override;
