@@ -507,6 +507,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     m_data.byte_readfrom = data_in.byte_readfrom;    
     m_data.contenttype = data_in.contenttype;
     m_data.agent = data_in.agent;
+    m_data.origin = data_in.origin;
     m_data.referer = data_in.referer;
     m_data.cookie_for_request = data_in.cookie_for_request;
     m_data.timeout = MAX( TIMEOUT_MIN, data_in.timeout );
@@ -1144,6 +1145,7 @@ std::string Loader::create_msg_send()
     msg << "Host: " << m_data.host << "\r\n";
     if( ! m_data.contenttype.empty() ) msg << "Content-Type: " << m_data.contenttype << "\r\n";
     if( ! m_data.agent.empty() ) msg << "User-Agent: " << m_data.agent << "\r\n";
+    if( ! m_data.origin.empty() ) msg << "Origin: " << m_data.origin << "\r\n";
     if( ! m_data.referer.empty() ) msg << "Referer: " << m_data.referer << "\r\n";
 
     // basic認証
