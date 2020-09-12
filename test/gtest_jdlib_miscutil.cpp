@@ -542,4 +542,145 @@ TEST_F(MISC_StartsWith, null_terminated_string)
     EXPECT_FALSE( MISC::starts_with( "hello", "helloworld" ) );
 }
 
+
+class MISC_ParseHtmlFormData : public ::testing::Test {};
+
+TEST_F(MISC_ParseHtmlFormData, empty_html)
+{
+    auto result = MISC::parse_html_form_data( std::string{} );
+    EXPECT_TRUE( result.empty() );
+}
+
+TEST_F(MISC_ParseHtmlFormData, hidden_datum)
+{
+    auto result = MISC::parse_html_form_data( "<input type=hidden name=FOO value=100>" );
+    decltype(result) expect{ { "FOO", "100" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, hidden_datum_uppercase)
+{
+    auto result = MISC::parse_html_form_data( "<INPUT TYPE=hidden NAME=FOO VALUE=100>" );
+    decltype(result) expect{ { "FOO", "100" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, hidden_datum_with_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<input type="hidden" name="FOO" value="100">)" );
+    decltype(result) expect{ { "FOO", "100" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, submit_datum)
+{
+    auto result = MISC::parse_html_form_data( "<input type=submit value=書き込む name=submit>" );
+    decltype(result) expect{ { "submit", "書き込む" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, submit_datum_with_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<input type="submit" value="書き込む" name="submit">)" );
+    decltype(result) expect{ { "submit", "書き込む" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, textarea_datum)
+{
+    auto result = MISC::parse_html_form_data( "<textarea name=MESSAGE>あかさたな</textarea>" );
+    decltype(result) expect{ { "MESSAGE", "あかさたな" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, textarea_have_tag)
+{
+    auto result = MISC::parse_html_form_data( "<textarea name=MESSAGE>あか<br>さたな</textarea>" );
+    decltype(result) expect{ { "MESSAGE", "あか<br>さたな" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, textarea_datum_uppercase)
+{
+    auto result = MISC::parse_html_form_data( "<TEXTAREA NAME=MESSAGE>あかさたな</TEXTAREA>" );
+    decltype(result) expect{ { "MESSAGE", "あかさたな" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, textarea_datum_with_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<textarea name="MESSAGE">"あかさたな"</textarea>)" );
+    decltype(result) expect{ { "MESSAGE", "あかさたな" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, multi_data_1)
+{
+    auto result = MISC::parse_html_form_data( R"(<textarea name="MESSAGE">"あかさたな"</textarea>)"
+                                              "<input type=submit value=書き込む name=submit>"
+                                              R"(<input type="hidden" name="FOO" value="100">)" );
+    decltype(result) expect{ { "MESSAGE", "あかさたな" }, { "submit", "書き込む" }, { "FOO", "100" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, multi_data_2)
+{
+    auto result = MISC::parse_html_form_data( "<input type=submit value=書き込む name=submit>"
+                                              R"(<input type="hidden" name="FOO" value="100">)"
+                                              R"(<textarea name="MESSAGE">"あかさたな"</textarea>)" );
+    decltype(result) expect{ { "submit", "書き込む" }, { "FOO", "100" }, { "MESSAGE", "あかさたな" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, multi_data_3)
+{
+    auto result = MISC::parse_html_form_data( R"(<input type="hidden" name="FOO" value="100">)"
+                                              R"(<textarea name="MESSAGE">"あかさたな"</textarea>)"
+                                              "<input type=submit value=書き込む name=submit>" );
+    decltype(result) expect{ { "FOO", "100" }, { "MESSAGE", "あかさたな" }, { "submit", "書き込む" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, hidden_empty_name_by_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<input type="hidden" name="" value="100">)" );
+    decltype(result) expect{ { std::string{}, "100" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, hidden_empty_value_by_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<input type="hidden" name=FOO value="">)" );
+    decltype(result) expect{ { "FOO", std::string{} } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, submit_empty_name_by_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<input type="submit" value=書き込む name="">)" );
+    decltype(result) expect{ { std::string{}, "書き込む" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, submit_empty_value_by_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<input type="submit" value="" name=submit>)" );
+    decltype(result) expect{ { "submit", std::string{} } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, textarea_empty_name_by_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<textarea name="">あかさたな</textarea>)" );
+    decltype(result) expect{ { std::string{}, "あかさたな" } };
+    EXPECT_EQ( result, expect );
+}
+
+TEST_F(MISC_ParseHtmlFormData, textarea_empty_value_by_double_quotes)
+{
+    auto result = MISC::parse_html_form_data( R"(<textarea name="MESSAGE"></textarea>)" );
+    decltype(result) expect{ { "MESSAGE", std::string{} } };
+    EXPECT_EQ( result, expect );
+}
+
 } // namespace

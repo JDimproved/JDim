@@ -1897,3 +1897,59 @@ bool MISC::starts_with( const char* self, const char* starts )
     }
     return true;
 }
+
+
+//
+// HTMLからform要素を解析してinput,textarea要素の名前と値を返す
+//
+std::vector<MISC::FormDatum> MISC::parse_html_form_data( const std::string& html )
+{
+    JDLIB::Regex regex;
+    constexpr bool icase = true; // 大文字小文字区別しない
+    constexpr bool newline = false;  // . に改行をマッチさせる
+    constexpr bool usemigemo = false;
+    constexpr bool wchar = false;
+
+    // <input type=(hidden|submit)> or <textarea> のタグを解析して name と value を取得
+    const std::string pattern = R"((<input +type=("hidden"|hidden|"submit"|submit) +(name=([^ ]*) +value=([^>]*)|value=([^ ]*) +name=([^>]*))>|<textarea +name=([^ >]*)[^>]*>(.*?)</textarea>))";
+    regex.compile( pattern, icase, newline, usemigemo, wchar );
+
+    std::vector<MISC::FormDatum> data;
+    for( std::size_t offset = 0; ; ++offset){
+        std::string name;
+        std::string value;
+
+        if( regex.exec( html, offset ) ) {
+            const std::string name_value = MISC::tolower_str( regex.str( 3 ) );
+            if( name_value.compare( 0, 5, "name=" ) == 0 ) {
+                name = MISC::remove_space( regex.str( 4 ) );
+                value = MISC::remove_space( regex.str( 5 ) );
+            }
+            else if( name_value.compare( 0, 6, "value=" ) == 0 ) {
+                name = MISC::remove_space( regex.str( 7 ) );
+                value = MISC::remove_space( regex.str( 6 ) );
+            }
+            else {
+                name = MISC::remove_space( regex.str( 8 ) );
+                value = MISC::remove_space( regex.str( 9 ) );
+            }
+        }
+
+        if( name.empty() ) break;
+
+        offset = regex.pos( 0 );
+
+        if( name[ 0 ] == '\"' ) name = MISC::cut_str( name, "\"", "\"" );
+
+        if( value[ 0 ] == '\"' ) value = MISC::cut_str( value, "\"", "\"" );
+
+#ifdef _DEBUG
+        std::cout << "offset = " << offset << " "
+                  << regex.str( 0 ) << std::endl
+                  << "name = " << name << " value = " << value << std::endl;
+#endif
+
+        data.push_back( MISC::FormDatum{ std::move( name ), std::move( value ) } );
+    }
+    return data;
+}

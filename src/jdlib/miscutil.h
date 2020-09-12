@@ -43,6 +43,15 @@ namespace MISC
          WINtoUNIX
      };
 
+     // parse_html_form_data() の戻り値
+     struct FormDatum
+     {
+         std::string name;
+         std::string value;
+
+         bool operator==( const FormDatum& rhs ) const { return name == rhs.name && value == rhs.value; }
+     };
+
     // str を "\n" ごとに区切ってlistにして出力
     std::list< std::string > get_lines( const std::string& str );
 
@@ -275,6 +284,9 @@ namespace MISC
     // selfの先頭部分がstartsと等しいか（ヌル終端文字列バージョン）
     // Unicode正規化は行わなずバイト列として比較する
     bool starts_with( const char* self, const char* starts );
+
+    // HTMLからform要素を解析してinput,textarea要素の名前と値を返す
+    std::vector<FormDatum> parse_html_form_data( const std::string& html );
 }
 
 
