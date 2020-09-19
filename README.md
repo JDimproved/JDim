@@ -43,11 +43,14 @@ JDim は GPLv2 の下で公開されている [JD][jd-project] からforkした�
 ## 動作プラットフォーム
 
 LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
-WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定していないようです。
 
 ##### サポートの最新情報
 gtkmmのバージョンが3.22未満のプラットフォームはサポートを終了する予定となりました。
 Debian stretch(2017年)より前にリリースされたディストリビューションを利用されている場合は更新をお願いいたします。
+
+メンテナンスの都合によりWindows(MinGW)版のサポートは[終了][#445]しました。
+
+[#445]: https://github.com/JDimproved/JDim/issues/445
 
 
 ## 導入方法
