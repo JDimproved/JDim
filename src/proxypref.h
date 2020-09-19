@@ -136,11 +136,11 @@ namespace CORE
             set_activate_entry( m_frame_data.entry_host );
             set_activate_entry( m_frame_data.entry_port );
 
-            get_vbox()->set_spacing( 4 );
-            get_vbox()->pack_start( m_label );
-            get_vbox()->pack_start( m_frame_2ch );
-            get_vbox()->pack_start( m_frame_2ch_w );
-            get_vbox()->pack_start( m_frame_data );
+            get_content_area()->set_spacing( 4 );
+            get_content_area()->pack_start( m_label );
+            get_content_area()->pack_start( m_frame_2ch );
+            get_content_area()->pack_start( m_frame_2ch_w );
+            get_content_area()->pack_start( m_frame_data );
 
             set_title( "プロキシ設定" );
             show_all_children();

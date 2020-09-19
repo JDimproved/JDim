@@ -130,7 +130,7 @@ void AboutDiag::init()
     m_hbuttonbox_environment.pack_start( m_button_copy_environment, Gtk::PACK_SHRINK );
     m_vbox_environment.pack_start( m_hbuttonbox_environment, Gtk::PACK_SHRINK );
 
-    get_vbox()->pack_start( m_notebook, Gtk::PACK_EXPAND_WIDGET, MARGIN );
+    get_content_area()->pack_start( m_notebook, Gtk::PACK_EXPAND_WIDGET, MARGIN );
 
     show_all_children();
 

@@ -294,7 +294,7 @@ SetupWizard::SetupWizard()
     m_notebook.set_show_tabs( false );
     m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &SetupWizard::slot_switch_page ) );
 
-    get_vbox()->pack_start( m_notebook, Gtk::PACK_EXPAND_PADDING, SPACING_SIZE );
+    get_content_area()->pack_start( m_notebook, Gtk::PACK_EXPAND_PADDING, SPACING_SIZE );
 
     show_all_children();
 }
