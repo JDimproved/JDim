@@ -200,7 +200,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     const int page_abone = 1;
     m_notebook.append_page( m_notebook_abone, "あぼ〜ん設定" );
 
-    get_vbox()->pack_start( m_notebook );
+    get_content_area()->pack_start( m_notebook );
     set_title( "「" + DBTREE::article_subject( get_url() ) + "」のプロパティ" );
     resize( 600, 400 );
     show_all_children();

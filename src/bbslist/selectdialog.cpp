@@ -85,8 +85,8 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
 #endif 
     m_combo_dirs.set_active( active_row );
 
-    get_vbox()->pack_start( m_label_name, Gtk::PACK_SHRINK );
-    get_vbox()->pack_start( m_hbox_dirs, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_label_name, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_hbox_dirs, Gtk::PACK_SHRINK );
     m_bt_show_tree.signal_clicked().connect( sigc::mem_fun( this, &SelectListDialog::slot_show_tree ) );
 
     set_title( "お気に入り追加先選択" );
@@ -146,7 +146,7 @@ void SelectListDialog::slot_show_tree()
             m_selectview->copy_treestore( m_treestore );
             m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &SelectListDialog::hide ) );
 
-            get_vbox()->pack_start(* m_selectview );
+            get_content_area()->pack_start( *m_selectview );
             m_selectview->set_size_request( -1, SELECTDIAG_TREEHEIGHT );
             m_selectview->focus_view();
             show_all_children();
@@ -154,7 +154,7 @@ void SelectListDialog::slot_show_tree()
 
     }
     else if( m_selectview ){
-        get_vbox()->remove( *m_selectview );
+        get_content_area()->remove( *m_selectview );
         resize( get_width(), 1 );
         delete m_selectview;
         m_selectview = nullptr;

@@ -67,8 +67,8 @@ namespace CORE
             m_vbox.pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 0 );
             m_vbox.pack_start( m_frame, Gtk::PACK_EXPAND_WIDGET, mrg );
 
-            get_vbox()->set_spacing( 0 );
-            get_vbox()->pack_start( m_vbox );
+            get_content_area()->set_spacing( 0 );
+            get_content_area()->pack_start( m_vbox );
 
             set_activate_entry( m_entry_browser );
 

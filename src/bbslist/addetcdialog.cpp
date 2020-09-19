@@ -32,10 +32,10 @@ AddEtcDialog::AddEtcDialog( const bool move, const std::string& url, const std::
     m_frame.set_label( "BASIC認証" );
     m_frame.add( m_vbox );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_entry_name );
-    get_vbox()->pack_start( m_entry_url );
-    get_vbox()->pack_start( m_frame );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_entry_name );
+    get_content_area()->pack_start( m_entry_url );
+    get_content_area()->pack_start( m_frame );
 
     set_activate_entry( m_entry_name );
     set_activate_entry( m_entry_url );
