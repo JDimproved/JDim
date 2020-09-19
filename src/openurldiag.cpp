@@ -15,7 +15,7 @@ OpenURLDialog::OpenURLDialog( const std::string& url )
     m_label_url.set_text( url );
     set_activate_entry( m_label_url );
 
-    get_vbox()->pack_start( m_label_url, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_label_url, Gtk::PACK_SHRINK );
 
     set_title( "URLを開く" );
     resize( 600, 1 );

@@ -107,9 +107,9 @@ namespace DBIMG
         SKELETON::PrefDiag( parent, url )
         {
 
-            get_vbox()->set_spacing( 8 );
-            get_vbox()->pack_start( m_frame_cache );
-            get_vbox()->pack_start( m_frame_abone );
+            get_content_area()->set_spacing( 8 );
+            get_content_area()->pack_start( m_frame_cache );
+            get_content_area()->pack_start( m_frame_abone );
 
             set_activate_entry( m_frame_cache.get_spin() );
             set_activate_entry( m_frame_abone.get_spin() );

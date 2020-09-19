@@ -538,7 +538,7 @@ int main( int argc, char **argv )
                                                                 false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
             Gtk::CheckButton chk_button( "今後表示しない" );
-            mdiag->get_vbox()->pack_start( chk_button, Gtk::PACK_SHRINK );
+            mdiag->get_content_area()->pack_start( chk_button, Gtk::PACK_SHRINK );
             chk_button.show();
 
             const int ret = mdiag->run();

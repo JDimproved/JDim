@@ -44,8 +44,8 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
     set_activate_entry( m_entry_url );
     set_activate_entry( m_entry_cmd );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_vbox );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_vbox );
 
     set_title( "フィルタ設定" );
     show_all_children();
@@ -110,9 +110,9 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     m_hbox.pack_start( m_scrollwin, Gtk::PACK_EXPAND_WIDGET );
     m_hbox.pack_start( m_vbuttonbox, Gtk::PACK_SHRINK );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
-    get_vbox()->pack_start( m_hbox );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_hbox );
 
     show_all_children();
     set_title( "リンクフィルタ設定" );

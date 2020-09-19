@@ -63,9 +63,9 @@ LivePref::LivePref( Gtk::Window* parent, const std::string& url )
     m_vbox.pack_start( m_bt_reset, Gtk::PACK_SHRINK );
     m_vbox.set_border_width( mrg );
 
-    get_vbox()->set_spacing( mrg );
-    get_vbox()->pack_start( m_label_inst, Gtk::PACK_SHRINK );
-    get_vbox()->pack_start( m_vbox, Gtk::PACK_SHRINK );
+    get_content_area()->set_spacing( mrg );
+    get_content_area()->pack_start( m_label_inst, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_vbox, Gtk::PACK_SHRINK );
 
     set_title( "実況設定" );
     show_all_children();

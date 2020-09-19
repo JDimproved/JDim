@@ -127,7 +127,7 @@ namespace CORE
 
             m_notebook.append_page( m_frame_2ch, "2ch" );
             m_notebook.append_page( m_frame_be, "BE" );
-            get_vbox()->pack_start( m_notebook );
+            get_content_area()->pack_start( m_notebook );
 
             set_title( "パスワード設定" );
             show_all_children();

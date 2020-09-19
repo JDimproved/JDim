@@ -73,7 +73,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_vbox_info.pack_end( m_check_protect, Gtk::PACK_SHRINK );
 
     set_title( "画像のプロパティ" );
-    get_vbox()->pack_start( m_vbox_info );
+    get_content_area()->pack_start( m_vbox_info );
     resize( 600, 400 );
     show_all_children();
 }

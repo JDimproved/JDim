@@ -238,8 +238,8 @@ void FontColorPref::pack_widget()
     m_notebook.append_page( m_vbox_color, "色の設定" );    
 
     // 全体
-    get_vbox()->pack_start( m_notebook );
-    get_vbox()->set_spacing( mrg );
+    get_content_area()->pack_start( m_notebook );
+    get_content_area()->set_spacing( mrg );
     set_border_width( mrg );
 }
 
