@@ -38,7 +38,7 @@ InputDiag::InputDiag( Gtk::Window* parent, const std::string& url,
     set_title( CONTROL::get_label( m_id ) + " ( " + CONTROL::get_mode_label( m_controlmode ) + " )" );
     resize( 400, 400 );
 
-    get_vbox()->pack_start( m_label );
+    get_content_area()->pack_start( m_label );
 
     show_all_children();
 }
@@ -298,9 +298,9 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
     m_hbox.pack_start( m_scrollwin, Gtk::PACK_EXPAND_WIDGET );
     m_hbox.pack_start( m_vbuttonbox, Gtk::PACK_SHRINK );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
-    get_vbox()->pack_start( m_hbox );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_hbox );
 
     show_all_children();
     set_title( CONTROL::get_label( m_id ) + " ( " + CONTROL::get_mode_label( m_controlmode ) + " )" );
@@ -529,10 +529,10 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     m_button_reset.signal_clicked().connect( sigc::mem_fun( *this, &MouseKeyPref::slot_reset ) );
     m_hbox.pack_start( m_button_reset, Gtk::PACK_SHRINK );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
-    get_vbox()->pack_start( m_scrollwin );
-    get_vbox()->pack_start( m_hbox, Gtk::PACK_SHRINK );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_scrollwin );
+    get_content_area()->pack_start( m_hbox, Gtk::PACK_SHRINK );
 
     set_default_size_ratio( 0.666 );
     show_all_children();

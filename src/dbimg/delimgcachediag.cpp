@@ -31,9 +31,9 @@ DelImgCacheDiag::DelImgCacheDiag()
     set_title( "JDim 画像キャッシュ削除中" );
 
     const int mrg = 8;
-    get_vbox()->set_spacing( mrg );
+    get_content_area()->set_spacing( mrg );
     set_border_width( mrg );
-    get_vbox()->pack_start( m_label, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
     show_all_children();
 }
 

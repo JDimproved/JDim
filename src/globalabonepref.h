@@ -70,7 +70,7 @@ namespace CORE
             m_notebook.append_page( m_edit_word, "NG ワード" );
             m_notebook.append_page( m_edit_regex, "NG 正規表現" );
 
-            get_vbox()->pack_start( m_notebook );
+            get_content_area()->pack_start( m_notebook );
             set_title( "全体あぼ〜ん設定" );
             resize( 600, 400 );
             show_all_children();
