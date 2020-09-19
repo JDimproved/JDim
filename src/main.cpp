@@ -116,11 +116,7 @@ void restore_bkup( const bool no_restore_bkup )
 // SIGINTのハンドラ
 void sig_handler( int sig )
 {
-#ifdef _WIN32
-    if( sig == SIGINT ){
-#else
     if( sig == SIGHUP || sig == SIGINT || sig == SIGQUIT ){
-#endif
 
 #ifdef _DEBUG
         std::cout << "sig_handler sig = " << sig << std::endl;
@@ -377,9 +373,7 @@ int main( int argc, char **argv )
                 //break;
 
             case 'm':
-#ifndef _WIN32
                 multi_mode = true;
-#endif
                 break;
 
             case 'n':
@@ -435,7 +429,6 @@ int main( int argc, char **argv )
     }
     /*---------------------------------------------------------------*/
 
-#ifndef _WIN32
     // SIGINT、SIGQUITのハンドラ設定
     struct sigaction sigact;
     sigset_t blockset;
@@ -458,7 +451,6 @@ int main( int argc, char **argv )
         fprintf( stderr, "sigaction failed\n" );
         exit( 1 );
     }
-#endif
 
     Gtk::Main m( &argc, &argv );
 

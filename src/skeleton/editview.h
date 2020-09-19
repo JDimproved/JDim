@@ -138,13 +138,7 @@ namespace SKELETON
         Glib::RefPtr< Gtk::TextBuffer > get_buffer(){ return m_textview.get_buffer(); }
 
         void set_text( const Glib::ustring& text ){ m_textview.get_buffer()->set_text( text ); }
-        Glib::ustring get_text(){
-#ifdef _WIN32
-            return MISC::utf8_fix_wavedash( m_textview.get_buffer()->get_text(), MISC::WINtoUNIX );
-#else
-            return m_textview.get_buffer()->get_text();
-#endif
-        }
+        Glib::ustring get_text() const { return m_textview.get_buffer()->get_text(); }
 
         void set_wrap_mode( Gtk::WrapMode wrap_mode ){ m_textview.set_wrap_mode( wrap_mode ); }
 

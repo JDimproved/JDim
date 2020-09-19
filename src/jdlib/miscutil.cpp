@@ -1696,11 +1696,7 @@ std::string MISC::getenv_limited( const char *name, const size_t size )
     std::vector< char > env( size + 1, '\0' );
     strncpy( env.data(), getenv( name ), size );
 
-#ifdef _WIN32
-    return recover_path( Glib::locale_to_utf8( std::string( env.data() ) ) );
-#else
     return env.data();
-#endif
 }
 
 
@@ -1709,29 +1705,12 @@ std::string MISC::getenv_limited( const char *name, const size_t size )
 //
 std::string MISC::recover_path( const std::string& str )
 {
-#ifdef _WIN32
-    // Windowsのpathセパレータ \ を、jdの / に置き換える
-    std::string ret( str );
-    for (int i=ret.length()-1; i>=0; i--)
-        if (ret[ i ] == '\\')
-            ret[ i ] = '/';
-    return ret;
-#else
     return str;
-#endif
 }
 
 std::vector< std::string > MISC::recover_path( std::vector< std::string > list_str )
 {
-#ifdef _WIN32
-    std::vector< std::string > list_ret;
-    std::vector< std::string >::const_iterator it = list_str.begin();
-    for( ; it != list_str.end() ; ++it )
-        list_ret.push_back( MISC::recover_path( *it ) );
-    return list_ret;
-#else
     return list_str;
-#endif
 }
 
 

@@ -16,11 +16,7 @@ namespace CONFIG
         CONF_RESTORE_BOARD = 0,     // スレ一覧を復元
         CONF_RESTORE_ARTICLE = 0,   // スレを復元
         CONF_RESTORE_IMAGE = 0,     // 画像を復元
-#ifndef _WIN32
         CONF_MANAGE_WINPOS = 1,    // 自前でウィンドウ配置を管理する
-#else
-        CONF_MANAGE_WINPOS = 0,    // Windowsがウインドウ配置を管理する
-#endif
         CONF_REF_PREFIX_SPACE = 1, // 参照文字( CONF_REF_PREFIX ) の後のスペースの数
         CONF_USE_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシを使用するか
         CONF_SEND_COOKIE_TO_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシにクッキーを送信するか
@@ -169,8 +165,7 @@ namespace CONFIG
 // browsers.cpp のデフォルトのラベル番号
 // browsers.cpp のブラウザの順番に気をつけること
     enum{
-        // _WIN32 : ie をデフォルトにする
-        // not _WIN32 : xdg-open をデフォルトにする
+        // xdg-open をデフォルトにする
         CONF_BROWSER_NO = 1
     };
 

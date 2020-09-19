@@ -1,10 +1,5 @@
 // ライセンス: GPL2
 
-#ifdef _WIN32
-// require Windows XP or Server 2003 for getaddrinfo
-#define WINVER 0x0501
-#endif
-
 //#define _DEBUG
 //#define _DEBUG_CHUNKED
 //#define _DEBUG_TIME
@@ -37,33 +32,20 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#ifdef _WIN32
-#include <process.h>
-#else
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#endif
 #include <signal.h>
 
 #include <glibmm.h>
 
-#ifdef _WIN32
-// _soc : SOCKET (unsigned int)
-#define SOC_ISVALID(_soc) ( (_soc) != INVALID_SOCKET )
-#else
 // _soc : int
 #define SOC_ISVALID(_soc) ( (_soc) >= 0 )
-#endif
+
 
 constexpr int MAX_LOADER = 10; // 最大スレッド数
 constexpr int MAX_LOADER_SAMEHOST = 2; // 同一ホストに対して実行できる最大スレッド数
 constexpr size_t LNG_BUF_MIN = 1 * 1024; // 読み込みバッファの最小値 (byte)
 constexpr long TIMEOUT_MIN = 1; // タイムアウトの最小値 (秒)
-
-
-#ifdef _WIN32
-bool initialized_loader = false;
-#endif
 
 
 namespace {
@@ -256,12 +238,6 @@ void JDLIB::check_loader_alive()
         MISC::ERRMSG( "queue of loaders are not empty." );
         assert( false );
     }
-
-#ifdef _WIN32
-    if ( initialized_loader ){
-        WSACleanup();
-    }
-#endif
 }
 
 
@@ -286,16 +262,6 @@ Loader::Loader( const bool low_priority )
 {
 #ifdef _DEBUG
     std::cout << "Loader::Loader : loader was created.\n";
-#endif
-
-#ifdef _WIN32
-    if ( !initialized_loader ){
-        WSADATA wsaData;
-        if ( WSAStartup(MAKEWORD(2,0), &wsaData) != 0 ){
-            MISC::ERRMSG( "could not startup winsock2" );
-        }
-        initialized_loader = true;
-    }
 #endif
 
     clear();
@@ -593,10 +559,6 @@ bool Loader::send_connect( const int soc, std::string& errmsg )
             return false;
         }
 
-#ifdef _WIN32
-        ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
-        int lastError = WSAGetLastError();
-#else
 #ifdef MSG_NOSIGNAL
         ssize_t tmpsize = send( soc, msg_send.data(), send_size, MSG_NOSIGNAL );
 #else
@@ -605,15 +567,9 @@ bool Loader::send_connect( const int soc, std::string& errmsg )
         ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
         signal(SIGPIPE,SIG_DFL); /* 念のため戻す */
 #endif // MSG_NOSIGNAL
-#endif // _WIN32
 
-#ifdef _WIN32
-        if( tmpsize == 0
-            || ( tmpsize < 0 && !( lastError == WSAEWOULDBLOCK || errno == WSAEINTR ) ) ){
-#else
         if( tmpsize == 0
             || ( tmpsize < 0 && !( errno == EWOULDBLOCK || errno == EINTR ) ) ){
-#endif
 
             m_data.code = HTTP_ERR;
             errmsg = "send failed : " + m_data.url;
@@ -669,11 +625,7 @@ void Loader::run_main()
     // エラーメッセージ
     std::string errmsg;
 
-#ifdef _WIN32
-    SOCKET soc = INVALID_SOCKET; // ソケットID
-#else
     int soc = -1; // ソケットID
-#endif
     bool use_proxy = ( ! m_data.host_proxy.empty() );
 
     JDLIB::JDSSL* ssl = nullptr;
@@ -715,14 +667,9 @@ void Loader::run_main()
 
     // ソケットを非同期に設定
     if( m_data.async ){
-#ifdef _WIN32
-        u_long flags = 0;
-        if ( ioctlsocket( soc, FIONBIO, &flags) != 0 ){
-#else
         int flags;
         flags = fcntl( soc, F_GETFL, 0);
         if( flags == -1 || fcntl( soc, F_SETFL, flags | O_NONBLOCK ) < 0 ){
-#endif
             m_data.code = HTTP_ERR;
             errmsg = "fcntl failed";
             goto EXIT_LOADING;
@@ -735,11 +682,7 @@ void Loader::run_main()
     if( ret != 0 ){
 
         // ノンブロックでまだ接続中
-#ifdef _WIN32
-        if ( !( m_data.async && WSAGetLastError() == WSAEWOULDBLOCK ) ){
-#else
         if ( !( m_data.async && errno == EINPROGRESS ) ){
-#endif
 
             m_data.code = HTTP_ERR;
             if( ! use_proxy ) errmsg = "connect failed : " + m_data.host;
@@ -763,11 +706,7 @@ void Loader::run_main()
         // connectが成功したかチェック
         int optval;
         socklen_t optlen = sizeof( int );
-#ifdef _WIN32
-        if( getsockopt( soc, SOL_SOCKET, SO_ERROR, (char *)&optval, &optlen ) != 0 ){
-#else
         if( getsockopt( soc, SOL_SOCKET, SO_ERROR, (void *)&optval, &optlen ) < 0 ){
-#endif
             m_data.code = HTTP_ERR;
             errmsg = "getsockopt failed";
             goto EXIT_LOADING;
@@ -817,10 +756,6 @@ void Loader::run_main()
             }
 
             // SEND 又は POST
-#ifdef _WIN32
-            ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
-            int lastError = WSAGetLastError();
-#else
 #ifdef MSG_NOSIGNAL
             ssize_t tmpsize = send( soc, msg_send.data(), send_size, MSG_NOSIGNAL );
 #else
@@ -829,15 +764,9 @@ void Loader::run_main()
             ssize_t tmpsize = send( soc, msg_send.data(), send_size,0);
             signal(SIGPIPE,SIG_DFL); /* 念のため戻す */
 #endif // MSG_NOSIGNAL
-#endif // _WIN32
 
-#ifdef _WIN32
-            if( tmpsize == 0
-                || ( tmpsize < 0 && !( lastError == WSAEWOULDBLOCK || errno == WSAEINTR ) ) ){
-#else
             if( tmpsize == 0
                 || ( tmpsize < 0 && !( errno == EWOULDBLOCK || errno == EINTR ) ) ){
-#endif
 
                 m_data.code = HTTP_ERR;
                 errmsg = "send failed : " + m_data.url;
@@ -1038,11 +967,7 @@ EXIT_LOADING:
         }
 
         // 送信禁止
-#ifdef _WIN32
-        shutdown( soc, SD_SEND );
-#else
         shutdown( soc, SHUT_WR );
-#endif
     }
 
     // 強制停止した場合
@@ -1063,11 +988,7 @@ EXIT_LOADING:
 
     // ソケットクローズ
     if( SOC_ISVALID( soc ) ){
-#ifdef _WIN32
-        closesocket( soc );
-#else
         close( soc );
-#endif
     }
 
     // addrinfo開放

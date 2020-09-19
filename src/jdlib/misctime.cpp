@@ -18,13 +18,6 @@
 #include <sys/time.h>
 #include <vector>
 
-#ifdef _WIN32
-#include <stdlib.h>
-// not exist _r suffix functions in mingw time.h
-#define localtime_r( _clock, _result ) \
-        ( *(_result) = *localtime( (_clock) ), \
-          (_result) )
-#endif
 
 //
 // gettimeofday()の秒を文字列で取得
@@ -64,39 +57,6 @@ time_t MISC::datetotime( const std::string& date )
     struct tm tm_out;
     memset( &tm_out, 0, sizeof( struct tm ) );
 
-#ifdef _WIN32
-    int rc;
-    char month[4];
-    char monthes[][4] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"  };
-    char tzone[4];
-    rc = sscanf(date.c_str(), "%*3s, %2d %3s %4d %2d:%2d:%2d %3s",
-                &tm_out.tm_mday, month, &tm_out.tm_year,
-                &tm_out.tm_hour, &tm_out.tm_min, &tm_out.tm_sec, tzone);
-    if ( rc != 7 )
-    {
-        ERRMSG( "MISC::datetotime : unknown format = " + date );
-        return 0;
-    }
-    tm_out.tm_year -= 1900;
-    for (int i=0; i<12; i++)
-    {
-        if (strcasecmp(monthes[i], month) == 0)
-        {
-            tm_out.tm_mon = i;
-            break;
-        }
-    }
-
-    // 通常はTZにGMTが渡される
-    std::string env = "TZ=";
-    putenv( (env + tzone).c_str() );
-    tzset();
-    time_t t_ret = mktime( &tm_out );
-    putenv( "TZ=" );
-    tzset();
-
-#else // _WIN32
     // (注意) LC_TIMEが"C"でないと環境によってはstrptime()が失敗する
     std::string lcl;
     char *lcl_tmp = setlocale( LC_TIME, nullptr );
@@ -115,7 +75,6 @@ time_t MISC::datetotime( const std::string& date )
 #else
     time_t t_ret = timegm( &tm_out );
 #endif
-#endif // _WIN32
 
 #ifdef _DEBUG
     std::cout << "MISC::datetotime " << date << " -> " << t_ret << std::endl;

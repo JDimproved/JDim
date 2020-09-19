@@ -30,9 +30,7 @@
 
 #include <fcntl.h>
 #include <cstring>
-#if defined(_WIN32)
-#include <utime.h>
-#endif
+
 
 enum
 {
@@ -749,14 +747,6 @@ int CACHE::file_exists( const std::string& path )
     if( path.empty() ) return EXIST_ERROR;
 
     std::string path_s = path;
-#ifdef _WIN32
-    // on windows fail stat() directory path with ends '/'
-    // "c:/" = ok, "c:" = fail
-    // "c:/dir/" = fail, "c:/dir" = ok
-    if( path.length() > 3 && path[ path.length() - 1 ] == '/' ){
-        path_s = path.substr( 0, path.length() - 1 );
-    }
-#endif
     if( stat( to_locale_cstr( path_s ), &buf_stat ) != 0 ) return EXIST_ERROR;
 
     if( S_ISREG( buf_stat.st_mode ) ) return EXIST_FILE;
@@ -799,15 +789,6 @@ bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
     if( stat( to_locale_cstr( path ), &buf_stat ) != 0 ) return false;
     if( S_ISREG( buf_stat.st_mode ) ){
 
-#if defined(_WIN32)
-        struct utimbuf tb;
-
-        tb.actime = buf_stat.st_atime;
-        tb.modtime = mtime;
-
-        if( ! utime( to_locale_cstr( path ), &tb ) ) return true;
-
-#else // WIN32
         struct timeval tv[2];
 
         tv[0].tv_sec  = buf_stat.st_atime;
@@ -816,7 +797,6 @@ bool CACHE::set_filemtime( const std::string& path, const time_t mtime )
         tv[1].tv_usec = 0;
 
         if( ! utimes( to_locale_cstr( path ), tv ) ) return true;
-#endif // WIN32
     }
 
     return false;
@@ -844,12 +824,7 @@ bool CACHE::jdmkdir( const std::string& path )
         target = homedir + path.substr( 2 );
     }
 
-#ifdef _WIN32
-    // on windows has case of start drive letter "c:/...", or UNC "//pcname/..."
-    if( target[ 0 ] != '/' && target[ 1 ] != ':' ) return false;
-#else
     if( target[ 0 ] != '/' ) return false;
-#endif
     if( target[ target.length() -1 ] != '/' ) target += "/";
 
 #ifdef _DEBUG
@@ -870,11 +845,7 @@ bool CACHE::jdmkdir( const std::string& path )
         
         if( CACHE::file_exists( currentdir ) == EXIST_DIR ) continue;
 
-#ifdef _WIN32
-        if( mkdir( to_locale_cstr( currentdir ) ) != 0 ){
-#else
         if( mkdir( to_locale_cstr( currentdir ), 0755 ) != 0 ){
-#endif
             MISC::ERRMSG( "mkdir failed " + currentdir );
             return false;
         }
@@ -1159,12 +1130,7 @@ std::string CACHE::get_realpath( const std::string& path )
     std::string path_real;
 
     char resolved_path[ PATH_MAX + 1 ];
-#ifdef _WIN32
-    // _fullpath() are not checked　the path is completely available
-    char* ret = _fullpath( resolved_path, to_locale_cstr( path ), PATH_MAX );
-#else
     char* ret = realpath( to_locale_cstr( path ), resolved_path );
-#endif
     if( ret ){
         path_real = ret;
     }

@@ -178,13 +178,7 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
     std::cout << "Log_Manager::check_write url = " << url << " newthread = " << newthread << " headsize = " << headsize << std::endl;
 #endif
 
-#ifndef _WIN32
     const char* msg = msg_in;
-#else
-    // WAVE DASH 問題 ( UNIX用の文字コードになっていることがある )
-    const std::string msg_buf = MISC::utf8_fix_wavedash( msg_in, MISC::UNIXtoWIN );
-    const char* msg = msg_buf.c_str();
-#endif
 
     std::list< LogItem* >::iterator it = m_logitems.begin();
     for( ; it != m_logitems.end(); ++it ){
