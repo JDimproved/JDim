@@ -8,14 +8,9 @@
 
 #include <gdk/gdk.h>
 
-#ifndef _WIN32
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif // GDK_WINDOWING_X11
-#else
-#include <gdk/gdkwin32.h>
-#include <windows.h>
-#endif
 
 
 //
@@ -23,7 +18,6 @@
 //
 void MISC::WarpPointer( Glib::RefPtr< Gdk::Window > src, Glib::RefPtr< Gdk::Window > dest, int x, int y ){
 
-#ifndef _WIN32
 #ifdef GDK_WINDOWING_X11
     GdkDisplay* display = gdk_window_get_display( Glib::unwrap( src ) );
     // X11環境でない場合は何もしない
@@ -34,18 +28,4 @@ void MISC::WarpPointer( Glib::RefPtr< Gdk::Window > src, Glib::RefPtr< Gdk::Wind
                   gdk_x11_window_get_xid( Glib::unwrap( dest ) )
                   , 0, 0, 0, 0, x, y );
 #endif // GDK_WINDOWING_X11
-#else
-    HWND hWnd;
-    POINT pos;
-
-    // スクリーン座標を取得してからカーソル位置を設定する
-    hWnd = (HWND)GDK_WINDOW_HWND( Glib::unwrap( dest ) );
-    if( hWnd != nullptr ){
-        pos.x = x;
-        pos.y = y;
-        if( ClientToScreen( hWnd, &pos ) ){
-            SetCursorPos( pos.x, pos.y );
-        }
-    }
-#endif
 }

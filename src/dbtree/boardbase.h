@@ -13,9 +13,6 @@
 #include <vector>
 #include <ctime>
 
-#ifdef _WIN32
-#include <sys/time.h>
-#endif
 
 namespace JDLIB
 {

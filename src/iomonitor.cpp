@@ -16,9 +16,6 @@
 #include <cstring>
 #include <sys/stat.h>
 
-#ifdef _WIN32
-#define FIFO_TIMEOUT_MILI 100
-#endif
 
 using namespace CORE;
 
@@ -29,26 +26,12 @@ using namespace CORE;
 // コンストラクタ
 /*-------------------------------------------------------------------*/
 IOMonitor::IOMonitor()
-#ifndef _WIN32
     : m_fifo_fd( -1 )
     , m_iochannel( nullptr )
-#else
-    : m_slot_hd( INVALID_HANDLE_VALUE )
-#endif // _WIN32
     , m_fifo_file( CACHE::path_lock() )
     , m_fifo_stat( FIFO_OK )
     , m_main_process( false )
 {
-#ifdef _WIN32
-    // create path to mailslot depends JD cache root
-    std::string slot_tmp( CACHE::path_root() );
-    for( int i=slot_tmp.length()-1; i>=0; i-- ){
-        if( slot_tmp[ i ] == '/' || slot_tmp[ i ] == ':' ){
-            slot_tmp[ i ] = '_';
-        }
-    }
-    m_slot_name = "\\\\.\\mailslot\\" + slot_tmp;
-#endif // _WIN32
     init();
 }
 
@@ -58,20 +41,10 @@ IOMonitor::IOMonitor()
 /*-------------------------------------------------------------------*/
 IOMonitor::~IOMonitor()
 {
-#ifndef _WIN32
     if( m_iochannel ) m_iochannel->close(); // close( m_fifo_fd );
 
     // メインプロセスの終了時にFIFOを消去する
     if( m_main_process ) delete_fifo();
-#else
-    if( m_slot_hd != INVALID_HANDLE_VALUE ){
-        CloseHandle( m_slot_hd );
-        m_slot_hd = INVALID_HANDLE_VALUE;
-    }
-    if( m_main_process ){
-        m_thread.join();
-    }
-#endif // _WIN32
 }
 
 
@@ -83,7 +56,6 @@ void IOMonitor::init()
     // 既にFIFOと同名のファイルが存在するか確認
     const int status = CACHE::file_exists( m_fifo_file );
 
-#ifndef _WIN32
     // 同名のファイルがFIFOでなければ削除する
     if( status != CACHE::EXIST_ERROR && status != CACHE::EXIST_FIFO )
     {
@@ -151,56 +123,12 @@ void IOMonitor::init()
         Glib::signal_io().connect( sigc::mem_fun( this, &IOMonitor::slot_ioin ), m_fifo_fd, Glib::IO_IN );
         m_iochannel = Glib::IOChannel::create_from_fd( m_fifo_fd );
     }
-#else // _WIN32
-    if( status != CACHE::EXIST_ERROR )
-    {
-        // if lockfile exists, jd don't suggest working because cache isn't broken
-        MISC::ERRMSG( "IOMonitor::init(): exists other lockfile." );
-        m_fifo_stat = FIFO_CREATE_ERROR;
-    }
-
-#ifdef _DEBUG
-    std::cerr << "Create slot name: " << m_slot_name << std::endl;
-#endif
-    m_slot_hd = CreateMailslot( to_locale_cstr( m_slot_name.c_str() ),
-            0, FIFO_TIMEOUT_MILI, nullptr );
-    if( m_slot_hd == INVALID_HANDLE_VALUE ){
-        if( GetLastError() == ERROR_ALREADY_EXISTS ){
-            // client
-            m_slot_hd = CreateFile( to_locale_cstr( m_slot_name.c_str() ),
-                    GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
-                    nullptr, OPEN_EXISTING, 0, nullptr );
-            if( m_slot_hd == INVALID_HANDLE_VALUE ){
-#ifdef _DEBUG
-                std::cerr << "Open err: " << GetLastError() << std::endl;
-#endif
-                MISC::ERRMSG( "IOMonitor::init(): Open client failed." );
-                m_fifo_stat = FIFO_OPEN_ERROR;
-            }
-        } else {
-#ifdef _DEBUG
-            std::cerr << "Create err: " << GetLastError() << std::endl;
-#endif
-            MISC::ERRMSG( "IOMonitor::init(): Create slot failed." );
-            m_fifo_stat = FIFO_CREATE_ERROR;
-        }
-    } else {
-        // server
-        if( ! m_thread.create( monitor_launcher, ( void* )this, JDLIB::NODETACH ) ) {
-            MISC::ERRMSG( "IOMonitor::init(): Could not start thread." );
-            m_fifo_stat = FIFO_CREATE_ERROR;
-            return;
-        }
-        m_main_process = true;
-    }
-#endif // _WIN32
 }
 
 
 /*-------------------------------------------------------------------*/
 // FIFOを削除する
 /*-------------------------------------------------------------------*/
-#ifndef _WIN32
 void IOMonitor::delete_fifo()
 {
     int del_stat = 0;
@@ -212,7 +140,6 @@ void IOMonitor::delete_fifo()
 
     g_assert( del_stat >= 0 );
 }
-#endif // ! _WIN32
 
 
 /*-------------------------------------------------------------------*/
@@ -231,21 +158,12 @@ bool IOMonitor::send_command( const char* command )
     // 異常に長かったら書き込まない
     if( command_length > COMMAND_MAX_LENGTH ) return false;
 
-#ifndef _WIN32
     g_assert( m_fifo_fd >= 0 );
 
     int status = -1;
     status = write( m_fifo_fd, command, command_length );
 
     return ( (size_t)status == command_length );
-#else
-    g_assert( m_slot_hd != INVALID_HANDLE_VALUE );
-
-    DWORD length = 0;
-    BOOL rc = WriteFile( m_slot_hd, command, command_length, &length, nullptr );
-
-    return rc != FALSE && ( size_t )length == command_length;
-#endif // _WIN32
 }
 
 
@@ -265,35 +183,12 @@ bool IOMonitor::slot_ioin( Glib::IOCondition io_condition )
     }
 
     Glib::ustring buffer;
-#ifndef _WIN32
     // 最大で COMMAND_MAX_LENGTH まで読み出す
     Glib::IOStatus io_status = m_iochannel->read( buffer, COMMAND_MAX_LENGTH );
     if( io_status == Glib::IO_STATUS_ERROR )
     {
         MISC::ERRMSG( "IOMonitor::slot_ioin(): read error." );
     }
-#else
-    char msg[ COMMAND_MAX_LENGTH ];
-    memset( msg, 0, sizeof( msg ) );
-    DWORD length = 0;
-
-    BOOL rc = ReadFile( m_slot_hd, msg, COMMAND_MAX_LENGTH - 1, &length, nullptr );
-    if( rc == FALSE ){
-        DWORD error = GetLastError();
-        if( error == ERROR_SEM_TIMEOUT ){
-            return true;
-        }
-#ifdef _DEBUG
-        std::cout << "read err: " << error << std::endl;
-#endif
-        MISC::ERRMSG( "IOMonitor::slot_ioin(): read error." );
-        return false;
-    }
-    if( length == 0 ){
-        return true;
-    }
-    buffer += msg;
-#endif // _WIN32
 
 #ifdef _DEBUG
     std::cout << "入力文字: " << buffer << std::endl;
@@ -307,21 +202,3 @@ bool IOMonitor::slot_ioin( Glib::IOCondition io_condition )
 
     return true;
 }
-
-
-#ifdef _WIN32
-/*-------------------------------------------------------------------*/
-// monitor_launcher
-/*-------------------------------------------------------------------*/
-// static
-void* IOMonitor::monitor_launcher( void* dat )
-{
-    CORE::IOMonitor* iom = ( CORE::IOMonitor* )dat;
-    while( iom->m_slot_hd != INVALID_HANDLE_VALUE ){
-        if( ! iom->slot_ioin( Glib::IO_IN ) ){
-            break;
-        }
-    }
-    return 0;
-}
-#endif // _WIN32

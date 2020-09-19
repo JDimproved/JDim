@@ -1,10 +1,5 @@
 // License GPL2
 
-#ifdef _WIN32
-// require Windows XP SP2 or Server 2003 SP1 for GetNativeSystemInfo, KEY_WOW64_64KEY
-#define WINVER 0x0502
-#endif
-
 //#define _DEBUG
 #include "jddebug.h"
 
@@ -22,9 +17,6 @@
 
 #ifdef HAVE_SYS_UTSNAME_H
 #include <sys/utsname.h> // uname()
-#endif
-#ifdef _WIN32
-#include <windows.h>
 #endif
 
 #if defined(USE_GNUTLS)
@@ -203,104 +195,6 @@ std::string ENVIRONMENT::get_distname()
     std::cout << "SESSION::get_dist_name\n";
 #endif
 
-    std::string dist_name;
-
-#ifdef _WIN32
-    std::ostringstream vstr;
-    vstr << "Windows";
-
-    OSVERSIONINFOEX osvi;
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    if (GetVersionEx((OSVERSIONINFO *)&osvi) != 0)
-    {
-        LONG rc;
-        HKEY hKey;
-
-        switch (osvi.dwPlatformId)
-        {
-        case VER_PLATFORM_WIN32_NT:
-            // Read Windows edition from the registry
-            rc = RegOpenKeyEx( HKEY_LOCAL_MACHINE,
-                    "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
-                    0, KEY_READ | KEY_WOW64_64KEY, &hKey );
-            if( rc == ERROR_SUCCESS )
-            {
-                DWORD dwSize;
-
-                // read size of ProductName
-                rc = RegQueryValueEx( hKey, "ProductName",
-                        nullptr, nullptr, nullptr, &dwSize );
-                if( rc == ERROR_SUCCESS && dwSize > 0 )
-                {
-                    // get buffer
-                    char* regVal = (char *)malloc( dwSize );
-                    if( regVal != nullptr )
-                    {
-                        // read ProductName
-                        rc = RegQueryValueEx( hKey, "ProductName",
-                                nullptr, nullptr, (LPBYTE)regVal, &dwSize );
-                        if( rc == ERROR_SUCCESS && strlen( regVal ) > 0 )
-                        {
-                            // may be contains "Windows" in the value
-                            vstr.str( "" );
-                            vstr << regVal;
-                        }
-                        free( regVal );
-                    }
-                }
-
-                // read size of CSDVersion
-                rc = RegQueryValueEx( hKey, "CSDVersion",
-                        nullptr, nullptr, nullptr, &dwSize );
-                if( rc == ERROR_SUCCESS && dwSize > 0 )
-                {
-                    // get buffer
-                    char* regVal = (char *)malloc( dwSize );
-                    if( regVal != nullptr )
-                    {
-                        // read CSDVersion
-                        rc = RegQueryValueEx( hKey, "CSDVersion",
-                                nullptr, nullptr, (LPBYTE)regVal, &dwSize );
-                        if( rc == ERROR_SUCCESS && strlen( regVal ) > 0 )
-                        {
-                            // ServicePack version
-                            vstr << " " << regVal;
-                        }
-                        free( regVal );
-                    }
-                }
-
-                // close registry handle
-                RegCloseKey( hKey ); // ignore errors
-            }
-
-            // OS architecture
-            if (osvi.dwMajorVersion >= 5)
-            {
-                SYSTEM_INFO sysi;
-                GetNativeSystemInfo(&sysi);
-                if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-                    vstr << " x64";
-                else if (sysi.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
-                    vstr << " ia64";
-            }
-            break;
-        case VER_PLATFORM_WIN32_WINDOWS:
-            // Not support versions (Me, 98, 95, ... )
-            break;
-        default:
-            // Unknown versions
-            break;
-        }
-
-        // Build version
-        vstr << " (build " << osvi.dwMajorVersion
-                << "." << osvi.dwMinorVersion
-                << "." << osvi.dwBuildNumber << ")";
-    }
-    dist_name = vstr.str();
-
-#else // _WIN32
     std::string tmp;
     std::string text_data;
 
@@ -428,7 +322,7 @@ std::string ENVIRONMENT::get_distname()
     }
 
     // 文字列両端のスペースなどを削除する
-    dist_name = MISC::remove_spaces( tmp );
+    std::string dist_name = MISC::remove_spaces( tmp );
 
     // 取得した文字が異常に長い場合は空にする
     if( dist_name.length() > 50 ) dist_name.clear();
@@ -467,7 +361,6 @@ std::string ENVIRONMENT::get_distname()
     }
 
 #endif
-#endif // _WIN32
 
     return dist_name;
 }
@@ -483,7 +376,6 @@ static constexpr const char* tbl_desktop[] = {
 //
 ENVIRONMENT::DesktopType ENVIRONMENT::get_wm()
 {
-#ifndef _WIN32
     if( window_manager != DesktopType::unknown ) return window_manager;
 
     constexpr const char* envvar[] = { "DESKTOP_SESSION", "XDG_CURRENT_DESKTOP" };
@@ -514,7 +406,6 @@ ENVIRONMENT::DesktopType ENVIRONMENT::get_wm()
             if( str_wm == "true" ) window_manager = DesktopType::kde;
         }
     }
-#endif
 
     return window_manager;
 }
@@ -525,19 +416,7 @@ ENVIRONMENT::DesktopType ENVIRONMENT::get_wm()
 //
 std::string ENVIRONMENT::get_wm_str()
 {
-    std::string desktop;
-
-#ifdef _WIN32
-#ifdef __MINGW32__
-    desktop = "build by mingw32";
-#else
-    desktop = "build with _WIN32";
-#endif
-#else
-    desktop = tbl_desktop[ static_cast< int >( get_wm() ) ];
-#endif
-
-    return desktop;
+    return tbl_desktop[ static_cast< int >( get_wm() ) ];
 }
 
 

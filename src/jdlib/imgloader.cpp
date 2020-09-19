@@ -219,11 +219,8 @@ void ImgLoader::slot_area_updated(int x, int y, int w, int h )
 // 読み込み中断のリクエスト
 void ImgLoader::request_stop()
 {
-#ifndef _WIN32
     // 中断をリクエストされても実際には読み込みが完了していることがある
-    // windowsでは読み込みを中断すると、通常の画像でpixbufが壊れてしまうことがある
     m_stop = true;
-#endif
 }
 
 bool ImgLoader::equals( const std::string& file ) const

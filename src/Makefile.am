@@ -68,10 +68,6 @@ jdim_SOURCES = \
 	iomonitor.cpp \
 	environment.cpp
 
-if MAKE_WINDRES
-jdim_SOURCES += jd_windres.rc
-endif
-
 
 noinst_HEADERS = \
 	winmain.h \
@@ -138,11 +134,3 @@ noinst_HEADERS = \
 
 
 AM_CXXFLAGS = @GTKMM_CFLAGS@ @GNUTLS_CFLAGS@ @OPENSSL_CFLAGS@ @LIBSM_CFLAGS@
-
-
-jd_windres.o: jdversion.h
-
-SUFFIXES = .rc .o
-
-.rc.o:
-	$(WINDRES) -o $@ $<;

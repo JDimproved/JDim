@@ -49,7 +49,7 @@ JDimはGPLv2の下で公開されている [JD][] からforkしたソフトウ�
 ### 動作プラットフォーム
 LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
 
-WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定していないようです。
+メンテナンスの都合によりWindows(MinGW)版のサポートは[終了][#445]しました。
 
 
 [５ちゃんねる]: https://5ch.net
@@ -58,5 +58,6 @@ WindowsではMinGWを使ってビルド可能ですが、動作はまだ安定�
 [repository]: https://github.com/JDimproved/JDim
 [gpl2]: https://ja.osdn.net/projects/opensource/wiki/licenses%2FGNU_General_Public_License
 [linux]: https://mao.5ch.net/linux/
+[#445]: https://github.com/JDimproved/JDim/issues/445
 
 [互換性]: {{ site.baseurl }}/start/#compatibility "起動について \| JDim"

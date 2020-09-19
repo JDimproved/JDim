@@ -1396,12 +1396,6 @@ void BoardBase::receive_finish()
 
                 // 古いファイルをrename
                 if( CACHE::file_exists( path_subject ) == CACHE::EXIST_FILE ){
-#ifdef _WIN32
-                    // not overwrite by rename() on windows
-                    if (CACHE::file_exists( path_oldsubject ) == CACHE::EXIST_FILE ){
-                        remove( path_oldsubject.c_str() );
-                    }
-#endif
                     if( rename( path_subject.c_str(), path_oldsubject.c_str() ) != 0 ){
                         MISC::ERRMSG( "rename failed " + path_subject );
                     }

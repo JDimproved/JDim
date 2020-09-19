@@ -16,13 +16,7 @@
 #include <list>
 #include <zlib.h>
 
-#ifdef _WIN32
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#else
 #include <netdb.h>
-#endif
 
 
 namespace SKELETON

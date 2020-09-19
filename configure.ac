@@ -36,9 +36,6 @@ case "${host_os}" in
  solaris*)
    AC_DEFINE(NO_TIMEGM, , [no timegm])
    ;;
- mingw*)
-   AC_DEFINE(USE_MKTIME, , [use mktime])
-   ;;
  darwin*)
    AC_DEFUN([AM_ICONV], [])
    AC_DEFINE(USE_MKTIME, , [use mktime])
@@ -105,58 +102,23 @@ AC_CHECK_LIB(z,inflate)
 dnl
 dnl packages dependent on platform 
 dnl
-use_windres=""
 
-case "${host_os}" in 
- mingw*)
-   dnl
-   dnl winsock2 using model of socket
-   dnl not available uname on windows
-   dnl
-   
-   AC_CHECK_HEADERS([winsock2.h])
-   AC_CHECK_LIB(ws2_32,_head_libws2_32_a)
-   
-   AC_CHECK_HEADERS([regex.h])
-   AC_CHECK_LIB(regex,regexec)
-   
-   AC_CHECK_HEADERS([iconv.h])
-   AC_CHECK_LIB(iconv,_head_libiconv_a)
-   AC_CHECK_TOOL([WINDRES], [windres], [windres])
-   AC_SUBST(WINDRES)
-   AC_DEFINE(USE_WINDRES, , [use windres])
-   use_windres="yes"
-   ;;
- *)
-   dnl
-   dnl any other POSIX systems
-   dnl
+dnl
+dnl any other POSIX systems
+dnl
 
-   AC_CHECK_HEADERS([sys/utsname.h])
+AC_CHECK_HEADERS([sys/utsname.h])
 
-   AC_CHECK_HEADERS([socket.h])
-   AC_CHECK_LIB(socket,socket)
-   ;;
-esac
-
-AM_CONDITIONAL(MAKE_WINDRES, test -n "$use_windres")
+AC_CHECK_HEADERS([socket.h])
+AC_CHECK_LIB(socket,socket)
 
 
 dnl
 dnl X関連ライブラリ
 dnl
-X11_CFLAGS=""
-X11_LIBS=""
-
-case "${host_os}" in 
- mingw*)
-   ;;
- *)
-   PKG_CHECK_MODULES(X11, x11)
-   AC_SUBST(X11_CFLAGS)
-   AC_SUBST(X11_LIBS)
-   ;;
-esac
+PKG_CHECK_MODULES(X11, x11)
+AC_SUBST(X11_CFLAGS)
+AC_SUBST(X11_LIBS)
 
 
 dnl
