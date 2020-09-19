@@ -357,7 +357,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_notebook.append_page( m_edit_settingtxt, "SETTING.TXT" );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Preferences::slot_switch_page ) );
 
-    get_vbox()->pack_start( m_notebook );
+    get_content_area()->pack_start( m_notebook );
     set_title( "「" + DBTREE::board_name( get_url() ) + "」のプロパティ" );
     resize( 600, 400 );
     show_all_children();

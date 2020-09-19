@@ -19,8 +19,8 @@ AboutConfigDiagStr::AboutConfigDiagStr( Gtk::Window* parent, std::string* value,
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagStr::slot_default ) );
     m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_hbox );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_hbox );
 
     set_activate_entry( m_entry );
 
@@ -56,8 +56,8 @@ AboutConfigDiagInt::AboutConfigDiagInt( Gtk::Window* parent, int* value, const i
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagInt::slot_default ) );
     m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_hbox );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_hbox );
 
     set_activate_entry( m_entry );
 
@@ -98,8 +98,8 @@ AboutConfigDiagBool::AboutConfigDiagBool( Gtk::Window* parent, bool* value, cons
     m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
 
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_hbox );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_hbox );
 
     set_title( "真偽値設定" );
     show_all_children();
