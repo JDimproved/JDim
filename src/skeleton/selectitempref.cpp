@@ -124,8 +124,8 @@ void SelectItemPref::pack_widgets()
 
     m_hbox.pack_start( m_scroll_hidden, Gtk::PACK_EXPAND_WIDGET );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_hbox );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_hbox );
 
     show_all_children();
 }

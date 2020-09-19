@@ -22,7 +22,7 @@ namespace SKELETON
             m_edit.set_editable( editable );
 
             add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
-            get_vbox()->pack_start( m_edit  );
+            get_content_area()->pack_start( m_edit );
             set_title( title );
             show_all_children();
 

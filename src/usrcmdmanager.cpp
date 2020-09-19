@@ -58,8 +58,8 @@ public:
         m_vbox.pack_start( m_label, Gtk::PACK_SHRINK );
         m_vbox.pack_start( m_entry, Gtk::PACK_SHRINK );
 
-        get_vbox()->set_spacing( 8 );
-        get_vbox()->pack_start( m_vbox );
+        get_content_area()->set_spacing( 8 );
+        get_content_area()->pack_start( m_vbox );
 
         set_title( "テキスト入力" );
         show_all_children();

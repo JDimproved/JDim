@@ -32,7 +32,7 @@ DetailDiag::DetailDiag( Gtk::Window* parent, const std::string& url,
     m_notebook.append_page( *m_detail, tab_detail );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &DetailDiag::slot_switch_page ) );
 
-    get_vbox()->pack_start( m_notebook );
+    get_content_area()->pack_start( m_notebook );
 
     show_all_children();
     grab_ok();

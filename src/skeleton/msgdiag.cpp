@@ -153,7 +153,7 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
                 
     Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox );
     hbox->pack_start( m_chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
-    get_vbox()->pack_start( *hbox, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( *hbox, Gtk::PACK_SHRINK );
 
     Gtk::Button* button = nullptr;
 
