@@ -70,7 +70,7 @@ namespace CORE
         Gtk::Image m_icon;
         Gtk::Label m_label;
 
-        Gtk::Table m_table;
+        Gtk::Grid m_table;
 
         Gtk::Label m_label_res;
         Gtk::Label m_label_mail;

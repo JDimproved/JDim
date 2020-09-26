@@ -106,11 +106,10 @@ void PageNet::slot_setup_browser()
 
 PageFont::PageFont() : Gtk::VBox(),
                        m_label( "３/５．フォントの設定をします", Gtk::ALIGN_START ),
-                       m_table( 2, 4 ),
-                       m_label_res( "スレ(_T)", Gtk::ALIGN_START, Gtk::ALIGN_START, true ),
-                       m_label_mail( "メール(_U)", Gtk::ALIGN_START, Gtk::ALIGN_START, true ),
-                       m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_START, Gtk::ALIGN_START, true ),
-                       m_label_tree( "板／スレ一覧(_O)", Gtk::ALIGN_START, Gtk::ALIGN_START,  true ),
+                       m_label_res( "スレ(_T)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true ),
+                       m_label_mail( "メール(_U)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true ),
+                       m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true ),
+                       m_label_tree( "板／スレ一覧(_O)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true ),
                        m_font_res( "スレフォント" ),
                        m_font_mail( "メール欄フォント" ),
                        m_font_popup( "ポップアップフォント" ),
@@ -136,16 +135,23 @@ PageFont::PageFont() : Gtk::VBox(),
     m_font_popup.signal_font_set().connect( sigc::mem_fun( *this, &PageFont::slot_font_popup ) );
     m_font_tree.signal_font_set().connect( sigc::mem_fun( *this, &PageFont::slot_font_tree ) );
 
-    m_table.set_spacings( 4 );
-    m_table.attach( m_label_res, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK );
-    m_table.attach( m_label_mail, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK );
-    m_table.attach( m_label_popup, 0, 1, 2, 3, Gtk::FILL, Gtk::SHRINK );
-    m_table.attach( m_label_tree, 0, 1, 3, 4, Gtk::FILL, Gtk::SHRINK );
+    m_font_res.set_hexpand( true );
+    m_font_mail.set_hexpand( true );
+    m_font_popup.set_hexpand( true );
+    m_font_tree.set_hexpand( true );
 
-    m_table.attach( m_font_res, 1, 2, 0, 1, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
-    m_table.attach( m_font_mail, 1, 2, 1, 2, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
-    m_table.attach( m_font_popup, 1, 2, 2, 3, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
-    m_table.attach( m_font_tree, 1, 2, 3, 4, Gtk::FILL | Gtk::EXPAND, Gtk::SHRINK );
+    m_table.set_row_spacing( 4 );
+    m_table.set_column_spacing( 4 );
+    m_table.set_hexpand( true );
+    m_table.attach( m_label_res, 0, 0 );
+    m_table.attach( m_label_mail, 0, 1 );
+    m_table.attach( m_label_popup, 0, 2 );
+    m_table.attach( m_label_tree, 0, 3 );
+
+    m_table.attach( m_font_res, 1, 0 );
+    m_table.attach( m_font_mail, 1, 1 );
+    m_table.attach( m_font_popup, 1, 2 );
+    m_table.attach( m_font_tree, 1, 3 );
 
     set_spacing( SPACING_SIZE );
     pack_start( m_hbox_label, Gtk::PACK_SHRINK );
