@@ -117,7 +117,6 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_cr( nullptr, cairo_destroy )
     , m_backscreen( nullptr, cairo_surface_destroy )
     , m_enable_draw{ true }
-    , m_scroll_window{ true }
     , m_back_frame_top( nullptr, cairo_surface_destroy )
     , m_back_frame_bottom( nullptr, cairo_surface_destroy )
     , m_pre_pos_y{ -1 }
@@ -198,7 +197,6 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_view.signal_motion_notify_event().connect(  sigc::mem_fun( *this, &DrawAreaBase::slot_motion_notify_event ));
     m_view.signal_key_press_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_press_event ));
     m_view.signal_key_release_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_release_event ));
-    m_view.signal_visibility_notify_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_visibility_notify_event ) );
 
     pack_start( m_view );
 
@@ -260,8 +258,6 @@ void DrawAreaBase::clear()
 
     m_rect_backscreen.y = 0;
     m_rect_backscreen.height = 0;
-
-    m_scroll_window = true;
 
     m_enable_draw = true;
 
@@ -1779,7 +1775,6 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
               << " y_screen = " << y_screen << " h_screen = " << height_screen
               << " upper = " << upper << " lower = " << lower
               << " scrollmode = " << m_scrollinfo.mode
-              << " scroll_window = " << m_scroll_window
               << " url = " << m_url
               << std::endl;
 #endif
@@ -1932,67 +1927,41 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
         }
     }
 
+    // 前回描画したオートスクロールマーカを消す
+    if( m_ready_back_marker ){
 
-    // 高速スクロール
-    // DrawingAreaの領域が全て表示されているときは Gdk::Window::scroll() を使ってスクロール
-    // 一部が隠れている時はバックスクリーン内でスクロール処理してバックスクリーン全体をウィンドウにコピーする
-    // slot_visibility_notify_event()を参照せよ
-    if( m_scroll_window ){
+        m_ready_back_marker = false;
 
-#ifdef _DEBUG
-        std::cout << "rapid scroll\n";
-#endif
-
-        // 前回描画したオートスクロールマーカを消す
-        if( m_ready_back_marker ){
-
-            m_ready_back_marker = false;
-
-            cairo_save( m_cr.get() );
-            cairo_rectangle( m_cr.get(), m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-            cairo_clip( m_cr.get() );
-            cairo_set_source_surface( m_cr.get(), m_back_marker.get(), m_clip_marker.x, m_clip_marker.y );
-            cairo_paint( m_cr.get() );
-            cairo_restore( m_cr.get() );
-        }
-
-        // 前回描画したフレームを消す
-        if( m_ready_back_frame ){
-
-            m_ready_back_frame = false;
-
-            cairo_save( m_cr.get() );
-            cairo_rectangle( m_cr.get(), 0.0, 0.0, width_view, height_view );
-            cairo_clip( m_cr.get() );
-            cairo_set_source_surface( m_cr.get(), m_back_frame_top.get(), 0.0, 0.0 );
-            cairo_paint( m_cr.get() );
-            cairo_set_source_surface( m_cr.get(), m_back_frame_bottom.get(), 0.0, height_view - WIDTH_FRAME );
-            cairo_paint( m_cr.get() );
-            cairo_restore( m_cr.get() );
-        }
-
-        // バックスクリーンをウィンドウにコピー
         cairo_save( m_cr.get() );
-        cairo_rectangle( m_cr.get(), 0.0, y_screen, width_view, height_screen );
+        cairo_rectangle( m_cr.get(), m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
         cairo_clip( m_cr.get() );
-        cairo_set_source_surface( m_cr.get(), m_backscreen.get(), 0.0, 0.0 );
+        cairo_set_source_surface( m_cr.get(), m_back_marker.get(), m_clip_marker.x, m_clip_marker.y );
         cairo_paint( m_cr.get() );
         cairo_restore( m_cr.get() );
     }
 
-    // バックスクリーンを全てウィンドウにコピー
-    else{
+    // 前回描画したフレームを消す
+    if( m_ready_back_frame ){
 
-#ifdef _DEBUG
-        std::cout << "copy all\n";
-#endif
+        m_ready_back_frame = false;
+
         cairo_save( m_cr.get() );
         cairo_rectangle( m_cr.get(), 0.0, 0.0, width_view, height_view );
         cairo_clip( m_cr.get() );
-        cairo_set_source_surface( m_cr.get(), m_backscreen.get(), 0.0, 0.0 );
+        cairo_set_source_surface( m_cr.get(), m_back_frame_top.get(), 0.0, 0.0 );
+        cairo_paint( m_cr.get() );
+        cairo_set_source_surface( m_cr.get(), m_back_frame_bottom.get(), 0.0, height_view - WIDTH_FRAME );
         cairo_paint( m_cr.get() );
         cairo_restore( m_cr.get() );
     }
+
+    // バックスクリーンをウィンドウにコピー
+    cairo_save( m_cr.get() );
+    cairo_rectangle( m_cr.get(), 0.0, y_screen, width_view, height_screen );
+    cairo_clip( m_cr.get() );
+    cairo_set_source_surface( m_cr.get(), m_backscreen.get(), 0.0, 0.0 );
+    cairo_paint( m_cr.get() );
+    cairo_restore( m_cr.get() );
 
     // オートスクロールマーカと枠の描画
     draw_marker();
@@ -2314,8 +2283,7 @@ void DrawAreaBase::draw_marker()
 
     // オートスクロールマーカを描く前に背景のバックアップを取っておきスクロールする前に描き直す
     // exec_draw_screen() 参照
-    if( m_scroll_window ){
-
+    {
         cairo_t* const cr = cairo_create( m_back_marker.get() );
         cairo_rectangle( cr, 0.0, 0.0, m_clip_marker.width, m_clip_marker.height );
         cairo_clip( cr );
@@ -2347,25 +2315,22 @@ void DrawAreaBase::draw_frame()
     const int width_win = m_view.get_width();
     const int height_win = m_view.get_height();
 
-    if( m_scroll_window ){
+    cairo_surface_t* const borrowed_sf = cairo_get_target( m_cr.get() );
+    cairo_t* cr = cairo_create( m_back_frame_top.get() );
+    cairo_rectangle( cr, 0.0, 0.0, width_win, WIDTH_FRAME );
+    cairo_clip( cr );
+    cairo_set_source_surface( cr, borrowed_sf, 0.0, 0.0 );
+    cairo_paint( cr );
+    cairo_destroy( cr );
 
-        cairo_surface_t* const borrowed_sf = cairo_get_target( m_cr.get() );
-        cairo_t* cr = cairo_create( m_back_frame_top.get() );
-        cairo_rectangle( cr, 0.0, 0.0, width_win, WIDTH_FRAME );
-        cairo_clip( cr );
-        cairo_set_source_surface( cr, borrowed_sf, 0.0, 0.0 );
-        cairo_paint( cr );
-        cairo_destroy( cr );
+    cr = cairo_create( m_back_frame_bottom.get() );
+    cairo_rectangle( cr, 0.0, 0.0, width_win, WIDTH_FRAME );
+    cairo_clip( cr );
+    cairo_set_source_surface( cr, borrowed_sf, 0.0, WIDTH_FRAME - height_win );
+    cairo_paint( cr );
+    cairo_destroy( cr );
 
-        cr = cairo_create( m_back_frame_bottom.get() );
-        cairo_rectangle( cr, 0.0, 0.0, width_win, WIDTH_FRAME );
-        cairo_clip( cr );
-        cairo_set_source_surface( cr, borrowed_sf, 0.0, WIDTH_FRAME - height_win );
-        cairo_paint( cr );
-        cairo_destroy( cr );
-
-        m_ready_back_frame = true;
-    }
+    m_ready_back_frame = true;
 
     cairo_save( m_cr.get() );
     gdk_cairo_set_source_rgba( m_cr.get(), m_color[ COLOR_FRAME ].gobj() );
@@ -4813,42 +4778,6 @@ bool DrawAreaBase::slot_leave_notify_event( GdkEventCrossing* event )
     return false;
 }
 
-
-//
-// ウィンドウの重なり状態が変わった
-//
-// スクロール時の描画モードを変更する
-//
-// DrawingAreaの領域が全て表示されているときは Gdk::Window::scroll() を使ってスクロール
-// 一部が隠れている時はバックスクリーン内でスクロール処理してバックスクリーン全体をウィンドウにコピーする
-//
-bool DrawAreaBase::slot_visibility_notify_event(GdkEventVisibility* event)
-{
-#ifdef _DEBUG
-    std::cout << "DrawAreaBase::slot_visibility_notify_event\n";
-#endif
-
-    m_scroll_window = false;
-
-    if (event->state == GDK_VISIBILITY_UNOBSCURED) {
-
-#ifdef _DEBUG
-        std::cout << "unobscured\n";
-#endif
-        m_scroll_window = true;
-
-    } else if ( event->state == GDK_VISIBILITY_PARTIAL ){
-
-#ifdef _DEBUG
-        std::cout << "partial\n";
-#endif
-    }
-#ifdef _DEBUG
-    else  std::cout << "invisible\n";
-#endif
-
-    return true;
-}
 
 
 //

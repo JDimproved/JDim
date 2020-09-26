@@ -134,11 +134,6 @@ namespace ARTICLE
         bool m_enable_draw;
         DRAWINFO m_drawinfo{};
 
-        // 高速スクロール描画実行
-        // DrawingAreaの領域が全て表示されているときは Gdk::Window::scroll() を使ってスクロール
-        // 一部が隠れている時はバックスクリーン内でスクロール処理してバックスクリーン全体をウィンドウにコピーする
-        bool m_scroll_window; 
-
         // キャレット情報
         CARET_POSITION m_caret_pos;           // 現在のキャレットの位置(クリックやドラッグすると移動)
         CARET_POSITION m_caret_pos_pre;       // 移動前のキャレットの位置(選択範囲の描画などで使用する)
@@ -483,7 +478,6 @@ namespace ARTICLE
         bool slot_draw( const Cairo::RefPtr< Cairo::Context >& cr );
         bool slot_scroll_event( GdkEventScroll* event );
         bool slot_leave_notify_event( GdkEventCrossing* event );
-        bool slot_visibility_notify_event( GdkEventVisibility* event );
         void slot_realize();
 
         bool slot_button_press_event( GdkEventButton* event );
