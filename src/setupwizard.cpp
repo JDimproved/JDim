@@ -143,15 +143,17 @@ PageFont::PageFont() : Gtk::VBox(),
     m_table.set_row_spacing( 4 );
     m_table.set_column_spacing( 4 );
     m_table.set_hexpand( true );
-    m_table.attach( m_label_res, 0, 0 );
-    m_table.attach( m_label_mail, 0, 1 );
-    m_table.attach( m_label_popup, 0, 2 );
-    m_table.attach( m_label_tree, 0, 3 );
+    constexpr int width = 1;
+    constexpr int height = 1;
+    m_table.attach( m_label_res, 0, 0, width, height );
+    m_table.attach( m_label_mail, 0, 1, width, height );
+    m_table.attach( m_label_popup, 0, 2, width, height );
+    m_table.attach( m_label_tree, 0, 3, width, height );
 
-    m_table.attach( m_font_res, 1, 0 );
-    m_table.attach( m_font_mail, 1, 1 );
-    m_table.attach( m_font_popup, 1, 2 );
-    m_table.attach( m_font_tree, 1, 3 );
+    m_table.attach( m_font_res, 1, 0, width, height );
+    m_table.attach( m_font_mail, 1, 1, width, height );
+    m_table.attach( m_font_popup, 1, 2, width, height );
+    m_table.attach( m_font_tree, 1, 3, width, height );
 
     set_spacing( SPACING_SIZE );
     pack_start( m_hbox_label, Gtk::PACK_SHRINK );
