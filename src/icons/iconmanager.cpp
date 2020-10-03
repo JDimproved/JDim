@@ -84,15 +84,6 @@ using namespace ICON;
 
 ICON_Manager::ICON_Manager()
 {
-    // TODO: Use Gtk::IconTheme::load_icon() instead of Gtk::Widget::render_icon_pixbuf()
-    struct Dummy : public Gtk::Image
-    {
-        Glib::RefPtr< Gdk::Pixbuf > render_icon( Gtk::BuiltinStockID stock, Gtk::BuiltinIconSize size )
-        {
-            return render_icon_pixbuf( stock, size );
-        }
-    } m_dummy;
-
     m_list_icons.resize( NUM_ICONS );
 
     m_list_icons[ ICON::JD16 ] =  Gdk::Pixbuf::create_from_inline( sizeof( icon_jd16 ), icon_jd16 );
@@ -145,18 +136,31 @@ ICON_Manager::ICON_Manager()
     //////////////////////////////
     // ツールバーのアイコン
 
+    // アイコン名はfreedesktop.orgの規格とGTK3デフォルトテーマのAdwaitaを参照する
+    // https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+    // https://gitlab.gnome.org/GNOME/adwaita-icon-theme
+
+    const auto icon_theme = Gtk::IconTheme::get_default();
+    constexpr int size_menu = 16; // Gtk::ICON_SIZE_MENU
+
     // 共通
-    m_list_icons[ ICON::SEARCH_PREV ]  = m_dummy.render_icon( Gtk::Stock::GO_UP, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::SEARCH_NEXT ]  = m_dummy.render_icon( Gtk::Stock::GO_DOWN, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::STOPLOADING ]  = m_dummy.render_icon( Gtk::Stock::STOP, Gtk::ICON_SIZE_MENU );
+    m_list_icons[ ICON::SEARCH_PREV ] = icon_theme->load_icon( "go-up", size_menu );
+    m_list_icons[ ICON::SEARCH_NEXT ] = icon_theme->load_icon( "go-down", size_menu );
+    m_list_icons[ ICON::STOPLOADING ] = icon_theme->load_icon( "process-stop", size_menu );
     m_list_icons[ ICON::WRITE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_write ), icon_write );
-    m_list_icons[ ICON::RELOAD ]  = m_dummy.render_icon( Gtk::Stock::REFRESH, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::APPENDFAVORITE ]  = m_dummy.render_icon( Gtk::Stock::COPY, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::DELETE ]  = m_dummy.render_icon( Gtk::Stock::DELETE, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::QUIT ]  = m_dummy.render_icon( Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::BACK ]  = m_dummy.render_icon( Gtk::Stock::GO_BACK, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::FORWARD ]  = m_dummy.render_icon( Gtk::Stock::GO_FORWARD, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::LOCK ]  = m_dummy.render_icon( Gtk::Stock::NO, Gtk::ICON_SIZE_MENU );
+    m_list_icons[ ICON::RELOAD ] = icon_theme->load_icon( "view-refresh", size_menu );
+    m_list_icons[ ICON::APPENDFAVORITE ] = icon_theme->load_icon( "edit-copy", size_menu );
+    m_list_icons[ ICON::DELETE ] = icon_theme->load_icon( "edit-delete", size_menu );
+    m_list_icons[ ICON::QUIT ] = icon_theme->load_icon( "window-close", size_menu );
+    m_list_icons[ ICON::BACK ] = icon_theme->load_icon( "go-previous", size_menu );
+    m_list_icons[ ICON::FORWARD ] = icon_theme->load_icon( "go-next", size_menu );
+    try {
+        // changes-prevent is not a standard icon name.
+        m_list_icons[ ICON::LOCK ] = icon_theme->load_icon( "changes-prevent-symbolic", size_menu );
+    }
+    catch( Gtk::IconThemeError& ) {
+        m_list_icons[ ICON::LOCK ] = icon_theme->load_icon( "window-close", size_menu );
+    }
 
     // メイン
     m_list_icons[ ICON::BBSLISTVIEW ] = m_list_icons[ ICON::DIR ];
@@ -169,27 +173,27 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::BOARDVIEW ] = m_list_icons[ ICON::BOARD ];
     m_list_icons[ ICON::ARTICLEVIEW ] = m_list_icons[ ICON::THREAD ];
     m_list_icons[ ICON::IMAGEVIEW ] = m_list_icons[ ICON::IMAGE ];
-    m_list_icons[ ICON::GO ]  = m_dummy.render_icon( Gtk::Stock::JUMP_TO, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::UNDO ]  = m_dummy.render_icon( Gtk::Stock::UNDO, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::REDO ]  = m_dummy.render_icon( Gtk::Stock::REDO, Gtk::ICON_SIZE_MENU );
+    m_list_icons[ ICON::GO ] = icon_theme->load_icon( "go-jump", size_menu );
+    m_list_icons[ ICON::UNDO ] = icon_theme->load_icon( "edit-undo", size_menu );
+    m_list_icons[ ICON::REDO ] = icon_theme->load_icon( "edit-redo", size_menu );
 
     // サイドバー
-    m_list_icons[ ICON::CHECK_UPDATE_ROOT ]  = m_dummy.render_icon( Gtk::Stock::REFRESH, Gtk::ICON_SIZE_MENU );
+    m_list_icons[ ICON::CHECK_UPDATE_ROOT ] = icon_theme->load_icon( "view-refresh", size_menu );
     m_list_icons[ ICON::CHECK_UPDATE_OPEN_ROOT ]  = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread ), icon_thread );
 
     // スレビュー
-    m_list_icons[ ICON::SEARCH ]  = m_dummy.render_icon( Gtk::Stock::FIND, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::LIVE ]  = m_dummy.render_icon( Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU );
+    m_list_icons[ ICON::SEARCH ] = icon_theme->load_icon( "edit-find", size_menu );
+    m_list_icons[ ICON::LIVE ] = icon_theme->load_icon( "media-playback-start", size_menu );
 
     // 検索バー
-    m_list_icons[ ICON::CLOSE_SEARCH ]  = m_dummy.render_icon( Gtk::Stock::UNDO, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::CLEAR_SEARCH ]  = m_dummy.render_icon( Gtk::Stock::CLEAR, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::SEARCH_AND ]  = m_dummy.render_icon( Gtk::Stock::CUT, Gtk::ICON_SIZE_MENU );
-    m_list_icons[ ICON::SEARCH_OR ]  = m_dummy.render_icon( Gtk::Stock::ADD, Gtk::ICON_SIZE_MENU );
+    m_list_icons[ ICON::CLOSE_SEARCH ] = icon_theme->load_icon( "edit-undo", size_menu );
+    m_list_icons[ ICON::CLEAR_SEARCH ] = icon_theme->load_icon( "edit-clear", size_menu );
+    m_list_icons[ ICON::SEARCH_AND ] = icon_theme->load_icon( "edit-cut", size_menu );
+    m_list_icons[ ICON::SEARCH_OR ] = icon_theme->load_icon( "list-add", size_menu );
 
     // 書き込みビュー
     m_list_icons[ ICON::PREVIEW ] = m_list_icons[ ICON::THREAD ];
-    m_list_icons[ ICON::INSERTTEXT ]  = m_dummy.render_icon( Gtk::Stock::OPEN, Gtk::ICON_SIZE_MENU );
+    m_list_icons[ ICON::INSERTTEXT ] = icon_theme->load_icon( "document-open", size_menu );
 
     load_theme();
 }
