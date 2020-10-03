@@ -3,8 +3,10 @@
 #ifndef _JDICONV_H
 #define _JDICONV_H
 
-#include <iconv.h>
 #include <string>
+
+#include <gmodule.h> // GIConv
+
 
 // iconv の内部で確保するバッファサイズ(バイト)
 //  BUF_SIZE_ICONV_IN を超える入力は扱えないので注意
@@ -18,7 +20,7 @@ namespace JDLIB
 {
     class Iconv
     {
-        iconv_t m_cd;
+        GIConv m_cd; // iconv実装は環境で違いがあるためGlibのラッパーAPIを利用する
 
         size_t m_byte_left_in{};
         char* m_buf_in{};

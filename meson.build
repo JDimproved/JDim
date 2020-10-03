@@ -98,15 +98,6 @@ if cpp_compiler.has_header('crypt.h')
   conf.set('HAVE_CRYPT_H', 1)
 endif
 
-# iconv
-if cpp_compiler.has_function('iconv_open')
-  iconv_dep = dependency('', required : false)
-elif cpp_compiler.has_header_symbol('iconv.h', 'iconv_open')
-  iconv_dep = cpp_compiler.find_library('iconv')
-else
-  error('iconv fucntion not found')
-endif
-
 # socket
 if cpp_compiler.has_header('sys/socket.h')
   socket_dep = dependency('', required : false)
