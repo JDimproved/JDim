@@ -1678,12 +1678,12 @@ bool Core::open_color_diag( std::string title, int id )
 {
     Gdk::RGBA color( CONFIG::get_color( id ) );
 
-    Gtk::ColorSelectionDialog diag( title );
-    diag.get_color_selection()->set_current_rgba( color );
+    Gtk::ColorChooserDialog diag( title );
+    diag.set_use_alpha( false );
+    diag.set_rgba( color );
     diag.set_transient_for( *CORE::get_mainwindow() );
     if( diag.run() == Gtk::RESPONSE_OK ){
-        Gtk::ColorSelection* sel = diag.get_color_selection();
-        CONFIG::set_color( id, MISC::color_to_str( sel->get_current_rgba() ) );
+        CONFIG::set_color( id, MISC::color_to_str( diag.get_rgba() ) );
         return true;
     }
 
