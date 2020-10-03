@@ -734,6 +734,17 @@ TEST_F(MISC_ParseHtmlFormActionTest, relative_path_an_upper_order)
     EXPECT_EQ( result, "/test/bbs.cgi" );
 }
 
+TEST_F(MISC_ParseHtmlFormActionTest, relative_path_same_hierarchy)
+{
+    std::string html = R"(<form method="POST" action="./bbs.cgi">")";
+    std::string result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, "/test/bbs.cgi" );
+
+    html = R"(<form method="POST" action="./subbbs.cgi">")";
+    result = MISC::parse_html_form_action( html );
+    EXPECT_EQ( result, "/test/subbbs.cgi" );
+}
+
 TEST_F(MISC_ParseHtmlFormActionTest, relative_path_double_upper_orders)
 {
     const std::string html = R"(<form method="POST" action="../../test/bbs.cgi">")";

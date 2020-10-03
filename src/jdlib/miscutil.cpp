@@ -1941,6 +1941,7 @@ std::vector<MISC::FormDatum> MISC::parse_html_form_data( const std::string& html
 std::string MISC::parse_html_form_action( const std::string& html )
 {
     const char pattern[] = R"(<form +method=("POST"|POST)[^>]* action="(\.\.)?(/test/(sub)?bbs\.cgi(\?[^"]*)?))";
+    const char pattern_same_hierarchy[] = R"(<form +method=("POST"|POST)[^>]* action="\.(/(sub)?bbs\.cgi(\?[^"]*)?))";
     JDLIB::Regex regex;
     constexpr std::size_t offset = 0;
     constexpr bool icase = true; // 大文字小文字区別しない
@@ -1951,6 +1952,9 @@ std::string MISC::parse_html_form_action( const std::string& html )
     std::string path;
     if( regex.exec( pattern, html, offset, icase, newline, usemigemo, wchar ) ) {
         path = regex.str( 3 );
+    }
+    else if( regex.exec( pattern_same_hierarchy, html, offset, icase, newline, usemigemo, wchar ) ) {
+        path = "/test" + regex.str( 2 );
     }
     return path;
 }
