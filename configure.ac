@@ -37,16 +37,12 @@ case "${host_os}" in
    AC_DEFINE(NO_TIMEGM, , [no timegm])
    ;;
  darwin*)
-   AC_DEFUN([AM_ICONV], [])
    AC_DEFINE(USE_MKTIME, , [use mktime])
    ;;
 dnl linux*|gnu*|*-gnu
  *)
-   AC_DEFUN([AM_ICONV], [])
    ;;
 esac
-
-AM_ICONV
 
 
 dnl ---------------------------------------------------

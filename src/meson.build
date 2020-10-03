@@ -80,7 +80,6 @@ jdim_deps = [
   crypt_dep,
   gtkmm_dep,
   ice_dep,
-  iconv_dep,
   migemo_dep,
   regex_dep,
   sm_dep,

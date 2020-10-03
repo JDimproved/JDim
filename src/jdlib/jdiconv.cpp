@@ -14,23 +14,6 @@
 #include <cstdlib>
 
 
-namespace
-{
-struct iconv_cast
-{
-    char** const m_t;
-    iconv_cast() = delete;
-    explicit iconv_cast( char** t ) noexcept : m_t{ t } {}
-    ~iconv_cast() noexcept = default;
-
-    // POSIX-1.2008 : https://pubs.opengroup.org/onlinepubs/9699919799/functions/iconv.html
-    operator char**() const noexcept { return const_cast< char** >( m_t ); }
-    // SUSv2 : https://pubs.opengroup.org/onlinepubs/7908799/xsh/iconv.html
-    operator const char**() const noexcept { return const_cast< const char** >( m_t ); }
-};
-} // namespace
-
-
 using namespace JDLIB;
 
 Iconv::Iconv( const std::string& coding_from, const std::string& coding_to )
@@ -43,29 +26,29 @@ Iconv::Iconv( const std::string& coding_from, const std::string& coding_to )
     m_buf_in = ( char* )malloc( BUF_SIZE_ICONV_IN );
     m_buf_out = ( char* )malloc( BUF_SIZE_ICONV_OUT );
     
-    m_cd = iconv_open( coding_to.c_str(), m_coding_from.c_str() ); 
+    m_cd = g_iconv_open( coding_to.c_str(), m_coding_from.c_str() );
 
     // MS932で失敗したらCP932で試してみる
-    if( m_cd == ( iconv_t ) -1 ){
-        if( coding_to == "MS932" ) m_cd = iconv_open( "CP932", m_coding_from.c_str() );
-        else if( coding_from == "MS932" ) m_cd = iconv_open( coding_to.c_str(), "CP932" ); 
+    if( m_cd == ( GIConv ) -1 ){
+        if( coding_to == "MS932" ) m_cd = g_iconv_open( "CP932", m_coding_from.c_str() );
+        else if( coding_from == "MS932" ) m_cd = g_iconv_open( coding_to.c_str(), "CP932" );
     }
 
     // "EUCJP-*"で失敗したら"EUCJP"で試してみる
-    if( m_cd == ( iconv_t ) - 1 && ( errno & EINVAL ) != 0 )
+    if( m_cd == ( GIConv ) - 1 && ( errno & EINVAL ) != 0 )
     {
         if( coding_to.find( "EUCJP-", 0 ) == 0 )
 		{
-            m_cd = iconv_open( "EUCJP//TRANSLIT", coding_from.c_str() );
+            m_cd = g_iconv_open( "EUCJP//TRANSLIT", coding_from.c_str() );
         }
         else if( coding_from.find( "EUCJP-", 0 ) == 0 )
 		{
             const std::string coding_to_translit = coding_to + "//TRANSLIT";
-            m_cd = iconv_open( coding_to_translit.c_str(), "EUCJP" );
+            m_cd = g_iconv_open( coding_to_translit.c_str(), "EUCJP" );
         }
     }
 
-    if( m_cd == ( iconv_t ) -1 ){
+    if( m_cd == ( GIConv ) -1 ){
         MISC::ERRMSG( "can't open iconv coding = " + m_coding_from + " to " + coding_to );
     }
 }
@@ -78,7 +61,7 @@ Iconv::~Iconv()
     
     if( m_buf_in ) free( m_buf_in );
     if( m_buf_out ) free( m_buf_out );
-    if( m_cd != ( iconv_t ) -1 ) iconv_close( m_cd );
+    if( m_cd != ( GIConv ) -1 ) g_iconv_close( m_cd );
 }
 
 
@@ -90,7 +73,7 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
 #endif
 
     assert( m_byte_left_in + size_in < BUF_SIZE_ICONV_IN );
-    if( m_cd == ( iconv_t ) -1 ) return nullptr;
+    if( m_cd == ( GIConv ) -1 ) return nullptr;
     
     size_t byte_left_out = BUF_SIZE_ICONV_OUT;
     char* buf_out = m_buf_out;
@@ -113,7 +96,7 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
         std::cout << "byte_left_out = " << byte_left_out << std::endl;
 #endif
     
-        const int ret = iconv( m_cd, iconv_cast{ &m_buf_in_tmp }, &m_byte_left_in, &buf_out, &byte_left_out );
+        const int ret = g_iconv( m_cd, &m_buf_in_tmp, &m_byte_left_in, &buf_out, &byte_left_out );
 
 #ifdef _DEBUG
         std::cout << "--> ret = " << ret << std::endl;
