@@ -9,8 +9,8 @@ layout: default
 
 - [動作環境](#environment)
 - [makeに必要なツール、ライブラリ](#requirement)
-- [make 方法( rpmbuild の場合 )](#make-rpmbuild)
-- [make 方法( configure + make の場合 )](#make-configure)
+- [ビルド方法( configure + make の場合 )](#make-configure)
+- [ビルド方法( meson の場合 )](#build-meson)
 - [configureオプション](#configure-option)
 - [メモ](#memo)
 
@@ -58,20 +58,25 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
 <small>(v0.3.0+から実験的なサポートとして追加)</small>
 
 
-<a name="make-rpmbuild"></a>
-### make 方法( rpmbuild の場合 )
-1. `rpmbuild -tb 〜.tgz` でrpmファイルが出来るのであとは `rpm -Uvh 〜.rpm`
-2. ライブラリが足りないといわれたら `yum install 〜-devel`
-3. 起動はメニューから起動するか、端末で `jdim` と打ち込んでエンターを押す。
-
-
 <a name="make-configure"></a>
-### make 方法( configure + make の場合 )
+### ビルド方法( configure + make の場合 )
 
 1. `autoreconf -i` ( 又は `./autogen.sh` )
 2. `./configure`
 3. `make`
 4. (お好みで) `strip src/jdim`
+
+
+<a name="build-meson"></a>
+### ビルド方法( meson の場合 )
+
+1. `meson builddir`
+2. `meson compile -C builddir`
+3. 起動は `./builddir/src/jdim`
+
+#### mesonのビルドオプション
+- `meson builddir -Dregex=glib` のように指定する。
+- オプションの一覧は `meson configure` を実行してProject optionsの段落を参照する。
 
 
 <a name="configure-option"></a>

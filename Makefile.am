@@ -12,7 +12,7 @@ dist_iconsvg_DATA = jdim.svg
 metainfodir = $(datadir)/metainfo
 dist_metainfo_DATA = jdim.metainfo.xml
 
-EXTRA_DIST = AUTHORS TODO README configure jdim.spec
+EXTRA_DIST = AUTHORS TODO README configure
 
 jdim_BUILDINFO_HEADER = buildinfo.h
 jdim_CONFIGURE_ARGS = @ac_configure_args@

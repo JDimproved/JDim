@@ -8,7 +8,6 @@ layout: default
 ## {{ page.title }}
 
 - [バックアップ方法](#backup)
-- [アンインストール方法( rpm の場合 )](#uninstall-rpm)
 - [アンインストール方法( 手動の場合 )](#uninstall-manual)
 
 
@@ -16,14 +15,6 @@ layout: default
 ### バックアップ方法
 キャッシュのバックアップはキャッシュディレクトリ(デフォルトでは `$XDG_CACHE_HOME/jdim` )
 以下を保存するだけでよい。
-
-
-<a name="uninstall-rpm"></a>
-### アンインストール方法( rpm の場合 )
-```
-$ rpm -e jdim
-$ rm -rf <キャッシュディレクトリ>
-```
 
 
 <a name="uninstall-manual"></a>
