@@ -85,7 +85,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
     m_max_line = DBTREE::line_number( get_url() ) * 2;
     m_max_str = DBTREE::message_count( get_url() );
 
-    m_iconv = new JDLIB::Iconv( "UTF-8", DBTREE::board_charset( get_url() ) );;
+    m_iconv = new JDLIB::Iconv( DBTREE::board_charset( get_url() ), "UTF-8" );;
 
     m_lng_iconv = m_max_str * 3;
     if( ! m_lng_iconv ) m_lng_iconv = MAX_STR_ICONV;

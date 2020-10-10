@@ -109,7 +109,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         str_cookies = "クッキー:\n未取得\n";
     }
     else {
-        str_cookies = "クッキー:\n" + MISC::Iconv( temp_cookies, DBTREE::board_charset( get_url() ), "UTF-8" ) + "\n";
+        str_cookies = "クッキー:\n" + MISC::Iconv( temp_cookies, "UTF-8", DBTREE::board_charset( get_url() ) ) + "\n";
     }
 
     std::string keyword = DBTREE::board_keyword_for_write( get_url() );

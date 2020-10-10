@@ -405,7 +405,7 @@ void Root::receive_finish()
     }
 
     // 文字コードを変換してXML作成
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( "MS932", "UTF-8" );
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( "UTF-8", "MS932" );
     int byte_out;
     const char* rawdata_utf8 = libiconv->convert( &*m_rawdata.begin(), m_rawdata.size(),  byte_out );
     bbsmenu2xml( rawdata_utf8 );

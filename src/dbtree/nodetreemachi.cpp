@@ -93,7 +93,7 @@ void NodeTreeMachi::init_loading()
 
     // iconv 初期化
     std::string charset = DBTREE::board_charset( get_url() );
-    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( charset, "UTF-8" );
+    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( "UTF-8", charset );
 
     m_buffer_for_200.clear();
 
@@ -201,7 +201,7 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
                 if( m_regex->exec( reg_subject, line, offset, icase, newline, usemigemo, wchar ) ){
 
                     const std::string charset = DBTREE::board_charset( get_url() );
-                    m_subject_machi = MISC::Iconv( m_regex->str( 1 ), charset, "UTF-8" );
+                    m_subject_machi = MISC::Iconv( m_regex->str( 1 ), "UTF-8", charset );
 #ifdef _DEBUG
                     std::cout << "NodeTreeMachi::process_raw_lines\n";
                     std::cout << "subject = " << m_subject_machi << std::endl;

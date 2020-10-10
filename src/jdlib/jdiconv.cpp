@@ -16,7 +16,7 @@
 
 using namespace JDLIB;
 
-Iconv::Iconv( const std::string& coding_from, const std::string& coding_to )
+Iconv::Iconv( const std::string& coding_to, const std::string& coding_from )
     : m_coding_from( coding_from )
 {
 #ifdef _DEBUG

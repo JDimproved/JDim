@@ -2387,17 +2387,17 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
             {
                 case MISC::CHARCODE_EUC_JP:
 
-                    status_url = MISC::Iconv( tmp, "EUC-JP", "UTF-8" );
+                    status_url = MISC::Iconv( tmp, "UTF-8", "EUC-JP" );
                     break;
 
                 case MISC::CHARCODE_JIS:
 
-                    status_url = MISC::Iconv( tmp, "ISO-2022-JP", "UTF-8" );
+                    status_url = MISC::Iconv( tmp, "UTF-8", "ISO-2022-JP" );
                     break;
 
                 case MISC::CHARCODE_SJIS:
 
-                    status_url = MISC::Iconv( tmp, "MS932", "UTF-8" );
+                    status_url = MISC::Iconv( tmp, "UTF-8", "MS932" );
                     break;
 
                 case MISC::CHARCODE_ASCII:

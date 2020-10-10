@@ -1094,7 +1094,7 @@ void BoardBase::receive_data( const char* data, size_t size )
     if( m_rawdata_left.capacity() < SIZE_OF_RAWDATA ) {
         m_rawdata_left.reserve( SIZE_OF_RAWDATA );
     }
-    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( m_charset, "UTF-8" );
+    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( "UTF-8", m_charset );
 
     m_rawdata_left.append( data, size );
 
@@ -1879,7 +1879,7 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
     if( m_hash_article->size() == 0 ) return;
 
     const bool append_all = query.empty();
-    const std::string query_local = MISC::Iconv( query, "UTF-8", get_charset() );
+    const std::string query_local = MISC::Iconv( query, get_charset(), "UTF-8" );
     const std::list< std::string > list_query = MISC::split_line( query_local );
 
     const std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );

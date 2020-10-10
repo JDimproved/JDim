@@ -172,7 +172,7 @@ void TextLoader::receive_finish()
     set_str_code( std::string() );
 
     // UTF-8に変換しておく
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( get_charset(), "UTF-8" );
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( "UTF-8", get_charset() );
     int byte_out;
     m_data = libiconv->convert( &*m_rawdata.begin(), m_rawdata.size(),  byte_out );
     delete libiconv;
