@@ -79,7 +79,7 @@ void NodeTreeJBBS::init_loading()
 
     // iconv 初期化
     std::string charset = DBTREE::board_charset( get_url() );
-    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( charset, "UTF-8" );
+    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( "UTF-8", charset );
 
     if( m_decoded_lines.capacity() < BUF_SIZE_ICONV_OUT ) {
         m_decoded_lines.reserve( BUF_SIZE_ICONV_OUT );

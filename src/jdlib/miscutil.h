@@ -192,7 +192,7 @@ namespace MISC
 
     // 文字コードを coding_from から coding_to に変換
     // 遅いので連続的な処理が必要な時は使わないこと
-    std::string Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to );
+    std::string Iconv( const std::string& str, const std::string& coding_to, const std::string& coding_from );
 
     // 「&#数字;」形式の数字参照文字列の中の「数字」部分の文字列長
     //

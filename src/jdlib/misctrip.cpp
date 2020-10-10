@@ -244,7 +244,7 @@ std::string MISC::get_trip( const std::string& str, const std::string& charset )
     if( str.empty() ) return std::string();
 
     // str の文字コードを UTF-8 から charset に変更して key に代入する
-    std::string key = MISC::Iconv( str, "UTF-8", charset );
+    std::string key = MISC::Iconv( str, charset, "UTF-8" );
 
     std::string trip;
 

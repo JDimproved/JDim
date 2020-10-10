@@ -1126,7 +1126,7 @@ std::string MISC::charset_url_encode( const std::string& str, const std::string&
 {
     if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( str.c_str(), str.length() );
 
-    const std::string str_enc = MISC::Iconv( str, "UTF-8", charset );
+    const std::string str_enc = MISC::Iconv( str, charset, "UTF-8" );
     return  MISC::url_encode( str_enc.c_str(), str_enc.length() );
 }
 
@@ -1204,13 +1204,13 @@ std::string MISC::base64( const std::string& str )
 //
 // 遅いので連続的な処理が必要な時は使わないこと
 //
-std::string MISC::Iconv( const std::string& str, const std::string& coding_from, const std::string& coding_to )
+std::string MISC::Iconv( const std::string& str, const std::string& coding_to, const std::string& coding_from )
 {
     if( coding_from == coding_to ) return str;
 
     std::string str_bk = str;
 
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( coding_from, coding_to );
+    JDLIB::Iconv* libiconv = new JDLIB::Iconv( coding_to, coding_from );
     int byte_out;
 
     std::string str_enc = libiconv->convert( &*str_bk.begin(), str_bk.size(), byte_out );

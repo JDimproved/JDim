@@ -32,7 +32,7 @@ namespace JDLIB
 
     public:
         
-        Iconv( const std::string& coding_from, const std::string& coding_to );
+        Iconv( const std::string& coding_to, const std::string& coding_from );
         ~Iconv();
 
         const char* convert( char* str_in, int size_in, int& size_out );
