@@ -44,9 +44,6 @@ parts:
       - git
       - libgnutls28-dev
       - libsigc++-2.0-dev
-    stage-packages:
-      # base or gnome-3-34 extension do not include the follow package:
-      - libsigc++-2.0-0v5
     override-build: |
       set -eu
       snapcraftctl build
