@@ -26,7 +26,7 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_
     }
 
     if( add_cancel ){
-        add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL )
+        add_button( g_dgettext( GTK_DOMAIN, "_Cancel" ), Gtk::RESPONSE_CANCEL )
         ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_cancel_clicked ) );
     }
 

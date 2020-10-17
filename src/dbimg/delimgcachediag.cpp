@@ -16,6 +16,8 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 
+#include <glib/gi18n.h>
+
 #include <sys/time.h>
 
 
@@ -25,7 +27,7 @@ using namespace DBIMG;
 DelImgCacheDiag::DelImgCacheDiag()
     : m_label( "画像キャッシュ削除中・・・\n\nしばらくお待ち下さい" )
 {
-    add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL )
+    add_button( g_dgettext( GTK_DOMAIN, "_Cancel" ), Gtk::RESPONSE_CANCEL )
     ->signal_clicked().connect( sigc::mem_fun(*this, &DelImgCacheDiag::slot_cancel_clicked ) );
 
     set_title( "JDim 画像キャッシュ削除中" );

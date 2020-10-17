@@ -21,7 +21,7 @@ namespace SKELETON
         // ボタン追加 + saveボタンをデフォルトボタンにセット
         void add_buttons(){
 
-            add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+            add_button( g_dgettext( GTK_DOMAIN, "_Cancel" ), Gtk::RESPONSE_CANCEL );
 
             if( m_action == Gtk::FILE_CHOOSER_ACTION_OPEN ) add_button( Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT );
             else add_button( Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT );
