@@ -11,6 +11,9 @@
 #include "dispatchmanager.h"
 #include "global.h"
 
+#include <glib/gi18n.h>
+
+
 using namespace SKELETON;
 
 PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_cancel, const bool add_apply, const bool add_open )
@@ -28,7 +31,7 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_
     }
 
     if( add_open ) m_bt_ok = add_button( Gtk::Stock::OPEN, Gtk::RESPONSE_OK );
-    else m_bt_ok = add_button( Gtk::Stock::OK, Gtk::RESPONSE_OK );
+    else m_bt_ok = add_button( g_dgettext( GTK_DOMAIN, "_OK" ), Gtk::RESPONSE_OK );
 
     m_bt_ok->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_ok_clicked ) );
 
