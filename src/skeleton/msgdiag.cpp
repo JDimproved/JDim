@@ -157,18 +157,14 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
     hbox->pack_start( m_chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
     get_content_area()->pack_start( *hbox, Gtk::PACK_SHRINK );
 
-    Gtk::Button* button = nullptr;
-
     if( buttons == Gtk::BUTTONS_OK ){
 
-        button = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
-        add_default_button( button, Gtk::RESPONSE_OK );
+        add_default_button( g_dgettext( GTK_DOMAIN, "_OK" ), Gtk::RESPONSE_OK );
     }
     else if( buttons == Gtk::BUTTONS_OK_CANCEL ){
         add_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_CANCEL );
 
-        button = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
-        add_default_button( button, Gtk::RESPONSE_OK );
+        add_default_button( g_dgettext( GTK_DOMAIN, "_OK" ), Gtk::RESPONSE_OK );
     }
     else if( buttons == Gtk::BUTTONS_YES_NO ){
 
