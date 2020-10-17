@@ -1125,7 +1125,7 @@ bool ArticleViewBase::operate_view( const int control )
                                           "ログを削除しますか？\n\n「スレ再取得」を押すと\nあぼ〜んなどのスレ情報を削除せずにスレを再取得します。",
                                           "今後表示しない(常に削除)(_D)",
                                           Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
-            mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+            mdiag.add_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_NO );
             mdiag.add_default_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
 
             Gtk::Button *button = mdiag.add_button( "スレ再取得(_R)", Gtk::RESPONSE_YES + 100 );
