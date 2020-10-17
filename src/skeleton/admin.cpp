@@ -2721,7 +2721,7 @@ bool Admin::back_forward_viewhistory( const std::string& url, const bool back, c
                                          false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
                 mdiag.add_button( "タブを開く(_T)", Gtk::RESPONSE_YES );
                 if( enable_next ) mdiag.add_button( "次を開く(_N)", Gtk::RESPONSE_NO );
-                mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
+                mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Cancel" ), Gtk::RESPONSE_CANCEL );
 
                 int ret = mdiag.run();
                 mdiag.hide();
