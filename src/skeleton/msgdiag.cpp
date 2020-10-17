@@ -165,7 +165,7 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
         add_default_button( button, Gtk::RESPONSE_OK );
     }
     else if( buttons == Gtk::BUTTONS_OK_CANCEL ){
-        add_button( Gtk::Stock::NO, Gtk::RESPONSE_CANCEL );
+        add_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_CANCEL );
 
         button = Gtk::manage( new Gtk::Button( Gtk::Stock::OK ) );
         add_default_button( button, Gtk::RESPONSE_OK );
@@ -174,14 +174,13 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
 
         if( default_response == Gtk::RESPONSE_NO ){
 
-            button = Gtk::manage( new Gtk::Button( Gtk::Stock::NO ) );
-            add_default_button( button, Gtk::RESPONSE_NO );
+            add_default_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_NO );
 
             add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
         }
         else{
 
-            add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+            add_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_NO );
 
             add_default_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
         }
@@ -202,7 +201,7 @@ MsgOverwriteDiag::MsgOverwriteDiag( Gtk::Window* parent )
     : SKELETON::MsgDiag( parent, "ファイルが存在します。ファイル名を変更して保存しますか？", 
                          false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE )
 {
-    add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+    add_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_NO );
     add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
     add_button( "上書き", OVERWRITE_YES );
     add_button( "すべていいえ", OVERWRITE_NO_ALL );

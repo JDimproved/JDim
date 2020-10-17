@@ -1662,8 +1662,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
                     mdiag.add_button( "スレ削除中止(_C)", Gtk::RESPONSE_CANCEL );
                     mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
-                    Gtk::Button button( Gtk::Stock::NO );
-                    mdiag.add_default_button( &button, Gtk::RESPONSE_NO );
+                    mdiag.add_default_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_NO );
 
                     const int ret = mdiag.run();
                     if( ret == Gtk::RESPONSE_CANCEL ) return;

@@ -106,7 +106,7 @@ std::string MessageViewMain::create_message()
                                  false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE );
 
         mdiag.set_title( "！！！誤爆注意！！！" );
-        mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+        mdiag.add_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_NO );
         mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
         mdiag.add_button( "スレを開く", Gtk::RESPONSE_YES + 100 );
 

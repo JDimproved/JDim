@@ -2630,7 +2630,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                                                       Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE
                             );
 
-                        mdiag.add_default_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
+                        mdiag.add_default_button( g_dgettext( GTK_DOMAIN, "_No" ), Gtk::RESPONSE_NO );
                         mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
                         mdiag.add_button( "新スレをお気に入りに追加(_F)", Gtk::RESPONSE_CANCEL );
 
