@@ -18,6 +18,8 @@
 #include "command.h"
 #include "session.h"
 
+#include <glib/gi18n.h>
+
 #include <sstream>
 
 using namespace MESSAGE;
@@ -78,7 +80,7 @@ std::string MessageViewMain::create_message()
             mdiag.set_title( "確認" );
             mdiag.add_button( Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL );
             mdiag.add_button( Gtk::Stock::REMOVE, Gtk::RESPONSE_DELETE_EVENT );
-            mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+            mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
 
             switch( mdiag.run() )
             {
@@ -105,7 +107,7 @@ std::string MessageViewMain::create_message()
 
         mdiag.set_title( "！！！誤爆注意！！！" );
         mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-        mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+        mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
         mdiag.add_button( "スレを開く", Gtk::RESPONSE_YES + 100 );
 
         int ret = mdiag.run();

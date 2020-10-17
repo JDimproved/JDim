@@ -10,6 +10,8 @@
 #include "dispatchmanager.h"
 #include "global.h"
 
+#include <glib/gi18n.h>
+
 
 using namespace SKELETON;
 
@@ -56,7 +58,7 @@ void MsgDiag::add_default_button( const Gtk::StockID& stock_id, const int id )
 
 void MsgDiag::add_default_button( const Glib::ustring& label, const int id )
 {
-    Gtk::Button* button = Gtk::manage( new Gtk::Button( label ) );
+    Gtk::Button* button = Gtk::manage( new Gtk::Button( label, true ) );
     add_default_button( button, id );
 }
 
@@ -175,14 +177,13 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
             button = Gtk::manage( new Gtk::Button( Gtk::Stock::NO ) );
             add_default_button( button, Gtk::RESPONSE_NO );
 
-            add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+            add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
         }
         else{
 
             add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
 
-            button = Gtk::manage( new Gtk::Button( Gtk::Stock::YES ) );
-            add_default_button( button, Gtk::RESPONSE_YES );
+            add_default_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
         }
     }
 
@@ -202,7 +203,7 @@ MsgOverwriteDiag::MsgOverwriteDiag( Gtk::Window* parent )
                          false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE )
 {
     add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-    add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+    add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
     add_button( "上書き", OVERWRITE_YES );
     add_button( "すべていいえ", OVERWRITE_NO_ALL );
     add_button( "すべて上書き", OVERWRITE_YES_ALL );

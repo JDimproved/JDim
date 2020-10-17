@@ -50,6 +50,8 @@
 
 #include "icons/iconmanager.h"
 
+#include <glib/gi18n.h>
+
 #include <sstream>
 #include <cstring>
 
@@ -1124,7 +1126,7 @@ bool ArticleViewBase::operate_view( const int control )
                                           "今後表示しない(常に削除)(_D)",
                                           Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
             mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-            mdiag.add_default_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+            mdiag.add_default_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
 
             Gtk::Button *button = mdiag.add_button( "スレ再取得(_R)", Gtk::RESPONSE_YES + 100 );
             Gtk::Image image( Gtk::Stock::REFRESH, Gtk::ICON_SIZE_BUTTON );
