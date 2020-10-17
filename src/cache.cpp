@@ -19,6 +19,7 @@
 
 #include "dbtree/interface.h"
 
+#include <glib/gi18n.h>
 #include <gtkmm.h>
 
 #include <fstream>
@@ -1043,7 +1044,7 @@ std::string CACHE::open_save_diag( Gtk::Window* parent, const std::string& dir, 
         SKELETON::MsgDiag mdiag( parent, "ファイルが存在します。ファイル名を変更して保存しますか？", 
                                  false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
         mdiag.add_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-        mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+        mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
         mdiag.add_button( "上書き", Gtk::RESPONSE_YES + 100 );
 
         int ret = mdiag.run();

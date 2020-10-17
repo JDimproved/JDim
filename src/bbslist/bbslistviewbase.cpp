@@ -45,6 +45,8 @@
 #include "dndmanager.h"
 #include "sign.h"
 
+#include <glib/gi18n.h>
+
 
 enum
 {
@@ -2629,7 +2631,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
                             );
 
                         mdiag.add_default_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-                        mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+                        mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
                         mdiag.add_button( "新スレをお気に入りに追加(_F)", Gtk::RESPONSE_CANCEL );
 
                         mdiag.set_title( "お気に入り更新" );

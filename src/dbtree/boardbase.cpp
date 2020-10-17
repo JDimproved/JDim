@@ -28,6 +28,8 @@
 #include "session.h"
 #include "boardcolumnsid.h"
 
+#include <glib/gi18n.h>
+
 #include <sstream>
 #include <cstring>
 
@@ -1644,7 +1646,7 @@ void BoardBase::remove_old_abone_thread()
                                       Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
 
         mdiag.add_default_button( Gtk::Stock::NO, Gtk::RESPONSE_NO );
-        mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+        mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
 
         const int ret = mdiag.run();
 

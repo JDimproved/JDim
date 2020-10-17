@@ -27,6 +27,7 @@
 #include "session.h"
 #include "updatemanager.h"
 
+#include <glib/gi18n.h>
 #include <sstream>
 
 
@@ -1660,7 +1661,7 @@ void ArticleBase::delete_cache( const bool cache_only )
                                                   Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
 
                     mdiag.add_button( "スレ削除中止(_C)", Gtk::RESPONSE_CANCEL );
-                    mdiag.add_button( Gtk::Stock::YES, Gtk::RESPONSE_YES );
+                    mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
                     Gtk::Button button( Gtk::Stock::NO );
                     mdiag.add_default_button( &button, Gtk::RESPONSE_NO );
 
