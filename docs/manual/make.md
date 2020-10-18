@@ -71,7 +71,7 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
 ### ビルド方法( meson の場合 )
 
 1. `meson builddir`
-2. `meson compile -C builddir`
+2. `meson compile -C builddir` ( 又は `ninja -C builddir` )
 3. 起動は `./builddir/src/jdim`
 
 #### mesonのビルドオプション

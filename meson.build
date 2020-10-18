@@ -9,14 +9,14 @@
 # Fedora
 #   ディストロのパッケージをインストールする
 #   ```
-#   dnf install git libtool meson ninja-build
+#   dnf install git libtool meson
 #   dnf install gnutls-devel gtkmm30-devel libSM-devel
 #   ```
 #
 # Debian Buster, Ubuntu 20.04
 #   ディストロのパッケージをインストールする
 #   ```
-#   sudo apt install build-essential git libtool meson ninja-build
+#   sudo apt install build-essential git libtool meson
 #   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
 #   ```
 #
@@ -38,7 +38,8 @@
 #   ninja
 #   ```
 # Tips
-#   - JDimのビルドオプションは `meson configure` で確認できる
+#   - JDimのビルドオプションは `meson configure` を実行してProject optionsの段落を確認する
+#     または meson_options.txt を見る
 #   - ビルドオプションは `meson builddir -Dregex=glib` のように指定する
 #   - 生成された実行ファイルの場所は builddir/src/jdim
 
