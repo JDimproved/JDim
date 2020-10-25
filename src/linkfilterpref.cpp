@@ -17,6 +17,9 @@
 #include "command.h"
 #include "environment.h"
 
+#include <glib/gi18n.h>
+
+
 using namespace CORE;
 
 LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, const std::string& cmd )
@@ -67,8 +70,8 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
       m_button_up( Gtk::Stock::GO_UP ),
       m_button_down( Gtk::Stock::GO_DOWN ),
       m_button_bottom( Gtk::Stock::GOTO_BOTTOM ),
-      m_button_delete( Gtk::Stock::DELETE ),
-      m_button_add( Gtk::Stock::ADD )
+      m_button_delete( g_dgettext( GTK_DOMAIN, "Stock label\x04_Delete" ), true ),
+      m_button_add( g_dgettext( GTK_DOMAIN, "Stock label\x04_Add" ), true )
 {
     m_button_top.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_top ) );
     m_button_up.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_up ) );

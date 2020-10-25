@@ -15,6 +15,8 @@
 
 #include "colorid.h"
 
+#include <glib/gi18n.h>
+
 
 using namespace CONTROL;
 
@@ -269,8 +271,8 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
       m_controlmode( CONTROL::get_mode( m_id ) ),
       m_single( false ),
       m_label( "編集したい" + target + "設定をダブルクリックして下さい。" ),
-      m_button_delete( Gtk::Stock::DELETE ),
-      m_button_add( Gtk::Stock::ADD ),
+      m_button_delete( g_dgettext( GTK_DOMAIN, "Stock label\x04_Delete" ), true ),
+      m_button_add( g_dgettext( GTK_DOMAIN, "Stock label\x04_Add" ), true ),
       m_button_reset( "デフォルト" )
 {
     m_liststore = Gtk::ListStore::create( m_columns );
