@@ -19,14 +19,19 @@ using namespace SKELETON;
 #define ROW_COLOR "WhiteSmoke"
 
 SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::PrefDiag( parent, url, true, true ),
-      m_button_top( Gtk::Stock::GOTO_TOP ),
-      m_button_up( Gtk::Stock::GO_UP ),
-      m_button_down( Gtk::Stock::GO_DOWN ),
-      m_button_bottom( Gtk::Stock::GOTO_BOTTOM ),
-      m_button_default( g_dgettext( GTK_DOMAIN, "Stock label\x04_Revert" ), true )
+    : SKELETON::PrefDiag( parent, url, true, true )
+    , m_button_top( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Top" ), true )
+    , m_button_up( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Up" ), true )
+    , m_button_down( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Down" ), true )
+    , m_button_bottom( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Bottom" ), true )
+    , m_button_default( g_dgettext( GTK_DOMAIN, "Stock label\x04_Revert" ), true )
 {
     m_list_default_data.clear();
+
+    m_button_top.set_image_from_icon_name( "go-top" );
+    m_button_up.set_image_from_icon_name( "go-up" );
+    m_button_down.set_image_from_icon_name( "go-down" );
+    m_button_bottom.set_image_from_icon_name( "go-bottom" );
 
     m_button_delete.set_image_from_icon_name( "go-next" );
     m_button_add.set_image_from_icon_name( "go-previous" );
