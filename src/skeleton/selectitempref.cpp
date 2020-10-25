@@ -11,6 +11,9 @@
 #include "global.h"
 #include "session.h"
 
+#include <glib/gi18n.h>
+
+
 using namespace SKELETON;
 
 #define ROW_COLOR "WhiteSmoke"
@@ -23,7 +26,7 @@ SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url )
       m_button_bottom( Gtk::Stock::GOTO_BOTTOM ),
       m_button_delete( Gtk::Stock::GO_FORWARD, std::string(), Gtk::ICON_SIZE_BUTTON ),
       m_button_add( Gtk::Stock::GO_BACK, std::string(), Gtk::ICON_SIZE_BUTTON ),
-      m_button_default( Gtk::Stock::REVERT_TO_SAVED )
+      m_button_default( g_dgettext( GTK_DOMAIN, "Stock label\x04_Revert" ), true )
 {
     m_list_default_data.clear();
 
