@@ -13,6 +13,9 @@
 #include "icons/iconmanager.h"
 #include "jdlib/miscgtk.h"
 
+#include <glib/gi18n.h>
+
+
 using namespace SKELETON;
 
 enum
@@ -28,7 +31,7 @@ AboutDiag::AboutDiag( const Glib::ustring& title )
     set_transient_for( *CORE::get_mainwindow() );
     set_resizable( false );
 
-    Gtk::Button* button = add_button( Gtk::Stock::CLOSE, Gtk::RESPONSE_CLOSE );
+    Gtk::Button* button = add_button( g_dgettext( GTK_DOMAIN, "_Close" ), Gtk::RESPONSE_CLOSE );
     button->signal_clicked().connect( sigc::mem_fun( *this, &AboutDiag::slot_close_clicked ) );
 
     set_default_response( Gtk::RESPONSE_CLOSE );
