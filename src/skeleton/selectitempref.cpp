@@ -24,11 +24,12 @@ SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url )
       m_button_up( Gtk::Stock::GO_UP ),
       m_button_down( Gtk::Stock::GO_DOWN ),
       m_button_bottom( Gtk::Stock::GOTO_BOTTOM ),
-      m_button_delete( Gtk::Stock::GO_FORWARD, std::string(), Gtk::ICON_SIZE_BUTTON ),
-      m_button_add( Gtk::Stock::GO_BACK, std::string(), Gtk::ICON_SIZE_BUTTON ),
       m_button_default( g_dgettext( GTK_DOMAIN, "Stock label\x04_Revert" ), true )
 {
     m_list_default_data.clear();
+
+    m_button_delete.set_image_from_icon_name( "go-next" );
+    m_button_add.set_image_from_icon_name( "go-previous" );
 
     pack_widgets();
 }

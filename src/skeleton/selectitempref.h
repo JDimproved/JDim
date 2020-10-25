@@ -52,8 +52,8 @@ namespace SKELETON
         Gtk::Button m_button_bottom;
         Gtk::VButtonBox m_vbuttonbox_v;
         // ボタン(横移動)
-        SKELETON::ImgButton m_button_delete;
-        SKELETON::ImgButton m_button_add;
+        Gtk::Button m_button_delete;
+        Gtk::Button m_button_add;
         Gtk::VButtonBox m_vbuttonbox_h;
         // ボタン(アクション)
         Gtk::Button m_button_default;
