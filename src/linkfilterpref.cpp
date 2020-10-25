@@ -64,15 +64,20 @@ void LinkFilterDiag::slot_show_manual()
 
 
 LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::PrefDiag( parent, url ),
-      m_label( "追加ボタンを押すとフィルタ設定を追加出来ます。編集するにはダブルクリックします。" ),
-      m_button_top( Gtk::Stock::GOTO_TOP ),
-      m_button_up( Gtk::Stock::GO_UP ),
-      m_button_down( Gtk::Stock::GO_DOWN ),
-      m_button_bottom( Gtk::Stock::GOTO_BOTTOM ),
-      m_button_delete( g_dgettext( GTK_DOMAIN, "Stock label\x04_Delete" ), true ),
-      m_button_add( g_dgettext( GTK_DOMAIN, "Stock label\x04_Add" ), true )
+    : SKELETON::PrefDiag( parent, url )
+    , m_label( "追加ボタンを押すとフィルタ設定を追加出来ます。編集するにはダブルクリックします。" )
+    , m_button_top( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Top" ), true )
+    , m_button_up( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Up" ), true )
+    , m_button_down( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Down" ), true )
+    , m_button_bottom( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Bottom" ), true )
+    , m_button_delete( g_dgettext( GTK_DOMAIN, "Stock label\x04_Delete" ), true )
+    , m_button_add( g_dgettext( GTK_DOMAIN, "Stock label\x04_Add" ), true )
 {
+    m_button_top.set_image_from_icon_name( "go-top" );
+    m_button_up.set_image_from_icon_name( "go-up" );
+    m_button_down.set_image_from_icon_name( "go-down" );
+    m_button_bottom.set_image_from_icon_name( "go-bottom" );
+
     m_button_top.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_top ) );
     m_button_up.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_up ) );
     m_button_down.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_down ) );
