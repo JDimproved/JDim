@@ -79,7 +79,7 @@ std::string MessageViewMain::create_message()
 
             mdiag.set_title( "確認" );
             mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Cancel" ), Gtk::RESPONSE_CANCEL );
-            mdiag.add_button( Gtk::Stock::REMOVE, Gtk::RESPONSE_DELETE_EVENT );
+            mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Remove" ), Gtk::RESPONSE_DELETE_EVENT );
             mdiag.add_button( g_dgettext( GTK_DOMAIN, "_Yes" ), Gtk::RESPONSE_YES );
 
             switch( mdiag.run() )
