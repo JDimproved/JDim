@@ -19,7 +19,7 @@ namespace SKELETON
     {
         std::string m_url;
 
-        Gtk::Button* m_bt_ok;
+        Gtk::Button* m_bt_ok{};
         Gtk::Button m_bt_apply;
 
         std::unique_ptr<JDLIB::Timeout> m_conn_timer;
