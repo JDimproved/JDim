@@ -1693,10 +1693,9 @@ std::string MISC::getenv_limited( const char *name, const size_t size )
 {
     if( ! name || ! getenv( name ) ) return std::string();
 
-    std::vector< char > env( size + 1, '\0' );
-    strncpy( env.data(), getenv( name ), size );
-
-    return env.data();
+    std::string env = getenv( name );
+    if( env.size() > size ) env.resize( size );
+    return env;
 }
 
 
