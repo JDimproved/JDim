@@ -656,9 +656,8 @@ void ImageAdmin::close_left_views( const std::string& url )
     set_command( "set_imgtab_operating", "", "true" );
 
     for( auto&& widget : m_iconbox.get_children() ) {
-        auto view = dynamic_cast< SKELETON::View* >( widget );
-        if( view->get_url() == url ) break;
-        if( view ) {
+        if( auto view{ dynamic_cast<SKELETON::View*>( widget ) } ) {
+            if( view->get_url() == url ) break;
             set_command( "close_view", view->get_url() );
         }
     }
