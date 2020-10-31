@@ -1344,7 +1344,8 @@ static int sanitize_numeric_character_reference( int raw_point )
     else if( raw_point <= 0x0008 // Control character
             || raw_point == 0x000B // Control character (Vertical tab)
             || ( 0x000D <= raw_point && raw_point <= 0x001F ) // Control character
-            || ( 0xFDD0 <= raw_point && raw_point <= 0xFDEF ) // Noncharacters
+            || ( 0xFDD0 <= raw_point // && raw_point <= 0xFDEF の境界は上でチェックしているので不要
+                ) // Noncharacters
             ) {
         parse_error = true;
     }
