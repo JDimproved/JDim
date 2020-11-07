@@ -247,20 +247,24 @@ void PagePane::slot_v3pane()
 /////////////////////////////////////////////
 
 
-PageEnd::PageEnd() : Gtk::VBox(),
-                     m_label( "５/５．JDim セットアップ完了", Gtk::ALIGN_START ),
-                     m_label2( "その他の設定は起動後に設定及び表示メニューからおこなって下さい\n\n"
-                               "完了を押すとJDimを起動して板一覧のリストをロードします\n"
-                               "板一覧が表示されるまでしばらくお待ち下さい" , Gtk::ALIGN_START )
+PageEnd::PageEnd()
+    : Gtk::Grid()
+    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_label( "５/５．JDim セットアップ完了", Gtk::ALIGN_START )
+    , m_label2( "その他の設定は起動後に設定及び表示メニューからおこなって下さい\n\n"
+                "完了を押すとJDimを起動して板一覧のリストをロードします\n"
+                "板一覧が表示されるまでしばらくお待ち下さい",
+                Gtk::ALIGN_START )
 {
-    m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
-    m_hbox_label.set_spacing( SPACING_SIZE );
-    m_hbox_label.pack_start( m_icon, Gtk::PACK_SHRINK );
-    m_hbox_label.pack_start( m_label );
+    set_column_spacing( SPACING_SIZE );
+    set_row_spacing( SPACING_SIZE );
 
-    set_spacing( SPACING_SIZE );
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
-    pack_start( m_label2, Gtk::PACK_SHRINK );
+    // Gtk::Grid::attach( child, column, row, width, height )
+    attach( m_icon, 0, 0, 1, 1 );
+    attach( m_label, 1, 0, 1, 1 );
+    attach( m_label2, 0, 1, 2, 1 );
+
+    m_label.set_hexpand( true );
 }
 
 
