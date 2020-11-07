@@ -35,7 +35,6 @@ namespace SKELETON
 
         ~MsgDiag() noexcept;
 
-        void add_default_button( const Gtk::StockID& stock_id, const int id );
         void add_default_button( const Glib::ustring& label, const int id );
         void add_default_button( Gtk::Widget* button, const int id );
 
