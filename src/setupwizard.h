@@ -33,6 +33,7 @@ namespace CORE
 
     class PageNet : public Gtk::Grid
     {
+        Gtk::Window* m_parent{};
         Gtk::Image m_icon;
         Gtk::Label m_label;
 
@@ -46,7 +47,7 @@ namespace CORE
 
       public:
 
-        PageNet();
+        explicit PageNet( Gtk::Window* parent );
 
       private:
 

@@ -43,8 +43,9 @@ PageStart::PageStart()
 /////////////////////////////////////////////
 
 
-PageNet::PageNet()
+PageNet::PageNet( Gtk::Window* parent )
     : Gtk::Grid()
+    , m_parent{ parent }
     , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
     , m_label( "２/５．ネットワークの設定をします", Gtk::ALIGN_START )
     , m_proxy( "プロキシ設定(_P)", true )
@@ -77,7 +78,7 @@ PageNet::PageNet()
 //
 void PageNet::slot_setup_proxy()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_PROXY, "" );
+    SKELETON::PrefDiag* pref = CORE::PrefDiagFactory( m_parent, CORE::PREFDIAG_PROXY, "" );
     pref->run();
     delete pref;
 }
@@ -88,7 +89,7 @@ void PageNet::slot_setup_proxy()
 //
 void PageNet::slot_setup_browser()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_BROWSER, "" );
+    SKELETON::PrefDiag* pref = CORE::PrefDiagFactory( m_parent, CORE::PREFDIAG_BROWSER, "" );
     pref->run();
     delete pref;
 
@@ -260,7 +261,10 @@ PageEnd::PageEnd() : Gtk::VBox(),
 
 
 SetupWizard::SetupWizard()
-    : Gtk::Dialog(), m_back( "<< 戻る(_B)", true ), m_next( "次へ(_N) >>", true )
+    : Gtk::Dialog()
+    , m_page_network{ this }
+    , m_back( "<< 戻る(_B)", true )
+    , m_next( "次へ(_N) >>", true )
 {
     set_title( "JDim セットアップウィザード" );
     set_keep_above( true );
