@@ -115,7 +115,7 @@ PageFont::PageFont()
     , m_font_tree( "板／スレ一覧フォント" )
 {
     m_label_res.set_mnemonic_widget( m_font_res );
-    m_label_res.set_mnemonic_widget( m_font_mail );
+    m_label_mail.set_mnemonic_widget( m_font_mail );
     m_label_popup.set_mnemonic_widget( m_font_popup );
     m_label_tree.set_mnemonic_widget( m_font_tree );
 
