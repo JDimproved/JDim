@@ -14,7 +14,6 @@ sources = [
   'entry.cpp',
   'hpaned.cpp',
   'imgbutton.cpp',
-  'imgtogglebutton.cpp',
   'jdtoolbar.cpp',
   'label_entry.cpp',
   'loadable.cpp',

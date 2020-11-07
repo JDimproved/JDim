@@ -20,7 +20,6 @@ libskeleton_a_SOURCES = \
 	tabswitchbutton.cpp \
 	tabswitchmenu.cpp \
 	imgbutton.cpp \
-	imgtogglebutton.cpp \
 	menubutton.cpp \
 	toolmenubutton.cpp \
 	backforwardbutton.cpp \
@@ -68,7 +67,6 @@ noinst_HEADERS = \
 	tabswitchmenu.h \
 	imgbutton.h \
 	imgtoolbutton.h \
-	imgtogglebutton.h \
 	menubutton.h \
 	toolmenubutton.h \
 	backforwardbutton.h \
