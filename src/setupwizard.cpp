@@ -43,40 +43,32 @@ PageStart::PageStart()
 /////////////////////////////////////////////
 
 
-PageNet::PageNet() : Gtk::VBox(),
-                     m_label( "２/５．ネットワークの設定をします", Gtk::ALIGN_START ),
-                     m_proxy( "プロキシ設定(_P)", true ),
-                     m_browser( "ブラウザ設定(_W)", true ),
-                     m_frame( "ブラウザ起動コマンド" ),   // フレーム
-                     m_label_browser( CONFIG::get_command_openurl(), Gtk::ALIGN_START )
+PageNet::PageNet()
+    : Gtk::Grid()
+    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_label( "２/５．ネットワークの設定をします", Gtk::ALIGN_START )
+    , m_proxy( "プロキシ設定(_P)", true )
+    , m_browser( "ブラウザ設定(_W)", true )
+    , m_frame( "ブラウザ起動コマンド" ) // フレーム
+    , m_label_browser( CONFIG::get_command_openurl(), Gtk::ALIGN_START )
 {
+    m_label_browser.property_margin() = SPACING_SIZE;
+    m_frame.add( m_label_browser );
 
-    m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
-    m_hbox_label.set_spacing( SPACING_SIZE );
-    m_hbox_label.pack_start( m_icon, Gtk::PACK_SHRINK );
-    m_hbox_label.pack_start( m_label );
-
-    m_vbox.set_spacing( SPACING_SIZE );
-    m_vbox.pack_start( m_proxy, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_browser, Gtk::PACK_SHRINK );    
-
-    // m_hbox_commnad に m_label_browser を格納
-    m_hbox_command.set_spacing( SPACING_SIZE );
-    m_hbox_command.pack_start( m_label_browser, Gtk::PACK_SHRINK );
-    m_hbox_command.set_border_width( SPACING_SIZE );
-
-    // フレーム内にHBoxを格納
-    m_frame.add( m_hbox_command );
-   
     m_proxy.signal_clicked().connect( sigc::mem_fun( *this, &PageNet::slot_setup_proxy ) );
     m_browser.signal_clicked().connect( sigc::mem_fun( *this, &PageNet::slot_setup_browser ) );
 
-    set_spacing( SPACING_SIZE );
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
-    pack_start( m_vbox, Gtk::PACK_SHRINK );
+    set_column_spacing( SPACING_SIZE );
+    set_row_spacing( SPACING_SIZE );
 
-    // フレームの追加
-    pack_start( m_frame, Gtk::PACK_SHRINK );
+    // Gtk::Grid::attach( child, column, row, width, height )
+    attach( m_icon, 0, 0, 1, 1 );
+    attach( m_label, 1, 0, 1, 1 );
+    attach( m_proxy, 0, 1, 2, 1 );
+    attach( m_browser, 0, 2, 2, 1 );
+    attach( m_frame, 0, 3, 2, 1 ); // フレームの追加
+
+    m_label.set_hexpand( true );
 }
 
 
