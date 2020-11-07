@@ -92,9 +92,8 @@ namespace CORE
 /////////////////////////////////////////////
 
 
-    class PagePane : public Gtk::VBox
+    class PagePane : public Gtk::Grid
     {
-        Gtk::HBox m_hbox_label;
         Gtk::Image m_icon;
         Gtk::Label m_label;
 

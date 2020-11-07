@@ -188,18 +188,15 @@ void PageFont::slot_font_tree()
 /////////////////////////////////////////////
 
 
-PagePane::PagePane() : Gtk::VBox(),
-                       m_label( "４/５．ペイン表示設定をします", Gtk::ALIGN_START ),
-                       m_2pane( m_radiogroup, "２ペイン表示(_2)", true ),
-                       m_3pane( m_radiogroup, "３ペイン表示(_3)", true ),
-                       m_v3pane( m_radiogroup, "縦３ペイン表示(_V)", true ),
-                       m_label_inst( "" , Gtk::ALIGN_START )
+PagePane::PagePane()
+    : Gtk::Grid()
+    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_label( "４/５．ペイン表示設定をします", Gtk::ALIGN_START )
+    , m_2pane( m_radiogroup, "２ペイン表示(_2)", true )
+    , m_3pane( m_radiogroup, "３ペイン表示(_3)", true )
+    , m_v3pane( m_radiogroup, "縦３ペイン表示(_V)", true )
+    , m_label_inst( "", Gtk::ALIGN_START )
 {
-    m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
-    m_hbox_label.set_spacing( SPACING_SIZE );
-    m_hbox_label.pack_start( m_icon, Gtk::PACK_SHRINK );
-    m_hbox_label.pack_start( m_label );
-
     switch( SESSION::get_mode_pane() ){
         case SESSION::MODE_2PANE: m_2pane.set_active( true ); slot_2pane(); break;
         case SESSION::MODE_3PANE: m_3pane.set_active( true ); slot_3pane(); break;
@@ -210,12 +207,18 @@ PagePane::PagePane() : Gtk::VBox(),
     m_3pane.signal_toggled().connect( sigc::mem_fun( *this, &PagePane::slot_3pane ) );
     m_v3pane.signal_toggled().connect( sigc::mem_fun( *this, &PagePane::slot_v3pane ) );
 
-    set_spacing( SPACING_SIZE );
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
-    pack_start( m_2pane, Gtk::PACK_EXPAND_WIDGET );
-    pack_start( m_3pane, Gtk::PACK_EXPAND_WIDGET );
-    pack_start( m_v3pane, Gtk::PACK_EXPAND_WIDGET );
-    pack_start( m_label_inst, Gtk::PACK_EXPAND_WIDGET );
+    set_column_spacing( SPACING_SIZE );
+    set_row_spacing( SPACING_SIZE );
+
+    // Gtk::Grid::attach( child, column, row, width, height )
+    attach( m_icon, 0, 0, 1, 1 );
+    attach( m_label, 1, 0, 1, 1 );
+    attach( m_2pane, 0, 1, 2, 1 );
+    attach( m_3pane, 0, 2, 2, 1 );
+    attach( m_v3pane, 0, 3, 2, 1 );
+    attach( m_label_inst, 0, 4, 2, 1 );
+
+    m_label.set_hexpand( true );
 }
 
 
@@ -236,7 +239,8 @@ void PagePane::slot_3pane()
 void PagePane::slot_v3pane()
 {
     SESSION::set_mode_pane( SESSION::MODE_V3PANE );
-    m_label_inst.set_text( "ウィンドウの左に板一覧、中央にスレ一覧、右にスレビューを表示" );
+    // ウインドウの幅を固定するため空白で長さを揃える
+    m_label_inst.set_text( "ウィンドウの左に板一覧、中央にスレ一覧、右にスレビューを表示　" );
 }
 
 
