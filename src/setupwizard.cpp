@@ -19,20 +19,24 @@ enum
     SPACING_SIZE = 8
 };
 
-PageStart::PageStart() : Gtk::VBox(),
-                         m_label( "１/５．JDim セットアップ開始", Gtk::ALIGN_START ),
-                         m_label2( "JDimセットアップウィザードへようこそ\n\n"
-                                   "このウィザードでネットワークとフォント等の設定をおこないます\n\n"
-                                   "設定を始めるには［次へ］を押してください", Gtk::ALIGN_START )
+PageStart::PageStart()
+    : Gtk::Grid()
+    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_label( "１/５．JDim セットアップ開始", Gtk::ALIGN_START )
+    , m_label2( "JDimセットアップウィザードへようこそ\n\n"
+                "このウィザードでネットワークとフォント等の設定をおこないます\n\n"
+                "設定を始めるには［次へ］を押してください",
+                Gtk::ALIGN_START )
 {
-    m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
-    m_hbox_label.set_spacing( SPACING_SIZE );
-    m_hbox_label.pack_start( m_icon, Gtk::PACK_SHRINK );
-    m_hbox_label.pack_start( m_label );
+    set_column_spacing( SPACING_SIZE );
+    set_row_spacing( SPACING_SIZE );
 
-    set_spacing( SPACING_SIZE );
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
-    pack_start( m_label2, Gtk::PACK_SHRINK );
+    // Gtk::Grid::attach( child, column, row, width, height )
+    attach( m_icon, 0, 0, 1, 1 );
+    attach( m_label, 1, 0, 1, 1 );
+    attach( m_label2, 0, 1, 2, 1 );
+
+    m_label.set_hexpand( true );
 }
 
 
