@@ -6,7 +6,6 @@
 #define _SELECTITEMPREF_H
 
 #include "prefdiag.h"
-#include "imgbutton.h"
 
 #include <string>
 #include <list>

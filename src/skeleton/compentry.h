@@ -9,7 +9,6 @@
 #include "entry.h"
 #include "popupwinbase.h"
 #include "treeviewbase.h"
-#include "imgbutton.h"
 
 #include <gtkmm.h>
 

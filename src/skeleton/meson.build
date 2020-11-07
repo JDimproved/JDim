@@ -13,7 +13,6 @@ sources = [
   'editview.cpp',
   'entry.cpp',
   'hpaned.cpp',
-  'imgbutton.cpp',
   'jdtoolbar.cpp',
   'label_entry.cpp',
   'loadable.cpp',
