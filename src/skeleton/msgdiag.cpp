@@ -49,13 +49,6 @@ MsgDiag::MsgDiag( Gtk::Window* parent,
 MsgDiag::~MsgDiag() noexcept = default;
 
 
-void MsgDiag::add_default_button( const Gtk::StockID& stock_id, const int id )
-{
-    Gtk::Button* button = Gtk::manage( new Gtk::Button( stock_id ) );
-    add_default_button( button, id );
-}
-
-
 void MsgDiag::add_default_button( const Glib::ustring& label, const int id )
 {
     Gtk::Button* button = Gtk::manage( new Gtk::Button( label, true ) );
