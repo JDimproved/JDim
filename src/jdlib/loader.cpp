@@ -385,7 +385,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     if( i == std::string::npos ){
 
         m_data.code = HTTP_ERR;
-        m_data.str_code = "could nod get protocol : " + m_data.url;
+        m_data.str_code = "could not get protocol : " + m_data.url;
         MISC::ERRMSG( m_data.str_code );
         return false;
     }
