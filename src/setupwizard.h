@@ -59,9 +59,8 @@ namespace CORE
 /////////////////////////////////////////////
 
 
-    class PageFont : public Gtk::VBox
+    class PageFont : public Gtk::Grid
     {
-        Gtk::HBox m_hbox_label;
         Gtk::Image m_icon;
         Gtk::Label m_label;
 

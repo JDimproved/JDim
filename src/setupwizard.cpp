@@ -101,26 +101,23 @@ void PageNet::slot_setup_browser()
 /////////////////////////////////////////////
 
 
-PageFont::PageFont() : Gtk::VBox(),
-                       m_label( "３/５．フォントの設定をします", Gtk::ALIGN_START ),
-                       m_label_res( "スレ(_T)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true ),
-                       m_label_mail( "メール(_U)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true ),
-                       m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true ),
-                       m_label_tree( "板／スレ一覧(_O)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true ),
-                       m_font_res( "スレフォント" ),
-                       m_font_mail( "メール欄フォント" ),
-                       m_font_popup( "ポップアップフォント" ),
-                       m_font_tree( "板／スレ一覧フォント" )
+PageFont::PageFont()
+    : Gtk::Grid()
+    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_label( "３/５．フォントの設定をします", Gtk::ALIGN_START )
+    , m_label_res( "スレ(_T)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
+    , m_label_mail( "メール(_U)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
+    , m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
+    , m_label_tree( "板／スレ一覧(_O)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
+    , m_font_res( "スレフォント" )
+    , m_font_mail( "メール欄フォント" )
+    , m_font_popup( "ポップアップフォント" )
+    , m_font_tree( "板／スレ一覧フォント" )
 {
     m_label_res.set_mnemonic_widget( m_font_res );
     m_label_res.set_mnemonic_widget( m_font_mail );
     m_label_popup.set_mnemonic_widget( m_font_popup );
     m_label_tree.set_mnemonic_widget( m_font_tree );
-
-    m_icon.set( ICON::get_icon_manager()->get_icon( ICON::JD48 ) );
-    m_hbox_label.set_spacing( SPACING_SIZE );
-    m_hbox_label.pack_start( m_icon, Gtk::PACK_SHRINK );
-    m_hbox_label.pack_start( m_label );
 
     m_font_res.set_font_name( CONFIG::get_fontname( FONT_MAIN ) );
     m_font_mail.set_font_name( CONFIG::get_fontname( FONT_MAIL ) );
@@ -137,9 +134,6 @@ PageFont::PageFont() : Gtk::VBox(),
     m_font_popup.set_hexpand( true );
     m_font_tree.set_hexpand( true );
 
-    m_table.set_row_spacing( 4 );
-    m_table.set_column_spacing( 4 );
-    m_table.set_hexpand( true );
     constexpr int width = 1;
     constexpr int height = 1;
     m_table.attach( m_label_res, 0, 0, width, height );
@@ -152,9 +146,18 @@ PageFont::PageFont() : Gtk::VBox(),
     m_table.attach( m_font_popup, 1, 2, width, height );
     m_table.attach( m_font_tree, 1, 3, width, height );
 
-    set_spacing( SPACING_SIZE );
-    pack_start( m_hbox_label, Gtk::PACK_SHRINK );
-    pack_start( m_table, Gtk::PACK_EXPAND_WIDGET );
+    set_column_spacing( SPACING_SIZE );
+    set_row_spacing( SPACING_SIZE );
+
+    // Gtk::Grid::attach( child, column, row, width, height )
+    attach( m_icon, 0, 0, 1, 1 );
+    attach( m_label, 1, 0, 1, 1 );
+    attach( m_table, 0, 1, 2, 1 );
+
+    m_label.set_hexpand( true );
+    m_table.set_hexpand( true );
+    m_table.set_row_spacing( 4 );
+    m_table.set_column_spacing( 4 );
 }
 
 
