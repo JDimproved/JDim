@@ -6,7 +6,6 @@
 #include "gtkmmversion.h"
 
 #include "skeleton/view.h"
-#include "skeleton/imgbutton.h"
 #include "skeleton/compentry.h"
 #include "skeleton/jdtoolbar.h"
 

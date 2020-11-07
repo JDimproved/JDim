@@ -15,7 +15,6 @@
 #include <string>
 
 #include "skeleton/dispatchable.h"
-#include "skeleton/imgbutton.h"
 #include "skeleton/hpaned.h"
 #include "skeleton/vpaned.h"
 #include "skeleton/notebook.h"
