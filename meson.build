@@ -199,14 +199,16 @@ endif
 #
 
 # Use PangoLayout instead of PangoGlyphString
-if get_option('pangolayout').enabled()
+pangolayout = get_option('pangolayout').enabled()
+if pangolayout
   conf.set('USE_PANGOLAYOUT', 1)
   configure_args += '\'--with-pangolayout\''
   message('Render text by PangoLayout: YES')
 endif
 
 # compatible cache directory
-if get_option('compat_cache_dir').enabled()
+compat_cache_dir = get_option('compat_cache_dir').enabled()
+if compat_cache_dir
   conf.set('ENABLE_COMPAT_CACHE_DIR', 1)
   message('Use compatible cache directory: YES')
 else
@@ -220,7 +222,8 @@ endif
 #
 
 # gprof support
-if get_option('gprof').enabled()
+gprof = get_option('gprof').enabled()
+if gprof
   args = ['-pg']
   if cpp_compiler.has_multi_arguments(args)
     add_project_arguments(args, language: 'cpp')
@@ -233,7 +236,8 @@ if get_option('gprof').enabled()
 endif
 
 # CPUの最適化オプション
-if get_option('native').enabled()
+native = get_option('native').enabled()
+if native
   args = ['-march=native']
   if cpp_compiler.has_multi_arguments(args)
     add_project_arguments(args, language : 'cpp')
@@ -250,8 +254,6 @@ endif
 #
 conf.set('HAVE_BUILDINFO_H', 1)
 
-buildinfo = configuration_data()
-
 if configure_args.length() > 0
   conf.set_quoted('CONFIGURE_ARGS', ' '.join(configure_args))
 endif
@@ -261,6 +263,21 @@ subdir('src')
 if build_tests
   subdir('test', if_found : gtest_main_dep)
 endif
+
+# TODO: meson 0.53 から summary() が使用できる
+message('*** Configuration ***')
+message('alsa = @0@'.format(alsa_dep.found()))
+message('build_tests = @0@'.format(build_tests))
+message('compat_cache_dir = @0@'.format(compat_cache_dir))
+message('gprof = @0@'.format(gprof))
+message('migemo = @0@'.format(migemo_dep.found()))
+message('migemodict = @0@'.format(migemodict))
+message('native = @0@'.format(native))
+message('pangolayout = @0@'.format(pangolayout))
+message('regex = @0@'.format(regex_opt))
+message('sessionlib = @0@'.format(sessionlib_opt))
+message('tls = @0@'.format(tls_opt))
+message('*********************')
 
 
 #
