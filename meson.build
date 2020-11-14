@@ -182,12 +182,17 @@ endif
 
 
 # googletestが見つからない場合はテストはしない
-# ディストロのパッケージとmeson wrapに対応
-gtest_main_dep = dependency('gtest',
-                            main : true,
-                            fallback : ['gtest', 'gtest_main_dep'],
-                            required : false)
-
+build_tests_opt = get_option('build_tests')
+if not build_tests_opt.disabled()
+  # ディストロのパッケージとmeson wrapに対応
+  gtest_main_dep = dependency('gtest',
+                              main : true,
+                              fallback : ['gtest', 'gtest_main_dep'],
+                              required : build_tests_opt)
+  build_tests = gtest_main_dep.found()
+else
+  build_tests = false
+endif
 
 #
 # オプションの機能
@@ -253,7 +258,9 @@ endif
 
 
 subdir('src')
-subdir('test', if_found : gtest_main_dep)
+if build_tests
+  subdir('test', if_found : gtest_main_dep)
+endif
 
 
 #
