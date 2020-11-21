@@ -122,8 +122,7 @@ void BoardAdmin::restore( const bool only_locked )
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
 
         // 板がDBに登録されていない場合は表示しない
-        if( command_arg.url != URL_ALLLOG && command_arg.arg4 != "SIDEBAR"
-            && DBTREE::url_boardbase( command_arg.url ).empty() ){
+        if( command_arg.url.empty() && command_arg.arg4 != "SIDEBAR" ){
             MISC::ERRMSG(  *it_url + " is not registered" );
             list_switchhistory.remove( *it_url );
             continue;
@@ -162,7 +161,7 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
     // 次スレ検索
     if( regex.exec( std::string( "(.*)" ) + NEXT_SIGN + ARTICLE_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
-        command_arg.url = regex.str( 1 );
+        command_arg.url = DBTREE::url_boardbase( regex.str( 1 ) );
 
         command_arg.arg4 = "NEXT";
         command_arg.arg5 = regex.str( 2 ); // 前スレのアドレス
@@ -179,7 +178,7 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
     // ログ一覧
     else if( regex.exec( std::string( "(.*)" ) + LOG_SIGN, url, offset, icase, newline, usemigemo, wchar )){
 
-        command_arg.url = regex.str( 1 );
+        command_arg.url = DBTREE::url_boardbase( regex.str( 1 ) );
 
         command_arg.arg4 = "LOG";
     }
@@ -187,7 +186,7 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
     // サイドバー
     else if( regex.exec( std::string( "(.*)" ) + SIDEBAR_SIGN + "(.*)", url, offset, icase, newline, usemigemo, wchar )){
 
-        command_arg.url = regex.str( 1 );
+        command_arg.url = DBTREE::url_boardbase( regex.str( 1 ) );
 
         command_arg.arg4 = "SIDEBAR";
         command_arg.arg5 = regex.str( 2 ); // ディレクトリID
@@ -196,7 +195,7 @@ COMMAND_ARGS BoardAdmin::url_to_openarg( const std::string& url, const bool tab,
     // スレビュー
     else{
 
-        command_arg.url = url;
+        command_arg.url = DBTREE::url_boardbase( url );
 
         command_arg.arg4 = "MAIN";
     }

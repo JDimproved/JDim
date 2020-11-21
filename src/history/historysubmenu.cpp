@@ -156,7 +156,7 @@ bool HistorySubMenu::open_history( const int i )
 
             case TYPE_BOARD:
                 
-                CORE::core_set_command( "open_board" , DBTREE::url_subject( info_list[ i ].url ), tab, mode );
+                CORE::core_set_command( "open_board", DBTREE::url_boardbase( info_list[ i ].url ), tab, mode );
                 ret = true;
                 break;
 

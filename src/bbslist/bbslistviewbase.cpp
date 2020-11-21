@@ -1697,7 +1697,7 @@ void BBSListViewBase::check_update_dir( const bool root, const bool open )
 
         if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
         else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
-            CORE::get_checkupdate_manager()->push_back( DBTREE::url_subject( url ), open );
+            CORE::get_checkupdate_manager()->push_back( DBTREE::url_boardbase( url ), open );
 
     }
 
@@ -1798,7 +1798,8 @@ void BBSListViewBase::slot_preferences_board()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, DBTREE::url_subject( url ) );
+    SKELETON::PrefDiag* pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD,
+                                                      DBTREE::url_boardbase( url ) );
     pref->run();
     delete pref;
 }
@@ -1890,7 +1891,7 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
         case TYPE_BOARD:
         case TYPE_BOARD_UPDATE:
-            CORE::core_set_command( "open_board", DBTREE::url_subject( url ), str_tab, str_mode );
+            CORE::core_set_command( "open_board", DBTREE::url_boardbase( url ), str_tab, str_mode );
             break;
 
         case TYPE_THREAD_OLD:
@@ -1974,7 +1975,7 @@ void BBSListViewBase::open_selected_rows()
 
             case TYPE_BOARD:
             case TYPE_BOARD_UPDATE:
-                url = DBTREE::url_subject( url );
+                url = DBTREE::url_boardbase( url );
                 if( !list_url_board.empty() ) list_url_board += " ";
                 list_url_board += url;
                 break;
@@ -2018,7 +2019,7 @@ void BBSListViewBase::checkupdate_selected_rows( const bool open )
 
         if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
         else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
-            CORE::get_checkupdate_manager()->push_back( DBTREE::url_subject( url ), open );
+            CORE::get_checkupdate_manager()->push_back( DBTREE::url_boardbase( url ), open );
     }
 }
 

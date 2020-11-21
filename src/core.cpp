@@ -1496,17 +1496,17 @@ void Core::slot_activate_menubar()
 
     // 開いている板のログ検索
     act = m_action_group->get_action( "SearchCacheBoard" );
-    if( BOARD::get_admin()->empty() || DBTREE::url_subject( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
+    if( BOARD::get_admin()->empty() || DBTREE::url_boardbase( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
     else act->set_sensitive( true );
 
     // 開いている板のログ一覧表示
     act = m_action_group->get_action( "ShowCacheBoard" );
-    if( BOARD::get_admin()->empty() || DBTREE::url_subject( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
+    if( BOARD::get_admin()->empty() || DBTREE::url_boardbase( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
     else act->set_sensitive( true );
 
     // スレ一覧のプロパティ
     act = m_action_group->get_action( "BoardPref" );
-    if( BOARD::get_admin()->empty() || DBTREE::url_subject( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
+    if( BOARD::get_admin()->empty() || DBTREE::url_boardbase( BOARD::get_admin()->get_current_url() ).empty() ) act->set_sensitive( false );
     else act->set_sensitive( true );
     
     // スレのプロパティ
@@ -3219,7 +3219,7 @@ void Core::exec_command()
         int num_from, num_to;
         std::string num_str;
         const std::string url_dat = DBTREE::url_dat( command.url, num_from, num_to, num_str );
-        const std::string url_subject = DBTREE::url_subject( command.url );
+        const std::string boardbase = DBTREE::url_boardbase( command.url );
        
         // datの場合ビューで開く
         if( ! url_dat.empty() ){
@@ -3259,13 +3259,13 @@ void Core::exec_command()
         }
 
         // 掲示板のベースURLの場合
-        else if( ! url_subject.empty() ){
+        else if( ! boardbase.empty() ){
 
 #ifdef _DEBUG
-            std::cout << "exec : open_board url = " << url_subject << std::endl;
+            std::cout << "exec : open_board url = " << boardbase << std::endl;
 #endif
 
-            CORE::core_set_command( "open_board" , url_subject, "true" );
+            CORE::core_set_command( "open_board", boardbase, "true" );
         }
 
         // その他
@@ -4241,10 +4241,10 @@ void Core::import_dat( const std::string& url_board, const std::vector< std::str
 {
     if( ! list_files.size() ) return;
 
-    const std::string url_subject = DBTREE::url_subject( url_board );
+    const std::string boardbase = DBTREE::url_boardbase( url_board );
 
 #ifdef _DEBUG
-    std::cout << "Core::import_dat url = " << url_subject << std::endl;
+    std::cout << "Core::import_dat url = " << boardbase << std::endl;
 #endif
 
     CORE::DATA_INFO_LIST list_info;
@@ -4257,7 +4257,7 @@ void Core::import_dat( const std::string& url_board, const std::vector< std::str
         std::cout << filename << std::endl;
 #endif
 
-        std::string url = DBTREE::board_import_dat( url_subject, filename );
+        std::string url = DBTREE::board_import_dat( boardbase, filename );
         if( ! url.empty() ){
             info.url = url;
             list_info.push_back( info );
@@ -4266,10 +4266,10 @@ void Core::import_dat( const std::string& url_board, const std::vector< std::str
 
     if( list_info.size() ){
 
-        CORE::core_set_command( "open_board" , url_subject, "true" , "auto" );
+        CORE::core_set_command( "open_board", boardbase, "true", "auto" );
 
         CORE::SBUF_set_list( list_info );
-        BOARD::get_admin()->set_command( "draw_bg_articles", url_subject );
+        BOARD::get_admin()->set_command( "draw_bg_articles", boardbase );
     }
 }
 

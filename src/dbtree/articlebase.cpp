@@ -548,7 +548,7 @@ void ArticleBase::update_writetime()
         m_save_info = true;
 
         // BoardViewの行を更新
-        CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+        CORE::core_set_command( "update_board_item", DBTREE::url_boardbase( m_url ), m_id );
     }
 
     // 板の書き込み時間を更新
@@ -574,7 +574,7 @@ void ArticleBase::set_bookmarked_thread( const bool bookmarked )
     save_info( true );
 
     // BoardViewの行を更新
-    CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+    CORE::core_set_command( "update_board_item", DBTREE::url_boardbase( m_url ), m_id );
 }
 
 
@@ -1343,7 +1343,7 @@ void ArticleBase::slot_load_finished()
             DBTREE::board_show_updateicon( m_url, true );
 
             // スレ一覧の ! 行のアイコンを更新マークにする
-            CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+            CORE::core_set_command( "update_board_item", DBTREE::url_boardbase( m_url ), m_id );
         }
 
         // code と modified を戻しておく
@@ -1525,7 +1525,7 @@ void ArticleBase::slot_load_finished()
 #endif
 
     // 対応するBoardビューの行を更新
-    CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+    CORE::core_set_command( "update_board_item", DBTREE::url_boardbase( m_url ), m_id );
     
     // articleビューに終了を知らせる
     CORE::core_set_command( "update_article", m_url );
@@ -1743,7 +1743,7 @@ void ArticleBase::delete_cache( const bool cache_only )
     if( CACHE::file_exists( path_dat ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path_dat ) );
 
     // BoardViewの行を更新
-    CORE::core_set_command( "update_board_item", DBTREE::url_subject( m_url ), m_id );
+    CORE::core_set_command( "update_board_item", DBTREE::url_boardbase( m_url ), m_id );
 
     // サイドバーのアイコン表示を戻す
     CORE::core_set_command( "toggle_sidebar_articleicon", m_url );

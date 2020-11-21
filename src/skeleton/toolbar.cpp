@@ -656,7 +656,7 @@ void ToolBar::slot_open_board()
 {
     if( ! m_enable_slot ) return;
 
-    CORE::core_set_command( "open_board", DBTREE::url_subject( get_url() ), "true",
+    CORE::core_set_command( "open_board", DBTREE::url_boardbase( get_url() ), "true",
                             "auto" // オートモードで開く
         );
 }
@@ -670,9 +670,11 @@ void ToolBar::slot_menu_board( int i )
 
     // ToolBar::get_button_board()で作成したメニューの順番に内容を合わせる
     if( i == 0 ) slot_open_board();
-    else if( i == 1 ) CORE::core_set_command( "open_board", DBTREE::url_subject( get_url() ), "true" );
-    else if( i == 3 ) pref = CORE::PrefDiagFactory( CORE::get_mainwindow(), CORE::PREFDIAG_BOARD, DBTREE::url_subject( get_url() ), "show_localrule" );
-    else if( i == 4 ) pref = CORE::PrefDiagFactory( CORE::get_mainwindow(), CORE::PREFDIAG_BOARD, DBTREE::url_subject( get_url() )  );
+    else if( i == 1 ) CORE::core_set_command( "open_board", DBTREE::url_boardbase( get_url() ), "true" );
+    else if( i == 3 ) pref = CORE::PrefDiagFactory( CORE::get_mainwindow(), CORE::PREFDIAG_BOARD,
+                                                    DBTREE::url_boardbase( get_url() ), "show_localrule" );
+    else if( i == 4 ) pref = CORE::PrefDiagFactory( CORE::get_mainwindow(), CORE::PREFDIAG_BOARD,
+                                                    DBTREE::url_boardbase( get_url() )  );
 
     if( pref ){
         pref->run();

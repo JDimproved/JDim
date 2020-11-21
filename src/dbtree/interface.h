@@ -37,7 +37,7 @@ namespace DBTREE
     ArticleBase* get_article( const std::string& url );
 
     // urlの変換関係
-    std::string url_subject( const std::string& url ); // 板の subject.txt の URL
+    std::string url_subject( const std::string& url ) = delete; // 板の subject.txt の URL
     std::string url_root( const std::string& url );
     std::string url_boardbase( const std::string& url );
     std::string url_datbase( const std::string& url );
