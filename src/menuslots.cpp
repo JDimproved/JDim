@@ -1137,7 +1137,7 @@ void Core::slot_search_cache()
 //
 void Core::slot_show_cache_board()
 {
-    const std::string url = DBTREE::url_subject( BOARD::get_admin()->get_current_url() );
+    const std::string url = DBTREE::url_boardbase( BOARD::get_admin()->get_current_url() );
     if( ! url.empty() ) CORE::core_set_command( "open_board_showlog", url );
 }
 
@@ -1265,7 +1265,7 @@ void Core::slot_create_vboard()
 //
 void Core::slot_show_bbs()
 {
-    CORE::core_set_command( "open_board" , DBTREE::url_subject( ENVIRONMENT::get_jdbbs() ), "newtab" );
+    CORE::core_set_command( "open_board", DBTREE::url_boardbase( ENVIRONMENT::get_jdbbs() ), "newtab" );
 }
 
 
@@ -1274,7 +1274,7 @@ void Core::slot_show_bbs()
 //
 void Core::slot_show_old2ch()
 {
-    CORE::core_set_command( "open_board" , DBTREE::url_subject( ENVIRONMENT::get_jd2chlog() ), "newtab" );
+    CORE::core_set_command( "open_board", DBTREE::url_boardbase( ENVIRONMENT::get_jd2chlog() ), "newtab" );
 }
 
 

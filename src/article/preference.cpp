@@ -273,5 +273,5 @@ void Preferences::slot_clear_post_history()
     CORE::core_set_command( "redraw_article" );
 
     // BoardViewの行を更新
-    CORE::core_set_command( "update_board_item", DBTREE::url_subject( get_url() ), DBTREE::article_id( get_url() ) );
+    CORE::core_set_command( "update_board_item", DBTREE::url_boardbase( get_url() ), DBTREE::article_id( get_url() ) );
 }

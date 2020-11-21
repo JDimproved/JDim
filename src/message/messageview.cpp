@@ -207,5 +207,5 @@ void MessageViewNew::write_impl( const std::string& msg )
 
 void MessageViewNew::reload()
 {
-    CORE::core_set_command( "open_board", DBTREE::url_subject( get_url() ), "true" );
+    CORE::core_set_command( "open_board", DBTREE::url_boardbase( get_url() ), "true" );
 }

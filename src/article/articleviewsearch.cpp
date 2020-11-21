@@ -290,7 +290,7 @@ void ArticleViewSearch::relayout()
 
                 // 板名表示
                 if( m_searchmode == CORE::SEARCHMODE_ALLLOG || m_searchmode == CORE::SEARCHMODE_TITLE  )
-                    comment << "[ <a href=\"" << DBTREE::url_subject( (*it).url_readcgi ) << "\">" << (*it).boardname << "</a> ] ";
+                    comment << "[ <a href=\"" << DBTREE::url_boardbase( (*it).url_readcgi ) << "\">" << (*it).boardname << "</a> ] ";
 
                 comment << "<a href=\"" << (*it).url_readcgi << "\">" << MISC::html_escape( (*it).subject ) << "</a>";
 

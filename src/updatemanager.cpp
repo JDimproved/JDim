@@ -104,7 +104,7 @@ void CheckUpdate_Manager::push_back( const std::string& url, const bool open )
     int num_from, num_to;
     std::string num_str;
     const std::string url_dat = DBTREE::url_dat( url, num_from, num_to, num_str );
-    const std::string url_subject = DBTREE::url_subject( url );
+    const std::string boardbase = DBTREE::url_boardbase( url );
 
     // スレ
     if( ! url_dat.empty() ){
@@ -116,10 +116,10 @@ void CheckUpdate_Manager::push_back( const std::string& url, const bool open )
     }
 
     // 板
-    else if( ! url_subject.empty() ){
+    else if( ! boardbase.empty() ){
 #ifdef _DEBUG
         std::cout << "type = board\n"
-                  << url_subject << std::endl;
+                  << boardbase << std::endl;
 #endif
         urllist = DBTREE::board_get_check_update_articles( url );
     }
@@ -173,7 +173,7 @@ void CheckUpdate_Manager::pop_front()
                 int num_from, num_to;
                 std::string num_str;
                 const std::string url_dat = DBTREE::url_dat( url, num_from, num_to, num_str );
-                const std::string url_subject = DBTREE::url_subject( url );
+                const std::string boardbase = DBTREE::url_boardbase( url );
 
                 // スレ
                 if( ! url_dat.empty() ){
@@ -182,7 +182,7 @@ void CheckUpdate_Manager::pop_front()
                 }
 
                 // 板
-                else if( ! url_subject.empty() ){
+                else if( ! boardbase.empty() ){
 
                     if( DBTREE::board_status( url ) & STATUS_UPDATE ) urls_board += url + " ";
                 }

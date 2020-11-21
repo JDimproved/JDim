@@ -125,8 +125,8 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     // 次スレ検索ビューのようにURLの途中に http が入っている場合は取り除く
     size_t pos = url.rfind( "http://" );
     if( pos == std::string::npos || pos == 0 ) pos = url.rfind( "https://" );
-    if( pos != std::string::npos && pos != 0 ) m_url_board = DBTREE::url_subject( url.substr( 0, pos ) );
-    else m_url_board = DBTREE::url_subject( url );
+    if( pos != std::string::npos && pos != 0 ) m_url_board = DBTREE::url_boardbase( url.substr( 0, pos ) );
+    else m_url_board = DBTREE::url_boardbase( url );
 
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
@@ -237,7 +237,7 @@ int BoardViewBase::get_icon( const std::string& iconname ) const
 //
 std::string BoardViewBase::url_for_copy() const
 {
-    return DBTREE::url_boardbase( get_url_board() );
+    return get_url_board();
 }
 
 
@@ -1334,6 +1334,8 @@ void BoardViewBase::update_status()
 //
 void BoardViewBase::select_item( const std::string& url )
 {
+    if( m_url_board != DBTREE::url_boardbase( url ) ) return;
+
     const Gtk::TreeModel::Row row = get_row_from_url( url );
     if( row ){
         Gtk::TreePath path = GET_PATH( row );
@@ -1749,7 +1751,7 @@ Gtk::Menu* BoardViewBase::get_popupmenu( const std::string& url )
 //
 // 特定の行だけの表示内容更新
 //
-// url : subject.txt のアドレス
+// url : boardbase アドレス
 // id : DAT の ID(拡張子付き), empty なら全ての行の表示内容を更新する
 //
 void BoardViewBase::update_item( const std::string& url, const std::string& id )
@@ -2550,7 +2552,7 @@ std::string BoardViewBase::path2url_board( const Gtk::TreePath& path )
 {
     if( ! get_url_board().empty() ) return get_url_board();
     if( path.empty() ) return std::string();
-    return DBTREE::url_subject( path2daturl( path ) );
+    return DBTREE::url_boardbase( path2daturl( path ) );
 }
 
 
@@ -2929,7 +2931,7 @@ void BoardViewBase::slot_search_next()
     if( m_path_selected.empty() ) return;
     const std::string url = path2daturl( m_path_selected );
 
-    CORE::core_set_command( "open_board_next", DBTREE::url_subject( url ) , url );
+    CORE::core_set_command( "open_board_next", DBTREE::url_boardbase( url ), url );
 }
 
 

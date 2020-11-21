@@ -375,7 +375,7 @@ void BoardBase::send_update_board()
     // "update_board" コマンドの後に"update_board_item"を送ると
     // ローディングが終了しているため行を二回更新してしまうので注意
     // 詳しくは BoardViewBase::update_item() を参照
-    CORE::core_set_command( "update_board_item", url_subject(),
+    CORE::core_set_command( "update_board_item", url_boardbase(),
                             std::string() // IDとして空文字を送る
         );
 
@@ -997,7 +997,7 @@ ArticleBase* BoardBase::get_article_fromURL( const std::string& url )
 void BoardBase::download_subject( const std::string& url_update_view, const bool read_from_cache )
 {
 #ifdef _DEBUG
-    std::cout << "BoardBase::download_subject " << url_subject() << std::endl
+    std::cout << "BoardBase::download_subject " << url_boardbase() << std::endl
               << "url_update_view = " << url_update_view << std::endl
               << "read_from_cache = " << read_from_cache << std::endl
               << "empty = " << empty() << std::endl
@@ -1160,7 +1160,7 @@ void BoardBase::receive_finish()
             if( DBTREE::move_board( url_boardbase(), location() ) ) {
                 // 再読み込み
                 const std::string str_tab = "false";
-                CORE::core_set_command( "open_board", url_subject(), str_tab );
+                CORE::core_set_command( "open_board", url_boardbase(), str_tab );
             }
         }
         // HTMLの埋め込みスクリプトで移動を指示された場合
@@ -1209,7 +1209,7 @@ void BoardBase::receive_finish()
 
                         // 再読み込み
                         const std::string str_tab = "false";
-                        CORE::core_set_command( "open_board", url_subject(), str_tab );
+                        CORE::core_set_command( "open_board", url_boardbase(), str_tab );
                     }
                 }
             }
@@ -1696,7 +1696,7 @@ void BoardBase::update_abone_thread( const bool redraw )
     const bool online = SESSION::is_online();
     SESSION::set_online( false );
 
-    download_subject( ( redraw ? url_subject() : std::string() ), false );
+    download_subject( ( redraw ? url_boardbase() : std::string() ), false );
 
     SESSION::set_online( online );
 }
@@ -1871,7 +1871,7 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
     )
 {
 #ifdef _DEBUG
-    std::cout << "BoardBase::search_cache " << url_subject() << std::endl;
+    std::cout << "BoardBase::search_cache " << url_boardbase() << std::endl;
 #endif
 
     if( empty() ) return;
@@ -2330,7 +2330,7 @@ void BoardBase::show_updateicon( const bool update )
             m_status |= STATUS_UPDATE;
 
             // スレ一覧のタブのアイコン表示を更新
-            CORE::core_set_command( "toggle_board_icon", url_subject() );
+            CORE::core_set_command( "toggle_board_icon", url_boardbase() );
 
             // サイドバーのアイコン表示を更新
             CORE::core_set_command( "toggle_sidebar_boardicon", url_datbase() );
@@ -2350,7 +2350,7 @@ void BoardBase::show_updateicon( const bool update )
 
             // サイドバーのアイコン表示を戻す
             // スレ一覧のタブのアイコンはBoardViewがロード終了時に自動的に戻す
-            CORE::core_set_command( "toggle_sidebar_boardicon", url_subject() );
+            CORE::core_set_command( "toggle_sidebar_boardicon", url_boardbase() );
 
             save_info();
         }

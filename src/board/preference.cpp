@@ -405,7 +405,7 @@ void Preferences::slot_clear_post_history()
     DBTREE::board_clear_all_post_history( get_url() );
 
     // スレ一覧とスレビューの表示更新
-    CORE::core_set_command( "update_board", DBTREE::url_subject( get_url() ) );
+    CORE::core_set_command( "update_board", DBTREE::url_boardbase( get_url() ) );
     CORE::core_set_command( "redraw_article" );
 }
 
