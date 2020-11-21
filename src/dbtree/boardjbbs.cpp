@@ -6,6 +6,8 @@
 #include "boardjbbs.h"
 #include "articlejbbs.h"
 #include "articlehash.h"
+#include "ruleloader.h"
+#include "settingloader.h"
 
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
@@ -14,6 +16,7 @@
 #include "config/globalconf.h"
 
 #include "global.h"
+#include "httpcode.h"
 
 #include <sstream>
 #include <cstring>
@@ -34,6 +37,17 @@ BoardJBBS::BoardJBBS( const std::string& root, const std::string& path_board, co
     set_ext( "" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く  
     set_charset( "EUCJP-WIN" );
+}
+
+
+BoardJBBS::~BoardJBBS() noexcept
+{
+    if( m_settingloader ) {
+        m_settingloader->terminate_load();
+    }
+    if( m_ruleloader ) {
+        m_ruleloader->terminate_load();
+    }
 }
 
 
@@ -145,6 +159,92 @@ std::string BoardJBBS::url_subbbscgi_new()
     return url_subbbscgibase() + get_id() + "/new/";
 }
 
+
+std::string BoardJBBS::localrule()
+{
+    if( m_ruleloader ){
+        if( m_ruleloader->is_loading() ) return "ロード中です";
+        else if( m_ruleloader->get_code() == HTTP_OK
+                 || m_ruleloader->get_code() == HTTP_REDIRECT
+                 || m_ruleloader->get_code() == HTTP_MOVED_PERM )
+        {
+            const std::string& data = m_ruleloader->get_data();
+            return data.empty() ? "ローカルルールはありません" : data;
+        }
+        return "ロードに失敗しました : " + m_ruleloader->get_str_code();
+    }
+
+    return BoardBase::localrule();
+}
+
+
+std::string BoardJBBS::settingtxt()
+{
+    if( m_settingloader ){
+        if( m_settingloader->is_loading() ) return "ロード中です";
+        else if( m_settingloader->get_code() == HTTP_OK
+                 || m_settingloader->get_code() == HTTP_REDIRECT
+                 || m_settingloader->get_code() == HTTP_MOVED_PERM )
+        {
+            const std::string& data = m_settingloader->get_data();
+            return data.empty() ? "SETTING.TXTはありません" : data;
+        }
+        return "ロードに失敗しました : " + m_settingloader->get_str_code();
+    }
+
+    return BoardBase::settingtxt();
+}
+
+
+std::string BoardJBBS::default_noname()
+{
+    if( m_settingloader && m_settingloader->get_code() == HTTP_OK ) {
+        return m_settingloader->default_noname();
+    }
+    return BoardBase::default_noname();
+}
+
+
+//
+// SETTING.TXT のURL
+//
+// (例) "http://jbbs.shitaraba.net/bbs/api/setting.cgi/computer/123/"
+//
+std::string BoardJBBS::url_settingtxt()
+{
+    return get_root() + "/bbs/api/setting.cgi/" + get_id() + "/";
+}
+
+
+//
+// ローカルルールとSETTING.TXTをキャッシュから読み込む
+//
+// BoardBase::read_info()で呼び出す
+//
+void BoardJBBS::load_rule_setting()
+{
+    if( ! m_ruleloader ) m_ruleloader.reset( new RuleLoader( url_boardbase(), "MS932" ) );
+    m_ruleloader->load_text();
+
+    if( ! m_settingloader ) m_settingloader.reset( new SettingLoader( url_boardbase() ) );
+    m_settingloader->load_text();
+}
+
+
+//
+// SETTING.TXTをサーバからダウンロード
+// ローカルルールはスレ本文とエンコーディングが異なる
+//
+// 読み込むタイミングはsubject.txtを読み終わった直後( BoardBase::receive_finish() )
+//
+void BoardJBBS::download_rule_setting()
+{
+    if( ! m_ruleloader ) m_ruleloader.reset( new RuleLoader( url_boardbase(), "MS932" ) );
+    m_ruleloader->download_text();
+
+    if( ! m_settingloader ) m_settingloader.reset( new SettingLoader( url_boardbase() ) );
+    m_settingloader->download_text();
+}
 
 
 //

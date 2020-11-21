@@ -13,7 +13,6 @@
 
 #include "cache.h"
 
-#define SETTING_TXT "SETTING.TXT"
 
 using namespace DBTREE;
 
@@ -41,13 +40,13 @@ SettingLoader::~SettingLoader()
 
 std::string SettingLoader::get_url()
 {
-    return m_url_boadbase + SETTING_TXT;
+    return DBTREE::url_settingtxt( m_url_boadbase );
 }
 
 
 std::string SettingLoader::get_path()
 {
-    return CACHE::path_board_root( m_url_boadbase ) + SETTING_TXT;
+    return CACHE::path_board_root( m_url_boadbase ) + DBTREE::kSettingTxt;
 }
 
 

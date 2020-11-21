@@ -102,6 +102,12 @@ std::string DBTREE::url_readcgi( const std::string& url, int num_from, int num_t
 }
 
 
+std::string DBTREE::url_settingtxt( const std::string& url )
+{
+    return DBTREE::get_board( url )->url_settingtxt();
+}
+
+
 std::string DBTREE::url_bbscgibase( const std::string& url )
 {
     return DBTREE::get_board( url )->url_bbscgibase();

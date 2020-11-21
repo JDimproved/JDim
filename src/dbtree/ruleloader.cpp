@@ -17,9 +17,10 @@
 
 using namespace DBTREE;
 
-RuleLoader::RuleLoader( const std::string& url_boadbase )
-    : SKELETON::TextLoader(),
-      m_url_boadbase( url_boadbase )
+RuleLoader::RuleLoader( const std::string& url_boadbase, const char* override_charset )
+    : SKELETON::TextLoader()
+    , m_url_boadbase( url_boadbase )
+    , m_override_charset{ override_charset }
 {
 #ifdef _DEBUG
     std::cout << "RuleLoader::RuleLoader : " << RuleLoader::get_url() << std::endl;
@@ -51,7 +52,7 @@ std::string RuleLoader::get_path()
 
 std::string RuleLoader::get_charset()
 {
-    return DBTREE::board_charset( m_url_boadbase );
+    return m_override_charset ? m_override_charset : DBTREE::board_charset( m_url_boadbase );
 }
 
 
