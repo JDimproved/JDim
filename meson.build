@@ -46,7 +46,7 @@
 project('jdim', 'cpp',
         version : '0.4.0',
         license : 'GPL2',
-        meson_version : '>= 0.49.2',
+        meson_version : '>= 0.49.0',
         default_options : ['warning_level=3', 'cpp_std=c++11'])
 
 # 追加コンパイルオプション
