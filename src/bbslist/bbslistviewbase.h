@@ -142,22 +142,22 @@ namespace BBSLIST
         int row2type( const Gtk::TreeModel::Row& row );
 
         // row -> name 変換
-        Glib::ustring row2name( const Gtk::TreeModel::Row& row );
+        std::string row2name( const Gtk::TreeModel::Row& row );
 
         // row -> url 変換
         // 板の場合は boardbase
         // スレの場合は dat 型のアドレスを返す
-        Glib::ustring row2url( const Gtk::TreeModel::Row& row );
+        std::string row2url( const Gtk::TreeModel::Row& row );
 
         // row -> dirid 変換
         size_t row2dirid( const Gtk::TreeModel::Row& row );
 
         // path からその行の名前を取得
-        Glib::ustring path2name( const Gtk::TreePath& path );
+        std::string path2name( const Gtk::TreePath& path );
 
         // path からその行のURLを取得
-        Glib::ustring path2rawurl( const Gtk::TreePath& path );
-        Glib::ustring path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
+        std::string path2rawurl( const Gtk::TreePath& path );
+        std::string path2url( const Gtk::TreePath& path ); // 移転をチェックするバージョン
 
         // url で指定した項目を削除
         void remove_item( const std::string& url );
