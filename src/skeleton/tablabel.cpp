@@ -132,7 +132,7 @@ int TabLabel::get_label_margin()
     if( CONFIG::get_show_tab_icon() && m_id_icon < ICON::NUM_ICONS ) label_margin += ICON::get_icon( m_id_icon )->get_width();
 
 #ifdef _DEBUG
-    std::cout << "image_w = " << m_image->get_allocation().get_width()
+    std::cout << "image_w = " << ( m_image ? m_image->get_allocation().get_width() : 0 )
               << " label_w = "  << m_label.get_allocation().get_width()
               << " alloc_w =  " << get_allocation().get_width()
               << " label_margine = " << label_margin
