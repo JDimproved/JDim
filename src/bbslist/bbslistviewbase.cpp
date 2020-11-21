@@ -1875,15 +1875,16 @@ void BBSListViewBase::slot_row_col( const Gtk::TreeModel::iterator&, const Gtk::
 //
 bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 {
-    if( ! m_treeview.get_row( path ) ) return false;
+    const Gtk::TreeModel::Row row = m_treeview.get_row( path );
+    if( ! row ) return false;
 
     std::string str_tab = "false";
     if( tab ) str_tab = "opentab";
 
     const std::string str_mode = "";
 
-    const Glib::ustring url = path2url( path );
-    const int type = path2type( path );
+    const std::string url = row2url( row );
+    const int type = row2type( row );
 
     if( type != TYPE_DIR && url.empty() ) return false;
 
@@ -1891,7 +1892,7 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
         case TYPE_BOARD:
         case TYPE_BOARD_UPDATE:
-            CORE::core_set_command( "open_board", DBTREE::url_boardbase( url ), str_tab, str_mode );
+            CORE::core_set_command( "open_board", url, str_tab, str_mode );
             break;
 
         case TYPE_THREAD_OLD:
@@ -1899,7 +1900,7 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
             // fallthrough
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
-            CORE::core_set_command( "open_article", DBTREE::url_dat( url ), str_tab, str_mode );
+            CORE::core_set_command( "open_article", url, str_tab, str_mode );
             break;
 
         case TYPE_IMAGE:
@@ -1961,31 +1962,25 @@ void BBSListViewBase::open_selected_rows()
     std::string list_url_board;
     std::string list_url_article;
 
-    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-    for( ; it != list_it.end(); ++it ){
+    for( Gtk::TreeIter& iter : m_treeview.get_selected_iterators() ) {
 
-        Gtk::TreeModel::Row row = *( *it );
-        Gtk::TreePath path = GET_PATH( row );
-
-        int type = path2type( path );
-        std::string url = path2url( path );
+        Gtk::TreeModel::Row row = *iter;
+        const int type = row2type( row );
+        const std::string url = row2url( row );
 
         switch( type ){
 
             case TYPE_BOARD:
             case TYPE_BOARD_UPDATE:
-                url = DBTREE::url_boardbase( url );
-                if( !list_url_board.empty() ) list_url_board += " ";
-                list_url_board += url;
+                if( ! list_url_board.empty() ) list_url_board.push_back( ' ' );
+                list_url_board.append( url );
                 break;
 
             case TYPE_THREAD:
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
-                url = DBTREE::url_dat( url );
-                if( !list_url_article.empty() ) list_url_article += " ";
-                list_url_article += url;
+                if( ! list_url_article.empty() ) list_url_article.push_back( ' ' );
+                list_url_article.append( url );
                 break;
 
             case TYPE_IMAGE:
@@ -2007,19 +2002,18 @@ void BBSListViewBase::open_selected_rows()
 //
 void BBSListViewBase::checkupdate_selected_rows( const bool open )
 {
-    std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-    for( ; it != list_it.end(); ++it ){
+    for( Gtk::TreeIter& iter : m_treeview.get_selected_iterators() ) {
 
-        Gtk::TreeModel::Row row = *( *it );
-        Gtk::TreePath path = GET_PATH( row );
+        Gtk::TreeModel::Row row = *iter;
+        const int type = row2type( row );
+        const std::string url = row2url( row );
 
-        int type = path2type( path );
-        std::string url = path2url( path );
-
-        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) CORE::get_checkupdate_manager()->push_back( DBTREE::url_dat( url ), open );
-        else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) )
-            CORE::get_checkupdate_manager()->push_back( DBTREE::url_boardbase( url ), open );
+        if( type == TYPE_THREAD || type == TYPE_THREAD_UPDATE ) {
+            CORE::get_checkupdate_manager()->push_back( url, open );
+        }
+        else if( CONFIG::get_check_update_board() && ( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ) ) {
+            CORE::get_checkupdate_manager()->push_back( url, open );
+        }
     }
 }
 
@@ -2047,32 +2041,21 @@ void BBSListViewBase::slot_sort( const int mode )
 //
 // path -> url 変換
 //
-Glib::ustring BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
+std::string BBSListViewBase::path2rawurl( const Gtk::TreePath& path )
 {
-    Gtk::TreeModel::Row row = m_treeview.get_row( path );
-    if( !row ) return Glib::ustring();
-    Glib::ustring url =  row[ m_columns.m_url ];
-    return url;
+    const Gtk::TreeModel::Row row = m_treeview.get_row( path );
+    return row2url( row );
 }
 
 
 // 移転をチェックするバージョン
-Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
+std::string BBSListViewBase::path2url( const Gtk::TreePath& path )
 {
-    Gtk::TreeModel::Row row = m_treeview.get_row( path );
-    if( !row ) return Glib::ustring();
+    const Gtk::TreeModel::Row row = m_treeview.get_row( path );
+    std::string url = row2url( row );
 
-    Glib::ustring url =  row[ m_columns.m_url ];
-    if( url.empty() ) return url;
-
-    // 移転があったら url を最新のものに変換しておく
-    int type = path2type( path );
-    switch( type ){
-
-        case TYPE_BOARD:
-        case TYPE_BOARD_UPDATE:
-            url = DBTREE::url_boardbase( url );
-            break;
+    // url を最新のものに変換しておく
+    switch( row2type( row ) ){
 
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
@@ -2091,30 +2074,11 @@ Glib::ustring BBSListViewBase::path2url( const Gtk::TreePath& path )
 // 板の場合は boardbase
 // スレの場合は dat 型のアドレスを返す
 //
-Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
+std::string BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
 {
-    if( ! row ) return Glib::ustring();
-
-    Glib::ustring url =  row[ m_columns.m_url ];
-    if( url.empty() ) return url;
-
-    // 移転があったら url を最新のものに変換しておく
-    int type = row2type( row );
-    switch( type ){
-
-        case TYPE_BOARD:
-        case TYPE_BOARD_UPDATE:
-            url = DBTREE::url_boardbase( url );
-            break;
-
-        case TYPE_THREAD:
-        case TYPE_THREAD_UPDATE:
-        case TYPE_THREAD_OLD:
-            url = DBTREE::url_dat( url );
-            break;
-    }
-
-    return url;
+    if( ! row ) return {};
+    const Glib::ustring& ustr_url = row[ m_columns.m_url ];
+    return ustr_url.raw();
 }
 
 
@@ -2122,13 +2086,23 @@ Glib::ustring BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
 //
 // path -> name 変換
 //
-Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
+std::string BBSListViewBase::path2name( const Gtk::TreePath& path )
 {
-    Gtk::TreeModel::Row row = m_treeview.get_row( path );
-    if( !row ) return Glib::ustring();
-    return row[ m_columns.m_name ];
+    const Gtk::TreeModel::Row row = m_treeview.get_row( path );
+    return row2name( row );
 }
 
+
+
+//
+// row -> name 変換
+//
+std::string BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
+{
+    if( ! row ) return {};
+    const Glib::ustring& ustr_name = row[ m_columns.m_name ];
+    return ustr_name.raw();
+}
 
 
 //
@@ -2136,9 +2110,8 @@ Glib::ustring BBSListViewBase::path2name( const Gtk::TreePath& path )
 //
 int BBSListViewBase::path2type( const Gtk::TreePath& path )
 {
-    Gtk::TreeModel::Row row = m_treeview.get_row( path );
-    if( !row ) return TYPE_UNKNOWN;
-    return row[ m_columns.m_type ];
+    const Gtk::TreeModel::Row row = m_treeview.get_row( path );
+    return row2type( row );
 }
 
 
@@ -2149,16 +2122,6 @@ int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
 {
     if( ! row ) return TYPE_UNKNOWN;
     return row[ m_columns.m_type ];
-}
-
-
-//
-// row -> name 変換
-//
-Glib::ustring BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
-{
-    if( !row ) return Glib::ustring();
-    return row[ m_columns.m_name ];
 }
 
 
@@ -2782,8 +2745,8 @@ void BBSListViewBase::exec_search()
             else path = m_treeview.prev_path( path, false );
         }
 
-        Glib::ustring name = path2name( path );
-        Glib::ustring url = path2url( path );
+        const std::string name = path2name( path );
+        const std::string url = path2url( path );
 
         const size_t offset = 0;
         if( regex_name.exec( name, offset ) || regex_url.exec( url, offset ) ) hit = true;
