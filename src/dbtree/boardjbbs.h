@@ -9,14 +9,23 @@
 
 #include "boardbase.h"
 
+#include <memory>
+
+
 namespace DBTREE
 {
+    class RuleLoader;
+    class SettingLoader;
+
     class BoardJBBS : public BoardBase
     {
+        std::unique_ptr<RuleLoader> m_ruleloader;
+        std::unique_ptr<SettingLoader> m_settingloader;
+
       public:
 
         BoardJBBS( const std::string& root, const std::string& path_board,const std::string& name );
-        ~BoardJBBS() noexcept = default;
+        ~BoardJBBS() noexcept;
 
         std::string url_datpath() override;
 
@@ -30,12 +39,25 @@ namespace DBTREE
         // 新スレ作成用のsubbbscgi のURL
         std::string url_subbbscgi_new() override;
 
+        // ローカルルール
+        std::string localrule() override;
+
+        // SETTING.TXT
+        std::string settingtxt() override;
+        std::string default_noname() override;
+
+        // SETTING.TXT のURL
+        std::string url_settingtxt() override;
+
       private:
 
         bool is_valid( const std::string& filename ) override;
         ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
         void parse_subject( const char* str_subject_txt ) override;
         void regist_article( const bool is_online ) override;
+
+        void load_rule_setting() override;
+        void download_rule_setting() override;
     };
 }
 

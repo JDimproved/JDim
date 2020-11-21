@@ -17,6 +17,9 @@ namespace JDLIB
 
 namespace DBTREE
 {
+    // 板設定のファイル名
+    constexpr const char kSettingTxt[] = "SETTING.TXT";
+
     class SettingLoader : public SKELETON::TextLoader
     {
         std::string m_url_boadbase;

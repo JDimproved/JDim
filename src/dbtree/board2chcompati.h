@@ -47,6 +47,9 @@ namespace DBTREE
         // ローカルルール
         std::string localrule() override;
 
+        // SETTING.TXT のURL
+        std::string url_settingtxt() override;
+
         // SETTING.TXT 
         std::string settingtxt() override;
         std::string default_noname() override;

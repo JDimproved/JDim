@@ -51,6 +51,8 @@ namespace DBTREE
     // read.cgi型のurlに変換
     std::string url_readcgi( const std::string& url, int num_from, int num_to );
 
+    std::string url_settingtxt( const std::string& url );
+
     std::string url_bbscgibase( const std::string& url );
     std::string url_subbbscgibase( const std::string& url );
     std::string url_bbscgi( const std::string& url );
