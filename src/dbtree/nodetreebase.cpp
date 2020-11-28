@@ -10,7 +10,6 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/loaderdata.h"
-#include "jdlib/jdregex.h"
 
 #include "dbimg/imginterface.h"
 
@@ -27,9 +26,10 @@
 #include "session.h"
 #include "urlreplacemanager.h"
 
-#include <sstream>
+#include <algorithm>
 #include <fstream>
 #include <limits>
+#include <sstream>
 
 
 #ifndef MAX
@@ -112,9 +112,9 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
 
     // レスにアスキーアートがあると判定する正規表現
     if( CONFIG::get_aafont_enabled() ){
-        m_aa_regex = CONFIG::get_regex_res_aa();
-    } else {
-        m_aa_regex = std::string();
+        constexpr bool icase = false;
+        constexpr bool newline = true;
+        m_aa_regex.set( CONFIG::get_regex_res_aa(), icase, newline );
     }
 
 #ifdef _DEBUG
@@ -568,19 +568,19 @@ std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bo
     std::list< int > list_resnum;
     if( query.empty() ) return list_resnum;
 
-    std::list< JDLIB::Regex > list_regex;
-    const size_t offset = 0;
-    const bool icase = true; // 大文字小文字区別しない
-    const bool newline = true; // . に改行をマッチさせない
-    const bool usemigemo = true; // migemo使用
-    const bool wchar = true; // 全角半角の区別をしない
+    std::list<JDLIB::RegexPattern> list_regex;
+    JDLIB::Regex regex;
+    const auto make_pattern = []( const std::string& query ) {
+        constexpr bool icase = true; // 大文字小文字区別しない
+        constexpr bool newline = true; // . に改行をマッチさせない
+        constexpr bool usemigemo = true; // migemo使用
+        constexpr bool wchar = true; // 全角半角の区別をしない
 
-    const std::list< std::string > list_query = MISC::split_line( query );
-    for( const std::string& keyword : list_query ) {
+        return JDLIB::RegexPattern( query, icase, newline, usemigemo, wchar );
+    };
 
-        list_regex.push_back( JDLIB::Regex() );
-        list_regex.back().compile( keyword, icase, newline, usemigemo, wchar );
-    }
+    const std::list<std::string> list_query = MISC::split_line( query );
+    std::transform( list_query.cbegin(), list_query.cend(), std::back_inserter( list_regex ), make_pattern );
 
     for( int i = 1; i <= m_id_header ; ++i ){
 
@@ -589,11 +589,10 @@ std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bo
         bool apnd = true;
         if( mode_or ) apnd = false;
 
-        std::list< JDLIB::Regex >::iterator it_regex;
-        for( it_regex = list_regex.begin(); it_regex != list_regex.end() ; ++it_regex ){
+        for( const JDLIB::RegexPattern& pattern : list_regex ) {
 
-            JDLIB::Regex &regex = ( *it_regex );
-            const bool ret = regex.exec( res_str, offset );
+            constexpr std::size_t offset = 0;
+            const bool ret = regex.match( pattern, res_str, offset );
 
             // OR
             if( mode_or ){
@@ -2863,17 +2862,31 @@ void NodeTreeBase::copy_abone_info( const std::list< std::string >& list_abone_i
     m_list_abone_id_board = DBTREE::get_abone_list_id_board( m_url );
     m_list_abone_name_board = DBTREE::get_abone_list_name_board( m_url );
 
+    std::list<std::string> list_str;
+    const auto make_pattern = []( const std::string& query ) {
+        const bool icase = CONFIG::get_abone_icase();
+        constexpr bool newline = true;
+        const bool wchar = CONFIG::get_abone_wchar();
+        return JDLIB::RegexPattern( query, icase, newline, false, wchar );
+    };
+
     // 設定ファイルには改行は"\\n"で保存されているので "\n"　に変換する
     m_list_abone_word = MISC::replace_str_list( list_abone_word, "\\n", "\n" );
-    m_list_abone_regex = MISC::replace_str_list( list_abone_regex, "\\n", "\n" );
+    list_str = MISC::replace_str_list( list_abone_regex, "\\n", "\n" );
+    m_list_abone_regex.clear();
+    std::transform( list_str.cbegin(), list_str.cend(), std::back_inserter( m_list_abone_regex ), make_pattern );
 
     m_list_abone_word_board = DBTREE::get_abone_list_word_board( m_url );
     m_list_abone_word_board = MISC::replace_str_list( m_list_abone_word_board, "\\n", "\n" );
-    m_list_abone_regex_board = DBTREE::get_abone_list_regex_board( m_url );
-    m_list_abone_regex_board = MISC::replace_str_list( m_list_abone_regex_board, "\\n", "\n" );
+    list_str = DBTREE::get_abone_list_regex_board( m_url );
+    list_str = MISC::replace_str_list( list_str, "\\n", "\n" );
+    m_list_abone_regex_board.clear();
+    std::transform( list_str.cbegin(), list_str.cend(), std::back_inserter( m_list_abone_regex_board ), make_pattern );
 
     m_list_abone_word_global = MISC::replace_str_list( CONFIG::get_list_abone_word(), "\\n", "\n" );
-    m_list_abone_regex_global = MISC::replace_str_list( CONFIG::get_list_abone_regex(), "\\n", "\n" );
+    list_str = MISC::replace_str_list( CONFIG::get_list_abone_regex(), "\\n", "\n" );
+    m_list_abone_regex_global.clear();
+    std::transform( list_str.cbegin(), list_str.cend(), std::back_inserter( m_list_abone_regex_global ), make_pattern );
 
     m_abone_reses = abone_reses;
 
@@ -3111,10 +3124,6 @@ bool NodeTreeBase::check_abone_word( const int number )
     const std::string res_str = get_res_str( number );
     JDLIB::Regex regex;
     const size_t offset = 0;
-    const bool icase = CONFIG::get_abone_icase();
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = CONFIG::get_abone_wchar();
 
     // ローカル NG word
     if( check_word ){
@@ -3131,9 +3140,8 @@ bool NodeTreeBase::check_abone_word( const int number )
     // ローカル NG regex
     if( check_regex ){
 
-        std::list< std::string >::iterator it = m_list_abone_regex.begin();
-        for( ; it != m_list_abone_regex.end(); ++it ){
-            if( regex.exec( *it, res_str, offset, icase, newline, usemigemo, wchar ) ){
+        for( const JDLIB::RegexPattern& pattern : m_list_abone_regex ) {
+            if( regex.match( pattern, res_str, offset ) ){
                 head->headinfo->abone = true;
                 return true;
             }
@@ -3155,9 +3163,8 @@ bool NodeTreeBase::check_abone_word( const int number )
     // 板レベル NG regex
     if( check_regex_board ){
 
-        std::list< std::string >::iterator it = m_list_abone_regex_board.begin();
-        for( ; it != m_list_abone_regex_board.end(); ++it ){
-            if( regex.exec( *it, res_str, offset, icase, newline, usemigemo, wchar ) ){
+        for( const JDLIB::RegexPattern& pattern : m_list_abone_regex_board ) {
+            if( regex.match( pattern, res_str, offset ) ){
                 head->headinfo->abone = true;
                 return true;
             }
@@ -3179,9 +3186,8 @@ bool NodeTreeBase::check_abone_word( const int number )
     // 全体 NG regex
     if( check_regex_global ){
 
-        std::list< std::string >::iterator it = m_list_abone_regex_global.begin();
-        for( ; it != m_list_abone_regex_global.end(); ++it ){
-            if( regex.exec( *it, res_str, offset, icase, newline, usemigemo, wchar ) ){
+        for( const JDLIB::RegexPattern& pattern : m_list_abone_regex_global ) {
+            if( regex.match( pattern, res_str, offset ) ){
                 head->headinfo->abone = true;
                 return true;
             }
@@ -3530,7 +3536,7 @@ void NodeTreeBase::check_fontid( const int number )
 
     // ヘッダノードには、フォント判定済みの意味を兼ねて、デフォルトフォントを設定しておく
     head->fontid = FONT_DEFAULT;
-    if( m_aa_regex.empty() ) return;
+    if( ! m_aa_regex.compiled() ) return;
 
     char fontid_mes = FONT_DEFAULT; // 本文のフォント(fontid.h)
 
@@ -3538,12 +3544,8 @@ void NodeTreeBase::check_fontid( const int number )
     const std::string res_str = get_res_str( number );
     JDLIB::Regex regex;
     const size_t offset = 0;
-    const bool icase = false;
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = false;
 
-    if( regex.exec( m_aa_regex, res_str, offset, icase, newline, usemigemo, wchar ) ){
+    if( regex.match( m_aa_regex, res_str, offset ) ){
         fontid_mes = FONT_AA;
 #ifdef _DEBUG
         std::cout << "NodeTreeBase::check_fontid() fontid = " << FONT_AA

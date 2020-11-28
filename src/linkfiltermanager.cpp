@@ -149,15 +149,7 @@ bool Linkfilter_Manager::exec( const std::string& url, const std::string& link, 
         if( ! regex.exec( query, link, offset, icase, newline, usemigemo, wchar ) ) continue;
 
         // \0 ... \9 までのcmd文字列を置換
-        std::string cmd_out = cmd;
-        char rep_text[] = "\\0";
-        for( int i = 0; i < 9; i++ ){
-            if( regex.pos( i ) == -1 ){
-                continue;
-            }
-            rep_text[ 1 ] = '0' + i;
-            cmd_out = MISC::replace_str( cmd_out, rep_text, regex.str( i ) );
-        }
+        const std::string cmd_out = regex.replace( cmd );
 
         // queryと一致したら実行
         CORE::get_usrcmd_manager()->exec( cmd_out, url, link, selection, 0 );

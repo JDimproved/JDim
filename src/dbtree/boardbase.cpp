@@ -547,9 +547,9 @@ void BoardBase::update_url( const std::string& root, const std::string& path_boa
     m_root = root;
     m_path_board = path_board;
 
-    m_query_dat = std::string();
-    m_query_cgi = std::string();
-    m_query_kako = std::string();
+    m_query_dat.clear();
+    m_query_cgi.clear();
+    m_query_kako.clear();
 
     // modified 時刻をリセット
     // 自動移転処理後に bbsmenu.html を読み込んだときに、bbsmenu.html の
@@ -579,10 +579,6 @@ std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_
 
     JDLIB::Regex regex;
     const size_t offset = 0;
-    const bool icase = false;
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = false;
 
     std::string id; // スレッドのID
 
@@ -592,30 +588,38 @@ std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_
     
     num_from = num_to = 0;
 
-    if( m_query_dat.empty() ){
+    if( ! m_query_dat.compiled() ){
+
+        constexpr bool icase = false;
+        constexpr bool newline = true;
+        constexpr bool usemigemo = false;
+        constexpr bool wchar = false;
 
         // dat 型
         const std::string datpath = MISC::replace_str( url_datpath(), "?", "\\?" );
-        m_query_dat = "^ *(https?://.+" + datpath  + ")([1234567890]+" + get_ext() + ") *$";
+        const std::string reg_dat = "^ *(https?://.+" + datpath  + ")([0-9]+" + get_ext() + ") *$";
+        m_query_dat.set( reg_dat, icase, newline, usemigemo, wchar );
 
         // read.cgi型
         const std::string cgipath = MISC::replace_str( url_readcgipath(), "?", "\\?" );
-        m_query_cgi = "^ *(https?://.+" + cgipath + ")([1234567890]+)/?r?(l50)?([1234567890]+)?(-)?([1234567890]+)?.*$";
+        const std::string reg_cgi = "^ *(https?://.+" + cgipath + ")([0-9]+)/?r?(l50)?([0-9]+)?(-)?([0-9]+)?.*$";
+        m_query_cgi.set( reg_cgi, icase, newline, usemigemo, wchar );
 
         // 過去ログかどうか
         const std::string pathboard = MISC::replace_str( m_path_board, "?", "\\?" );
-        m_query_kako = "^ *(https?://.+)" + pathboard  + "/kako(/[1234567890]+)?/[1234567890]+/([1234567890]+).html *$";
+        const std::string reg_kako = "^ *(https?://.+)" + pathboard  + "/kako(/[0-9]+)?/[0-9]+/([0-9]+).html *$";
+        m_query_kako.set( reg_kako, icase, newline, usemigemo, wchar );
 
 #ifdef _DEBUG
-        std::cout << "query_dat = " << m_query_dat << std::endl;
-        std::cout << "query_cgi = " << m_query_cgi << std::endl;
-        std::cout << "query_kako = " << m_query_kako << std::endl;
+        std::cout << "reg_dat = " << reg_dat << std::endl;
+        std::cout << "reg_cgi = " << reg_cgi << std::endl;
+        std::cout << "reg_kako = " << reg_kako << std::endl;
 #endif
     }
 
-    if( regex.exec( m_query_dat , url, offset, icase, newline, usemigemo, wchar ) ) id = regex.str( 2 );
+    if( regex.match( m_query_dat, url, offset ) ) id = regex.str( 2 );
 
-    else if( regex.exec( m_query_cgi , url, offset, icase, newline, usemigemo, wchar ) ){
+    else if( regex.match( m_query_cgi, url, offset ) ){
 
         id = regex.str( 2 ) + get_ext(); 
 
@@ -647,10 +651,7 @@ std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_
     // どちらでもない(スレのURLでない)場合
     else{
 
-#ifdef _DEBUG
-        std::cout << "query_kako = " << m_query_kako << std::endl;
-#endif
-        if( regex.exec( m_query_kako , url, offset, icase, newline, usemigemo, wchar ) ){
+        if( regex.match( m_query_kako, url, offset ) ){
 
             std::string url_tmp = regex.str( 1 ) + url_datpath() + regex.str( 3 ) + get_ext();
 #ifdef _DEBUG

@@ -1884,6 +1884,7 @@ bool MISC::starts_with( const char* self, const char* starts )
 std::vector<MISC::FormDatum> MISC::parse_html_form_data( const std::string& html )
 {
     JDLIB::Regex regex;
+    JDLIB::RegexPattern pat;
     constexpr bool icase = true; // 大文字小文字区別しない
     constexpr bool newline = false;  // . に改行をマッチさせる
     constexpr bool usemigemo = false;
@@ -1891,14 +1892,14 @@ std::vector<MISC::FormDatum> MISC::parse_html_form_data( const std::string& html
 
     // <input type=(hidden|submit)> or <textarea> のタグを解析して name と value を取得
     const std::string pattern = R"((<input +type=("hidden"|hidden|"submit"|submit) +(name=([^ ]*) +value=([^>]*)|value=([^ ]*) +name=([^>]*))>|<textarea +name=([^ >]*)[^>]*>(.*?)</textarea>))";
-    regex.compile( pattern, icase, newline, usemigemo, wchar );
+    pat.set( pattern, icase, newline, usemigemo, wchar );
 
     std::vector<MISC::FormDatum> data;
     for( std::size_t offset = 0; ; ++offset){
         std::string name;
         std::string value;
 
-        if( regex.exec( html, offset ) ) {
+        if( regex.match( pat, html, offset ) ) {
             const std::string name_value = MISC::tolower_str( regex.str( 3 ) );
             if( name_value.compare( 0, 5, "name=" ) == 0 ) {
                 name = MISC::remove_space( regex.str( 4 ) );

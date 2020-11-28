@@ -261,10 +261,10 @@ void Search_Manager::search_fin_title()
         const bool newline = true;
         const bool usemigemo = false;
         const bool wchar = false;
-        regex.compile( pattern, icase, newline, usemigemo, wchar );
+        const JDLIB::RegexPattern regexptn( pattern, icase, newline, usemigemo, wchar );
 
         std::size_t offset = 0;
-        while( regex.exec( source, offset ) ){
+        while( regex.match( regexptn, source, offset ) ){
 
             SEARCHDATA data;
             data.url_readcgi = DBTREE::url_readcgi( regex.str( 1 ), 0, 0 );
