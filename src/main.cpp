@@ -394,10 +394,10 @@ int main( int argc, char **argv )
                 query = "(([0-9]*)x([0-9]*))?\\-([0-9]*)\\+([0-9]*)";
                 if( regex.exec( query, optarg, offset, icase, newline, usemigemo, wchar ) ){
 
-                    if( ! regex.str( 2 ).empty() ) init_w = atoi( regex.str( 2 ).c_str() );
-                    if( ! regex.str( 3 ).empty() ) init_h = atoi( regex.str( 3 ).c_str() );
-                    if( ! regex.str( 4 ).empty() ) init_x = atoi( regex.str( 4 ).c_str() );
-                    if( ! regex.str( 5 ).empty() ) init_y = atoi( regex.str( 5 ).c_str() );
+                    if( regex.length( 2 ) ) init_w = atoi( regex.str( 2 ).c_str() );
+                    if( regex.length( 3 ) ) init_h = atoi( regex.str( 3 ).c_str() );
+                    if( regex.length( 4 ) ) init_x = atoi( regex.str( 4 ).c_str() );
+                    if( regex.length( 5 ) ) init_y = atoi( regex.str( 5 ).c_str() );
                 }
                 else usage( EXIT_FAILURE );
 

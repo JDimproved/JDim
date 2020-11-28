@@ -623,7 +623,7 @@ std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_
 
         id = regex.str( 2 ) + get_ext(); 
 
-        if( !regex.str( 3 ).empty() ){ // l50
+        if( regex.length( 3 ) ){ // l50
             num_from = 1;
             num_to = 50;
         }
@@ -638,7 +638,7 @@ std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_
             num_from = MAX( 1, num_from );
 
             // 12- みたいな場合はとりあえず大きい数字を入れとく
-            if( !regex.str( 5 ).empty() && !num_to ) num_to = CONFIG::get_max_resnumber() + 1;
+            if( regex.length( 5 ) && !num_to ) num_to = CONFIG::get_max_resnumber() + 1;
         }
 
         // -15 みたいな場合
@@ -1826,7 +1826,7 @@ void BoardBase::set_local_proxy( const std::string& proxy )
 
     if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy, offset, icase, newline, usemigemo, wchar ) )
     {
-        m_local_proxy_basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        m_local_proxy_basicauth = regex.str( 1 ).substr( 0, regex.length( 1 ) - 1 );
         m_local_proxy = regex.str( 2 );
     }
 }
@@ -1851,7 +1851,7 @@ void BoardBase::set_local_proxy_w( const std::string& proxy )
 
     if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy, offset, icase, newline, usemigemo, wchar ) )
     {
-        m_local_proxy_basicauth_w = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        m_local_proxy_basicauth_w = regex.str( 1 ).substr( 0, regex.length( 1 ) - 1 );
         m_local_proxy_w = regex.str( 2 );
     }
 }

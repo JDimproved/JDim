@@ -102,6 +102,7 @@ namespace JDLIB
         // マッチした文字列と \0〜\9 を置換する
         std::string replace( const std::string& repstr ) const;
 
+        int length( std::size_t num ) const noexcept;
         int pos( std::size_t num ) const noexcept;
         std::string str( std::size_t num ) const;
     };

@@ -1120,7 +1120,7 @@ void ConfigItems::set_proxy_for2ch( const std::string& proxy )
 
     if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy, offset, icase, newline, usemigemo, wchar ) )
     {
-        proxy_basicauth_for2ch = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        proxy_basicauth_for2ch = regex.str( 1 ).substr( 0, regex.length( 1 ) - 1 );
         proxy_for2ch = regex.str( 2 );
     }
 }
@@ -1141,7 +1141,7 @@ void ConfigItems::set_proxy_for2ch_w( const std::string& proxy )
 
     if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy, offset, icase, newline, usemigemo, wchar ) )
     {
-        proxy_basicauth_for2ch_w = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        proxy_basicauth_for2ch_w = regex.str( 1 ).substr( 0, regex.length( 1 ) - 1 );
         proxy_for2ch_w = regex.str( 2 );
     }
 }
@@ -1162,7 +1162,7 @@ void ConfigItems::set_proxy_for_data( const std::string& proxy )
 
     if( regex.exec( "([^/]+:[^/]+@)(.+)$" , proxy, offset, icase, newline, usemigemo, wchar ) )
     {
-        proxy_basicauth_for_data = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+        proxy_basicauth_for_data = regex.str( 1 ).substr( 0, regex.length( 1 ) - 1 );
         proxy_for_data = regex.str( 2 );
     }
 }

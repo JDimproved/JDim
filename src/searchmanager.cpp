@@ -288,7 +288,7 @@ void Search_Manager::search_fin_title()
             }
 
             // オフセットを設定して再検索する
-            offset = regex.pos( 0 ) + regex.str( 0 ).length();
+            offset = regex.pos( 0 ) + regex.length( 0 );
         }
     }
 

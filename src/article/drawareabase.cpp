@@ -3565,7 +3565,7 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
 
                             if( min_offset == -1 || regex.pos( 0 ) <= min_offset ){
                                 min_offset = regex.pos( 0 );
-                                lng = regex.str( 0 ).length();
+                                lng = regex.length( 0 );
                             }
                         }
                     }

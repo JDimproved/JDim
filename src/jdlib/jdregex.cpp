@@ -346,11 +346,11 @@ std::string Regex::replace( const std::string& repstr ) const
 }
 
 
-std::string Regex::str( std::size_t num ) const
+int Regex::length( std::size_t num ) const noexcept
 {
-    if( m_results.size() > num ) return m_results[num];
+    if( m_results.size() > num ) return m_results[num].size();
 
-    return {};
+    return 0;
 }
 
 
@@ -359,4 +359,12 @@ int Regex::pos( std::size_t num ) const noexcept
     if( m_results.size() > num ) return m_pos[num];
 
     return -1;
+}
+
+
+std::string Regex::str( std::size_t num ) const
+{
+    if( m_results.size() > num ) return m_results[num];
+
+    return {};
 }
