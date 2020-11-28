@@ -125,6 +125,8 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
     使用する正規表現ライブラリを設定する。
     デフォルトでは Glib Regex(GRegex) を使用する。<small>(v0.4.0+から変更)</small>
   </dd>
+  <dt>--with-regex=posix</dt>
+  <dd><strong>非推奨</strong>: かわりに <code>--with-regex=glib</code> を使用してください。</dd>
   <dt>--with-regex=oniguruma</dt>
   <dd>
     POSIX regex のかわりに鬼車を使用する。

@@ -110,6 +110,10 @@
        使用する正規表現ライブラリを設定する。
        デフォルトでは Glib Regex(GRegex) を使用する。(v0.4.0+から変更)
 
+    --with-regex=posix
+
+       非推奨: かわりに --with-regex=glib を使用してください。
+
     --with-regex=oniguruma
 
        POSIX regex のかわりに鬼車を使用する。

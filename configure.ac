@@ -179,7 +179,8 @@ AC_MSG_RESULT($with_regex)
 AS_IF(
   [test "x$with_regex" = xposix],
   [AC_CHECK_HEADERS([regex.h], , [AC_MSG_ERROR([regex.h not found])])
-   AC_CHECK_LIB([regex], [regexec])],
+   AC_CHECK_LIB([regex], [regexec])
+   AC_MSG_WARN([--with-regex=posix is deprecated. Use --with-regex=glib instead.])],
 
   [test "x$with_regex" = xpcre],
   [AC_MSG_ERROR([--with-regex=pcre has been removed. Use --with-regex=glib instead.])],
