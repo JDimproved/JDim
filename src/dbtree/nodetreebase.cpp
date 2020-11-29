@@ -1557,21 +1557,68 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     node->fontid = FONT_MAIL;
     create_node_link( tmpstr.c_str(), tmpstr.size(), tmplink.c_str(), tmplink.size(), COLOR_CHAR_LINK_RES, true, FONT_MAIL );
 
-    const char* section[ SECTION_NUM ];
-    int section_lng[ SECTION_NUM ];
-   
-    // セクション分けしながら壊れてないかチェック
-    for( i = 0; i < SECTION_NUM ; ++i ){
-        
-        section[ i ] = pos;
-        while( !( *pos == '<' && *( pos + 1 ) == '>' ) && ( *pos != '\0' && *pos != '\n' ) ) ++pos;
-        section_lng[ i ] = ( int )( pos - section[ i ] );
-        
-        if( ( *pos == '\0' || *pos == '\n' ) && i < SECTION_NUM -1 ) break; // 壊れてる
+    const char* section[ SECTION_NUM ]{};
+    int section_lng[ SECTION_NUM ]{};
 
-        if ( !( *pos == '\0' || *pos == '\n' ) ) pos += 2; // "<>"の分
+    // セクション分けしながら壊れてないかチェック
+    for( i = 0; i < SECTION_NUM; ++i ) {
+
+        section[i] = pos;
+        while( *pos != '\0' && *pos != '\n' && ! ( pos[0] == '<' && pos[1] == '>' ) ) ++pos;
+        section_lng[i] = pos - section[i];
+
+        if( *pos == '\0' || *pos == '\n' ) {
+            ++i;
+            break;
+        }
+        pos += 2; // "<>"の分
     }
-   
+
+    if( i < ( SECTION_NUM - 1 ) ) {
+        // 本文途中まで解析出来てなければ旧dat形式でチェックしてみる
+        pos = datline;
+
+        for( i = 0; i < SECTION_NUM; ++i ) {
+
+            section[i] = pos;
+            while( *pos != ',' && *pos != '\0' && *pos != '\n' ) ++pos;
+            section_lng[i] = pos - section[i];
+
+            if( *pos == '\0' || *pos == '\n' ) {
+                ++i;
+                break;
+            }
+            pos += 1; // ","の分
+        }
+    }
+
+    // 行末まで読み飛ばす
+    while( *pos != '\0' && *pos != '\n' ) ++pos;
+
+    // 名前
+    const int color_name = section_lng[1] ? COLOR_CHAR_NAME : COLOR_CHAR_NAME_NOMAIL;
+    parse_name( header, section[0], section_lng[0], color_name );
+
+    // メール
+    if( i > 1 ) parse_mail( header, section[1], section_lng[1] );
+
+    // 日付とID
+    if( i > 2 ) parse_date_id( header, section[2], section_lng[2] );
+
+    // 本文
+    if( i > 3 ) {
+
+        header->headinfo->block[ BLOCK_MES ] = create_node_block();
+
+        const char* str = section[3];
+        int lng_msg = section_lng[3];
+
+        constexpr bool digitlink = false;
+        constexpr bool bold = false;
+        constexpr bool ahref = false;
+        parse_html( str, lng_msg, COLOR_CHAR, digitlink, bold, ahref );
+    }
+
     // 壊れている
     if( i != SECTION_NUM ){
 
@@ -1581,41 +1628,26 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 #endif
 
         m_broken = true;
-        node = header->headinfo->block[ BLOCK_NAME ] = create_node_block();
-        node->fontid = FONT_MAIL;
+        if( i <= 2 ) {
+            node = header->headinfo->block[ BLOCK_MES ] = create_node_block();
+            node->fontid = FONT_MAIL;
+        }
+        constexpr bool digitlink = false;
+        constexpr bool bold = true;
+        constexpr bool ahref = false;
+        constexpr const char message[] = "<br> <br> 壊れています<br>";
+        parse_html( message, std::strlen( message ), COLOR_CHAR, digitlink, bold, ahref, FONT_MAIL );
 
-        create_node_text( " 壊れています", COLOR_CHAR, false, FONT_MAIL );
-
-        header->headinfo->block[ BLOCK_MES ] = create_node_block();
         const char str_broken[] = "ここ";
         create_node_link( str_broken, strlen( str_broken ) , PROTO_BROKEN, strlen( PROTO_BROKEN ), COLOR_CHAR_LINK, false );
         create_node_text( "をクリックしてスレを再取得して下さい。", COLOR_CHAR );
-        
+
         return pos;
     }
-    
-    // 名前
-    int color_name = COLOR_CHAR_NAME;
-    if( ! section_lng[ 1 ] ) color_name = COLOR_CHAR_NAME_NOMAIL;
-    parse_name( header, section[ 0 ], section_lng[ 0 ], color_name );
-    
-    // メール
-    parse_mail( header, section[ 1 ], section_lng[ 1 ] );
-
-    // 日付とID
-    parse_date_id( header, section[ 2 ], section_lng[ 2 ] );
-
-    // 本文
-    header->headinfo->block[ BLOCK_MES ] = create_node_block();
-
-    const bool digitlink = false;
-    const bool bold = false;
-    const bool ahref = false;
-    parse_html( section[ 3 ], section_lng[ 3 ], COLOR_CHAR, digitlink, bold, ahref );
 
     // サブジェクト
-    if( header->id_header == 1 ){
-        m_subject = std::string( section[ 4 ] ).substr( 0, section_lng[ 4 ] );
+    if( header->id_header == 1 ) {
+        m_subject.assign( section[4], section_lng[4] );
 
 #ifdef _DEBUG
         std::cout << "subject = " << m_subject << std::endl;
