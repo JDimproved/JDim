@@ -6,6 +6,7 @@
 #ifndef _BOARDBASE_H
 #define _BOARDBASE_H
 
+#include "jdlib/jdregex.h"
 #include "skeleton/loadable.h"
 
 #include <string>
@@ -121,9 +122,9 @@ namespace DBTREE
         std::string m_name; // 板名
 
         // dat型のurlに変換する時のquery ( url_dat()で使用する )
-        std::string m_query_dat;
-        std::string m_query_cgi;
-        std::string m_query_kako;
+        JDLIB::RegexPattern m_query_dat;
+        JDLIB::RegexPattern m_query_cgi;
+        JDLIB::RegexPattern m_query_kako;
 
         // ローカルあぼーん情報(板内の全レス対象)
         std::list< std::string > m_list_abone_id; // あぼーんするID

@@ -2673,9 +2673,6 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 //
 void BBSListViewBase::exec_search()
 {
-    JDLIB::Regex regex_name;
-    JDLIB::Regex regex_url;
-
     CORE::core_set_command( "set_info", "", "" );
 
     std::string query = get_search_query();
@@ -2704,17 +2701,19 @@ void BBSListViewBase::exec_search()
     std::cout << "BBSListViewBase::exec_search() path = " << path.to_string() << " query = " << query << std::endl;
 #endif
 
-    const bool icase_name = true; // 大文字小文字区別しない
-    const bool newline_name = true; // . に改行をマッチさせない
-    const bool usemigemo_name = true; // migemo使用
-    const bool wchar_name = true;  // 全角半角の区別をしない
-    regex_name.compile( query, icase_name, newline_name, usemigemo_name, wchar_name );
+    constexpr bool icase_name = true; // 大文字小文字区別しない
+    constexpr bool newline_name = true; // . に改行をマッチさせない
+    constexpr bool usemigemo_name = true; // migemo使用
+    constexpr bool wchar_name = true;  // 全角半角の区別をしない
+    const JDLIB::RegexPattern regex_name( query, icase_name, newline_name, usemigemo_name, wchar_name );
 
-    const bool icase_url = true; // 大文字小文字区別しない
-    const bool newline_url = true;
-    const bool usemigemo_url = false;
-    const bool wchar_url = false;
-    regex_url.compile( query, icase_url, newline_url, usemigemo_url, wchar_url );
+    constexpr bool icase_url = true; // 大文字小文字区別しない
+    constexpr bool newline_url = true;
+    constexpr bool usemigemo_url = false;
+    constexpr bool wchar_url = false;
+    const JDLIB::RegexPattern regex_url( query, icase_url, newline_url, usemigemo_url, wchar_url );
+
+    JDLIB::Regex regex;
 
     bool hit = false;
     for(;;){
@@ -2749,7 +2748,7 @@ void BBSListViewBase::exec_search()
         const std::string url = path2url( path );
 
         const size_t offset = 0;
-        if( regex_name.exec( name, offset ) || regex_url.exec( url, offset ) ) hit = true;
+        if( regex.match( regex_name, name, offset ) || regex.match( regex_url, url, offset ) ) hit = true;
 
         // 一周したら終わり
         if( path == path_start ) break;

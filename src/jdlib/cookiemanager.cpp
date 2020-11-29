@@ -123,7 +123,7 @@ bool SimpleCookieParser::parse( const std::string& input, SimpleCookie& result )
     if( regex.exec( R"-(([^"\=;]+)=([^"\=;]*))-", input, offset, icase, newline, usemigemo, wchar ) ) {
         result.name = regex.str( 1 );
         result.value = regex.str( 0 );
-        offset = regex.str( 0 ).size();
+        offset = regex.length( 0 );
     }
     else {
         return false;
@@ -131,7 +131,7 @@ bool SimpleCookieParser::parse( const std::string& input, SimpleCookie& result )
 
     if( regex.exec( R"-(path=/([^;]+))-", input, offset, icase, newline, usemigemo, wchar ) ) {
         // ルート(/)以外のpathは解析失敗にする
-        if( ! regex.str( 1 ).empty() ) return false;
+        if( regex.length( 1 ) ) return false;
     }
     if( regex.exec( R"-(domain=([^;]+))-", input, offset, icase, newline, usemigemo, wchar ) ) {
         result.domain = regex.str( 1 );

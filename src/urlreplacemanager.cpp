@@ -10,6 +10,9 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 
+#include <list>
+
+
 CORE::Urlreplace_Manager* instance_urlreplace_manager = nullptr;
 
 CORE::Urlreplace_Manager* CORE::get_urlreplace_manager()
@@ -82,29 +85,41 @@ void Urlreplace_Manager::conf2list( const std::string& conf )
     std::list< std::string > lines = MISC::get_lines( conf );
     if( lines.size() == 0 ) return;
 
-    std::list < std::string >::iterator it = lines.begin();
-    for( ; it != lines.end(); ++it ){
-        if( (*it).length() <= 0 ) continue;
-        if( (*it)[0] == '#' ) continue; // コメント行
+    for( const std::string& conf_str : lines ) {
+        if( conf_str.empty() ) continue;
+        if( conf_str[0] == '#' ) continue; // コメント行
 
-        std::list< std::string > line = MISC::StringTokenizer( *it, '\t' );
-        if( line.size() < 2 ) continue;
+        std::list<std::string> tokens = MISC::StringTokenizer( conf_str, '\t' );
+        if( tokens.size() < 2 ) continue;
 
         UrlreplaceItem item;
-        std::string ctrl;
-        std::list < std::string >::iterator str = line.begin();
+        std::list<std::string>::iterator str = tokens.begin();
         // 1: 検索URL
-        item.match = *str;
+        constexpr bool icase = false;
+        constexpr bool newline = true;
+        constexpr bool migemo = false;
+        constexpr bool wchar = false;
+        if( (*str).empty() || ! item.creg.set( *str, icase, newline, migemo, wchar ) ) {
+            continue;
+        }
         // 2: 置換URL
-        item.replace = *(++str);
+        if( (*++str).empty() ) {
+            continue;
+        }
+        item.replace = std::move( *str );
+        std::string tgt_text = "$0";
+        std::string rep_text = "\\0";
+        for( int n = '0'; n <= '9'; ++n ) {
+            tgt_text[1] = rep_text[1] = n;
+            item.replace = MISC::replace_str( item.replace, tgt_text, rep_text );
+        }
         // 3: リファラURL
-        item.referer.clear();
-         if( (++str) != line.end() ) item.referer = *str;
+        if( (++str) != tokens.end() ) item.referer = std::move( *str );
         // 4: コントロール
         item.imgctrl = IMGCTRL_NONE;
         item.match_break = false;
-        if( (++str) != line.end() ){
-            ctrl = *str;
+        if( (++str) != tokens.end() ) {
+            const std::string& ctrl = *str;
             int imgctrl = IMGCTRL_INIT;
 
             // 拡張子がない場合でも画像として扱う
@@ -130,7 +145,7 @@ void Urlreplace_Manager::conf2list( const std::string& conf )
             item.match_break = ( ctrl.find( "$BREAK" ) != std::string::npos );
         }
 
-        if( ! item.match.empty() && ! item.replace.empty() ) m_list_cmd.push_back( item );
+        m_list_cmd.push_back( std::move( item ) );
     }
 }
 
@@ -144,26 +159,19 @@ bool Urlreplace_Manager::exec( std::string &url )
     if( m_list_cmd.empty() ) return false;
 
     JDLIB::Regex regex;
-    const size_t offset = 0;
-    const bool icase = false;
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = false;
+    constexpr std::size_t offset = 0;
 
     // いずれかの正規表現に一致するか
     bool matched = false;
-    std::list< UrlreplaceItem >::iterator it = m_list_cmd.begin();
-    for( ; it != m_list_cmd.end(); ++it ){
-        if( regex.exec( (*it).match, url,
-                offset, icase, newline, usemigemo, wchar ) ){
+    for( const auto& cmd : m_list_cmd ) {
+        if( regex.match( cmd.creg, url, offset ) ) {
             matched = true;
 
             // 置換URLの変換
-            url = (*it).replace;
-            replace( regex, url );
+            url = regex.replace( cmd.replace );
 
             // URLが空になったか、以降の判定を行わない
-            if( url.empty() || (*it).match_break ) break;
+            if( url.empty() || cmd.match_break ) break;
         }
     }
     return matched;
@@ -173,33 +181,26 @@ bool Urlreplace_Manager::exec( std::string &url )
 //
 // URLからリファラを求める
 //
-bool Urlreplace_Manager::referer( const std::string &url, std::string &referer )
+bool Urlreplace_Manager::referer( const std::string &url, std::string &refstr )
 {
     if( m_list_cmd.empty() ) return false;
 
-    referer = url;
+    refstr = url;
 
     JDLIB::Regex regex;
-    const size_t offset = 0;
-    const bool icase = false;
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = false;
+    constexpr std::size_t offset = 0;
 
     // いずれかの正規表現に一致するか
     bool matched = false;
-    std::list< UrlreplaceItem >::iterator it = m_list_cmd.begin();
-    for( ; it != m_list_cmd.end(); ++it ){
-        if( regex.exec( (*it).match, referer,
-                offset, icase, newline, usemigemo, wchar ) ){
+    for( const auto& cmd : m_list_cmd ) {
+        if( regex.match( cmd.creg, refstr, offset ) ) {
             matched = true;
 
             // リファラURLの変換
-            referer = (*it).referer;
-            replace( regex, referer );
+            refstr = regex.replace( cmd.referer );
 
             // URLが空になったか、以降の判定を行わない
-            if( referer.empty() || (*it).match_break ) break;
+            if( refstr.empty() || cmd.match_break ) break;
         }
     }
     return matched;
@@ -207,76 +208,27 @@ bool Urlreplace_Manager::referer( const std::string &url, std::string &referer )
 
 
 //
-// URLの画像コントロールを取得する (URLキャッシュ)
+// URLの画像コントロールを取得する
 //
 int Urlreplace_Manager::get_imgctrl( const std::string &url )
 {
     if( m_list_cmd.empty() ) return IMGCTRL_NONE;
 
-    // 取得済みのURLか
-    std::map< std::string, int >::iterator it = m_map_imgctrl.find( url );
-    if( it != m_map_imgctrl.end() ) return ( *it ).second;
-
-    // 新たに取得してキャッシュする
-    int imgctrl = get_imgctrl_impl( url );
-    m_map_imgctrl.insert( make_pair( url, imgctrl ) );
-
-    return imgctrl;
-}
-
-//
-// URLの画像コントロールを取得する
-//
-int Urlreplace_Manager::get_imgctrl_impl( const std::string &url )
-{
     int imgctrl = IMGCTRL_NONE;
 
     JDLIB::Regex regex;
-    const size_t offset = 0;
-    const bool icase = false;
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = false;
+    constexpr std::size_t offset = 0;
 
     // いずれかの正規表現に一致するか
-    std::list< UrlreplaceItem >::iterator it = m_list_cmd.begin();
-    for( ; it != m_list_cmd.end(); ++it ){
-        if( regex.exec( (*it).match, url,
-                offset, icase, newline, usemigemo, wchar ) ){
+    for( const auto& cmd : m_list_cmd ) {
+        if( regex.match( cmd.creg, url, offset ) ) {
 
             // 画像コントロールを取得
-            imgctrl = (*it).imgctrl;
+            imgctrl = cmd.imgctrl;
 
             // 以降の判定を行わない
-            if( (*it).match_break ) break;
+            if( cmd.match_break ) break;
         }
     }
     return imgctrl;
 }
-
-
-//
-// 置換文字列を変換
-//   \0 ... \9 ( $0 ... $9 ) : 正規表現の部分一致
-//
-void Urlreplace_Manager::replace( JDLIB::Regex &regex, std::string &str )
-{
-    if( str.empty() ) return;
-    
-    char rep1[] = "\\0";
-    char rep2[] = "$0";
-    for( int i = 0; i < 9; i++ ){
-        if( regex.pos( i ) == -1 ){
-            break;
-        }
-        rep1[ 1 ] = '0' + i;
-        if( str.find( rep1 ) != std::string::npos ){
-            str = MISC::replace_str( str, rep1, regex.str( i ) );
-        }
-        rep2[ 1 ] = '0' + i;
-        if( str.find( rep2 ) != std::string::npos ){
-            str = MISC::replace_str( str, rep2, regex.str( i ) );
-        }
-    }
-}
-

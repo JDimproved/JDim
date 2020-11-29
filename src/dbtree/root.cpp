@@ -1117,7 +1117,7 @@ void Root::load_etc()
             // basic認証
             if( regex.exec( "https?://([^/]+:[^/]+@)(.+)$" , info.url, offset, icase, newline, usemigemo, wchar ) )
             {
-                info.basicauth = regex.str( 1 ).substr( 0, regex.str( 1 ).length() - 1 );
+                info.basicauth = regex.str( 1 ).substr( 0, regex.length( 1 ) - 1 );
                 info.url = ( info.url[4] == 's' ? "https://" : "http://" ) + regex.str( 2 );
             }
 

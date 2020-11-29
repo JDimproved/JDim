@@ -224,9 +224,9 @@ void KeyConfig::set_one_motion_impl( const int id, const int mode, const std::st
 
     if( regex.exec( "(Ctrl\\+)?(Shift\\+)?(Alt\\+)?(.*)", str_motion, offset, icase, newline, usemigemo, wchar ) ){
 
-        if( ! regex.str( 1 ).empty() ) ctrl = true;
-        if( ! regex.str( 2 ).empty() ) shift = true;
-        if( ! regex.str( 3 ).empty() ) alt = true;
+        if( regex.length( 1 ) ) ctrl = true;
+        if( regex.length( 2 ) ) shift = true;
+        if( regex.length( 3 ) ) alt = true;
 
         const std::string str_key = regex.str( 4 );
         if( str_key.empty() ) return;
@@ -236,7 +236,7 @@ void KeyConfig::set_one_motion_impl( const int id, const int mode, const std::st
         // keyがアスキー文字の場合は shift を無視する (大文字除く)
         // Control::key_press() も参照せよ
         if( CONTROL::is_ascii( key ) ){
-            if( regex.str( 4 ).length() == 1 && key >= 'A' && key <= 'Z' ) shift = true;
+            if( regex.length( 4 ) == 1 && key >= 'A' && key <= 'Z' ) shift = true;
             else shift = false;
         }
     }

@@ -14,6 +14,7 @@
 
 #include "jdlib/heap.h"
 #include "jdlib/miscutil.h"
+#include "jdlib/jdregex.h"
 
 #include <map>
 #include <cstring>
@@ -83,15 +84,15 @@ namespace DBTREE
         std::list< std::string > m_list_abone_id;   // あぼーんするID
         std::list< std::string > m_list_abone_name; // あぼーんする名前
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
-        std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
+        std::list< JDLIB::RegexPattern > m_list_abone_regex; // あぼーんする正規表現
 
         std::list< std::string > m_list_abone_id_board;   // あぼーんするID(板レベル)
         std::list< std::string > m_list_abone_name_board; // あぼーんする名前(板レベル)
         std::list< std::string > m_list_abone_word_board; // あぼーんする文字列(板レベル)
-        std::list< std::string > m_list_abone_regex_board; // あぼーんする正規表現(板レベル)
+        std::list< JDLIB::RegexPattern > m_list_abone_regex_board; // あぼーんする正規表現(板レベル)
 
         std::list< std::string > m_list_abone_word_global; // あぼーんする文字列(全体)
-        std::list< std::string > m_list_abone_regex_global; // あぼーんする正規表現(全体)
+        std::list< JDLIB::RegexPattern > m_list_abone_regex_global; // あぼーんする正規表現(全体)
         std::unordered_set< int > m_abone_reses; // レスあぼーん情報
         bool m_abone_transparent; // 透明あぼーん
         bool m_abone_chain; // 連鎖あぼーん
@@ -124,7 +125,7 @@ namespace DBTREE
         NODE* m_node_previous;
 
         // AA判定用
-        std::string m_aa_regex;
+        JDLIB::RegexPattern m_aa_regex;
 
         // その他のエラーメッセージ
         std::string m_ext_err;

@@ -121,9 +121,9 @@ void ButtonConfig::set_one_motion_impl( const int id, const int mode, const std:
 
     if( regex.exec( "(Ctrl)?(\\+?Shift)?(\\+?Alt)?\\+?(.*)", str_motion, offset, icase, newline, usemigemo, wchar ) ){
 
-        if( ! regex.str( 1 ).empty() ) ctrl = true;
-        if( ! regex.str( 2 ).empty() ) shift = true;
-        if( ! regex.str( 3 ).empty() ) alt = true;
+        if( regex.length( 1 ) ) ctrl = true;
+        if( regex.length( 2 ) ) shift = true;
+        if( regex.length( 3 ) ) alt = true;
 
         std::string str_button = regex.str( 4 );
 

@@ -261,10 +261,10 @@ void Search_Manager::search_fin_title()
         const bool newline = true;
         const bool usemigemo = false;
         const bool wchar = false;
-        regex.compile( pattern, icase, newline, usemigemo, wchar );
+        const JDLIB::RegexPattern regexptn( pattern, icase, newline, usemigemo, wchar );
 
         std::size_t offset = 0;
-        while( regex.exec( source, offset ) ){
+        while( regex.match( regexptn, source, offset ) ){
 
             SEARCHDATA data;
             data.url_readcgi = DBTREE::url_readcgi( regex.str( 1 ), 0, 0 );
@@ -288,7 +288,7 @@ void Search_Manager::search_fin_title()
             }
 
             // オフセットを設定して再検索する
-            offset = regex.pos( 0 ) + regex.str( 0 ).length();
+            offset = regex.pos( 0 ) + regex.length( 0 );
         }
     }
 
