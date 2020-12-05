@@ -24,6 +24,7 @@
 #include "command.h"
 #include "cache.h"
 #include "session.h"
+#include "replacestrmanager.h"
 #include "urlreplacemanager.h"
 
 #include <algorithm>
@@ -1612,6 +1613,15 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 
         const char* str = section[3];
         int lng_msg = section_lng[3];
+        std::string str_msg;
+
+        // 文字列置換
+        const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
+        if( mgr->list_get_active( CORE::REPLACETARGET_MESSAGE ) ) {
+            str_msg = mgr->replace( str, lng_msg, CORE::REPLACETARGET_MESSAGE );
+            str = str_msg.c_str();
+            lng_msg = str_msg.size();
+        }
 
         constexpr bool digitlink = false;
         constexpr bool bold = false;
@@ -1693,9 +1703,22 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
 {
     const bool bold = true;
     const bool ahref = false;
+    int lng_name = lng;
     NODE *node;
 
     const bool defaultname = ( strncmp( m_default_noname.data(), str, lng ) == 0 );
+
+    // 後ろの空白を除く
+    while( str[ lng_name - 1 ] == ' ' ) --lng_name;
+
+    // 文字列置換
+    std::string str_name;
+    const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
+    if( mgr->list_get_active( CORE::REPLACETARGET_NAME ) ) {
+        str_name = mgr->replace( str, lng_name, CORE::REPLACETARGET_NAME );
+        str = str_name.c_str();
+        lng_name = str_name.size();
+    }
 
     node = header->headinfo->block[ BLOCK_NAMELINK ] = create_node_block();
     node->fontid = FONT_MAIL;
@@ -1713,17 +1736,17 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
     // デフォルト名無しと同じときはアンカーを作らない
     if( defaultname ){
         constexpr bool digitlink = false;
-        parse_html( str, lng, color_name, digitlink, bold, ahref, FONT_MAIL );
+        parse_html( str, lng_name, color_name, digitlink, bold, ahref, FONT_MAIL );
     }
     else{
 
         int pos = 0;
         int i;
 
-        while( pos < lng ){
+        while( pos < lng_name ) {
 
             // トリップなど</b>〜<b>の中の文字列は色を変えて数字をリンクにしない
-            for( i = pos; i < lng; ++i ){
+            for( i = pos; i < lng_name; ++i ) {
                 if( str[ i ] == '<'
                     && str[ i+1 ] == '/'
                     && ( str[ i+2 ] == 'b' || str[ i+2 ] == 'B' )
@@ -1736,12 +1759,12 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
                 const bool digitlink = ( strncmp( m_default_noname.data(), str + pos, i - pos ) != 0 );
                 parse_html( str + pos, i - pos, color_name, digitlink, bold, ahref, FONT_MAIL );
             }
-            if( i >= lng ) break;
+            if( i >= lng_name ) break;
             pos = i + 4; // 4 = strlen( "</b>" );
 
             // <b>の位置を探す
-            int pos_end = lng;
-            for( i = pos; i < lng; ++i ){
+            int pos_end = lng_name;
+            for( i = pos; i < lng_name; ++i ) {
                 if( str[ i ] == '<'
                     && ( str[ i+1 ] == 'b' || str[ i+1 ] == 'B' )
                     && str[ i+2 ] == '>' ){
@@ -1770,8 +1793,8 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
     // plainな名前取得
     // 名前あぼーんや名前抽出などで使用する
     if( defaultname ){
-        header->headinfo->name = m_heap.heap_alloc<char>( lng +2 );
-        memcpy( header->headinfo->name, str, lng );
+        header->headinfo->name = m_heap.heap_alloc<char>( lng_name +2 );
+        std::memcpy( header->headinfo->name, str, lng_name );
     }
     else{
         std::string str_tmp;
@@ -1805,16 +1828,27 @@ void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
     node = header->headinfo->block[ BLOCK_MAIL ] = create_node_block();
     node->fontid = FONT_MAIL;
 
-    if( ! lng )  create_node_text( "[]", color, false, FONT_MAIL );
+    // 文字列置換
+    std::string str_mail;
+    int lng_mail = lng;
+    const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
+    if( mgr->list_get_active( CORE::REPLACETARGET_MAIL ) ) {
+        str_mail = mgr->replace( str, lng, CORE::REPLACETARGET_MAIL );
+        str = str_mail.c_str();
+        lng_mail = str_mail.size();
+    }
 
+    if( lng_mail == 0 ) {
+        create_node_text( "[]", color, false, FONT_MAIL );
+    }
     else{
-        create_node_text( "[", color, false, FONT_MAIL );
 
         const bool digitlink = true;
         const bool bold = false;
         const bool ahref = false;
-        parse_html( str, lng, color, digitlink, bold, ahref, FONT_MAIL );
 
+        create_node_text( "[", color, false, FONT_MAIL );
+        parse_html( str, lng_mail, color, digitlink, bold, ahref, FONT_MAIL );
         create_node_text( "]", color, false, FONT_MAIL );
     }
 }
@@ -1825,6 +1859,17 @@ void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
 //
 void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
 {
+    std::string str_date;
+    int lng_date = lng;
+
+    // 文字列置換
+    const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
+    if( mgr->list_get_active( CORE::REPLACETARGET_DATE ) ) {
+        str_date = mgr->replace( str, lng, CORE::REPLACETARGET_DATE );
+        str = str_date.c_str();
+        lng_date = str_date.size();
+    }
+
     int start = 0;
     int lng_text = 0;
     int lng_link_tmp;
@@ -1840,12 +1885,12 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
     for(;;){
 
         // 先頭の空白を飛ばす
-        while( start + lng_text < lng && str[ start + lng_text ] == ' ' ) ++lng_text;
+        while( start + lng_text < lng_date && str[ start + lng_text ] == ' ' ) ++lng_text;
 
         // 空白ごとにブロック分けしてパースする
         int start_block = start + lng_text;
         int lng_block = 0; // ブロックの長さ
-        while( start_block + lng_block < lng && str[ start_block + lng_block ] != ' ' ) ++lng_block;
+        while( start_block + lng_block < lng_date && str[ start_block + lng_block ] != ' ' ) ++lng_block;
         if( !lng_block ) break;
 
         if(
@@ -1875,7 +1920,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
                 offset = 5;
 
                 // HOST: の場合は途中で空白が入るときがあるので最後までブロックを伸ばす
-                lng_block = lng - start_block;
+                lng_block = lng_date - start_block;
             }
             else if( str[ start_block ] == (char)0xe7 ) offset = 10;
 
@@ -1948,7 +1993,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             if( lng_text ) create_node_ntext( str + start, lng_text, COLOR_CHAR, false, FONT_MAIL );
 
             // </a>までブロックの長さを伸ばす
-            while( start_block + lng_block < lng
+            while( start_block + lng_block < lng_date
                    && ! ( ( str[ start_block + lng_block -1 ] == 'a' || str[ start_block + lng_block -1 ] == 'A' )
                           && str[ start_block + lng_block ] == '>' ) ) ++lng_block;
             ++lng_block;
