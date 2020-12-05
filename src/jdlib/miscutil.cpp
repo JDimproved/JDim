@@ -989,7 +989,7 @@ std::string MISC::chref_decode( const char* str, const int lng, const bool compl
 
         // 文字参照のデコード
         int n_in;
-        str_out.append( spchar_impl( pos, n_in, completely ) );
+        str_out.append( chref_decode_one( pos, n_in, completely ) );
         pos += n_in;
     }
 
