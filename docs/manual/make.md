@@ -55,7 +55,7 @@ layout: default
 OSやディストリビューション別の解説は[OS/ディストリビューション別インストール方法][wiki-install] (JD wiki) を参照。
 
 configure のかわりに [meson] を使ってビルドする方法は [GitHub][pr388] を参照。
-<small>(v0.3.0+から実験的なサポートとして追加)</small>
+<small>(v0.4.0+から暫定サポート)</small>
 
 
 <a name="make-configure"></a>

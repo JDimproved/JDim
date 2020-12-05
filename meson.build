@@ -1,5 +1,5 @@
 # JDim用 meson.build
-# NOTE: 実験的なサポートのため変更または廃止の可能性がある
+# NOTE: 暫定的なサポートのため変更の可能性がある
 
 # Autotoolsからの移行はGNOMEのガイドラインを参考にする
 # https://wiki.gnome.org/Initiatives/GnomeGoals/MesonPorting
