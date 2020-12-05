@@ -58,7 +58,7 @@ Debian stretch(2017年)より前にリリースされたディストリビュー
 ソースコードからJDimをビルドします。**GTK3版がビルド**されますのでご注意ください。
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
-ビルドツール [meson][mesonbuild] の実験的なサポートを追加しました。
+ビルドツール [meson][mesonbuild] を暫定的にサポートしています。
 configure のかわりに meson を使ってビルドする方法は <https://github.com/JDimproved/JDim/pull/388> を参照してください。
 
 [mesonbuild]: https://mesonbuild.com
