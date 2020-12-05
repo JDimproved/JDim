@@ -964,6 +964,40 @@ static std::string chref_decode_one( const char* str, int& n_in, const bool comp
 
 
 //
+// HTMLの文字参照をデコード
+//
+// completely = true の時は'"' '&' '<' '>'もデコードする
+//
+std::string MISC::chref_decode( const char* str, const int lng, const bool completely )
+{
+    std::string str_out;
+
+    if( lng <= 0 ) return str_out;
+    if( std::memchr( str, '&', lng ) == nullptr ) {
+        str_out.assign( str, lng );
+        return str_out;
+    }
+
+    const char* pos = str;
+    const char* pos_end = str + lng;
+
+    while( pos < pos_end ) {
+
+        // '&' までコピーする
+        while( *pos != '&' && pos < pos_end ) str_out.push_back( *pos++ );
+        if( pos >= pos_end ) break;
+
+        // 文字参照のデコード
+        int n_in;
+        str_out.append( spchar_impl( pos, n_in, completely ) );
+        pos += n_in;
+    }
+
+    return str_out;
+}
+
+
+//
 // URL中のスキームを判別する
 //
 // 戻り値 : スキームタイプ
