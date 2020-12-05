@@ -158,6 +158,13 @@ namespace MISC
     // HTMLアンエスケープ
     std::string html_unescape( const std::string& str );
 
+    // HTML文字参照をデコード( completely=trueの場合は '&' '<' '>' '"' を含める )
+    std::string chref_decode( const char* str, const int lng, const bool completely = true );
+    inline std::string chref_decode( const std::string& str, const bool completely = true )
+    {
+        return MISC::chref_decode( str.c_str(), str.size(), completely );
+    }
+
     // URL中のスキームを判別する
     // 戻り値 : スキームタイプ
     // length    : "http://"等の文字数

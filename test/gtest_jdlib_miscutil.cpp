@@ -780,4 +780,39 @@ TEST_F(MISC_ParseHtmlFormActionTest, https_url)
     EXPECT_EQ( result, std::string{} );
 }
 
+
+class ChrefDecodeTest : public ::testing::Test {};
+
+TEST_F(ChrefDecodeTest, empty)
+{
+    const std::string result = MISC::chref_decode( std::string{}, true );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(ChrefDecodeTest, decimal_hello)
+{
+    const std::string result = MISC::chref_decode( std::string{ "&#104;&#101;&#108;&#108;&#111;" }, true );
+    EXPECT_EQ( result, "hello" );
+}
+
+TEST_F(ChrefDecodeTest, hexadecimal_hello)
+{
+    const std::string result = MISC::chref_decode( std::string{ "&#x68;&#x65;&#X6c;&#x6C;&#x6f;" }, true );
+    EXPECT_EQ( result, "hello" );
+}
+
+TEST_F(ChrefDecodeTest, escape_html_char_completely)
+{
+    const std::string input = "&#60;&#62;&#38;&#34; &#x3c;&#x3e;&#x26;&#x22; &lt;&gt;&amp;&quot;";
+    const std::string result = MISC::chref_decode( input, true );
+    EXPECT_EQ( result, R"(<>&" <>&" <>&")" );
+}
+
+TEST_F(ChrefDecodeTest, escape_html_char_keeping)
+{
+    const std::string input = "&#60;&#62;&#38;&#34; &#x3c;&#x3e;&#x26;&#x22; &lt;&gt;&amp;&quot;";
+    const std::string result = MISC::chref_decode( input, false );
+    EXPECT_EQ( result, "&lt;&gt;&amp;&quot; &lt;&gt;&amp;&quot; &lt;&gt;&amp;&quot;" );
+}
+
 } // namespace

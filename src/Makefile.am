@@ -33,6 +33,7 @@ jdim_SOURCES = \
 	dndmanager.cpp \
 	usrcmdmanager.cpp \
 	linkfiltermanager.cpp \
+	replacestrmanager.cpp \
 	urlreplacemanager.cpp \
 	compmanager.cpp \
 	searchmanager.cpp \
@@ -62,6 +63,7 @@ jdim_SOURCES = \
 	fontcolorpref.cpp \
 	usrcmdpref.cpp \
 	linkfilterpref.cpp \
+	replacestrpref.cpp \
 	livepref.cpp \
 	openurldiag.cpp \
 \
@@ -83,6 +85,7 @@ noinst_HEADERS = \
 	dndmanager.h \
 	usrcmdmanager.h \
 	linkfiltermanager.h \
+	replacestrmanager.h \
     urlreplacemanager.h \
 	compmanager.h \
 	searchmanager.h \
@@ -122,6 +125,7 @@ noinst_HEADERS = \
 	fontcolorpref.h \
 	usrcmdpref.h \
 	linkfilterpref.h \
+	replacestrpref.h \
 	livepref.h \
 	openurldiag.h \
 \

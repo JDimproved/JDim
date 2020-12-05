@@ -32,6 +32,7 @@ std::string ENVIRONMENT::get_jdbbs(){ return std::string( JDBBS ); }
 std::string ENVIRONMENT::get_jd2chlog(){ return std::string( JD2CHLOG ); }
 std::string ENVIRONMENT::get_jdhelp(){ return std::string( JDHELP ); }
 std::string ENVIRONMENT::get_jdhelpcmd(){ return std::string( JDHELPCMD ); }
+std::string ENVIRONMENT::get_jdhelpreplstr() { return JDHELPREPLSTR; }
 std::string ENVIRONMENT::get_jdlicense(){ return std::string( JDLICENSE ); }
 
 

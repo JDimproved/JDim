@@ -71,6 +71,10 @@ std::string XML::get_name( const int type_id )
             name = "linkfilter";
             break;
 
+        case TYPE_REPLACESTR:
+            name = "replacestr";
+            break;
+
         case TYPE_SEPARATOR:
             name = "separator";
             break;
@@ -142,6 +146,10 @@ int XML::get_type( const std::string& node_name )
     else if( node_name == "linkfilter" )
     {
         type = TYPE_LINKFILTER;
+    }
+    else if( node_name == "replacestr" )
+    {
+        type = TYPE_REPLACESTR;
     }
     else if( node_name == "separator" )
     {

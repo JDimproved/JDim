@@ -153,6 +153,13 @@ std::string CACHE::path_linkfilter()
 }
 
 
+// 文字列置換設定ファイル
+std::string CACHE::path_replacestr()
+{
+    return CACHE::path_root() + "replacestr.xml";
+}
+
+
 // URL変換設定ファイル
 std::string CACHE::path_urlreplace()
 {

@@ -6,6 +6,7 @@
 #include "privacypref.h"
 #include "browserpref.h"
 #include "linkfilterpref.h"
+#include "replacestrpref.h"
 #include "usrcmdpref.h"
 #include "proxypref.h"
 #include "globalabonepref.h"
@@ -51,6 +52,9 @@ SKELETON::PrefDiag* CORE::PrefDiagFactory( Gtk::Window* parent, const int type, 
 
         case PREFDIAG_LINKFILTER:
             return new CORE::LinkFilterPref( parent, url );
+
+        case PREFDIAG_REPLACESTR:
+            return new CORE::ReplaceStrPref( parent, url );
 
         case PREFDIAG_USRCMD:
             return new CORE::UsrCmdPref( parent, url );

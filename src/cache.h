@@ -66,6 +66,9 @@ namespace CACHE
     // リンクフィルタ
     std::string path_linkfilter();
 
+    // 文字列置換
+    std::string path_replacestr();
+
     // URL変換設定ファイル
     std::string path_urlreplace();
 

@@ -312,6 +312,7 @@ namespace CORE
         void slot_setup_live();
         void slot_usrcmd_pref();
         void slot_filter_pref();
+        void slot_replace_pref();
         void slot_aboutconfig();
         void slot_clear_privacy();
         void slot_clear_post_log();

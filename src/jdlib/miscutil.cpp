@@ -918,6 +918,86 @@ std::string MISC::html_unescape( const std::string& str )
 
 
 //
+// 文字参照のデコード内部処理
+//
+// strは'&'で始まる文字列を指定すること
+// completely = true の時は'"' '&' '<' '>'も含めて変換する
+//
+static std::string chref_decode_one( const char* str, int& n_in, const bool completely )
+{
+    std::string out_char( 15u, '\0' );
+    int n_out;
+    const int type = DBTREE::decode_char( str, n_in, &*out_char.begin(), n_out, false );
+    out_char.resize( n_out );
+
+    // 改行、タブ、スペースの処理
+    if( type != DBTREE::NODE_NONE && ( out_char[0] == ' ' || out_char[0] == '\n' ) ) {
+        out_char.assign( 1u, ' ' );
+    }
+    // 変換できない文字
+    else if( type == DBTREE::NODE_NONE ) {
+        out_char.assign( 1u, *str );
+        n_in = 1;
+    }
+    // エスケープする文字の場合は元に戻す
+    else if( ! completely && n_out == 1 ) {
+        switch( out_char[0] ) {
+            case '"':
+                out_char.assign( "&quot;" );
+                break;
+            case '&':
+                out_char.assign( "&amp;" );
+                break;
+            case '<':
+                out_char.assign( "&lt;" );
+                break;
+            case '>':
+                out_char.assign( "&gt;" );
+                break;
+            default:
+                break;
+        }
+    }
+
+    return out_char;
+}
+
+
+//
+// HTMLの文字参照をデコード
+//
+// completely = true の時は'"' '&' '<' '>'もデコードする
+//
+std::string MISC::chref_decode( const char* str, const int lng, const bool completely )
+{
+    std::string str_out;
+
+    if( lng <= 0 ) return str_out;
+    if( std::memchr( str, '&', lng ) == nullptr ) {
+        str_out.assign( str, lng );
+        return str_out;
+    }
+
+    const char* pos = str;
+    const char* pos_end = str + lng;
+
+    while( pos < pos_end ) {
+
+        // '&' までコピーする
+        while( *pos != '&' && pos < pos_end ) str_out.push_back( *pos++ );
+        if( pos >= pos_end ) break;
+
+        // 文字参照のデコード
+        int n_in;
+        str_out.append( chref_decode_one( pos, n_in, completely ) );
+        pos += n_in;
+    }
+
+    return str_out;
+}
+
+
+//
 // URL中のスキームを判別する
 //
 // 戻り値 : スキームタイプ

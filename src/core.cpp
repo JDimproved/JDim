@@ -14,6 +14,7 @@
 #include "dndmanager.h"
 #include "usrcmdmanager.h"
 #include "linkfiltermanager.h"
+#include "replacestrmanager.h"
 #include "compmanager.h"
 #include "searchmanager.h"
 #include "aamanager.h"
@@ -125,6 +126,9 @@ Core::Core( JDWinMain& win_main )
     // リンクフィルタマネージャ作成
     CORE::get_linkfilter_manager();
 
+    // 文字列置換マネージャ作成
+    CORE::get_replacestr_manager();
+
     // ログ検索マネージャ作成
     CORE::get_search_manager();
 
@@ -172,6 +176,9 @@ Core::~Core()
 
     // ログ検索マネージャ削除
     CORE::delete_search_manager();
+
+    // 文字列置換マネージャ削除
+    CORE::delete_replacestr_manager();
 
     // ユーザコマンドマネージャ削除
     CORE::delete_usrcmd_manager();
@@ -682,6 +689,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
     m_action_group->add( Gtk::Action::create( "LivePref", "実況設定(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_live ) );
     m_action_group->add( Gtk::Action::create( "UsrCmdPref", "ユーザコマンドの編集(_U)..." ), sigc::mem_fun( *this, &Core::slot_usrcmd_pref ) );
     m_action_group->add( Gtk::Action::create( "FilterPref", "リンクフィルタの編集(_F)..." ), sigc::mem_fun( *this, &Core::slot_filter_pref ) );
+    m_action_group->add( Gtk::Action::create( "ReplacePref", "置換文字列の編集(_R)..." ), [this] { slot_replace_pref(); } );
     m_action_group->add( Gtk::Action::create( "AboutConfig", "about:config 高度な設定(_C)..." ), sigc::mem_fun( *this, &Core::slot_aboutconfig ) );
 
 
@@ -1034,6 +1042,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                 "<menuitem action='LivePref'/>"
                 "<menuitem action='UsrCmdPref'/>"
                 "<menuitem action='FilterPref'/>"
+                "<menuitem action='ReplacePref'/>"
             "</menu>"
             "<separator/>"
             "<menuitem action='AboutConfig'/>"

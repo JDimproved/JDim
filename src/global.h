@@ -287,6 +287,7 @@ enum
 
 #define URL_USRCMD "jdpref://usrcmd"
 #define URL_LINKFILTER "jdpref://linkfilter"
+#define URL_REPLACESTR "jdpref://replacestr"
 #define URL_BROWSER "jdpref://browser"
 #define URL_ABOUTCONFIG "jdpref://aboutconfig"
 #define URL_PRIVACY "jdpref://privacy"
