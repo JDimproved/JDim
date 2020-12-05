@@ -918,6 +918,52 @@ std::string MISC::html_unescape( const std::string& str )
 
 
 //
+// 文字参照のデコード内部処理
+//
+// strは'&'で始まる文字列を指定すること
+// completely = true の時は'"' '&' '<' '>'も含めて変換する
+//
+static std::string chref_decode_one( const char* str, int& n_in, const bool completely )
+{
+    std::string out_char( 15u, '\0' );
+    int n_out;
+    const int type = DBTREE::decode_char( str, n_in, &*out_char.begin(), n_out, false );
+    out_char.resize( n_out );
+
+    // 改行、タブ、スペースの処理
+    if( type != DBTREE::NODE_NONE && ( out_char[0] == ' ' || out_char[0] == '\n' ) ) {
+        out_char.assign( 1u, ' ' );
+    }
+    // 変換できない文字
+    else if( type == DBTREE::NODE_NONE ) {
+        out_char.assign( 1u, *str );
+        n_in = 1;
+    }
+    // エスケープする文字の場合は元に戻す
+    else if( ! completely && n_out == 1 ) {
+        switch( out_char[0] ) {
+            case '"':
+                out_char.assign( "&quot;" );
+                break;
+            case '&':
+                out_char.assign( "&amp;" );
+                break;
+            case '<':
+                out_char.assign( "&lt;" );
+                break;
+            case '>':
+                out_char.assign( "&gt;" );
+                break;
+            default:
+                break;
+        }
+    }
+
+    return out_char;
+}
+
+
+//
 // URL中のスキームを判別する
 //
 // 戻り値 : スキームタイプ
