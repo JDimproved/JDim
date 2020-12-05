@@ -56,6 +56,8 @@ core_sources = files(
   'msgitempref.cpp',
   'openurldiag.cpp',
   'prefdiagfactory.cpp',
+  'replacestrmanager.cpp',
+  'replacestrpref.cpp',
   'searchitempref.cpp',
   'searchloader.cpp',
   'searchmanager.cpp',

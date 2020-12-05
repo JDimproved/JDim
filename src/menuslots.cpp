@@ -1037,6 +1037,17 @@ void Core::slot_filter_pref()
 
 
 //
+// 置換文字列の編集
+//
+void Core::slot_replace_pref()
+{
+    SKELETON::PrefDiag* pref = CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_REPLACESTR, URL_REPLACESTR );
+    pref->run();
+    delete pref;
+}
+
+
+//
 // about:config
 //
 void Core::slot_aboutconfig()

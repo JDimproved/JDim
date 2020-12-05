@@ -30,6 +30,7 @@
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP "https://jdimproved.github.io/JDim/"
 #define JDHELPCMD JDHELP "usrcmd/"
+#define JDHELPREPLSTR JDHELP "replacestr/"
 
 // [ ライセンス表記 ]
 //
