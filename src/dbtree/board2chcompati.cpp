@@ -18,8 +18,10 @@
 #include "httpcode.h"
 #include "global.h"
 
-#include <sstream>
+#include <algorithm>
 #include <cstring>
+#include <iterator>
+#include <sstream>
 
 using namespace DBTREE;
 
@@ -75,15 +77,12 @@ Board2chCompati::~Board2chCompati()
 //
 bool Board2chCompati::is_valid( const std::string& filename )
 {
-    if( filename.find( get_ext() ) == std::string::npos ) return false;
-    if( filename.length() - filename.rfind( get_ext() ) != get_ext().length() ) return false;
+    const std::string& ext = get_ext();
+    if( filename.size() <= ext.size() ) return false;
+    if( filename.compare( filename.size() - ext.size(), ext.size(), ext ) != 0 ) return false;
 
-    size_t dig, n;
-    MISC::str_to_uint( filename.c_str(), dig, n );
-    if( dig != n ) return false;
-    if( dig == 0 ) return false;
-        
-    return true;
+    return std::all_of( filename.cbegin(), std::prev( filename.cend(), ext.size() ),
+                        []( char c ) { return '0' <= c && c <= '9'; } );
 }
 
 
