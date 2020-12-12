@@ -36,13 +36,9 @@ constexpr const char* DragTreeView::s_css_classname;
 
 DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget,
     const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
-    : JDTreeViewBase(),
-      m_url( url ),
-      m_dndtarget( dndtarget ),
-      m_dragging( false ),
-      m_use_bg_even( false ),
-      m_popup_win( nullptr ),
-      m_popup_shown( false )
+    : JDTreeViewBase()
+    , m_url( url )
+    , m_dndtarget( dndtarget )
 {
 #ifdef _DEBUG
     std::cout << "DragTreeView::DragTreeView\n";
