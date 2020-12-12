@@ -31,10 +31,10 @@ namespace SKELETON
         std::string m_url;
         std::string m_dndtarget;
 
-        bool m_dragging;  // ドラッグ中
+        bool m_dragging{}; // ドラッグ中
 
         // 範囲選択に使用
-        bool m_selection_canceled; // 範囲選択を解除したときにsig_button_release()を発行しないようにする
+        bool m_selection_canceled{}; // 範囲選択を解除したときにsig_button_release()を発行しないようにする
         Gtk::TreeModel::Path m_path_dragstart;
         Gtk::TreeModel::Path m_path_dragpre;
 
@@ -42,15 +42,15 @@ namespace SKELETON
         Glib::RefPtr< Gtk::CssProvider > m_provider = Gtk::CssProvider::create();
 
         // 色
-        bool m_use_bg_even;
+        bool m_use_bg_even{};
         Gdk::RGBA m_color_text;
         Gdk::RGBA m_color_bg;
         Gdk::RGBA m_color_bg_even;
 
         // ポップアップウィンドウ用
-        PopupWin* m_popup_win;
+        PopupWin* m_popup_win{};
         std::string m_pre_popup_url;
-        bool m_popup_shown;
+        bool m_popup_shown{};
         
         // 入力コントローラ
         CONTROL::Control m_control;
