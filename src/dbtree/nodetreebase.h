@@ -49,24 +49,24 @@ namespace DBTREE
         std::string m_default_noname;
 
         // コード変換前の生データのサイズ ( byte )
-        size_t m_lng_dat; 
+        std::size_t m_lng_dat{};
 
         // レジュームのモード
         int m_resume;
 
         // レジューム時のチェック用
-        bool m_resume_cached;
+        bool m_resume_cached{};
         // 生データの先頭から RESUME_CHKSIZE バイト分を入れる
         char m_resume_head[ RESUME_CHKSIZE ];
 
         // レジューム中にスキップした生データサイズ
-        size_t m_resume_lng;
+        std::size_t m_resume_lng{};
 
         // 現在処理中のヘッダ番号( つまりロード中でないなら総レス数になる )
         int m_id_header; 
 
         // サーバー側であぼーんがあったりしてスレが壊れている
-        bool m_broken;  
+        bool m_broken{};
 
         JDLIB::HEAP m_heap;
         std::vector< NODE* > m_vec_header;  // レスのヘッダのポインタの配列
@@ -94,11 +94,11 @@ namespace DBTREE
         std::list< std::string > m_list_abone_word_global; // あぼーんする文字列(全体)
         std::list< JDLIB::RegexPattern > m_list_abone_regex_global; // あぼーんする正規表現(全体)
         std::unordered_set< int > m_abone_reses; // レスあぼーん情報
-        bool m_abone_transparent; // 透明あぼーん
-        bool m_abone_chain; // 連鎖あぼーん
-        bool m_abone_age; // age ているレスはあぼーん
-        bool m_abone_board; // 板レベルでのあぼーんを有効にする
-        bool m_abone_global; // 全体レベルでのあぼーんを有効にする
+        bool m_abone_transparent{}; // 透明あぼーん
+        bool m_abone_chain{}; // 連鎖あぼーん
+        bool m_abone_age{}; // age ているレスはあぼーん
+        bool m_abone_board{}; // 板レベルでのあぼーんを有効にする
+        bool m_abone_global{}; // 全体レベルでのあぼーんを有効にする
 
         // 自分が書き込んだレスか
         std::unordered_set< int > m_posts;
@@ -114,15 +114,15 @@ namespace DBTREE
         std::string m_buffer_lines;
         std::string m_parsed_text; // HTMLパーサに使うバッファ
         std::string m_buffer_write; // 書き込みチェック用バッファ
-        bool m_check_update; // HEADによる更新チェックのみ
-        bool m_check_write; // 自分の書き込みかチェックする
-        bool m_loading_newthread; // 新スレ読み込み中
-        
+        bool m_check_update{}; // HEADによる更新チェックのみ
+        bool m_check_write{}; // 自分の書き込みかチェックする
+        bool m_loading_newthread{}; // 新スレ読み込み中
+
         // キャッシュ保存用ファイルハンドラ
-        FILE *m_fout;
-        
+        FILE* m_fout{};
+
         // パース用雑用変数
-        NODE* m_node_previous;
+        NODE* m_node_previous{};
 
         // AA判定用
         JDLIB::RegexPattern m_aa_regex;

@@ -80,17 +80,10 @@ using namespace DBTREE;
 
 
 NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified )
-    : SKELETON::Loadable(),
-      m_url( url ),
-      m_lng_dat( 0 ),
-      m_resume ( RESUME_NO ),
-      m_resume_cached( false ),
-      m_broken( false ),
-      m_heap( SIZE_OF_HEAP ),
-      m_check_update( false ),
-      m_check_write( false ),
-      m_loading_newthread( false ),
-      m_fout ( nullptr )
+    : SKELETON::Loadable()
+    , m_url( url )
+    , m_resume( RESUME_NO )
+    , m_heap( SIZE_OF_HEAP )
 {
     set_date_modified( modified );
 
