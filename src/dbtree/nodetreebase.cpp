@@ -1706,10 +1706,10 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
     int lng_name = lng;
     NODE *node;
 
-    const bool defaultname = ( strncmp( m_default_noname.data(), str, lng ) == 0 );
+    const bool defaultname{ m_default_noname.compare( 0, lng, str, lng ) == 0 };
 
     // 後ろの空白を除く
-    while( str[ lng_name - 1 ] == ' ' ) --lng_name;
+    while( lng_name > 0 && str[ lng_name - 1 ] == ' ' ) --lng_name;
 
     // 文字列置換
     std::string str_name;
