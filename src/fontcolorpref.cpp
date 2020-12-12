@@ -451,11 +451,11 @@ void FontColorPref::slot_change_color()
         if( colorid == COLOR_NONE ) return;
     }
 
-    Gtk::ColorChooserDialog colordiag;
+    Gtk::ColorSelectionDialog colordiag;
     if( colorid != COLOR_NONE ) {
-        colordiag.set_rgba( Gdk::RGBA( CONFIG::get_color( colorid ) ) );
+        Gtk::ColorSelection* sel = colordiag.get_color_selection();
+        sel->set_current_rgba( Gdk::RGBA( CONFIG::get_color( colorid ) ) );
     }
-    colordiag.set_use_alpha( false );
     colordiag.set_transient_for( *CORE::get_mainwindow() );
     const int ret = colordiag.run();
 
@@ -468,7 +468,8 @@ void FontColorPref::slot_change_color()
 
             colorid = row[ m_columns_color.m_col_colorid ];
             if( colorid != COLOR_NONE ) {
-                CONFIG::set_color( colorid, MISC::color_to_str( colordiag.get_rgba() ) );
+                Gtk::ColorSelection* sel = colordiag.get_color_selection();
+                CONFIG::set_color( colorid, MISC::color_to_str( sel->get_current_rgba() ) );
             }
         }
     }
