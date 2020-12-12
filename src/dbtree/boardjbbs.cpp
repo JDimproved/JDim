@@ -18,8 +18,9 @@
 #include "global.h"
 #include "httpcode.h"
 
-#include <sstream>
+#include <algorithm>
 #include <cstring>
+#include <sstream>
 
 using namespace DBTREE;
 
@@ -58,12 +59,8 @@ bool BoardJBBS::is_valid( const std::string& filename )
 {
     if( filename.length() != 10 ) return false;
 
-    size_t dig, n;
-    MISC::str_to_uint( filename.c_str(), dig, n );
-    if( dig != n ) return false;
-    if( dig != 10 ) return false;
-        
-    return true;
+    return std::all_of( filename.cbegin(), filename.cend(),
+                        []( char c ) { return '0' <= c && c <= '9'; } );
 }
 
 
