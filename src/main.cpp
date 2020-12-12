@@ -522,10 +522,11 @@ int main( int argc, char **argv )
         // マルチモードでなく、メインプロセスでもない場合は問い合わせる
         else if( ! multi_mode && ! iomonitor.is_main_process() )
         {
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( "JDimは既に起動しています。起動しますか？",
-                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            int ret = mdiag->run();
-            delete mdiag;
+            Gtk::MessageDialog mdiag( "JDimは既に起動しています。起動しますか？\n\n起動中のJDimが存在しない場合\n"
+                                          + CACHE::path_lock() + " を削除してください。",
+                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            mdiag.set_title( "ロックファイルが見つかりました" );
+            int ret = mdiag.run();
             if( ret != Gtk::RESPONSE_YES ) return 0;
         }
     }
