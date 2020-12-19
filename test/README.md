@@ -3,6 +3,7 @@
 JDimは [Google Test][google_test] を使って機能をテストします。
 テストはmakeコマンドでビルド、実行が行えます。
 
+makeのかわりに [Meson][mesonbuild] を利用することもできます。([下記参照](#meson-test))
 
 ## テストプログラムのビルドに必要なもの
 - JDimソースコードの各namespaceで生成されるオブジェクトファイル(\*.o)や静的ライブラリ(\*.a)
@@ -16,7 +17,7 @@ JDimは [Google Test][google_test] を使って機能をテストします。
    (b)googletestリポジトリをクローンしてください。
 
    #### (a) ディストリビューションのソースパッケージを利用する場合
-   ディストリのパッケージ管理ツールを使ってgoogletestのソースコードをインストールします。
+   ディストロのパッケージ管理ツールを使ってgoogletestのソースコードをインストールします。
 
    ##### Debian系
    `googletest`をインストールします。
@@ -78,3 +79,47 @@ make test
 
 
 [google_test]: https://github.com/google/googletest
+
+---
+
+<a name="meson-test"></a>
+## Mesonを利用してテストする
+
+Mesonのインストール方法は[GitHub][#388]を参照してください。
+
+### セットアップ
+
+[事前準備][readme-prepare]に加えて`googletest`をインストールします。
+(a)ディストリビューションのパッケージをインストールするか、
+(b)[meson wraptool][meson-wraptool]を利用してください。
+
+#### (a) ディストリビューションのパッケージを利用する場合
+ディストロのパッケージ管理ツールを使ってgoogletestのパッケージをインストールします。
+
+##### Debian系
+```sh
+sudo apt install libgtest-dev
+```
+
+#### (b) Meson wraptool を利用する場合
+[Wrap DB][wrapdb]を利用してローカルの`subprojects`ディレクトリにインストールします。
+googletestのソースコードは構成時にダウンロードされます。
+```sh
+mkdir subprojects
+meson wrap install gtest
+```
+
+### テストのビルドと実行
+mesonの **test** サブコマンドでテストプログラムのビルドと実行を行います。
+結果表示など詳細はMesonの[リファレンス][meson-reference]を参照してください。
+```sh
+meson builddir
+meson test -C builddir
+```
+
+[mesonbuild]: https://mesonbuild.com/
+[#388]: https://github.com/JDimproved/JDim/pull/388
+[readme-prepare]: https://github.com/JDimproved/JDim/blob/master/README.md#%E4%BA%8B%E5%89%8D%E6%BA%96%E5%82%99
+[meson-wraptool]: https://mesonbuild.com/Using-wraptool.html
+[wrapdb]: https://wrapdb.mesonbuild.com/gtest
+[meson-reference]: https://mesonbuild.com/Unit-tests.html#other-test-options
