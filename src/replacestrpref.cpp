@@ -122,12 +122,12 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
     , m_check_chref( "対象の置換前に文字参照をデコード(_E)", true )
     , m_chref( REPLACETARGET_MAX )
     , m_store( REPLACETARGET_MAX )
-    , m_button_top( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Top" ), true )
-    , m_button_up( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Up" ), true )
-    , m_button_down( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Down" ), true )
-    , m_button_bottom( g_dgettext( GTK_DOMAIN, "Stock label, navigation\x04_Bottom" ), true )
-    , m_button_delete( g_dgettext( GTK_DOMAIN, "Stock label\x04_Delete" ), true )
-    , m_button_add( g_dgettext( GTK_DOMAIN, "Stock label\x04_Add" ), true )
+    , m_button_top( g_dpgettext( GTK_DOMAIN, "Stock label, navigation\x04_Top", 24 ), true )
+    , m_button_up( g_dpgettext( GTK_DOMAIN, "Stock label, navigation\x04_Up", 24 ), true )
+    , m_button_down( g_dpgettext( GTK_DOMAIN, "Stock label, navigation\x04_Down", 24 ), true )
+    , m_button_bottom( g_dpgettext( GTK_DOMAIN, "Stock label, navigation\x04_Bottom", 24 ), true )
+    , m_button_delete( g_dpgettext( GTK_DOMAIN, "Stock label\x04_Delete", 12 ), true )
+    , m_button_add( g_dpgettext( GTK_DOMAIN, "Stock label\x04_Add", 12 ), true )
     , m_vbuttonbox{ Gtk::ORIENTATION_VERTICAL }
 {
     m_button_top.set_image_from_icon_name( "go-top" );
