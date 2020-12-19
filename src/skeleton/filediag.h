@@ -25,9 +25,9 @@ namespace SKELETON
             add_button( g_dgettext( GTK_DOMAIN, "_Cancel" ), Gtk::RESPONSE_CANCEL );
 
             if( m_action == Gtk::FILE_CHOOSER_ACTION_OPEN ) {
-                add_button( g_dgettext( GTK_DOMAIN, "Stock label\x04_Open" ), Gtk::RESPONSE_ACCEPT );
+                add_button( g_dpgettext( GTK_DOMAIN, "Stock label\x04_Open", 12 ), Gtk::RESPONSE_ACCEPT );
             }
-            else add_button( g_dgettext( GTK_DOMAIN, "Stock label\x04_Save" ), Gtk::RESPONSE_ACCEPT );
+            else add_button( g_dpgettext( GTK_DOMAIN, "Stock label\x04_Save", 12 ), Gtk::RESPONSE_ACCEPT );
 
             set_default_response( Gtk::RESPONSE_ACCEPT );
         }

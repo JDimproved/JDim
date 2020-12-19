@@ -32,7 +32,7 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_
         ->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_cancel_clicked ) );
     }
 
-    if( add_open ) m_bt_ok = add_button( g_dgettext( GTK_DOMAIN, "Stock label\x04_Open" ), Gtk::RESPONSE_OK );
+    if( add_open ) m_bt_ok = add_button( g_dpgettext( GTK_DOMAIN, "Stock label\x04_Open", 12 ), Gtk::RESPONSE_OK );
     else m_bt_ok = add_button( g_dgettext( GTK_DOMAIN, "_OK" ), Gtk::RESPONSE_OK );
 
     m_bt_ok->signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_ok_clicked ) );
