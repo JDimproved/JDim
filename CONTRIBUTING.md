@@ -14,7 +14,7 @@ JDimへのコントリビュート方法を案内します。
 
 
 ## :question: 質問をしたい
-Issueを開いて質問をします。 → [New issue][new-issue]
+Discussionsを開いて質問をします。 → [New discussion][new-discussion]
 
 使い方や設定方法の情報は[オンラインマニュアル][manual]や
 2ch/5chのスレッド・過去ログにありますのでそちらも参照してください。
@@ -29,6 +29,8 @@ Issueを開いてバグを報告します。 → [New issue][new-issue]
 * やりたいこと・期待する動作
 * バグが現れるまでの手順・操作
 * 実際の結果・エラーメッセージ
+
+バグなのかはっきりしない場合はDiscussionsで質問してみてください。 → [New discussion][new-discussion]
 
 
 ## :muscle: 機能のリクエストをしたい
@@ -58,6 +60,7 @@ Pull requestは`master`ブランチに対してお願いいたします。
 [issues]: https://github.com/JDimproved/JDim/issues
 [pull-requests]: https://github.com/JDimproved/JDim/pulls
 [linux-5ch]: https://mao.5ch.net/linux/
+[new-discussion]: https://github.com/JDimproved/JDim/discussions/new
 [new-issue]: https://github.com/JDimproved/JDim/issues/new
 [manual]: https://jdimproved.github.io/JDim/
 [rfcs]: https://github.com/JDimproved/rfcs
