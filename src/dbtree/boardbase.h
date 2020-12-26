@@ -579,7 +579,7 @@ namespace DBTREE
         void clear();
 
         // デフォルト最大レス数( 0 : 未設定 )
-        virtual int get_default_number_max_res() { return 0; }
+        virtual int get_default_number_max_res() const { return 0; }
 
         // キャッシュのファイル名が正しいかどうか
         virtual bool is_valid( const std::string& filename ) { return false; }
@@ -610,7 +610,7 @@ namespace DBTREE
 
         // レス数であぼーん(グローバル)
         // 2ch以外の板ではキャンセルする
-        virtual int get_abone_number_global() { return 0; }
+        virtual int get_abone_number_global() const { return 0; }
     };
 }
 

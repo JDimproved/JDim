@@ -81,7 +81,7 @@ namespace DBTREE
       private:
 
         // デフォルト最大レス数
-        int get_default_number_max_res() override { return DEFAULT_NUMBER_MAX_2CH; }
+        int get_default_number_max_res() const override { return DEFAULT_NUMBER_MAX_2CH; }
 
         ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
 
