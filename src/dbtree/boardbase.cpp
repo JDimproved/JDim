@@ -118,7 +118,7 @@ ArticleBase* BoardBase::get_article_null()
 }
 
 
-bool BoardBase::empty()
+bool BoardBase::empty() const
 {
     return m_root.empty();
 }
@@ -423,7 +423,7 @@ void BoardBase::update_writetime()
 //
 // 経過時間(秒)
 //
-time_t BoardBase::get_write_pass()
+time_t BoardBase::get_write_pass() const
 {
     time_t ret = 0;
     struct timeval tv;
@@ -438,7 +438,7 @@ time_t BoardBase::get_write_pass()
 //
 // 書き込み可能までの残り秒
 //
-time_t BoardBase::get_write_leftsec()
+time_t BoardBase::get_write_leftsec() const
 {
     const time_t mrg = 2;
 
@@ -761,7 +761,7 @@ std::string BoardBase::url_readcgi( const std::string& url, int num_from, int nu
 //
 // (例) "http://www.hoge2ch.net/hogeboard/subject.txt"
 //
-std::string BoardBase::url_subject()
+std::string BoardBase::url_subject() const
 {
     if( empty() ) return std::string();
 
@@ -775,7 +775,7 @@ std::string BoardBase::url_subject()
 //
 // (例) "http://www.hoge2ch.net/"  (最後に '/' がつく)
 //
-std::string BoardBase::url_root()
+std::string BoardBase::url_root() const
 {
     if( empty() ) return std::string();
 
@@ -788,7 +788,7 @@ std::string BoardBase::url_root()
 //
 // (例) "http://www.hoge2ch.net/hogeboard/"  (最後に '/' がつく)
 //
-std::string BoardBase::url_boardbase()
+std::string BoardBase::url_boardbase() const
 {
     if( empty() ) return std::string();
 
@@ -828,7 +828,7 @@ std::string BoardBase::url_datpath()
 //
 // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/"  (最後に '/' がつく)
 //
-std::string BoardBase::url_readcgibase()
+std::string BoardBase::url_readcgibase() const
 {
     if( empty() ) return std::string();
 
@@ -841,7 +841,7 @@ std::string BoardBase::url_readcgibase()
 //
 // (例) "/test/read.cgi/hogeboard/"   (最初と最後に '/' がつく)
 //
-std::string BoardBase::url_readcgipath()
+std::string BoardBase::url_readcgipath() const
 {
     if( empty() ) return std::string();
 
@@ -855,7 +855,7 @@ std::string BoardBase::url_readcgipath()
 // (例) "http://www.hoge2ch.net/test/bbs.cgi/" ( 最後に '/' がつく )
 //
 //
-std::string BoardBase::url_bbscgibase()
+std::string BoardBase::url_bbscgibase() const
 {
     if( empty() ) return std::string();
 
@@ -868,7 +868,7 @@ std::string BoardBase::url_bbscgibase()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi/"  ( 最後に '/' がつく )
 //
-std::string BoardBase::url_subbbscgibase()
+std::string BoardBase::url_subbbscgibase() const
 {
     if( empty() ) return std::string();
 

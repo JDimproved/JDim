@@ -242,13 +242,13 @@ namespace DBTREE
 
         // subject.txt の URLを取得
         // (例) "http://hoge.2ch.net/hogeboard/subject.txt"
-        std::string url_subject();
+        std::string url_subject() const;
 
       public:
 
         BoardBase( const std::string& root, const std::string& path_board, const std::string& name );
         ~BoardBase();
-        bool empty();
+        bool empty() const;
 
         // 状態 ( global.hで定義 )
         int get_status() const { return m_status; }
@@ -386,11 +386,11 @@ namespace DBTREE
 
         // ルートアドレス
         // (例) "http://www.hoge2ch.net/hogeboard/" なら "http://www.hoge2ch.net/"
-        std::string url_root();
+        std::string url_root() const;
 
         // 板のベースアドレス
         // (例) "http://www.hoge2ch.net/hogeboard/"
-        std::string url_boardbase();
+        std::string url_boardbase() const;
 
         // dat ファイルのURLのベースアドレスを返す
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat" なら "http://www.hoge2ch.net/hogeboard/dat/"
@@ -402,19 +402,19 @@ namespace DBTREE
 
         // read.cgi のURLのベースアドレスを返す
         // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345" なら "http://www.hoge2ch.net/test/read.cgi/hogeboard/"
-        std::string url_readcgibase();
+        std::string url_readcgibase() const;
 
         // read.cgi のURLのパスを返す
         // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345" なら "/test/read.cgi/hogeboard/"
-        std::string url_readcgipath();
+        std::string url_readcgipath() const;
 
         // bbscgi のURLのベースアドレス
         // (例) "http://www.hoge2ch.net/test/bbs.cgi/" ( 最後に '/' がつく )
-        std::string url_bbscgibase();
+        std::string url_bbscgibase() const;
 
         // subbbscgi のURLのベースアドレス
         // (例) "http://www.hoge2ch.net/test/subbbs.cgi/"  ( 最後に '/' がつく )
-        std::string url_subbbscgibase();
+        std::string url_subbbscgibase() const;
 
         // article クラスのポインタ取得
         ArticleBase* get_article_fromURL( const std::string& url );
@@ -515,10 +515,10 @@ namespace DBTREE
         // 最終書き込み時間
         void update_writetime();
         time_t get_write_time() const { return m_write_time.tv_sec; } // 秒
-        time_t get_write_pass(); // 経過時間(秒)
+        time_t get_write_pass() const; // 経過時間(秒)
         time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
         void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
-        time_t get_write_leftsec(); // 書き込み可能までの残り秒
+        time_t get_write_leftsec() const; // 書き込み可能までの残り秒
 
         // 全書き込み履歴クリア
         void clear_all_post_history();
