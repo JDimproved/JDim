@@ -214,7 +214,7 @@ std::string Board2chCompati::create_newarticle_message( const std::string& subje
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-std::string Board2chCompati::url_bbscgi_new()
+std::string Board2chCompati::url_bbscgi_new() const
 {
     std::string cgibase = url_bbscgibase();
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
@@ -226,7 +226,7 @@ std::string Board2chCompati::url_bbscgi_new()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-std::string Board2chCompati::url_subbbscgi_new()
+std::string Board2chCompati::url_subbbscgi_new() const
 {
     std::string cgibase = url_subbbscgibase();
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
@@ -431,7 +431,7 @@ std::string Board2chCompati::localrule() const
 //
 // (例) "http://hoge.2ch.net/hogeboard/SETTING.TXT"
 //
-std::string Board2chCompati::url_settingtxt()
+std::string Board2chCompati::url_settingtxt() const
 {
     return url_boardbase() + DBTREE::kSettingTxt;
 }

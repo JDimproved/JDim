@@ -27,17 +27,17 @@ namespace DBTREE
         BoardJBBS( const std::string& root, const std::string& path_board,const std::string& name );
         ~BoardJBBS() noexcept;
 
-        std::string url_datpath() override;
+        std::string url_datpath() const override;
 
         // 新スレ作成用のメッセージ変換
         std::string create_newarticle_message( const std::string& subject, const std::string& name,
                                                const std::string& mail, const std::string& msg ) override;
 
         // 新スレ作成用のbbscgi のURL
-        std::string url_bbscgi_new() override;
+        std::string url_bbscgi_new() const override;
         
         // 新スレ作成用のsubbbscgi のURL
-        std::string url_subbbscgi_new() override;
+        std::string url_subbbscgi_new() const override;
 
         // ローカルルール
         std::string localrule() const override;
@@ -47,7 +47,7 @@ namespace DBTREE
         std::string default_noname() const override;
 
         // SETTING.TXT のURL
-        std::string url_settingtxt() override;
+        std::string url_settingtxt() const override;
 
       private:
 

@@ -39,16 +39,16 @@ namespace DBTREE
                                                const std::string& mail, const std::string& msg ) override;
 
         // 新スレ作成用のbbscgi のURL
-        std::string url_bbscgi_new() override;
+        std::string url_bbscgi_new() const override;
         
         // 新スレ作成用のsubbbscgi のURL
-        std::string url_subbbscgi_new() override;
+        std::string url_subbbscgi_new() const override;
 
         // ローカルルール
         std::string localrule() const override;
 
         // SETTING.TXT のURL
-        std::string url_settingtxt() override;
+        std::string url_settingtxt() const override;
 
         // SETTING.TXT 
         std::string settingtxt() const override;

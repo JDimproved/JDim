@@ -382,7 +382,7 @@ namespace DBTREE
 
         // SETTING.TXT の URLを取得
         // (例) "http://hoge.2ch.net/hogeboard/SETTING.TXT"
-        virtual std::string url_settingtxt() { return {}; }
+        virtual std::string url_settingtxt() const { return {}; }
 
         // ルートアドレス
         // (例) "http://www.hoge2ch.net/hogeboard/" なら "http://www.hoge2ch.net/"
@@ -394,11 +394,11 @@ namespace DBTREE
 
         // dat ファイルのURLのベースアドレスを返す
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat" なら "http://www.hoge2ch.net/hogeboard/dat/"
-        std::string url_datbase();
+        std::string url_datbase() const;
 
         // dat ファイルのURLのパスを返す
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat" なら "/hogeboard/dat/"
-        virtual std::string url_datpath();
+        virtual std::string url_datpath() const;
 
         // read.cgi のURLのベースアドレスを返す
         // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345" なら "http://www.hoge2ch.net/test/read.cgi/hogeboard/"
@@ -435,10 +435,10 @@ namespace DBTREE
         }
 
         // 新スレ作成用のbbscgi のURL
-        virtual std::string url_bbscgi_new() { return {}; }
+        virtual std::string url_bbscgi_new() const { return {}; }
         
         // 新スレ作成用のsubbbscgi のURL
-        virtual std::string url_subbbscgi_new() { return {}; }
+        virtual std::string url_subbbscgi_new() const { return {}; }
 
         // 配下の全articlebaseクラスのあぼーん状態の更新
         void update_abone_all_article();

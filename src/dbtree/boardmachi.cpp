@@ -166,7 +166,7 @@ std::string BoardMachi::url_dat( const std::string& url, int& num_from, int& num
 //
 // (例) "/bbs/read.cgi?BBS=board&KEY=" (最初に '/' がつく)
 //
-std::string BoardMachi::url_datpath()
+std::string BoardMachi::url_datpath() const
 {
     if( empty() ) return std::string();
 
@@ -188,7 +188,7 @@ std::string BoardMachi::create_newarticle_message( const std::string& subject, c
 //
 // 新スレ作成時のbbscgi(write.cgi) のURL
 //
-std::string BoardMachi::url_bbscgi_new()
+std::string BoardMachi::url_bbscgi_new() const
 {
     return std::string();
 }
@@ -197,7 +197,7 @@ std::string BoardMachi::url_bbscgi_new()
 //
 // 新スレ作成時のsubbbscgi のURL
 //
-std::string BoardMachi::url_subbbscgi_new()
+std::string BoardMachi::url_subbbscgi_new() const
 {
     return std::string();
 }

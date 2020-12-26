@@ -247,7 +247,7 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-std::string Board2ch::url_bbscgi_new()
+std::string Board2ch::url_bbscgi_new() const
 {
     return Board2chCompati::url_bbscgi_new();
 }
@@ -258,7 +258,7 @@ std::string Board2ch::url_bbscgi_new()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-std::string Board2ch::url_subbbscgi_new()
+std::string Board2ch::url_subbbscgi_new() const
 {
     return Board2chCompati::url_subbbscgi_new();
 }

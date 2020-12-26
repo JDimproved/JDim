@@ -94,7 +94,7 @@ ArticleBase* BoardJBBS::append_article( const std::string& datbase, const std::s
 //
 // (例) "/bbs/rawmode.cgi/board/"  (最初と最後に '/' がつく)
 //
-std::string BoardJBBS::url_datpath()
+std::string BoardJBBS::url_datpath() const
 {
     if( empty() ) return std::string();
 
@@ -140,7 +140,7 @@ std::string BoardJBBS::create_newarticle_message( const std::string& subject, co
 // (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/new/"
 //
 //
-std::string BoardJBBS::url_bbscgi_new()
+std::string BoardJBBS::url_bbscgi_new() const
 {
     return url_bbscgibase() + get_id() + "/new/";
 }
@@ -151,7 +151,7 @@ std::string BoardJBBS::url_bbscgi_new()
 //
 // (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/new/"
 //
-std::string BoardJBBS::url_subbbscgi_new()
+std::string BoardJBBS::url_subbbscgi_new() const
 {
     return url_subbbscgibase() + get_id() + "/new/";
 }
@@ -207,7 +207,7 @@ std::string BoardJBBS::default_noname() const
 //
 // (例) "http://jbbs.shitaraba.net/bbs/api/setting.cgi/computer/123/"
 //
-std::string BoardJBBS::url_settingtxt()
+std::string BoardJBBS::url_settingtxt() const
 {
     return get_root() + "/bbs/api/setting.cgi/" + get_id() + "/";
 }

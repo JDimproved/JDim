@@ -801,7 +801,7 @@ std::string BoardBase::url_boardbase() const
 //
 // (例) "http://www.hoge2ch.net/hogeboard/dat/" (最後に '/' がつく)
 //
-std::string BoardBase::url_datbase()
+std::string BoardBase::url_datbase() const
 {
     if( empty() ) return std::string();
 
@@ -814,7 +814,7 @@ std::string BoardBase::url_datbase()
 //
 // (例) "/hogeboard/dat/"  (最初と最後に '/' がつく)
 //
-std::string BoardBase::url_datpath()
+std::string BoardBase::url_datpath() const
 {
     if( empty() ) return std::string();
 
