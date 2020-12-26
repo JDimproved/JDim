@@ -299,18 +299,18 @@ namespace DBTREE
         const std::string& get_subjecttxt() const { return m_subjecttxt; }
 
         // ユーザーエージェント
-        virtual const std::string& get_agent(); // ダウンロード用
-        virtual const std::string& get_agent_w(); // 書き込み用
+        virtual const std::string& get_agent() const; // ダウンロード用
+        virtual const std::string& get_agent_w() const; // 書き込み用
 
         // ダウンロード時のプロキシ
-        virtual std::string get_proxy_host();
-        virtual int get_proxy_port();
-        virtual std::string get_proxy_basicauth();
+        virtual std::string get_proxy_host() const;
+        virtual int get_proxy_port() const;
+        virtual std::string get_proxy_basicauth() const;
 
         // 書き込み時のプロキシ
-        virtual std::string get_proxy_host_w();
-        virtual int get_proxy_port_w();
-        virtual std::string get_proxy_basicauth_w();
+        virtual std::string get_proxy_host_w() const;
+        virtual int get_proxy_port_w() const;
+        virtual std::string get_proxy_basicauth_w() const;
 
         // ローカルルール
         virtual std::string localrule();
