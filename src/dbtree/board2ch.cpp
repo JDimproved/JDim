@@ -40,20 +40,20 @@ Board2ch::~Board2ch() noexcept
 
 // ユーザエージェント
 // ダウンロード用
-const std::string& Board2ch::get_agent()
+const std::string& Board2ch::get_agent() const
 {
     return CONFIG::get_agent_for2ch();
 }
 
 // 書き込み用
-const std::string& Board2ch::get_agent_w()
+const std::string& Board2ch::get_agent_w() const
 {
     return CONFIG::get_agent_for2ch();
 }
 
 
 // 読み込み用プロキシ
-std::string Board2ch::get_proxy_host()
+std::string Board2ch::get_proxy_host() const
 {
     const int mode = get_mode_local_proxy();
 
@@ -66,7 +66,7 @@ std::string Board2ch::get_proxy_host()
     return std::string();
 }
 
-int Board2ch::get_proxy_port()
+int Board2ch::get_proxy_port() const
 {
     const int mode = get_mode_local_proxy();
 
@@ -76,7 +76,7 @@ int Board2ch::get_proxy_port()
     return 0;
 }
 
-std::string Board2ch::get_proxy_basicauth()
+std::string Board2ch::get_proxy_basicauth() const
 {
     const int mode = get_mode_local_proxy();
 
@@ -88,7 +88,7 @@ std::string Board2ch::get_proxy_basicauth()
 
 
 // 書き込み用プロキシ
-std::string Board2ch::get_proxy_host_w()
+std::string Board2ch::get_proxy_host_w() const
 {
     const int mode = get_mode_local_proxy_w();
 
@@ -100,7 +100,7 @@ std::string Board2ch::get_proxy_host_w()
     return std::string();
 }
 
-int Board2ch::get_proxy_port_w()
+int Board2ch::get_proxy_port_w() const
 {
     const int mode = get_mode_local_proxy_w();
 
@@ -111,7 +111,7 @@ int Board2ch::get_proxy_port_w()
 }
 
 
-std::string Board2ch::get_proxy_basicauth_w()
+std::string Board2ch::get_proxy_basicauth_w() const
 {
     const int mode = get_mode_local_proxy_w();
 
@@ -247,7 +247,7 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-std::string Board2ch::url_bbscgi_new()
+std::string Board2ch::url_bbscgi_new() const
 {
     return Board2chCompati::url_bbscgi_new();
 }
@@ -258,7 +258,7 @@ std::string Board2ch::url_bbscgi_new()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-std::string Board2ch::url_subbbscgi_new()
+std::string Board2ch::url_subbbscgi_new() const
 {
     return Board2chCompati::url_subbbscgi_new();
 }

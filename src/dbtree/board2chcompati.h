@@ -39,27 +39,27 @@ namespace DBTREE
                                                const std::string& mail, const std::string& msg ) override;
 
         // 新スレ作成用のbbscgi のURL
-        std::string url_bbscgi_new() override;
+        std::string url_bbscgi_new() const override;
         
         // 新スレ作成用のsubbbscgi のURL
-        std::string url_subbbscgi_new() override;
+        std::string url_subbbscgi_new() const override;
 
         // ローカルルール
-        std::string localrule() override;
+        std::string localrule() const override;
 
         // SETTING.TXT のURL
-        std::string url_settingtxt() override;
+        std::string url_settingtxt() const override;
 
         // SETTING.TXT 
-        std::string settingtxt() override;
-        std::string default_noname() override;
-        int line_number() override;
-        int message_count() override;
-        std::string get_unicode() override;
+        std::string settingtxt() const override;
+        std::string default_noname() const override;
+        int line_number() const override;
+        int message_count() const override;
+        std::string get_unicode() const override;
 
       private:
 
-        bool is_valid( const std::string& filename ) override;
+        bool is_valid( const std::string& filename ) const override;
 
         ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
         void parse_subject( const char* str_subject_txt ) override;
@@ -69,7 +69,7 @@ namespace DBTREE
         void download_rule_setting() override;
 
         // レス数であぼーん(グローバル)
-        int get_abone_number_global() override;
+        int get_abone_number_global() const override;
 
         // htmlからキーワードを解析する
         std::string analyze_keyword_impl( const std::string& html, bool full_parse );

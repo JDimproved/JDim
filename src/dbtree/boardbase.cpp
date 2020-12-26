@@ -118,7 +118,7 @@ ArticleBase* BoardBase::get_article_null()
 }
 
 
-bool BoardBase::empty()
+bool BoardBase::empty() const
 {
     return m_root.empty();
 }
@@ -127,7 +127,7 @@ bool BoardBase::empty()
 //
 // url がこの板のものかどうか
 //
-bool BoardBase::equal( const std::string& url )
+bool BoardBase::equal( const std::string& url ) const
 {
     if( url.find( get_root() ) == 0
         && url.find( get_path_board() + "/" ) != std::string::npos ) return true;
@@ -153,20 +153,20 @@ void BoardBase::update_name( const std::string& name )
 
 // ユーザエージェント
 // ダウンロード用
-const std::string& BoardBase::get_agent()
+const std::string& BoardBase::get_agent() const
 {
     return CONFIG::get_agent_for_data();
 }
 
 // 書き込み用
-const std::string& BoardBase::get_agent_w()
+const std::string& BoardBase::get_agent_w() const
 {
     return get_agent();
 }
 
 
 // 読み込み用プロキシ
-std::string BoardBase::get_proxy_host()
+std::string BoardBase::get_proxy_host() const
 {
     const int mode = get_mode_local_proxy();
 
@@ -179,7 +179,7 @@ std::string BoardBase::get_proxy_host()
     return std::string();
 }
 
-int BoardBase::get_proxy_port()
+int BoardBase::get_proxy_port() const
 {
     const int mode = get_mode_local_proxy();
 
@@ -189,7 +189,7 @@ int BoardBase::get_proxy_port()
     return 0;
 }
 
-std::string BoardBase::get_proxy_basicauth()
+std::string BoardBase::get_proxy_basicauth() const
 {
     const int mode = get_mode_local_proxy();
 
@@ -201,7 +201,7 @@ std::string BoardBase::get_proxy_basicauth()
 
 
 // 書き込み用プロキシ
-std::string BoardBase::get_proxy_host_w()
+std::string BoardBase::get_proxy_host_w() const
 {
     const int mode = get_mode_local_proxy_w();
 
@@ -214,7 +214,7 @@ std::string BoardBase::get_proxy_host_w()
     return std::string();
 }
 
-int BoardBase::get_proxy_port_w()
+int BoardBase::get_proxy_port_w() const
 {
     const int mode = get_mode_local_proxy_w();
 
@@ -225,7 +225,7 @@ int BoardBase::get_proxy_port_w()
 }
 
 
-std::string BoardBase::get_proxy_basicauth_w()
+std::string BoardBase::get_proxy_basicauth_w() const
 {
     const int mode = get_mode_local_proxy_w();
 
@@ -237,41 +237,41 @@ std::string BoardBase::get_proxy_basicauth_w()
 
 
 // ローカルルール
-std::string BoardBase::localrule()
+std::string BoardBase::localrule() const
 {
     return "利用できません";
 }
 
 
 // setting.txt
-std::string BoardBase::settingtxt()
+std::string BoardBase::settingtxt() const
 {
     return "利用できません";
 }
 
 // デフォルトの名無し名
-std::string BoardBase::default_noname()
+std::string BoardBase::default_noname() const
 {
     return "???";
 }
 
 
 // 最大改行数/2
-int BoardBase::line_number()
+int BoardBase::line_number() const
 {
     return 0;
 }
 
 
 // 最大書き込みバイト数
-int BoardBase::message_count()
+int BoardBase::message_count() const
 {
     return 0;
 }
 
 
 // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
-std::string BoardBase::get_unicode()
+std::string BoardBase::get_unicode() const
 {
     return {};
 }
@@ -423,7 +423,7 @@ void BoardBase::update_writetime()
 //
 // 経過時間(秒)
 //
-time_t BoardBase::get_write_pass()
+time_t BoardBase::get_write_pass() const
 {
     time_t ret = 0;
     struct timeval tv;
@@ -438,7 +438,7 @@ time_t BoardBase::get_write_pass()
 //
 // 書き込み可能までの残り秒
 //
-time_t BoardBase::get_write_leftsec()
+time_t BoardBase::get_write_leftsec() const
 {
     const time_t mrg = 2;
 
@@ -761,7 +761,7 @@ std::string BoardBase::url_readcgi( const std::string& url, int num_from, int nu
 //
 // (例) "http://www.hoge2ch.net/hogeboard/subject.txt"
 //
-std::string BoardBase::url_subject()
+std::string BoardBase::url_subject() const
 {
     if( empty() ) return std::string();
 
@@ -775,7 +775,7 @@ std::string BoardBase::url_subject()
 //
 // (例) "http://www.hoge2ch.net/"  (最後に '/' がつく)
 //
-std::string BoardBase::url_root()
+std::string BoardBase::url_root() const
 {
     if( empty() ) return std::string();
 
@@ -788,7 +788,7 @@ std::string BoardBase::url_root()
 //
 // (例) "http://www.hoge2ch.net/hogeboard/"  (最後に '/' がつく)
 //
-std::string BoardBase::url_boardbase()
+std::string BoardBase::url_boardbase() const
 {
     if( empty() ) return std::string();
 
@@ -801,7 +801,7 @@ std::string BoardBase::url_boardbase()
 //
 // (例) "http://www.hoge2ch.net/hogeboard/dat/" (最後に '/' がつく)
 //
-std::string BoardBase::url_datbase()
+std::string BoardBase::url_datbase() const
 {
     if( empty() ) return std::string();
 
@@ -814,7 +814,7 @@ std::string BoardBase::url_datbase()
 //
 // (例) "/hogeboard/dat/"  (最初と最後に '/' がつく)
 //
-std::string BoardBase::url_datpath()
+std::string BoardBase::url_datpath() const
 {
     if( empty() ) return std::string();
 
@@ -828,7 +828,7 @@ std::string BoardBase::url_datpath()
 //
 // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/"  (最後に '/' がつく)
 //
-std::string BoardBase::url_readcgibase()
+std::string BoardBase::url_readcgibase() const
 {
     if( empty() ) return std::string();
 
@@ -841,7 +841,7 @@ std::string BoardBase::url_readcgibase()
 //
 // (例) "/test/read.cgi/hogeboard/"   (最初と最後に '/' がつく)
 //
-std::string BoardBase::url_readcgipath()
+std::string BoardBase::url_readcgipath() const
 {
     if( empty() ) return std::string();
 
@@ -855,7 +855,7 @@ std::string BoardBase::url_readcgipath()
 // (例) "http://www.hoge2ch.net/test/bbs.cgi/" ( 最後に '/' がつく )
 //
 //
-std::string BoardBase::url_bbscgibase()
+std::string BoardBase::url_bbscgibase() const
 {
     if( empty() ) return std::string();
 
@@ -868,7 +868,7 @@ std::string BoardBase::url_bbscgibase()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi/"  ( 最後に '/' がつく )
 //
-std::string BoardBase::url_subbbscgibase()
+std::string BoardBase::url_subbbscgibase() const
 {
     if( empty() ) return std::string();
 
@@ -1464,22 +1464,18 @@ bool BoardBase::start_checkking_if_board_moved()
 //
 // キャッシュのディレクトリ内にあるスレのファイル名のリストを取得
 //
-std::list< std::string > BoardBase::get_filelist_in_cache()
+std::list<std::string> BoardBase::get_filelist_in_cache() const
 {
-    std::list< std::string >list_out;
+    std::list<std::string> list_out;
     if( empty() ) return list_out;
 
-    std::list< std::string >list_file;
-    std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
+    const std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
 
-    list_file = CACHE::get_filelist( path_board_root );
-    if( ! list_file.size() ) return list_out;
+    std::list<std::string> list_file = CACHE::get_filelist( path_board_root );
+    if( list_file.empty() ) return list_out;
 
-    std::list< std::string >::iterator it = list_file.begin();
-    for(; it != list_file.end(); ++it ){
-
-        std::string& file = ( *it );
-        if( is_valid( file ) ) list_out.push_back( file );
+    for( std::string& file : list_file ) {
+        if( is_valid( file ) ) list_out.emplace_back( std::move( file ) );
     }
 
     return list_out;

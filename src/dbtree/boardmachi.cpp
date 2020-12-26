@@ -42,7 +42,7 @@ BoardMachi::BoardMachi( const std::string& root, const std::string& path_board, 
 //
 // url がこの板のものかどうか
 //
-bool  BoardMachi::equal( const std::string& url )
+bool BoardMachi::equal( const std::string& url ) const
 {
     if( url.find( get_root() ) == 0 ){
 
@@ -58,7 +58,7 @@ bool  BoardMachi::equal( const std::string& url )
 //
 // キャッシュのファイル名が正しいか
 //
-bool BoardMachi::is_valid( const std::string& filename )
+bool BoardMachi::is_valid( const std::string& filename ) const
 {
     if( filename.length() != 10 ) return false;
 
@@ -166,7 +166,7 @@ std::string BoardMachi::url_dat( const std::string& url, int& num_from, int& num
 //
 // (例) "/bbs/read.cgi?BBS=board&KEY=" (最初に '/' がつく)
 //
-std::string BoardMachi::url_datpath()
+std::string BoardMachi::url_datpath() const
 {
     if( empty() ) return std::string();
 
@@ -188,7 +188,7 @@ std::string BoardMachi::create_newarticle_message( const std::string& subject, c
 //
 // 新スレ作成時のbbscgi(write.cgi) のURL
 //
-std::string BoardMachi::url_bbscgi_new()
+std::string BoardMachi::url_bbscgi_new() const
 {
     return std::string();
 }
@@ -197,7 +197,7 @@ std::string BoardMachi::url_bbscgi_new()
 //
 // 新スレ作成時のsubbbscgi のURL
 //
-std::string BoardMachi::url_subbbscgi_new()
+std::string BoardMachi::url_subbbscgi_new() const
 {
     return std::string();
 }

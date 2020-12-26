@@ -75,7 +75,7 @@ Board2chCompati::~Board2chCompati()
 //
 // キャッシュのファイル名が正しいか
 //
-bool Board2chCompati::is_valid( const std::string& filename )
+bool Board2chCompati::is_valid( const std::string& filename ) const
 {
     const std::string& ext = get_ext();
     if( filename.size() <= ext.size() ) return false;
@@ -214,7 +214,7 @@ std::string Board2chCompati::create_newarticle_message( const std::string& subje
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-std::string Board2chCompati::url_bbscgi_new()
+std::string Board2chCompati::url_bbscgi_new() const
 {
     std::string cgibase = url_bbscgibase();
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
@@ -226,7 +226,7 @@ std::string Board2chCompati::url_bbscgi_new()
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-std::string Board2chCompati::url_subbbscgi_new()
+std::string Board2chCompati::url_subbbscgi_new() const
 {
     std::string cgibase = url_subbbscgibase();
     return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
@@ -411,7 +411,7 @@ void Board2chCompati::regist_article( const bool is_online )
 }
 
 
-std::string Board2chCompati::localrule()
+std::string Board2chCompati::localrule() const
 {
     if( m_ruleloader ){
         if( m_ruleloader->is_loading() ) return "ロード中です";
@@ -431,13 +431,13 @@ std::string Board2chCompati::localrule()
 //
 // (例) "http://hoge.2ch.net/hogeboard/SETTING.TXT"
 //
-std::string Board2chCompati::url_settingtxt()
+std::string Board2chCompati::url_settingtxt() const
 {
     return url_boardbase() + DBTREE::kSettingTxt;
 }
 
 
-std::string Board2chCompati::settingtxt()
+std::string Board2chCompati::settingtxt() const
 {
     if( m_settingloader ){
         if( m_settingloader->is_loading() ) return "ロード中です";
@@ -452,7 +452,7 @@ std::string Board2chCompati::settingtxt()
 }
 
 
-std::string Board2chCompati::default_noname()
+std::string Board2chCompati::default_noname() const
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->default_noname();
@@ -461,7 +461,7 @@ std::string Board2chCompati::default_noname()
 }
 
 
-int Board2chCompati::line_number()
+int Board2chCompati::line_number() const
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->line_number();
@@ -470,7 +470,7 @@ int Board2chCompati::line_number()
 }
 
 
-int Board2chCompati::message_count()
+int Board2chCompati::message_count() const
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->message_count();
@@ -479,7 +479,7 @@ int Board2chCompati::message_count()
 }    
 
 
-std::string Board2chCompati::get_unicode()
+std::string Board2chCompati::get_unicode() const
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->get_unicode();
@@ -529,7 +529,7 @@ void Board2chCompati::download_rule_setting()
 //
 // レス数であぼーん(グローバル)
 //
-int Board2chCompati::get_abone_number_global()
+int Board2chCompati::get_abone_number_global() const
 {
     return CONFIG::get_abone_number_thread();
 }

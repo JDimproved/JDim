@@ -32,18 +32,18 @@ namespace DBTREE
         ~Board2ch() noexcept;
 
         // ユーザーエージェント
-        const std::string& get_agent() override; // ダウンロード用
-        const std::string& get_agent_w() override; // 書き込み用
+        const std::string& get_agent() const override; // ダウンロード用
+        const std::string& get_agent_w() const override; // 書き込み用
 
         // 読み込み用プロキシ
-        std::string get_proxy_host() override;
-        int get_proxy_port() override;
-        std::string get_proxy_basicauth() override;
+        std::string get_proxy_host() const override;
+        int get_proxy_port() const override;
+        std::string get_proxy_basicauth() const override;
 
         // 書き込み用プロキシ
-        std::string get_proxy_host_w() override;
-        int get_proxy_port_w() override;
-        std::string get_proxy_basicauth_w() override;
+        std::string get_proxy_host_w() const override;
+        int get_proxy_port_w() const override;
+        std::string get_proxy_basicauth_w() const override;
 
         // 読み込み用クッキー
         std::string cookie_for_request() const override;
@@ -61,10 +61,10 @@ namespace DBTREE
                                                const std::string& mail, const std::string& msg ) override;
 
         // 新スレ作成用のbbscgi のURL
-        std::string url_bbscgi_new() override;
+        std::string url_bbscgi_new() const override;
         
         // 新スレ作成用のsubbbscgi のURL
-        std::string url_subbbscgi_new() override;
+        std::string url_subbbscgi_new() const override;
 
         // datの最大サイズ(Kバイト)
         int get_max_dat_lng() const override { return DEFAULT_MAX_DAT_LNG; }
@@ -81,7 +81,7 @@ namespace DBTREE
       private:
 
         // デフォルト最大レス数
-        int get_default_number_max_res() override { return DEFAULT_NUMBER_MAX_2CH; }
+        int get_default_number_max_res() const override { return DEFAULT_NUMBER_MAX_2CH; }
 
         ArticleBase* append_article( const std::string& datbase, const std::string& id, const bool cached ) override;
 

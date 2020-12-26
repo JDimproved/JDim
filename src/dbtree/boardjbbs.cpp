@@ -55,7 +55,7 @@ BoardJBBS::~BoardJBBS() noexcept
 //
 // キャッシュのファイル名が正しいか
 //
-bool BoardJBBS::is_valid( const std::string& filename )
+bool BoardJBBS::is_valid( const std::string& filename ) const
 {
     if( filename.length() != 10 ) return false;
 
@@ -94,7 +94,7 @@ ArticleBase* BoardJBBS::append_article( const std::string& datbase, const std::s
 //
 // (例) "/bbs/rawmode.cgi/board/"  (最初と最後に '/' がつく)
 //
-std::string BoardJBBS::url_datpath()
+std::string BoardJBBS::url_datpath() const
 {
     if( empty() ) return std::string();
 
@@ -140,7 +140,7 @@ std::string BoardJBBS::create_newarticle_message( const std::string& subject, co
 // (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/new/"
 //
 //
-std::string BoardJBBS::url_bbscgi_new()
+std::string BoardJBBS::url_bbscgi_new() const
 {
     return url_bbscgibase() + get_id() + "/new/";
 }
@@ -151,13 +151,13 @@ std::string BoardJBBS::url_bbscgi_new()
 //
 // (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/new/"
 //
-std::string BoardJBBS::url_subbbscgi_new()
+std::string BoardJBBS::url_subbbscgi_new() const
 {
     return url_subbbscgibase() + get_id() + "/new/";
 }
 
 
-std::string BoardJBBS::localrule()
+std::string BoardJBBS::localrule() const
 {
     if( m_ruleloader ){
         if( m_ruleloader->is_loading() ) return "ロード中です";
@@ -175,7 +175,7 @@ std::string BoardJBBS::localrule()
 }
 
 
-std::string BoardJBBS::settingtxt()
+std::string BoardJBBS::settingtxt() const
 {
     if( m_settingloader ){
         if( m_settingloader->is_loading() ) return "ロード中です";
@@ -193,7 +193,7 @@ std::string BoardJBBS::settingtxt()
 }
 
 
-std::string BoardJBBS::default_noname()
+std::string BoardJBBS::default_noname() const
 {
     if( m_settingloader && m_settingloader->get_code() == HTTP_OK ) {
         return m_settingloader->default_noname();
@@ -207,7 +207,7 @@ std::string BoardJBBS::default_noname()
 //
 // (例) "http://jbbs.shitaraba.net/bbs/api/setting.cgi/computer/123/"
 //
-std::string BoardJBBS::url_settingtxt()
+std::string BoardJBBS::url_settingtxt() const
 {
     return get_root() + "/bbs/api/setting.cgi/" + get_id() + "/";
 }

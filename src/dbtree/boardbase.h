@@ -242,13 +242,13 @@ namespace DBTREE
 
         // subject.txt の URLを取得
         // (例) "http://hoge.2ch.net/hogeboard/subject.txt"
-        std::string url_subject();
+        std::string url_subject() const;
 
       public:
 
         BoardBase( const std::string& root, const std::string& path_board, const std::string& name );
         ~BoardBase();
-        bool empty();
+        bool empty() const;
 
         // 状態 ( global.hで定義 )
         int get_status() const { return m_status; }
@@ -284,7 +284,7 @@ namespace DBTREE
         void set_show_oldlog( const bool show ){ m_show_oldlog = show; }
 
         // url がこの板のものかどうか
-        virtual bool equal( const std::string& url );
+        virtual bool equal( const std::string& url ) const;
 
         // 移転などで板のルートやパスを変更する
         void update_url( const std::string& root, const std::string& path_board );
@@ -299,36 +299,36 @@ namespace DBTREE
         const std::string& get_subjecttxt() const { return m_subjecttxt; }
 
         // ユーザーエージェント
-        virtual const std::string& get_agent(); // ダウンロード用
-        virtual const std::string& get_agent_w(); // 書き込み用
+        virtual const std::string& get_agent() const; // ダウンロード用
+        virtual const std::string& get_agent_w() const; // 書き込み用
 
         // ダウンロード時のプロキシ
-        virtual std::string get_proxy_host();
-        virtual int get_proxy_port();
-        virtual std::string get_proxy_basicauth();
+        virtual std::string get_proxy_host() const;
+        virtual int get_proxy_port() const;
+        virtual std::string get_proxy_basicauth() const;
 
         // 書き込み時のプロキシ
-        virtual std::string get_proxy_host_w();
-        virtual int get_proxy_port_w();
-        virtual std::string get_proxy_basicauth_w();
+        virtual std::string get_proxy_host_w() const;
+        virtual int get_proxy_port_w() const;
+        virtual std::string get_proxy_basicauth_w() const;
 
         // ローカルルール
-        virtual std::string localrule();
+        virtual std::string localrule() const;
 
         // SETTING.TXT
-        virtual std::string settingtxt();
+        virtual std::string settingtxt() const;
 
         // 書き込みの時のデフォルト名
-        virtual std::string default_noname();
+        virtual std::string default_noname() const;
 
         // 最大改行数/2
-        virtual int line_number();
+        virtual int line_number() const;
 
         // 最大書き込みバイト数
-        virtual int message_count();
+        virtual int message_count() const;
 
         // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
-        virtual std::string get_unicode();
+        virtual std::string get_unicode() const;
 
         // 板のホストを指定してクッキーのやり取り
         std::string cookie_by_host() const;
@@ -382,39 +382,39 @@ namespace DBTREE
 
         // SETTING.TXT の URLを取得
         // (例) "http://hoge.2ch.net/hogeboard/SETTING.TXT"
-        virtual std::string url_settingtxt() { return {}; }
+        virtual std::string url_settingtxt() const { return {}; }
 
         // ルートアドレス
         // (例) "http://www.hoge2ch.net/hogeboard/" なら "http://www.hoge2ch.net/"
-        std::string url_root();
+        std::string url_root() const;
 
         // 板のベースアドレス
         // (例) "http://www.hoge2ch.net/hogeboard/"
-        std::string url_boardbase();
+        std::string url_boardbase() const;
 
         // dat ファイルのURLのベースアドレスを返す
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat" なら "http://www.hoge2ch.net/hogeboard/dat/"
-        std::string url_datbase();
+        std::string url_datbase() const;
 
         // dat ファイルのURLのパスを返す
         // (例) "http://www.hoge2ch.net/hogeboard/dat/12345.dat" なら "/hogeboard/dat/"
-        virtual std::string url_datpath();
+        virtual std::string url_datpath() const;
 
         // read.cgi のURLのベースアドレスを返す
         // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345" なら "http://www.hoge2ch.net/test/read.cgi/hogeboard/"
-        std::string url_readcgibase();
+        std::string url_readcgibase() const;
 
         // read.cgi のURLのパスを返す
         // (例) "http://www.hoge2ch.net/test/read.cgi/hogeboard/12345" なら "/test/read.cgi/hogeboard/"
-        std::string url_readcgipath();
+        std::string url_readcgipath() const;
 
         // bbscgi のURLのベースアドレス
         // (例) "http://www.hoge2ch.net/test/bbs.cgi/" ( 最後に '/' がつく )
-        std::string url_bbscgibase();
+        std::string url_bbscgibase() const;
 
         // subbbscgi のURLのベースアドレス
         // (例) "http://www.hoge2ch.net/test/subbbs.cgi/"  ( 最後に '/' がつく )
-        std::string url_subbbscgibase();
+        std::string url_subbbscgibase() const;
 
         // article クラスのポインタ取得
         ArticleBase* get_article_fromURL( const std::string& url );
@@ -435,10 +435,10 @@ namespace DBTREE
         }
 
         // 新スレ作成用のbbscgi のURL
-        virtual std::string url_bbscgi_new() { return {}; }
+        virtual std::string url_bbscgi_new() const { return {}; }
         
         // 新スレ作成用のsubbbscgi のURL
-        virtual std::string url_subbbscgi_new() { return {}; }
+        virtual std::string url_subbbscgi_new() const { return {}; }
 
         // 配下の全articlebaseクラスのあぼーん状態の更新
         void update_abone_all_article();
@@ -465,8 +465,8 @@ namespace DBTREE
         const std::list< std::string >& get_abone_list_thread_remove(){ return m_list_abone_thread_remove; }
         const std::list< std::string >& get_abone_list_word_thread(){ return m_list_abone_word_thread; }
         const std::list< std::string >& get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
-        int get_abone_number_thread(){ return m_abone_number_thread; }
-        int get_abone_hour_thread(){ return m_abone_hour_thread; }
+        int get_abone_number_thread() const noexcept { return m_abone_number_thread; }
+        int get_abone_hour_thread() const noexcept { return m_abone_hour_thread; }
 
         // subject.txtのロード後にdat落ちしたスレッドをスレあぼーんのリストから取り除く
         void remove_old_abone_thread();
@@ -515,10 +515,10 @@ namespace DBTREE
         // 最終書き込み時間
         void update_writetime();
         time_t get_write_time() const { return m_write_time.tv_sec; } // 秒
-        time_t get_write_pass(); // 経過時間(秒)
+        time_t get_write_pass() const; // 経過時間(秒)
         time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
         void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
-        time_t get_write_leftsec(); // 書き込み可能までの残り秒
+        time_t get_write_leftsec() const; // 書き込み可能までの残り秒
 
         // 全書き込み履歴クリア
         void clear_all_post_history();
@@ -579,10 +579,10 @@ namespace DBTREE
         void clear();
 
         // デフォルト最大レス数( 0 : 未設定 )
-        virtual int get_default_number_max_res() { return 0; }
+        virtual int get_default_number_max_res() const { return 0; }
 
         // キャッシュのファイル名が正しいかどうか
-        virtual bool is_valid( const std::string& filename ) { return false; }
+        virtual bool is_valid( const std::string& filename ) const { return false; }
 
         virtual void create_loaderdata( JDLIB::LOADERDATA& data );
         void receive_data( const char* data, size_t size ) override;
@@ -595,7 +595,7 @@ namespace DBTREE
         virtual void parse_subject( const char* str_subject_txt ){}
         virtual void regist_article( const bool is_online ){}
 
-        std::list< std::string > get_filelist_in_cache();
+        std::list<std::string> get_filelist_in_cache() const;
 
         void read_board_info();
         virtual void append_all_article_in_cache();
@@ -610,7 +610,7 @@ namespace DBTREE
 
         // レス数であぼーん(グローバル)
         // 2ch以外の板ではキャンセルする
-        virtual int get_abone_number_global() { return 0; }
+        virtual int get_abone_number_global() const { return 0; }
     };
 }
 
