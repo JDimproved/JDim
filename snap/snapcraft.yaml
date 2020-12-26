@@ -7,17 +7,14 @@ base: core18
 grade: stable
 icon: jdim.png
 
-# https://snapcraft.io/gnome-3-34-1804
-# Snap Store does not provide gnome-3-34-1804 package for i386, ppc64el and s390x
+# for i386 and testing amd64
 architectures:
   - build-on: amd64
     run-on: amd64
-  - build-on: arm64
-    run-on: arm64
-  - build-on: armhf
-    run-on: armhf
+  - build-on: i386
+    run-on: i386
 
-# https://snapcraft.io/blog/gnome-3-34-snapcraft-extension
+# https://forum.snapcraft.io/t/gtk3-applications/13483
 parts:
   jdim:
     plugin: meson
@@ -29,21 +26,20 @@ parts:
       # Use dpkg-buildflags to set compiler flags instead of meson options
       - --buildtype=plain
       - --prefix=/
+      - -Dbuild_tests=disabled
       - -Dcompat_cache_dir=disabled
       - -Dpangolayout=enabled
-      - -Dregex=glib
     build-environment:
       # https://wiki.debian.org/Hardening
-      # Use -isystem to suppress compiler warning:
-      # /snap/gnome-3-34-1804-sdk/current/usr/include/limits.h:124:3: warning: #include_next is a GCC extension
-      - CPPFLAGS: "$(dpkg-buildflags --get CPPFLAGS) -isystem /snap/gnome-3-34-1804-sdk/current/usr/include"
+      - CFLAGS: "$(dpkg-buildflags --get CFLAGS)"
+      - CPPFLAGS: "$(dpkg-buildflags --get CPPFLAGS)"
       - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
       - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
     build-packages:
-      - build-essential
-      - git
+      # https://packages.ubuntu.com/source/focal/jdim
       - libgnutls28-dev
-      - libsigc++-2.0-dev
+      - libgtkmm-3.0-dev
+      - zlib1g-dev
     override-build: |
       set -eu
       snapcraftctl build
@@ -58,12 +54,46 @@ parts:
       ${SNAPCRAFT_PRIME}/share/applications/jdim.desktop
     parse-info: [jdim.metainfo.xml]
 
+  # gnome-3-28 extension does not bundle shared objects for C++ library.
+  jdim-depends:
+    plugin: nil
+    stage-packages:
+      # Exclude packages provided by gnome-3-28 extension and core18.
+      # https://gitlab.gnome.org/Community/Ubuntu/gnome-3-28-1804/blob/master/snapcraft.yaml
+      - libatkmm-1.6-1v5
+      - libcairomm-1.0-1v5
+      - libfribidi0
+      - libglibmm-2.4-1v5
+      - libgtkmm-3.0-1v5
+      - libpangomm-1.4-1v5
+      - libsigc++-2.0-0v5
+    prime:
+      - -./etc
+      - -./lib
+      - -./usr/bin
+      - -./usr/sbin
+      - -./usr/share
+      - -./var
+      # Include shared objects for C++ library and a few missings.
+      - ./usr/lib/**/libatkmm-1.6.so*
+      - ./usr/lib/**/libcairomm-1.0.so*
+      - ./usr/lib/**/libfribidi.so*
+      - ./usr/lib/**/libgdkmm-3.0.so*
+      - ./usr/lib/**/libgiomm-2.4.so*
+      - ./usr/lib/**/libglibmm-2.4.so*
+      - ./usr/lib/**/libglibmm_generate_extra_defs-2.4.so*
+      - ./usr/lib/**/libgtkmm-3.0.so*
+      - ./usr/lib/**/libpangomm-1.4.so*
+      - ./usr/lib/**/libsigc-2.0.so*
+
 apps:
   jdim:
     command: bin/jdim
     common-id: com.github.jdimproved.JDim
     desktop: share/applications/jdim.desktop
-    extensions: [gnome-3-34]
+    # https://forum.snapcraft.io/t/the-gnome-3-28-extension/13485
+    extensions: [gnome-3-28]
     plugs:
+      - gsettings
       - home
       - network
