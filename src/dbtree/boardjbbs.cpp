@@ -157,7 +157,7 @@ std::string BoardJBBS::url_subbbscgi_new()
 }
 
 
-std::string BoardJBBS::localrule()
+std::string BoardJBBS::localrule() const
 {
     if( m_ruleloader ){
         if( m_ruleloader->is_loading() ) return "ロード中です";
@@ -175,7 +175,7 @@ std::string BoardJBBS::localrule()
 }
 
 
-std::string BoardJBBS::settingtxt()
+std::string BoardJBBS::settingtxt() const
 {
     if( m_settingloader ){
         if( m_settingloader->is_loading() ) return "ロード中です";
@@ -193,7 +193,7 @@ std::string BoardJBBS::settingtxt()
 }
 
 
-std::string BoardJBBS::default_noname()
+std::string BoardJBBS::default_noname() const
 {
     if( m_settingloader && m_settingloader->get_code() == HTTP_OK ) {
         return m_settingloader->default_noname();

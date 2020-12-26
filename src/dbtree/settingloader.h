@@ -42,8 +42,8 @@ namespace DBTREE
         ~SettingLoader();
 
         const std::string& default_noname() const { return m_default_noname; }
-        int line_number() { return m_line_number; }
-        int message_count() { return m_message_count; }
+        int line_number() const noexcept { return m_line_number; }
+        int message_count() const noexcept { return m_message_count; }
         const std::string& get_unicode() const { return m_unicode; }
 
       protected:

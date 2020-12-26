@@ -237,41 +237,41 @@ std::string BoardBase::get_proxy_basicauth_w() const
 
 
 // ローカルルール
-std::string BoardBase::localrule()
+std::string BoardBase::localrule() const
 {
     return "利用できません";
 }
 
 
 // setting.txt
-std::string BoardBase::settingtxt()
+std::string BoardBase::settingtxt() const
 {
     return "利用できません";
 }
 
 // デフォルトの名無し名
-std::string BoardBase::default_noname()
+std::string BoardBase::default_noname() const
 {
     return "???";
 }
 
 
 // 最大改行数/2
-int BoardBase::line_number()
+int BoardBase::line_number() const
 {
     return 0;
 }
 
 
 // 最大書き込みバイト数
-int BoardBase::message_count()
+int BoardBase::message_count() const
 {
     return 0;
 }
 
 
 // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
-std::string BoardBase::get_unicode()
+std::string BoardBase::get_unicode() const
 {
     return {};
 }

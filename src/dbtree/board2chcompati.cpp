@@ -411,7 +411,7 @@ void Board2chCompati::regist_article( const bool is_online )
 }
 
 
-std::string Board2chCompati::localrule()
+std::string Board2chCompati::localrule() const
 {
     if( m_ruleloader ){
         if( m_ruleloader->is_loading() ) return "ロード中です";
@@ -437,7 +437,7 @@ std::string Board2chCompati::url_settingtxt()
 }
 
 
-std::string Board2chCompati::settingtxt()
+std::string Board2chCompati::settingtxt() const
 {
     if( m_settingloader ){
         if( m_settingloader->is_loading() ) return "ロード中です";
@@ -452,7 +452,7 @@ std::string Board2chCompati::settingtxt()
 }
 
 
-std::string Board2chCompati::default_noname()
+std::string Board2chCompati::default_noname() const
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->default_noname();
@@ -461,7 +461,7 @@ std::string Board2chCompati::default_noname()
 }
 
 
-int Board2chCompati::line_number()
+int Board2chCompati::line_number() const
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->line_number();
@@ -470,7 +470,7 @@ int Board2chCompati::line_number()
 }
 
 
-int Board2chCompati::message_count()
+int Board2chCompati::message_count() const
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->message_count();
@@ -479,7 +479,7 @@ int Board2chCompati::message_count()
 }    
 
 
-std::string Board2chCompati::get_unicode()
+std::string Board2chCompati::get_unicode() const
 {
     if( m_settingloader
         && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->get_unicode();

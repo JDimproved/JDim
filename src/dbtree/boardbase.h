@@ -313,22 +313,22 @@ namespace DBTREE
         virtual std::string get_proxy_basicauth_w() const;
 
         // ローカルルール
-        virtual std::string localrule();
+        virtual std::string localrule() const;
 
         // SETTING.TXT
-        virtual std::string settingtxt();
+        virtual std::string settingtxt() const;
 
         // 書き込みの時のデフォルト名
-        virtual std::string default_noname();
+        virtual std::string default_noname() const;
 
         // 最大改行数/2
-        virtual int line_number();
+        virtual int line_number() const;
 
         // 最大書き込みバイト数
-        virtual int message_count();
+        virtual int message_count() const;
 
         // 特殊文字書き込み可能か( pass なら可能、 change なら不可 )
-        virtual std::string get_unicode();
+        virtual std::string get_unicode() const;
 
         // 板のホストを指定してクッキーのやり取り
         std::string cookie_by_host() const;

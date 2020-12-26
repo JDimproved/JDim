@@ -40,11 +40,11 @@ namespace DBTREE
         std::string url_subbbscgi_new() override;
 
         // ローカルルール
-        std::string localrule() override;
+        std::string localrule() const override;
 
         // SETTING.TXT
-        std::string settingtxt() override;
-        std::string default_noname() override;
+        std::string settingtxt() const override;
+        std::string default_noname() const override;
 
         // SETTING.TXT のURL
         std::string url_settingtxt() override;
