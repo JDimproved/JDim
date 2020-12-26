@@ -284,7 +284,7 @@ namespace DBTREE
         void set_show_oldlog( const bool show ){ m_show_oldlog = show; }
 
         // url がこの板のものかどうか
-        virtual bool equal( const std::string& url );
+        virtual bool equal( const std::string& url ) const;
 
         // 移転などで板のルートやパスを変更する
         void update_url( const std::string& root, const std::string& path_board );

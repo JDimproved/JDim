@@ -19,7 +19,7 @@ namespace DBTREE
         ~BoardMachi() noexcept = default;
 
         // url がこの板のものかどうか
-        bool equal( const std::string& url ) override;
+        bool equal( const std::string& url ) const override;
 
         // スレの url を dat型のurlに変換して出力
         // (例) "http://hoge.machi.to/bbs/read.cgi?BBS=board&KEY=12345&START=12&END=15"" のとき

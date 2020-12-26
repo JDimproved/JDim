@@ -19,7 +19,7 @@ namespace DBTREE
         ~BoardLocal() noexcept;
 
         // url がこの板のものかどうか
-        bool equal( const std::string& url ) override;
+        bool equal( const std::string& url ) const override;
 
         std::string url_dat( const std::string& url, int& num_from, int& num_to, std::string& num_str ) override;
         std::string url_readcgi( const std::string& url, int num_from, int num_to ) override;

@@ -127,7 +127,7 @@ bool BoardBase::empty() const
 //
 // url がこの板のものかどうか
 //
-bool BoardBase::equal( const std::string& url )
+bool BoardBase::equal( const std::string& url ) const
 {
     if( url.find( get_root() ) == 0
         && url.find( get_path_board() + "/" ) != std::string::npos ) return true;

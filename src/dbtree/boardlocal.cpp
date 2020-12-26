@@ -30,11 +30,9 @@ BoardLocal::~BoardLocal() noexcept = default;
 //
 // url がこの板のものかどうか
 //
-bool BoardLocal::equal( const std::string& url )
+bool BoardLocal::equal( const std::string& url ) const
 {
-    if( url.find( "file://" ) == 0 ) return true;
-
-    return false;
+    return url.size() >= 7 && url.compare( 0, 7, "file://" ) == 0;
 }
 
 

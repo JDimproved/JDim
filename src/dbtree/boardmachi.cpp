@@ -42,7 +42,7 @@ BoardMachi::BoardMachi( const std::string& root, const std::string& path_board, 
 //
 // url がこの板のものかどうか
 //
-bool  BoardMachi::equal( const std::string& url )
+bool BoardMachi::equal( const std::string& url ) const
 {
     if( url.find( get_root() ) == 0 ){
 
