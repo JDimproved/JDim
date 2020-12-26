@@ -75,7 +75,7 @@ Board2chCompati::~Board2chCompati()
 //
 // キャッシュのファイル名が正しいか
 //
-bool Board2chCompati::is_valid( const std::string& filename )
+bool Board2chCompati::is_valid( const std::string& filename ) const
 {
     const std::string& ext = get_ext();
     if( filename.size() <= ext.size() ) return false;

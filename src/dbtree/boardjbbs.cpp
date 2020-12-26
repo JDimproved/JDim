@@ -55,7 +55,7 @@ BoardJBBS::~BoardJBBS() noexcept
 //
 // キャッシュのファイル名が正しいか
 //
-bool BoardJBBS::is_valid( const std::string& filename )
+bool BoardJBBS::is_valid( const std::string& filename ) const
 {
     if( filename.length() != 10 ) return false;
 

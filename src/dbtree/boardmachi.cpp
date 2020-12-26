@@ -58,7 +58,7 @@ bool  BoardMachi::equal( const std::string& url )
 //
 // キャッシュのファイル名が正しいか
 //
-bool BoardMachi::is_valid( const std::string& filename )
+bool BoardMachi::is_valid( const std::string& filename ) const
 {
     if( filename.length() != 10 ) return false;
 
