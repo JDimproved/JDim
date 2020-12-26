@@ -595,7 +595,7 @@ namespace DBTREE
         virtual void parse_subject( const char* str_subject_txt ){}
         virtual void regist_article( const bool is_online ){}
 
-        std::list< std::string > get_filelist_in_cache();
+        std::list<std::string> get_filelist_in_cache() const;
 
         void read_board_info();
         virtual void append_all_article_in_cache();

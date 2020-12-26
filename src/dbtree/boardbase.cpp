@@ -1464,22 +1464,18 @@ bool BoardBase::start_checkking_if_board_moved()
 //
 // キャッシュのディレクトリ内にあるスレのファイル名のリストを取得
 //
-std::list< std::string > BoardBase::get_filelist_in_cache()
+std::list<std::string> BoardBase::get_filelist_in_cache() const
 {
-    std::list< std::string >list_out;
+    std::list<std::string> list_out;
     if( empty() ) return list_out;
 
-    std::list< std::string >list_file;
-    std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
+    const std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
 
-    list_file = CACHE::get_filelist( path_board_root );
-    if( ! list_file.size() ) return list_out;
+    std::list<std::string> list_file = CACHE::get_filelist( path_board_root );
+    if( list_file.empty() ) return list_out;
 
-    std::list< std::string >::iterator it = list_file.begin();
-    for(; it != list_file.end(); ++it ){
-
-        std::string& file = ( *it );
-        if( is_valid( file ) ) list_out.push_back( file );
+    for( std::string& file : list_file ) {
+        if( is_valid( file ) ) list_out.emplace_back( std::move( file ) );
     }
 
     return list_out;
