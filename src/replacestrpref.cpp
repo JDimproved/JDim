@@ -65,10 +65,10 @@ ReplaceStrDiag::ReplaceStrDiag( Gtk::Window* parent, ReplaceStrCondition conditi
     m_hbox_active.pack_start( m_check_active );
     m_hbox_active.pack_start( m_button_copy, Gtk::PACK_SHRINK );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_hbox_active, Gtk::PACK_SHRINK );
-    get_vbox()->pack_start( m_hbox_regex, Gtk::PACK_SHRINK );
-    get_vbox()->pack_start( m_grid_entry, Gtk::PACK_SHRINK );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_hbox_active, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_hbox_regex, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_grid_entry, Gtk::PACK_SHRINK );
 
     set_title( "置換条件設定" );
     show_all_children();
@@ -208,9 +208,9 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
                                       "<b>&amp;</b>, 少なり記号<b>&lt;</b>, 大なり記号<b>&gt;</b>を<b>除く</b>"
                                       "文字参照をデコードしてから置換を行います。" );
 
-    get_vbox()->set_spacing( 8 );
-    get_vbox()->pack_start( m_grid_head, Gtk::PACK_SHRINK );
-    get_vbox()->pack_start( m_hbox );
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->pack_start( m_grid_head, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_hbox );
 
     show_all_children();
     m_treeview.grab_focus();
