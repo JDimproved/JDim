@@ -29,9 +29,9 @@ parts:
       # Use dpkg-buildflags to set compiler flags instead of meson options
       - --buildtype=plain
       - --prefix=/
+      - -Dbuild_tests=disabled
       - -Dcompat_cache_dir=disabled
       - -Dpangolayout=enabled
-      - -Dregex=glib
     build-environment:
       # https://wiki.debian.org/Hardening
       # Use -isystem to suppress compiler warning:
@@ -40,8 +40,6 @@ parts:
       - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
       - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
     build-packages:
-      - build-essential
-      - git
       - libgnutls28-dev
       - libsigc++-2.0-dev
     override-build: |
