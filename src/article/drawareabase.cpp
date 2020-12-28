@@ -5398,7 +5398,10 @@ void DrawAreaBase::slot_swipe( double velocity_x, double velocity_y )
 gboolean DrawAreaBase::deceleration_tick_cb( GtkWidget* cwidget, GdkFrameClock* clock, gpointer )
 {
     Gtk::Widget* const widget = Glib::wrap( cwidget );
-    return dynamic_cast< DrawAreaBase* >( widget )->deceleration_tick_impl( clock );
+    if( auto area = dynamic_cast<DrawAreaBase*>( widget ) ) {
+        return area->deceleration_tick_impl( clock );
+    }
+    return G_SOURCE_REMOVE;
 }
 
 gboolean DrawAreaBase::deceleration_tick_impl( GdkFrameClock* clock )
