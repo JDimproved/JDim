@@ -44,7 +44,6 @@
 
 
 constexpr size_t SECTION_NUM = 5;
-constexpr size_t LNG_RES = 16;
 constexpr int LNG_ID = 256;
 constexpr size_t LNG_LINK = 256;
 constexpr size_t MAX_ANCINFO = 64;
