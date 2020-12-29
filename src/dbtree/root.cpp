@@ -184,18 +184,17 @@ BoardBase* Root::get_board( const std::string& url, const int count )
     }
 
     // サーチ
-    for( BoardBase* board : m_list_board ) {
+    auto it_board = std::find_if( m_list_board.begin(), m_list_board.end(),
+                                  [&url]( const BoardBase* b ) { return b->equal( url ); } );
+    if( it_board != m_list_board.end() ) {
 
-        if( board->equal( url ) ){
-
-            board->read_info(); // 板情報の取得( 詳しくはBoardBase::read_info()をみること )
-            m_get_board = board;
+        m_get_board = *it_board;
+        m_get_board->read_info(); // 板情報の取得( 詳しくはBoardBase::read_info()をみること )
 
 #ifdef _SHOW_GETBOARD
             std::cout << "found\n";
 #endif
-            return board;
-        }
+        return m_get_board;;
     }
 
     // 見つからなかった
