@@ -5433,7 +5433,7 @@ gboolean DrawAreaBase::deceleration_tick_impl( GdkFrameClock* clock )
 
 void DrawAreaBase::cancel_deceleration()
 {
-    if( m_deceleration.id ) {
+    if( m_deceleration.id && GTK_IS_WIDGET( this->gobj() ) ) {
         gtk_widget_remove_tick_callback( GTK_WIDGET( this->gobj() ), m_deceleration.id );
         m_deceleration.id = 0;
     }
