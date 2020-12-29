@@ -123,7 +123,9 @@ void MenuButton::append_menu( std::vector< std::string >& items )
         }
         else{
             item = m_menuitems[ i ];
-            dynamic_cast< Gtk::Label* >( item->get_child() )->set_text( MISC::cut_str( items[ i ], MENU_MAX_LNG ) );
+            if( auto label = dynamic_cast<Gtk::Label*>( item->get_child() ) ) {
+                label->set_text( MISC::cut_str( items[i], MENU_MAX_LNG ) );
+            }
         }
 
         if( item ) m_popupmenu->append( *item );
