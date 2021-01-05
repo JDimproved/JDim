@@ -85,7 +85,7 @@ make test
 <a name="meson-test"></a>
 ## Mesonを利用してテストする
 
-Mesonのインストール方法は[GitHub][#388]を参照してください。
+Mesonのインストール方法は[GitHub][#556]を参照してください。
 
 ### セットアップ
 
@@ -118,7 +118,7 @@ meson test -C builddir
 ```
 
 [mesonbuild]: https://mesonbuild.com/
-[#388]: https://github.com/JDimproved/JDim/pull/388
+[#556]: https://github.com/JDimproved/JDim/discussions/556
 [readme-prepare]: https://github.com/JDimproved/JDim/blob/master/README.md#%E4%BA%8B%E5%89%8D%E6%BA%96%E5%82%99
 [meson-wraptool]: https://mesonbuild.com/Using-wraptool.html
 [wrapdb]: https://wrapdb.mesonbuild.com/gtest
