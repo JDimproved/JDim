@@ -54,7 +54,7 @@ layout: default
 
 OSやディストリビューション別の解説は[OS/ディストリビューション別インストール方法][wiki-install] (JD wiki) を参照。
 
-configure のかわりに [meson] を使ってビルドする方法は [GitHub][pr388] を参照。
+configure のかわりに [meson] を使ってビルドする方法は [GitHub][dis556] を参照。
 <small>(v0.4.0+から暫定サポート)</small>
 
 
@@ -155,4 +155,4 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
 
 [wiki-install]: https://ja.osdn.net/projects/jd4linux/wiki/OS%2F%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95
 [meson]: https://mesonbuild.com
-[pr388]: https://github.com/JDimproved/JDim/pull/388 "Add meson build for experimental support - Pull Request #388"
+[dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"

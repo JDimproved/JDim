@@ -58,9 +58,10 @@ Debian stretch(2017年)より前にリリースされたディストリビュー
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
 ビルドツール [meson][mesonbuild] を暫定的にサポートしています。
-configure のかわりに meson を使ってビルドする方法は <https://github.com/JDimproved/JDim/pull/388> を参照してください。
+configure のかわりに meson を使ってビルドする方法は [Discussions][dis556] を参照してください。
 
 [mesonbuild]: https://mesonbuild.com
+[dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"
 
 
 ### 事前準備
