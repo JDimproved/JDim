@@ -1,6 +1,5 @@
 # JDim - 2ch browser for linux
 
-[![Build Status](https://travis-ci.com/JDimproved/JDim.svg?branch=master)](https://travis-ci.com/JDimproved/JDim)
 ![GitHub Actions CI](https://github.com/JDimproved/JDim/workflows/CI/badge.svg)
 [![Snap Store](https://snapcraft.io/jdim/badge.svg)](https://snapcraft.io/jdim)
 
