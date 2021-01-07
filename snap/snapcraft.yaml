@@ -59,7 +59,7 @@ parts:
 apps:
   jdim:
     command: bin/jdim
-    common-id: com.github.jdimproved.JDim
+    common-id: com.github.jdimproved.jdim
     desktop: share/applications/jdim.desktop
     extensions: [gnome-3-34]
     plugs:
