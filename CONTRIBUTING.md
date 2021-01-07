@@ -21,7 +21,7 @@ Discussionsを開いて質問をします。 → [New discussion][new-discussion
 
 
 ## :beetle: バグを報告したい
-Issueを開いてバグを報告します。 → [New issue][new-issue]
+Issueを開いてバグを報告します。 → [Issue: 不具合(バグ)の報告][new-bug-report]
 
 以下の情報は原因特定の手がかりになりますのでご報告くださいますようお願いいたします。
 
@@ -61,6 +61,7 @@ Pull requestは`master`ブランチに対してお願いいたします。
 [pull-requests]: https://github.com/JDimproved/JDim/pulls
 [linux-5ch]: https://mao.5ch.net/linux/
 [new-discussion]: https://github.com/JDimproved/JDim/discussions/new
+[new-bug-report]: https://github.com/JDimproved/JDim/issues/new?assignees=&labels=bug&template=bug-report.md&title=
 [new-issue]: https://github.com/JDimproved/JDim/issues/new
 [manual]: https://jdimproved.github.io/JDim/
 [rfcs]: https://github.com/JDimproved/rfcs
