@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2019 JDimproved project -->
 <component type="desktop-application">
-  <id>com.github.jdimproved.JDim</id>
+  <id>com.github.jdimproved.jdim</id>
   <metadata_license>FSFAP</metadata_license>
   <project_license>GPL-2.0</project_license>
   <name>JDim</name>
