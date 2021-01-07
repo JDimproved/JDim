@@ -34,7 +34,7 @@ Issueを開いてバグを報告します。 → [Issue: 不具合(バグ)の報
 
 
 ## :muscle: 機能のリクエストをしたい
-Issueを開いて欲しい機能の要望を出しフィードバックを集めます。 → [New issue][new-issue]  
+Issueを開いて欲しい機能の要望を出しフィードバックを集めます。 → [Issue: 機能の変更][new-feature-request]  
 可能ならコードを書き始めてください。実証用でもコードがあると具体的なフィードバックが集まりやすいです。
 
 
@@ -62,7 +62,7 @@ Pull requestは`master`ブランチに対してお願いいたします。
 [linux-5ch]: https://mao.5ch.net/linux/
 [new-discussion]: https://github.com/JDimproved/JDim/discussions/new
 [new-bug-report]: https://github.com/JDimproved/JDim/issues/new?assignees=&labels=bug&template=bug-report.md&title=
-[new-issue]: https://github.com/JDimproved/JDim/issues/new
+[new-feature-request]: https://github.com/JDimproved/JDim/issues/new?assignees=&labels=feature&template=feature-request.md&title=
 [manual]: https://jdimproved.github.io/JDim/
 [rfcs]: https://github.com/JDimproved/rfcs
 [docs-readme]: https://github.com/JDimproved/JDim/tree/master/docs/README.md
