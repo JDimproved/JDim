@@ -47,7 +47,7 @@ project('jdim', 'cpp',
         version : '0.5.0',
         license : 'GPL2',
         meson_version : '>= 0.49.0',
-        default_options : ['warning_level=3', 'cpp_std=c++11'])
+        default_options : ['warning_level=3', 'cpp_std=c++1z'])
 
 # 追加コンパイルオプション
 add_project_arguments('-DHAVE_CONFIG_H=1', language : 'cpp')
