@@ -175,13 +175,6 @@ AS_IF(
 
 
 dnl
-dnl checking OpenSSL (removed)
-dnl
-AC_ARG_WITH(openssl,
-AS_HELP_STRING([--with-openssl], [NO LONGER AVAILABLE. use --with-tls=openssl]),
-[AC_MSG_ERROR([--with-openssl has been removed. Use --with-tls=openssl instead.])])
-
-dnl
 dnl TLS
 dnl
 AC_MSG_CHECKING(for --with-tls)
