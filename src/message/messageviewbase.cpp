@@ -238,19 +238,14 @@ void MessageViewBase::init_color()
             const auto bg = Gdk::RGBA( CONFIG::get_color( COLOR_BACK_MESSAGE ) ).to_string();
             const auto sel_fg = Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ).to_string();
             const auto sel_bg = Gdk::RGBA( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ).to_string();
-#if GTKMM_CHECK_VERSION(3,20,0)
-            constexpr const char* const caret_prop = u8"caret-color";
-#else
-            constexpr const char* const caret_prop = u8"-GtkWidget-cursor-color";
-#endif
             m_text_message->update_style( Glib::ustring::compose(
                 u8R"(
-                    .%1, .%1 text { color: %2; background-color: %3; %4: %2; }
+                    .%1, .%1 text { color: %2; background-color: %3; caret-color: %2; }
                     .%1:selected, .%1:selected:focus,
                     .%1 text:selected, .%1 text:selected:focus,
-                    .%1 text selection, .%1 text selection:focus { color: %5; background-color: %6; }
+                    .%1 text selection, .%1 text selection:focus { color: %4; background-color: %5; }
                 )",
-                classname, fg, bg, caret_prop, sel_fg, sel_bg ) );
+                classname, fg, bg, sel_fg, sel_bg ) );
         }
     }
 }

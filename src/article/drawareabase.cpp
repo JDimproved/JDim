@@ -775,7 +775,6 @@ void DrawAreaBase::redraw_view()
 
     configure_impl();
 
-#if GTKMM_CHECK_VERSION(3,20,0)
     // 実行時の警告を修正する
     // Gtk-WARNING **: HH:MM:SS.sss: Drawing a gadget with negative dimensions. Did you forget to allocate a size?
     // (node tab owner gtkmm__GtkNotebook)
@@ -790,13 +789,8 @@ void DrawAreaBase::redraw_view()
               << std::endl;
 #endif
     if( alloc_view.get_x() < 0 || alloc_view.get_y() < 0 ) return;
-#endif
 
     m_view.queue_draw();
-#if !GTKMM_CHECK_VERSION(3,22,0)
-    // 廃止予定の関数を呼び出すとスクロールバーの挙動がおかしくなるため省略する
-    if( m_window ) m_window->process_updates( false );
-#endif
 }
 
 // 強制再描画
@@ -1743,10 +1737,6 @@ bool DrawAreaBase::draw_screen( const int y, const int height )
     // expose イベント経由で exec_draw_screen() を呼び出す
     // gtk2.18以降は expose イベント内で描画処理しないと正しく描画されない様なので注意
     m_view.queue_draw();
-#if !GTKMM_CHECK_VERSION(3,22,0)
-    m_window->process_updates( false );
-#endif
-
     return true;
 }
 
