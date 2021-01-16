@@ -149,16 +149,14 @@ dnl 正規表現ライブラリ
 dnl
 AC_MSG_CHECKING(for --with-regex)
 AC_ARG_WITH(regex,
-AC_HELP_STRING([--with-regex=@<:@posix|oniguruma|glib@:>@],
+AC_HELP_STRING([--with-regex=oniguruma|glib],
                [use regular expression library @<:@default=glib@:>@]),
 [], [with_regex=glib])
 AC_MSG_RESULT($with_regex)
 
 AS_IF(
   [test "x$with_regex" = xposix],
-  [AC_CHECK_HEADERS([regex.h], , [AC_MSG_ERROR([regex.h not found])])
-   AC_CHECK_LIB([regex], [regexec])
-   AC_MSG_WARN([--with-regex=posix is deprecated. Use --with-regex=glib instead.])],
+  [AC_MSG_ERROR([--with-regex=posix has been removed. Use --with-regex=glib instead.])],
 
   [test "x$with_regex" = xoniguruma],
   [PKG_CHECK_MODULES(ONIG, [oniguruma])

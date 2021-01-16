@@ -106,23 +106,18 @@
        gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDimを実行すると
        gmon.out が出来るのでgprof./jdgmon.out で解析できる。CPUの最適化は効かなくなるので注意する。
 
-    --with-regex=[posix|oniguruma|glib]
+    --with-regex=oniguruma|glib
 
        使用する正規表現ライブラリを設定する。
        デフォルトでは Glib Regex(GRegex) を使用する。(v0.4.0+から変更)
 
-    --with-regex=posix
-
-       非推奨: かわりに --with-regex=glib を使用してください。
-
     --with-regex=oniguruma
 
-       POSIX regex のかわりに鬼車を使用する。
+       GRegex のかわりに鬼車を使用する。
        鬼車はBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
 
     --with-regex=glib
 
-       POSIX regex のかわりに GRegex を使用する。
        Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
        (v0.3.0+から追加)
 

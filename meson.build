@@ -127,12 +127,7 @@ endif
 
 # 正規表現ライブラリ
 regex_opt = get_option('regex')
-if regex_opt == 'posix'
-  configure_args += '\'--with-regex=posix\''
-  regex_dep = dependency('', required : false)
-  conf.set('HAVE_REGEX_H', 1)
-  warning('--with-regex=posix is deprecated. Use --with-regex=glib instead.')
-elif regex_opt == 'oniguruma'
+if regex_opt == 'oniguruma'
   regex_dep = dependency('oniguruma')
   if not cpp_compiler.has_header('onigposix.h')
     error('onigposix.h not found')
