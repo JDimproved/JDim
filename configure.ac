@@ -70,10 +70,6 @@ dnl
 dnl
 dnl gtkmm
 dnl
-AC_ARG_WITH(gtkmm3,
-[AS_HELP_STRING([--with-gtkmm3], [NO LONGER AVAILABLE. gtkmm3 is now default.])],
-[AC_MSG_ERROR([gtkmm3 is now default. see https://github.com/JDimproved/JDim/issues/229])])
-
 PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.22.0])
 AC_SUBST(GTKMM_CFLAGS)
 AC_SUBST(GTKMM_LIBS)
@@ -149,21 +145,6 @@ AS_IF(
 
 
 dnl
-dnl checking oniguruma (removed)
-dnl
-AC_ARG_WITH(oniguruma,
-AS_HELP_STRING([--with-oniguruma], [NO LONGER AVAILABLE. use --with-regex=oniguruma]),
-[AC_MSG_ERROR([--with-oniguruma has been removed. Use --with-regex=oniguruma instead.])])
-
-dnl
-dnl checking PCRE (removed)
-dnl
-AC_ARG_WITH(pcre,
-AS_HELP_STRING([--with-pcre], [NO LONGER AVAILABLE. use --with-regex=glib]),
-[AC_MSG_ERROR([--with-pcre has been removed. Use --with-regex=glib instead.])])
-
-
-dnl
 dnl 正規表現ライブラリ
 dnl
 AC_MSG_CHECKING(for --with-regex)
@@ -179,9 +160,6 @@ AS_IF(
    AC_CHECK_LIB([regex], [regexec])
    AC_MSG_WARN([--with-regex=posix is deprecated. Use --with-regex=glib instead.])],
 
-  [test "x$with_regex" = xpcre],
-  [AC_MSG_ERROR([--with-regex=pcre has been removed. Use --with-regex=glib instead.])],
-
   [test "x$with_regex" = xoniguruma],
   [PKG_CHECK_MODULES(ONIG, [oniguruma])
    AC_SUBST(ONIG_CFLAGS)
@@ -195,13 +173,6 @@ AS_IF(
   [AC_MSG_ERROR([regular expression library not found])]
 )
 
-
-dnl
-dnl checking OpenSSL (removed)
-dnl
-AC_ARG_WITH(openssl,
-AS_HELP_STRING([--with-openssl], [NO LONGER AVAILABLE. use --with-tls=openssl]),
-[AC_MSG_ERROR([--with-openssl has been removed. Use --with-tls=openssl instead.])])
 
 dnl
 dnl TLS
@@ -294,22 +265,6 @@ case "${host_os}" in
   )
  ;;
 esac
-
-
-dnl
-dnl thread (removed)
-dnl
-AC_ARG_WITH(gthread,
-AS_HELP_STRING([--with-gthread], [NO LONGER AVAILABLE]),
-[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
-
-AC_ARG_WITH(stdthread,
-AS_HELP_STRING([--with-stdthread], [NO LONGER AVAILABLE]),
-[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
-
-AC_ARG_WITH(thread,
-AC_HELP_STRING([--with-thread=@<:@posix|glib|std@:>@], [NO LONGER AVAILABLE]),
-[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
 
 
 dnl
