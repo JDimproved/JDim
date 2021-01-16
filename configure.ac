@@ -16,7 +16,7 @@ AC_PROG_LIBTOOL
 AC_PROG_MKDIR_P
 AC_LANG_CPLUSPLUS
 
-AX_CXX_COMPILE_STDCXX_11([noext], [mandatory])
+AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 
 dnl
 dnl buildinfo.h

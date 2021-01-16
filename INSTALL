@@ -25,7 +25,7 @@
   ・autoconf
   ・autoconf-archive
   ・automake
-  ・g++ 5 以上、または clang++ 3.3 以上 ( 将来のリリースで g++ 6 以上、または clang++ 5.0 以上になる )
+  ・g++ 6 以上、または clang++ 5.0 以上
   ・gnutls
   ・gtkmm
   ・libtool
