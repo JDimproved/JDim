@@ -78,11 +78,7 @@ endif
 #
 # 必須パッケージのチェック
 #
-gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.22.0', required : false)
-if not gtkmm_dep.found()
-  warning('JDim will require gtkmm-3.0 >= 3.22.0 in the future release.')
-  gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.18.0')
-endif
+gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.22.0')
 threads_dep = dependency('threads')
 x11_dep = dependency('x11')
 zlib_dep = dependency('zlib', version : '>= 1.2.0')
@@ -150,7 +146,7 @@ endif
 # TLS
 tls_opt = get_option('tls')
 if tls_opt == 'gnutls'
-  tls_dep = dependency('gnutls', version : '>= 3.4.10')
+  tls_dep = dependency('gnutls', version : '>= 3.5.8')
   conf.set('USE_GNUTLS', 1)
 elif tls_opt == 'openssl'
   tls_dep = dependency('openssl', version : '>= 0.9.0')
