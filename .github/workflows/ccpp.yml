@@ -1,0 +1,204 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+
+  compiler-18:
+    runs-on: ubuntu-18.04
+    env:
+      CC: ${{ matrix.sets.cc }}
+      CXX: ${{ matrix.sets.cxx }}
+    strategy:
+      matrix:
+        sets:
+          - cc: gcc-6
+            cxx: g++-6
+            package: g++-6
+          - cc: gcc-7
+            cxx: g++-7
+            package: g++-7
+          - cc: gcc-8
+            cxx: g++-8
+            package: g++-8
+          - cc: clang-5.0
+            cxx: clang++-5.0
+            package: clang-5.0
+          - cc: clang-6.0
+            cxx: clang++-6.0
+            package: clang-6.0
+          - cc: clang-7
+            cxx: clang++-7
+            package: clang-7
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.6'
+      - name: dependencies installation
+        run: |
+          sudo apt update
+          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev libltdl-dev libtool ninja-build zlib1g-dev ${{ matrix.sets.package }}
+      - name: install meson==0.49.0
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install meson==0.49.0
+      - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+        run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+      - name: meson test -C builddir
+        run: meson test -C builddir
+      - name: ./builddir/src/jdim -V
+        run: ./builddir/src/jdim -V
+
+  compiler-20:
+    runs-on: ubuntu-20.04
+    env:
+      CC: ${{ matrix.sets.cc }}
+      CXX: ${{ matrix.sets.cxx }}
+    strategy:
+      matrix:
+        sets:
+          - cc: gcc-9
+            cxx: g++-9
+            package: g++-9
+          - cc: gcc-10
+            cxx: g++-10
+            package: g++-10
+          - cc: clang-8
+            cxx: clang++-8
+            package: clang-8
+          - cc: clang-9
+            cxx: clang++-9
+            package: clang-9
+          - cc: clang-10
+            cxx: clang++-10
+            package: clang-10
+    steps:
+      - uses: actions/checkout@v2
+      - name: dependencies installation
+        run: |
+          sudo apt update
+          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev libltdl-dev libtool meson zlib1g-dev ${{ matrix.sets.package }}
+      - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+        run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+      - name: meson test -C builddir
+        run: meson test -C builddir
+      - name: ./builddir/src/jdim -V
+        run: ./builddir/src/jdim -V
+
+  autotools:
+    runs-on: ${{ matrix.sets.os }}
+    env:
+      CC: ${{ matrix.sets.cc }}
+      CXX: ${{ matrix.sets.cxx }}
+      CXXFLAGS: -Og -pipe
+      GTEST_SRCDIR: /usr/src/googletest
+    strategy:
+      matrix:
+        sets:
+          - os: ubuntu-18.04
+            cc: gcc-7
+            cxx: g++-7
+            package: g++-7
+          - os: ubuntu-20.04
+            cc: gcc-9
+            cxx: g++-9
+            package: g++-9
+    steps:
+      - uses: actions/checkout@v2
+      - name: dependencies installation
+        run: |
+          sudo apt update
+          sudo apt install autoconf-archive libgnutls28-dev libgtest-dev libgtkmm-3.0-dev libltdl-dev libtool zlib1g-dev ${{ matrix.sets.package }}
+      - name: autoreconf -i
+        run: autoreconf -i
+      - name: ./configure
+        run: ./configure
+      - name: make -j$(nproc)
+        run: make -j$(nproc)
+      - name: make check -j$(nproc)
+        run: make check -j$(nproc)
+      - name: ./src/jdim -V
+        run: ./src/jdim -V
+
+  library-18:
+
+    runs-on: ubuntu-18.04
+    env:
+      CC: gcc-7
+      CXX: g++-7
+      CXXFLAGS: -Og -pipe -D_DEBUG
+      GTEST_SRCDIR: /usr/src/googletest
+    strategy:
+      matrix:
+        deps:
+          - config_args: --with-tls=gnutls --with-regex=oniguruma --with-sessionlib=xsmp --with-migemo --with-alsa --with-pangolayout
+            packages: libgnutls28-dev libonig-dev libmigemo-dev libasound2-dev
+          - config_args: --with-tls=openssl --with-regex=glib --with-sessionlib=no --with-migemo --disable-compat-cache-dir
+            packages: libssl-dev libmigemo-dev
+          - config_args: --with-tls=openssl --with-regex=oniguruma --with-sessionlib=xsmp --with-alsa --with-pangolayout
+            packages: libssl-dev libonig-dev libasound2-dev
+    steps:
+      - uses: actions/checkout@v2
+      - name: dependencies installation (${{ matrix.deps.packages }})
+        run: |
+          sudo apt update
+          sudo apt install autoconf-archive libgtest-dev libtool libltdl-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-7
+      - name: autoreconf -i
+        run: autoreconf -i
+      - name: ./configure ${{ matrix.deps.config_args }}
+        run: ./configure ${{ matrix.deps.config_args }}
+      - name: make -j$(nproc)
+        run: make -j$(nproc)
+      - name: make check -j$(nproc)
+        run: make check -j$(nproc)
+      - name: ./src/jdim -V
+        run: ./src/jdim -V
+
+  library-20:
+
+    runs-on: ubuntu-20.04
+    env:
+      CC: gcc-9
+      CXX: g++-9
+    strategy:
+      matrix:
+        deps:
+          - config_args: -Dtls=gnutls -Dregex=oniguruma -Dsessionlib=xsmp -Dmigemo=enabled -Dalsa=enabled -Dpangolayout=enabled
+            packages: libgnutls28-dev libonig-dev libmigemo-dev libasound2-dev
+          - config_args: -Dtls=openssl -Dregex=glib -Dsessionlib=no -Dmigemo=enabled -Dcompat_cache_dir=disabled
+            packages: libssl-dev libmigemo-dev
+          - config_args: -Dtls=openssl -Dregex=oniguruma -Dsessionlib=xsmp -Dalsa=enabled -Dpangolayout=enabled
+            packages: libssl-dev libonig-dev libasound2-dev
+    steps:
+      - uses: actions/checkout@v2
+      - name: dependencies installation (${{ matrix.deps.packages }})
+        run: |
+          sudo apt update
+          sudo apt install meson libgtest-dev libtool libltdl-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-9
+      - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+        run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+      - name: meson test -C builddir
+        run: meson test -C builddir
+      - name: ./builddir/src/jdim -V
+        run: ./builddir/src/jdim -V
+
+  manual:
+
+    runs-on: ubuntu-18.04
+    env:
+      NOKOGIRI_USE_SYSTEM_LIBRARIES: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: dependencies installation
+        run: |
+          sudo apt update
+          sudo apt install ruby-dev ruby-bundler libcurl4-openssl-dev libxslt1-dev
+      - name: make -j$(nproc) -C docs build
+        run: make -j$(nproc) -C docs build
