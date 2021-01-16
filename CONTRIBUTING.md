@@ -50,7 +50,8 @@ Pull requestは`master`ブランチに対してお願いいたします。
 
 #### :pencil: C++ソースコードを修正するときの注意
 
-* C++11の機能を使う。迷ったときは[C++ Core Guidelines][isocpp]を参考にする。
+* C++14の機能を使う。迷ったときは[C++ Core Guidelines][isocpp]を参考にする。
+* C++17の機能はgcc-6が[サポート][support] [\[1\]][lang] [\[2\]][lib]していれば使ってもよい。(メンテナーと相談)
 * コーディングスタイルは周囲のコードになるべく合わせる。
 * ソースコードを修正したときはビルド可能なことチェックする。
 * 修正前よりコンパイル時警告を増やさないように気をつける。
@@ -68,3 +69,6 @@ Pull requestは`master`ブランチに対してお願いいたします。
 [docs-readme]: https://github.com/JDimproved/JDim/tree/master/docs/README.md
 [test-readme]: https://github.com/JDimproved/JDim/tree/master/test/README.md
 [isocpp]: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
+[support]: https://en.cppreference.com/w/Template:cpp/compiler_support/17
+[lang]: https://gcc.gnu.org/projects/cxx-status.html#cxx17
+[lib]: https://gcc.gnu.org/onlinedocs/libstdc++/manual/status.html#status.iso.2017
