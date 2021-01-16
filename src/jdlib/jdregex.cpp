@@ -172,9 +172,6 @@ std::string RegexPattern::errstr() const
         case REG_EBRACK: errmsg = "リストオペレータ [] が閉じていません。"; break;
         case REG_ECOLLATE: errmsg = "照合順序の要素として有効ではありません。"; break;
         case REG_ECTYPE: errmsg = "未知のキャラクタークラス名です。"; break;
-#ifdef HAVE_REGEX_H
-        case REG_EEND: errmsg = "未定義エラー。POSIX.2 には定義されていません。"; break;
-#endif
         case REG_EESCAPE: errmsg = "正規表現がバックスラッシュで終っています。"; break;
         case REG_EPAREN: errmsg = "グループオペレータ () が閉じていません。"; break;
         case REG_ERANGE: errmsg = "無効な範囲オペレータを使用しています。"; break;

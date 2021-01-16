@@ -80,13 +80,11 @@ ReplaceStr_Manager::ReplaceStr_Manager()
         ReplaceStrCondition condition{};
         list_append( REPLACETARGET_MESSAGE, condition, "ダブルクリックすると編集出来ます",
                      "(この項目は削除して構いません)" );
-#ifndef HAVE_REGEX_H
         condition.regex = true;
         list_append( REPLACETARGET_MESSAGE, condition, "(?<!t)ps://([[:alnum:]]+)", "https://\\1" );
         list_append( REPLACETARGET_MESSAGE, condition,
                      "(?<!ps://)i\\.imgur\\.com/([[:alnum:]]{7})\\.(jpe?g|gif|png)",
                      "https://i.imgur.com/\\1.\\2" );
-#endif
     }
 }
 

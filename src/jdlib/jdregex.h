@@ -12,13 +12,11 @@
 
 #if defined(HAVE_ONIGPOSIX_H)
 #include <onigposix.h>
-#elif defined(HAVE_REGEX_H)
-#include <regex.h>
 #else
 #include <glib.h>
 #endif
 
-#if defined(HAVE_ONIGPOSIX_H) || defined(HAVE_REGEX_H)
+#if defined(HAVE_ONIGPOSIX_H)
 #define POSIX_STYLE_REGEX_API 1
 #endif
 
