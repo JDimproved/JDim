@@ -297,22 +297,6 @@ esac
 
 
 dnl
-dnl thread (removed)
-dnl
-AC_ARG_WITH(gthread,
-AS_HELP_STRING([--with-gthread], [NO LONGER AVAILABLE]),
-[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
-
-AC_ARG_WITH(stdthread,
-AS_HELP_STRING([--with-stdthread], [NO LONGER AVAILABLE]),
-[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
-
-AC_ARG_WITH(thread,
-AC_HELP_STRING([--with-thread=@<:@posix|glib|std@:>@], [NO LONGER AVAILABLE]),
-[AC_MSG_ERROR([thread library options have been removed. see https://github.com/JDimproved/JDim/issues/228])])
-
-
-dnl
 dnl checking pangolayout
 dnl
 AC_MSG_CHECKING(for --with-pangolayout)
