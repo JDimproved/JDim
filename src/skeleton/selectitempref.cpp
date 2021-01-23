@@ -48,7 +48,6 @@ void SelectItemPref::pack_widgets()
     // 同一カラムにアイコンと項目名の両方を表示するので、手動で列を作成する
 
     // 表示項目リスト
-    m_tree_shown.set_rules_hint( CONFIG::get_use_tree_gtkrc() );
     m_tree_shown.get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
     m_tree_shown.signal_focus_in_event().connect( sigc::mem_fun( *this, &SelectItemPref::slot_focus_in_shown ) );
     m_store_shown = Gtk::ListStore::create( m_columns_shown );
@@ -88,7 +87,6 @@ void SelectItemPref::pack_widgets()
 
 
     // 非表示項目リスト
-    m_tree_hidden.set_rules_hint( CONFIG::get_use_tree_gtkrc() );
     m_tree_hidden.get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
     m_tree_hidden.signal_focus_in_event().connect( sigc::mem_fun( *this, &SelectItemPref::slot_focus_in_hidden ) );
     m_store_hidden = Gtk::ListStore::create( m_columns_hidden );
