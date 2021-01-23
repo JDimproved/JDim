@@ -10,6 +10,7 @@
 #include "tablabel.h"
 
 #include "config/globalconf.h"
+#include "jdlib/miscgtk.h"
 
 #include "session.h"
 #include "dndmanager.h"
@@ -164,7 +165,7 @@ int TabNotebook::get_page_under_mouse()
 {
     int x, y;
     Gdk::Rectangle rect = get_allocation();
-    get_pointer( x, y );
+    MISC::get_pointer_at_window( get_window(), x, y );
     x += rect.get_x();
     y += rect.get_y();
 

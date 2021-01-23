@@ -39,6 +39,9 @@ namespace MISC
 
     // str をクリップボードにコピー
     void CopyClipboard( const std::string& str );
+
+    // ウィジェット左上隅を基準としたマウスポインターの座標を取得
+    Glib::RefPtr<Gdk::Window> get_pointer_at_window( const Glib::RefPtr<Gdk::Window>& window, int& x, int& y );
 }
 
 #endif

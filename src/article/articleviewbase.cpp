@@ -1011,9 +1011,7 @@ void ArticleViewBase::warp_pointer_to_popup()
         const int mrg = 32;
 
         int x, y;
-        get_pointer( x, y );
-
-        m_popup_win->get_pointer( x, y );
+        MISC::get_pointer_at_window( m_popup_win->get_window(), x, y );
 
         if( x < mrg ) x = mrg;
         else if( x > m_popup_win->get_width() - mrg ) x = m_popup_win->get_width() - mrg;

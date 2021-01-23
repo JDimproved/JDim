@@ -15,9 +15,10 @@
 #include "font.h"
 #include "embeddedimage.h"
 
-#include "jdlib/miscutil.h"
-#include "jdlib/miscmsg.h"
 #include "jdlib/jdregex.h"
+#include "jdlib/miscgtk.h"
+#include "jdlib/miscmsg.h"
+#include "jdlib/miscutil.h"
 
 #include "dbtree/articlebase.h"
 #include "dbtree/node.h"
@@ -3154,7 +3155,7 @@ void DrawAreaBase::exec_scroll()
         {
             // 現在のポインタの位置取得
             int x_point, y_point;
-            m_view.get_pointer( x_point, y_point );
+            MISC::get_pointer_at_window( m_view.get_window(), x_point, y_point );
             double dy = m_scrollinfo.y - y_point;
 
             if( dy >= 0 && ! m_scrollinfo.enable_up ) dy = 0;

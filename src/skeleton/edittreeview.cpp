@@ -9,10 +9,9 @@
 #include "msgdiag.h"
 #include "undobuffer.h"
 
-#include "dbtree/interface.h"
-
 #include "config/globalconf.h"
-
+#include "dbtree/interface.h"
+#include "jdlib/miscgtk.h"
 #include "xml/document.h"
 
 #include "sharedbuffer.h"
@@ -231,7 +230,7 @@ void EditTreeView::clock_in()
                 const int step = (int)adjust->get_step_increment() / 2;
                 int val = -1;
                 int x,y;
-                get_pointer( x, y );
+                MISC::get_pointer_at_window( get_window(), x, y );
 
                 if( y < step * 2 ){
                     val = MAX( 0, (int)adjust->get_value() - step );
