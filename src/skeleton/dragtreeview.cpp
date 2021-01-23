@@ -45,7 +45,6 @@ DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget
 #endif
 
     set_enable_search( false );
-    set_rules_hint( CONFIG::get_use_tree_gtkrc() );
     add_events( Gdk::LEAVE_NOTIFY_MASK );
 
     auto context = get_style_context();
