@@ -44,11 +44,10 @@ PopupWin::~PopupWin()
 void PopupWin::slot_resize_popup()
 {
     if( ! m_view ) return;
-    
+
     // マウス座標
     int x_mouse, y_mouse;
-    // TODO: Use Gdk::Display::get_default_seat() instead of get_device_manager() (since 3.20)
-    Gdk::Display::get_default()->get_device_manager()->get_client_pointer()->get_position( x_mouse, y_mouse );
+    Gdk::Display::get_default()->get_default_seat()->get_pointer()->get_position( x_mouse, y_mouse );
 
     // クライアントのサイズを取得
     const int width_client = m_view->width_client();
