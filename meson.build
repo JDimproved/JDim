@@ -103,11 +103,6 @@ else
   socket_dep = cpp_compiler.find_library('socket')
 endif
 
-# utsname
-if cpp_compiler.has_header('sys/utsname.h')
-  conf.set('HAVE_SYS_UTSNAME_H', 1)
-endif
-
 
 #
 # オプションのパッケージ

@@ -97,8 +97,6 @@ dnl
 dnl any other POSIX systems
 dnl
 
-AC_CHECK_HEADERS([sys/utsname.h])
-
 AC_CHECK_HEADERS([socket.h])
 AC_CHECK_LIB(socket,socket)
 
