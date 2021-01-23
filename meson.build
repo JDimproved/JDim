@@ -161,9 +161,6 @@ endif
 alsa_dep = dependency('alsa', version : '>= 1.0.0', required : get_option('alsa'))
 if alsa_dep.found()
   conf.set('USE_ALSA', 1)
-  if cpp_compiler.has_header('alsa/asoundlib.h')
-    conf.set('HAVE_ALSA_ASOUNDLIB_H', 1)
-  endif
   configure_args += '\'--with-alsa\''
 endif
 
