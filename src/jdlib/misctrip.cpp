@@ -26,7 +26,7 @@
 #include <gnutls/crypto.h>
 #endif
 
-#ifdef HAVE_CRYPT_H
+#if __has_include(<crypt.h>)
 #include <crypt.h>
 #endif
 

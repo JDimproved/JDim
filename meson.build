@@ -92,9 +92,6 @@ endif
 if not crypt_dep.found()
   crypt_dep = dependency('libxcrypt')
 endif
-if cpp_compiler.has_header('crypt.h')
-  conf.set('HAVE_CRYPT_H', 1)
-endif
 
 # socket
 if cpp_compiler.has_header('sys/socket.h')

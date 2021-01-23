@@ -78,7 +78,6 @@ AC_SUBST(GTKMM_LIBS)
 dnl
 dnl crypt
 dnl
-AC_CHECK_HEADERS([crypt.h])
 AC_CHECK_LIB(crypt,crypt)
 
 
