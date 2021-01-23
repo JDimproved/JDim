@@ -6,9 +6,9 @@
 #include "admin.h"
 #include "view.h"
 
-#include "history/historymanager.h"
-
 #include "config/globalconf.h"
+#include "history/historymanager.h"
+#include "jdlib/miscgtk.h"
 
 #include "global.h"
 #include "session.h"
@@ -172,7 +172,7 @@ bool View::is_mouse_on_view()
     bool ret = false;
 
     int x,y;
-    get_pointer( x, y );
+    MISC::get_pointer_at_window( get_window(), x, y );
     if( x < get_width() && x >= 0 && y < get_height() && y >= 0 ) ret = true;
 
 #ifdef _DEBUG

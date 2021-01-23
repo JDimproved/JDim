@@ -5,6 +5,9 @@
 
 #include "treeviewbase.h"
 
+#include "jdlib/miscgtk.h"
+
+
 using namespace SKELETON;
 
 
@@ -79,7 +82,7 @@ Gtk::TreeModel::Path JDTreeViewBase::get_path_under_xy( int x, int y )
 Gtk::TreeModel::Path JDTreeViewBase::get_path_under_mouse()
 {
     int x, y;
-    get_pointer( x, y );
+    MISC::get_pointer_at_window( get_window(), x, y );
     return get_path_under_xy( x, y );
 }
 
@@ -96,7 +99,7 @@ void JDTreeViewBase::get_cell_xy_wh( int& cell_x, int& cell_y, int& cell_w, int&
     int x, y;
     Gdk::Rectangle rect;
 
-    get_pointer( x, y );
+    MISC::get_pointer_at_window( get_window(), x, y );
     get_path_at_pos( x, y, path, column, cell_x, cell_y );
     if( column ) {
         int o_x, o_y;

@@ -158,3 +158,12 @@ void MISC::CopyClipboard( const std::string& str )
     clip->set_text( str );
 }
 
+
+// ウインドウの左上隅を基準としたマウスポインターの座標を取得
+Glib::RefPtr<Gdk::Window> MISC::get_pointer_at_window( const Glib::RefPtr<Gdk::Window>& window, int& x, int& y )
+{
+    assert( window );
+    Gdk::ModifierType unused;
+    const auto device = Gdk::Display::get_default()->get_default_seat()->get_pointer();
+    return window->get_device_position( device, x, y, unused );
+}
