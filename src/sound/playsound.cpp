@@ -10,7 +10,7 @@
 #include "jdlib/miscmsg.h"
 
 #include <string>
-#ifdef HAVE_ALSA_ASOUNDLIB_H
+#if __has_include(<alsa/asoundlib.h>)
 #include <alsa/asoundlib.h>
 #else
 #include <asoundlib.h>

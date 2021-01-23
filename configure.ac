@@ -78,7 +78,6 @@ AC_SUBST(GTKMM_LIBS)
 dnl
 dnl crypt
 dnl
-AC_CHECK_HEADERS([crypt.h])
 AC_CHECK_LIB(crypt,crypt)
 
 
@@ -96,8 +95,6 @@ dnl
 dnl
 dnl any other POSIX systems
 dnl
-
-AC_CHECK_HEADERS([sys/utsname.h])
 
 AC_CHECK_HEADERS([socket.h])
 AC_CHECK_LIB(socket,socket)
@@ -257,7 +254,6 @@ case "${host_os}" in
     [test "x$with_alsa" = xyes],
     [PKG_CHECK_MODULES(ALSA, [alsa >= 1.0])
      AC_DEFINE(USE_ALSA, , [use alsa])
-     AC_CHECK_HEADERS([alsa/asoundlib.h])
      AC_SUBST(ALSA_CFLAGS)
      AC_SUBST(ALSA_LIBS)]
   )

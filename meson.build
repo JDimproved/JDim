@@ -92,20 +92,12 @@ endif
 if not crypt_dep.found()
   crypt_dep = dependency('libxcrypt')
 endif
-if cpp_compiler.has_header('crypt.h')
-  conf.set('HAVE_CRYPT_H', 1)
-endif
 
 # socket
 if cpp_compiler.has_header('sys/socket.h')
   socket_dep = dependency('', required : false)
 else
   socket_dep = cpp_compiler.find_library('socket')
-endif
-
-# utsname
-if cpp_compiler.has_header('sys/utsname.h')
-  conf.set('HAVE_SYS_UTSNAME_H', 1)
 endif
 
 
@@ -166,9 +158,6 @@ endif
 alsa_dep = dependency('alsa', version : '>= 1.0.0', required : get_option('alsa'))
 if alsa_dep.found()
   conf.set('USE_ALSA', 1)
-  if cpp_compiler.has_header('alsa/asoundlib.h')
-    conf.set('HAVE_ALSA_ASOUNDLIB_H', 1)
-  endif
   configure_args += '\'--with-alsa\''
 endif
 

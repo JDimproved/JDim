@@ -15,7 +15,8 @@
 
 #include "gtkmm.h"
 
-#ifdef HAVE_SYS_UTSNAME_H
+#if __has_include(<sys/utsname.h>)
+#define HAVE_SYS_UTSNAME_H
 #include <sys/utsname.h> // uname()
 #endif
 
