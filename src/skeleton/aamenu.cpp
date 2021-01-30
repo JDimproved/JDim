@@ -30,6 +30,7 @@ AAMenu::AAMenu( Gtk::Window& parent )
     m_textview.override_background_color( Gdk::RGBA( CONFIG::get_color( COLOR_BACK_SELECTION ) ),
                                           Gtk::STATE_FLAG_NORMAL );
 
+    m_popup.set_transient_for( m_parent );
     m_popup.sig_configured().connect( sigc::mem_fun( *this, &AAMenu::slot_configured_popup ) );
     m_popup.add( m_textview );
     m_popup.show_all_children();
