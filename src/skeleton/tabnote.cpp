@@ -166,8 +166,6 @@ int TabNotebook::get_page_under_mouse()
     int x, y;
     Gdk::Rectangle rect = get_allocation();
     MISC::get_pointer_at_window( get_window(), x, y );
-    x += rect.get_x();
-    y += rect.get_y();
 
 #ifdef _DEBUG
     std::cout << "TabNotebook::get_page_under_mouse x = " << x << " y = " << y << std::endl;
@@ -190,7 +188,8 @@ int TabNotebook::get_page_under_mouse()
             if( tab_x < 0 ) continue;
 
 #ifdef _DEBUG
-            std::cout << "page = " << i << " x = " << tab_x << " w = " << tab_w << std::endl;
+            std::cout << "TabNotebook::get_page_under_mouse page = " << i << " x = " << tab_x << " w = " << tab_w
+                      << std::endl;
 #endif
 
             if( x < tab_x ){
@@ -205,7 +204,7 @@ int TabNotebook::get_page_under_mouse()
     }
 
 #ifdef _DEBUG
-    std::cout << "ret = " << ret << std::endl;
+    std::cout << "TabNotebook::get_page_under_mouse ret = " << ret << std::endl;
 #endif
 
     return ret;
