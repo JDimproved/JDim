@@ -280,13 +280,7 @@ SetupWizard::SetupWizard()
     set_title( "JDim セットアップウィザード" );
     set_keep_above( true );
     set_resizable( false );
-
-    const int width = 600;
-    const int height = 300;
-    const int sw = get_screen()->get_width();
-    const int sh = get_screen()->get_height();
-    resize( width, height );
-    if( sw > width && sh > height ) move( ( sw - width )/2, ( sh - height )/2 );
+    set_position( Gtk::WIN_POS_CENTER ); // 配置はデスクトップ環境次第
 
     // ボタン
     get_action_area()->set_spacing( SPACING_SIZE / 2 );
