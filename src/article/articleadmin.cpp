@@ -53,7 +53,7 @@ void ARTICLE::delete_admin()
 using namespace ARTICLE;
 
 ArticleAdmin::ArticleAdmin( const std::string& url )
-    : SKELETON::Admin( url ), m_toolbar( nullptr ), m_toolbarsimple( nullptr ), m_search_toolbar( nullptr )
+    : SKELETON::Admin( url )
 {
     set_use_viewhistory( true );
     set_use_switchhistory( true );
