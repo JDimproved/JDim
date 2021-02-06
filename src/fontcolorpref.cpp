@@ -195,6 +195,7 @@ void FontColorPref::pack_widget()
     m_treeview_color.get_selection()->set_mode( Gtk::SELECTION_MULTIPLE );
     m_treeview_color.signal_row_activated().connect( sigc::mem_fun( *this, &FontColorPref::slot_row_activated ) );
     m_scrollwin_color.add( m_treeview_color );
+    m_scrollwin_color.set_min_content_height( 180 );
     m_scrollwin_color.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
     m_vbox_color.pack_start( m_scrollwin_color, Gtk::PACK_EXPAND_WIDGET );
 
