@@ -62,18 +62,10 @@ enum
 
 
 MessageViewBase::MessageViewBase( const std::string& url )
-    : SKELETON::View( url ),
-      m_post( nullptr ),
-      m_preview( nullptr ),
-      m_entry_name( CORE::COMP_NAME ),
-      m_entry_mail( CORE::COMP_MAIL ),
-      m_text_message( nullptr ),
-      m_enable_focus( true ),
-      m_lng_str_enc( 0 ),
-      m_counter( 0 ),
-      m_text_changed( false ),
-      m_over_lines( false ),
-      m_over_lng( false )
+    : SKELETON::View( url )
+    , m_entry_name( CORE::COMP_NAME )
+    , m_entry_mail( CORE::COMP_MAIL )
+    , m_enable_focus( true )
 {
 #ifdef _DEBUG
     std::cout << "MessageViewBase::MessageViewBase " << get_url() << std::endl;

@@ -30,10 +30,10 @@ namespace MESSAGE
 
     class MessageViewBase : public SKELETON::View
     {
-        Post* m_post;
+        Post* m_post{};
 
         Gtk::Notebook m_notebook;
-        SKELETON::View* m_preview;
+        SKELETON::View* m_preview{};
         Gtk::VBox m_msgview;
 
         SKELETON::JDToolbar m_toolbar_name_mail;
@@ -52,7 +52,7 @@ namespace MESSAGE
         SKELETON::CompletionEntry m_entry_name;
         SKELETON::CompletionEntry m_entry_mail;
 
-        SKELETON::EditView* m_text_message;
+        SKELETON::EditView* m_text_message{};
 
         bool m_enable_focus;
 
@@ -60,17 +60,17 @@ namespace MESSAGE
         JDLIB::Iconv* m_iconv;
         int m_max_line;
         int m_max_str;
-        int m_lng_str_enc;
+        int m_lng_str_enc{};
         int m_lng_iconv;
 
         // 経過時間表示用
-        int m_counter;
+        int m_counter{};
         std::string m_str_pass;
 
-        bool m_text_changed;
+        bool m_text_changed{};
 
-        bool m_over_lines;
-        bool m_over_lng;
+        bool m_over_lines{};
+        bool m_over_lng{};
 
       public:
 
