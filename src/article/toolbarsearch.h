@@ -16,9 +16,9 @@ namespace ARTICLE
 
     class SearchToolBar : public SKELETON::ToolBar
     {
-        ArticleViewSearch* m_searchview;
+        ArticleViewSearch* m_searchview{};
 
-        bool m_enable_slot;
+        bool m_enable_slot{};
 
         Gtk::ToolItem m_tool_bm;
         Gtk::CheckButton m_check_bm;
