@@ -36,9 +36,9 @@ namespace ARTICLE
 
     class ArticleAdmin : public SKELETON::Admin
     {
-        ArticleToolBar* m_toolbar;
-        ArticleToolBarSimple* m_toolbarsimple;
-        SearchToolBar* m_search_toolbar;
+        ArticleToolBar* m_toolbar{};
+        ArticleToolBarSimple* m_toolbarsimple{};
+        SearchToolBar* m_search_toolbar{};
 
         std::unique_ptr<JDLIB::Timeout> m_conn_timer;
 
