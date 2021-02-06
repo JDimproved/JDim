@@ -87,7 +87,7 @@ namespace ARTICLE
         std::unordered_map< int, LAYOUT* > m_map_header;  // ヘッダのポインタの連想配列
 
         // コメントノードやプレビュー表示時に使うローカルなノードツリー
-        DBTREE::NodeTreeBase* m_local_nodetree; 
+        DBTREE::NodeTreeBase* m_local_nodetree{};
 
         LAYOUT* m_root_header;
         LAYOUT* m_last_header;
@@ -95,7 +95,7 @@ namespace ARTICLE
         LAYOUT* m_last_div;
 
         // 新着セパレータ
-        LAYOUT* m_separator_header;
+        LAYOUT* m_separator_header{};
 
         // 新着セパレータの位置(レス番号), 0の時は表示していない
         int m_separator_new;
@@ -114,7 +114,7 @@ namespace ARTICLE
         bool m_show_multispace;
 
         // 前回のブロックにあった、DOMノードのattribute
-        int m_last_dom_attr;
+        int m_last_dom_attr{};
 
       public:
         
