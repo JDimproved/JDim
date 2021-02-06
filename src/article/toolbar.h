@@ -24,7 +24,7 @@ namespace ARTICLE
         SKELETON::ImgToolButton m_button_drawout_or;
 
         // 実況
-        Gtk::ToggleToolButton* m_button_live_play_stop;
+        Gtk::ToggleToolButton* m_button_live_play_stop{};
 
       public:
 
