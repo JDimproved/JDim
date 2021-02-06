@@ -18,10 +18,9 @@
 
 using namespace ARTICLE;
 
-SearchToolBar::SearchToolBar() :
-    SKELETON::ToolBar( ARTICLE::get_admin() ),
-    m_searchview( nullptr ),
-    m_check_bm( "しおり" )
+SearchToolBar::SearchToolBar()
+    : SKELETON::ToolBar( ARTICLE::get_admin() )
+    , m_check_bm( "しおり" )
 {
     m_tool_bm.add( m_check_bm );
     m_tool_bm.set_expand( false );
