@@ -13,8 +13,6 @@
 using namespace SKELETON;
 
 Loadable::Loadable()
-    : m_loader( nullptr ),
-      m_low_priority( false )
 {
     clear_load_data();
 }

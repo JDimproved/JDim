@@ -61,9 +61,9 @@ namespace SKELETON
 {
     class Loadable : public Dispatchable
     {
-        JDLIB::Loader* m_loader;
+        JDLIB::Loader* m_loader{};
 
-        bool m_low_priority; 
+        bool m_low_priority{};
 
         // ローダからコピーしたデータ
         int m_code;
