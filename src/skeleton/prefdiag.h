@@ -5,8 +5,6 @@
 #ifndef _PREFDIAG_H
 #define _PREFDIAG_H
 
-#include "gtkmmversion.h"
-
 #include <gtkmm.h>
 
 #include "jdlib/timeout.h"
@@ -47,8 +45,6 @@ namespace SKELETON
         virtual void slot_ok_clicked(){}
         virtual void slot_cancel_clicked(){}
         virtual void slot_apply_clicked(){}
-
-        void set_default_size_ratio( double ratio );
 
       private:
 

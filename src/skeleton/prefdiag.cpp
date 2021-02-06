@@ -101,16 +101,6 @@ int PrefDiag::run(){
 }
 
 
-// ダイアログのサイズをデフォルトのスクリーンに対する比率で設定する
-void PrefDiag::set_default_size_ratio( double ratio )
-{
-    const auto screen = Gdk::Screen::get_default();
-    const int width = static_cast< int >( screen->get_width() * ratio );
-    const int height = static_cast< int >( screen->get_height() * ratio );
-    Gtk::Dialog::set_default_size( width, height );
-}
-
-
 // タイマーのslot関数
 bool PrefDiag::slot_timeout( int timer_number )
 {

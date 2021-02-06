@@ -526,7 +526,9 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &MouseKeyPref::slot_cell_data ) );
 
     m_scrollwin.add( m_treeview );
-    m_scrollwin.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
+    m_scrollwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
+    m_scrollwin.set_propagate_natural_height( true );
+    m_scrollwin.set_propagate_natural_width( true );
 
     m_button_reset.signal_clicked().connect( sigc::mem_fun( *this, &MouseKeyPref::slot_reset ) );
     m_hbox.pack_start( m_button_reset, Gtk::PACK_SHRINK );
@@ -536,7 +538,6 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     get_content_area()->pack_start( m_scrollwin );
     get_content_area()->pack_start( m_hbox, Gtk::PACK_SHRINK );
 
-    set_default_size_ratio( 0.666 );
     show_all_children();
     set_title( target + "設定" );
 }

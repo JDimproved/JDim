@@ -69,13 +69,14 @@ void AboutConfig::pack_widgets()
 
     m_scrollwin.add( m_treeview );
     m_scrollwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
+    m_scrollwin.set_propagate_natural_height( true );
+    m_scrollwin.set_propagate_natural_width( true );
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
     get_content_area()->pack_start( m_scrollwin );
 
     set_title( "about:config 高度な設定" );
-    set_default_size_ratio( 0.666 );
     show_all_children();
 
     append_rows();
