@@ -62,10 +62,10 @@ namespace DBTREE
         ARTICLE_INFO_LIST m_list_artinfo; 
 
         // 状態 ( global.h で定義 )
-        int m_status;                
+        int m_status;
 
         // 一度でも m_list_subject が作られた(=subject.txtを開いた)らtrue
-        bool m_list_subject_created;
+        bool m_list_subject_created{};
 
         // ローカルルールのmodified 時刻
         std::string m_modified_localrule;
@@ -74,10 +74,10 @@ namespace DBTREE
         std::string m_modified_setting;
 
         // subjectダウンロード指示時(BoardBase::download_subject)にオンラインだったか
-        bool m_is_online;
+        bool m_is_online{};
 
         // subjectダウンロード指示時(BoardBase::download_subject)にブート中だったか
-        bool m_is_booting;
+        bool m_is_booting{};
 
         // ビュワーでソートをする列番号、ソード順
         int m_view_sort_column;
@@ -86,10 +86,10 @@ namespace DBTREE
         int m_view_sort_pre_mode;
 
         // 名無し書き込み不可
-        bool m_check_noname;
+        bool m_check_noname{};
 
         // 過去ログも表示する
-        bool m_show_oldlog;
+        bool m_show_oldlog{};
 
         //
         // subjectファイルのURLが "http://www.hoge2ch.net/hogeboard/subject.txt"
@@ -137,19 +137,19 @@ namespace DBTREE
         std::list< std::string > m_list_abone_thread_remove; // あぼーんするスレのタイトル( dat 落ち判定用、remove_old_abone_thread()を参照せよ )
         std::list< std::string > m_list_abone_word_thread; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex_thread; // あぼーんする正規表現
-        int m_abone_number_thread; // レスの数
-        int m_abone_hour_thread; // スレ立てからの経過時間
+        int m_abone_number_thread{}; // レスの数
+        int m_abone_hour_thread{}; // スレ立てからの経過時間
 
         // 読み込み用ローカルプロキシ設定
-        int m_mode_local_proxy;
+        int m_mode_local_proxy{};
         std::string m_local_proxy;
-        int m_local_proxy_port;
+        int m_local_proxy_port{};
         std::string m_local_proxy_basicauth; // basic 認証用の「ユーザID:パスワード」の組
 
         // 書き込み用ローカルプロキシ設定
-        int m_mode_local_proxy_w;
+        int m_mode_local_proxy_w{};
         std::string m_local_proxy_w;
-        int m_local_proxy_port_w;
+        int m_local_proxy_port_w{};
         std::string m_local_proxy_basicauth_w; // basic 認証用の「ユーザID:パスワード」の組
 
         // 書き込み時のデフォルトの名前とメアド
@@ -157,34 +157,34 @@ namespace DBTREE
         std::string m_write_mail;
 
         // 最終書き込み時間
-        struct timeval m_write_time;   
+        struct timeval m_write_time{};
 
         // samba(秒)
-        time_t m_samba_sec;
+        std::time_t m_samba_sec{};
 
         // 実況時の更新間隔(秒)
-        time_t m_live_sec;
+        std::time_t m_live_sec{};
 
         // 最終アクセス時刻
-        time_t m_last_access_time;
+        std::time_t m_last_access_time{};
 
         // 最大レス数
-        int m_number_max_res;
+        int m_number_max_res{};
 
         // ダウンロード用変数
         std::list< std::string > m_url_update_views; // CORE::core_set_command( "update_board" ) を送信するビューのアドレス
-        JDLIB::Iconv* m_iconv;
+        JDLIB::Iconv* m_iconv{};
         std::string m_rawdata;
         std::string m_rawdata_left;
 
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
-        bool m_read_info;
+        bool m_read_info{};
 
         // キャッシュにあるこの板に属するスレをデータベースに登録したか
-        bool m_append_articles;
+        bool m_append_articles{};
 
         // 移転を調査するために url_boardbase を読んでいる
-        bool m_read_url_boardbase;
+        bool m_read_url_boardbase{};
 
         // 書き込み時に必要なキーワード( hana=mogera や suka=pontan など )
         // 書き込み時のメッセージに付加する
@@ -199,13 +199,13 @@ namespace DBTREE
 
         // get_article_fromURL()のキャッシュ
         std::string m_get_article_url;
-        ArticleBase* m_get_article;
+        ArticleBase* m_get_article{};
 
         // remove_old_abone_thread() をキャンセルするか
-        bool m_cancel_remove_abone_thread;
+        bool m_cancel_remove_abone_thread{};
 
         // Null artice クラス
-        ArticleBase* m_article_null;
+        ArticleBase* m_article_null{};
 
       protected:
 

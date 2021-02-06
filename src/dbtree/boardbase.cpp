@@ -51,7 +51,6 @@ using namespace DBTREE;
 BoardBase::BoardBase( const std::string& root, const std::string& path_board, const std::string& name )
     : SKELETON::Loadable()
     , m_status( STATUS_UNKNOWN )
-    , m_list_subject_created( false )
     , m_view_sort_column( -1 )
     , m_view_sort_mode( -1 )
     , m_view_sort_pre_column( -1 )
@@ -59,21 +58,8 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
     , m_root( root )
     , m_path_board( path_board )
     , m_name( name )
-    , m_samba_sec( 0 )
-    , m_live_sec( 0 )
-    , m_last_access_time( 0 )
-    , m_number_max_res( 0 )
-    , m_iconv( nullptr )
-    , m_read_info( 0 )
-    , m_append_articles( false )
-    , m_get_article( nullptr )
-    , m_cancel_remove_abone_thread( false )
-    , m_article_null( nullptr )
 {
-    clear();
     clear_load_data();
-
-    memset( &m_write_time, 0, sizeof( struct timeval ) );
 
     m_hash_article = new ArticleHash();
 
