@@ -53,13 +53,10 @@ using namespace ARTICLE;
 // show_abone : true ならあぼーんしたレスも表示する
 // show_multispace : true なら連続空白ノードも表示
 LayoutTree::LayoutTree( const std::string& url, const bool show_abone, const bool show_multispace )
-    : m_heap( SIZE_OF_HEAP ),
-      m_url( url ),
-      m_local_nodetree( nullptr ),
-      m_separator_header( nullptr ),
-      m_show_abone( show_abone ),
-      m_show_multispace( show_multispace ),
-      m_last_dom_attr( 0 )
+    : m_heap( SIZE_OF_HEAP )
+    , m_url( url )
+    , m_show_abone( show_abone )
+    , m_show_multispace( show_multispace )
 {
 #ifdef _DEBUG
     std::cout << "LayoutTree::LayoutTree : url = " << url << " show_abone = " << m_show_abone << std::endl;
