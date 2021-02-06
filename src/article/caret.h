@@ -13,14 +13,14 @@ namespace ARTICLE
 
       public:
 
-        long x; 
-        long y;
-        LAYOUT* layout; // キャレットの属するレイアウトノードへのポインタ
-        long byte; // 何バイト目の文字の「前」か
+        long x{};
+        long y{};
+        LAYOUT* layout{}; // キャレットの属するレイアウトノードへのポインタ
+        long byte{}; // 何バイト目の文字の「前」か
 
-        CARET_POSITION() : x( 0 ), y( 0 ), layout( nullptr ), byte( 0 ){}
-        ~CARET_POSITION(){}
-        
+        CARET_POSITION() noexcept = default;
+        ~CARET_POSITION() noexcept = default;
+
         // キャレット座標計算関数
         void set( LAYOUT* _layout, long _byte,
 
