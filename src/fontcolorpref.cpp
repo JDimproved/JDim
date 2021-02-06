@@ -103,7 +103,6 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     m_fontbutton.set_tooltip_text( m_tooltips_font[ 0 ] );
 
     set_title( "フォントと色の詳細設定" );
-    set_default_size_ratio( 0.5 );
     show_all_children();
 }
 

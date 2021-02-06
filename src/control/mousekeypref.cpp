@@ -536,7 +536,6 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     get_content_area()->pack_start( m_scrollwin );
     get_content_area()->pack_start( m_hbox, Gtk::PACK_SHRINK );
 
-    set_default_size_ratio( 0.666 );
     show_all_children();
     set_title( target + "設定" );
 }

@@ -75,7 +75,6 @@ void AboutConfig::pack_widgets()
     get_content_area()->pack_start( m_scrollwin );
 
     set_title( "about:config 高度な設定" );
-    set_default_size_ratio( 0.666 );
     show_all_children();
 
     append_rows();
