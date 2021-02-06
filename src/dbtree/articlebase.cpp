@@ -61,43 +61,14 @@ if( it2 != lines.end() ){ \
 
 
 ArticleBase::ArticleBase( const std::string& datbase, const std::string& id, bool cached )
-    : SKELETON::Lockable(),
-      m_id ( id ),
-      m_key( std::string() ),
-      m_since_time( 0 ),
-      m_since_date( std::string() ),
-      m_code( HTTP_INIT ),
-      m_str_code( std::string() ),
-      m_status( STATUS_UNKNOWN ),
-      m_subject( std::string() ),
-      m_number( 0 ),
-      m_number_diff( 0 ),
-      m_number_new( 0 ),
-      m_number_load( 0 ),
-      m_number_before_load( 0 ),
-      m_number_seen( 0 ),
-      m_number_max( 0 ),
-      m_write_fixname( 0 ),
-      m_write_fixmail( 0 ),
-      m_abone_transparent( false ),
-      m_abone_chain( false ),
-      m_abone_age( false ),
-      m_abone_board( true ),
-      m_abone_global( true ),
-      m_bookmarked_thread( false ),
-      m_cached( cached ),
-      m_read_info( 0 ),
-      m_save_info( false ),
-      m_924( false )
+    : SKELETON::Lockable()
+    , m_id( id )
+    , m_code( HTTP_INIT )
+    , m_status( STATUS_UNKNOWN )
+    , m_abone_board( true )
+    , m_abone_global( true )
+    , m_cached( cached )
 {
-#ifdef _DEBUG
-//    std::cout << "ArticleBase::ArticleBase : " << m_id << std::endl;
-#endif
-
-    memset( &m_access_time, 0, sizeof( struct timeval ) );
-    memset( &m_check_update_time, 0, sizeof( struct timeval ) );
-    memset( &m_write_time, 0, sizeof( struct timeval ) );
-
     // m_url にURLセット
     update_datbase( datbase );
 

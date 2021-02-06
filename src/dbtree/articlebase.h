@@ -41,7 +41,7 @@ namespace DBTREE
         std::string m_id;            // ID ( .datなどの拡張子付き  (例) 1234567.dat )
         std::string m_key;           // ID から拡張子を取った物
         std::string m_date_modified; // サーバのデータが更新された時間
-        time_t m_since_time;         // スレが立った時刻
+        std::time_t m_since_time{};  // スレが立った時刻
         std::string m_since_date;    // スレ立て月日( string型 )
         int m_code;                  // HTTPコード
         std::string m_str_code;      // HTTPコード(文字列)
@@ -52,23 +52,23 @@ namespace DBTREE
         // 詳しくはコンストラクタの説明を参照せよ
         std::string m_org_host;
 
-        std::string m_subject;       // サブジェクト
-        int m_number;                // サーバ上にあるレスの数
-        int m_number_diff;            // レス増分( subject.txt をロードした時の m_number の増分 )
-        int m_number_new;            // 新着数( ロードした時の差分読み込み数)
-        int m_number_load;           // キャッシュにあるレスの数
-        int m_number_before_load;    // ロード前のレスの数( m_number_new を計算するのに使う )
-        int m_number_seen;           // どこまで読んだか
-        int m_number_max;            // 規定の最大レス数(0:未設定)
-        struct timeval m_access_time;  // ユーザが最後にロードした時間
-        std::string m_access_date;     // ユーザが最後にロードした月日( string型 )
-        struct timeval m_check_update_time;  // 最終更新チェック時間
-        struct timeval m_write_time;   // 最終書き込み時間
+        std::string m_subject;           // サブジェクト
+        int m_number{};                  // サーバ上にあるレスの数
+        int m_number_diff{};             // レス増分( subject.txt をロードした時の m_number の増分 )
+        int m_number_new{};              // 新着数( ロードした時の差分読み込み数)
+        int m_number_load{};             // キャッシュにあるレスの数
+        int m_number_before_load{};      // ロード前のレスの数( m_number_new を計算するのに使う )
+        int m_number_seen{};             // どこまで読んだか
+        int m_number_max{};              // 規定の最大レス数(0:未設定)
+        struct timeval m_access_time{};  // ユーザが最後にロードした時間
+        std::string m_access_date;       // ユーザが最後にロードした月日( string型 )
+        struct timeval m_check_update_time{};  // 最終更新チェック時間
+        struct timeval m_write_time{}; // 最終書き込み時間
         std::string m_write_time_date; // 最終書き込み月日( string型 )
         std::string m_write_name;      // 書き込み時の名前
         std::string m_write_mail;      // 書き込み時のメアド
-        bool m_write_fixname;          // 書き込み時名前固定
-        bool m_write_fixmail;          // 書き込み時メール固定
+        bool m_write_fixname{};        // 書き込み時名前固定
+        bool m_write_fixmail{};        // 書き込み時メール固定
 
         // あぼーん情報
         std::list< std::string > m_list_abone_id;   // あぼーんするID
@@ -76,14 +76,14 @@ namespace DBTREE
         std::list< std::string > m_list_abone_word; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex; // あぼーんする正規表現
         std::unordered_set< int > m_abone_reses; // レスあぼーん情報
-        bool m_abone_transparent; // 透明あぼーん
-        bool m_abone_chain; // 連鎖あぼーん
-        bool m_abone_age; // age ているレスをあぼーん
+        bool m_abone_transparent{}; // 透明あぼーん
+        bool m_abone_chain{}; // 連鎖あぼーん
+        bool m_abone_age{}; // age ているレスをあぼーん
         bool m_abone_board; // 板レベルでのあぼーんを有効にする
         bool m_abone_global; // 全体レベルでのあぼーんを有効にする
 
         // 「スレ」がスレ一覧でブックマークされているか
-        bool m_bookmarked_thread;
+        bool m_bookmarked_thread{};
 
         // 「レス」のブックマーク
         std::unordered_set< int > m_bookmarks; // ブックマーク判定キャッシュ
@@ -95,10 +95,10 @@ namespace DBTREE
         bool m_cached;
 
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
-        bool m_read_info;
+        bool m_read_info{};
 
         // true ならunlock_impl()がコールバックされたときに情報保存
-        bool m_save_info;
+        bool m_save_info{};
 
         // 前スレのアドレス
         // スレが未取得で、この変数がemptyで無いとき download_dat()を呼び出すと
@@ -106,7 +106,7 @@ namespace DBTREE
         std::string m_url_pre_article;
 
         // スレッド924か
-        bool m_924;
+        bool m_924{};
 
       protected:
 
