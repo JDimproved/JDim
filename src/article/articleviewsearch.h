@@ -18,13 +18,13 @@ namespace ARTICLE
         std::string m_url_title;
         std::string m_url_board;
         int m_searchmode; // searchmanager.hで定義した検索モード
-        bool m_mode_or;
-        bool m_enable_bm;
-        bool m_bm;
+        bool m_mode_or{};
+        bool m_enable_bm{};
+        bool m_bm{};
         std::list< CORE::SEARCHDATA > m_list_searchdata;
-        bool m_loading;
-        bool m_search_executed;
-        bool m_escaped;
+        bool m_loading{};
+        bool m_search_executed{};
+        bool m_escaped{};
         bool m_cancel_reload;
 
       public:

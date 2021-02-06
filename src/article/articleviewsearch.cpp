@@ -28,13 +28,8 @@ using namespace ARTICLE;
 
 // ログやスレタイ検索抽出ビュー
 ArticleViewSearch::ArticleViewSearch( const std::string& url, const bool exec_search )
-    : ArticleViewBase( url, "dummy" ),
-      m_mode_or( false ),
-      m_enable_bm( false ),
-      m_bm( false ),
-      m_loading( false ),
-      m_search_executed( false ),
-      m_escaped( false )
+    : ArticleViewBase( url, "dummy" )
+    , m_searchmode{ CORE::SEARCHMODE_LOG } // set_toolbar_from_url() で検索モードを設定する
 {
     set_id_toolbar( TOOLBAR_SEARCH );
     set_writeable( false );
