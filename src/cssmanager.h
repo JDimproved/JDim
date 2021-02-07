@@ -141,8 +141,8 @@ namespace CORE
         std::vector< std::string > m_colors;
         std::list< std::string > m_css_class;
 
-        DOM* m_dom;
-        DOM* m_last_dom;
+        DOM* m_dom{};
+        DOM* m_last_dom{};
 
     public:
 
