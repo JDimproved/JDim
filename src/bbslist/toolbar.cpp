@@ -26,12 +26,9 @@
 using namespace BBSLIST;
 
 
-BBSListToolBar::BBSListToolBar() :
-    SKELETON::ToolBar( BBSLIST::get_admin() ),
-    m_button_toggle( "ページ切り替え", true, true, m_label ),
-    m_button_check_update_root( nullptr ),
-    m_button_check_update_open_root( nullptr ),
-    m_button_stop_check_update( nullptr )
+BBSListToolBar::BBSListToolBar()
+    : SKELETON::ToolBar( BBSLIST::get_admin() )
+    , m_button_toggle( "ページ切り替え", true, true, m_label )
 {
     m_button_toggle.get_button()->set_tooltip_arrow( "ページ切り替え\n\nマウスホイール回転でも切り替え可能" );
 

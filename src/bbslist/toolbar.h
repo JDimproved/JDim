@@ -21,9 +21,9 @@ namespace BBSLIST
         Gtk::Label m_label;
         SKELETON::ToolMenuButton m_button_toggle;
 
-        Gtk::ToolButton* m_button_check_update_root;
-        Gtk::ToolButton* m_button_check_update_open_root;
-        Gtk::ToolItem* m_button_stop_check_update;
+        Gtk::ToolButton* m_button_check_update_root{};
+        Gtk::ToolButton* m_button_check_update_open_root{};
+        Gtk::ToolItem* m_button_stop_check_update{};
 
       public:
 
