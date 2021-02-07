@@ -25,7 +25,7 @@ namespace BBSLIST
 
     class BBSListAdmin : public SKELETON::Admin
     {
-        BBSListToolBar* m_toolbar;
+        BBSListToolBar* m_toolbar{};
 
       public:
 
