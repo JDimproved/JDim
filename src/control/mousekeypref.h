@@ -84,7 +84,7 @@ namespace CONTROL
     {
         int m_id;
         int m_controlmode;
-        bool m_single;
+        bool m_single{};
 
         SKELETON::JDTreeViewBase m_treeview;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
