@@ -96,31 +96,15 @@ m_treeview.append_column( *col ); \
 
 
 BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board )
-    : SKELETON::View( url ),
-      m_treeview( url, DNDTARGET_FAVORITE, true, CONFIG::get_fontname( FONT_BOARD ), COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN ),
-      m_col_mark( nullptr ),
-      m_col_id( nullptr ),
-      m_col_board( nullptr ),
-      m_col_subject( nullptr ),
-      m_col_res( nullptr ),
-      m_col_str_load( nullptr ),
-      m_col_str_new( nullptr ),
-      m_col_since( nullptr ),
-      m_col_write( nullptr ),
-      m_col_access( nullptr ),
-      m_col_speed( nullptr ),
-      m_col_diff( nullptr ),
-      m_clicked( false ),
-      m_col( COL_NUM_COL ),
-      m_previous_col( COL_NUM_COL ),
-      m_sortmode( SORTMODE_ASCEND ),
-      m_previous_sortmode( false ),
-      m_loading( false ),
-      m_enable_menuslot( true ),
-      m_load_subject_txt( true ),
-      m_show_col_board( show_col_board ),
-      m_col_diff_is_shown( false ),
-      m_cancel_openrow_counter( 0 )
+    : SKELETON::View( url )
+    , m_treeview( url, DNDTARGET_FAVORITE, true, CONFIG::get_fontname( FONT_BOARD ),
+                  COLOR_CHAR_BOARD, COLOR_BACK_BOARD, COLOR_BACK_BOARD_EVEN )
+    , m_col( COL_NUM_COL )
+    , m_previous_col( COL_NUM_COL )
+    , m_sortmode( SORTMODE_ASCEND )
+    , m_enable_menuslot( true )
+    , m_load_subject_txt( true )
+    , m_show_col_board( show_col_board )
 {
     // 次スレ検索ビューのようにURLの途中に http が入っている場合は取り除く
     size_t pos = url.rfind( "http://" );

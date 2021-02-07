@@ -23,38 +23,37 @@
 using namespace BOARD;
 
 Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string& command )
-    : SKELETON::PrefDiag( parent, url ),
-      m_frame_write( "書き込み設定" ),
-      m_entry_writename( true, "名前：" ),
-      m_entry_writemail( true, "メール：" ),
-      m_check_noname( "名前欄が空白の時は書き込まない" ),
-      m_bt_clear_post_history( "この板にある全スレの書き込み履歴クリア" ),
-      m_bt_set_default_namemail( "デフォルト" ),
+    : SKELETON::PrefDiag( parent, url )
+    , m_frame_write( "書き込み設定" )
+    , m_entry_writename( true, "名前：" )
+    , m_entry_writemail( true, "メール：" )
+    , m_check_noname( "名前欄が空白の時は書き込まない" )
+    , m_bt_clear_post_history( "この板にある全スレの書き込み履歴クリア" )
+    , m_bt_set_default_namemail( "デフォルト" )
 
-      m_frame_cookie( "クッキーと書き込みキーワード" ),
-      m_button_cookie( "削除" ) ,
+    , m_frame_cookie( "クッキーと書き込みキーワード" )
+    , m_button_cookie( "削除" )
 
-      m_check_live( "実況する" ),
+    , m_check_live( "実況する" )
 
-      m_proxy_frame( "読み込み用" ),
-      m_proxy_frame_w( "書き込み用" ),
+    , m_proxy_frame( "読み込み用" )
+    , m_proxy_frame_w( "書き込み用" )
 
-      m_label_name( false, "板タイトル：", DBTREE::board_name( get_url() ) ),
-      m_label_url( false, "板のURL：", DBTREE::url_boardbase( get_url() ) ),
-      m_label_cache( false, "ローカルキャッシュのルートパス", CACHE::path_board_root( DBTREE::url_boardbase( get_url() ) ) ),
+    , m_label_name( false, "板タイトル：", DBTREE::board_name( get_url() ) )
+    , m_label_url( false, "板のURL：", DBTREE::url_boardbase( get_url() ) )
+    , m_label_cache( false, "ローカルキャッシュのルートパス",
+                     CACHE::path_board_root( DBTREE::url_boardbase( get_url() ) ) )
 
-
-      m_label_noname( false, "デフォルト名無し：", DBTREE::default_noname( get_url() ) ),
-      m_label_max_line( false, "1レスの最大改行数：" ),
-      m_label_max_byte( false, "1レスの最大バイト数：" ),
-      m_label_last_access( false, "最終アクセス日時 ：" ),
-      m_label_modified( false, "最終更新日時 ：" ),
-      m_button_clearmodified( "日時クリア" ),
-      m_label_samba( false, "書き込み規制秒数 (Samba24) ：" ),
-      m_button_clearsamba( "秒数クリア" ),
-      m_check_oldlog( "過去ログを表示する" ),
-      m_button_remove_old_title( "dat落ちしたスレのタイトルを削除する" ),
-      m_localrule( nullptr )
+    , m_label_noname( false, "デフォルト名無し：", DBTREE::default_noname( get_url() ) )
+    , m_label_max_line( false, "1レスの最大改行数：" )
+    , m_label_max_byte( false, "1レスの最大バイト数：" )
+    , m_label_last_access( false, "最終アクセス日時 ：" )
+    , m_label_modified( false, "最終更新日時 ：" )
+    , m_button_clearmodified( "日時クリア" )
+    , m_label_samba( false, "書き込み規制秒数 (Samba24) ：" )
+    , m_button_clearsamba( "秒数クリア" )
+    , m_check_oldlog( "過去ログを表示する" )
+    , m_button_remove_old_title( "dat落ちしたスレのタイトルを削除する" )
 {
     m_edit_cookies.set_editable( false );
 
