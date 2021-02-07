@@ -128,18 +128,11 @@ show_popupmenu( url, slot ); \
 using namespace BBSLIST;
 
 
-BBSListViewBase::BBSListViewBase( const std::string& url,const std::string& arg1, const std::string& arg2 )
-    : SKELETON::View( url ),
-      m_treeview( url, DNDTARGET_FAVORITE, m_columns, true, CONFIG::get_fontname( FONT_BBS ), COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN ),
-      m_ready_tree( false ),
-      m_clicked( false ),
-      m_jump_y( -1 ),
-      m_search_invert( false ),
-      m_open_only_onedir( false ),
-      m_cancel_expand( false ),
-      m_expanding( 0 ),
-      m_editlistwin( nullptr ),
-      m_set_bookmark( false )
+BBSListViewBase::BBSListViewBase( const std::string& url, const std::string& arg1, const std::string& arg2 )
+    : SKELETON::View( url )
+    , m_treeview( url, DNDTARGET_FAVORITE, m_columns, true, CONFIG::get_fontname( FONT_BBS ),
+                  COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN )
+    , m_jump_y{ -1 }
 {
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );

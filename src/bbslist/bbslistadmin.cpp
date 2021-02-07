@@ -62,7 +62,7 @@ void BBSLIST::delete_admin()
 using namespace BBSLIST;
 
 BBSListAdmin::BBSListAdmin( const std::string& url )
-    : SKELETON::Admin( url ), m_toolbar( nullptr )
+    : SKELETON::Admin( url )
 {
     get_notebook()->set_dragable( false );
     get_notebook()->set_fixtab( true );

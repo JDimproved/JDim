@@ -42,14 +42,14 @@ namespace BBSLIST
 
         std::string m_date_modified;
 
-        bool m_ready_tree; // ツリーがセットされているならtrue
+        bool m_ready_tree{}; // ツリーがセットされているならtrue
 
         BBSLIST::TreeColumns m_columns;
 
         Gtk::ScrolledWindow m_scrwin;
 
         // クリック状態
-        bool m_clicked;
+        bool m_clicked{};
 
         // ダブルクリック状態
         bool m_dblclicked;
@@ -62,12 +62,12 @@ namespace BBSLIST
         int m_jump_y;
 
         // サーチで使う変数
-        bool m_search_invert;
+        bool m_search_invert{};
         std::string m_pre_query;
 
-        bool m_open_only_onedir; // あるフォルダを開いたときに他のフォルダを閉じる
-        bool m_cancel_expand; // signal_row_expanded() をキャンセルする
-        bool m_expanding; // 行を開いている最中にtrueにしてsignal_row_collapsed()をキャンセルする
+        bool m_open_only_onedir{}; // あるフォルダを開いたときに他のフォルダを閉じる
+        bool m_cancel_expand{}; // signal_row_expanded() をキャンセルする
+        bool m_expanding{}; // 行を開いている最中にtrueにしてsignal_row_collapsed()をキャンセルする
 
         // ツリーに含まれているスレのURLを入れる hash_set
         // toggle_articleicon() で使用する
@@ -80,10 +80,10 @@ namespace BBSLIST
         // ツリーに含まれている画像のURLを入れる hash_set
         std::set< std::string > m_set_image;
 
-        EditListWin* m_editlistwin;
+        EditListWin* m_editlistwin{};
 
         // スレを追加したときにそのスレにしおりを付ける
-        bool m_set_bookmark;
+        bool m_set_bookmark{};
 
       protected:
 
