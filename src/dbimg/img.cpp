@@ -59,9 +59,7 @@ using namespace DBIMG;
 
 Img::Img( const std::string& url )
     : SKELETON::Loadable()
-    ,m_url( url )
-    ,m_count_redirect( 0 )
-    ,m_fout( nullptr )
+    , m_url( url )
 {
 #ifdef _DEBUG
     std::cout << "Img::Img url = " << m_url <<  std::endl;
