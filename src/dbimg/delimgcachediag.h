@@ -19,7 +19,7 @@ namespace DBIMG
     class DelImgCacheDiag : public Gtk::Dialog, SKELETON::Dispatchable
     {
         Gtk::Label m_label;
-       
+
         bool m_stop; // = true にするとスレッド停止
         JDLIB::Thread m_thread;
 

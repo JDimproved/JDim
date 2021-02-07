@@ -20,7 +20,7 @@ namespace DBIMG
     {
         std::string m_url;
         std::string m_url_alt; // リダイレクトなどで使用するアドレス
-        int m_count_redirect; // リダイレクト回数
+        int m_count_redirect{}; // リダイレクト回数
 
         int m_imgctrl; // 画像コントロール
         int m_type; // 画像タイプ
@@ -49,8 +49,8 @@ namespace DBIMG
         int m_wait_counter;
 
         // 保存用ファイルハンドラ
-        FILE* m_fout;
-        
+        FILE* m_fout{};
+
       public:
 
         explicit Img( const std::string& url );
