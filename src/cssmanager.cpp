@@ -52,8 +52,7 @@ enum
 
 
 Css_Manager::Css_Manager()
-    : m_heap( SIZE_OF_HEAP ),
-      m_last_dom( nullptr )
+    : m_heap( SIZE_OF_HEAP )
 {
 #ifdef _DEBUG
     std::cout << "Css_Manager::Css_Manager\n";
