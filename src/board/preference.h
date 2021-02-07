@@ -138,7 +138,7 @@ namespace BOARD
         Gtk::Button m_button_remove_old_title;
 
         // ローカルルール
-        SKELETON::View* m_localrule;
+        SKELETON::View* m_localrule{};
 
         // SETTING.TXT
         SKELETON::EditView m_edit_settingtxt;
