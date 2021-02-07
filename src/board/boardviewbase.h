@@ -38,46 +38,46 @@ namespace BOARD
         Gtk::ScrolledWindow m_scrwin;
 
         // 列
-        Gtk::TreeView::Column* m_col_mark;
-        Gtk::TreeView::Column* m_col_id;
-        Gtk::TreeView::Column* m_col_board;
-        Gtk::TreeView::Column* m_col_subject;
-        Gtk::TreeView::Column* m_col_res;
-        Gtk::TreeView::Column* m_col_str_load;        
-        Gtk::TreeView::Column* m_col_str_new;
-        Gtk::TreeView::Column* m_col_since;
-        Gtk::TreeView::Column* m_col_write;
-        Gtk::TreeView::Column* m_col_access;
-        Gtk::TreeView::Column* m_col_speed;
-        Gtk::TreeView::Column* m_col_diff;
+        Gtk::TreeView::Column* m_col_mark{};
+        Gtk::TreeView::Column* m_col_id{};
+        Gtk::TreeView::Column* m_col_board{};
+        Gtk::TreeView::Column* m_col_subject{};
+        Gtk::TreeView::Column* m_col_res{};
+        Gtk::TreeView::Column* m_col_str_load{};
+        Gtk::TreeView::Column* m_col_str_new{};
+        Gtk::TreeView::Column* m_col_since{};
+        Gtk::TreeView::Column* m_col_write{};
+        Gtk::TreeView::Column* m_col_access{};
+        Gtk::TreeView::Column* m_col_speed{};
+        Gtk::TreeView::Column* m_col_diff{};
 
         // クリック状態
-        bool m_clicked;
+        bool m_clicked{};
 
         // ダブルクリック状態
-        bool m_dblclicked;
+        bool m_dblclicked{};
 
         // 押したキー
-        int m_pressed_key;
+        int m_pressed_key{};
 
         // ソートで使う変数
         int m_col;
         int m_previous_col;
         int m_sortmode;
-        int m_previous_sortmode;
+        int m_previous_sortmode{};
 
         // サーチで使う変数
-        bool m_search_invert;
+        bool m_search_invert{};
         std::string m_pre_query;
-        
+
         // ポップアップメニュー用
         Gtk::TreeModel::Path m_path_selected;
 
         // ロード中
-        bool m_loading;
+        bool m_loading{};
 
         // ロード前の最終アクセス時刻 ( 新着判定用 )
-        time_t m_last_access_time;
+        time_t m_last_access_time{};
 
         // ロード中に draw_bg_articles() を呼び出したときに使う一時変数
         // draw_bg_articles() を参照せよ
@@ -93,10 +93,10 @@ namespace BOARD
         bool m_show_col_board;
 
         // 増分行が表示されている
-        bool m_col_diff_is_shown;
+        bool m_col_diff_is_shown{};
 
         // 連続クリック防止用カウンタ
-        int m_cancel_openrow_counter;
+        int m_cancel_openrow_counter{};
 
     public:
 
