@@ -18,7 +18,7 @@ namespace BOARD
 
     class BoardAdmin : public SKELETON::Admin
     {
-        BoardToolBar* m_toolbar;
+        BoardToolBar* m_toolbar{};
 
       public:
         explicit BoardAdmin( const std::string& url );

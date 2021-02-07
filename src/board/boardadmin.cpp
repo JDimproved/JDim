@@ -51,7 +51,7 @@ void BOARD::delete_admin()
 using namespace BOARD;
 
 BoardAdmin::BoardAdmin( const std::string& url )
-    : SKELETON::Admin( url ) , m_toolbar( nullptr )
+    : SKELETON::Admin( url )
 {
     set_use_viewhistory( true );
     set_use_switchhistory( true );
