@@ -26,6 +26,7 @@ using namespace DBIMG;
 
 DelImgCacheDiag::DelImgCacheDiag()
     : m_label( "画像キャッシュ削除中・・・\n\nしばらくお待ち下さい" )
+    , m_stop{ true }
 {
     add_button( g_dgettext( GTK_DOMAIN, "_Cancel" ), Gtk::RESPONSE_CANCEL )
     ->signal_clicked().connect( sigc::mem_fun(*this, &DelImgCacheDiag::slot_cancel_clicked ) );
