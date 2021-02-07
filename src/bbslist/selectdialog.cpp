@@ -26,12 +26,11 @@ enum
 
 
 SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore )
-    : SKELETON::PrefDiag( parent, url, true ),
-      m_treestore( treestore ),
-      m_label_name( CORE::SBUF_size() == 1, "名前 ：" ),
-      m_label_dirs( "ディレクトリ ：" ),
-      m_bt_show_tree( "詳細" ),
-      m_selectview( nullptr )
+    : SKELETON::PrefDiag( parent, url, true )
+    , m_treestore( treestore )
+    , m_label_name( CORE::SBUF_size() == 1, "名前 ：" )
+    , m_label_dirs( "ディレクトリ ：" )
+    , m_bt_show_tree( "詳細" )
 {
     const int mrg = 8;
 

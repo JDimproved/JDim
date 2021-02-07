@@ -29,7 +29,7 @@ namespace BBSLIST
 
         Gtk::ToggleButton m_bt_show_tree;
 
-        SelectListView* m_selectview;
+        SelectListView* m_selectview{};
 
       public:
 
