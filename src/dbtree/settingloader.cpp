@@ -17,10 +17,8 @@
 using namespace DBTREE;
 
 SettingLoader::SettingLoader( const std::string& url_boadbase )
-    : SKELETON::TextLoader(),
-      m_url_boadbase( url_boadbase ),
-      m_line_number( 0 ),
-      m_message_count( 0 )
+    : SKELETON::TextLoader()
+    , m_url_boadbase( url_boadbase )
 {
 #ifdef _DEBUG
     std::cout << "SettingLoader::SettingLoader : " << m_url_boadbase << std::endl;
