@@ -19,9 +19,9 @@ namespace HISTORY
 
         std::vector< ViewHistoryItem* > m_items;
 
-        int m_history_top;
-        int m_history_current;
-        int m_history_end;
+        int m_history_top{};
+        int m_history_current{};
+        int m_history_end{};
 
         ViewHistory();
         virtual ~ViewHistory();

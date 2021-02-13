@@ -10,8 +10,7 @@ using namespace HISTORY;
 
 
 HistoryMenu::HistoryMenu( const std::string& url_history, const std::string& label )
-    : Gtk::MenuItem( label, true ),
-      m_activate( false )
+    : Gtk::MenuItem( label, true )
 {
     m_submenu = Gtk::manage( new HistorySubMenu( url_history ) );
     set_submenu( *m_submenu );

@@ -16,7 +16,7 @@ namespace HISTORY
     class HistoryMenu : public Gtk::MenuItem
     {
         HistorySubMenu* m_submenu;
-        bool m_activate;
+        bool m_activate{};
 
       public:
 
