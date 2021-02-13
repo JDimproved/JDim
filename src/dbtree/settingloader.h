@@ -28,10 +28,10 @@ namespace DBTREE
         std::string m_default_noname;
 
         // 最大改行数/2
-        int m_line_number;
+        int m_line_number{};
 
         // 最大書き込みバイト数
-        int m_message_count;
+        int m_message_count{};
 
         // 特殊文字書き込み
         std::string m_unicode;

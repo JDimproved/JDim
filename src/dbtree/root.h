@@ -60,7 +60,7 @@ namespace DBTREE
         std::list< DBTREE::ETCBOARDINFO > m_etcboards; // 外部板情報
 
         // 移転処理用変数
-        bool m_analyzing_board_xml;  // XML 解析中
+        bool m_analyzing_board_xml{};  // XML 解析中
         std::set< std::string > m_analyzed_path_board; // XML 解析中に処理済みの板のpath
         std::string m_move_info;  // 移転したときにダイアログに表示する移転済み板の一覧
 
@@ -70,7 +70,7 @@ namespace DBTREE
         // get_board()のキャッシュ
         // get_article_fromURL()のキャッシュ
         std::string m_get_board_url;
-        BoardBase* m_get_board;
+        BoardBase* m_get_board{};
 
         bool m_enable_save_movetable;
 
