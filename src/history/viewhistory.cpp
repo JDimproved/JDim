@@ -14,7 +14,6 @@ enum
 
 
 ViewHistory::ViewHistory()
-   :  m_history_top( 0 ), m_history_current( 0 ), m_history_end( 0 )
 {
 #ifdef _DEBUG
     std::cout << "ViewHistory::ViewHistory\n";
