@@ -62,9 +62,6 @@ enum
 
 Root::Root()
     : SKELETON::Loadable()
-    , m_analyzing_board_xml( false )
-    , m_board_null( nullptr )
-    , m_get_board( nullptr )
     , m_enable_save_movetable( true )
 {
     m_xml_document.clear();
