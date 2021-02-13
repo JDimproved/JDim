@@ -22,11 +22,11 @@ namespace CORE
     class DND_Manager
     {
         // true ならd&d中
-        bool m_dnd;
+        bool m_dnd{};
 
       public:
 
-        DND_Manager():m_dnd( false ){}
+        DND_Manager() noexcept = default;
         virtual ~DND_Manager() noexcept = default;
 
         bool now_dnd() const { return m_dnd; }
