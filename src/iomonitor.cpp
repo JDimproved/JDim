@@ -27,10 +27,8 @@ using namespace CORE;
 /*-------------------------------------------------------------------*/
 IOMonitor::IOMonitor()
     : m_fifo_fd( -1 )
-    , m_iochannel( nullptr )
     , m_fifo_file( CACHE::path_lock() )
     , m_fifo_stat( FIFO_OK )
-    , m_main_process( false )
 {
     init();
 }

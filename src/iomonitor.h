@@ -32,7 +32,7 @@ namespace CORE
         int m_fifo_stat;
 
         // メインプロセスか否か
-        bool m_main_process;
+        bool m_main_process{};
 
       private:
 
