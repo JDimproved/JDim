@@ -21,7 +21,7 @@ namespace HISTORY
 
         // ポップアップメニュー
         Gtk::Menu m_popupmenu;
-        int m_number_menuitem;
+        int m_number_menuitem{};
 
       public:
 
