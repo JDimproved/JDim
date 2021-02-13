@@ -68,12 +68,6 @@ using namespace HISTORY;
 
 
 History_Manager::History_Manager()
-    : m_menu_thread( nullptr ),
-      m_menu_board( nullptr ),
-      m_menu_close( nullptr ),
-      m_menu_closeboard( nullptr ),
-      m_menu_closeimg( nullptr ),
-      m_last_viewhistory( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "History_Manager::History_Manager\n";

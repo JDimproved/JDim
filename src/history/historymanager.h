@@ -27,15 +27,15 @@ namespace HISTORY
     class History_Manager
     {
         // 履歴メニュー
-        HistoryMenu* m_menu_thread;
-        HistoryMenu* m_menu_board;
-        HistoryMenu* m_menu_close;
-        HistoryMenu* m_menu_closeboard;
-        HistoryMenu* m_menu_closeimg;
+        HistoryMenu* m_menu_thread{};
+        HistoryMenu* m_menu_board{};
+        HistoryMenu* m_menu_close{};
+        HistoryMenu* m_menu_closeboard{};
+        HistoryMenu* m_menu_closeimg{};
 
         // View履歴
         std::list< ViewHistory* > m_view_histories;
-        ViewHistory* m_last_viewhistory;
+        ViewHistory* m_last_viewhistory{};
 
       public:
 
