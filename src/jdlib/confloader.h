@@ -25,7 +25,7 @@ namespace JDLIB
     {
         std::string m_file;
         std::list< ConfData > m_data;
-        bool m_broken;
+        bool m_broken{};
 
     public:
 

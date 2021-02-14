@@ -20,8 +20,7 @@ using namespace JDLIB;
 // もしstr_confがemptyの時はfileから読み込む
 //
 ConfLoader::ConfLoader( const std::string& file, std::string str_conf )
-    : m_file( file ),
-      m_broken( false )
+    : m_file( file )
 {
     if( str_conf.empty() ) CACHE::load_rawdata( m_file, str_conf );
 
