@@ -12,23 +12,23 @@ namespace JDLIB
     template < typename T >
     class ConstPtr
     {
-        T *m_p;
+        T* m_p{};
 
     public:
 
         T* operator -> () noexcept { return m_p; }
         const T* operator -> () const noexcept { return m_p; }
-        bool operator == ( const T *p ) const { return( m_p == p ); }
-        bool operator != ( const T *p ) const { return( m_p != p ); }
-        bool operator ! () const { return ( m_p == nullptr ); }
-        T& operator * () const { return *m_p; }
-        operator bool () const { return ( m_p != nullptr ); }
-        T& operator [] ( const int i ){ return m_p[ i ]; }
+        bool operator == ( const T* p ) const noexcept { return ( m_p == p ); }
+        bool operator != ( const T* p ) const noexcept { return ( m_p != p ); }
+        bool operator ! () const noexcept { return ( m_p == nullptr ); }
+        operator bool () const noexcept { return ( m_p != nullptr ); }
+        T& operator * () { return *m_p; }
+        const T& operator * () const { return *m_p; }
+        T& operator [] ( int i ) { return m_p[i]; }
+        const T& operator [] ( int i ) const { return m_p[i]; }
 
-        ConstPtr< T >& operator = ( const ConstPtr< T >& a ){ m_p = a.m_p; return *this; }
-        ConstPtr< T >& operator = ( ConstPtr< T >& a ){ m_p = a.m_p; return *this; }
-        ConstPtr< T >& operator = ( const T *p ){ m_p = p; return *this; }    
-        ConstPtr< T >& operator = ( T *p ){ m_p = p; return *this; }
+        ConstPtr& operator = ( const ConstPtr& a ) { m_p = a.m_p; return *this; }
+        ConstPtr& operator = ( T* p ) { m_p = p; return *this; }
 
         void reset() { m_p = nullptr; }
 
@@ -38,9 +38,8 @@ namespace JDLIB
             reset();
         }
 
-        ConstPtr() : m_p (nullptr){}
-        ConstPtr( T *p ) : m_p (p){}
-        ConstPtr( const T *p ) : m_p (p){}
+        ConstPtr() noexcept = default;
+        ConstPtr( T* p ) : m_p( p ) {}
     };
 }
 
