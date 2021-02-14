@@ -29,12 +29,12 @@ namespace JDLIB
         std::string m_errmsg;
 
 #ifdef USE_GNUTLS
-        gnutls_session_t m_session;
-        gnutls_certificate_credentials_t m_cred;
+        gnutls_session_t m_session{};
+        gnutls_certificate_credentials_t m_cred{};
 
 #else // USE_GNUTLS
-        SSL_CTX *m_ctx;
-        SSL* m_ssl;
+        SSL_CTX* m_ctx{};
+        SSL* m_ssl{};
 #endif // USE_GNUTLS
 
       public:

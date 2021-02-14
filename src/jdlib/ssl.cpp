@@ -34,8 +34,6 @@ void JDLIB::deinit_ssl()
 
 
 JDSSL::JDSSL()
-    : m_session( nullptr ),
-      m_cred( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::JDSSL(gnutls)\n";
@@ -202,8 +200,6 @@ void JDLIB::deinit_ssl()
 
 
 JDSSL::JDSSL()
-    : m_ctx( nullptr ),
-      m_ssl( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::JDSSL(openssl)\n";
