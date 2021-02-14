@@ -15,10 +15,10 @@ namespace IMAGE
     {
         Gtk::EventBox m_event_frame;
         Gtk::EventBox m_event_margin;
-        Gtk::Label* m_label;
-        size_t m_length_prev;
+        Gtk::Label* m_label{};
+        size_t m_length_prev{};
 
-        bool m_clicked;
+        bool m_clicked{};
 
       public:
 

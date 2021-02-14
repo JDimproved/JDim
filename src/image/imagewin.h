@@ -15,7 +15,7 @@ namespace IMAGE
 {
     class ImageWin : public SKELETON::JDWindow
     {
-        Gtk::Widget* m_tab;
+        Gtk::Widget* m_tab{};
 
       public:
 

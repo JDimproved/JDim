@@ -31,10 +31,10 @@ namespace IMAGE
 
         std::string m_errmsg; // エラーメッセージ
 
-        bool m_ready; // 画像がsetされた
+        bool m_ready{}; // 画像がsetされた
 
-        int m_width;
-        int m_height;
+        int m_width{};
+        int m_height{};
 
         // スレッド用変数
         JDLIB::Thread m_thread;

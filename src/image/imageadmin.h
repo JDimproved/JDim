@@ -31,9 +31,9 @@ namespace IMAGE
         std::list< SKELETON::View* > m_list_view;
 
         int m_scroll;
-        int m_counter_scroll;
+        int m_counter_scroll{};
 
-        double m_smooth_dy{ 0.0 }; // GDK_SCROLL_SMOOTH のスクロール変化量
+        double m_smooth_dy{}; // GDK_SCROLL_SMOOTH のスクロール変化量
 
         Glib::RefPtr<Gtk::GestureMultiPress> m_gesture_press_left;
         Glib::RefPtr<Gtk::GestureMultiPress> m_gesture_press_right;

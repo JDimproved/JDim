@@ -49,11 +49,8 @@ using namespace IMAGE;
 // 1 -> INTERP_BILINEAR
 // 3 -> INTERP_HYPER
 ImageAreaBase::ImageAreaBase( const std::string& url, const int interptype )
-    : m_url( url ),
-      m_img ( DBIMG::get_img( m_url ) ),
-      m_ready( false ),
-      m_width( 0 ),
-      m_height( 0 )
+    : m_url( url )
+    , m_img( DBIMG::get_img( m_url ) )
 {
 #ifdef _DEBUG
     std::cout << "ImageAreaBase::ImageAreaBase url = " << m_url << " type = " << interptype << std::endl;
