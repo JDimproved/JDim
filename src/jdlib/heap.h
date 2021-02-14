@@ -15,8 +15,8 @@ namespace JDLIB
     {
         std::list< std::unique_ptr<unsigned char[]> > m_heap_list;
         std::size_t m_blocksize; // ブロックサイズ
-        std::size_t m_space_avail; // ブロックの未使用サイズ
-        void* m_ptr_head; // 検索開始位置
+        std::size_t m_space_avail{}; // ブロックの未使用サイズ
+        void* m_ptr_head{}; // 検索開始位置
 
       public:
         explicit HEAP( std::size_t blocksize ) noexcept;
