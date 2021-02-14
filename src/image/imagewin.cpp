@@ -17,8 +17,7 @@ using namespace IMAGE;
 
 
 ImageWin::ImageWin()
-    : SKELETON::JDWindow( CONFIG::get_fold_image() ),
-      m_tab( nullptr )
+    : SKELETON::JDWindow( CONFIG::get_fold_image() )
 {
 #ifdef _DEBUG
     std::cout << "ImageWin::ImageWin x y w h = "
