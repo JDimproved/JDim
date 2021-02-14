@@ -13,8 +13,6 @@ using namespace JDLIB;
 
 HEAP::HEAP( std::size_t blocksize ) noexcept
     : m_blocksize{ blocksize }
-    , m_space_avail{ 0 }
-    , m_ptr_head{ nullptr }
 {}
 
 
