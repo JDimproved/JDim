@@ -14,10 +14,10 @@ namespace JDLIB
     template < typename T >
     class RefPtr_Lock
     {
-        T *m_p;
+        T* m_p{};
 
     public:
-    
+
         void clear(){
             if( m_p ){
                 m_p->unlock();
@@ -25,31 +25,26 @@ namespace JDLIB
             }
         }
 
-        void set( T *p ){
+        void set( T* p ){
             clear();
             m_p = p;
             if( m_p ) m_p->lock();
-        }        
-
+        }
 
         T* operator -> () noexcept { return m_p; }
         const T* operator -> () const noexcept { return m_p; }
-        bool operator == ( const T *p ) const { return( m_p == p ); }
-        bool operator != ( const T *p ) const { return( m_p != p ); }
-        bool operator ! () const { return ( m_p == nullptr ); }
-        operator bool () const { return ( m_p != nullptr ); }
-    
-        RefPtr_Lock< T >& operator = ( const RefPtr_Lock< T >& a ){ set( a.m_p ); return *this; }
-        RefPtr_Lock< T >& operator = ( RefPtr_Lock< T >& a ){ set( a.m_p ); return *this; }
-        RefPtr_Lock< T >& operator = ( const T *p ){ set( p ); return *this; }    
-        RefPtr_Lock< T >& operator = ( T *p ){ set( p ); return *this; }
-    
-        RefPtr_Lock() : m_p (nullptr){}
-        RefPtr_Lock( const RefPtr_Lock< T >& a ): m_p (nullptr){ set( a.m_p ); }
-        RefPtr_Lock( RefPtr_Lock< T >& a ) : m_p (nullptr){ set( a.m_p ); }
-        RefPtr_Lock( T *p ) : m_p (nullptr){ set( p ); }
-        RefPtr_Lock( const T *p ) : m_p (nullptr){ set( p ); }
-    
+        bool operator == ( const T* p ) const noexcept { return ( m_p == p ); }
+        bool operator != ( const T* p ) const noexcept { return ( m_p != p ); }
+        bool operator ! () const noexcept { return ( m_p == nullptr ); }
+        operator bool () const noexcept { return ( m_p != nullptr ); }
+
+        RefPtr_Lock& operator = ( const RefPtr_Lock& a ) { set( a.m_p ); return *this; }
+        RefPtr_Lock& operator = ( T* p ) { set( p ); return *this; }
+
+        RefPtr_Lock() noexcept = default;
+        RefPtr_Lock( const RefPtr_Lock& a ) { set( a.m_p ); }
+        RefPtr_Lock( T* p ) { set( p ); }
+
         virtual ~RefPtr_Lock(){ clear();}
     };
 }
