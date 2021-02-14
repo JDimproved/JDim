@@ -19,9 +19,6 @@ using namespace IMAGE;
 
 ImageViewPopup::ImageViewPopup( const std::string& url )
     : ImageViewBase( url )
-    , m_label( nullptr )
-    , m_length_prev( 0 )
-    , m_clicked( false )
 {
 #ifdef _DEBUG
     std::cout << "ImageViewPopup::ImageViewPopup url = " << get_url() << std::endl;
