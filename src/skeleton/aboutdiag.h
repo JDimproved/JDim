@@ -43,7 +43,6 @@ namespace SKELETON
 
         void init();
         void slot_button_website_clicked();
-        void slot_close_clicked() {}
         void slot_copy_environment();
 
       public:
