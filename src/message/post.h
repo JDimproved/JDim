@@ -45,12 +45,12 @@ namespace MESSAGE
         std::string m_errmsg;
         std::string m_rawdata;
 
-        int m_count; // 書き込み確認時の永久ループ防止用
-        bool m_subbbs; // true なら subbbs.cgiにpostする
+        int m_count{}; // 書き込み確認時の永久ループ防止用
+        bool m_subbbs{}; // true なら subbbs.cgiにpostする
         bool m_new_article; // 新スレ作成
 
         // 書き込んでいますのダイアログ
-        SKELETON::MsgDiag* m_writingdiag;
+        SKELETON::MsgDiag* m_writingdiag{};
 
         PostStrategy* m_post_strategy;
 

@@ -14,8 +14,6 @@
 #include <list>
 #include <string>
 #include <sys/time.h>
-#include <cstring>
-#include <ctime>
 
 enum
 {
@@ -33,13 +31,14 @@ namespace MESSAGE
         std::string msg;
         time_t time_write;
         std::list< std::string > msg_lines;
-        char head[ LOGITEM_SIZE_HEAD ];
-        bool remove;
+        char head[ LOGITEM_SIZE_HEAD ]{};
+        bool remove{};
 
-      LogItem( const std::string& _url, const bool _newthread, const std::string& _msg )
-      : url( _url ), newthread( _newthread ), msg( _msg ), remove( false )
+        LogItem( const std::string& _url, const bool _newthread, const std::string& _msg )
+            : url( _url )
+            , newthread( _newthread )
+            , msg( _msg )
         {
-
             struct timeval tv;
             struct timezone tz;
             gettimeofday( &tv, &tz );
@@ -61,7 +60,6 @@ namespace MESSAGE
             msg_lines = MISC::get_lines( MISC::replace_str( MISC::remove_spaces( msg ), "\n", " \n" ) );
 
             // 簡易チェック用に先頭の文字列をコピー(空白は除く)
-            memset( head, 0, LOGITEM_SIZE_HEAD );
             for( size_t i = 0, i2 = 0; i < LOGITEM_SIZE_HEAD && i2 < msg.length(); ++i2 ){
                 if( msg.c_str()[ i2 ] != ' ' ) head[ i++ ] = msg.c_str()[ i2 ];
             }

@@ -8,7 +8,6 @@
 #include <gtkmm.h>
 
 #include "skeleton/toolbar.h"
-#include "skeleton/label_entry.h"
 
 
 namespace MESSAGE
@@ -17,7 +16,7 @@ namespace MESSAGE
     {
         bool m_enable_slot;
 
-        Gtk::ToggleToolButton* m_button_preview;
+        Gtk::ToggleToolButton* m_button_preview{};
 
       public:
 
@@ -41,14 +40,14 @@ namespace MESSAGE
     // 通常
     class MessageToolBar : public MessageToolBarBase
     {
-        Gtk::ToolButton* m_button_insert_draft;
-        Gtk::ToolButton* m_button_undo;
+        Gtk::ToolButton* m_button_insert_draft{};
+        Gtk::ToolButton* m_button_undo{};
 
         // false ならスレ名ラベル、trueなら新規レス名entry表示
-        bool m_show_entry_new_subject;
+        bool m_show_entry_new_subject{};
 
-        Gtk::ToolItem* m_tool_new_subject;
-        Gtk::Entry* m_entry_new_subject;
+        Gtk::ToolItem* m_tool_new_subject{};
+        Gtk::Entry* m_entry_new_subject{};
 
       public:
 

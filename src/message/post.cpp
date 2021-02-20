@@ -65,14 +65,11 @@ enum
 };
 
 Post::Post( Gtk::Widget* parent, const std::string& url, const std::string& msg, bool new_article )
-    : SKELETON::Loadable(),
-      m_parent( parent ),
-      m_url( url ),
-      m_msg( msg ),
-      m_count( 0 ),
-      m_subbbs( 0 ),
-      m_new_article( new_article ),
-      m_writingdiag( nullptr )
+    : SKELETON::Loadable()
+    , m_parent( parent )
+    , m_url( url )
+    , m_msg( msg )
+    , m_new_article( new_article )
 {
 #ifdef _DEBUG
     std::cout << "Post::Post " << m_url << std::endl;

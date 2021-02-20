@@ -20,10 +20,9 @@ using namespace MESSAGE;
 
 
 
-MessageToolBarBase::MessageToolBarBase() :
-    SKELETON::ToolBar( MESSAGE::get_admin() ),
-    m_enable_slot( true ),
-    m_button_preview( nullptr )
+MessageToolBarBase::MessageToolBarBase()
+    : SKELETON::ToolBar( MESSAGE::get_admin() )
+    , m_enable_slot( true )
 {}
 
 
@@ -71,13 +70,8 @@ void MessageToolBarBase::set_active_previewbutton( const bool active )
 
 // 通常のツールバー
 
-MessageToolBar::MessageToolBar() :
-    MessageToolBarBase(),
-    m_button_insert_draft( nullptr ),
-    m_button_undo( nullptr ),
-    m_show_entry_new_subject( false ),
-    m_tool_new_subject( nullptr ),
-    m_entry_new_subject( nullptr )
+MessageToolBar::MessageToolBar()
+    : MessageToolBarBase()
 {
     MessageToolBar::pack_buttons();
 }
