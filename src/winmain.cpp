@@ -27,9 +27,7 @@
 
 JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag,
                       const int init_w, const int init_h, const int init_x, const int init_y )
-    : SKELETON::JDWindow( false ),
-      m_core( nullptr ),
-      m_cancel_state_event( false )
+    : SKELETON::JDWindow( false )
 {
 #ifdef _DEBUG
     std::cout << "JDWinMain::JDWinMain init = " << init << std::endl
