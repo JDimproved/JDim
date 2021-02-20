@@ -41,7 +41,7 @@ namespace XML
         int m_nodeType;
         std::string m_nodeName;
         std::string m_nodeValue;
-        Dom* m_parentNode;
+        Dom* m_parentNode{};
 
         // 属性ペアのリスト
         std::map< std::string, std::string > m_attributes;
