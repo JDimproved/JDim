@@ -18,8 +18,8 @@ namespace CORE
 class JDWinMain : public SKELETON::JDWindow
 {
     CORE::Core* m_core;
-    bool m_cancel_state_event;
-    
+    bool m_cancel_state_event{};
+
     // 入力コントローラ
     CONTROL::Control m_control;
 
