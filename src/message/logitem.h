@@ -60,8 +60,8 @@ namespace MESSAGE
             msg_lines = MISC::get_lines( MISC::replace_str( MISC::remove_spaces( msg ), "\n", " \n" ) );
 
             // 簡易チェック用に先頭の文字列をコピー(空白は除く)
-            for( size_t i = 0, i2 = 0; i < LOGITEM_SIZE_HEAD && i2 < msg.length(); ++i2 ){
-                if( msg.c_str()[ i2 ] != ' ' ) head[ i++ ] = msg.c_str()[ i2 ];
+            for( size_t i = 0, i2 = 0; i < LOGITEM_SIZE_HEAD -1 && i2 < msg.length(); ++i2 ){
+                if( msg[ i2 ] != ' ' ) head[ i++ ] = msg[ i2 ];
             }
         }
     };
