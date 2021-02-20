@@ -26,7 +26,7 @@ namespace SKELETON
 
         std::map< Gtk::MenuItem*, int > m_map_items;
 
-        Gtk::MenuItem* m_activeitem;
+        Gtk::MenuItem* m_activeitem{};
 
       public:
 
