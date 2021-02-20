@@ -27,10 +27,9 @@ std::set< std::string > Dom::m_static_html_elements;
 
 // コンストラクタ
 Dom::Dom( const int type, const std::string& name, const bool html )
-    : m_html( html ),
-      m_nodeType( type ),
-      m_nodeName( name ),
-      m_parentNode( nullptr )
+    : m_html( html )
+    , m_nodeType( type )
+    , m_nodeName( name )
 {
     // HTMLの場合に空要素として扱う物の内で、使われていそうな物( 小文字で統一 )
     if( html && m_static_html_elements.empty() )
@@ -57,12 +56,11 @@ Dom::~Dom() noexcept
 
 // コピーコンストラクタ
 Dom::Dom( const Dom& dom )
-    : m_html( dom.m_html ),
-      m_nodeType( dom.m_nodeType ),
-      m_nodeName( dom.m_nodeName ),
-      m_nodeValue( dom.m_nodeValue ),
-      m_parentNode( nullptr ),
-      m_attributes( dom.m_attributes )
+    : m_html( dom.m_html )
+    , m_nodeType( dom.m_nodeType )
+    , m_nodeName( dom.m_nodeName )
+    , m_nodeValue( dom.m_nodeValue )
+    , m_attributes( dom.m_attributes )
 {
     copy_childNodes( dom );
 }
