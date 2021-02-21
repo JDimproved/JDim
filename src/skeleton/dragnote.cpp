@@ -26,10 +26,9 @@ DragableNoteBook::DragableNoteBook()
     , m_notebook_toolbar( this )
     , m_notebook_view( this )
     , m_bt_tabswitch( this )
+    , m_show_tabs{ true }
+    , m_show_toolbar{ true }
     , m_page( -1 )
-    , m_dragging_tab( false )
-    , m_dragable( false )
-    , m_down_arrow( nullptr )
 {
     set_spacing( 0 );
 
@@ -48,10 +47,6 @@ DragableNoteBook::DragableNoteBook()
     pack_start( m_hbox_tab, Gtk::PACK_SHRINK );
     pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
     pack_start( m_notebook_view );
-    m_show_tabs = true;
-    m_show_toolbar = true;
-
-    memset( &m_alloc_old, 0, sizeof( Alloc_NoteBook ) );
 
     show_all_children();
 }
