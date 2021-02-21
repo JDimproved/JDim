@@ -20,7 +20,10 @@ enum
 using namespace SKELETON;
 
 TabSwitchMenu::TabSwitchMenu( DragableNoteBook* notebook, Admin* admin )
-    : Gtk::Menu(), m_parentadmin( admin ), m_parentnote( notebook ), m_deactivated( true ), m_size( 0 )
+    : Gtk::Menu()
+    , m_parentadmin( admin )
+    , m_parentnote( notebook )
+    , m_deactivated{ true }
 {
 
 #ifdef _DEBUG
