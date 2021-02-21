@@ -30,7 +30,7 @@ namespace SKELETON
         SIG_MOTION_NOTIFY m_sig_motion_notify;
 
         // get_row_height() で高さを取得するためのcolumn番号
-        int m_column_for_height;
+        int m_column_for_height{};
 
       public:
 
