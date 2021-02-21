@@ -17,7 +17,7 @@
 using namespace SKELETON;
 
 Login::Login( const std::string& url )
-    : m_url( url ), m_login_now( 0 ), m_save_info( 0 )
+    : m_url( url )
 {
 #ifdef _DEBUG
     std::cout << "Login::Login " << get_url() << std::endl;

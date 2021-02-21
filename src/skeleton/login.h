@@ -16,8 +16,8 @@ namespace SKELETON
     class Login : public SKELETON::Loadable
     {
         std::string m_url;
-        bool m_login_now;
-        bool m_save_info;
+        bool m_login_now{};
+        bool m_save_info{};
 
         std::string m_username;
         std::string m_passwd;
