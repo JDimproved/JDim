@@ -28,10 +28,10 @@ namespace SKELETON
 
         JDEntry m_entry;
         bool m_enable_changed;
-        bool m_focused;
+        bool m_focused{};
 
         // ポップアップ
-        bool m_show_popup;
+        bool m_show_popup{};
         PopupWinBase m_popup_win;
         Gtk::ScrolledWindow m_scr_win;
         JDTreeViewBase m_treeview;
