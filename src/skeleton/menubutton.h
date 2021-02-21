@@ -21,13 +21,13 @@ namespace SKELETON
         SIG_BUTTON_CLICKED m_sig_clicked;
         SIG_SELECTED m_sig_selected;
 
-        Gtk::Menu* m_popupmenu;
+        Gtk::Menu* m_popupmenu{};
         std::vector< Gtk::MenuItem* > m_menuitems;
-        Gtk::Widget* m_label;
+        Gtk::Widget* m_label{};
 
         Gtk::Image* m_arrow{};
 
-        bool m_on_arrow;
+        bool m_on_arrow{};
         bool m_enable_sig_clicked;
 
       public:

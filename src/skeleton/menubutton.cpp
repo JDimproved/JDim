@@ -21,14 +21,12 @@ enum
 
 
 MenuButton::MenuButton( const bool show_arrow, Gtk::Widget& label )
-    : m_label( nullptr )
 {
     setup( show_arrow, &label );
 }
 
 
 MenuButton::MenuButton( const bool show_arrow, const int id )
-    : m_label( nullptr )
 {
     setup( show_arrow, Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) ), Gtk::PACK_SHRINK );
 }
@@ -39,8 +37,6 @@ void MenuButton::setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOpti
     const int space = 4;
 
     m_label = label;
-    m_popupmenu =  nullptr;
-    m_on_arrow = false;
     m_enable_sig_clicked = true;
 
     Gtk::HBox *hbox = Gtk::manage( new Gtk::HBox() );
