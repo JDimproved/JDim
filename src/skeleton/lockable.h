@@ -14,16 +14,15 @@ namespace SKELETON
 {
     class Lockable
     {
-        int m_lock;
+        int m_lock{};
 
     public:
 
-        Lockable() :m_lock( 0 ){}
-        
+        Lockable() = default;
         virtual ~Lockable() noexcept = default;
 
         int get_lock() const { return m_lock; }
-    
+
         void lock(){ ++m_lock; }
         void unlock(){
             --m_lock;

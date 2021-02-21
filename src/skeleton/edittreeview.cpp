@@ -1847,10 +1847,9 @@ void EditTreeView::sort( const Gtk::TreePath& path, const int mode )
 // path が empty の時はルートから反復する
 //
 EditTreeViewIterator::EditTreeViewIterator( EditTreeView& treeview, EditColumns& columns, const Gtk::TreePath path )
-    : m_treeview( treeview ),
-      m_columns( columns ),
-      m_end( false ),
-      m_path( path )
+    : m_treeview( treeview )
+    , m_columns( columns )
+    , m_path( path )
 {
     const bool root = ( m_path.empty() );
     if( root ){

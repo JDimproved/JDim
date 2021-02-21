@@ -15,9 +15,8 @@ DetailDiag::DetailDiag( Gtk::Window* parent, const std::string& url,
                         const bool add_cancel,
                         const std::string& message, const std::string& tab_message,
                         const std::string& detail_html, const std::string& tab_detail )
-    : SKELETON::PrefDiag( parent, url, add_cancel ),
-      m_message( message ),
-      m_detail( nullptr )
+    : SKELETON::PrefDiag( parent, url, add_cancel )
+    , m_message( message )
 {
     m_message.set_width_chars( 60 );
     m_message.set_line_wrap( true );

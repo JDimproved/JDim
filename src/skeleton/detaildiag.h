@@ -5,8 +5,6 @@
 #ifndef _DETAILDIAG_H
 #define _DETAILDIAG_H
 
-#include "gtkmmversion.h"
-
 #include "prefdiag.h"
 
 
@@ -18,7 +16,7 @@ namespace SKELETON
     {
         Gtk::Notebook m_notebook;
         Gtk::Label m_message;
-        SKELETON::View* m_detail;
+        SKELETON::View* m_detail{};
 
       public:
 

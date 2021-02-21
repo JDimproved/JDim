@@ -3,12 +3,10 @@
 #ifndef _EDITVIEW_H
 #define _EDITVIEW_H
 
-#include "gtkmmversion.h"
-
 #include <gtkmm.h>
 
 #include "control/control.h"
-#include "jdlib/miscutil.h"
+
 
 namespace SKELETON
 {
@@ -40,10 +38,10 @@ namespace SKELETON
 
         // undo 用
         std::vector< UNDO_DATA > m_undo_tree;
-        int m_undo_pos;
+        int m_undo_pos{};
         Glib::ustring m_pre_text;
-        bool m_cancel_change;
-        bool m_delete_pushed;
+        bool m_cancel_change{};
+        bool m_delete_pushed{};
 
         // カーソル移動用
         int m_pre_offset;
@@ -51,10 +49,10 @@ namespace SKELETON
         int m_line_offset;
 
         // コンテキストメニュー
-        Gtk::Menu* m_context_menu;
+        Gtk::Menu* m_context_menu{};
 
         // AAポップアップ
-        AAMenu* m_aapopupmenu;
+        AAMenu* m_aapopupmenu{};
 
       public:
 

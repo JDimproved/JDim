@@ -16,7 +16,7 @@ namespace SKELETON
         Admin* m_parentadmin;
         DragableNoteBook* m_parentnote;
         bool m_deactivated;
-        int m_size;
+        int m_size{};
 
         std::vector< Gtk::MenuItem* > m_vec_items;
         std::vector< Gtk::Label* > m_vec_labels;

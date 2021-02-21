@@ -51,14 +51,7 @@ using namespace SKELETON;
 
 
 Admin::Admin( const std::string& url )
-    : m_url( url ),
-      m_win( nullptr ),
-      m_notebook( nullptr ),
-      m_focus( false ),
-      m_move_menu( nullptr ),
-      m_tabswitchmenu( nullptr ),
-      m_use_viewhistory( false ),
-      m_use_switchhistory( false )
+    : m_url( url )
 {
     m_notebook = new DragableNoteBook();
 

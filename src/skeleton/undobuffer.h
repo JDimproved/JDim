@@ -45,8 +45,8 @@ namespace SKELETON
     {
         std::vector< UNDO_DATA > m_vec_undo;
 
-        int m_pos;
-        int m_max;
+        int m_pos{};
+        int m_max{};
         bool m_first;
 
         SIG_UNDO m_sig_undo;

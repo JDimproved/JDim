@@ -7,8 +7,6 @@
 #ifndef _ADMIN_H
 #define _ADMIN_H
 
-#include "gtkmmversion.h"
-
 #include "dispatchable.h"
 
 #include <gtkmm.h>
@@ -29,13 +27,13 @@ namespace SKELETON
     {
         std::string m_url;
 
-        JDWindow * m_win;
+        JDWindow* m_win{};
 
     protected:
-        DragableNoteBook* m_notebook;
+        DragableNoteBook* m_notebook{};
 
     private:
-        bool m_focus;
+        bool m_focus{};
 
         std::list< COMMAND_ARGS > m_list_command;
 
@@ -46,17 +44,17 @@ namespace SKELETON
 
         // 移動サブメニュー
         Gtk::MenuItem* m_move_menuitem;
-        TabSwitchMenu* m_move_menu;
+        TabSwitchMenu* m_move_menu{};
 
         // タブ切り替えメニュー
-        TabSwitchMenu* m_tabswitchmenu;
+        TabSwitchMenu* m_tabswitchmenu{};
 
         // view履歴使用
-        bool m_use_viewhistory;
+        bool m_use_viewhistory{};
         std::string m_last_closed_url;
 
         // タブの切り替え履歴
-        bool m_use_switchhistory;
+        bool m_use_switchhistory{};
         std::list< std::string > m_list_switchhistory;
 
     public:

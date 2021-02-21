@@ -42,12 +42,11 @@ static inline bool is_separate_char( char32_t c )
 }
 
 
-EditTextView::EditTextView() :
-    Gtk::TextView(),
-    m_cancel_change( false ),
-    m_line_offset( -1 ),
-    m_context_menu( nullptr ),
-    m_aapopupmenu( nullptr )
+EditTextView::EditTextView()
+    : Gtk::TextView()
+    , m_pre_offset{ -1 }
+    , m_pre_line{ -1 }
+    , m_line_offset{ -1 }
 {
     // コントロールモード設定
     m_control.add_mode( CONTROL::MODE_EDIT );

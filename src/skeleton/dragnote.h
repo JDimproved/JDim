@@ -82,20 +82,18 @@ namespace SKELETON
         int m_page;
 
         // タブをドラッグ中
-        bool m_dragging_tab;
+        bool m_dragging_tab{};
 
-        bool m_dblclick;
+        bool m_dblclick{};
 
         // 入力コントローラ
         CONTROL::Control m_control;
 
-        bool m_dragable;
+        bool m_dragable{};
 
-        SKELETON::IconPopup* m_down_arrow;
+        SKELETON::IconPopup* m_down_arrow{};
 
-        Alloc_NoteBook m_alloc_old;
-
-        double m_smooth_dy{ 0.0 }; // GDK_SCROLL_SMOOTH のスクロール変化量
+        double m_smooth_dy{}; // GDK_SCROLL_SMOOTH のスクロール変化量
 
       public:
 

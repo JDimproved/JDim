@@ -12,7 +12,6 @@ using namespace SKELETON;
 
 
 JDTreeViewBase::JDTreeViewBase()
-    : m_column_for_height( 0 )
 {
     add_events( Gdk::KEY_PRESS_MASK );
     add_events( Gdk::KEY_RELEASE_MASK );
