@@ -9,7 +9,7 @@ using namespace SKELETON;
 
 
 UNDO_BUFFER::UNDO_BUFFER()
-    : m_pos( 0 ), m_max( 0 ), m_first( true )
+    : m_first{ true }
 {
     m_vec_undo.push_back( UNDO_DATA() );
 }
