@@ -34,42 +34,8 @@ constexpr const char* ToolBar::s_css_label;
 constexpr const char* ToolBar::s_css_leave;
 
 ToolBar::ToolBar( Admin* admin )
-    : m_admin( admin ),
-      m_enable_slot( true ),
-      m_buttonbar_shown( false ),
-      m_buttonbar_packed( false ),
-
-      m_tool_label( nullptr ),
-      m_ebox_label( nullptr ),
-      m_label( nullptr ),
-
-      m_searchbar( nullptr ),
-      m_searchbar_shown( false ),
-      m_searchbar_packed( false ),
-      m_button_open_searchbar( nullptr ),
-      m_button_close_searchbar( nullptr ),
-      m_button_up_search( nullptr ),
-      m_button_down_search( nullptr ),
-      m_button_clear_highlight( nullptr ),
-
-      m_tool_search( nullptr ),
-      m_entry_search( nullptr ),
-
-      m_label_board( nullptr ),
-      m_button_board( nullptr ),
-
-      m_button_write( nullptr ),
-      m_button_reload( nullptr ),
-      m_button_stop( nullptr ),
-      m_button_close( nullptr ),
-      m_button_delete( nullptr ),
-      m_button_favorite( nullptr ),
-      m_button_undo( nullptr ),
-      m_button_redo( nullptr ),
-      m_button_lock( nullptr ),
-
-      m_button_back( nullptr ),
-      m_button_forward( nullptr )
+    : m_admin( admin )
+    , m_enable_slot{ true }
 {
     m_buttonbar.set_border_width( 0 );
     m_buttonbar.set_icon_size( Gtk::ICON_SIZE_MENU );
