@@ -9,7 +9,9 @@
 
 #include "jdlib/miscmsg.h"
 
+#include <algorithm>
 #include <string>
+#include <vector>
 #if __has_include(<alsa/asoundlib.h>)
 #include <alsa/asoundlib.h>
 #else
@@ -105,7 +107,6 @@ void Play_Sound::play_wavfile()
     std::cout << "Play_Sound::play_wavfile file = " << m_wavfile << std::endl;
 #endif
 
-    char *buffer = nullptr;
     FILE* fin = nullptr;
     snd_pcm_t *handle = nullptr;
 
@@ -169,7 +170,7 @@ void Play_Sound::play_wavfile()
         snd_pcm_uframes_t period_size; 
         snd_pcm_get_params( handle, &buffer_size, &period_size );
         size_t bufsize = period_size * wavefmt.block;
-        buffer = new char[ bufsize + 64 ];
+        std::vector<char> buffer( bufsize + 64 );
 
 #ifdef _DEBUG
         std::cout << "period = " << period_size << ", bufsize = " << bufsize << std::endl;
@@ -177,8 +178,8 @@ void Play_Sound::play_wavfile()
 #endif
         while( ! m_stop ){
 
-            memset( buffer, 0, bufsize );
-            size_t readsize = fread( buffer, 1, bufsize , fin );
+            std::fill( buffer.begin(), buffer.end(), 0 );
+            const std::size_t readsize = fread( buffer.data(), 1, bufsize , fin );
             if( ! readsize ) break;
 
 #ifdef _DEBUG
@@ -186,7 +187,7 @@ void Play_Sound::play_wavfile()
             std::cout << totalsize << " / " << datachk.size << std::endl;
 #endif
 
-            snd_pcm_sframes_t frames = snd_pcm_writei( handle, buffer, readsize / wavefmt.block );
+            snd_pcm_sframes_t frames = snd_pcm_writei( handle, buffer.data(), readsize / wavefmt.block );
             if( frames < 0 ) frames = snd_pcm_recover( handle, frames, 0 );  // レジューム
             if( frames < 0 || frames < ( snd_pcm_sframes_t ) ( readsize / wavefmt.block ) )
                 throw std::string( "failed to snd_pcm_write : " ) + snd_strerror( err );
@@ -196,7 +197,6 @@ void Play_Sound::play_wavfile()
 
     if( handle ) snd_pcm_close( handle );
     if( fin ) fclose( fin );
-    if( buffer ) delete[] buffer;
 
 #ifdef _DEBUG
     std::cout << "fin\n";
