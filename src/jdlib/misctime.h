@@ -25,9 +25,6 @@ namespace MISC
         TIME_NUM
     };
 
-    // gettimeofday()の秒を文字列で取得
-    std::string get_sec_str();
-
     // timeval を str に変換
     std::string timevaltostr( const struct timeval& tv );
 
