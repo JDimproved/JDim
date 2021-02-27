@@ -47,24 +47,13 @@ using namespace CORE;
 
 
 LoginBe::LoginBe()
-    : SKELETON::Login( URL_LOGINBE ),
-      m_rawdata( nullptr ),
-      m_lng_rawdata( 0 )
+    : SKELETON::Login( URL_LOGINBE )
 {
 #ifdef _DEBUG
     std::cout << "LoginBe::LoginBe\n";
 #endif
 }
 
-
-LoginBe::~LoginBe()
-{
-#ifdef _DEBUG
-    std::cout << "LoginBe::~LoginBe\n";
-#endif
-
-    if( m_rawdata ) free( m_rawdata );
-}
 
 //
 // ログアウト
@@ -124,9 +113,8 @@ void LoginBe::start_login()
     data.str_post += "&submit=" + MISC::charset_url_encode( "登録", "EUC-JP" );
 
     logout();
-    if( ! m_rawdata ) m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
-    memset( m_rawdata, 0, SIZE_OF_RAWDATA );
-    m_lng_rawdata = 0;
+    if( m_rawdata.capacity() < SIZE_OF_RAWDATA ) m_rawdata.reserve( SIZE_OF_RAWDATA );
+    m_rawdata.clear();
 
     start_load( data );
 }
@@ -137,16 +125,13 @@ void LoginBe::start_login()
 //
 void LoginBe::receive_data( const char* data, size_t size )
 {
-    if( ! m_rawdata ) return;
-
 #ifdef _DEBUG
     std::cout << "LoginBe::receive_data\n";
 #endif
 
-    if( m_lng_rawdata + size < SIZE_OF_RAWDATA ){
+    if( m_rawdata.size() + size < SIZE_OF_RAWDATA ){
 
-        memcpy( m_rawdata + m_lng_rawdata , data, size );
-        m_lng_rawdata += size;
+        m_rawdata.append( data, size );
     }
 }
 
@@ -156,12 +141,9 @@ void LoginBe::receive_data( const char* data, size_t size )
 //
 void LoginBe::receive_finish()
 {
-    if( ! m_rawdata ) return;
-    m_rawdata[ m_lng_rawdata ] = '\0';
-
 #ifdef _DEBUG
     std::cout << "LoginBe::receive_finish code = " << get_code() << std::endl;
-    std::cout << "lng_rawdata = " << m_lng_rawdata << std::endl;
+    std::cout << "rawdata size = " << m_rawdata.size() << std::endl;
     std::cout << m_rawdata << std::endl;
 #endif
 
