@@ -11,17 +11,19 @@
 
 #include "skeleton/login.h"
 
+#include <string>
+
+
 namespace CORE
 {
     class LoginBe : public SKELETON::Login
     {
-        char* m_rawdata;
-        int m_lng_rawdata;
+        std::string m_rawdata;
 
       public:
 
         LoginBe();
-        ~LoginBe();
+        ~LoginBe() = default;
 
         void start_login() override;
         void logout() override;
