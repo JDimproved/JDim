@@ -51,6 +51,10 @@ jobs:
           pip install meson==0.49.0
       - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
         run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+        # `compile` subcommand requires Meson 0.54 or later.
+      - name: ninja -C builddir
+        run: ninja -C builddir
+        # Since Meson 0.57, `test` subcommand will only rebuild test program.
       - name: meson test -C builddir
         run: meson test -C builddir
       - name: ./builddir/src/jdim -V
@@ -87,6 +91,8 @@ jobs:
           sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev libltdl-dev libtool meson zlib1g-dev ${{ matrix.sets.package }}
       - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
         run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+      - name: ninja -C builddir
+        run: ninja -C builddir
       - name: meson test -C builddir
         run: meson test -C builddir
       - name: ./builddir/src/jdim -V
@@ -184,6 +190,8 @@ jobs:
           sudo apt install meson libgtest-dev libtool libltdl-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-9
       - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
         run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+      - name: ninja -C builddir
+        run: ninja -C builddir
       - name: meson test -C builddir
         run: meson test -C builddir
       - name: ./builddir/src/jdim -V
