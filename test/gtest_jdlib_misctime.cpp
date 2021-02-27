@@ -7,6 +7,57 @@
 #include <glibmm.h>
 #include <time.h> // tzset
 
+namespace {
+
+// NOTE: time_tのエポックはUnix epoch (1970-01-01T00:00:00 UTC)を想定している
+class MISC_DateToTimeTest : public ::testing::Test {};
+
+TEST_F(MISC_DateToTimeTest, empty_input)
+{
+    const std::time_t result = MISC::datetotime( "" );
+    EXPECT_EQ( result, 0 );
+}
+
+TEST_F(MISC_DateToTimeTest, invalid_format)
+{
+    const std::time_t result = MISC::datetotime( "hello world" );
+    EXPECT_EQ( result, 0 );
+}
+
+TEST_F(MISC_DateToTimeTest, unix_epoch)
+{
+    const std::time_t result = MISC::datetotime( "Thu, 01 Jan 1970 00:00:00 GMT" );
+    EXPECT_EQ( result, 0 );
+}
+
+TEST_F(MISC_DateToTimeTest, non_gmt_wont_be_parsed)
+{
+    const std::time_t result = MISC::datetotime( "Wed, 01 Jan 2020 12:34:56 JST" );
+    EXPECT_EQ( result, 0 );
+}
+
+TEST_F(MISC_DateToTimeTest, iso8601_wont_be_parsed)
+{
+    const std::time_t result = MISC::datetotime( "2006-01-27T03:48:59Z" );
+    EXPECT_EQ( result, 0 );
+}
+
+TEST_F(MISC_DateToTimeTest, one_hundred_million)
+{
+    const std::time_t result = MISC::datetotime( "Sat, 03 Mar 1973 09:46:40 GMT" );
+    EXPECT_EQ( result, 100'000'000 );
+}
+
+TEST_F(MISC_DateToTimeTest, wrong_day_will_be_parsed)
+{
+    // Although correct day of 2001-09-09 is Sunday, parsed time is right.
+    const std::time_t result = MISC::datetotime( "Mon, 09 Sep 2001 01:46:40 GMT" );
+    EXPECT_EQ( result, 1'000'000'000 );
+}
+
+} // namespace
+
+
 #ifdef _POSIX_C_SOURCE
 namespace {
 

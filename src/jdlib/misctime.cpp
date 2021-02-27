@@ -10,11 +10,10 @@
 #include "misctime.h"
 #include "miscmsg.h"
 
-#include <sstream>
-#include <cstdio>
-#include <cstring>
 #include <ctime>
 #include <iomanip>
+#include <locale>
+#include <sstream>
 #include <sys/time.h>
 #include <vector>
 
@@ -49,38 +48,24 @@ std::string MISC::timevaltostr( const struct timeval& tv )
 
 //
 // 時刻を紀元からの経過秒に直す
+// 日時のフォーマットはHTTPリクエストの形式(RFC 7232 IMF-fixdate)
 //
 time_t MISC::datetotime( const std::string& date )
 {
     if( date.empty() ) return 0;
 
-    struct tm tm_out;
-    memset( &tm_out, 0, sizeof( struct tm ) );
+    std::tm buf{};
+    std::istringstream iss( date );
+    iss.imbue( std::locale::classic() ); // Cロケール
 
-    // (注意) LC_TIMEが"C"でないと環境によってはstrptime()が失敗する
-    std::string lcl;
-    char *lcl_tmp = setlocale( LC_TIME, nullptr );
-    if( lcl_tmp ) lcl = lcl_tmp;
+    iss >> std::get_time( &buf, "%a, %d %b %Y %T GMT" );
+    if( iss.fail() ) return 0;
+
+    const std::time_t utc = timegm( &buf );
 #ifdef _DEBUG
-    std::cout << "locale = " << lcl << std::endl;
-#endif    
-    if( ! lcl.empty() ) setlocale( LC_TIME, "C" ); 
-    char *ret = strptime( date.c_str(), "%a, %d %b %Y %T %Z", &tm_out );
-    if( ! lcl.empty() ) setlocale( LC_TIME, lcl.c_str() ); 
-
-    if( ret == nullptr ) return 0;
-
-#ifdef USE_MKTIME
-    time_t t_ret = mktime( &tm_out );
-#else
-    time_t t_ret = timegm( &tm_out );
+    std::cout << "MISC::datetotime " << date << " -> " << utc << std::endl;
 #endif
-
-#ifdef _DEBUG
-    std::cout << "MISC::datetotime " << date << " -> " << t_ret << std::endl;
-#endif
-
-    return t_ret;
+    return utc;
 }
 
 
