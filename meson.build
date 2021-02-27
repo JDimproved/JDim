@@ -62,18 +62,6 @@ conf = configuration_data()
 # オプションの表示にはconfigureスタイル('--with-foo')が必要なので注意
 configure_args = []
 
-#
-# OSを判定してOS別の設定
-#
-system = host_machine.system()
-if system == 'freebsd'
-  conf.set('USE_MKTIME', 1)
-elif system == 'sunos'
-  conf.set('NO_TIMEGM', 1)
-elif system == 'darwin'
-  conf.set('USE_MKTIME', 1)
-endif
-
 
 #
 # 必須パッケージのチェック
@@ -98,6 +86,10 @@ if cpp_compiler.has_header('sys/socket.h')
   socket_dep = dependency('', required : false)
 else
   socket_dep = cpp_compiler.find_library('socket')
+endif
+
+if not cpp_compiler.has_function('timegm')
+  conf.set('NO_TIMEGM', 1)
 endif
 
 

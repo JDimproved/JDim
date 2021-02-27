@@ -26,24 +26,6 @@ AC_PATH_PROG(GIT, git)
 AC_PATH_PROG(XSUM, md5sum, [cksum])
 AC_SUBST(ac_configure_args)
 
-dnl
-dnl OSを判定してOS別の設定
-dnl 
-case "${host_os}" in 
- freebsd*) 
-   AC_DEFINE(USE_MKTIME, , [use mktime])
-   ;;
- solaris*)
-   AC_DEFINE(NO_TIMEGM, , [no timegm])
-   ;;
- darwin*)
-   AC_DEFINE(USE_MKTIME, , [use mktime])
-   ;;
-dnl linux*|gnu*|*-gnu
- *)
-   ;;
-esac
-
 
 dnl ---------------------------------------------------
 dnl ---------------------------------------------------
@@ -98,6 +80,9 @@ dnl
 
 AC_CHECK_HEADERS([socket.h])
 AC_CHECK_LIB(socket,socket)
+
+AC_CHECK_FUNC([timegm], [],
+[AC_DEFINE(NO_TIMEGM, 1, [Define to 1 if you do not have the 'timegm' function])])
 
 
 dnl
