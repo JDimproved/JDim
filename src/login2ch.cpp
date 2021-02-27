@@ -49,23 +49,11 @@ using namespace CORE;
 
 Login2ch::Login2ch()
     : SKELETON::Login( URL_LOGIN2CH )
-    , m_rawdata( nullptr ), m_lng_rawdata( 0 )
 {
 #ifdef _DEBUG
     std::cout << "Login2ch::Login2ch\n";
 #endif
 }
-
-
-Login2ch::~Login2ch()
-{
-#ifdef _DEBUG
-    std::cout << "Login2ch::~Login2ch\n";
-#endif
-
-    if( m_rawdata ) free( m_rawdata );
-}
-
 
 
 //
@@ -121,9 +109,8 @@ void Login2ch::start_login()
     data.str_post += get_passwd();
 
     logout();
-    if( ! m_rawdata ) m_rawdata = ( char* )malloc( SIZE_OF_RAWDATA );
-    memset( m_rawdata, 0, SIZE_OF_RAWDATA );
-    m_lng_rawdata = 0;
+    if( m_rawdata.capacity() < SIZE_OF_RAWDATA ) m_rawdata.reserve( SIZE_OF_RAWDATA );
+    m_rawdata.clear();
 
     start_load( data );
 }
@@ -138,9 +125,7 @@ void Login2ch::receive_data( const char* data, size_t size )
     std::cout << "Login2ch::receive_data\n";
 #endif
 
-    memcpy( m_rawdata + m_lng_rawdata , data, size );
-    m_lng_rawdata += size;
-    assert( m_lng_rawdata < SIZE_OF_RAWDATA );
+    m_rawdata.append( data, size );
 }
 
 
@@ -150,28 +135,26 @@ void Login2ch::receive_data( const char* data, size_t size )
 void Login2ch::receive_finish()
 {
 #ifdef _DEBUG
-    std::cout << "Login2ch::receive_finish code = " << get_code() << " lng_rawdata = " << m_lng_rawdata << std::endl;
-//    if( m_rawdata ) std::cout << m_rawdata << std::endl;
+    std::cout << "Login2ch::receive_finish code = " << get_code()
+              << " rawdata size = " << m_rawdata.size() << std::endl;
 #endif
 
-    std::string sid;
     bool show_err = true;
 
-    if( m_rawdata && get_code() == HTTP_OK ){
+    if( ! m_rawdata.empty() && get_code() == HTTP_OK ){
 
         // 末尾のLFを除去
-        char *pos_lf = strchr( m_rawdata, '\n' );
-        if( pos_lf ){
+        const std::size_t pos_lf = m_rawdata.find( '\n' );
+        if( pos_lf != std::string::npos ) {
 
-            *pos_lf= '\0';
-
+            m_rawdata.erase( pos_lf );
 #ifdef _DEBUG
             std::cout << "removed LF\n";
 #endif
         }
 
         // SID 取得
-        sid = std::string( m_rawdata );
+        std::string sid = m_rawdata;
 
         if( sid.find( "SESSION-ID=" ) == 0 ){
 

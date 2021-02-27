@@ -11,17 +11,19 @@
 
 #include "skeleton/login.h"
 
+#include <string>
+
+
 namespace CORE
 {
     class Login2ch : public SKELETON::Login
     {
-        char* m_rawdata;
-        int m_lng_rawdata;
+        std::string m_rawdata;
 
       public:
 
         Login2ch();
-        ~Login2ch();
+        ~Login2ch() = default;
 
         void start_login() override;
         void logout() override;
