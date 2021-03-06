@@ -82,8 +82,6 @@ BoardBase::~BoardBase()
     ArticleHashIterator it = m_hash_article->begin();
     for( ; it != m_hash_article->end(); ++it ) delete ( *it );
 
-    if( m_article_null ) delete m_article_null;
-
     delete m_hash_article;
 
 #ifdef _TEST_CACHE
@@ -99,8 +97,8 @@ BoardBase::~BoardBase()
 
 ArticleBase* BoardBase::get_article_null()
 {
-    if( ! m_article_null ) m_article_null = new DBTREE::ArticleBase( "", "", false );
-    return m_article_null;
+    if( ! m_article_null ) m_article_null = std::make_unique<DBTREE::ArticleBase>( "", "", false );
+    return m_article_null.get();
 }
 
 
@@ -340,8 +338,7 @@ void BoardBase::clear()
 
     m_get_article_url = std::string();
 
-    if( m_iconv ) delete m_iconv;
-    m_iconv = nullptr;
+    m_iconv.reset();
 
     m_list_artinfo.clear();
 }
@@ -1083,7 +1080,7 @@ void BoardBase::receive_data( const char* data, size_t size )
     if( m_rawdata_left.capacity() < SIZE_OF_RAWDATA ) {
         m_rawdata_left.reserve( SIZE_OF_RAWDATA );
     }
-    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( "UTF-8", m_charset );
+    if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( "UTF-8", m_charset );
 
     m_rawdata_left.append( data, size );
 

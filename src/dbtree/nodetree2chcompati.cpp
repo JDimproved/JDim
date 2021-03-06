@@ -17,7 +17,6 @@ using namespace DBTREE;
 
 NodeTree2chCompati::NodeTree2chCompati( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
-    , m_iconv( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "NodeTree2chCompati::NodeTree2chCompati url = " << url << " modified = " << date_modified << std::endl;
@@ -50,8 +49,7 @@ void NodeTree2chCompati::clear()
     NodeTreeBase::clear();
 
     // iconv 削除
-    if( m_iconv ) delete m_iconv;
-    m_iconv = nullptr;
+    m_iconv.reset();
 }
 
 
@@ -69,7 +67,7 @@ void NodeTree2chCompati::init_loading()
 
     // iconv 初期化
     std::string charset = DBTREE::board_charset( get_url() );
-    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( "UTF-8", charset );
+    if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( "UTF-8", charset );
 }
 
 

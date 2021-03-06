@@ -9,6 +9,9 @@
 
 #include "boardbase.h"
 
+#include <memory>
+
+
 namespace DBTREE
 {
     class SettingLoader;
@@ -16,8 +19,8 @@ namespace DBTREE
 
     class Board2chCompati : public BoardBase
     {
-        SettingLoader* m_settingloader;
-        RuleLoader* m_ruleloader;
+        std::unique_ptr<SettingLoader> m_settingloader;
+        std::unique_ptr<RuleLoader> m_ruleloader;
 
       public:
 

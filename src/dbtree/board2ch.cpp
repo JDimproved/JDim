@@ -190,7 +190,7 @@ std::string Board2ch::get_write_referer( const std::string& url )
 // フロントページのダウンロード
 void Board2ch::download_front()
 {
-    if( ! m_frontloader ) m_frontloader.reset( new FrontLoader( url_boardbase() ) );
+    if( ! m_frontloader ) m_frontloader = std::make_unique<FrontLoader>( url_boardbase() );
     m_frontloader->reset();
     m_frontloader->download_text();
 }
@@ -235,7 +235,7 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
 
     // スレ立てのメッセージを作成したらキーワードとフロントページの読み込み状況はリセットする
     set_keyword_for_newarticle( std::string{} );
-    m_frontloader->reset();
+    m_frontloader->reset(); // call SKELETON::TextLoader::reset()
 
     return ss_post.str();
 }

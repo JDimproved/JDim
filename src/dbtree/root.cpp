@@ -62,6 +62,7 @@ enum
 
 Root::Root()
     : SKELETON::Loadable()
+    , m_board_null{ std::make_unique<DBTREE::BoardBase>( "", "", "" ) }
     , m_enable_save_movetable( true )
 {
     m_xml_document.clear();
@@ -80,7 +81,6 @@ Root::Root()
     // ローカルファイル
     set_board( URL_BOARD_LOCAL, "ローカルファイル" );
 
-    m_board_null = new DBTREE::BoardBase( "", "", "" );
 }
 
 
@@ -101,8 +101,6 @@ Root::~Root()
         ( *it )->terminate_load();
         delete ( *it );
     }
-
-    if( m_board_null ) delete m_board_null;
 
 #ifdef _TEST_CACHE
     std::cout << "board cache\n"
@@ -166,10 +164,10 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 
         // ユーザープロフィールアドレス( http://be.2ch.net/test/p.php?u=d:http://〜 )の様に
         // 先頭以外に http:// が入っている場合は失敗
-        if( pos != std::string::npos && pos != 0 ) return m_board_null;
+        if( pos != std::string::npos && pos != 0 ) return m_board_null.get();
 
         size_t pos2 = url.rfind( "https://" );
-        if ( pos2 != std::string::npos && pos2 != 0 ) return m_board_null;
+        if ( pos2 != std::string::npos && pos2 != 0 ) return m_board_null.get();
         if ( pos2 == 0 ) pos = 0;
 
         // http[s]:// が含まれていなかったら先頭に追加して再帰呼び出し
@@ -260,7 +258,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 #endif
     
     // それでも見つからなかったらNullクラスを返す
-    return m_board_null;
+    return m_board_null.get();
 }
 
 
