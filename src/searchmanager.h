@@ -9,11 +9,14 @@
 
 #include "skeleton/dispatchable.h"
 
-#include <gtkmm.h>
 #include "jdlib/jdthread.h"
 
-#include <string>
+#include <gtkmm.h>
+
 #include <list>
+#include <memory>
+#include <string>
+
 
 namespace DBTREE
 {
@@ -68,7 +71,7 @@ namespace CORE
         bool m_stop{};
 
         // スレタイ検索ローダ
-        SearchLoader* m_searchloader{};
+        std::unique_ptr<SearchLoader> m_searchloader;
 
       public:
 
