@@ -77,7 +77,7 @@ MessageViewBase::MessageViewBase( const std::string& url )
     m_max_line = DBTREE::line_number( get_url() ) * 2;
     m_max_str = DBTREE::message_count( get_url() );
 
-    m_iconv = new JDLIB::Iconv( DBTREE::board_charset( get_url() ), "UTF-8" );;
+    m_iconv = std::make_unique<JDLIB::Iconv>( DBTREE::board_charset( get_url() ), "UTF-8" );;
 
     m_lng_iconv = m_max_str * 3;
     if( ! m_lng_iconv ) m_lng_iconv = MAX_STR_ICONV;
@@ -106,12 +106,8 @@ MessageViewBase::~MessageViewBase()
 
     if( m_post ){
         m_post->terminate_load();
-        delete m_post;
+        m_post.reset();
     }
-    m_post = nullptr;
-
-    if( m_iconv ) delete m_iconv;
-    m_iconv = nullptr;
 
     SESSION::set_close_mes( ! is_locked() );
 }
@@ -797,9 +793,8 @@ void MessageViewBase::post_msg( const std::string& msg, bool new_article )
 
     if( m_post ){
         m_post->terminate_load();
-        delete m_post;
     }
-    m_post = new Post( this, get_url(),  msg, new_article );
+    m_post = std::make_unique<Post>( this, get_url(),  msg, new_article );
     m_post->sig_fin().connect( sigc::mem_fun( *this, &MessageViewBase::post_fin ) );
     m_post->post_msg();
 
