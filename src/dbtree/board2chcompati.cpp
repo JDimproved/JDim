@@ -37,10 +37,8 @@ using namespace DBTREE;
 
 
 Board2chCompati::Board2chCompati( const std::string& root, const std::string& path_board, const std::string& name,
-    const std::string& basicauth)
-    : BoardBase( root, path_board, name ),
-      m_settingloader( nullptr ),
-      m_ruleloader( nullptr )
+                                  const std::string& basicauth )
+    : BoardBase( root, path_board, name )
 {
     set_path_dat( "/dat" );
     set_path_readcgi( "/test/read.cgi" );
@@ -59,15 +57,10 @@ Board2chCompati::~Board2chCompati()
 {
     if( m_settingloader ){
         m_settingloader->terminate_load();
-        delete m_settingloader;
     }
-    m_settingloader = nullptr;
-
     if( m_ruleloader ){
         m_ruleloader->terminate_load();
-        delete m_ruleloader;
     }
-    m_ruleloader = nullptr;
 }
 
 
@@ -499,10 +492,10 @@ void Board2chCompati::load_rule_setting()
     std::cout << "Board2chCompati::load_rule_setting\n";
 #endif
 
-    if( ! m_ruleloader ) m_ruleloader = new RuleLoader( url_boardbase() );
+    if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase() );
     m_ruleloader->load_text();
 
-    if( ! m_settingloader ) m_settingloader = new SettingLoader( url_boardbase() );
+    if( ! m_settingloader ) m_settingloader = std::make_unique<SettingLoader>( url_boardbase() );
     m_settingloader->load_text();
 }
 
@@ -518,10 +511,10 @@ void Board2chCompati::download_rule_setting()
     std::cout << "Board2chCompati::download_rule_setting\n";
 #endif
 
-    if( ! m_ruleloader ) m_ruleloader = new RuleLoader( url_boardbase() );
+    if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase() );
     m_ruleloader->download_text();
 
-    if( ! m_settingloader ) m_settingloader = new SettingLoader( url_boardbase() );
+    if( ! m_settingloader ) m_settingloader = std::make_unique<SettingLoader>( url_boardbase() );
     m_settingloader->download_text();
 }
 
