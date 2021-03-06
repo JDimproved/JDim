@@ -9,6 +9,9 @@
 
 #include "skeleton/admin.h"
 
+#include <memory>
+
+
 namespace SKELETON
 {
     class EditView;
@@ -31,18 +34,18 @@ namespace MESSAGE
 
     class MessageAdmin : public SKELETON::Admin
     {
-        MessageToolBar* m_toolbar;
-        MessageToolBarPreview* m_toolbar_preview;
+        std::unique_ptr<MessageToolBar> m_toolbar;
+        std::unique_ptr<MessageToolBarPreview> m_toolbar_preview;
 
         // 書き込み用のメッセージ欄
         // インスタンスを破棄しないで、前回書き込みビューを閉じた時の
         // 日本語のON/OFF状態を次回開いたときに継続させる
-        SKELETON::EditView* m_text_message;
+        std::unique_ptr<SKELETON::EditView> m_text_message;
 
       public:
 
         explicit MessageAdmin( const std::string& url );
-        ~MessageAdmin();
+        ~MessageAdmin() = default;
 
         void save_session() override {}
 

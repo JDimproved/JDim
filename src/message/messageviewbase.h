@@ -9,6 +9,8 @@
 #include "skeleton/compentry.h"
 #include "skeleton/jdtoolbar.h"
 
+#include <memory>
+
 
 namespace JDLIB
 {
@@ -30,7 +32,7 @@ namespace MESSAGE
 
     class MessageViewBase : public SKELETON::View
     {
-        Post* m_post{};
+        std::unique_ptr<Post> m_post;
 
         Gtk::Notebook m_notebook;
         SKELETON::View* m_preview{};
@@ -57,7 +59,7 @@ namespace MESSAGE
         bool m_enable_focus;
 
         // 文字数計算用
-        JDLIB::Iconv* m_iconv;
+        std::unique_ptr<JDLIB::Iconv> m_iconv;
         int m_max_line;
         int m_max_str;
         int m_lng_str_enc{};
