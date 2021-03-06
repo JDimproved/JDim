@@ -13,9 +13,11 @@
 #include "skeleton/loadable.h"
 #include "xml/document.h"
 
-#include <string>
 #include <list>
+#include <memory>
 #include <set>
+#include <string>
+
 
 namespace DBTREE
 {
@@ -65,7 +67,7 @@ namespace DBTREE
         std::string m_move_info;  // 移転したときにダイアログに表示する移転済み板の一覧
 
         // Null board クラス
-        BoardBase* m_board_null;
+        std::unique_ptr<BoardBase> m_board_null;
 
         // get_board()のキャッシュ
         // get_article_fromURL()のキャッシュ
