@@ -40,23 +40,10 @@ using namespace MESSAGE;
 
 
 MessageAdmin::MessageAdmin( const std::string& url )
-    : SKELETON::Admin( url ), m_toolbar( nullptr ), m_toolbar_preview( nullptr ), m_text_message( nullptr )
+    : SKELETON::Admin( url )
 {
     get_notebook()->set_show_tabs( false );
 }
-
-
-MessageAdmin::~MessageAdmin()
-{
-#ifdef _DEBUG
-    std::cout << "MessageAdmin::~MessageAdmin\n";
-#endif 
-
-    if( m_toolbar ) delete m_toolbar;
-    if( m_toolbar_preview ) delete m_toolbar_preview;
-    if( m_text_message ) delete m_text_message;
-}
-
 
 
 void MessageAdmin::show_entry_new_subject( bool show )
@@ -75,9 +62,9 @@ std::string MessageAdmin::get_new_subject()
 
 SKELETON::EditView* MessageAdmin::get_text_message()
 {
-    if( ! m_text_message ) m_text_message = new SKELETON::EditView();
+    if( ! m_text_message ) m_text_message = std::make_unique<SKELETON::EditView>();
 
-    return m_text_message;
+    return m_text_message.get();
 }
 
 
@@ -349,12 +336,12 @@ void MessageAdmin::show_toolbar()
     if( ! m_toolbar ){
 
         // 通常のツールバー
-        m_toolbar = new MessageToolBar();
+        m_toolbar = std::make_unique<MessageToolBar>();
         get_notebook()->append_toolbar( *m_toolbar );
         m_toolbar->open_buttonbar();
 
         // プレビュー用のツールバー
-        m_toolbar_preview = new MessageToolBarPreview();
+        m_toolbar_preview = std::make_unique<MessageToolBarPreview>();
         get_notebook()->append_toolbar( *m_toolbar_preview );
         m_toolbar_preview->open_buttonbar();
     }
