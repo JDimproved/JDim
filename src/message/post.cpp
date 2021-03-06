@@ -90,9 +90,6 @@ Post::~Post()
 #endif
 
     clear();
-
-    if( m_writingdiag ) delete m_writingdiag;
-    m_writingdiag = nullptr;
 }
 
 
@@ -119,8 +116,7 @@ void Post::emit_sigfin()
 
     clear();
 
-    if( m_writingdiag ) delete m_writingdiag;
-    m_writingdiag = nullptr;
+    m_writingdiag.reset();
 }
 
 
@@ -136,7 +132,8 @@ void Post::show_writingdiag( const bool show_buttons )
     if( show_buttons ) buttons = Gtk::BUTTONS_OK;
 
     if( ! m_writingdiag ){
-        m_writingdiag = new SKELETON::MsgDiag( *toplevel, "書き込み中・・・", false, Gtk::MESSAGE_INFO, buttons, false );
+        m_writingdiag = std::make_unique<SKELETON::MsgDiag>( *toplevel, "書き込み中・・・", false, Gtk::MESSAGE_INFO,
+                                                             buttons, false );
         m_writingdiag->signal_response().connect( sigc::mem_fun( *this, &Post::slot_response ) );
     }
     m_writingdiag->show();

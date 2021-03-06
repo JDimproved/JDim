@@ -10,7 +10,10 @@
 #include "skeleton/loadable.h"
 
 #include <gtkmm.h>
+
+#include <memory>
 #include <string>
+
 
 namespace SKELETON
 {
@@ -50,7 +53,7 @@ namespace MESSAGE
         bool m_new_article; // 新スレ作成
 
         // 書き込んでいますのダイアログ
-        SKELETON::MsgDiag* m_writingdiag{};
+        std::unique_ptr<SKELETON::MsgDiag> m_writingdiag;
 
         PostStrategy* m_post_strategy;
 
