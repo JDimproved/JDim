@@ -46,8 +46,6 @@ Search_Manager::~Search_Manager()
 
     stop( std::string() );
     wait();
-
-    if( m_searchloader ) delete m_searchloader;
 }
 
 
@@ -228,7 +226,7 @@ bool Search_Manager::search_title( const std::string& id, const std::string& que
 
     // スレタイの検索が終わったら search_fin_title が呼び出される
     if( ! m_searchloader ){
-        m_searchloader = new SearchLoader();
+        m_searchloader = std::make_unique<SearchLoader>();
         m_searchloader->sig_search_fin().connect( sigc::mem_fun( *this, &Search_Manager::search_fin_title ) );
     }
 
@@ -292,7 +290,7 @@ void Search_Manager::search_fin_title()
         }
     }
 
-    m_searchloader->reset();
+    m_searchloader->reset(); // call SKELETON::TextLoader::reset()
 
     search_fin();
 }
