@@ -220,10 +220,10 @@ std::string BoardJBBS::url_settingtxt() const
 //
 void BoardJBBS::load_rule_setting()
 {
-    if( ! m_ruleloader ) m_ruleloader.reset( new RuleLoader( url_boardbase(), "MS932" ) );
+    if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase(), "MS932" );
     m_ruleloader->load_text();
 
-    if( ! m_settingloader ) m_settingloader.reset( new SettingLoader( url_boardbase() ) );
+    if( ! m_settingloader ) m_settingloader = std::make_unique<SettingLoader>( url_boardbase() );
     m_settingloader->load_text();
 }
 
@@ -236,10 +236,10 @@ void BoardJBBS::load_rule_setting()
 //
 void BoardJBBS::download_rule_setting()
 {
-    if( ! m_ruleloader ) m_ruleloader.reset( new RuleLoader( url_boardbase(), "MS932" ) );
+    if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase(), "MS932" );
     m_ruleloader->download_text();
 
-    if( ! m_settingloader ) m_settingloader.reset( new SettingLoader( url_boardbase() ) );
+    if( ! m_settingloader ) m_settingloader = std::make_unique<SettingLoader>( url_boardbase() );
     m_settingloader->download_text();
 }
 
