@@ -564,13 +564,11 @@ void ImageViewBase::show_preference()
 {
     CORE::core_set_command( "hide_popup" );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, get_url() );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, get_url() );
 
     IMAGE::get_admin()->set_command_immediately( "disable_fold_win" ); // run 直前に呼ぶこと
     pref->run();
     IMAGE::get_admin()->set_command_immediately( "enable_fold_win" );  // run 直後に呼ぶこと
-
-    delete pref;
 }
 
 

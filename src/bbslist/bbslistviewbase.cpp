@@ -1791,10 +1791,8 @@ void BBSListViewBase::slot_preferences_board()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    SKELETON::PrefDiag* pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD,
-                                                      DBTREE::url_boardbase( url ) );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, DBTREE::url_boardbase( url ) );
     pref->run();
-    delete pref;
 }
 
 
@@ -1807,9 +1805,8 @@ void BBSListViewBase::slot_preferences_article()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, DBTREE::url_dat( url ) );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, DBTREE::url_dat( url ) );
     pref->run();
-    delete pref;
 }
 
 
@@ -1821,9 +1818,8 @@ void BBSListViewBase::slot_preferences_image()
     if( m_path_selected.empty() ) return;
     std::string url = path2url( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, url );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, url );
     pref->run();
-    delete pref;
 }
 
 

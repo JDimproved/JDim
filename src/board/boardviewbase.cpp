@@ -2734,9 +2734,8 @@ void BoardViewBase::show_preference()
     const std::string url_board = path2url_board( m_path_selected );
     if( url_board.empty() ) return;
 
-    SKELETON::PrefDiag* pref =  CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, url_board );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD, url_board );
     pref->run();
-    delete pref;
 }
 
 
@@ -2748,9 +2747,8 @@ void BoardViewBase::slot_preferences_article()
     if( m_path_selected.empty() ) return;
     const std::string url = path2daturl( m_path_selected );
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, url );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, url );
     pref->run();
-    delete pref;
 }
 
 

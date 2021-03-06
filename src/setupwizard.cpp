@@ -78,9 +78,8 @@ PageNet::PageNet( Gtk::Window* parent )
 //
 void PageNet::slot_setup_proxy()
 {
-    SKELETON::PrefDiag* pref = CORE::PrefDiagFactory( m_parent, CORE::PREFDIAG_PROXY, "" );
+    auto pref = CORE::PrefDiagFactory( m_parent, CORE::PREFDIAG_PROXY, "" );
     pref->run();
-    delete pref;
 }
 
 
@@ -89,9 +88,8 @@ void PageNet::slot_setup_proxy()
 //
 void PageNet::slot_setup_browser()
 {
-    SKELETON::PrefDiag* pref = CORE::PrefDiagFactory( m_parent, CORE::PREFDIAG_BROWSER, "" );
+    auto pref = CORE::PrefDiagFactory( m_parent, CORE::PREFDIAG_BROWSER, "" );
     pref->run();
-    delete pref;
 
     m_label_browser.set_text( CONFIG::get_command_openurl() );
 }

@@ -314,7 +314,7 @@ void HistorySubMenu::slot_show_property()
         std::cout << "url " << info_list[ i ].url << std::endl;
 #endif
 
-        SKELETON::PrefDiag* pref = nullptr;
+        std::unique_ptr<SKELETON::PrefDiag> pref;
         switch( info_list[ i ].type ){
 
             case TYPE_THREAD: 
@@ -338,7 +338,6 @@ void HistorySubMenu::slot_show_property()
 
         if( pref ){
             pref->run();
-            delete pref;
         }
     }
 }

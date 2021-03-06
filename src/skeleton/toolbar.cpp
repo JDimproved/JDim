@@ -632,7 +632,7 @@ void ToolBar::slot_menu_board( int i )
 {
     if( ! m_enable_slot ) return;
 
-    SKELETON::PrefDiag* pref = nullptr;
+    std::unique_ptr<SKELETON::PrefDiag> pref;
 
     // ToolBar::get_button_board()で作成したメニューの順番に内容を合わせる
     if( i == 0 ) slot_open_board();
@@ -644,7 +644,6 @@ void ToolBar::slot_menu_board( int i )
 
     if( pref ){
         pref->run();
-        delete pref;
     }
 }
 

@@ -10,7 +10,10 @@
 #include "skeleton/prefdiag.h"
 
 #include <gtkmm.h>
+
+#include <memory>
 #include <string>
+
 
 namespace CORE
 {
@@ -54,9 +57,9 @@ namespace CORE
 
         PREFDIAG_NONE
     };
-    
-    SKELETON::PrefDiag* PrefDiagFactory( Gtk::Window* parent, const int type, const std::string& url,
-                                         const std::string& command = {} );
+
+    std::unique_ptr<SKELETON::PrefDiag> PrefDiagFactory( Gtk::Window* parent, const int type, const std::string& url,
+                                                         const std::string& command = {} );
 }
 
 #endif
