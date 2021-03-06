@@ -9,10 +9,11 @@
 #include "jdlib/jdregex.h"
 #include "skeleton/loadable.h"
 
-#include <string>
-#include <list>
-#include <vector>
 #include <ctime>
+#include <list>
+#include <memory>
+#include <string>
+#include <vector>
 
 
 namespace JDLIB
@@ -173,7 +174,7 @@ namespace DBTREE
 
         // ダウンロード用変数
         std::list< std::string > m_url_update_views; // CORE::core_set_command( "update_board" ) を送信するビューのアドレス
-        JDLIB::Iconv* m_iconv{};
+        std::unique_ptr<JDLIB::Iconv> m_iconv;
         std::string m_rawdata;
         std::string m_rawdata_left;
 
@@ -205,7 +206,7 @@ namespace DBTREE
         bool m_cancel_remove_abone_thread{};
 
         // Null artice クラス
-        ArticleBase* m_article_null{};
+        std::unique_ptr<ArticleBase> m_article_null;
 
       protected:
 
