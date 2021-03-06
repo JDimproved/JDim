@@ -28,8 +28,6 @@ constexpr size_t BUF_SIZE_200 = 256;
 
 NodeTreeMachi::NodeTreeMachi( const std::string& url, const std::string& date_modified )
     : NodeTreeBase( url, date_modified )
-    , m_regex( nullptr )
-    , m_iconv( nullptr )
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeMachi::NodeTreeMachi url = " << get_url() << " modified = " << date_modified << std::endl;
@@ -57,13 +55,8 @@ void NodeTreeMachi::clear()
 #endif
     NodeTreeBase::clear();
 
-    // regex 削除
-    if( m_regex ) delete m_regex;
-    m_regex = nullptr;
-
-    // iconv 削除
-    if( m_iconv ) delete m_iconv;
-    m_iconv = nullptr;
+    m_regex.reset(); // regex 削除
+    m_iconv.reset(); // iconv 削除
 
     m_decoded_lines.clear();
     m_decoded_lines.shrink_to_fit();
@@ -89,11 +82,11 @@ void NodeTreeMachi::init_loading()
     NodeTreeBase::init_loading();
 
     // regex 初期化
-    if( ! m_regex ) m_regex = new JDLIB::Regex();
+    if( ! m_regex ) m_regex = std::make_unique<JDLIB::Regex>();
 
     // iconv 初期化
     std::string charset = DBTREE::board_charset( get_url() );
-    if( ! m_iconv ) m_iconv = new JDLIB::Iconv( "UTF-8", charset );
+    if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( "UTF-8", charset );
 
     m_buffer_for_200.clear();
 
