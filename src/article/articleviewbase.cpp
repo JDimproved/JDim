@@ -1366,9 +1366,8 @@ void ArticleViewBase::show_preference()
     std::cout << "ArticleViewBase::show_preference\n";
 #endif
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, m_url_article );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, m_url_article );
     pref->run();
-    delete pref;
 }
 
 
@@ -1380,9 +1379,8 @@ void ArticleViewBase::slot_preferences_image()
     if( m_url_tmp.empty() ) return;
     std::string url = m_url_tmp;
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, url );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_IMAGE, url );
     pref->run();
-    delete pref;
 }
 
 
@@ -1558,24 +1556,21 @@ void ArticleViewBase::slot_copy_article_info()
 //
 void ArticleViewBase::slot_setup_abone()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, m_url_article, "show_abone" );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_ARTICLE, m_url_article, "show_abone" );
     pref->run();
-    delete pref;
 }
 
 void ArticleViewBase::slot_setup_abone_board()
 {
-    SKELETON::PrefDiag* pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD,
-                                                      DBTREE::url_boardbase( m_url_article ), "show_abone_article" );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_BOARD,
+                                       DBTREE::url_boardbase( m_url_article ), "show_abone_article" );
     pref->run();
-    delete pref;
 }
 
 void ArticleViewBase::slot_setup_abone_all()
 {
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_GLOBALABONE, "" );
+    auto pref = CORE::PrefDiagFactory( get_parent_win(), CORE::PREFDIAG_GLOBALABONE, "" );
     pref->run();
-    delete pref;
 }
 
 

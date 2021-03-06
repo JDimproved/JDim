@@ -302,9 +302,8 @@ void ImgRoot::delete_all_files()
     std::cout << "ImgRoot::delete_all_files\n";
 #endif
 
-    SKELETON::PrefDiag* pref= CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_DELIMG, "" );
+    auto pref = CORE::PrefDiagFactory( nullptr, CORE::PREFDIAG_DELIMG, "" );
     int ret = pref->run();
-    delete pref;
     if( ret != Gtk::RESPONSE_OK ) return;
 
     // 画像キャッシュ削除ダイアログ表示
