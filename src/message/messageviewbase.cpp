@@ -37,9 +37,9 @@
 #include "global.h"
 #include "compmanager.h"
 
-#include <sstream>
-#include <sys/time.h>
 #include <cstring>
+#include <ctime>
+#include <sstream>
 
 
 using namespace MESSAGE;
@@ -909,10 +909,8 @@ void MessageViewBase::slot_switch_page( Gtk::Widget*, guint page )
 
         ss << "<>" << mail  << "<>";
 
-        struct timeval tv;
-        struct timezone tz;
-        gettimeofday( &tv, &tz );
-        ss << MISC::timettostr( tv.tv_sec, MISC::TIME_WEEK );
+        const std::time_t current = std::time( nullptr );
+        ss << MISC::timettostr( current, MISC::TIME_WEEK );
 
         ss << " ID:???" << "<>" << msg << "<>\n";
 

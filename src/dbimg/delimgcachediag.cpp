@@ -18,7 +18,7 @@
 
 #include <glib/gi18n.h>
 
-#include <sys/time.h>
+#include <ctime>
 
 
 using namespace DBIMG;
@@ -181,13 +181,11 @@ void DelImgCacheDiag::callback_dispatch()
 //
 time_t DelImgCacheDiag::get_days( const std::string& path )
 {
-        struct timeval tv;
-        struct timezone tz;
-        gettimeofday( &tv, &tz );
-        time_t mtime = CACHE::get_filemtime( path );
-        if( ! mtime ) return -1;
+    const std::time_t current = std::time( nullptr );
+    const std::time_t mtime = CACHE::get_filemtime( path );
+    if( ! mtime ) return -1;
 
-        return ( tv.tv_sec - mtime ) / ( 60 * 60 * 24 );
+    return ( current - mtime ) / ( 60 * 60 * 24 );
 }
 
 
