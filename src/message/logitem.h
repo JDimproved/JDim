@@ -11,9 +11,10 @@
 
 #include "jdlib/miscutil.h"
 
+#include <ctime>
 #include <list>
 #include <string>
-#include <sys/time.h>
+
 
 enum
 {
@@ -29,7 +30,7 @@ namespace MESSAGE
         std::string url;
         const bool newthread;
         std::string msg;
-        time_t time_write;
+        std::time_t time_write;
         std::list< std::string > msg_lines;
         char head[ LOGITEM_SIZE_HEAD ]{};
         bool remove{};
@@ -38,12 +39,8 @@ namespace MESSAGE
             : url( _url )
             , newthread( _newthread )
             , msg( _msg )
+            , time_write{ std::time( nullptr ) }
         {
-            struct timeval tv;
-            struct timezone tz;
-            gettimeofday( &tv, &tz );
-            time_write = tv.tv_sec;
-
             if( newthread && url.find( ID_OF_NEWTHREAD ) != std::string::npos ) url = url.substr( 0, url.find( ID_OF_NEWTHREAD ) );
 
             // WAVE DASH 問題
