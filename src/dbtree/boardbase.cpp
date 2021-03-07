@@ -30,8 +30,9 @@
 
 #include <glib/gi18n.h>
 
-#include <sstream>
+#include <algorithm>
 #include <cstring>
+#include <sstream>
 
 
 #ifdef _TEST_CACHE
@@ -390,16 +391,14 @@ ArticleBase* BoardBase::append_article( const std::string& datbase, const std::s
 //
 void BoardBase::update_writetime()
 {
-    struct timeval tv;
-    struct timezone tz;
-    if( gettimeofday( &tv, &tz ) == 0 ){
-
-        m_write_time = tv;
+    const std::time_t current = std::time( nullptr );
+    if( current != std::time_t(-1) ) {
+        m_write_time = current;
+    }
 
 #ifdef _DEBUG
-        std::cout << "BoardBase::update_writetime : " << m_write_time.tv_sec << std::endl;
+    std::cout << "BoardBase::update_writetime : " << m_write_time << std::endl;
 #endif
-    }
 }
 
 
@@ -408,13 +407,12 @@ void BoardBase::update_writetime()
 //
 time_t BoardBase::get_write_pass() const
 {
-    time_t ret = 0;
-    struct timeval tv;
-    struct timezone tz;
+    std::time_t current;
+    if( m_write_time && std::time( &current ) != std::time_t(-1) ) {
 
-    if( m_write_time.tv_sec && gettimeofday( &tv, &tz ) == 0 ) ret = MAX( 0, tv.tv_sec - m_write_time.tv_sec );
-
-    return ret;
+        return std::max<std::time_t>( 0, current - m_write_time );
+    }
+    return 0;
 }
 
 
