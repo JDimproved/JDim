@@ -17,10 +17,10 @@
 #include "cache.h"
 #include "session.h"
 
-#include <sys/time.h>
 #include <cstring>
-#include <sys/types.h> // chmod
+#include <ctime>
 #include <sys/stat.h>
+#include <sys/types.h> // chmod
 
 
 enum
@@ -120,9 +120,7 @@ bool Log_Manager::has_items( const std::string& url, const bool newthread )
 
 void Log_Manager::remove_items( const std::string& url )
 {
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
+    const std::time_t current = std::time( nullptr );
 
     if( ! m_logitems.size() ) return;
 
@@ -138,7 +136,7 @@ void Log_Manager::remove_items( const std::string& url )
             || ( (*it)->newthread && url.find( (*it)->url ) == 0 )
             ){
 
-            const time_t elapsed = tv.tv_sec - (*it)->time_write;
+            const std::time_t elapsed = current - (*it)->time_write;
 
 #ifdef _DEBUG
             std::cout << "elapsed = " << elapsed << std::endl;
@@ -301,12 +299,10 @@ void Log_Manager::save( const std::string& url,
 
     if( ! CACHE::mkdir_logroot() ) return;
 
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday( &tv, &tz );
+    const std::time_t current = std::time( nullptr );
 
     // 保存メッセージ作成
-    const std::string date = MISC::timettostr( tv.tv_sec, MISC::TIME_WEEK );
+    const std::string date = MISC::timettostr( current, MISC::TIME_WEEK );
     const bool include_url = false; // URLを除外して msg をエスケープ
 
     std::string html = "<hr><br>" + DBTREE::url_readcgi( url, 0, 0 ) + "<br>"
