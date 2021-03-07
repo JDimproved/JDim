@@ -158,7 +158,7 @@ namespace DBTREE
         std::string m_write_mail;
 
         // 最終書き込み時間
-        struct timeval m_write_time{};
+        std::time_t m_write_time{};
 
         // samba(秒)
         std::time_t m_samba_sec{};
@@ -515,7 +515,7 @@ namespace DBTREE
 
         // 最終書き込み時間
         void update_writetime();
-        time_t get_write_time() const { return m_write_time.tv_sec; } // 秒
+        time_t get_write_time() const noexcept { return m_write_time; } // 秒
         time_t get_write_pass() const; // 経過時間(秒)
         time_t get_samba_sec() const { return m_samba_sec; } // samba(秒)
         void set_samba_sec( time_t sec ){ m_samba_sec = sec; }
