@@ -6,7 +6,6 @@
 #define _MISCTIME_H
 
 #include <string>
-#include <sys/time.h>
 #include <ctime>
 
 namespace MISC
@@ -37,8 +36,8 @@ namespace MISC
     std::string timettostr( const time_t time_from, const int mode );
 
     // 実行時間測定用
-    void start_measurement( const int id );
-    int measurement( const int id );
+    void start_measurement( const unsigned int id );
+    long long measurement( const unsigned int id );
 }
 
 #endif
