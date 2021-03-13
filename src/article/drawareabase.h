@@ -18,6 +18,8 @@
 #include <gtkmm.h>
 
 #include <chrono>
+#include <memory>
+
 
 namespace ARTICLE
 {
@@ -111,7 +113,7 @@ namespace ARTICLE
         Gtk::Scrollbar* m_vscrbar{};
 
         // レイアウトツリー
-        LayoutTree* m_layout_tree{};
+        std::unique_ptr<LayoutTree> m_layout_tree;
 
         // 描画領域の幅、高さ( != ウィンドウサイズ )
         int m_width_client{};
