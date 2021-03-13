@@ -10,6 +10,9 @@
 
 #include "control/control.h"
 
+#include <memory>
+
+
 namespace CORE
 {
     class Core;
@@ -17,7 +20,7 @@ namespace CORE
 
 class JDWinMain : public SKELETON::JDWindow
 {
-    CORE::Core* m_core;
+    std::unique_ptr<CORE::Core> m_core;
     bool m_cancel_state_event{};
 
     // 入力コントローラ
