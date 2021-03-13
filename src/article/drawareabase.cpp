@@ -1794,9 +1794,7 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
         m_seen_current = m_layout_tree->max_res_number();
     }
 
-    struct timeval tv_before;
-    struct timezone tz;
-    gettimeofday( &tv_before, &tz );
+    const auto tv_before = Monotonic::now();
 
     // 2分探索で画面に表示されているノードの先頭を探す
     LAYOUT* header = nullptr;
@@ -1889,18 +1887,18 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
     // 処理落ちが起きていないかチェックする
     // exec_scroll()を参照せよ
-    struct timeval tv_after;
-    if( ! m_wait_scroll && ! gettimeofday( &tv_after, &tz ) ){
+    if( m_wait_scroll == Monotonic::duration::zero() ) {
 
-        const time_t passed = ( tv_after.tv_sec * 1000000 + tv_after.tv_usec ) - ( tv_before.tv_sec * 1000000 + tv_before.tv_usec );
-        if( passed > TIMER_TIMEOUT * 1000 ){
+        const auto tv_after = Monotonic::now();
+        const auto passed = tv_after - tv_before;
+        if( passed > std::chrono::milliseconds{ TIMER_TIMEOUT } ) {
 
             m_scroll_time = tv_after;
-            m_wait_scroll = TIMER_TIMEOUT * 1000;
+            m_wait_scroll = std::chrono::milliseconds{ TIMER_TIMEOUT };
 
 #ifdef _DEBUG
-            std::cout << "DrawAreaBase::draw_screen_core : passed = " << passed
-                      << " wait = " << m_wait_scroll << std::endl;
+            std::cout << "DrawAreaBase::draw_screen_core : passed = " << passed.count()
+                      << " wait = " << m_wait_scroll.count() << std::endl;
 #endif
         }
     }
@@ -3020,7 +3018,7 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
             m_scrollinfo.mode = SCROLL_NORMAL;
 
             // ホイールのスクロールの場合は必ずスクロール処理を実施する
-            m_wait_scroll = 0;
+            m_wait_scroll = Monotonic::duration::zero();
 
             if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() * speed;
             else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
@@ -3061,32 +3059,26 @@ void DrawAreaBase::exec_scroll()
     if( m_scrollinfo.mode == SCROLL_NOT && ! m_scrollinfo.live ) return;
 
     // 描画で処理落ちしている時はスクロール処理をキャンセルする
-    if( m_wait_scroll ){
+    constexpr const auto zero = Monotonic::duration::zero();
+    if( m_wait_scroll != zero ) {
 
-        struct timeval tv;
-        struct timezone tz;
-        if( ! gettimeofday( &tv, &tz ) ){
+        const auto current = Monotonic::now();
+        if( current < m_scroll_time ) {
+            m_wait_scroll = zero;
+        }
+        else {
+            const auto passed = current - m_scroll_time;
+            m_scroll_time = current;
+            m_wait_scroll = std::max( zero, m_wait_scroll - passed );
 
-            const time_t current = tv.tv_sec * 1000000 + tv.tv_usec;
-            const time_t before = m_scroll_time.tv_sec * 1000000 + m_scroll_time.tv_usec;
-
-            if( current < before ) m_wait_scroll = 0;
-            else{
-
-                const time_t passed = current - before;
-                m_scroll_time = tv;
-                m_wait_scroll = MAX( 0, m_wait_scroll - passed );
-
-                if( m_wait_scroll ){
+            if( m_wait_scroll != zero ) {
 #ifdef _DEBUG
-                    std::cout << "cancel scroll passed = " << passed
-                              << " wait = " << m_wait_scroll << std::endl;
+                std::cout << "cancel scroll passed = " << passed.count()
+                          << " wait = " << m_wait_scroll.count() << std::endl;
 #endif
-                    return;
-                }
+                return;
             }
         }
-        else m_wait_scroll = 0;
     }
 
 #ifdef _DEBUG
@@ -5338,7 +5330,7 @@ void DrawAreaBase::slot_pan_update( double offset_x, double offset_y )
     if( y >= adjust->get_upper() - adjust->get_page_size() ) return;
 
     // パンの最中は必ずスクロール処理を実施する
-    m_wait_scroll = 0;
+    m_wait_scroll = Monotonic::duration::zero();
 
     m_scrollinfo.reset();
     m_scrollinfo.y = static_cast< int >( y );
@@ -5412,7 +5404,7 @@ gboolean DrawAreaBase::deceleration_tick_impl( GdkFrameClock* clock )
     }
 
     // 減速中は必ずスクロール処理を実施する
-    m_wait_scroll = 0;
+    m_wait_scroll = Monotonic::duration::zero();
 
     m_scrollinfo.reset();
     m_scrollinfo.dy = static_cast< int >( dy );
