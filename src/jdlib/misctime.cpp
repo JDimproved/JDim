@@ -10,6 +10,7 @@
 #include "misctime.h"
 #include "miscmsg.h"
 
+#include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <locale>
@@ -137,27 +138,23 @@ time_t timegm (struct tm *tm)
 
 // 実行時間測定用
 
-std::vector< struct timeval > tv_measurement;
+static std::vector<std::chrono::steady_clock::time_point> tv_measurement;
 
-void MISC::start_measurement( const int id )
+void MISC::start_measurement( const unsigned int id )
 {
-    while( (int)tv_measurement.size() <= id ){
-        struct timeval tv;
-        tv_measurement.push_back( tv );
+    if( tv_measurement.size() <= id ) {
+        tv_measurement.resize( id + 1 );
     }
-
-    gettimeofday( &tv_measurement[ id ], nullptr );
+    tv_measurement[id] = std::chrono::steady_clock::now();
 }
 
-int MISC::measurement( const int id )
+long long MISC::measurement( const unsigned int id )
 {
-    if( id >= (int)tv_measurement.size() ) return 0;
+    if( id >= tv_measurement.size() ) return 0;
 
-    struct timeval tv;
-    gettimeofday( &tv, nullptr );
+    const auto current = std::chrono::steady_clock::now();
+    const auto duration = current - tv_measurement[id];
+    tv_measurement[id] = current;
 
-    int ret = ( tv.tv_sec * 1000000 + tv.tv_usec ) - ( tv_measurement[ id ].tv_sec * 1000000 + tv_measurement[ id ].tv_usec );
-    tv_measurement[ id ] = tv;
-
-    return ret;
+    return std::chrono::duration_cast<std::chrono::nanoseconds>( duration ).count();
 }

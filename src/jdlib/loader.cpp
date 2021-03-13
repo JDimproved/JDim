@@ -16,6 +16,7 @@
 
 #ifdef _DEBUG_TIME
 #include "misctime.h"
+#include <iostream>
 #endif
 
 #include "config/globalconf.h"
@@ -842,7 +843,7 @@ void Loader::run_main()
                 }
 
 #ifdef _DEBUG_TIME
-                std::cout << "size = " << tmpsize << " time = " << MISC::measurement( 0 ) << std::endl;
+                std::cout << "size = " << tmpsize << " time(ns) = " << MISC::measurement( 0 ) << std::endl;
 #endif
             }
 
@@ -942,7 +943,7 @@ void Loader::run_main()
     } while( !m_stop );
 
 #ifdef _DEBUG_TIME
-    std::cout << "loadingl time = " << MISC::measurement( 1 ) << std::endl;
+    std::cout << "Loader::run_main loading time(ns) = " << MISC::measurement( 1 ) << std::endl;
 #endif
 
     // 終了処理
