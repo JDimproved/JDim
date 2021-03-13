@@ -5,8 +5,10 @@
 #ifndef _MISCTIME_H
 #define _MISCTIME_H
 
-#include <string>
 #include <ctime>
+#include <string>
+#include <sys/time.h>
+
 
 namespace MISC
 {
