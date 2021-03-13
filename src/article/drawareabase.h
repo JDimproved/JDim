@@ -16,8 +16,8 @@
 #include "cssmanager.h"
 
 #include <gtkmm.h>
-#include <sys/time.h>
-#include <ctime>
+
+#include <chrono>
 
 namespace ARTICLE
 {
@@ -191,8 +191,9 @@ namespace ARTICLE
         std::unique_ptr< cairo_surface_t, void ( * )( cairo_surface_t* ) > m_back_marker;
         RECTANGLE m_clip_marker{};
         bool m_ready_back_marker{};
-        time_t m_wait_scroll{};  // 処理落ちした時にスクロールにウエイトを入れる
-        struct timeval m_scroll_time{};  // ウエイト時に最後にスクロールした時刻
+        using Monotonic = std::chrono::steady_clock;
+        Monotonic::duration m_wait_scroll{}; // 処理落ちした時にスクロールにウエイトを入れる
+        Monotonic::time_point m_scroll_time; // ウエイト時に最後にスクロールした時刻
 
         // 状態
         int m_x_pointer{};
