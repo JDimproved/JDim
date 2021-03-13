@@ -92,8 +92,7 @@ void LayoutTree::clear()
     m_id_header = -STEP_ID; // ルートヘッダのIDが 0 になるように -STEP_ID を入れておく
     m_root_header = create_layout_header();
     
-    if( m_local_nodetree ) delete m_local_nodetree;
-    m_local_nodetree = nullptr;
+    m_local_nodetree.reset();
 
     m_last_div = nullptr;
 
@@ -500,7 +499,7 @@ void LayoutTree::append_html( const std::string& html )
     std::cout << "LayoutTree::append_html url = " << m_url << " html = " << html << std::endl;
 #endif    
 
-    if( ! m_local_nodetree ) m_local_nodetree = new DBTREE::NodeTreeDummy( m_url );
+    if( ! m_local_nodetree ) m_local_nodetree = std::make_unique<DBTREE::NodeTreeDummy>( m_url );
     DBTREE::NODE* node_header = m_local_nodetree->append_html( html );
     if( !node_header ) {
         return;
@@ -525,7 +524,7 @@ void LayoutTree::append_html( const std::string& html )
 void LayoutTree::append_dat( const std::string& dat, int num )
 {
     if( dat.empty() ) return;
-    if( ! m_local_nodetree ) m_local_nodetree = new DBTREE::NodeTreeBase( m_url, std::string() );
+    if( ! m_local_nodetree ) m_local_nodetree = std::make_unique<DBTREE::NodeTreeBase>( m_url, std::string() );
 
     // ダミーのノードを作って番号を調整する
     int res_num = m_local_nodetree->get_res_number();

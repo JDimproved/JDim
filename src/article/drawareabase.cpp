@@ -152,8 +152,6 @@ DrawAreaBase::~DrawAreaBase()
 
     cancel_deceleration();
 
-    if( m_layout_tree ) delete m_layout_tree;
-    m_layout_tree = nullptr;
     clear();
 }
 
@@ -167,12 +165,10 @@ DrawAreaBase::~DrawAreaBase()
 //
 void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const bool show_multispace )
 {
-    if( m_layout_tree ) delete m_layout_tree;
-    m_layout_tree = nullptr;
     clear();
 
     m_article = DBTREE::get_article( m_url );
-    m_layout_tree = new LayoutTree( m_url, show_abone, show_multispace );
+    m_layout_tree = std::make_unique<LayoutTree>( m_url, show_abone, show_multispace );
 
     // デフォルトではoffになってるイベントを追加
     m_view.add_events( Gdk::BUTTON_PRESS_MASK );
