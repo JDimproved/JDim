@@ -6,13 +6,15 @@
 #ifndef _LAYOUTTREE_H
 #define _LAYOUTTREE_H
 
-#include <string>
-#include <unordered_map>
-
 #include "jdlib/refptr_lock.h"
 #include "jdlib/heap.h"
 
 #include "cssmanager.h"
+
+#include <memory>
+#include <string>
+#include <unordered_map>
+
 
 namespace DBTREE
 {
@@ -87,7 +89,7 @@ namespace ARTICLE
         std::unordered_map< int, LAYOUT* > m_map_header;  // ヘッダのポインタの連想配列
 
         // コメントノードやプレビュー表示時に使うローカルなノードツリー
-        DBTREE::NodeTreeBase* m_local_nodetree{};
+        std::unique_ptr<DBTREE::NodeTreeBase> m_local_nodetree;
 
         LAYOUT* m_root_header;
         LAYOUT* m_last_header;
