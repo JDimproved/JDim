@@ -28,6 +28,8 @@
 #include "updatemanager.h"
 
 #include <glib/gi18n.h>
+
+#include <algorithm>
 #include <sstream>
 
 
@@ -1079,16 +1081,15 @@ void ArticleBase::download_dat( const bool check_update )
               << "url_pre_article = " << m_url_pre_article << std::endl;
 #endif
 
-    struct timeval tv;
-    struct timezone tz;
-    if( gettimeofday( &tv, &tz ) != 0 ) tv.tv_sec = 0;
+    std::time_t current = std::time( nullptr );
+    if( current == std::time_t(-1) ) current = 0;
 
     // 更新チェック可能か判定する
     if( check_update ){
 
         // 一度更新チェックしたらしばらくは再チェックできないようにする
         time_t passed = 0;
-        if( tv.tv_sec ) passed = MAX( 0, tv.tv_sec - m_check_update_time.tv_sec );
+        if( current ) passed = std::max<std::time_t>( 0, current - m_check_update_time );
 
         if( ! SESSION::is_online()
             || ! enable_check_update()
@@ -1125,7 +1126,7 @@ void ArticleBase::download_dat( const bool check_update )
         }
     }
 
-    if( SESSION::is_online() && tv.tv_sec ) m_check_update_time = tv;
+    if( SESSION::is_online() && current ) m_check_update_time = current;
 
     // DAT落ちしていてロードしない場合
     if( ( m_status & STATUS_OLD ) && ! is_load_olddat() ) {
@@ -1520,9 +1521,8 @@ void ArticleBase::show_updateicon( const bool update )
               << " update = " << update << " status = " << ( m_status & STATUS_UPDATE ) << std::endl;
 #endif
 
-    struct timeval tv;
-    struct timezone tz;
-    if( gettimeofday( &tv, &tz ) == 0 ) m_check_update_time = tv;
+    const std::time_t current = std::time( nullptr );
+    if( current != std::time_t(-1) ) m_check_update_time = current;
 
     if( update ){
 
@@ -1668,7 +1668,7 @@ void ArticleBase::delete_cache( const bool cache_only )
     reset_status();
     m_date_modified.clear();
     memset( &m_access_time, 0, sizeof( struct timeval ) );
-    memset( &m_check_update_time, 0, sizeof( struct timeval ) );
+    m_check_update_time = 0;
 
     if( ! cache_only ){
 
@@ -1923,13 +1923,16 @@ void ArticleBase::read_info()
         GET_INFOVALUE( str_tmp, "aboneage = " );
         if( ! str_tmp.empty() ) m_abone_age = atoi( str_tmp.c_str() );
 
-        // 最終更新チェック時間
+        // 最終更新チェック時間 (elisp の Lisp timestamp形式)
         GET_INFOVALUE( str_tmp, "checktime = " );
         if( ! str_tmp.empty() ){
             list_tmp = MISC::split_line( str_tmp );
-            if( list_tmp.size() == 2 ){
+            // (high low)部分のみ
+            if( list_tmp.size() >= 2 ){
                 it_tmp = list_tmp.begin();
-                m_check_update_time.tv_sec = ( atoi( ( *(it_tmp++) ).c_str() ) << 16 ) + atoi( ( *(it_tmp++) ).c_str() );
+                m_check_update_time = std::atoi( it_tmp->c_str() ) << 16; // high
+                ++it_tmp;
+                m_check_update_time += std::atoi( it_tmp->c_str() ); // low
             }
         }
 
@@ -2078,9 +2081,9 @@ void ArticleBase::save_info( const bool force )
     std::ostringstream ss_write;
     if( m_write_time.tv_sec ) ss_write << ( m_write_time.tv_sec >> 16 ) << " " << ( m_write_time.tv_sec & 0xffff ) << " " << m_write_time.tv_usec;
 
-    // 更新チェック時間
+    // 更新チェック時間 (elisp の Lisp timestamp形式, highとlowのみ)
     std::ostringstream ss_check;
-    if( m_check_update_time.tv_sec ) ss_check << ( m_check_update_time.tv_sec >> 16 ) << " " << ( m_check_update_time.tv_sec & 0xffff );
+    if( m_check_update_time ) ss_check << ( m_check_update_time >> 16 ) << ' ' << ( m_check_update_time & 0xffff );
 
     // あぼーん情報
     std::string str_abone_id = MISC::listtostr( m_list_abone_id );

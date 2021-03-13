@@ -62,7 +62,7 @@ namespace DBTREE
         int m_number_max{};              // 規定の最大レス数(0:未設定)
         struct timeval m_access_time{};  // ユーザが最後にロードした時間
         std::string m_access_date;       // ユーザが最後にロードした月日( string型 )
-        struct timeval m_check_update_time{};  // 最終更新チェック時間
+        std::time_t m_check_update_time{}; // 最終更新チェック時間
         struct timeval m_write_time{}; // 最終書き込み時間
         std::string m_write_time_date; // 最終書き込み月日( string型 )
         std::string m_write_name;      // 書き込み時の名前
