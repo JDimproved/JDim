@@ -16,7 +16,6 @@
 #include <ctime>
 #include <list>
 #include <string>
-#include <sys/time.h>
 #include <unordered_set>
 #include <vector>
 
@@ -63,7 +62,7 @@ namespace DBTREE
         std::time_t m_access_time{};     // ユーザが最後にロードした時間
         std::string m_access_date;       // ユーザが最後にロードした月日( string型 )
         std::time_t m_check_update_time{}; // 最終更新チェック時間
-        struct timeval m_write_time{}; // 最終書き込み時間
+        std::time_t m_write_time{};    // 最終書き込み時間
         std::string m_write_time_date; // 最終書き込み月日( string型 )
         std::string m_write_name;      // 書き込み時の名前
         std::string m_write_mail;      // 書き込み時のメアド
@@ -244,7 +243,7 @@ namespace DBTREE
         void reset_access_date(){ m_access_date = std::string(); }
 
         // 最終書き込み時間
-        time_t get_write_time() const { return m_write_time.tv_sec; } // 秒
+        time_t get_write_time() const noexcept { return m_write_time; } // 秒
         const std::string& get_write_date(); // string型
         void reset_write_date(){ m_write_time_date = std::string(); }
 
