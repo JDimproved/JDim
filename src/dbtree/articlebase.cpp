@@ -28,6 +28,8 @@
 #include "updatemanager.h"
 
 #include <glib/gi18n.h>
+
+#include <algorithm>
 #include <sstream>
 
 
@@ -388,7 +390,9 @@ void ArticleBase::set_org_host( const std::string& host )
 //
 std::string ArticleBase::get_access_time_str()
 {
-    return MISC::timevaltostr( m_access_time );
+    struct timeval buf{};
+    buf.tv_sec = m_access_time;
+    return MISC::timevaltostr( buf );
 }
 
 
@@ -397,12 +401,12 @@ std::string ArticleBase::get_access_time_str()
 //
 const std::string& ArticleBase::get_access_date()
 {
-    if( m_access_time.tv_sec ){
+    if( m_access_time ){
 
         if( m_access_date.empty() 
             || SESSION::get_col_access_time() == MISC::TIME_PASSED ){
-        
-            m_access_date = MISC::timettostr( m_access_time.tv_sec, SESSION::get_col_access_time() );
+
+            m_access_date = MISC::timettostr( m_access_time, SESSION::get_col_access_time() );
         }
     }
 
@@ -488,12 +492,12 @@ void ArticleBase::set_number_seen( const int number_seen )
 // 最終書き込み時間( string型 )
 const std::string& ArticleBase::get_write_date()
 {
-    if( m_write_time.tv_sec ){
+    if( m_write_time ){
 
         if( m_write_time_date.empty() 
             || SESSION::get_col_write_time() == MISC::TIME_PASSED ){
-        
-            m_write_time_date = MISC::timettostr( m_write_time.tv_sec, SESSION::get_col_write_time() );
+
+            m_write_time_date = MISC::timettostr( m_write_time, SESSION::get_col_write_time() );
         }
     }
 
@@ -506,15 +510,14 @@ const std::string& ArticleBase::get_write_date()
 //
 void ArticleBase::update_writetime()
 {
-    struct timeval tv;
-    struct timezone tz;
-    if( CONFIG::get_save_post_history() && gettimeofday( &tv, &tz ) == 0 ){
+    std::time_t current;
+    if( CONFIG::get_save_post_history() && std::time( &current ) != std::time_t(-1) ){
 
-        m_write_time = tv;
-        m_write_time_date = std::string();
+        m_write_time = current;
+        m_write_time_date.clear();
 
 #ifdef _DEBUG
-        std::cout << "ArticleBase::update_writetime : " << m_write_time.tv_sec << " " << m_write_time_date << std::endl;
+        std::cout << "ArticleBase::update_writetime : " << m_write_time << std::endl;
 #endif
         m_save_info = true;
 
@@ -940,7 +943,7 @@ void ArticleBase::clear_post_history()
     if( ! is_cached() ) return;
 
     read_info();
-    if( !m_posts.empty() || m_write_time.tv_sec || m_write_time.tv_usec ){
+    if( !m_posts.empty() || m_write_time ){
 
 #ifdef _DEBUG
         std::cout << "ArticleBase::clear_post_history size = " << m_posts.size()
@@ -948,8 +951,8 @@ void ArticleBase::clear_post_history()
                   << " subject = " << m_subject << std::endl;
 #endif
         m_posts.clear();
-        memset( &m_write_time, 0, sizeof( struct timeval ) );
-        m_write_time_date = std::string();
+        m_write_time = 0;
+        m_write_time_date.clear();
 
         // nodetreeが作られている時はnodetreeもリセット
         if( m_nodetree ) m_nodetree->clear_post_history();
@@ -1079,16 +1082,15 @@ void ArticleBase::download_dat( const bool check_update )
               << "url_pre_article = " << m_url_pre_article << std::endl;
 #endif
 
-    struct timeval tv;
-    struct timezone tz;
-    if( gettimeofday( &tv, &tz ) != 0 ) tv.tv_sec = 0;
+    std::time_t current = std::time( nullptr );
+    if( current == std::time_t(-1) ) current = 0;
 
     // 更新チェック可能か判定する
     if( check_update ){
 
         // 一度更新チェックしたらしばらくは再チェックできないようにする
         time_t passed = 0;
-        if( tv.tv_sec ) passed = MAX( 0, tv.tv_sec - m_check_update_time.tv_sec );
+        if( current ) passed = std::max<std::time_t>( 0, current - m_check_update_time );
 
         if( ! SESSION::is_online()
             || ! enable_check_update()
@@ -1125,7 +1127,7 @@ void ArticleBase::download_dat( const bool check_update )
         }
     }
 
-    if( SESSION::is_online() && tv.tv_sec ) m_check_update_time = tv;
+    if( SESSION::is_online() && current ) m_check_update_time = current;
 
     // DAT落ちしていてロードしない場合
     if( ( m_status & STATUS_OLD ) && ! is_load_olddat() ) {
@@ -1464,11 +1466,10 @@ void ArticleBase::slot_load_finished()
             m_read_info = true;
             m_save_info = true;
 
-            struct timeval tv;
-            struct timezone tz;
-            if( gettimeofday( &tv, &tz ) == 0 ) {
-                m_access_time = tv;
-                m_access_date = std::string();
+            std::time_t current;
+            if( std::time( &current ) != std::time_t(-1) ) {
+                m_access_time = current;
+                m_access_date.clear();
             }
 
             if( m_number < m_number_load ) m_number = m_number_load;
@@ -1520,9 +1521,8 @@ void ArticleBase::show_updateicon( const bool update )
               << " update = " << update << " status = " << ( m_status & STATUS_UPDATE ) << std::endl;
 #endif
 
-    struct timeval tv;
-    struct timezone tz;
-    if( gettimeofday( &tv, &tz ) == 0 ) m_check_update_time = tv;
+    const std::time_t current = std::time( nullptr );
+    if( current != std::time_t(-1) ) m_check_update_time = current;
 
     if( update ){
 
@@ -1593,7 +1593,7 @@ void ArticleBase::delete_cache( const bool cache_only )
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
         }
 
-        if( CONFIG::get_show_del_written_thread_diag() && m_write_time.tv_sec ){
+        if( CONFIG::get_show_del_written_thread_diag() && m_write_time ){
 
             const std::string msg = "「" + get_subject() + "」には書き込み履歴が残っています。\n\nスレを削除しますか？";
 
@@ -1667,12 +1667,12 @@ void ArticleBase::delete_cache( const bool cache_only )
     m_cached = false;
     reset_status();
     m_date_modified.clear();
-    memset( &m_access_time, 0, sizeof( struct timeval ) );
-    memset( &m_check_update_time, 0, sizeof( struct timeval ) );
+    m_access_time = 0;
+    m_check_update_time = 0;
 
     if( ! cache_only ){
 
-        memset( &m_write_time, 0, sizeof( struct timeval ) );
+        m_write_time = 0;
         m_write_time_date.clear();
 
         m_code =  HTTP_INIT;
@@ -1805,25 +1805,31 @@ void ArticleBase::read_info()
         // 更新時間 (time)
         GET_INFOVALUE( m_date_modified, "modified = " );
 
-        // access time
+        // access time (Emacs Lisp の Lisp timestamp形式)
         GET_INFOVALUE( str_tmp, "access = " );
         if( ! str_tmp.empty() ){
             list_tmp = MISC::split_line( str_tmp );
-            if( list_tmp.size() == 3 ){
+            // Emacsでは(high low micro pico)まで拡張されているが(high low)部分のみ使う
+            if( list_tmp.size() >= 2 ){
                 it_tmp = list_tmp.begin();
-                m_access_time.tv_sec = ( atoi( ( *(it_tmp++) ).c_str() ) << 16 ) + atoi( ( *(it_tmp++) ).c_str() );
-                m_access_time.tv_usec = atoi( ( *(it_tmp++) ).c_str() );
+                m_access_time = std::atoi( it_tmp->c_str() ) << 16; // high
+                ++it_tmp;
+                m_access_time += std::atoi( it_tmp->c_str() ); // low
+                // 以前はmicro秒を解析していたが未使用だったため省略した (Since v0.5.0+)
             }
         }
 
-        // write time
+        // write time (elisp の Lisp timestamp形式)
         GET_INFOVALUE( str_tmp, "writetime = " );
         if( ! str_tmp.empty() ){
             list_tmp = MISC::split_line( str_tmp );
-            if( list_tmp.size() == 3 ){
+            // (high low)部分のみ使う
+            if( list_tmp.size() >= 2 ){
                 it_tmp = list_tmp.begin();
-                m_write_time.tv_sec = ( atoi( ( *(it_tmp++) ).c_str() ) << 16 ) + atoi( ( *(it_tmp++) ).c_str() );
-                m_write_time.tv_usec = atoi( ( *(it_tmp++) ).c_str() );
+                m_write_time = std::atoi( it_tmp->c_str() ) << 16; // high
+                ++it_tmp;
+                m_write_time += std::atoi( it_tmp->c_str() ); // low
+                // 以前はmicro秒を解析していたが未使用だったため省略した (Since v0.5.0+)
             }
         }
 
@@ -1923,13 +1929,16 @@ void ArticleBase::read_info()
         GET_INFOVALUE( str_tmp, "aboneage = " );
         if( ! str_tmp.empty() ) m_abone_age = atoi( str_tmp.c_str() );
 
-        // 最終更新チェック時間
+        // 最終更新チェック時間 (elisp の Lisp timestamp形式)
         GET_INFOVALUE( str_tmp, "checktime = " );
         if( ! str_tmp.empty() ){
             list_tmp = MISC::split_line( str_tmp );
-            if( list_tmp.size() == 2 ){
+            // (high low)部分のみ
+            if( list_tmp.size() >= 2 ){
                 it_tmp = list_tmp.begin();
-                m_check_update_time.tv_sec = ( atoi( ( *(it_tmp++) ).c_str() ) << 16 ) + atoi( ( *(it_tmp++) ).c_str() );
+                m_check_update_time = std::atoi( it_tmp->c_str() ) << 16; // high
+                ++it_tmp;
+                m_check_update_time += std::atoi( it_tmp->c_str() ); // low
             }
         }
 
@@ -2074,13 +2083,13 @@ void ArticleBase::save_info( const bool force )
     std::cout << "subject = " << m_subject << std::endl;
 #endif
 
-    // 書き込み時間
+    // 書き込み時間 (elisp の Lisp timestamp形式, 互換性のためmicro秒は0で固定)
     std::ostringstream ss_write;
-    if( m_write_time.tv_sec ) ss_write << ( m_write_time.tv_sec >> 16 ) << " " << ( m_write_time.tv_sec & 0xffff ) << " " << m_write_time.tv_usec;
+    if( m_write_time ) ss_write << ( m_write_time >> 16 ) << ' ' << ( m_write_time & 0xffff ) << " 0";
 
-    // 更新チェック時間
+    // 更新チェック時間 (elisp の Lisp timestamp形式, highとlowのみ)
     std::ostringstream ss_check;
-    if( m_check_update_time.tv_sec ) ss_check << ( m_check_update_time.tv_sec >> 16 ) << " " << ( m_check_update_time.tv_sec & 0xffff );
+    if( m_check_update_time ) ss_check << ( m_check_update_time >> 16 ) << ' ' << ( m_check_update_time & 0xffff );
 
     // あぼーん情報
     std::string str_abone_id = MISC::listtostr( m_list_abone_id );

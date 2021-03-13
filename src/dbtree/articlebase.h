@@ -16,7 +16,6 @@
 #include <ctime>
 #include <list>
 #include <string>
-#include <sys/time.h>
 #include <unordered_set>
 #include <vector>
 
@@ -60,10 +59,10 @@ namespace DBTREE
         int m_number_before_load{};      // ロード前のレスの数( m_number_new を計算するのに使う )
         int m_number_seen{};             // どこまで読んだか
         int m_number_max{};              // 規定の最大レス数(0:未設定)
-        struct timeval m_access_time{};  // ユーザが最後にロードした時間
+        std::time_t m_access_time{};     // ユーザが最後にロードした時間
         std::string m_access_date;       // ユーザが最後にロードした月日( string型 )
-        struct timeval m_check_update_time{};  // 最終更新チェック時間
-        struct timeval m_write_time{}; // 最終書き込み時間
+        std::time_t m_check_update_time{}; // 最終更新チェック時間
+        std::time_t m_write_time{};    // 最終書き込み時間
         std::string m_write_time_date; // 最終書き込み月日( string型 )
         std::string m_write_name;      // 書き込み時の名前
         std::string m_write_mail;      // 書き込み時のメアド
@@ -239,12 +238,12 @@ namespace DBTREE
 
         // 最終アクセス時間
         std::string get_access_time_str();
-        time_t get_access_time() const { return m_access_time.tv_sec; } // 秒
+        time_t get_access_time() const noexcept { return m_access_time; } // 秒
         const std::string& get_access_date(); // string型
         void reset_access_date(){ m_access_date = std::string(); }
 
         // 最終書き込み時間
-        time_t get_write_time() const { return m_write_time.tv_sec; } // 秒
+        time_t get_write_time() const noexcept { return m_write_time; } // 秒
         const std::string& get_write_date(); // string型
         void reset_write_date(){ m_write_time_date = std::string(); }
 
