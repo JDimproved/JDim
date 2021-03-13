@@ -90,7 +90,7 @@ JDWinMain::JDWinMain( const bool init, const bool skip_setupdiag,
 #endif
 
     // 後はcoreを作って任せる
-    m_core = new class CORE::Core( *this );
+    m_core = std::make_unique<CORE::Core>( *this );
     m_core->run( init, skip_setupdiag );
 }
 
@@ -103,13 +103,8 @@ JDWinMain::~JDWinMain()
               << " h = " << JDWinMain::get_height_win() << " max = " << JDWinMain::is_maximized_win() << std::endl;
 #endif
 
-    if( m_core ){
-
-        delete m_core;
-        m_core = nullptr;
-
-        JDLIB::check_loader_alive();
-    }
+    m_core.reset();
+    JDLIB::check_loader_alive();
 
     // migemo のクローズ
 #ifdef HAVE_MIGEMO_H
@@ -128,7 +123,7 @@ void JDWinMain::save_session()
     std::cout << "JDWinMain::save_session\n";
 #endif
 
-    if( m_core ) m_core->save_session();
+    m_core->save_session();
 }
 
 
