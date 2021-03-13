@@ -80,10 +80,6 @@ ArticleAdmin::~ArticleAdmin()
     std::cout << "ArticleAdmin::~ArticleAdmin\n";
 #endif
 
-    if( m_toolbar ) delete m_toolbar;
-    if( m_toolbarsimple ) delete m_toolbarsimple;
-    if( m_search_toolbar ) delete m_search_toolbar;
-
     ARTICLE::init_font();
 }
 
@@ -580,15 +576,15 @@ void ArticleAdmin::show_toolbar()
     if( ! m_toolbar ){
 
         // 通常のツールバー( TOOLBAR_ARTICLE )
-        m_toolbar = new ArticleToolBar();
+        m_toolbar = std::make_unique<ArticleToolBar>();
         get_notebook()->append_toolbar( *m_toolbar );
 
         // 簡易版ツールバー( TOOLBAR_SIMPLE )
-        m_toolbarsimple = new ArticleToolBarSimple();
+        m_toolbarsimple = std::make_unique<ArticleToolBarSimple>();
         get_notebook()->append_toolbar( *m_toolbarsimple );
 
         // ログ検索などのツールバー( TOOLBAR_SEARCH )
-        m_search_toolbar = new SearchToolBar();
+        m_search_toolbar = std::make_unique<SearchToolBar>();
         get_notebook()->append_toolbar( *m_search_toolbar );
 
         if( SESSION::get_show_article_toolbar() ){
