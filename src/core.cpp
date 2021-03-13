@@ -237,7 +237,7 @@ Core::~Core()
     CORE::delete_dispatchmanager();
 
     // ツールバー削除
-    if( m_toolbar ) delete m_toolbar;
+    m_toolbar.reset();
 
     // 設定削除
     CONFIG::delete_confitem();
@@ -1291,7 +1291,7 @@ void Core::create_toolbar()
 {
     if( m_toolbar ) return;
 
-    m_toolbar = new MainToolBar();
+    m_toolbar = std::make_unique<MainToolBar>();
 
     m_toolbar->m_button_bbslist.signal_clicked().connect(
         sigc::bind< std::string, bool >( sigc::mem_fun(*this, &Core::switch_sidebar ), URL_BBSLISTVIEW, false ) );
