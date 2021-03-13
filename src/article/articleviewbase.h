@@ -10,7 +10,9 @@
 #include "jdlib/refptr_lock.h"
 
 #include <gtkmm.h>
+
 #include <list>
+#include <memory>
 
 
 namespace SKELETON
@@ -56,7 +58,7 @@ namespace ARTICLE
         std::string m_name;    // 名前
 
         // ポップアップ
-        SKELETON::PopupWin* m_popup_win{};
+        std::unique_ptr<SKELETON::PopupWin> m_popup_win;
         bool m_popup_shown{}; // 表示されているならtrue, falseでもdeleteしない限りは m_popup_win != nullptrに注意
         int m_hidepopup_counter{}; // ポップアップを消すまでのカウンタ
         std::string m_popup_url; // 表示中のポップアップのアドレス

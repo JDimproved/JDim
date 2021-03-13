@@ -2846,7 +2846,7 @@ void ArticleViewBase::show_popup( SKELETON::View* view, const int mrg_x, const i
 
     delete_popup();
 
-    m_popup_win = new SKELETON::PopupWin( this, view, mrg_x, mrg_y );
+    m_popup_win = std::make_unique<SKELETON::PopupWin>( this, view, mrg_x, mrg_y );
     m_popup_win->signal_leave_notify_event().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_popup_leave_notify_event ) );
     m_popup_win->sig_hide_popup().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_hide_popup ) );
     m_popup_shown = true;
@@ -2952,8 +2952,7 @@ void ArticleViewBase::delete_popup()
     std::cout << "ArticleViewBase::delete_popup " << get_url() << std::endl;
 #endif
 
-    if( m_popup_win ) delete m_popup_win;
-    m_popup_win = nullptr;
+    m_popup_win.reset();
     m_popup_shown = false;
 }
 
