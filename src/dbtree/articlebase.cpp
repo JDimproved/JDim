@@ -390,7 +390,9 @@ void ArticleBase::set_org_host( const std::string& host )
 //
 std::string ArticleBase::get_access_time_str()
 {
-    return MISC::timevaltostr( m_access_time );
+    struct timeval buf{};
+    buf.tv_sec = m_access_time;
+    return MISC::timevaltostr( buf );
 }
 
 
@@ -399,12 +401,12 @@ std::string ArticleBase::get_access_time_str()
 //
 const std::string& ArticleBase::get_access_date()
 {
-    if( m_access_time.tv_sec ){
+    if( m_access_time ){
 
         if( m_access_date.empty() 
             || SESSION::get_col_access_time() == MISC::TIME_PASSED ){
-        
-            m_access_date = MISC::timettostr( m_access_time.tv_sec, SESSION::get_col_access_time() );
+
+            m_access_date = MISC::timettostr( m_access_time, SESSION::get_col_access_time() );
         }
     }
 
@@ -1465,11 +1467,10 @@ void ArticleBase::slot_load_finished()
             m_read_info = true;
             m_save_info = true;
 
-            struct timeval tv;
-            struct timezone tz;
-            if( gettimeofday( &tv, &tz ) == 0 ) {
-                m_access_time = tv;
-                m_access_date = std::string();
+            std::time_t current;
+            if( std::time( &current ) != std::time_t(-1) ) {
+                m_access_time = current;
+                m_access_date.clear();
             }
 
             if( m_number < m_number_load ) m_number = m_number_load;
@@ -1667,7 +1668,7 @@ void ArticleBase::delete_cache( const bool cache_only )
     m_cached = false;
     reset_status();
     m_date_modified.clear();
-    memset( &m_access_time, 0, sizeof( struct timeval ) );
+    m_access_time = 0;
     m_check_update_time = 0;
 
     if( ! cache_only ){
@@ -1805,14 +1806,17 @@ void ArticleBase::read_info()
         // 更新時間 (time)
         GET_INFOVALUE( m_date_modified, "modified = " );
 
-        // access time
+        // access time (Emacs Lisp の Lisp timestamp形式)
         GET_INFOVALUE( str_tmp, "access = " );
         if( ! str_tmp.empty() ){
             list_tmp = MISC::split_line( str_tmp );
-            if( list_tmp.size() == 3 ){
+            // Emacsでは(high low micro pico)まで拡張されているが(high low)部分のみ使う
+            if( list_tmp.size() >= 2 ){
                 it_tmp = list_tmp.begin();
-                m_access_time.tv_sec = ( atoi( ( *(it_tmp++) ).c_str() ) << 16 ) + atoi( ( *(it_tmp++) ).c_str() );
-                m_access_time.tv_usec = atoi( ( *(it_tmp++) ).c_str() );
+                m_access_time = std::atoi( it_tmp->c_str() ) << 16; // high
+                ++it_tmp;
+                m_access_time += std::atoi( it_tmp->c_str() ); // low
+                // 以前はmicro秒を解析していたが未使用だったため省略した (Since v0.5.0+)
             }
         }
 
