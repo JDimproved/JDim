@@ -9,11 +9,6 @@
 
 #include "gtkmmversion.h"
 
-#include <gtkmm.h>
-#include <list>
-#include <memory>
-#include <string>
-
 #include "skeleton/dispatchable.h"
 #include "skeleton/hpaned.h"
 #include "skeleton/vpaned.h"
@@ -21,6 +16,13 @@
 #include "skeleton/vbox.h"
 
 #include "command_args.h"
+
+#include <gtkmm.h>
+
+#include <list>
+#include <memory>
+#include <string>
+
 
 class JDWinMain;
 
@@ -96,7 +98,7 @@ namespace CORE
         SKELETON::JDVPaned m_vpaned_message; // 埋め込み書き込みビュー用
 
         // ツールバー
-        MainToolBar* m_toolbar{};
+        std::unique_ptr<MainToolBar> m_toolbar;
 
         // タイトルに表示する文字列
         // set_maintitle() 参照
