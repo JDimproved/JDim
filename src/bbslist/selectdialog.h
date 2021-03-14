@@ -11,6 +11,8 @@
 #include "skeleton/label_entry.h"
 
 #include <vector>
+#include <memory>
+
 
 namespace BBSLIST
 {
@@ -29,12 +31,12 @@ namespace BBSLIST
 
         Gtk::ToggleButton m_bt_show_tree;
 
-        SelectListView* m_selectview{};
+        std::unique_ptr<SelectListView> m_selectview;
 
       public:
 
         SelectListDialog( Gtk::Window* parent, const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore );
-        ~SelectListDialog();
+        ~SelectListDialog() noexcept;
 
         std::string get_name();
         std::string get_path();

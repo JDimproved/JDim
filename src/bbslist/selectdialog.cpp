@@ -97,10 +97,8 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
 }
 
 
-SelectListDialog::~SelectListDialog()
-{
-    if( m_selectview ) delete m_selectview;
-}
+// SelectListView が不完全型のためヘッダーではデストラクタを定義できない
+SelectListDialog::~SelectListDialog() noexcept = default;
 
 
 //
@@ -139,24 +137,21 @@ void SelectListDialog::slot_show_tree()
 
     if( m_bt_show_tree.get_active() ){
 
-        if( ! m_selectview ) m_selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, get_url() ) ) );
-        if( m_selectview ){
-            m_selectview->set_parent_win( this );
-            m_selectview->copy_treestore( m_treestore );
-            m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &SelectListDialog::hide ) );
+        if( ! m_selectview ) m_selectview = std::make_unique<SelectListView>( get_url() );
 
-            get_content_area()->pack_start( *m_selectview );
-            m_selectview->set_size_request( -1, SELECTDIAG_TREEHEIGHT );
-            m_selectview->focus_view();
-            show_all_children();
-        }
+        m_selectview->set_parent_win( this );
+        m_selectview->copy_treestore( m_treestore );
+        m_selectview->sig_close_dialog().connect( [this] { hide(); } );
 
+        get_content_area()->pack_start( *m_selectview );
+        m_selectview->set_size_request( -1, SELECTDIAG_TREEHEIGHT );
+        m_selectview->focus_view();
+        show_all_children();
     }
     else if( m_selectview ){
         get_content_area()->remove( *m_selectview );
         resize( get_width(), 1 );
-        delete m_selectview;
-        m_selectview = nullptr;
+        m_selectview.reset();
     }
 }
 
