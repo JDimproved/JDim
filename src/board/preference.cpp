@@ -211,7 +211,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
 
     // ローカルルール
-    m_localrule = CORE::ViewFactory( CORE::VIEW_ARTICLEINFO, get_url() );
+    m_localrule.reset( CORE::ViewFactory( CORE::VIEW_ARTICLEINFO, get_url() ) );
 
     // プロキシ
     std::string host;
@@ -366,13 +366,6 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 }
 
 
-Preferences::~Preferences()
-{
-    if( m_localrule ) delete m_localrule;
-    m_localrule = nullptr;
-}
-
-
 void Preferences::slot_clear_modified()
 {
     DBTREE::board_set_date_modified( get_url(), "" );
@@ -460,7 +453,7 @@ void Preferences::slot_remove_old_title()
 
 void Preferences::slot_switch_page( Gtk::Widget*, guint page )
 {
-    if( m_notebook.get_nth_page( page ) == m_localrule ){
+    if( m_notebook.get_nth_page( page ) == m_localrule.get() ){
         m_localrule->set_command( "clear_screen" );
         m_localrule->set_command( "append_html", DBTREE::localrule( get_url() ) );
     }
