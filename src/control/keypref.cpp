@@ -36,9 +36,9 @@ KeyDiag::KeyDiag( Gtk::Window* parent, const std::string& url, const int id, con
 }
 
 
-InputDiag* KeyDiag::create_inputdiag()
+std::unique_ptr<InputDiag> KeyDiag::create_inputdiag()
 {
-    return new KeyInputDiag( this, "", get_id() );
+    return std::make_unique<KeyInputDiag>( this, "", get_id() );
 }
 
 
@@ -231,9 +231,9 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
 }
 
 
-MouseKeyDiag* KeyPref::create_setting_diag( const int id, const std::string& str_motions )
+std::unique_ptr<MouseKeyDiag> KeyPref::create_setting_diag( const int id, const std::string& str_motions )
 {
-    return new KeyDiag( this, "", id, str_motions );
+    return std::make_unique<KeyDiag>( this, "", id, str_motions );
 }
 
 

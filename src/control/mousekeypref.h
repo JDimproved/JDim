@@ -11,6 +11,9 @@
 
 #include "control.h"
 
+#include <memory>
+
+
 namespace CONTROL
 {
     enum
@@ -116,7 +119,7 @@ namespace CONTROL
         int get_single() const { return m_single; }
         void set_single( bool single ){ m_single = single; }
 
-        virtual InputDiag* create_inputdiag() = 0;
+        virtual std::unique_ptr<InputDiag> create_inputdiag() = 0;
         virtual std::string get_default_motions( const int id ) = 0;
         virtual std::vector< int > check_conflict( const int mode, const std::string& str_motion ) = 0;
 
@@ -190,7 +193,7 @@ namespace CONTROL
         void append_row( const int id, const std::string& label = std::string() );
         void append_comment_row( const std::string& comment );
 
-        virtual MouseKeyDiag* create_setting_diag( const int id, const std::string& str_motions ) = 0;
+        virtual std::unique_ptr<MouseKeyDiag> create_setting_diag( const int id, const std::string& str_motions ) = 0;
         virtual std::string get_str_motions( const int id ) = 0;
         virtual std::string get_default_motions( const int id ) = 0;
         virtual void set_motions( const int id, const std::string& str_motions ) = 0;

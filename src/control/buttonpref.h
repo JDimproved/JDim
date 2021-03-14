@@ -39,7 +39,7 @@ namespace CONTROL
 
       protected:
 
-        InputDiag* create_inputdiag() override;
+        std::unique_ptr<InputDiag> create_inputdiag() override;
         std::string get_default_motions( const int id ) override;
         std::vector< int > check_conflict( const int mode, const std::string& str_motion ) override;
     };
@@ -59,7 +59,7 @@ namespace CONTROL
 
       protected:
 
-        MouseKeyDiag* create_setting_diag( const int id, const std::string& str_motions ) override;
+        std::unique_ptr<MouseKeyDiag> create_setting_diag( const int id, const std::string& str_motions ) override;
         std::string get_str_motions( const int id ) override;
         std::string get_default_motions( const int id ) override;
         void set_motions( const int id, const std::string& str_motions ) override;
