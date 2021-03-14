@@ -64,16 +64,6 @@ BoardAdmin::BoardAdmin( const std::string& url )
 }
 
 
-BoardAdmin::~BoardAdmin()
-{
-#ifdef _DEBUG    
-    std::cout << "BoardAdmin::~BoardAdmin\n";
-#endif
-
-    if( m_toolbar ) delete m_toolbar;
-}
-
-
 void BoardAdmin::save_session()
 {
     Admin::save_session();
@@ -296,7 +286,7 @@ void BoardAdmin::show_toolbar()
 {
     // まだ作成されていない場合は作成する
     if( ! m_toolbar ){
-        m_toolbar = new BoardToolBar();
+        m_toolbar = std::make_unique<BoardToolBar>();
         get_notebook()->append_toolbar( *m_toolbar );
 
         if( SESSION::get_show_board_toolbar() ) m_toolbar->open_buttonbar();
