@@ -16,8 +16,10 @@
 
 #include <gtkmm.h>
 
+#include <memory>
 #include <string>
 #include <unordered_set>
+
 
 namespace SKELETON
 {
@@ -80,7 +82,7 @@ namespace BBSLIST
         // ツリーに含まれている画像のURLを入れる hash_set
         std::set< std::string > m_set_image;
 
-        EditListWin* m_editlistwin{};
+        std::unique_ptr<EditListWin> m_editlistwin;
 
         // スレを追加したときにそのスレにしおりを付ける
         bool m_set_bookmark{};
@@ -183,7 +185,7 @@ namespace BBSLIST
       public:
 
         explicit BBSListViewBase( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
-        ~BBSListViewBase();
+        ~BBSListViewBase() noexcept;
 
         //
         // SKELETON::View の関数のオーバロード

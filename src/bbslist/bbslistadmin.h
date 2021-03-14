@@ -11,8 +11,10 @@
 #include "type.h"
 #include "data_info.h"
 
+#include <memory>
 #include <string>
 #include <vector>
+
 
 namespace SKELETON
 {
@@ -25,7 +27,7 @@ namespace BBSLIST
 
     class BBSListAdmin : public SKELETON::Admin
     {
-        BBSListToolBar* m_toolbar{};
+        std::unique_ptr<BBSListToolBar> m_toolbar;
 
       public:
 
