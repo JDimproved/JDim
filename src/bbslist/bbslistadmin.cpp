@@ -75,7 +75,6 @@ BBSListAdmin::~BBSListAdmin()
     std::cout << "BBSListAdmin::~BBSListAdmin\n";
 #endif
 
-    if( m_toolbar ) delete m_toolbar;
     BBSLIST::delete_undo_buffer_favorite();
 }
 
@@ -153,7 +152,7 @@ void BBSListAdmin::show_toolbar()
 {
     // まだ作成されていない場合は作成する
     if( ! m_toolbar ){
-        m_toolbar = new BBSListToolBar();
+        m_toolbar = std::make_unique<BBSListToolBar>();
         get_notebook()->append_toolbar( *m_toolbar );
 
         if( SESSION::get_show_bbslist_toolbar() ) m_toolbar->open_buttonbar();
