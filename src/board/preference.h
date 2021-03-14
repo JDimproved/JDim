@@ -10,6 +10,8 @@
 #include "skeleton/editview.h"
 #include "skeleton/label_entry.h"
 
+#include <memory>
+
 
 namespace BOARD
 {
@@ -138,14 +140,14 @@ namespace BOARD
         Gtk::Button m_button_remove_old_title;
 
         // ローカルルール
-        SKELETON::View* m_localrule{};
+        std::unique_ptr<SKELETON::View> m_localrule;
 
         // SETTING.TXT
         SKELETON::EditView m_edit_settingtxt;
 
       public:
         Preferences( Gtk::Window* parent, const std::string& url, const std::string& command );
-        ~Preferences();
+        ~Preferences() noexcept = default;
 
       private:
         void slot_clear_modified();

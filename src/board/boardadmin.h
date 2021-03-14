@@ -10,7 +10,9 @@
 
 #include "sign.h"
 
+#include <memory>
 #include <string>
+
 
 namespace BOARD
 {
@@ -18,11 +20,11 @@ namespace BOARD
 
     class BoardAdmin : public SKELETON::Admin
     {
-        BoardToolBar* m_toolbar{};
+        std::unique_ptr<BoardToolBar> m_toolbar;
 
       public:
         explicit BoardAdmin( const std::string& url );
-        ~BoardAdmin();
+        ~BoardAdmin() = default;
 
         void save_session() override;
 
