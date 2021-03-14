@@ -497,15 +497,8 @@ BBSListViewBase::BBSListViewBase( const std::string& url, const std::string& arg
 }
 
 
-BBSListViewBase::~BBSListViewBase()
-{
-#ifdef _DEBUG
-    std::cout << "BBSListViewBase::~BBSListViewBase : " << get_url() << std::endl;
-#endif
-
-    if( m_editlistwin ) delete m_editlistwin;
-    m_editlistwin = nullptr;
-}
+// EditListWin が不完全型のためヘッダーではデストラクタを定義できない
+BBSListViewBase::~BBSListViewBase() noexcept = default;
 
 
 void BBSListViewBase::save_session()
@@ -3078,7 +3071,7 @@ void BBSListViewBase::edit_tree()
 
     else{
 
-        m_editlistwin = new EditListWin( get_url(), get_treestore() );
+        m_editlistwin = std::make_unique<EditListWin>( get_url(), get_treestore() );
         m_editlistwin->signal_hide().connect( sigc::mem_fun(*this, &BBSListViewBase::slot_hide_editlistwin ) );
         m_editlistwin->show();
     }
@@ -3094,8 +3087,7 @@ void BBSListViewBase::slot_hide_editlistwin()
     std::cout << "BBSListViewBase::slot_hide_editlistwin\n";
 #endif
 
-    if( m_editlistwin ) delete m_editlistwin;
-    m_editlistwin = nullptr;
+    m_editlistwin.reset();
 }
 
 
