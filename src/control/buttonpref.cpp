@@ -30,9 +30,9 @@ ButtonDiag::ButtonDiag( Gtk::Window* parent, const std::string& url, const int i
 {}
 
 
-InputDiag* ButtonDiag::create_inputdiag()
+std::unique_ptr<InputDiag> ButtonDiag::create_inputdiag()
 {
-    return new ButtonInputDiag( this, "", get_id() );
+    return std::make_unique<ButtonInputDiag>( this, "", get_id() );
 }
 
 
@@ -121,9 +121,9 @@ ButtonPref::ButtonPref( Gtk::Window* parent, const std::string& url )
 }
 
 
-MouseKeyDiag* ButtonPref::create_setting_diag( const int id, const std::string& str_motions )
+std::unique_ptr<MouseKeyDiag> ButtonPref::create_setting_diag( const int id, const std::string& str_motions )
 {
-    return new ButtonDiag( this, "", id, str_motions );
+    return std::make_unique<ButtonDiag>( this, "", id, str_motions );
 }
 
 
