@@ -79,10 +79,8 @@ DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget
 }
 
 
-DragTreeView::~DragTreeView()
-{
-    delete_popup();
-}
+// メンバーに不完全型のスマートポインターがあるためデストラクタはinlineにできない
+DragTreeView::~DragTreeView() noexcept = default;
 
 
 //
@@ -197,7 +195,7 @@ void DragTreeView::show_popup( const std::string& url, View* view )
 
     delete_popup();
 
-    m_popup_win = new PopupWin( this, view, mrg_x, mrg_y );
+    m_popup_win = std::make_unique<PopupWin>( this, view, mrg_x, mrg_y );
     m_popup_win->signal_leave_notify_event().connect( sigc::mem_fun( *this, &DragTreeView::slot_popup_leave_notify_event ) );
     m_popup_win->sig_hide_popup().connect( sigc::mem_fun( *this, &DragTreeView::hide_popup ) );
 
@@ -263,10 +261,8 @@ void DragTreeView::delete_popup()
         std::cout << "DragTreeView::delete_popup\n";
 #endif
 
-        delete m_popup_win;
-        m_popup_win = nullptr;
-
-        m_pre_popup_url = std::string();
+        m_popup_win.reset();
+        m_pre_popup_url.clear();
         m_popup_shown = false;
     }
 }
