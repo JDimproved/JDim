@@ -60,11 +60,8 @@ EditTextView::EditTextView()
 }
 
 
-EditTextView::~EditTextView()
-{
-    if( m_aapopupmenu ) delete m_aapopupmenu;
-    m_aapopupmenu = nullptr;
-}
+// メンバーに不完全型のスマートポインターがあるためデストラクタはinlineにできない
+EditTextView::~EditTextView() noexcept = default;
 
 
 //
@@ -651,9 +648,7 @@ void EditTextView::show_aalist_popup()
 {
     if( CORE::get_aamanager()->get_size() )
     {
-        if( m_aapopupmenu ) delete m_aapopupmenu;
-
-        m_aapopupmenu = Gtk::manage( new AAMenu( *dynamic_cast< Gtk::Window* >( get_toplevel() ) ) );
+        m_aapopupmenu = std::make_unique<AAMenu>( *dynamic_cast<Gtk::Window*>( get_toplevel() ) );
 
         m_aapopupmenu->sig_selected().connect( sigc::mem_fun( *this, &EditTextView::slot_aamenu_selected ) );
         m_aapopupmenu->signal_map().connect( sigc::mem_fun( *this, &EditTextView::slot_map_aamenu ) ); 
