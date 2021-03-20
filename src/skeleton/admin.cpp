@@ -52,9 +52,8 @@ using namespace SKELETON;
 
 Admin::Admin( const std::string& url )
     : m_url( url )
+    , m_notebook{ std::make_unique<DragableNoteBook>() }
 {
-    m_notebook = new DragableNoteBook();
-
     m_notebook->signal_switch_page().connect( sigc::mem_fun( *this, &Admin::slot_switch_page ) );
     m_notebook->set_scrollable( true );
 
@@ -102,10 +101,6 @@ Admin::~Admin()
 
     Admin::close_window();
     delete_jdwin();
-
-    if( m_notebook ) delete m_notebook;
-    if( m_move_menu ) delete m_move_menu;
-    if( m_tabswitchmenu ) delete m_tabswitchmenu;
 }
 
 
@@ -217,7 +212,7 @@ void Admin::setup_menu()
     Gtk::MenuItem* item;
 
     // 移動サブメニュー
-    m_move_menu = new SKELETON::TabSwitchMenu( m_notebook, this );
+    m_move_menu = std::make_unique<SKELETON::TabSwitchMenu>( m_notebook.get(), this );
 
     // 進む、戻る
     Glib::RefPtr< Gtk::Action > act;
@@ -269,7 +264,7 @@ void Admin::slot_popupmenu_deactivate()
 
 Gtk::Widget* Admin::get_widget()
 {
-    return dynamic_cast< Gtk::Widget*>( m_notebook );
+    return static_cast<Gtk::Widget*>( m_notebook.get() );
 }
 
 
@@ -2225,7 +2220,7 @@ void Admin::slot_show_tabswitchmenu()
     std::cout << "Admin::slot_show_tabswitchmenu\n";
 #endif
 
-    if( ! m_tabswitchmenu ) m_tabswitchmenu = new SKELETON::TabSwitchMenu( m_notebook, this );
+    if( ! m_tabswitchmenu ) m_tabswitchmenu = std::make_unique<SKELETON::TabSwitchMenu>( m_notebook.get(), this );
 
     m_tabswitchmenu->remove_items();
     m_tabswitchmenu->append_items();

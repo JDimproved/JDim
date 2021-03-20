@@ -37,7 +37,7 @@ void Loadable::terminate_load()
     // デストラクタの外から呼び出すこと
     set_dispatchable( false );
 
-    delete_loader();
+    m_loader.reset();
 }
 
 
@@ -57,10 +57,8 @@ void Loadable::clear_load_data()
 
 bool Loadable::is_loading() const
 {
-    if( ! m_loader ) return false;
-
     // m_loader != nullptr ならローダ起動中ってこと
-    return true;
+    return static_cast<bool>( m_loader );
 }
 
 
@@ -82,17 +80,6 @@ time_t Loadable::get_time_modified()
 }
 
 
-
-
-void Loadable::delete_loader()
-{
-    if( m_loader ) delete m_loader;
-    m_loader = nullptr;
-}
-
-
-
-
 //
 // ロード開始
 //
@@ -105,7 +92,7 @@ bool Loadable::start_load( const JDLIB::LOADERDATA& data )
 #endif
 
     assert( m_loader == nullptr );
-    m_loader = new JDLIB::Loader( m_low_priority );
+    m_loader = std::make_unique<JDLIB::Loader>( m_low_priority );
 
     // 情報初期化
     // m_date_modified, m_cookie は初期化しない
@@ -118,7 +105,7 @@ bool Loadable::start_load( const JDLIB::LOADERDATA& data )
     if( !m_loader->run( this, data ) ){
         m_code = get_loader_code();
         m_str_code = get_loader_str_code();
-        delete_loader();
+        m_loader.reset();
         return false;
     }
 
@@ -180,10 +167,10 @@ void Loadable::callback_dispatch()
     if( ! get_loader_location().empty() ) m_location = get_loader_location();
 
 #ifdef _DEBUG
-    std::cout << "delete_loader\n";
-#endif    
+    std::cout << "delete loader\n";
+#endif
 
-    delete_loader();
+    m_loader.reset();
 
 #ifdef _DEBUG
     std::cout << "code = " << m_code << std::endl;

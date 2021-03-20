@@ -3,9 +3,11 @@
 #ifndef _EDITVIEW_H
 #define _EDITVIEW_H
 
+#include "control/control.h"
+
 #include <gtkmm.h>
 
-#include "control/control.h"
+#include <memory>
 
 
 namespace SKELETON
@@ -52,7 +54,7 @@ namespace SKELETON
         Gtk::Menu* m_context_menu{};
 
         // AAポップアップ
-        AAMenu* m_aapopupmenu{};
+        std::unique_ptr<AAMenu> m_aapopupmenu;
 
       public:
 
@@ -61,7 +63,7 @@ namespace SKELETON
         SIG_BUTTON_PRESS sig_button_press() { return m_sig_button_press; }
 
         EditTextView();
-        ~EditTextView();
+        ~EditTextView() noexcept;
 
         void insert_str( const std::string& str, bool use_br );
 

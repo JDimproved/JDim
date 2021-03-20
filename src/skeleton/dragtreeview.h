@@ -19,6 +19,9 @@
 
 #include <gtkmm.h>
 
+#include <memory>
+
+
 namespace SKELETON
 {
     class View;
@@ -48,7 +51,7 @@ namespace SKELETON
         Gdk::RGBA m_color_bg_even;
 
         // ポップアップウィンドウ用
-        PopupWin* m_popup_win{};
+        std::unique_ptr<PopupWin> m_popup_win;
         std::string m_pre_popup_url;
         bool m_popup_shown{};
         
@@ -65,7 +68,7 @@ namespace SKELETON
         // use_usr_fontcolor が true の時はフォントや色を指定する
         DragTreeView( const std::string& url, const std::string& dndtarget,
                       const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even );
-        ~DragTreeView();
+        ~DragTreeView() noexcept;
 
         virtual void clock_in();
 

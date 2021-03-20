@@ -7,6 +7,8 @@
 
 #include "prefdiag.h"
 
+#include <memory>
+
 
 namespace SKELETON
 {
@@ -16,7 +18,7 @@ namespace SKELETON
     {
         Gtk::Notebook m_notebook;
         Gtk::Label m_message;
-        SKELETON::View* m_detail{};
+        std::unique_ptr<SKELETON::View> m_detail;
 
       public:
 
@@ -25,12 +27,12 @@ namespace SKELETON
                     const std::string& message, const std::string& tab_message,
                     const std::string& detail_html, const std::string& tab_detail
             );
-        ~DetailDiag();
+        ~DetailDiag() noexcept;
 
       protected:
 
         Gtk::Notebook& get_notebook(){ return  m_notebook; }
-        SKELETON::View* get_detail(){ return m_detail; }
+        SKELETON::View* get_detail(){ return m_detail.get(); }
 
       private:
 

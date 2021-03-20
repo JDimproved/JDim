@@ -29,7 +29,7 @@
 
 (6) ディスパッチャ経由で Dispatchable::callback_dispatch() が呼び出される
 (7) クッキー、更新時刻などを取得する
-(8) delete_loader()でローダの停止を待って削除する
+(8) m_loader.reset()でローダの停止を待って削除する
 (9) receive_finish()を呼び出す 
 
 注意点
@@ -47,8 +47,11 @@
 #include "dispatchable.h"
 
 #include <gtkmm.h>
-#include <list>
+
 #include <ctime>
+#include <list>
+#include <memory>
+
 
 namespace JDLIB
 {
@@ -61,7 +64,7 @@ namespace SKELETON
 {
     class Loadable : public Dispatchable
     {
-        JDLIB::Loader* m_loader{};
+        std::unique_ptr<JDLIB::Loader> m_loader;
 
         bool m_low_priority{};
 
@@ -138,7 +141,6 @@ namespace SKELETON
         virtual void receive_data( const char* , size_t ){};
         virtual void receive_finish(){};
 
-        void delete_loader();
         void callback_dispatch() override;
 
         int get_loader_code() const;

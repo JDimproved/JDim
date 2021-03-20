@@ -9,11 +9,13 @@
 
 #include "dispatchable.h"
 
-#include <gtkmm.h>
-#include <string>
-#include <list>
-
 #include "command_args.h"
+
+#include <gtkmm.h>
+
+#include <list>
+#include <memory>
+#include <string>
 
 
 namespace SKELETON
@@ -30,7 +32,7 @@ namespace SKELETON
         JDWindow* m_win{};
 
     protected:
-        DragableNoteBook* m_notebook{};
+        std::unique_ptr<DragableNoteBook> m_notebook;
 
     private:
         bool m_focus{};
@@ -44,10 +46,10 @@ namespace SKELETON
 
         // 移動サブメニュー
         Gtk::MenuItem* m_move_menuitem;
-        TabSwitchMenu* m_move_menu{};
+        std::unique_ptr<TabSwitchMenu> m_move_menu;
 
         // タブ切り替えメニュー
-        TabSwitchMenu* m_tabswitchmenu{};
+        std::unique_ptr<TabSwitchMenu> m_tabswitchmenu;
 
         // view履歴使用
         bool m_use_viewhistory{};
@@ -154,7 +156,7 @@ namespace SKELETON
         // URLやステータスを更新
         void update_status( View* view, const bool force );
 
-        DragableNoteBook* get_notebook(){ return m_notebook; }
+        DragableNoteBook* get_notebook(){ return m_notebook.get(); }
 
         // コマンド入力
         // immediately = true のときディスパッチャを呼ばずにすぐさま実行
