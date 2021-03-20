@@ -101,9 +101,6 @@ MessageViewBase::~MessageViewBase()
     CORE::get_completion_manager()->set_query( CORE::COMP_NAME, name );
     CORE::get_completion_manager()->set_query( CORE::COMP_MAIL, mail );
 
-    if( m_preview ) delete m_preview;
-    m_preview = nullptr;
-
     if( m_post ){
         m_post->terminate_load();
         m_post.reset();
@@ -467,7 +464,7 @@ void MessageViewBase::pack_widget()
     m_text_message->get_buffer()->signal_changed().connect( sigc::mem_fun(*this, &MessageViewBase::slot_text_changed ) );
 
     // プレビュー
-    m_preview = CORE::ViewFactory( CORE::VIEW_ARTICLEPREVIEW, get_url() );
+    m_preview.reset( CORE::ViewFactory( CORE::VIEW_ARTICLEPREVIEW, get_url() ) );
 
     m_notebook.set_show_tabs( false );
     m_notebook.set_show_border( false );
