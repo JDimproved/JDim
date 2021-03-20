@@ -83,11 +83,6 @@ History_Manager::~History_Manager()
     std::cout << "History_Manager::~History_Manager\n";
 #endif
 
-    if( m_menu_thread ) delete m_menu_thread;
-    if( m_menu_board ) delete m_menu_board;
-    if( m_menu_close ) delete m_menu_close;
-    if( m_menu_closeimg ) delete m_menu_closeimg;
-
     if( m_view_histories.size() ){
         std::list< ViewHistory* >::iterator it = m_view_histories.begin();
         for( ; it != m_view_histories.end(); ++it ) delete *it;
@@ -98,34 +93,49 @@ History_Manager::~History_Manager()
 // 履歴メニュー取得
 Gtk::MenuItem* History_Manager::get_menu_thread()
 {
-    if( ! m_menu_thread ) m_menu_thread = new HistoryMenu( URL_HISTTHREADVIEW, std::string( ITEM_NAME_HISTVIEW ) + "(_T)" );
-    return m_menu_thread;
+    if( ! m_menu_thread ) {
+        m_menu_thread = std::make_unique<HistoryMenu>( URL_HISTTHREADVIEW,
+                                                       std::string( ITEM_NAME_HISTVIEW ) + "(_T)" );
+    }
+    return m_menu_thread.get();
 }
 
 
 Gtk::MenuItem* History_Manager::get_menu_board()
 {
-    if( ! m_menu_board ) m_menu_board = new HistoryMenu( URL_HISTBOARDVIEW, std::string( ITEM_NAME_HIST_BOARDVIEW ) + "(_B)" );
-    return m_menu_board;
+    if( ! m_menu_board ) {
+        m_menu_board = std::make_unique<HistoryMenu>( URL_HISTBOARDVIEW,
+                                                      std::string( ITEM_NAME_HIST_BOARDVIEW ) + "(_B)" );
+    }
+    return m_menu_board.get();
 }
 
 
 Gtk::MenuItem* History_Manager::get_menu_close()
 {
-    if( ! m_menu_close ) m_menu_close = new HistoryMenu( URL_HISTCLOSEVIEW, std::string( ITEM_NAME_HIST_CLOSEVIEW ) + "(_M)" );
-    return m_menu_close;
+    if( ! m_menu_close ) {
+        m_menu_close = std::make_unique<HistoryMenu>( URL_HISTCLOSEVIEW,
+                                                      std::string( ITEM_NAME_HIST_CLOSEVIEW ) + "(_M)" );
+    }
+    return m_menu_close.get();
 }
 
 Gtk::MenuItem* History_Manager::get_menu_closeboard()
 {
-    if( ! m_menu_closeboard ) m_menu_closeboard = new HistoryMenu( URL_HISTCLOSEBOARDVIEW, std::string( ITEM_NAME_HIST_CLOSEBOARDVIEW ) + "(_N)" );
-    return m_menu_closeboard;
+    if( ! m_menu_closeboard ) {
+        m_menu_closeboard = std::make_unique<HistoryMenu>( URL_HISTCLOSEBOARDVIEW,
+                                                           std::string( ITEM_NAME_HIST_CLOSEBOARDVIEW ) + "(_N)" );
+    }
+    return m_menu_closeboard.get();
 }
 
 Gtk::MenuItem* History_Manager::get_menu_closeimg()
 {
-    if( ! m_menu_closeimg ) m_menu_closeimg = new HistoryMenu( URL_HISTCLOSEIMGVIEW, std::string( ITEM_NAME_HIST_CLOSEIMGVIEW ) + "(_I)" );
-    return m_menu_closeimg;
+    if( ! m_menu_closeimg ) {
+        m_menu_closeimg = std::make_unique<HistoryMenu>( URL_HISTCLOSEIMGVIEW,
+                                                         std::string( ITEM_NAME_HIST_CLOSEIMGVIEW ) + "(_I)" );
+    }
+    return m_menu_closeimg.get();
 }
 
 
