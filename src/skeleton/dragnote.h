@@ -20,6 +20,9 @@
 
 #include <gtkmm.h>
 
+#include <memory>
+
+
 namespace SKELETON
 {
     class View;
@@ -91,7 +94,7 @@ namespace SKELETON
 
         bool m_dragable{};
 
-        SKELETON::IconPopup* m_down_arrow{};
+        std::unique_ptr<SKELETON::IconPopup> m_down_arrow;
 
         double m_smooth_dy{}; // GDK_SCROLL_SMOOTH のスクロール変化量
 
@@ -107,7 +110,7 @@ namespace SKELETON
         SIG_DRAG_DATA_GET sig_drag_data_get() { return m_sig_drag_data_get; }
 
         DragableNoteBook();
-        ~DragableNoteBook();
+        ~DragableNoteBook() noexcept;
 
         void clock_in();
 

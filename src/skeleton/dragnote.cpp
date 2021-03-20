@@ -52,12 +52,8 @@ DragableNoteBook::DragableNoteBook()
 }
 
 
-
-DragableNoteBook::~DragableNoteBook()
-{
-    if( m_down_arrow ) delete m_down_arrow;
-}
-
+// メンバーに不完全型のスマートポインターがあるためデストラクタはinlineにできない
+DragableNoteBook::~DragableNoteBook() noexcept = default;
 
 
 //
@@ -574,7 +570,7 @@ void DragableNoteBook::slot_drag_motion( const int page, const int tab_x, const 
     }
     else if( m_dragging_tab ){
 
-        if( ! m_down_arrow ) m_down_arrow = new SKELETON::IconPopup( ICON::DOWN );
+        if( ! m_down_arrow ) m_down_arrow = std::make_unique<SKELETON::IconPopup>( ICON::DOWN );
         m_down_arrow->show();
 
         const int space = 4;
