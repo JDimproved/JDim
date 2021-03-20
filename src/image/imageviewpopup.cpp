@@ -68,14 +68,6 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
 }
 
 
-ImageViewPopup::~ImageViewPopup()
-{
-#ifdef _DEBUG
-    std::cout << "ImageViewPopup::~ImageViewPopup url = " << get_url() << std::endl;
-#endif    
-}
-
-
 //
 // クロック入力
 //
@@ -114,10 +106,8 @@ void ImageViewPopup::stop()
 void ImageViewPopup::set_label( const std::string& status )
 {
     if( !m_label ){
-        m_label = Gtk::manage( new Gtk::Label() );
-        assert( m_label );
+        m_label = std::make_unique<Gtk::Label>( status );
         get_event().add( *m_label );
-        m_label->set_text( status );
 
         std::string text_color = CONFIG::get_color( COLOR_CHAR );
         const int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
@@ -141,8 +131,7 @@ void ImageViewPopup::remove_label()
 {
     if( m_label ){
         get_event().remove();
-        delete m_label;
-        m_label = nullptr;
+        m_label.reset();
     }
 }
 

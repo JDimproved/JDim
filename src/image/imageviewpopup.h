@@ -9,13 +9,16 @@
 
 #include "imageviewbase.h"
 
+#include <memory>
+
+
 namespace IMAGE
 {
     class ImageViewPopup : public ImageViewBase
     {
         Gtk::EventBox m_event_frame;
         Gtk::EventBox m_event_margin;
-        Gtk::Label* m_label{};
+        std::unique_ptr<Gtk::Label> m_label;
         size_t m_length_prev{};
 
         bool m_clicked{};
@@ -23,7 +26,7 @@ namespace IMAGE
       public:
 
         explicit ImageViewPopup( const std::string& url );
-        ~ImageViewPopup();
+        ~ImageViewPopup() noexcept = default;
 
         void clock_in() override;
 
