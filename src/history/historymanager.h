@@ -8,8 +8,9 @@
 #define _HISTORYMANAGER_H
 
 #include <list>
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
 
 namespace Gtk
 {
@@ -27,11 +28,11 @@ namespace HISTORY
     class History_Manager
     {
         // 履歴メニュー
-        HistoryMenu* m_menu_thread{};
-        HistoryMenu* m_menu_board{};
-        HistoryMenu* m_menu_close{};
-        HistoryMenu* m_menu_closeboard{};
-        HistoryMenu* m_menu_closeimg{};
+        std::unique_ptr<HistoryMenu> m_menu_thread;
+        std::unique_ptr<HistoryMenu> m_menu_board;
+        std::unique_ptr<HistoryMenu> m_menu_close;
+        std::unique_ptr<HistoryMenu> m_menu_closeboard;
+        std::unique_ptr<HistoryMenu> m_menu_closeimg;
 
         // View履歴
         std::list< ViewHistory* > m_view_histories;
