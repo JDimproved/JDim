@@ -396,28 +396,22 @@ void AboutConfig::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tre
     const int type = row[ m_columns.m_col_type ];
     if( type == CONFTYPE_COMMENT ) return;
 
-    SKELETON::PrefDiag* pref = nullptr;
+    else if( type == CONFTYPE_STR ) {
 
-    switch( type ){
-
-        case CONFTYPE_STR:
-            pref = new AboutConfigDiagStr( this, row[ m_columns.m_col_value_str ], row[ m_columns.m_col_default_str ] );
-            pref->run();
-            set_value( row, *row[ m_columns.m_col_value_str ] );
-            break;
-
-        case CONFTYPE_INT:
-            pref = new AboutConfigDiagInt( this, row[ m_columns.m_col_value_int ], row[ m_columns.m_col_default_int ] );
-            pref->run();
-            set_value( row, *row[ m_columns.m_col_value_int ] );
-            break;
-
-        case CONFTYPE_BOOL:
-            pref = new AboutConfigDiagBool( this, row[ m_columns.m_col_value_bool ], row[ m_columns.m_col_default_bool ] );
-            pref->run();
-            set_value( row, *row[ m_columns.m_col_value_bool ] );
-            break;
+        AboutConfigDiagStr pref( this, row[ m_columns.m_col_value_str ], row[ m_columns.m_col_default_str ] );
+        pref.run();
+        set_value( row, *row[ m_columns.m_col_value_str ] );
     }
+    else if( type == CONFTYPE_INT ) {
 
-    if( pref ) delete pref;
+        AboutConfigDiagInt pref( this, row[ m_columns.m_col_value_int ], row[ m_columns.m_col_default_int ] );
+        pref.run();
+        set_value( row, *row[ m_columns.m_col_value_int ] );
+    }
+    else if( type == CONFTYPE_BOOL ) {
+
+        AboutConfigDiagBool pref( this, row[ m_columns.m_col_value_bool ], row[ m_columns.m_col_default_bool ] );
+        pref.run();
+        set_value( row, *row[ m_columns.m_col_value_bool ] );
+    }
 }

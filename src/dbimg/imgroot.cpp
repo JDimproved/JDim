@@ -307,9 +307,8 @@ void ImgRoot::delete_all_files()
     if( ret != Gtk::RESPONSE_OK ) return;
 
     // 画像キャッシュ削除ダイアログ表示
-    DelImgCacheDiag* deldiag = new DelImgCacheDiag();
-    deldiag->run();
-    delete deldiag;
+    DelImgCacheDiag deldiag;
+    deldiag.run();
 
     reset_imgs();
 

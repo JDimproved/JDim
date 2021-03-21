@@ -71,13 +71,12 @@ void restore_bkup( const bool no_restore_bkup )
 
         if( ! no_restore_bkup ){
 
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog(
+            Gtk::MessageDialog mdiag(
                 "前回の起動時に正しくJDimが終了されませんでした。\n\n"
                 "板リストとお気に入りをバックアップファイルから復元しますか？\n"
                 "いいえを押すとバックアップファイルを削除します。",
                 false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            if( mdiag->run() == Gtk::RESPONSE_YES ) restore = true;
-            delete mdiag;
+            if( mdiag.run() == Gtk::RESPONSE_YES ) restore = true;
         }
 
         if( restore ){
@@ -98,9 +97,8 @@ void restore_bkup( const bool no_restore_bkup )
 
             msg += "\nに移動しました。";
 
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg );
-            mdiag->run();
-            delete mdiag;
+            Gtk::MessageDialog mdiag( msg );
+            mdiag.run();
         }
         else{
             if( bkup_main ) unlink( to_locale_cstr( path_main_bkup ) );
@@ -477,10 +475,8 @@ int main( int argc, char **argv )
 
             std::string msg = "JDimの設定ファイル(" + CACHE::path_conf()
                               + ")は存在しますが読み込むことが出来ませんでした。\n\n起動しますか？";
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( msg,
-                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            int ret = mdiag->run();
-            delete mdiag;
+            Gtk::MessageDialog mdiag( msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            const int ret = mdiag.run();
             if( ret != Gtk::RESPONSE_YES ) return 0;
         }
 
@@ -533,18 +529,16 @@ int main( int argc, char **argv )
     {
         if( CONFIG::get_show_diag_fifo_error() )
         {
-            Gtk::MessageDialog* mdiag = new Gtk::MessageDialog( CACHE::path_lock() + "の作成またはオープンに問題があります。このまま起動しますか？",
-                                                                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            Gtk::MessageDialog mdiag( CACHE::path_lock() + "の作成またはオープンに問題があります。このまま起動しますか？",
+                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
             Gtk::CheckButton chk_button( "今後表示しない" );
-            mdiag->get_content_area()->pack_start( chk_button, Gtk::PACK_SHRINK );
+            mdiag.get_content_area()->pack_start( chk_button, Gtk::PACK_SHRINK );
             chk_button.show();
 
-            const int ret = mdiag->run();
+            const int ret = mdiag.run();
 
             CONFIG::set_show_diag_fifo_error( ! chk_button.get_active() );
-
-            delete mdiag;
 
             if( ret != Gtk::RESPONSE_YES )
             {
