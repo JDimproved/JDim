@@ -20,29 +20,14 @@ enum
 };
 
 
-MenuButton::MenuButton( const bool show_arrow, Gtk::Widget& label )
+MenuButton::MenuButton( const bool show_arrow, Gtk::Widget* label, Gtk::PackOptions options )
+    : m_label{ label }
+    , m_enable_sig_clicked{ true }
 {
-    setup( show_arrow, &label );
-}
+    Gtk::Box* hbox = Gtk::manage( new Gtk::Box( Gtk::ORIENTATION_HORIZONTAL ) );
 
-
-MenuButton::MenuButton( const bool show_arrow, const int id )
-{
-    setup( show_arrow, Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) ), Gtk::PACK_SHRINK );
-}
-
-
-void MenuButton::setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOptions options, guint padding )
-{
-    const int space = 4;
-
-    m_label = label;
-    m_enable_sig_clicked = true;
-
-    Gtk::HBox *hbox = Gtk::manage( new Gtk::HBox() );
-
-    hbox->set_spacing( space );
-    if( m_label ) hbox->pack_start( *m_label, options, padding );
+    hbox->set_spacing( 4 );
+    if( m_label ) hbox->pack_start( *m_label, options );
 
     if( show_arrow ){
         m_arrow = Gtk::manage( new Gtk::Image() );
@@ -69,11 +54,23 @@ void MenuButton::setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOpti
         Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "menu" + std::to_string( i ), "dummy" );
         action->set_accel_group( agroup );
         Gtk::MenuItem* item = Gtk::manage( action->create_menu_item() );
-        actiongroup->add( action, sigc::bind< int >( sigc::mem_fun( *this, &MenuButton::slot_menu_selected ), i ) );
+        actiongroup->add( action, [this, i] { slot_menu_selected( i ); } );
         m_menuitems.push_back( item );
     }
 
     set_focus_on_click( false );
+}
+
+
+MenuButton::MenuButton( const bool show_arrow, Gtk::Widget& label )
+    : MenuButton( show_arrow, &label )
+{
+}
+
+
+MenuButton::MenuButton( const bool show_arrow, const int id )
+    : MenuButton( show_arrow, Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) ), Gtk::PACK_SHRINK )
+{
 }
 
 
