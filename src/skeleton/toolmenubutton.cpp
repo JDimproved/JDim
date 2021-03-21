@@ -14,27 +14,27 @@ ToolMenuButton::ToolMenuButton() = default;
 
 ToolMenuButton::ToolMenuButton( const std::string& label, const bool expand,
                                 const bool show_arrow, Gtk::Widget& widget )
+    : ToolMenuButton( Gtk::manage( new SKELETON::MenuButton( show_arrow, widget ) ),
+                      label, expand )
 {
-    SKELETON::MenuButton *button = Gtk::manage( new SKELETON::MenuButton( show_arrow, widget ) );
-    setup( button, label, expand );
 }
 
 
 ToolMenuButton::ToolMenuButton( const std::string& label, const bool expand,
-                                const bool show_arrow ,
+                                const bool show_arrow,
                                 const int id )
+    : ToolMenuButton( Gtk::manage( new SKELETON::MenuButton( show_arrow, id ) ),
+                      label, expand )
 {
-    SKELETON::MenuButton *button = Gtk::manage( new SKELETON::MenuButton( show_arrow, id ) );
-    setup( button, label, expand );
 }
 
 
 ToolMenuButton::~ToolMenuButton() noexcept = default;
 
 
-void ToolMenuButton::setup( SKELETON::MenuButton* button, const std::string& label, const bool expand )
+ToolMenuButton::ToolMenuButton( SKELETON::MenuButton* button, const std::string& label, const bool expand )
+    : m_button{ button }
 {
-    m_button = button;
     assert( m_button != nullptr );
 
     Gtk::Widget* label_widget = m_button->get_label_widget();
@@ -77,9 +77,9 @@ void ToolMenuButton::setup( SKELETON::MenuButton* button, const std::string& lab
 
 ToolBackForwardButton::ToolBackForwardButton( const std::string& label, const bool expand,
                                               const std::string& url, const bool back )
+    : ToolMenuButton( Gtk::manage( new SKELETON::BackForwardButton( url, back ) ),
+                      label, expand )
 {
-    SKELETON::MenuButton *button = Gtk::manage( new SKELETON::BackForwardButton( url, back ) );
-    setup( button, label, expand );
 }
 
 

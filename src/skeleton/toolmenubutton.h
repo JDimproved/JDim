@@ -17,7 +17,7 @@ namespace SKELETON
 
     class ToolMenuButton : public Gtk::ToolItem
     {
-        SKELETON::MenuButton* m_button = nullptr;
+        SKELETON::MenuButton* m_button{};
 
       public:
 
@@ -37,7 +37,7 @@ namespace SKELETON
 
       protected:
 
-        void setup( SKELETON::MenuButton* button, const std::string& label, const bool expand );
+        ToolMenuButton( SKELETON::MenuButton* button, const std::string& label, const bool expand );
     };
 
     //////////////////////////
