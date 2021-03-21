@@ -586,23 +586,20 @@ bool ConfigItems::load( const bool restore )
     if( cf.is_broken() )
     {
         std::string msg;
-        Gtk::MessageDialog *mdiag;
 
         // 非resotreモードでバックアップが存在する
         if( ! restore && CACHE::file_exists( CACHE::path_conf_bkup() ) == CACHE::EXIST_FILE )
         {
             msg = "設定ファイル (" + path_conf + ")に異常な値があります。全設定をバックアップから復元しますか？";
-            mdiag = new Gtk::MessageDialog( msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            int ret = mdiag->run();
-            delete mdiag;
+            Gtk::MessageDialog mdiag( msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
+            const int ret = mdiag.run();
             if( ret != Gtk::RESPONSE_YES ) load( true ); // resotreモードで再帰
         }
         else
         {
             msg = "設定ファイル (" + path_conf + ")に異常な値があるため、一部をデフォルトに設定しました。";
-            mdiag = new Gtk::MessageDialog( msg );
-            mdiag->run();
-            delete mdiag;
+            Gtk::MessageDialog mdiag( msg );
+            mdiag.run();
         }
     }
     // 正常ならバックアップ
