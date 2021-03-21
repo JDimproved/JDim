@@ -30,6 +30,8 @@ namespace SKELETON
         bool m_on_arrow{};
         bool m_enable_sig_clicked;
 
+        MenuButton( const bool show_arrow, Gtk::Widget* label, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET );
+
       public:
 
         MenuButton( const bool show_arrow, Gtk::Widget& label );
@@ -62,8 +64,6 @@ namespace SKELETON
       virtual void show_popupmenu();
 
       private:
-
-      void setup( const bool show_arrow, Gtk::Widget* label, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
 
       void slot_menu_selected( int i );
 
