@@ -66,6 +66,7 @@ EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeS
 
     add( m_vbox );
     set_title( "お気に入りの編集" );
+    set_position( Gtk::WIN_POS_CENTER );
     resize( EDITWIN_WIDTH, EDITWIN_HEIGHT );
 
     show_all_children();
