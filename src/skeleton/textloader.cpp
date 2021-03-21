@@ -172,15 +172,10 @@ void TextLoader::receive_finish()
     set_str_code( std::string() );
 
     // UTF-8に変換しておく
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( "UTF-8", get_charset() );
+    JDLIB::Iconv libiconv( "UTF-8", get_charset() );
     int byte_out;
-    m_data = libiconv->convert( &*m_rawdata.begin(), m_rawdata.size(),  byte_out );
-    delete libiconv;
+    m_data = libiconv.convert( &*m_rawdata.begin(), m_rawdata.size(),  byte_out );
     clear();
-
-#ifdef _DEBUG
-//    std::cout << m_data << std::endl;
-#endif
 
     receive_cookies();
 

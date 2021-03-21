@@ -236,11 +236,12 @@ void Post::receive_finish()
     std::cout << "Post::receive_finish\n";
 #endif
 
-    std::string charset = DBTREE::board_charset( m_url );
-    JDLIB::Iconv* libiconv = new JDLIB::Iconv( "UTF-8", charset );
-    int byte_out;
-    m_return_html = libiconv->convert( &*m_rawdata.begin(), m_rawdata.size(), byte_out );
-    delete libiconv;
+    {
+        const std::string charset = DBTREE::board_charset( m_url );
+        JDLIB::Iconv libiconv( "UTF-8", charset );
+        int byte_out;
+        m_return_html = libiconv.convert( &*m_rawdata.begin(), m_rawdata.size(), byte_out );
+    }
 
 #ifdef _DEBUG
     std::cout << "code = " << get_code() << std::endl;
