@@ -303,9 +303,7 @@ bool Admin::empty()
 // タブの数
 int Admin::get_tab_nums()
 {
-    if( m_notebook ) return m_notebook->get_n_pages();
-
-    return 0;
+    return m_notebook->get_n_pages();
 }
 
 
@@ -2236,7 +2234,6 @@ void Admin::slot_show_tabswitchmenu()
 void Admin::slot_popup_pos( int& x, int& y, bool& push_in )
 {
     if( ! m_tabswitchmenu ) return;
-    if( ! m_notebook ) return;
 
     const int mrg = 16;
 
