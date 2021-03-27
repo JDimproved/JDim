@@ -74,13 +74,6 @@ MenuButton::MenuButton( const bool show_arrow, const int id )
 }
 
 
-// virtual
-MenuButton::~MenuButton()
-{
-    if( m_popupmenu ) delete m_popupmenu;
-}
-
-
 void MenuButton::set_tooltip_arrow( const std::string& tooltip )
 {
     if( m_arrow ) {
@@ -98,14 +91,13 @@ void MenuButton::append_menu( std::vector< std::string >& items )
     if( m_popupmenu ){
         const int menusize = m_popupmenu->get_children().size();
         for( int i = 0; i < menusize; ++i ) m_popupmenu->remove( *m_menuitems[ i ] );
-        delete m_popupmenu;
+        m_popupmenu.reset();
     }
-    m_popupmenu = nullptr;
 
     if( ! items.size() ) return;
 
     // 新しくメニューを作成して項目追加
-    m_popupmenu = Gtk::manage( new Gtk::Menu() );
+    m_popupmenu = std::make_unique<Gtk::Menu>();
     const size_t size = MIN( items.size(), MAX_MENU_SIZE );
     for( size_t i = 0 ; i < size; ++i ){
 
