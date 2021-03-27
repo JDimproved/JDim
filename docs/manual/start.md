@@ -139,6 +139,7 @@ WaylandやXWaylandではX11限定の機能を使うことができないため�
 * 32bit OSの古いMATE環境（バージョン[1.10][mate-1-10]から[1.16][mate-1-16]？）でJDim GTK3版を実行したとき
   スレビューの上に別のウインドウを重ねて移動させると残像でスレビュー内のみ描画が乱れる。
   スレビューをスクロール等させて再描画すると直る。([背景事情][mate-background])
+* Wayland環境では画像ビュー(ウインドウ表示)のフォーカスが外れたら折りたたむ機能が正常に動作しない。
 
 [mate-1-10]: https://mate-desktop.org/blog/2015-06-11-mate-1-10-released/ "GTK3の実験的なサポート追加"
 [mate-1-16]: https://mate-desktop.org/blog/2016-09-21-mate-1-16-released/ "GTK3に移行途中"
