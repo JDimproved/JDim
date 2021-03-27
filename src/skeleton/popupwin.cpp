@@ -9,11 +9,11 @@ using namespace SKELETON;
 
 
 PopupWin::PopupWin( Gtk::Widget* parent, SKELETON::View* view, const int mrg_x, const int mrg_y )
-    : PopupWinBase( POPUPWIN_NOFRAME ),
-      m_parent( parent ),
-      m_view( view ),
-      m_mrg_x( mrg_x ),
-      m_mrg_y( mrg_y )
+    : PopupWinBase( POPUPWIN_NOFRAME )
+    , m_parent{ parent }
+    , m_view{ view }
+    , m_mrg_x{ mrg_x }
+    , m_mrg_y{ mrg_y }
 {
 #ifdef _DEBUG
     std::cout << "PopupWin::PopupWin\n";
@@ -29,12 +29,6 @@ PopupWin::PopupWin( Gtk::Widget* parent, SKELETON::View* view, const int mrg_x, 
         set_transient_for( *dynamic_cast< Gtk::Window* >( toplevel ) );
     }
     slot_resize_popup();
-}
-
-
-PopupWin::~PopupWin()
-{
-    if( m_view ) delete m_view;
 }
 
 
