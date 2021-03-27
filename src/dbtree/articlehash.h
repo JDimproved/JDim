@@ -22,7 +22,6 @@ namespace DBTREE
 
         size_t m_size{};
         size_t m_min_hash;
-        ArticleHashIterator* m_iterator;
         std::vector< std::vector< ArticleBase* > > m_table;
 
         // iterator 用変数
