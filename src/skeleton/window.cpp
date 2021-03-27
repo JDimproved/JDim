@@ -114,7 +114,7 @@ void JDWindow::init_win()
         m_vbox_view = new SKELETON::JDVBox();
 
         m_scrwin->set_size_request( 0, 0 );
-        m_scrwin->set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
+        m_scrwin->set_policy( Gtk::POLICY_EXTERNAL, Gtk::POLICY_EXTERNAL );
         m_scrwin->add( *m_vbox_view );
         m_vbox.pack_remove_end( false, *m_scrwin, Gtk::PACK_EXPAND_WIDGET );
 
