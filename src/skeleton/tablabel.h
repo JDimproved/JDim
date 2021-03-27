@@ -4,7 +4,10 @@
 #define _TABLABEL_H
 
 #include <gtkmm.h>
+
+#include <memory>
 #include <string>
+
 
 namespace SKELETON
 {
@@ -38,7 +41,7 @@ namespace SKELETON
         Gtk::Label m_label;
 
         // アイコン画像
-        Gtk::Image* m_image{};
+        std::unique_ptr<Gtk::Image> m_image;
 
         // ラベルに表示する文字列の全体
         std::string m_fulltext;
@@ -46,7 +49,7 @@ namespace SKELETON
       public:
 
         explicit TabLabel( const std::string& url );
-        ~TabLabel();
+        ~TabLabel() noexcept = default;
 
         SIG_TAB_MOTION_EVENT sig_tab_motion_event(){ return  m_sig_tab_motion_event; }
         SIG_TAB_LEAVE_EVENT sig_tab_leave_event(){ return m_sig_tab_leave_event; }

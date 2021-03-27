@@ -41,16 +41,6 @@ TabLabel::TabLabel( const std::string& url )
 }
 
 
-TabLabel::~TabLabel()
-{
-#ifdef _DEBUG
-    std::cout << "TabLabel::~TabLabel " << m_fulltext << std::endl;
-#endif
-
-    if( m_image ) delete m_image;
-}
-
-
 // アイコンセット
 void TabLabel::set_id_icon( const int id )
 {
@@ -59,7 +49,7 @@ void TabLabel::set_id_icon( const int id )
     if( id == ICON::NONE ) return;
 
     if( !m_image ){
-        m_image = new Gtk::Image();
+        m_image = std::make_unique<Gtk::Image>();
         m_hbox.remove( m_label );
         m_hbox.set_spacing( SPACING_LABEL );
         m_hbox.pack_start( *m_image, Gtk::PACK_SHRINK );
