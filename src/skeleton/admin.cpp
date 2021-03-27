@@ -100,7 +100,6 @@ Admin::~Admin()
     m_list_command.clear();
 
     Admin::close_window();
-    delete_jdwin();
 }
 
 
@@ -270,16 +269,19 @@ Gtk::Widget* Admin::get_widget()
 
 Gtk::Window* Admin::get_win()
 {
-    return dynamic_cast< Gtk::Window*>( m_win );
+    return static_cast<Gtk::Window*>( m_win.get() );
+}
+
+
+void Admin::set_jdwin( std::unique_ptr<JDWindow> win )
+{
+    m_win = std::move( win );
 }
 
 
 void Admin::delete_jdwin()
 {
-    if( m_win ){
-        delete m_win;
-        m_win = nullptr;
-    }
+    m_win.reset();
 }
 
 

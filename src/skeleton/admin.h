@@ -29,7 +29,7 @@ namespace SKELETON
     {
         std::string m_url;
 
-        JDWindow* m_win{};
+        std::unique_ptr<JDWindow> m_win;
 
     protected:
         std::unique_ptr<DragableNoteBook> m_notebook;
@@ -149,8 +149,8 @@ namespace SKELETON
 
         void set_use_switchhistory( const bool use ){ m_use_switchhistory = use; }
 
-        JDWindow* get_jdwin(){ return m_win; }
-        void set_jdwin( JDWindow* win ){ m_win = win; }
+        JDWindow* get_jdwin(){ return m_win.get(); }
+        void set_jdwin( std::unique_ptr<JDWindow> win );
         void delete_jdwin();
 
         // URLやステータスを更新
