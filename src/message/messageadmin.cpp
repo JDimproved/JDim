@@ -175,8 +175,8 @@ void MessageAdmin::open_window()
     std::cout << "MessageAdmin::open_window\n";
 #endif
 
-        win = new MESSAGE::MessageWin();
-        set_jdwin( win );
+        set_jdwin( std::make_unique<MESSAGE::MessageWin>() );
+        win = get_jdwin();
         win->pack_remove_end( false, *get_widget() );
         win->show_all();
     }

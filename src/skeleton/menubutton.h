@@ -6,8 +6,11 @@
 #define _MENUBUTTON_H
 
 #include <gtkmm.h>
+
+#include <memory>
 #include <string>
 #include <vector>
+
 
 constexpr size_t MAX_MENU_SIZE = 20;
 
@@ -21,7 +24,7 @@ namespace SKELETON
         SIG_BUTTON_CLICKED m_sig_clicked;
         SIG_SELECTED m_sig_selected;
 
-        Gtk::Menu* m_popupmenu{};
+        std::unique_ptr<Gtk::Menu> m_popupmenu;
         std::vector< Gtk::MenuItem* > m_menuitems;
         Gtk::Widget* m_label{};
 
@@ -38,7 +41,7 @@ namespace SKELETON
 
         MenuButton( const bool show_arrow , const int id );
 
-      ~MenuButton();
+        ~MenuButton() noexcept = default;
 
       Gtk::Widget* get_label_widget(){ return m_label; }
 

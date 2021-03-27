@@ -602,8 +602,8 @@ void ImageAdmin::open_window()
     ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
 
     if( ! SESSION::get_embedded_img() && ! win && ! empty() ){
-        win = new IMAGE::ImageWin();
-        set_jdwin( win );
+        set_jdwin( std::make_unique<IMAGE::ImageWin>() );
+        win = dynamic_cast<IMAGE::ImageWin*>( get_jdwin() );
         win->pack_remove_tab( false, m_tab );
         win->pack_remove_end( false, m_view );
         win->show_all();
