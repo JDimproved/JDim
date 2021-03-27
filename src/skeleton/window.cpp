@@ -97,21 +97,14 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
 }
 
 
-JDWindow::~JDWindow()
-{
-    if( m_vbox_view ) delete m_vbox_view;
-    if( m_scrwin ) delete m_scrwin;
-}
-
-
 // windowの初期設定(サイズ変更や移動など)
 void JDWindow::init_win()
 {
     // フォーカスアウトで折り畳む場合
     if( m_fold_when_focusout ){
 
-        m_scrwin = new Gtk::ScrolledWindow();
-        m_vbox_view = new SKELETON::JDVBox();
+        m_scrwin = std::make_unique<Gtk::ScrolledWindow>();
+        m_vbox_view = std::make_unique<SKELETON::JDVBox>();
 
         m_scrwin->set_size_request( 0, 0 );
         m_scrwin->set_policy( Gtk::POLICY_EXTERNAL, Gtk::POLICY_EXTERNAL );

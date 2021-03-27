@@ -7,10 +7,14 @@
 #ifndef _JDWINDOW_H
 #define _JDWINDOW_H
 
-#include <gtkmm.h>
 #include "gtkmmversion.h"
 
 #include "vbox.h"
+
+#include <gtkmm.h>
+
+#include <memory>
+
 
 namespace SKELETON
 {
@@ -33,8 +37,8 @@ namespace SKELETON
 
         SKELETON::JDVBox m_vbox;
 
-        Gtk::ScrolledWindow* m_scrwin{};
-        SKELETON::JDVBox* m_vbox_view{};
+        std::unique_ptr<Gtk::ScrolledWindow> m_scrwin;
+        std::unique_ptr<SKELETON::JDVBox> m_vbox_view;
 
         // ステータスバー
         std::string m_status;
@@ -51,7 +55,7 @@ namespace SKELETON
       public:
 
         explicit JDWindow( const bool fold_when_focusout, const bool need_mginfo = true );
-        ~JDWindow();
+        ~JDWindow() noexcept = default;
 
         Gtk::HBox& get_statbar(){ return  m_statbar; }
 
