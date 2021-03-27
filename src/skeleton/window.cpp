@@ -99,7 +99,6 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
 
 JDWindow::~JDWindow()
 {
-    if( m_dummywin ) delete m_dummywin;
     if( m_vbox_view ) delete m_vbox_view;
     if( m_scrwin ) delete m_scrwin;
 }
@@ -118,12 +117,6 @@ void JDWindow::init_win()
         m_scrwin->set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_NEVER );
         m_scrwin->add( *m_vbox_view );
         m_vbox.pack_remove_end( false, *m_scrwin, Gtk::PACK_EXPAND_WIDGET );
-
-        m_dummywin = new Gtk::Window();
-        m_dummywin->resize( 1, 1 );
-        m_dummywin->move( -1, -1 );
-        m_dummywin->hide();
-        m_dummywin->set_skip_taskbar_hint( true );
 
         set_skip_taskbar_hint( true );
         resize( get_width_win(), 1 );
@@ -456,9 +449,9 @@ void JDWindow::set_transient( bool set )
             m_transient = true;
         }
 
-        // ダミーwindowを使ってtransientを外す
+        // transientを外す
         else if( ! set && m_transient ){
-            set_transient_for( *m_dummywin );
+            unset_transient_for();
             m_transient = false;
         }
     }

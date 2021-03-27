@@ -30,7 +30,6 @@ namespace SKELETON
         int m_mode;
         int m_counter{};
         int m_count_focusout{}; // フォーカス制御用カウンタ
-        Gtk::Window* m_dummywin{}; // set_transient()で使うダミーwindow
 
         SKELETON::JDVBox m_vbox;
 
