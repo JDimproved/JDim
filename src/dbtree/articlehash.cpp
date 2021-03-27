@@ -20,7 +20,6 @@ enum
 ArticleHash::ArticleHash()
     : m_min_hash( HASH_TBLSIZE + 1 )
 {
-    m_iterator = new ArticleHashIterator( this );
 }
 
 
@@ -36,9 +35,6 @@ ArticleHash::~ArticleHash()
         }
     }
 #endif
-
-    if( m_iterator ) delete m_iterator;
-    m_iterator = nullptr;
 }
 
 
@@ -87,7 +83,7 @@ ArticleHashIterator ArticleHash::begin()
     m_it_pos = 0;
     m_it_size = 0;
 
-    return *m_iterator;
+    return ArticleHashIterator{ this };
 }
 
 
