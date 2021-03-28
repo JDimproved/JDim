@@ -30,11 +30,11 @@ namespace CORE
 
     class Completion_Manager
     {
-        std::vector< COMPLIST* > m_lists;
+        std::vector<COMPLIST> m_lists;
 
     public:
         Completion_Manager();
-        virtual ~Completion_Manager();
+        virtual ~Completion_Manager() noexcept = default;
 
         COMPLIST get_list( const int mode, const std::string& query );
         void set_query( const int mode, const std::string& query );

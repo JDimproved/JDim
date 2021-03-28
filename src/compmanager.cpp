@@ -38,18 +38,10 @@ void CORE::delete_completion_manager()
 using namespace CORE;
 
 Completion_Manager::Completion_Manager()
+    : m_lists( COMP_SIZE )
 {
     for( int i = 0; i < COMP_SIZE; ++i ){
-        m_lists.push_back( new COMPLIST );
         load_info( i );
-    }
-}
-
-
-Completion_Manager::~Completion_Manager()
-{
-    for( int i = 0; i < COMP_SIZE; ++i ){
-        delete m_lists[ i ];
     }
 }
 
@@ -75,16 +67,16 @@ COMPLIST Completion_Manager::get_list( const int mode, const std::string& query 
         if( query.empty()
             || query == " "
             || query == "　" // 全角スペース
-            ) complist = *m_lists[ mode ];
+        ) {
+            complist = m_lists[ mode ];
+        }
         else{
 
-            std::string tmp_query = MISC::tolower_str( query );
+            const std::string lower_query = MISC::tolower_str( query );
 
-            CORE::COMPLIST_ITERATOR it = m_lists[ mode ]->begin();
-            for( ; it != m_lists[ mode ]->end(); ++it ){
-
-                std::string tmp_str = MISC::tolower_str( *it );
-                if( tmp_str.find( tmp_query ) != std::string::npos ) complist.push_back( *it );
+            for( const std::string& str : m_lists[ mode ] ) {
+                const std::string lower_str = MISC::tolower_str( str );
+                if( lower_str.find( lower_query ) != std::string::npos ) complist.push_back( str );
             }
         }
     }
@@ -101,12 +93,12 @@ void Completion_Manager::set_query( const int mode, const std::string& query )
         std::cout << "Completion_Manager::set_query mode = " << mode << " query = " << query << std::endl;
 #endif
 
-        COMPLIST* complist = m_lists[ mode ];
+        COMPLIST& complist = m_lists[ mode ];
 
-        complist->remove( query );
-        complist->push_front( query );
+        complist.remove( query );
+        complist.push_front( query );
 
-        if( complist->size() > MAX_COMPLETION ) complist->pop_back();
+        if( complist.size() > MAX_COMPLETION ) complist.pop_back();
     }
 }
 
@@ -114,7 +106,7 @@ void Completion_Manager::set_query( const int mode, const std::string& query )
 void Completion_Manager::clear( const int mode )
 {
     if( mode < COMP_SIZE ){
-        m_lists[ mode ]->clear();
+        m_lists[ mode ].clear();
 
         std::string path = CACHE::path_completion( mode );
         unlink( to_locale_cstr( path ) );
@@ -135,9 +127,9 @@ void Completion_Manager::load_info( const int mode )
 #endif
 
     if( ! info.empty() ){
-        *m_lists[ mode ] = MISC::get_lines( info );
-        *m_lists[ mode ] = MISC::remove_nullline_from_list( *m_lists[ mode ] );
-        *m_lists[ mode ] = MISC::remove_space_from_list( *m_lists[ mode ] );
+        m_lists[ mode ] = MISC::get_lines( info );
+        m_lists[ mode ] = MISC::remove_nullline_from_list( m_lists[ mode ] );
+        m_lists[ mode ] = MISC::remove_space_from_list( m_lists[ mode ] );
     }
 }
 
@@ -145,14 +137,16 @@ void Completion_Manager::load_info( const int mode )
 void Completion_Manager::save_info( const int mode )
 {
     std::string info;
-    COMPLIST* complist = m_lists[ mode ];
+    COMPLIST& complist = m_lists[ mode ];
 
-    if( complist->size() ){
+    if( ! complist.empty() ) {
 
         std::string path = CACHE::path_completion( mode );
 
-        COMPLIST_ITERATOR it = complist->begin();
-        for(; it != complist->end(); ++it ) info += (*it) + "\n";
+        for( const std::string& str : complist ) {
+            info.append( str );
+            info.push_back( '\n' );
+        }
 
 #ifdef _DEBUG
         std::cout << "Completion_Manager::save_info path = " << path << std::endl
