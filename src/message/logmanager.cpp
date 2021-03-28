@@ -65,44 +65,38 @@ Log_Manager::~Log_Manager()
 {
 #ifdef _DEBUG
     std::cout << "MESSAGE::~Log_Manager\n";
-#endif
 
-    std::list< LogItem* >::iterator it = m_logitems.begin();
-    for( ; it != m_logitems.end(); ++it ){
-#ifdef _DEBUG
-        std::cout << "url = " << (*it)->url << std::endl;
-        std::cout << "newthread = " << (*it)->newthread << std::endl;
-        std::cout << "msg = " << (*it)->msg << std::endl;
-#endif
-        delete *it;
+    for( const LogItem& item : m_logitems ) {
+        std::cout << "url = " << item.url << std::endl;
+        std::cout << "newthread = " << item.newthread << std::endl;
+        std::cout << "msg = " << item.msg << std::endl;
     }
+#endif
 }
 
 
 
-bool Log_Manager::has_items( const std::string& url, const bool newthread )
+bool Log_Manager::has_items( const std::string& url, const bool newthread ) const
 {
-    if( ! m_logitems.size() ) return false;
+    if( m_logitems.empty() ) return false;
 
 #ifdef _DEBUG
     std::cout << "Log_Manager::has_items url = " << url << " newthread " << newthread << std::endl;
 #endif
 
-    std::list< LogItem* >::iterator it = m_logitems.begin();
-    for( ; it != m_logitems.end(); ++it ){
-
+    for( const LogItem& item : m_logitems ) {
 #ifdef _DEBUG
-        std::cout << "checking : " << (*it)->url << std::endl;
+        std::cout << "checking : " << item.url << std::endl;
 #endif
-        if( newthread != (*it)->newthread ) continue;
+        if( newthread != item.newthread ) continue;
 
-        if( (*it)->url == url ){
+        if( item.url == url ){
 #ifdef _DEBUG
             std::cout << "found\n";
 #endif
             return true;
         }
-        if( (*it)->newthread && url.find( (*it)->url ) == 0 ){
+        if( item.newthread && url.find( item.url ) == 0 ){
 #ifdef _DEBUG
             std::cout << "found\n";
 #endif
@@ -122,35 +116,33 @@ void Log_Manager::remove_items( const std::string& url )
 {
     const std::time_t current = std::time( nullptr );
 
-    if( ! m_logitems.size() ) return;
+    if( m_logitems.empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "Log_Manager::remove_items url = " << url << std::endl
               << "size = " << m_logitems.size() << std::endl;
 #endif 
 
-    std::list< LogItem* >::iterator it = m_logitems.begin();
+    std::list<LogItem>::iterator it = m_logitems.begin();
     for( ; it != m_logitems.end(); ++it ){
 
-        if( (*it)->url == url
-            || ( (*it)->newthread && url.find( (*it)->url ) == 0 )
+        if( it->url == url
+            || ( it->newthread && url.find( it->url ) == 0 )
             ){
 
-            const std::time_t elapsed = current - (*it)->time_write;
+            const std::time_t elapsed = current - it->time_write;
 
 #ifdef _DEBUG
             std::cout << "elapsed = " << elapsed << std::endl;
 #endif 
 
             // removeフラグが立っているか、時間切れの場合は削除
-            if( (*it)->remove || elapsed > WRITE_TIMEOUT ){
+            if( it->remove || elapsed > WRITE_TIMEOUT ){
 
 #ifdef _DEBUG
-                std::cout << "removed url = " << (*it)->url << std::endl;
+                std::cout << "removed url = " << it->url << std::endl;
 #endif
-                delete (*it);
-                m_logitems.erase( it );
-                it = m_logitems.begin();
+                it = m_logitems.erase( it );
             }
         }
     }
@@ -170,7 +162,7 @@ void Log_Manager::remove_items( const std::string& url )
 //
 bool Log_Manager::check_write( const std::string& url, const bool newthread, const char* msg_in, const size_t headsize )
 {
-    if( ! m_logitems.size() ) return false;
+    if( m_logitems.empty() ) return false;
 
 #ifdef _DEBUG
     std::cout << "Log_Manager::check_write url = " << url << " newthread = " << newthread << " headsize = " << headsize << std::endl;
@@ -178,33 +170,32 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
 
     const char* msg = msg_in;
 
-    std::list< LogItem* >::iterator it = m_logitems.begin();
-    for( ; it != m_logitems.end(); ++it ){
+    for( LogItem& item : m_logitems ) {
 
-        if( (*it)->newthread != newthread ) continue;
+        if( item.newthread != newthread ) continue;
 
-        if( ! (*it)->newthread && (*it)->url != url ) continue;
-        if( (*it)->newthread && url.find( (*it)->url ) != 0 ) continue;
+        if( ! item.newthread && item.url != url ) continue;
+        if( item.newthread && url.find( item.url ) != 0 ) continue;
 
         // 先頭のheadsize文字だけ簡易チェックする
-        // ヒットしても(*it)->remove を true にしない
+        // ヒットしてもitem.remove を true にしない
         if( headsize ){
 
             bool flag = true;
             size_t i = 0, i2 = 0;
-            while( (*it)->head[ i ] != '\0' && i2 < headsize ){
+            while( item.head[ i ] != '\0' && i2 < headsize ){
 
                 // 空白は除く
-                while( (*it)->head[ i ] == ' ' ) ++i;
+                while( item.head[ i ] == ' ' ) ++i;
                 while( msg[ i2 ] == ' ' ) ++i2;
 #ifdef _DEBUG
-                std::cout << (int)( (*it)->head[ i ] ) << " - " << (int)( msg[ i2 ] ) << std::endl;
+                std::cout << (int)( item.head[ i ] ) << " - " << (int)( msg[ i2 ] ) << std::endl;
 #endif
                 // もしバッファの最後が空白で終わっていたら成功と見なす
                 if( i && i2
-                    && ( (*it)->head[ i ] == '\0' || msg[ i2 ] == '\0' ) ) break;
+                    && ( item.head[ i ] == '\0' || msg[ i2 ] == '\0' ) ) break;
 
-                if( (*it)->head[ i ] != msg[ i2 ] ){
+                if( item.head[ i ] != msg[ i2 ] ){
                     flag = false;
 #ifdef _DEBUG
                     std::cout << "!! failed (head) !!\n";
@@ -230,14 +221,14 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
         std::list< std::string > msg_lines = MISC::get_lines( MISC::replace_str( MISC::remove_spaces( msg ), "\n", " \n" ) );
 
 #ifdef _DEBUG
-        std::cout << "lines = " << msg_lines.size() << " : " << (*it)->msg_lines.size() << std::endl;
-        std::cout << "newthread = " << newthread << " : " << (*it)->newthread << std::endl;
+        std::cout << "lines = " << msg_lines.size() << " : " << item.msg_lines.size() << std::endl;
+        std::cout << "newthread = " << newthread << " : " << item.newthread << std::endl;
 #endif
 
-        if( msg_lines.size() != (*it)->msg_lines.size() ) continue;
+        if( msg_lines.size() != item.msg_lines.size() ) continue;
 
         std::list< std::string >::iterator it_msg = msg_lines.begin();
-        std::list< std::string >::iterator it_item = (*it)->msg_lines.begin();
+        std::list< std::string >::iterator it_item = item.msg_lines.begin();
         for( ; it_msg != msg_lines.end() ; ++it_msg, ++it_item ){
 #ifdef _DEBUG
             std::cout << (*it_msg) << " | " << (*it_item) << std::endl;
@@ -250,7 +241,7 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
         std::cout << "!! hit !!\n";
 #endif
 
-        (*it)->remove = true;
+        item.remove = true;
 
         return true;
 
@@ -267,14 +258,14 @@ void Log_Manager::push_logitem( const std::string& url, const bool newthread,  c
 {
     if( ! CONFIG::get_save_post_history() ) return;
 
-    LogItem *item = new LogItem( url, newthread, msg );
-    m_logitems.push_back( item );
+    m_logitems.emplace_back( url, newthread, msg );
 
 #ifdef _DEBUG
+    const LogItem& item = m_logitems.back();
     std::cout << "Log_Manager::push_logitem\n";
-    std::cout << "url = " << item->url << std::endl;
-    std::cout << "newthread = " << item->newthread << std::endl;
-    std::cout << "msg = " << item->msg << std::endl;
+    std::cout << "url = " << item.url << std::endl;
+    std::cout << "newthread = " << item.newthread << std::endl;
+    std::cout << "msg = " << item.msg << std::endl;
 #endif
 }
 
