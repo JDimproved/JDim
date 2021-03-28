@@ -16,7 +16,7 @@ namespace MESSAGE
 
     class Log_Manager
     {
-        std::list< LogItem* > m_logitems;
+        std::list<LogItem> m_logitems;
 
       public:
 
@@ -24,7 +24,7 @@ namespace MESSAGE
         virtual ~Log_Manager();
 
         int size() const { return m_logitems.size(); }
-        bool has_items( const std::string& url, const bool newthread );
+        bool has_items( const std::string& url, const bool newthread ) const;
         void remove_items( const std::string& url );
 
         // messageが自分の書き込んだものかチェックする
