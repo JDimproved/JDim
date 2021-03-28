@@ -8,8 +8,10 @@
 
 #include "viewhistoryitem.h"
 
+#include <memory>
 #include <string>
 #include <vector>
+
 
 namespace HISTORY
 {
@@ -17,17 +19,17 @@ namespace HISTORY
     {
         friend class History_Manager; // History_Manager 以外からは直接操作禁止
 
-        std::vector< ViewHistoryItem* > m_items;
+        std::vector<std::unique_ptr<ViewHistoryItem>> m_items;
 
         int m_history_top{};
         int m_history_current{};
         int m_history_end{};
 
-        ViewHistory();
-        virtual ~ViewHistory();
+        ViewHistory() = default;
+        virtual ~ViewHistory() noexcept = default;
 
         int get_size() const noexcept { return m_items.size(); }
-        const ViewHistoryItem* get_item( const int pos ) const { return m_items[ pos ]; }
+        const ViewHistoryItem* get_item( const int pos ) const { return m_items[ pos ].get(); }
 
         int get_top() const noexcept { return m_history_top; }
         int get_cur() const noexcept { return m_history_current; }

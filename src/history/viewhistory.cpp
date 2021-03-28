@@ -13,26 +13,6 @@ enum
 };
 
 
-ViewHistory::ViewHistory()
-{
-#ifdef _DEBUG
-    std::cout << "ViewHistory::ViewHistory\n";
-#endif
-
-    m_items.push_back( new ViewHistoryItem() );
-}
-
-
-ViewHistory::~ViewHistory()
-{
-#ifdef _DEBUG
-    std::cout << "ViewHistory::~ViewHistory\n";
-#endif
-
-    for( size_t i = 0; i < m_items.size(); ++i ) delete m_items[ i ];
-}
-
-
 void ViewHistory::set_top( const int top )
 {
     if( m_items.size() < MAX_LOCAL_HISTORY && top > m_history_top ) return;
@@ -129,10 +109,9 @@ void ViewHistory::replace_url( const std::string& url_old, const std::string& ur
               << "end = " << m_history_end << std::endl;
 #endif
 
-    int size = m_items.size();
-    for( int i = 0; i < size; ++i ){
-        if( m_items[ i ]->url == url_old ){
-            m_items[ i ]->url = url_new;
+    for( auto& item : m_items ) {
+        if( item->url == url_old ) {
+            item->url = url_new;
 #ifdef _DEBUG
             std::cout << "replaced\n";
 #endif
@@ -173,7 +152,7 @@ std::vector< ViewHistoryItem* >& ViewHistory::get_items_back( const int count ) 
     for( int i = 0; i < count; ++i ){
         if( tmp_current == m_history_end ) break;
         tmp_current = ( tmp_current + MAX_LOCAL_HISTORY - 1 ) % MAX_LOCAL_HISTORY;
-        items.push_back( m_items[ tmp_current ] );
+        items.push_back( m_items[ tmp_current ].get() );
     }
 
     return items;
@@ -192,7 +171,7 @@ std::vector< ViewHistoryItem* >& ViewHistory::get_items_forward( const int count
     for( int i = 0; i < count; ++i ){
         if( tmp_current == m_history_top ) break;
         tmp_current = ( tmp_current + 1 ) % MAX_LOCAL_HISTORY;
-        items.push_back( m_items[ tmp_current ] );
+        items.push_back( m_items[ tmp_current ].get() );
     }
 
     return items;
@@ -243,7 +222,11 @@ void ViewHistory::append( const std::string& url )
 #endif
 
     // 一番最初の呼び出し
-    if( m_items.size() == 1 && m_items[ 0 ]->url.empty() ) m_items[ 0 ]->url = url;
+    if( m_items.empty() ) {
+        auto item = std::make_unique<ViewHistoryItem>();
+        item->url = url;
+        m_items.push_back( std::move( item ) );
+    }
 
     else{
 
@@ -268,7 +251,7 @@ void ViewHistory::append( const std::string& url )
             std::cout << "exist\n";
 #endif
 
-            ViewHistoryItem* item = m_items[ tmp_current ];
+            std::unique_ptr<ViewHistoryItem> item = std::move( m_items[ tmp_current ] );
 
             for( int i = 0; i < MAX_LOCAL_HISTORY; ++i ){
                 if( tmp_current == m_history_current ) break;
@@ -276,11 +259,11 @@ void ViewHistory::append( const std::string& url )
 #ifdef _DEBUG
                 std::cout << "current = " << tmp_current << " next = " << next << std::endl;
 #endif
-                m_items[ tmp_current ] = m_items[ next ];
+                m_items[ tmp_current ] = std::move( m_items[ next ] );
                 tmp_current = next;
             }
 
-            m_items[ tmp_current ] = item;
+            m_items[ tmp_current ] = std::move( item );
             m_history_top = m_history_current;
         }
 
@@ -302,9 +285,9 @@ void ViewHistory::append( const std::string& url )
 #ifdef _DEBUG
                 std::cout << "push_back\n";
 #endif
-                ViewHistoryItem *item = new ViewHistoryItem();
+                auto item = std::make_unique<ViewHistoryItem>();
                 item->url = url;
-                m_items.push_back( item );
+                m_items.push_back( std::move( item ) );
             }
             else m_items[ m_history_current ]->url = url;
 
@@ -382,7 +365,7 @@ const ViewHistoryItem* ViewHistory::back_forward( const bool back, const int cou
               << "ret.title = " << m_items[ tmp_current ]->title << std::endl;
 #endif
 
-    return m_items[ tmp_current ];
+    return m_items[ tmp_current ].get();
 }
 
 
