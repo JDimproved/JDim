@@ -35,13 +35,13 @@ namespace HISTORY
         std::unique_ptr<HistoryMenu> m_menu_closeimg;
 
         // View履歴
-        std::list< ViewHistory* > m_view_histories;
+        std::list<ViewHistory> m_view_histories;
         ViewHistory* m_last_viewhistory{};
 
       public:
 
         History_Manager();
-        virtual ~History_Manager();
+        virtual ~History_Manager() noexcept = default;
 
         // 履歴メニュー取得
         Gtk::MenuItem* get_menu_thread();
