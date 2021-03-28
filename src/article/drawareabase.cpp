@@ -261,8 +261,6 @@ void DrawAreaBase::clear()
     m_jump_history.clear();
 
     // 埋め込み画像削除
-    std::list< EmbeddedImage* >::iterator it = m_eimgs.begin();
-    for( ; it != m_eimgs.end(); ++it ) if( *it ) delete *it;
     m_eimgs.clear();
 }
 
@@ -2578,8 +2576,8 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
         ( img->is_loading() || code == HTTP_INIT )
         ){
 
-        delete layout->eimg;
-        m_eimgs.remove( layout->eimg );
+        // 削除対象はアドレスで判定する
+        m_eimgs.remove_if( [p = layout->eimg]( auto& e ) { return p == std::addressof( e ); } );
         layout->eimg = nullptr;
 
         relayout = true;
@@ -2601,10 +2599,10 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
         // 埋め込み画像を作成
         if( ! layout->eimg ){
 
-            layout->eimg = new EmbeddedImage( layout->link );
-
-            // EmbeddedImageのアドレスを記憶しておいてDrawAreaBase::clear()でdeleteする
-            m_eimgs.push_back( layout->eimg );
+            // EmbeddedImageのリストはDrawAreaBase::clear()でリソースを解放する
+            // NOTE: 挿入削除で参照が無効にならないコンテナが条件
+            m_eimgs.emplace_back( layout->link );
+            layout->eimg = std::addressof( m_eimgs.back() );
 
             layout->eimg->show();
 
