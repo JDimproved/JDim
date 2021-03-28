@@ -77,19 +77,6 @@ History_Manager::History_Manager()
 }
 
 
-History_Manager::~History_Manager()
-{
-#ifdef _DEBUG
-    std::cout << "History_Manager::~History_Manager\n";
-#endif
-
-    if( m_view_histories.size() ){
-        std::list< ViewHistory* >::iterator it = m_view_histories.begin();
-        for( ; it != m_view_histories.end(); ++it ) delete *it;
-    }
-}
-
-
 // 履歴メニュー取得
 Gtk::MenuItem* History_Manager::get_menu_thread()
 {
@@ -249,9 +236,8 @@ void History_Manager::xml2viewhistory()
                   << "end = " << end << std::endl;
 #endif
 
-        ViewHistory* history = new ViewHistory();
-        assert( history );
-        m_view_histories.push_back( history );
+        m_view_histories.emplace_back();
+        ViewHistory& history = m_view_histories.back();
 
         // viewhistory に item を append
         const std::list<XML::Dom*> domlist_hist = subdir->childNodes();
@@ -270,13 +256,13 @@ void History_Manager::xml2viewhistory()
                       << "name = " << name << std::endl
                       << "url = " << url << std::endl;
 #endif
-            history->append( url );
-            history->replace_current_title( name );
+            history.append( url );
+            history.replace_current_title( name );
         }
 
-        history->set_top( top );
-        history->set_cur( cur );
-        history->set_end( end );
+        history.set_top( top );
+        history.set_cur( cur );
+        history.set_end( end );
     }
 }
 
@@ -316,13 +302,12 @@ void History_Manager::viewhistory2xml()
     // root 
     XML::Dom* root = document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
 
-    std::list< ViewHistory* >::iterator it = m_view_histories.begin();
-    for( ; it != m_view_histories.end(); ++it ){
+    for( const ViewHistory& history : m_view_histories ) {
 
-        const int size = (*it)->get_size();
-        const int top = (*it)->get_top();
-        const int cur = (*it)->get_cur();
-        const int end = (*it)->get_end();
+        const int size = history.get_size();
+        const int top = history.get_top();
+        const int cur = history.get_cur();
+        const int end = history.get_end();
 
 #ifdef _DEBUG
         std::cout << "\n---------------\nviewhistory\n"
@@ -330,12 +315,12 @@ void History_Manager::viewhistory2xml()
                   << "top = " << top << std::endl
                   << "cur = " << cur << std::endl
                   << "end = " << end << std::endl
-                  << "url = " << (*it)->get_item( cur )->url << std::endl
-                  << "title = " << (*it)->get_item( cur )->title << std::endl;
+                  << "url = " << history.get_item( cur )->url << std::endl
+                  << "title = " << history.get_item( cur )->title << std::endl;
 #endif
 
         // タブに表示されていない履歴はXMLにしない
-        if( taburls.find( (*it)->get_item( cur )->url ) == taburls.end() ) continue;
+        if( taburls.find( history.get_item( cur )->url ) == taburls.end() ) continue;
 
 #ifdef _DEBUG
         std::cout << "make xml\n";
@@ -354,8 +339,8 @@ void History_Manager::viewhistory2xml()
         for( int i = 0; i < size; ++i ){
 
             XML::Dom* node_hist = node->appendChild( XML::NODE_TYPE_ELEMENT, node_name );
-            node_hist->setAttribute( "name", (*it)->get_item( i )->title );
-            node_hist->setAttribute( "url", (*it)->get_item( i )->url );
+            node_hist->setAttribute( "name", history.get_item( i )->title );
+            node_hist->setAttribute( "url", history.get_item( i )->url );
         }
     }
 
@@ -389,17 +374,16 @@ ViewHistory* History_Manager::get_viewhistory( const std::string& url )
               << "size = " << m_view_histories.size() << std::endl;
 #endif
 
-    if( m_view_histories.size() ){
-        std::list< ViewHistory* >::iterator it = m_view_histories.begin();
-        for( ; it != m_view_histories.end(); ++it ){
-            if( ( *it )->get_current_url() == url ){
+    auto it = std::find_if( m_view_histories.begin(), m_view_histories.end(),
+                            [&url]( auto& h ) { return h.get_current_url() == url; } );
+    if( it != m_view_histories.end() ) {
 #ifdef _DEBUG
-                std::cout << "found\n";
+        std::cout << "found\n";
 #endif
-                m_last_viewhistory = *it;
-                return *it;
-            }
-        }
+
+        // NOTE: 挿入削除で参照が無効にならないコンテナが条件
+        m_last_viewhistory = std::addressof( *it );
+        return m_last_viewhistory;
     }
 
 #ifdef _DEBUG
@@ -422,11 +406,8 @@ void History_Manager::create_viewhistory( const std::string& url )
     std::cout << "History_Manager::create_viewhistory : " << url << std::endl;
 #endif
 
-    history = new ViewHistory();
-    if( history ){
-        m_view_histories.push_back( history );
-        history->append( url );
-    }
+    m_view_histories.emplace_back();
+    m_view_histories.back().append( url );
 }
 
 
@@ -440,20 +421,11 @@ void History_Manager::delete_viewhistory( const std::string& url )
               << "size = " << m_view_histories.size() << std::endl;
 #endif
 
-    if( m_view_histories.size() ){
-        std::list< ViewHistory* >::iterator it = m_view_histories.begin();
-        for( ; it != m_view_histories.end(); ++it ){
-            if( ( *it )->get_current_url() == url ){
-
-                ViewHistory* history = *it;
-
-                m_view_histories.erase( it );
-                delete history;
-                m_last_viewhistory = nullptr;
-
-                break;
-            }
-        }
+    auto it = std::find_if( m_view_histories.begin(), m_view_histories.end(),
+                            [&url]( auto& h ) { return h.get_current_url() == url; } );
+    if( it != m_view_histories.end() ) {
+        m_view_histories.erase( it );
+        m_last_viewhistory = nullptr;
     }
 }
 
@@ -488,9 +460,8 @@ void History_Manager::replace_url_viewhistory( const std::string& url_old, const
               << "new = " << url_new << std::endl;
 #endif
 
-    if( m_view_histories.size() ){
-        std::list< ViewHistory* >::iterator it = m_view_histories.begin();
-        for( ; it != m_view_histories.end(); ++it ) ( *it )->replace_url( url_old, url_new );
+    for( auto& h : m_view_histories ) {
+        h.replace_url( url_old, url_new );
     }
 }
 

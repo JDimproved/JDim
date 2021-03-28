@@ -25,8 +25,13 @@ namespace HISTORY
         int m_history_current{};
         int m_history_end{};
 
+      public:
+
+        // privateだと std::list<ViewHistory> で要素の構築・削除ができない
         ViewHistory() = default;
         virtual ~ViewHistory() noexcept = default;
+
+      private:
 
         int get_size() const noexcept { return m_items.size(); }
         const ViewHistoryItem* get_item( const int pos ) const { return m_items[ pos ].get(); }
