@@ -213,8 +213,8 @@ namespace ARTICLE
         // 入力コントローラ
         CONTROL::Control m_control;
 
-        // 埋め込み画像のポインタ
-        std::list< EmbeddedImage* > m_eimgs;
+        // 埋め込み画像を保持するリスト
+        std::list<EmbeddedImage> m_eimgs;
 
         // ブックマークアイコン
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf_bkmk;
