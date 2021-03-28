@@ -5,9 +5,11 @@
 #ifndef _IMGROOT_H
 #define _IMGROOT_H
 
-#include <string>
-#include <map>
 #include <list>
+#include <map>
+#include <memory>
+#include <string>
+
 
 namespace DBIMG
 {
@@ -15,7 +17,7 @@ namespace DBIMG
 
     class ImgRoot
     {
-        std::map< std::string, Img* > m_map_img;
+        std::map<std::string, std::unique_ptr<Img>> m_map_img;
         std::list< Img* > m_list_wait; // ロード待ち状態のImgクラス
         std::list< Img* > m_list_delwait; // ロード待ち状態のImgクラスを削除する時の一時変数
         
@@ -35,7 +37,7 @@ namespace DBIMG
         Img* get_img( const std::string& url );
 
         // 検索(無ければnullptr)
-        Img* search_img( const std::string& url );
+        Img* search_img( const std::string& url ) = delete;
 
         // 画像データの先頭のシグネチャを見て画像のタイプを取得
         // 画像ではない場合は T_NOIMG を返す

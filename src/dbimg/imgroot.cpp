@@ -32,10 +32,9 @@ ImgRoot::ImgRoot()
 
 ImgRoot::~ImgRoot()
 {
-    std::map< std::string, Img* >::iterator it;
-    for( it = m_map_img.begin(); it != m_map_img.end(); ++it ){
-        ( *it ).second->terminate_load();
-        delete ( *it ).second;
+    for( auto& key_val : m_map_img ) {
+        key_val.second->terminate_load();
+        key_val.second.reset(); // call unique_ptr::reset()
     }
 }
 
@@ -92,29 +91,14 @@ void ImgRoot::remove_clock_in()
 //
 Img* ImgRoot::get_img( const std::string& url )
 {
-    Img* img = search_img( url );
+    auto it = m_map_img.find( url );
+    if( it != m_map_img.end() ) return it->second.get();
 
     // 無ければ作る
-    if( img == nullptr ){
-        img = new Img( url );
-        m_map_img.insert( make_pair( url, img ) );
-    }
-
+    auto uniq = std::make_unique<Img>( url );
+    Img* img = uniq.get();
+    m_map_img.emplace( url, std::move( uniq ) );
     return img;
-}
-
-
-//
-//　検索
-//
-// DBになくてもImgクラスは作らない
-//
-Img* ImgRoot::search_img( const std::string& url )
-{
-    std::map< std::string, Img* >::iterator it = m_map_img.find( url );
-    if( it != m_map_img.end() ) return ( *it ).second;
-
-    return nullptr;
 }
 
 
@@ -283,7 +267,7 @@ void ImgRoot::delete_cache( const std::string& url )
     if( CACHE::file_exists( path ) == CACHE::EXIST_FILE ) unlink( to_locale_cstr( path ) );
 
     // 再描画
-    if( img ) img->reset();
+    if( img ) img->reset(); // call Img::reset()
     CORE::core_set_command( "close_image", url );
     CORE::core_set_command( "redraw_article" );
     CORE::core_set_command( "redraw_message" );
@@ -323,12 +307,7 @@ void ImgRoot::delete_all_files()
 //
 void ImgRoot::reset_imgs()
 {
-    std::map< std::string, Img* >::iterator it;
-    for( it = m_map_img.begin(); it != m_map_img.end(); ++it ){
-        Img* img = ( *it ).second;
-        if( img ) img->reset();
+    for( auto& key_val : m_map_img ) {
+        key_val.second->reset(); // call Img::reset()
     }
 }
-
-
-
