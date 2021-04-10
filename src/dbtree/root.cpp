@@ -702,9 +702,10 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     // 新板登録
     if( stat == BOARD_NEW ){
 
-        board = DBTREE::BoardFactory( type, root, path_board, name, basicauth );
-        if( board ){
-            m_list_board.push_back( std::unique_ptr<BoardBase>( board ) );
+        auto uniq = DBTREE::BoardFactory( type, root, path_board, name, basicauth );
+        if( uniq ){
+            board = uniq.get();
+            m_list_board.push_back( std::move( uniq ) );
             if( m_analyzing_board_xml ) m_analyzed_path_board.insert( path_board );
         }
     }
