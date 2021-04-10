@@ -105,8 +105,7 @@ int TabNotebook::append_tab( Widget& tab )
 #endif
 
     // ダミーWidgetを作成してtabにappend (表示はされない )
-    // remove_tab()でdeleteする
-    DummyWidget* dummypage = new DummyWidget();
+    DummyWidget* dummypage = Gtk::manage( new DummyWidget );
 
     return append_page( *dummypage , tab );
 }
@@ -119,8 +118,7 @@ int TabNotebook::insert_tab( Widget& tab, int page )
 #endif
 
     // ダミーWidgetを作成してtabにappend (表示はされない )
-    // remove_tab()でdeleteする
-    DummyWidget* dummypage = new DummyWidget();
+    DummyWidget* dummypage = Gtk::manage( new DummyWidget );
 
     return insert_page( *dummypage, tab, page );
 }
@@ -132,11 +130,8 @@ void TabNotebook::remove_tab( const int page, const bool adjust_tab )
     std::cout << "TabNotebook::remove_tab page = " << page << std::endl;
 #endif
 
-    // ダミーWidgetをdelete
-    Gtk::Widget* dummypage = get_nth_page( page );
+    // ダミーWidgetはGtk::manage()の効果でdeleteされる
     remove_page( page );
-
-    if( dummypage ) delete dummypage;
 
     if( adjust_tab ) adjust_tabwidth();
 }

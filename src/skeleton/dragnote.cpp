@@ -145,7 +145,7 @@ int DragableNoteBook::append_page( const std::string& url, Gtk::Widget& child )
 
     m_bt_tabswitch.show_button();
 
-    SKELETON::TabLabel* tablabel = create_tablabel( url );
+    SKELETON::TabLabel* tablabel = Gtk::manage( create_tablabel( url ) );
     return m_notebook_tab.append_tab( *tablabel );
 }
 
@@ -156,7 +156,7 @@ int DragableNoteBook::insert_page( const std::string& url, Gtk::Widget& child, i
 
     m_bt_tabswitch.show_button();
 
-    SKELETON::TabLabel* tablabel = create_tablabel( url );
+    SKELETON::TabLabel* tablabel = Gtk::manage( create_tablabel( url ) );
     return m_notebook_tab.insert_tab( *tablabel, page );
 }
 
@@ -186,12 +186,9 @@ void DragableNoteBook::set_tab_fulltext( const std::string& str, const int page 
 //
 void DragableNoteBook::remove_page( const int page, const bool adjust_tab )
 {
-    SKELETON::TabLabel* tablabel = m_notebook_tab.get_tablabel( page );
-
+    // タブはGtk::manage()の効果でdeleteされる
     m_notebook_tab.remove_tab( page, adjust_tab );
     m_notebook_view.remove_page( page );
-
-    if( tablabel ) delete tablabel;
 
     if( ! get_n_pages() ) m_bt_tabswitch.hide_button();
 }
