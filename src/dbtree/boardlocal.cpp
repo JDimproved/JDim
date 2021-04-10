@@ -83,11 +83,8 @@ ArticleBase* BoardLocal::append_article( const std::string& datbase, const std::
               << ", id = " << id << std::endl;
 #endif
 
-    ArticleBase* article = new DBTREE::ArticleLocal( datbase, id );
+    ArticleBase* article = insert( std::make_unique<DBTREE::ArticleLocal>( datbase, id ) );
     if( article ){
-
-        get_hash_article()->push( article );
-
         // subject にも追加する
         get_list_subject().push_back( article );
     }

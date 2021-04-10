@@ -78,8 +78,6 @@ BoardBase::~BoardBase()
 
     clear();
 
-    for( ArticleBase* a : m_hash_article ) delete a;
-
 #ifdef _TEST_CACHE
     if( m_hash_article.size() ){
         std::cout << "article cache\n"
@@ -902,6 +900,10 @@ ArticleBase* BoardBase::get_article_create( const std::string& datbase, const st
 }
 
 
+ArticleBase* BoardBase::insert( std::unique_ptr<ArticleBase> article )
+{
+    return m_hash_article.insert( std::move( article ) );
+}
 
 
 //

@@ -213,12 +213,13 @@ namespace DBTREE
 
         ARTICLE_INFO_LIST& get_list_artinfo(){ return m_list_artinfo; }
 
-        ArticleHash* get_hash_article(){ return &m_hash_article; }
         std::list< std::string >& get_url_update_views(){ return  m_url_update_views; }
 
         ArticleBase* get_article_null();
         ArticleBase* get_article( const std::string& datbase, const std::string& id );
         ArticleBase* get_article_create( const std::string& datbase, const std::string& id );
+
+        ArticleBase* insert( std::unique_ptr<ArticleBase> article );
 
         void set_path_dat( const std::string& str ){ m_path_dat = str; }
         void set_path_readcgi( const std::string& str ){ m_path_readcgi = str; }
