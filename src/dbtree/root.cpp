@@ -96,11 +96,7 @@ Root::~Root()
 
     clear();
 
-    std::list< BoardBase* >::iterator it;
-    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
-        ( *it )->terminate_load();
-        delete ( *it );
-    }
+    for( auto& b : m_list_board ) b->terminate_load();
 
 #ifdef _TEST_CACHE
     std::cout << "board cache\n"
@@ -180,10 +176,10 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 
     // サーチ
     auto it_board = std::find_if( m_list_board.begin(), m_list_board.end(),
-                                  [&url]( const BoardBase* b ) { return b->equal( url ); } );
+                                  [&url]( const auto& b ) { return b->equal( url ); } );
     if( it_board != m_list_board.end() ) {
 
-        m_get_board = *it_board;
+        m_get_board = it_board->get();
         m_get_board->read_info(); // 板情報の取得( 詳しくはBoardBase::read_info()をみること )
 
 #ifdef _SHOW_GETBOARD
@@ -209,14 +205,14 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 
             // 板パスを見て一致したら移転したと見なす
             // TODO : 板パスが同じ板が2つ以上あるときどうするか？
-            const auto match_path = [&url, this]( const BoardBase* b ) {
+            const auto match_path = [&url, this]( const auto& b ) {
                 return is_2ch( b->get_root() ) && url.find( b->get_path_board() + "/" ) != std::string::npos;
             };
 
             // 全ての板をサーチして移転先の板を探す
             auto it = std::find_if( m_list_board.begin(), m_list_board.end(), match_path );
             if( it != m_list_board.end() ) {
-                BoardBase* board = *it;
+                BoardBase* board = it->get();
 
                 const std::string hostname = MISC::get_hostname( url );
                 const std::string& path_board = board->get_path_board();
@@ -708,7 +704,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 
         board = DBTREE::BoardFactory( type, root, path_board, name, basicauth );
         if( board ){
-            m_list_board.push_back( board );
+            m_list_board.push_back( std::unique_ptr<BoardBase>( board ) );
             if( m_analyzing_board_xml ) m_analyzed_path_board.insert( path_board );
         }
     }
@@ -1020,8 +1016,8 @@ bool Root::remove_board( const std::string& url )
     // delete board する前に全て閉じないとセグフォの原因となるので注意
     CORE::core_set_command( "close_board", url );
 
-    m_list_board.remove( board );
-    delete board;
+    // 削除対象はアドレスで判定する
+    m_list_board.remove_if( [board]( const auto& b ) { return board == b.get(); } );
 
     m_get_board_url = std::string();
     m_get_board = nullptr;
@@ -1047,10 +1043,7 @@ int Root::is_moved( const std::string& root,
                      const std::string& name,
                      BoardBase** board_old, bool etc )
 {
-    std::list< BoardBase* >::iterator it;
-    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
-
-        BoardBase* board = *( it );
+    for( auto& board : m_list_board ) {
 
         if( board->get_path_board() == path_board ){
 
@@ -1060,7 +1053,7 @@ int Root::is_moved( const std::string& root,
             // 名前が同じで、サイトが同じなら移転
             if( board->get_name() == name
                     && get_board_type( board->get_root() ) == get_board_type( root, etc ) ){
-                *board_old = board;
+                *board_old = board.get();
                 return BOARD_MOVED;
             }
         }
@@ -1374,11 +1367,8 @@ std::string Root::is_board_moved( const std::string& url,
 
         if( is_2ch( url ) ){
 
-            std::list< BoardBase* >::iterator it;
-            for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
-
+            for( auto& board : m_list_board ) {
                 // 板の最新のrootとpathを取得する
-                BoardBase* board = *( it );
 
                 // 板パスを見て一致したら移転したと見なす
                 // TODO : 板パスが同じ板が2つ以上あるときどうするか？
@@ -1486,11 +1476,7 @@ std::string Root::is_board_moved( const std::string& url,
 // 全板の情報ファイル読み込み
 void Root::read_boardinfo_all()
 {
-    std::list< BoardBase* >::iterator it;
-    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
-
-        ( *it )->read_info();
-    }
+    for( auto& b : m_list_board ) b->read_info();
 }
 
 
@@ -1502,10 +1488,7 @@ void Root::save_articleinfo_all()
     std::cout << "Root::save_articleinfo_all\n";
 #endif
 
-    std::list< BoardBase* >::iterator it = m_list_board.begin();
-    for( ; it != m_list_board.end(); ++it ){
-        ( *it )->save_articleinfo_all();
-    }
+    for( auto& b : m_list_board ) b->save_articleinfo_all();
 
 #ifdef _DEBUG
     std::cout << "end\n";
@@ -1518,9 +1501,8 @@ void Root::save_articleinfo_all()
 void Root::search_cache( std::vector< ArticleBase* >& list_article,
                          const std::string& query, const bool mode_or, const bool bm, const bool stop )
 {
-    std::list< BoardBase* >::iterator it;
-    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
-        ( *it )->search_cache( list_article, query, mode_or, bm, stop );
+    for( auto& b : m_list_board ) {
+        b->search_cache( list_article, query, mode_or, bm, stop );
         if( stop ) break;
     }
 }
@@ -1529,10 +1511,7 @@ void Root::search_cache( std::vector< ArticleBase* >& list_article,
 // 全てのスレの書き込み履歴削除
 void Root::clear_all_post_history()
 {
-    std::list< BoardBase* >::iterator it;
-    for( it = m_list_board.begin(); it != m_list_board.end(); ++it ){
-        ( *it )->clear_all_post_history();
-    }
+    for( auto& b : m_list_board ) b->clear_all_post_history();
 }
 
 
@@ -1645,8 +1624,7 @@ bool Root::is_local( const std::string& url )
 //
 void Root::update_abone_thread()
 {
-    std::list< BoardBase* >::iterator it = m_list_board.begin();
-    for( ; it != m_list_board.end(); ++it ) ( *it )->update_abone_thread( true );
+    for( auto& b : m_list_board ) b->update_abone_thread( true );
 }
 
 
@@ -1656,8 +1634,7 @@ void Root::update_abone_thread()
 //
 void Root::update_abone_all_article()
 {
-    std::list< BoardBase* >::iterator it = m_list_board.begin();
-    for( ; it != m_list_board.end(); ++it ) ( *it )->update_abone_all_article();
+    for( auto& b : m_list_board ) b->update_abone_all_article();
 }
 
 
@@ -1666,19 +1643,15 @@ void Root::update_abone_all_article()
 //
 void Root::reset_all_since_date()
 {
-    std::list< BoardBase* >::iterator it = m_list_board.begin();
-    for( ; it != m_list_board.end(); ++it ) ( *it )->reset_all_since_date();
+    for( auto& b : m_list_board ) b->reset_all_since_date();
 }
 
 void Root::reset_all_write_date()
 {
-    std::list< BoardBase* >::iterator it = m_list_board.begin();
-    for( ; it != m_list_board.end(); ++it ) ( *it )->reset_all_write_date();
+    for( auto& b : m_list_board ) b->reset_all_write_date();
 }
 
 void Root::reset_all_access_date()
 {
-    std::list< BoardBase* >::iterator it = m_list_board.begin();
-    for( ; it != m_list_board.end(); ++it ) ( *it )->reset_all_access_date();
+    for( auto& b : m_list_board ) b->reset_all_access_date();
 }
-

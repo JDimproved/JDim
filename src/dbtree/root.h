@@ -52,7 +52,7 @@ namespace DBTREE
     {
         // Boardクラス のキャッシュ
         // Boardクラスは一度作ったら~Root()以外ではdeleteしないこと
-        std::list< BoardBase* > m_list_board;
+        std::list<std::unique_ptr<BoardBase>> m_list_board;
 
         // 鯖移転テーブル
         std::list< MOVETABLE > m_movetable;
@@ -195,11 +195,11 @@ namespace DBTREE
         void load_movetable();
 
         // urlのタイプ判定
-        bool is_2ch( const std::string& url );
-        bool is_JBBS( const std::string& url );
-        bool is_machi( const std::string& url );
-        bool is_vip2ch( const std::string& url );
-        bool is_local( const std::string& url );
+        static bool is_2ch( const std::string& url );
+        static bool is_JBBS( const std::string& url );
+        static bool is_machi( const std::string& url );
+        static bool is_vip2ch( const std::string& url );
+        static bool is_local( const std::string& url );
     };
 }
 
