@@ -52,7 +52,7 @@ namespace DBTREE
     {
         // Boardクラス のキャッシュ
         // Boardクラスは一度作ったら~Root()以外ではdeleteしないこと
-        std::list< BoardBase* > m_list_board;
+        std::list<std::unique_ptr<BoardBase>> m_list_board;
 
         // 鯖移転テーブル
         std::list< MOVETABLE > m_movetable;
