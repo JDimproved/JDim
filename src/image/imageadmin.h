@@ -8,7 +8,9 @@
 
 #include "skeleton/admin.h"
 
+#include <memory>
 #include <string>
+
 
 namespace IMAGE
 {
@@ -27,8 +29,7 @@ namespace IMAGE
         Gtk::Button m_left, m_right;
         Gtk::EventBox m_view;
 
-        // Gtk::manageで作ってるので view は deleteしなくても良い
-        std::list< SKELETON::View* > m_list_view;
+        std::list<std::unique_ptr<SKELETON::View>> m_list_view;
 
         int m_scroll;
         int m_counter_scroll{};

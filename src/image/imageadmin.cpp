@@ -165,7 +165,7 @@ void ImageAdmin::switch_admin()
 //
 bool ImageAdmin::empty()
 {
-    return ( m_list_view.size() == 0 );
+    return m_list_view.empty();
 }
 
 
@@ -345,10 +345,10 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
         }
 
         // view作成
-        SKELETON::View* view = Gtk::manage( CORE::ViewFactory( CORE::VIEW_IMAGEVIEW, command.url ) );
+        auto view = std::unique_ptr<SKELETON::View>( CORE::ViewFactory( CORE::VIEW_IMAGEVIEW, command.url ) );
         if( view ){
             view->show_view();
-            m_list_view.push_back( view );
+            m_list_view.push_back( std::move( view ) );
         }
     }
 
@@ -485,11 +485,10 @@ void ImageAdmin::update_status_of_all_views()
 
 #ifdef _DEBUG
     std::cout << "ImageAdmin::update_status_of_all_views\n";
-#endif    
+#endif
 
-    std::list< SKELETON::View* >::iterator it_view;
-    for( it_view = m_list_view.begin(); it_view != m_list_view.end(); ++it_view ){
-        if( *it_view ) (*it_view)->set_command( "update_status" );
+    for( auto& v : m_list_view ) {
+        v->set_command( "update_status" );
     }
 }
 
@@ -578,8 +577,8 @@ void ImageAdmin::close_view( const std::string& url )
     }
 
     if( view ){
-        m_list_view.remove( view );
-        delete view;
+        // 削除対象はアドレスで判定する
+        m_list_view.remove_if( [view]( auto& p ) { return view == p.get(); } );
     }
 
     if( empty() ){
@@ -818,14 +817,9 @@ void ImageAdmin::switch_img( const std::string& url )
 #endif
 
     // 画像切り替え
-    int page = 0;
-    std::list< SKELETON::View* >::iterator it_view;
-    for( it_view = m_list_view.begin(); it_view != m_list_view.end(); ++it_view ){
-
-        SKELETON::View* view = ( *it_view );
-        if( view->get_url() == url ){
-
-            if( view != get_current_view() ){
+    for( auto& view : m_list_view ) {
+        if( view->get_url() == url ) {
+            if( view.get() != get_current_view() ) {
 #ifdef _DEBUG
                 std::cout << "view was toggled.\n";
 #endif
@@ -840,6 +834,7 @@ void ImageAdmin::switch_img( const std::string& url )
     focus_out_all();
 
     // アイコン切り替え
+    int page = 0;
     SKELETON::View* view_icon = get_icon( url, page );
     if( view_icon ) view_icon->set_command( "switch_icon" );
 
@@ -931,9 +926,8 @@ SKELETON::View* ImageAdmin::get_view( const std::string& url )
     SKELETON::View* view = get_current_view();
     if( view && view->get_url() == url ) return view;
 
-    std::list< SKELETON::View* >::iterator it_view;
-    for( it_view = m_list_view.begin(); it_view != m_list_view.end(); ++it_view ){
-        if( ( *it_view )->get_url() == url ) return ( *it_view );
+    for( auto& v : m_list_view ) {
+        if( v->get_url() == url ) return v.get();
     }
 
     return nullptr;
