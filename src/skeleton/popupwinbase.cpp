@@ -15,27 +15,17 @@ PopupWinBase::PopupWinBase( bool draw_frame )
     : Gtk::Window( Gtk::WINDOW_POPUP )
     , m_draw_frame( draw_frame )
 {
-    if( m_draw_frame ) set_border_width( 1 );
+    if( m_draw_frame ) {
+        set_border_width( 1 );
+
+        auto provider = Gtk::CssProvider::create();
+        provider->load_from_data( "window { border: 1px solid black; }" );
+        get_style_context()->add_provider( provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
+    }
 
     if ( auto main_window = CORE::get_mainwindow() ) {
         set_transient_for( *main_window );
     }
-}
-
-
-PopupWinBase::~PopupWinBase() noexcept = default;
-
-
-bool PopupWinBase::on_draw( const Cairo::RefPtr< Cairo::Context >& cr )
-{
-    const bool ret = Gtk::Window::on_draw( cr );
-    if( m_draw_frame ) {
-        Gdk::Cairo::set_source_rgba( cr, Gdk::RGBA( "black" ) );
-        cr->set_line_width( 1.0 );
-        cr->rectangle( 0.0, 0.0, get_width(), get_height() );
-        cr->stroke();
-    }
-    return ret;
 }
 
 
