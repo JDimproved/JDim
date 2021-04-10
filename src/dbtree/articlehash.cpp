@@ -6,7 +6,9 @@
 #include "articlehash.h"
 #include "articlebase.h"
 
+#include <algorithm>
 #include <stdlib.h> // atoi
+
 
 using namespace DBTREE;
 
@@ -50,7 +52,7 @@ int ArticleHash::get_hash( const std::string& id )
 }
 
 
-void ArticleHash::push( ArticleBase* article )
+ArticleBase* ArticleHash::insert( std::unique_ptr<ArticleBase> article )
 {
     if( ! m_table.size() ){
         m_table.resize( HASH_TBLSIZE );
@@ -60,7 +62,8 @@ void ArticleHash::push( ArticleBase* article )
 
     if( hash < m_min_hash ) m_min_hash = hash;
     ++m_size;
-    m_table[ hash ].push_back( article );
+    m_table[ hash ].push_back( std::move( article ) );
+    return m_table[ hash ].back().get();
 }
 
 
@@ -70,8 +73,10 @@ ArticleBase* ArticleHash::find( const std::string& datbase, const std::string& i
 
     const size_t hash = get_hash( id );
 
-    std::vector< ArticleBase* >::iterator it = m_table[ hash ].begin();
-    for( ; it != m_table[ hash ].end(); ++it ) if( ( *it )->equal( datbase, id ) ) return *it;
+    auto& block = m_table[ hash ];
+    auto it = std::find_if( block.begin(), block.end(),
+                            [&datbase, &id]( auto& a ) { return a->equal( datbase, id ); } );
+    if( it != block.end() ) return it->get();
 
     return nullptr;
 }
@@ -91,7 +96,7 @@ ArticleBase* ArticleHash::it_get()
 {
     if( m_it_hash >= m_table.size() ) return nullptr;
 
-    return m_table[ m_it_hash ][ m_it_pos ];
+    return m_table[ m_it_hash ][ m_it_pos ].get();
 }
 
 

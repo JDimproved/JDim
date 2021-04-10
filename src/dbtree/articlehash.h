@@ -8,8 +8,10 @@
 #ifndef _ARTICLEHASH_H
 #define _ARTICLEHASH_H
 
-#include <vector>
+#include <memory>
 #include <string>
+#include <vector>
+
 
 namespace DBTREE
 {
@@ -22,7 +24,7 @@ namespace DBTREE
 
         size_t m_size{};
         size_t m_min_hash;
-        std::vector< std::vector< ArticleBase* > > m_table;
+        std::vector< std::vector<std::unique_ptr<ArticleBase>> > m_table;
 
         // iterator 用変数
         size_t m_it_hash{};
@@ -39,7 +41,7 @@ namespace DBTREE
 
         size_t size() const { return m_size; }
 
-        void push( ArticleBase* article );
+        ArticleBase* insert( std::unique_ptr<ArticleBase> article );
 
         ArticleBase* find( const std::string& datbase, const std::string& id );
 
