@@ -94,6 +94,18 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
         context->add_class( s_css_stat_label );
         context->add_provider( m_stat_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
     }
+
+    try {
+        m_stat_provider->load_from_data(
+            ".red:not(:selected), .red:active:not(:selected) { color: white; background-color: red; }"
+            ".green:not(:selected), .green:active:not(:selected) { color: white; background-color: green; }"
+            ".blue:not(:selected), .blue:active:not(:selected) { color: white; background-color: blue; }" );
+    }
+    catch( Gtk::CssProviderError& err ) {
+#ifdef _DEBUG
+        std::cout << "ERROR:JDWindow::JDWindow css fail " << err.what() << std::endl;
+#endif
+    }
 }
 
 
@@ -406,24 +418,18 @@ void JDWindow::set_status_color( const std::string& color )
     std::cout << "JDWindow::set_status_color " << color << std::endl;
 #endif
 
-    // TODO: 色を毎回指定するかわりにcssクラスの交換でスタイルを変更する
-    Glib::ustring css;
-    if( color.empty() ) {
-        // テキスト部分が上手く配色されないGTKテーマがあるので明示的に設定する
-        css = Glib::ustring::compose( u8".%1:not(:selected) { color: unset; }", s_css_stat_label );
-    }
-    else {
-        css = Glib::ustring::compose(
-            u8".%1:not(:selected), %1:active:not(:selected) { color: white; background-color: %2; }",
-            s_css_stat_label, Gdk::RGBA( color ).to_string() );
-    }
-    try {
-        m_stat_provider->load_from_data( css );
-    }
-    catch( Gtk::CssProviderError& err ) {
-#ifdef _DEBUG
-        std::cout << "ERROR:JDWindow::set_status_color fail " << err.what() << std::endl;
-#endif
+    auto context = m_label_stat.get_style_context();
+    context->remove_class( "red" );
+    context->remove_class( "green" );
+    context->remove_class( "blue" );
+    if( ! color.empty() ) context->add_class( color );
+
+    if( m_mginfo.get_realized() ) {
+        context = m_mginfo.get_style_context();
+        context->remove_class( "red" );
+        context->remove_class( "green" );
+        context->remove_class( "blue" );
+        if( ! color.empty() ) context->add_class( color );
     }
 }
 
