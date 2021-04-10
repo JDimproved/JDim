@@ -3,14 +3,12 @@
 //
 // ポップアップウィンドウの基底クラス
 //
-// TODO: 枠線はcssで設定する
 
 #ifndef POPUPWINBASE_H
 #define POPUPWINBASE_H
 
-#include "gtkmmversion.h"
-
 #include <gtkmm.h>
+
 
 namespace SKELETON
 {
@@ -32,13 +30,12 @@ namespace SKELETON
 
         // draw_frame == true なら枠を描画する
         explicit PopupWinBase( bool draw_frame );
-        ~PopupWinBase() noexcept;
+        ~PopupWinBase() noexcept = default;
 
         SIG_CONFIGURED_POPUP sig_configured(){ return m_sig_configured; }
 
       protected:
 
-        bool on_draw( const Cairo::RefPtr< Cairo::Context >& cr ) override;
         bool on_configure_event( GdkEventConfigure* event ) override;
     };
 }

@@ -20,7 +20,7 @@ enum
 CompletionEntry::CompletionEntry( const int mode )
     : m_mode( mode )
     , m_enable_changed( true )
-    , m_popup_win( true )
+    , m_popup_win( SKELETON::POPUPWIN_DRAWFRAME )
 {
     m_entry.signal_key_press().connect( sigc::mem_fun( *this, &CompletionEntry::slot_entry_key_press ) );
     m_entry.signal_button_press().connect( sigc::mem_fun(*this, &CompletionEntry::slot_entry_button_press ) );
