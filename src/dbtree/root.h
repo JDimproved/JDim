@@ -195,11 +195,11 @@ namespace DBTREE
         void load_movetable();
 
         // urlのタイプ判定
-        bool is_2ch( const std::string& url );
-        bool is_JBBS( const std::string& url );
-        bool is_machi( const std::string& url );
-        bool is_vip2ch( const std::string& url );
-        bool is_local( const std::string& url );
+        static bool is_2ch( const std::string& url );
+        static bool is_JBBS( const std::string& url );
+        static bool is_machi( const std::string& url );
+        static bool is_vip2ch( const std::string& url );
+        static bool is_local( const std::string& url );
     };
 }
 
