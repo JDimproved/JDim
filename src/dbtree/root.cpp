@@ -1378,38 +1378,38 @@ std::string Root::is_board_moved( const std::string& url,
             if( it_board != m_list_board.cend() ) {
                 const BoardBase* board = it_board->get();
 
-                std::string str = "移転テーブルが破損していたので修復しました\n";
+                std::string msg = "移転テーブルが破損していたので修復しました\n";
 
-                std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
-                for( ; it_move != m_movetable.end(); ){
+                for( auto it = m_movetable.begin(); it != m_movetable.end(); ) {
 
-                    if( is_2ch( ( *it_move ).old_root ) &&
-                        url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos
-                        ){
+                    if( is_2ch( it->old_root )
+                            && url.find( it->old_path_board + "/" ) != std::string::npos ) {
 
                         // 最新のrootとpathに変更する
-                        ( *it_move ).new_root = board->get_root();
-                        ( *it_move ).new_path_board = board->get_path_board();
+                        it->new_root = board->get_root();
+                        it->new_path_board = board->get_path_board();
+
+                        const std::string from_to = it->old_root + it->old_path_board + "/ -> "
+                                                    + board->url_boardbase() + "\n";
 
                         // url -> url の形となった場合は消す
-                        if( ( *it_move ).old_root == ( *it_move ).new_root &&
-                            ( *it_move ).old_path_board == ( *it_move ).new_path_board ){
+                        if( it->old_root == it->new_root
+                                && it->old_path_board == it->new_path_board ) {
 
-                            str += "削除: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
-
-                            m_movetable.erase( it_move );
-                            it_move = m_movetable.begin();
-
+                            msg.append( "削除: " );
+                            msg.append( from_to );
+                            it = m_movetable.erase( it );
                             continue;
                         }
 
-                        str += "更新: " + ( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
+                        msg.append( "更新: " );
+                        msg.append( from_to );
                     }
 
-                    ++it_move;
+                    ++it;
                 }
 
-                MISC::MSG( str );
+                MISC::MSG( msg );
 
                 if( m_enable_save_movetable ){
 
