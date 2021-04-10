@@ -205,7 +205,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 
             // 板パスを見て一致したら移転したと見なす
             // TODO : 板パスが同じ板が2つ以上あるときどうするか？
-            const auto match_path = [&url, this]( const auto& b ) {
+            const auto match_path = [&url]( const auto& b ) {
                 return is_2ch( b->get_root() ) && url.find( b->get_path_board() + "/" ) != std::string::npos;
             };
 
@@ -1367,58 +1367,61 @@ std::string Root::is_board_moved( const std::string& url,
 
         if( is_2ch( url ) ){
 
-            for( auto& board : m_list_board ) {
-                // 板の最新のrootとpathを取得する
+            // 板パスを見て一致したら移転したと見なす
+            // TODO : 板パスが同じ板が2つ以上あるときどうするか？
+            const auto match_path = [&url]( const auto& b ) {
+                return is_2ch( b->get_root() ) && url.find( b->get_path_board() + "/" ) != std::string::npos;
+            };
 
-                // 板パスを見て一致したら移転したと見なす
-                // TODO : 板パスが同じ板が2つ以上あるときどうするか？
-                if( is_2ch( board->get_root() ) && url.find( board->get_path_board() + "/" ) != std::string::npos ){
+            // 板の最新のrootとpathを取得する
+            auto it_board = std::find_if( m_list_board.cbegin(), m_list_board.cend(), match_path );
+            if( it_board != m_list_board.cend() ) {
+                const BoardBase* board = it_board->get();
 
-                    std::string str = "移転テーブルが破損していたので修復しました\n";
+                std::string msg = "移転テーブルが破損していたので修復しました\n";
 
-                    std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
-                    for( ; it_move != m_movetable.end(); ){
+                for( auto it = m_movetable.begin(); it != m_movetable.end(); ) {
 
-                        if( is_2ch( ( *it_move ).old_root ) &&
-                            url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos
-                            ){
+                    if( is_2ch( it->old_root )
+                            && url.find( it->old_path_board + "/" ) != std::string::npos ) {
 
-                            // 最新のrootとpathに変更する
-                            ( *it_move ).new_root = board->get_root();
-                            ( *it_move ).new_path_board = board->get_path_board();
+                        // 最新のrootとpathに変更する
+                        it->new_root = board->get_root();
+                        it->new_path_board = board->get_path_board();
 
-                            // url -> url の形となった場合は消す
-                            if( ( *it_move ).old_root == ( *it_move ).new_root &&
-                                ( *it_move ).old_path_board == ( *it_move ).new_path_board ){
+                        const std::string from_to = it->old_root + it->old_path_board + "/ -> "
+                                                    + board->url_boardbase() + "\n";
 
-                                str += "削除: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
+                        // url -> url の形となった場合は消す
+                        if( it->old_root == it->new_root
+                                && it->old_path_board == it->new_path_board ) {
 
-                                m_movetable.erase( it_move );
-                                it_move = m_movetable.begin();
-
-                                continue;
-                            }
-
-                            str += "更新: " + ( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + board->url_boardbase() + "\n";
+                            msg.append( "削除: " );
+                            msg.append( from_to );
+                            it = m_movetable.erase( it );
+                            continue;
                         }
 
-                        ++it_move;
+                        msg.append( "更新: " );
+                        msg.append( from_to );
                     }
 
-                    MISC::MSG( str );
-
-                    if( m_enable_save_movetable ){
-
-                        //移転テーブル保存
-                        save_movetable();
-
-                        // サイドバーに登録されているURL更新
-                        CORE::core_set_command( "update_sidebar_item" );
-                    }
-
-                    // 改めてもう一度実行
-                    return is_board_moved( url, old_root, old_path_board, new_root, new_path_board, 0 ); 
+                    ++it;
                 }
+
+                MISC::MSG( msg );
+
+                if( m_enable_save_movetable ){
+
+                    //移転テーブル保存
+                    save_movetable();
+
+                    // サイドバーに登録されているURL更新
+                    CORE::core_set_command( "update_sidebar_item" );
+                }
+
+                // 改めてもう一度実行
+                return is_board_moved( url, old_root, old_path_board, new_root, new_path_board, 0 );
             }
         }
 
