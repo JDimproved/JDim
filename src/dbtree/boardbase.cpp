@@ -62,8 +62,6 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
 {
     clear_load_data();
 
-    m_hash_article = new ArticleHash();
-
     // 板情報はクラスが作られた時点ではまだ読まない
     // BoardBase::read_info() の説明を見ること
 }
@@ -75,18 +73,15 @@ BoardBase::BoardBase( const std::string& root, const std::string& path_board, co
 BoardBase::~BoardBase()
 {
 #ifdef _DEBUG
-    if( m_hash_article->size() ) std::cout << "BoardBase::~BoardBase : " << url_boardbase() << std::endl;
+    if( m_hash_article.size() ) std::cout << "BoardBase::~BoardBase : " << url_boardbase() << std::endl;
 #endif
 
     clear();
 
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) delete ( *it );
-
-    delete m_hash_article;
+    for( ArticleBase* a : m_hash_article ) delete a;
 
 #ifdef _TEST_CACHE
-    if( m_hash_article->size() ){
+    if( m_hash_article.size() ){
         std::cout << "article cache\n"
                   << "hit = " << cache_hit_art << std::endl
                   << "nohit = " << cache_nohit_art << std::endl
@@ -440,10 +435,9 @@ void BoardBase::clear_all_post_history()
 {
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
-    if( m_hash_article->size() == 0 ) return;
+    if( m_hash_article.size() == 0 ) return;
 
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->clear_post_history();
+    for( ArticleBase* a : m_hash_article ) a->clear_post_history();
 }
 
 
@@ -452,20 +446,17 @@ void BoardBase::clear_all_post_history()
 //
 void BoardBase::reset_all_since_date()
 {
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->reset_since_date();
+    for( ArticleBase* a : m_hash_article ) a->reset_since_date();
 }
 
 void BoardBase::reset_all_write_date()
 {
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->reset_write_date();
+    for( ArticleBase* a : m_hash_article ) a->reset_write_date();
 }
 
 void BoardBase::reset_all_access_date()
 {
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->reset_access_date();
+    for( ArticleBase* a : m_hash_article ) a->reset_access_date();
 }
 
 
@@ -480,8 +471,7 @@ void BoardBase::set_number_max_res( const int number )
 
     m_number_max_res = MAX( 0, MIN( CONFIG::get_max_resnumber(), number ) );
 
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->set_number_max( m_number_max_res );
+    for( ArticleBase* a : m_hash_article ) a->set_number_max( m_number_max_res );
 }
 
 
@@ -539,8 +529,7 @@ void BoardBase::update_url( const std::string& root, const std::string& path_boa
 
     // 配下の ArticleBase にも知らせてあげる
     const std::string datbase = url_datbase();
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->update_datbase( datbase );
+    for( ArticleBase* a : m_hash_article ) a->update_datbase( datbase );
 }
 
 
@@ -870,7 +859,7 @@ ArticleBase* BoardBase::get_article( const std::string& datbase, const std::stri
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
 
-    ArticleBase* art = m_hash_article->find( datbase, id );
+    ArticleBase* art = m_hash_article.find( datbase, id );
     if( art ) return art;
 
     return get_article_null();
@@ -1284,20 +1273,19 @@ void BoardBase::receive_finish()
 
     // 一度全てのarticleをdat落ち状態にして subject.txt に
     // 含まれているものだけ regist_article()の中で通常状態にする
-    ArticleHashIterator hash_it = m_hash_article->begin();
-    for( ; hash_it != m_hash_article->end(); ++hash_it ){
+    for( ArticleBase* article : m_hash_article ) {
 
-        if( read_from_cache && ! ( *hash_it )->is_924()
-                && ( *hash_it )->get_since_time() > m_last_access_time ){
+        if( read_from_cache && ! article->is_924()
+                && article->get_since_time() > m_last_access_time ){
             // キャッシュから読み込む場合にsubject.txtよりも新しいスレは残す
-            ( *hash_it )->read_info();
-            if( ! is_abone_thread( *hash_it ) ) m_list_subject.push_back( *hash_it );
+            article->read_info();
+            if( ! is_abone_thread( article ) ) m_list_subject.push_back( article );
         }
         else{
-            int status = ( *hash_it )->get_status();
+            int status = article->get_status();
             status &= ~STATUS_NORMAL;
             status |= STATUS_OLD;
-            ( *hash_it )->set_status( status );
+            article->set_status( status );
         }
     }
 
@@ -1331,11 +1319,10 @@ void BoardBase::receive_finish()
         // DAT落ちなどでsubject.txtに無いスレもsubjectリストに加える
         if( CONFIG::get_show_oldarticle() || m_show_oldlog ){
 
-            ArticleHashIterator it = m_hash_article->begin();
-            for( ; it != m_hash_article->end(); ++it ){
+            for( ArticleBase* article : m_hash_article ) {
 
-                if( ( *it )->is_cached()
-                    && ( ( *it )->get_status() & STATUS_OLD )
+                if( article->is_cached()
+                    && ( article->get_status() & STATUS_OLD )
                     ){
 
 
@@ -1343,11 +1330,11 @@ void BoardBase::receive_finish()
                     // 取得する必要がある
                     // TODO : 数が多いとboardビューを開くまで時間がかかるのをなんとかする
 #ifdef _DEBUG
-                    std::cout << "read article_info : " << ( *it )->get_url() << std::endl;
-#endif                
-                    ( *it )->read_info();
+                    std::cout << "read article_info : " << article->get_url() << std::endl;
+#endif
+                    article->read_info();
 
-                    if( ! is_abone_thread( *it ) ) m_list_subject.push_back( *it );
+                    if( ! is_abone_thread( article ) ) m_list_subject.push_back( article );
                 }
             }
         }
@@ -1507,8 +1494,7 @@ void BoardBase::append_all_article_in_cache()
 //
 void BoardBase::update_abone_all_article()
 {
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->update_abone();
+    for( ArticleBase* a : m_hash_article ) a->update_abone();
 }
 
 
@@ -1856,7 +1842,7 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
 
     // キャッシュにあるレスをデータベースに登録
     append_all_article_in_cache();
-    if( m_hash_article->size() == 0 ) return;
+    if( m_hash_article.size() == 0 ) return;
 
     const bool append_all = query.empty();
     const std::string query_local = MISC::Iconv( query, get_charset(), "UTF-8" );
@@ -1864,12 +1850,10 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
 
     const std::string path_board_root = CACHE::path_board_root_fast( url_boardbase() );
 
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ){
+    for( ArticleBase* article : m_hash_article ) {
 
         if( stop ) break;
 
-        ArticleBase* article = ( *it );
         if( ! article->is_cached() ) continue;
 
         // しおりがついているスレだけ追加
@@ -2283,8 +2267,7 @@ void BoardBase::save_board_info()
 //
 void BoardBase::save_articleinfo_all()
 {
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ) ( *it )->save_info( false );
+    for( ArticleBase* a : m_hash_article ) a->save_info( false );
 }
 
 
@@ -2356,25 +2339,24 @@ std::list< std::string > BoardBase::get_check_update_articles()
 
     std::list< int > list_speed;
 
-    ArticleHashIterator it = m_hash_article->begin();
-    for( ; it != m_hash_article->end(); ++it ){
+    for( ArticleBase* article : m_hash_article ) {
 
-        if( ( *it )->is_cached()
-            && ( *it )->get_number()
-            && ! ( ( *it )->get_status() & STATUS_UPDATE )
-            && ! ( ( *it )->get_status() & STATUS_OLD )
-            && ( *it )->get_number() == ( *it )->get_number_load()
+        if( article->is_cached()
+            && article->get_number()
+            && ! ( article->get_status() & STATUS_UPDATE )
+            && ! ( article->get_status() & STATUS_OLD )
+            && article->get_number() == article->get_number_load()
             ){
 
-            const std::string& url = ( *it )->get_url();
-            const int speed = ( *it )->get_speed();
+            const std::string& url = article->get_url();
+            const int speed = article->get_speed();
 
 #ifdef _DEBUG
             std::cout << "added " << url
-                      << " number = " << ( *it )->get_number()
-                      << " load = " << ( *it )->get_number_load()
+                      << " number = " << article->get_number()
+                      << " load = " << article->get_number_load()
                       << " speed = " << speed
-                      << " " << ( *it )->get_subject() << std::endl;
+                      << " " << article->get_subject() << std::endl;
 #endif
 
             // 挿入ソート
