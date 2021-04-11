@@ -974,7 +974,7 @@ void ArticleBase::clear_post_history()
 //
 // this の参照が無くなったら ArticleBase::unlock_impl()が呼ばれて m_nodetree は自動クリアされる
 //
-JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
+NodeTreeBase* ArticleBase::get_nodetree()
 {
     assert( !empty() );
 
@@ -984,7 +984,7 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
         std::cout << "ArticleBase::get_nodetree create " << m_url << std::endl;
 #endif
     
-        m_nodetree = create_nodetree();
+        m_nodetree.reset( create_nodetree() );
         assert( m_nodetree );
 
         // あぼーん情報のコピー
@@ -1002,7 +1002,7 @@ JDLIB::ConstPtr< NodeTreeBase >& ArticleBase::get_nodetree()
         m_nodetree->load_cache();
     }
     
-    return m_nodetree;
+    return m_nodetree.get();
 }
 
 
@@ -1025,7 +1025,7 @@ void ArticleBase::unlock_impl()
     // スレ情報保存 	 
     save_info( false );
 
-    m_nodetree.clear();
+    m_nodetree.reset();
 }
 
 

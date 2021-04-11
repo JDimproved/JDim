@@ -61,9 +61,12 @@ using namespace ARTICLE;
 
 
 EmbeddedImage::EmbeddedImage( const std::string& url )
-    : m_url( url ),
-      m_img ( DBIMG::get_img( m_url ) )
-{}
+    : m_url( url )
+    , m_img{ DBIMG::get_img( m_url ) }
+{
+    assert( m_img );
+}
+
 
 EmbeddedImage::~EmbeddedImage()
 {

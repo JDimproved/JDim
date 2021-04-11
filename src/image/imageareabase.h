@@ -11,7 +11,6 @@
 
 #include "skeleton/dispatchable.h"
 
-#include "jdlib/constptr.h"
 #include "jdlib/jdthread.h"
 #include "jdlib/imgloader.h"
 
@@ -26,7 +25,7 @@ namespace IMAGE
     class ImageAreaBase : public Gtk::Image, public SKELETON::Dispatchable
     {
         std::string m_url;
-        JDLIB::ConstPtr< DBIMG::Img > m_img;
+        DBIMG::Img* m_img;
         Gdk::InterpType m_interptype;
 
         std::string m_errmsg; // エラーメッセージ
@@ -71,7 +70,7 @@ namespace IMAGE
 
     protected:
 
-        JDLIB::ConstPtr< DBIMG::Img >& get_img(){ return  m_img; }
+        DBIMG::Img* get_img() { return m_img; }
         void set_errmsg( const std::string& errmsg ){ m_errmsg = errmsg; }
         void set_ready( bool ready ){ m_ready = ready; }
 

@@ -368,8 +368,8 @@ void ImageViewBase::setup_common()
 void ImageViewBase::set_imagearea( ImageAreaBase* imagearea )
 {
     assert( imagearea );
+    assert( ! m_imagearea );
 
-    m_imagearea.clear();
     m_imagearea = imagearea;
 
     set_width_client( imagearea->get_width() );
@@ -386,7 +386,8 @@ void ImageViewBase::remove_imagearea()
 {
     if( m_imagearea ){
         m_event.remove();
-        m_imagearea.clear();
+        delete m_imagearea;
+        m_imagearea = nullptr;
     }
 }
 

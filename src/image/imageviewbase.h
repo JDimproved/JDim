@@ -10,8 +10,6 @@
 #include "skeleton/view.h"
 #include "skeleton/admin.h"
 
-#include "jdlib/constptr.h"
-
 #include <gtkmm.h>
 
 
@@ -35,10 +33,10 @@ namespace IMAGE
     //
     class ImageViewBase : public SKELETON::View
     {
-        JDLIB::ConstPtr< DBIMG::Img > m_img;
+        DBIMG::Img* m_img;
 
         // Gtk::manage で作っているのでdeleteしなくても良い
-        JDLIB::ConstPtr< ImageAreaBase > m_imagearea;
+        ImageAreaBase* m_imagearea{};
 
         bool m_wait{};
         bool m_loading{};
@@ -53,9 +51,9 @@ namespace IMAGE
         // Viewが所属するAdminクラス
         SKELETON::Admin* get_admin() override;
 
-        JDLIB::ConstPtr< DBIMG::Img >& get_img(){ return  m_img;}
+        DBIMG::Img* get_img() { return m_img; }
 
-        JDLIB::ConstPtr< ImageAreaBase >& get_imagearea(){ return  m_imagearea; }
+        ImageAreaBase* get_imagearea() { return m_imagearea; }
         void set_imagearea( ImageAreaBase* imagearea );
         void remove_imagearea();
 

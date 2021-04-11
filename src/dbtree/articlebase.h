@@ -11,13 +11,13 @@
 
 #include "skeleton/lockable.h"
 
-#include "jdlib/constptr.h"
-
 #include <ctime>
 #include <list>
+#include <memory>
 #include <string>
 #include <unordered_set>
 #include <vector>
+
 
 namespace DBTREE
 {
@@ -33,7 +33,7 @@ namespace DBTREE
         std::string m_path_article_ext_info;
 
         // m_nodetree は参照が外れたら自動でクリアされる
-        JDLIB::ConstPtr< NodeTreeBase > m_nodetree;
+        std::unique_ptr<NodeTreeBase> m_nodetree;
 
         std::string m_url;           // dat ファイルのURL
         std::string m_datbase;       // ベースアドレス
@@ -304,7 +304,7 @@ namespace DBTREE
         void set_cached( const bool set ){ m_cached = set; }
 
         // キャッシュがarticlebaseに読み込まれている(nodetree!=nullptr)か
-        bool is_cache_read() const { return ( m_nodetree ); }
+        bool is_cache_read() const noexcept { return static_cast<bool>( m_nodetree ); }
 
         // キャッシュがあって、かつ新着の読み込みが可能
         bool enable_load();
@@ -408,7 +408,7 @@ namespace DBTREE
 
         // NodeTree作成
         // もしNodeTreeが作られていなかったら作成
-        JDLIB::ConstPtr< NodeTreeBase >& get_nodetree();
+        NodeTreeBase* get_nodetree();
 
         virtual NodeTreeBase* create_nodetree(){ return nullptr; }
 
