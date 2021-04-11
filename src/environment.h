@@ -51,6 +51,10 @@ namespace ENVIRONMENT
 	std::string get_glibmm_version();
     std::string get_tlslib_version();
     std::string get_jdinfo();
+
+    // ダイアログでClient-Side Decorationを使うか
+    // JDimの設定とGtkSettingsから使うか判断する
+    bool get_dialog_use_header_bar();
 }
 
 
