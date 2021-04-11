@@ -134,6 +134,8 @@ namespace XML
         bool setAttribute( const std::string& name, const std::string& value );
         bool setAttribute( const std::string& name, const int value );
         bool removeAttribute( const std::string& name ) = delete;
+
+        std::size_t size() const noexcept { return m_childNodes.size(); }
     };
 }
 

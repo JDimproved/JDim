@@ -61,7 +61,7 @@ void Linkfilter_Manager::xml2list( const std::string& xml )
 
 #ifdef _DEBUG
     std::cout << "Linkfilter_Manager::xml2list";
-    std::cout << " children =" << document.childNodes().size() << std::endl;
+    std::cout << " children =" << document.size() << std::endl;
 #endif
 
     for( const XML::Dom* child : domlist ){
