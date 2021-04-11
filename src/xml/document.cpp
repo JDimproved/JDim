@@ -98,7 +98,7 @@ void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETO
 {
     treestore->clear();
 
-    if( childNodes().size() )
+    if( size() )
     {
         // ルートの子要素以下が対象
         const Dom* root = get_root_element( root_name );

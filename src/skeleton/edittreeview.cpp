@@ -312,7 +312,7 @@ void EditTreeView::xml2tree( const XML::Document& document, Glib::RefPtr< Gtk::T
 #ifdef _DEBUG
     std::cout << "EditTreeView::xml2tree ";
     std::cout << " root = " << root_name;
-    std::cout << " size = " << document.childNodes().size() << std::endl;
+    std::cout << " size = " << document.size() << std::endl;
 #endif
 
     treestore->clear();
@@ -362,7 +362,7 @@ void EditTreeView::tree2xml( XML::Document& document, const std::string& root_na
 #ifdef _DEBUG
     std::cout << "EditTreeView::tree2xml ";
     std::cout << " root = " << root_name;
-    std::cout << " size = " << document.childNodes().size() << std::endl;
+    std::cout << " size = " << document.size() << std::endl;
 #endif
 }
 

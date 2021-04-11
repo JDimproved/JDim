@@ -2218,7 +2218,7 @@ void BBSListViewBase::xml2tree( const std::string& root_name, const std::string&
 
 #ifdef _DEBUG
     std::cout << " ルートノード名=" << root_name;
-    std::cout << " 子ノード数=" << m_document.childNodes().size() << std::endl;
+    std::cout << " 子ノード数=" << m_document.size() << std::endl;
 #endif
 
     m_treeview.xml2tree( m_document, m_treestore, root_name );
