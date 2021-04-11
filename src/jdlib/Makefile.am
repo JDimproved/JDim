@@ -31,7 +31,6 @@ noinst_HEADERS = \
 	miscgtk.h \
 	jdthread.h \
 	misccharcode.h \
-	constptr.h \
 	refptr_lock.h \
 	heap.h \
 	jdiconv.h \
