@@ -70,7 +70,7 @@ ImageViewIcon::~ImageViewIcon()
 #endif
 
     // スレッドを止めるために明示的にクリアする
-    get_imagearea().clear();
+    remove_imagearea();
 }
 
 

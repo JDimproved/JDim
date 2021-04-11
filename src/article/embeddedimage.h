@@ -10,7 +10,6 @@
 
 #include "skeleton/dispatchable.h"
 
-#include "jdlib/constptr.h"
 #include "jdlib/jdthread.h"
 #include "jdlib/imgloader.h"
 
@@ -25,7 +24,7 @@ namespace ARTICLE
     {
         std::string m_url;
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf;
-        JDLIB::ConstPtr< DBIMG::Img > m_img;
+        DBIMG::Img* m_img;
         JDLIB::Thread m_thread;
 
         Glib::RefPtr< JDLIB::ImgLoader > m_imgloader;

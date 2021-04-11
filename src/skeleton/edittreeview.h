@@ -10,8 +10,6 @@
 
 #include "dragtreeview.h"
 
-#include "jdlib/constptr.h"
-
 #include "type.h"
 #include "data_info.h"
 
@@ -47,7 +45,7 @@ namespace SKELETON
         Gtk::Window* m_parent_win{};
 
         EditColumns& m_columns;
-        JDLIB::ConstPtr< Gtk::CellRendererText > m_ren_text;
+        Gtk::CellRendererText* m_ren_text{}; // Gtk managed
 
         // 編集可能
         bool m_editable{};
