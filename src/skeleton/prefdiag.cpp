@@ -7,24 +7,32 @@
 #include "label_entry.h"
 
 #include "command.h"
-#include "session.h"
 #include "dispatchmanager.h"
+#include "environment.h"
 #include "global.h"
+#include "session.h"
 
 #include <glib/gi18n.h>
 
 
 using namespace SKELETON;
 
-PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_cancel, const bool add_apply, const bool add_open )
-    : Gtk::Dialog()
+
+PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_cancel, const bool add_apply,
+                    const bool add_open )
+    : Gtk::Dialog( "", ENVIRONMENT::get_dialog_use_header_bar() ? Gtk::DIALOG_USE_HEADER_BAR
+                                                                : Gtk::DialogFlags{} )
     , m_url( url )
     , m_bt_apply( g_dgettext( GTK_DOMAIN, "_Apply" ), true )
 {
     if( add_apply ){
         m_bt_apply.signal_clicked().connect( sigc::mem_fun(*this, &PrefDiag::slot_apply_clicked ) );
-        get_action_area()->pack_start( m_bt_apply );
-
+        if( property_use_header_bar() ) {
+            get_header_bar()->pack_start( m_bt_apply );
+        }
+        else {
+            get_action_area()->pack_start( m_bt_apply );
+        }
     }
 
     if( add_cancel ){

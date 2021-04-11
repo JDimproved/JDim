@@ -25,8 +25,9 @@ enum
 
 
 AboutDiag::AboutDiag( const Glib::ustring& title )
-    : Gtk::Dialog( title ),
-      m_button_copy_environment( "クリップボードへコピー" )
+    : Gtk::Dialog( title, ENVIRONMENT::get_dialog_use_header_bar() ? Gtk::DIALOG_USE_HEADER_BAR
+                                                                   : Gtk::DialogFlags{} )
+    , m_button_copy_environment( "クリップボードへコピー" )
 {
     set_transient_for( *CORE::get_mainwindow() );
     set_resizable( false );

@@ -13,7 +13,7 @@
 #include <cstring>
 #include <sstream>
 
-#include "gtkmm.h"
+#include <gtkmm.h>
 
 #if __has_include(<sys/utsname.h>)
 #define HAVE_SYS_UTSNAME_H
@@ -511,3 +511,24 @@ std::string ENVIRONMENT::get_jdinfo()
     return jd_info.str();
 }
 
+
+// Client-Side Decorationを使うか
+static bool should_use_header_bar()
+{
+    const int flag = CONFIG::get_use_header_bar();
+    // 0: 使わない 1: 使う
+    if( flag == 0 || flag == 1 ) return static_cast<bool>( flag );
+
+    // 2: デスクトップに合わせる のときはデスクトップ環境を調べる
+    return ENVIRONMENT::get_wm() == ENVIRONMENT::DesktopType::gnome;
+}
+
+
+// ダイアログでClient-Side Decorationを使うか
+// JDimの設定とGtkSettingsから使うか判断する
+bool ENVIRONMENT::get_dialog_use_header_bar()
+{
+    const bool dialog_use_header = Gtk::Settings::get_default()->property_gtk_dialogs_use_header();
+
+    return dialog_use_header && should_use_header_bar();
+}
