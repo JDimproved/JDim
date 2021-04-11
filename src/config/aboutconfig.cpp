@@ -263,6 +263,8 @@ void AboutConfig::append_rows()
     append_row( "スレビューのスクロールバーを左に配置する", get_confitem()->left_scrbar, CONF_LEFT_SCRBAR );
     append_row( "メニューバーを非表示にした時にダイアログを表示", get_confitem()->show_hide_menubar_diag, CONF_SHOW_HIDE_MENUBAR_DIAG );
     append_row( "状態変更時にメインステータスバーの色を変える", get_confitem()->change_stastatus_color, CONF_CHANGE_STASTATUS_COLOR );
+    append_row( "Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )",
+                get_confitem()->use_header_bar, CONF_USE_HEADER_BAR );
 
     // 次スレ検索
     append_row( "" );
