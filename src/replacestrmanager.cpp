@@ -148,9 +148,9 @@ void ReplaceStr_Manager::xml2list( const std::string& xml )
     }
     if( xml.empty() ) return;
 
-    XML::Document document( xml );
+    const XML::Document document( xml );
 
-    XML::Dom* const root = document.get_root_element( kRootNodeNameReplaceStr );
+    const XML::Dom* const root = document.get_root_element( kRootNodeNameReplaceStr );
     if( ! root ) return;
 
     const std::list<XML::Dom*> domlist = root->childNodes();

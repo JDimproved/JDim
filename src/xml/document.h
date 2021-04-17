@@ -47,7 +47,8 @@ namespace XML
                             const std::string& root_name, std::list< Gtk::TreePath >& list_path_expand ) const;
 
         // ルート要素を取得する
-        Dom* get_root_element( const std::string& node_name = std::string() ) const;
+        Dom* get_root_element( const std::string& node_name = {} );
+        const Dom* get_root_element( const std::string& node_name = {} ) const;
     };
 }
 
