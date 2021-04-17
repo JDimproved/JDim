@@ -70,8 +70,6 @@ namespace SKELETON
 
       void slot_menu_selected( int i );
 
-      void slot_popup_pos( int& x, int& y, bool& push_in );
-
       bool slot_enter( GdkEventCrossing* event );
       bool slot_leave( GdkEventCrossing* event );
       bool slot_motion( GdkEventMotion* event );

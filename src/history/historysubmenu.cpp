@@ -210,7 +210,7 @@ bool HistorySubMenu::slot_button_press( GdkEventButton* event, int i )
     // ポップアップメニュー表示
     if( event->button == 3 )
     {
-        m_popupmenu.popup( 0, gtk_get_current_event_time() );
+        m_popupmenu.popup_at_pointer( reinterpret_cast<GdkEvent*>( event ) );
     }
 
     return true;

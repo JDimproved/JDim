@@ -285,9 +285,6 @@ namespace SKELETON
         // タブ切り替えメニュー表示
         void slot_show_tabswitchmenu();
 
-        // タブ切り替えメニューの位置決め
-        void slot_popup_pos( int& x, int& y, bool& push_in );
-
         // 右クリックメニュー
         virtual void slot_close_tab();
         virtual void slot_lock();
