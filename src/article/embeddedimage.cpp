@@ -87,8 +87,6 @@ void EmbeddedImage::stop()
 #ifdef _DEBUG    
     std::cout << "EmbeddedImage::stop" << std::endl;
 #endif 
-    if( m_imgloader )
-        m_imgloader->request_stop();
 }
 
 
@@ -139,8 +137,8 @@ void EmbeddedImage::resize_thread()
 
     if( m_img->get_type() == DBIMG::T_BMP ) pixbufonly = false; // BMP の場合 pixbufonly = true にすると真っ黒になる
     
-    m_imgloader = JDLIB::ImgLoader::get_loader( m_img->get_cache_path() );
-    Glib::RefPtr<Gdk::Pixbuf> pixbuf = m_imgloader->get_pixbuf( pixbufonly );
+    Glib::RefPtr<JDLIB::ImgLoader> imgloader = JDLIB::ImgLoader::get_loader( m_img->get_cache_path() );
+    Glib::RefPtr<Gdk::Pixbuf> pixbuf = imgloader->get_pixbuf( pixbufonly );
     if( pixbuf ){
         Gdk::InterpType interptype = Gdk::INTERP_NEAREST;
         if( CONFIG::get_imgemb_interp() == 1 ) interptype = Gdk::INTERP_BILINEAR;
@@ -148,7 +146,7 @@ void EmbeddedImage::resize_thread()
 
         m_pixbuf = pixbuf->scale_simple( width, height, interptype );
     }
-    m_imgloader.reset();
+    imgloader.reset();
 
     // メインスレッドにリサイズが終わったことを知らせて
     // メインスレッドがpthread_join()を呼び出す

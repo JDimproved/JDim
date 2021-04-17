@@ -2613,7 +2613,7 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
         // 描画
         else{
 
-            Glib::RefPtr< Gdk::Pixbuf > pixbuf = layout->eimg->get_pixbuf();
+            Glib::RefPtr<Gdk::Pixbuf>& pixbuf = layout->eimg->get_pixbuf();
             if( pixbuf ){
 
                 const int s_top = MAX( 0, ci.upper - ( rect->y + 1 ) );

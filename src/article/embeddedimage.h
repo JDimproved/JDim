@@ -27,14 +27,12 @@ namespace ARTICLE
         DBIMG::Img* m_img;
         JDLIB::Thread m_thread;
 
-        Glib::RefPtr< JDLIB::ImgLoader > m_imgloader;
-
       public:
 
         explicit EmbeddedImage( const std::string& url );
         ~EmbeddedImage();
 
-        Glib::RefPtr< Gdk::Pixbuf > get_pixbuf(){ return m_pixbuf; }
+        Glib::RefPtr<Gdk::Pixbuf>& get_pixbuf() { return m_pixbuf; }
 
         void show();
         void resize_thread();
