@@ -70,7 +70,6 @@ namespace XML
         void parse( const Gtk::TreeModel::Children& children, SKELETON::EditColumns& columns );
 
         // プロパティをセットするアクセッサ
-        void parentNode( Dom* parent ) = delete;
         void copy_childNodes( const Dom& dom ); // dom の子ノードをコピーする
 
         // ノードを分解して Gtk::TreeStore へ Gtk::TreeModel::Row を追加
@@ -103,7 +102,7 @@ namespace XML
         void nodeValue( const std::string& value ) { m_nodeValue = value; }
 
         // ノード
-        // 注意：appendChild(), replaceChild(), insertBefore() は
+        // 注意：appendChild(), insertBefore() は
         // 戻り値と引数がJavascriptなどのDOMとは異なります。
         //
         // delete忘れを防ぐために外部でnewしない方が良いだろうという
@@ -112,28 +111,17 @@ namespace XML
         //
         // クラス外で使用していないメンバ関数は削除してあります。
 
-        Dom* ownerDocument() const noexcept = delete;
-        Dom* parentNode() const noexcept = delete;
         bool hasChildNodes() const noexcept;
         std::list<Dom*> childNodes() const { return m_childNodes; }
         Dom* firstChild() const;
-        Dom* lastChild() const = delete;
         Dom* appendChild( const int node_type, const std::string& node_name );
         bool removeChild( Dom* node );
-        Dom* replaceChild( const int node_type, const std::string& node_name, Dom* oldNode ) = delete;
         Dom* insertBefore( const int node_type, const std::string& node_name, Dom* insNode );
-        Dom* previousSibling() const = delete;
-        Dom* nextSibling() const = delete;
 
         // 属性
-        bool hasAttributes() const noexcept = delete;
-        std::map< std::string, std::string > attributes() const = delete;
-        void attributes( std::map< std::string, std::string > attributes ) = delete;
-        bool hasAttribute( const std::string& name ) const = delete;
         std::string getAttribute( const std::string& name ) const;
         bool setAttribute( const std::string& name, const std::string& value );
         bool setAttribute( const std::string& name, const int value );
-        bool removeAttribute( const std::string& name ) = delete;
 
         std::size_t size() const noexcept { return m_childNodes.size(); }
     };
