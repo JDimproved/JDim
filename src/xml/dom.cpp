@@ -620,22 +620,14 @@ bool Dom::removeChild( Dom* node )
 
 
 //
-// ノード：insertBefore()
+// insertBefore() の機能をフルに使っていなかったためシンプルにした関数を導入する
 //
-Dom* Dom::insertBefore( const int node_type, const std::string& node_name, Dom* insNode )
+Dom* Dom::emplace_front( const int node_type, const std::string& node_name )
 {
-    if( ! insNode ) return appendChild( node_type, node_name );
-
-    Dom* newNode = nullptr;
-
-    const auto it = std::find( m_childNodes.begin(), m_childNodes.end(), insNode );
-    if( it != m_childNodes.end() )
-    {
-        newNode = new Dom( node_type, node_name );
-        newNode->m_parentNode = insNode->m_parentNode;
-        m_childNodes.insert( it, newNode );
-    }
-    return newNode;
+    Dom* node = new Dom( node_type, node_name );
+    node->m_parentNode = this;
+    m_childNodes.push_front( node );
+    return node;
 }
 
 

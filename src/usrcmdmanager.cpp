@@ -449,8 +449,7 @@ std::string Usrcmd_Manager::create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >
     std::string menu;
     if( ! dom ) return menu;
 
-    const std::list<XML::Dom*> domlist = dom->childNodes();
-    for( const XML::Dom* child : domlist )
+    for( const XML::Dom* child : *dom )
     {
         if( child->nodeType() == XML::NODE_TYPE_ELEMENT )
         {

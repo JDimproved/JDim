@@ -115,13 +115,25 @@ void Document::set_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore, SKELETO
 //
 // node_name : 要素名で限定、空の時は要素名問わず取得
 //
-Dom* Document::get_root_element( const std::string& node_name ) const
+static Dom* get_root_element_impl( const std::list<Dom*>& children, const std::string& node_name )
 {
-    const std::list<Dom*> children = childNodes();
     auto it = std::find_if( children.cbegin(), children.cend(),
                             []( const Dom* c ) { return c->nodeType() == NODE_TYPE_ELEMENT; } );
 
     if( it != children.cend()
         && ( node_name.empty() || (*it)->nodeName() == node_name ) ) return *it;
     return nullptr;
+}
+
+
+Dom* Document::get_root_element( const std::string& node_name )
+{
+    // Domのfriend classなのでアクセス可能
+    return get_root_element_impl( m_childNodes, node_name );
+}
+
+
+const Dom* Document::get_root_element( const std::string& node_name ) const
+{
+    return get_root_element_impl( m_childNodes, node_name );
 }

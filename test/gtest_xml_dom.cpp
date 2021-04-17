@@ -184,7 +184,7 @@ TEST_F(XML_DomChildren, child_nodes)
     XML::Dom* second = dom.appendChild( XML::NODE_TYPE_TEXT, "text" );
     XML::Dom* third = dom.appendChild( XML::NODE_TYPE_DOCUMENT, "document" );
     const std::list<XML::Dom*> expect = { first, second, third };
-    const std::list<XML::Dom*> result = dom.childNodes();
+    const std::list<XML::Dom*> result{ dom.begin(), dom.end() };
     EXPECT_EQ( expect, result );
 }
 
@@ -223,20 +223,16 @@ TEST_F(XML_DomChildren, remove_child)
     EXPECT_FALSE( dom.hasChildNodes() );
 }
 
-TEST_F(XML_DomChildren, insert_before)
+TEST_F(XML_DomChildren, emplace_front)
 {
     XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
 
-    XML::Dom* first_child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "child1" );
-    XML::Dom* second_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "child2", first_child );
+    dom.appendChild( XML::NODE_TYPE_ELEMENT, "child1" );
+    XML::Dom* second_child = dom.emplace_front( XML::NODE_TYPE_ELEMENT, "child2" );
     EXPECT_EQ( dom.firstChild(), second_child );
 
-    XML::Dom* third_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "child2", nullptr );
-    EXPECT_EQ( dom.childNodes().back(), third_child );
-
-    XML::Dom not_child{ XML::NODE_TYPE_UNKNOWN, "test" };
-    XML::Dom* null_child = dom.insertBefore( XML::NODE_TYPE_ELEMENT, "null", &not_child );
-    EXPECT_EQ( nullptr, null_child );
+    XML::Dom* third_child = dom.emplace_front( XML::NODE_TYPE_ELEMENT, "child2" );
+    EXPECT_EQ( dom.firstChild(), third_child );
 }
 
 TEST_F(XML_DomChildren, children_clear)
