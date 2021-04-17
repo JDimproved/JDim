@@ -184,7 +184,7 @@ TEST_F(XML_DomChildren, child_nodes)
     XML::Dom* second = dom.appendChild( XML::NODE_TYPE_TEXT, "text" );
     XML::Dom* third = dom.appendChild( XML::NODE_TYPE_DOCUMENT, "document" );
     const std::list<XML::Dom*> expect = { first, second, third };
-    const std::list<XML::Dom*> result = dom.childNodes();
+    const std::list<XML::Dom*> result{ dom.begin(), dom.end() };
     EXPECT_EQ( expect, result );
 }
 

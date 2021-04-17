@@ -454,8 +454,7 @@ void Root::bbsmenu2xml( const std::string& menu )
         MISC::ERRMSG( "parse error for bbsmenu" );
         return;
     }
-    targets = targets.front()->childNodes();
-    for( const XML::Dom* child : targets )
+    for( const XML::Dom* child : *targets.front() )
     {
         // 要素b( カテゴリ名 )
         if( child->nodeName() == "b" )

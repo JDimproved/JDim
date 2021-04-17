@@ -112,7 +112,7 @@ namespace XML
         // クラス外で使用していないメンバ関数は削除してあります。
 
         bool hasChildNodes() const noexcept;
-        std::list<Dom*> childNodes() const { return m_childNodes; }
+        std::list<Dom*> childNodes() const = delete;
         Dom* firstChild() const;
         Dom* appendChild( const int node_type, const std::string& node_name );
         bool removeChild( Dom* node );
@@ -124,6 +124,9 @@ namespace XML
         bool setAttribute( const std::string& name, const int value );
 
         std::size_t size() const noexcept { return m_childNodes.size(); }
+
+        auto begin() const noexcept { return m_childNodes.cbegin(); }
+        auto end() const noexcept { return m_childNodes.cend(); }
     };
 }
 

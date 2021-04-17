@@ -57,14 +57,13 @@ void Linkfilter_Manager::xml2list( const std::string& xml )
 
     const XML::Dom* root = document.get_root_element( std::string( ROOT_NODE_NAME_LINKFILTER ) );
     if( ! root ) return;
-    const std::list<XML::Dom*> domlist = root->childNodes();
 
 #ifdef _DEBUG
     std::cout << "Linkfilter_Manager::xml2list";
     std::cout << " children =" << document.size() << std::endl;
 #endif
 
-    for( const XML::Dom* child : domlist ){
+    for( const XML::Dom* child : *root ) {
 
         if( child->nodeType() == XML::NODE_TYPE_ELEMENT ){
 

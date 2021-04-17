@@ -153,8 +153,7 @@ void ReplaceStr_Manager::xml2list( const std::string& xml )
     const XML::Dom* const root = document.get_root_element( kRootNodeNameReplaceStr );
     if( ! root ) return;
 
-    const std::list<XML::Dom*> domlist = root->childNodes();
-    for( const XML::Dom* dom : domlist ) {
+    for( const XML::Dom* dom : *root ) {
 
         if( dom->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
 
@@ -166,8 +165,7 @@ void ReplaceStr_Manager::xml2list( const std::string& xml )
 
         m_chref[id] = dom->getAttribute( "chref" ) == "true";
 
-        const std::list<XML::Dom*> domlist_query = dom->childNodes();
-        for( const XML::Dom* query : domlist_query ) {
+        for( const XML::Dom* query : *dom ) {
 
             if( query->nodeType() != XML::NODE_TYPE_ELEMENT ) continue;
 
