@@ -1742,7 +1742,7 @@ void BoardViewBase::update_item( const std::string& url, const std::string& id )
 {
     if( is_loading() ) return;
     if( ! get_row_size() ) return;
-    if( ! get_url_board().empty() && get_url_board() !=  url ) return;
+    if( get_url_board() != url ) return;
 
     if( id.empty() ){
         update_item_all();
