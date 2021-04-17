@@ -2208,7 +2208,7 @@ void Admin::slot_tab_menu( int page, int x, int y )
         if( label ) label->set_text_with_mnemonic( ITEM_NAME_GO + std::string( " [ タブ数 " )
                                                    + std::to_string( m_notebook->get_n_pages() ) +" ](_M)" );
 
-        popupmenu->popup( 0, gtk_get_current_event_time() );
+        popupmenu->popup_at_pointer( nullptr ); // current event
     }
 }
 

@@ -268,7 +268,8 @@ void UsrCmdPref::show_popupmenu()
         if( act_del ) act_del->set_sensitive( true );
     }
 
-    menu->popup( 0, gtk_get_current_event_time() );
+    // Specify the current event by nullptr.
+    menu->popup_at_pointer( nullptr );
 }
 
 
