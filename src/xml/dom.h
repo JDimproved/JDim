@@ -102,7 +102,7 @@ namespace XML
         void nodeValue( const std::string& value ) { m_nodeValue = value; }
 
         // ノード
-        // 注意：appendChild(), insertBefore() は
+        // 注意：appendChild() は
         // 戻り値と引数がJavascriptなどのDOMとは異なります。
         //
         // delete忘れを防ぐために外部でnewしない方が良いだろうという
@@ -116,7 +116,7 @@ namespace XML
         Dom* firstChild() const;
         Dom* appendChild( const int node_type, const std::string& node_name );
         bool removeChild( Dom* node );
-        Dom* insertBefore( const int node_type, const std::string& node_name, Dom* insNode );
+        Dom* emplace_front( int node_type, const std::string& node_name );
 
         // 属性
         std::string getAttribute( const std::string& name ) const;

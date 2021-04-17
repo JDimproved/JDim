@@ -95,8 +95,8 @@ void BBSListViewMain::update_view()
     // <subdir>を挿入
     // ルート要素の有無で処理を分ける( 旧様式=無, 新様式=有 )
     XML::Dom* subdir = nullptr;
-    if( root ) subdir = root->insertBefore( XML::NODE_TYPE_ELEMENT, "subdir", root->firstChild() );
-    else subdir = get_document().insertBefore( XML::NODE_TYPE_ELEMENT, "subdir", get_document().firstChild() );
+    if( root ) subdir = root->emplace_front( XML::NODE_TYPE_ELEMENT, "subdir" );
+    else subdir = get_document().emplace_front( XML::NODE_TYPE_ELEMENT, "subdir" );
     subdir->setAttribute( "name", std::string( SUBDIR_ETCLIST ) );
 
     // 子要素( <board> )を追加
