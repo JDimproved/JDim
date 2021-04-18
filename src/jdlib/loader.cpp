@@ -1080,6 +1080,9 @@ std::string Loader::create_msg_send()
 
     if( ! m_data.modified.empty() ) msg << "If-Modified-Since: " << m_data.modified << "\r\n";
 
+    msg << "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n";
+    msg << "Accept-Language: ja,en-US;q=0.7,en;q=0.3\r\n";
+
     // レジュームするときは gzip は受け取らない
     if( m_data.byte_readfrom ){
 
@@ -1093,6 +1096,7 @@ std::string Loader::create_msg_send()
     // その他のフィールド
     if( ! m_data.ex_field.empty() ) msg << m_data.ex_field;
 
+    msg << "DNT: 1\r\n";
     msg << "Connection: close\r\n";
 
     // POST する文字列
@@ -1103,6 +1107,7 @@ std::string Loader::create_msg_send()
         msg << m_data.str_post;
         msg << "\r\n";
     }
+    msg << "Upgrade-Insecure-Requests: 1\r\n";
     msg << "\r\n";
     
     return msg.str();
