@@ -13,6 +13,7 @@
 
 #include "control/controlid.h"
 
+#include "command.h"
 #include "dndmanager.h"
 #include "session.h"
 
@@ -568,6 +569,8 @@ void DragableNoteBook::slot_drag_motion( const int page, const int tab_x, const 
     else if( m_dragging_tab ){
 
         if( ! m_down_arrow ) m_down_arrow = std::make_unique<SKELETON::IconPopup>( ICON::DOWN );
+        // HACK: サブウインドウにタブ機能がないためメインウインドウに決め打ちしている
+        m_down_arrow->set_transient_for( *CORE::get_mainwindow() );
         m_down_arrow->show();
 
         const int space = 4;
