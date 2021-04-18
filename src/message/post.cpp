@@ -465,10 +465,10 @@ void Post::receive_finish()
 
 #ifdef _DEBUG
     std::cout << "Error" << std::endl;
-    std::cout << m_errmsg << std::endl;
+    std::cout << m_return_html << std::endl;
 #endif        
 
-    MISC::ERRMSG( m_return_html );
+    MISC::ERRMSG( m_errmsg );
 
     set_code( HTTP_ERR );
     emit_sigfin();
