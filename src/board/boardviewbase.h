@@ -287,7 +287,6 @@ namespace BOARD
         bool drawout( const bool force_reset );
 
         void update_row_common( const Gtk::TreeModel::Row& row );
-        std::string get_subject_from_path( Gtk::TreePath& path ); // XXX: 実装がない
 
         template < typename ColumnType >
         std::string get_name_of_cell( Gtk::TreePath& path, const Gtk::TreeModelColumn< ColumnType >& column );
