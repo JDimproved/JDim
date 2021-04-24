@@ -208,10 +208,10 @@ namespace CONFIG
 
 // スレタイ検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_TITLE  "スレタイ検索 (ff5ch.syoboi.jp)"
-#define CONF_URL_SEARCH_TITLE "https://ff5ch.syoboi.jp/?q=$TEXTU"
+#define CONF_URL_SEARCH_TITLE "https://ff5ch.syoboi.jp/?alt=tsv&q=$TEXTU"
 
 // スレタイ検索用正規表現
-#define CONF_REGEX_SEARCH_TITLE R"=(<a [^>]*?href="(http[^"]+)">([^<]+)</a><span[[:space:]]+class="count"> \(([0-9]+)\))="
+#define CONF_REGEX_SEARCH_TITLE R"=(^(?=[^\t\n]+\t[^\t\n]+\t([^\t\n]+))([^\t\n]+)\t([^\t\n]+))="
 
 // WEB検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"
