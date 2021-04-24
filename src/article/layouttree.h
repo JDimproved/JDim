@@ -130,7 +130,8 @@ namespace ARTICLE
         // RECTANGLE型のメモリ確保
         RECTANGLE* create_rect();
 
-        LAYOUT* top_header() const { return m_root_header->next_header; }
+        LAYOUT* top_header() { return m_root_header->next_header; }
+        const LAYOUT* top_header() const { return m_root_header->next_header; }
         const LAYOUT* last_header() const { return m_last_header; }
         int max_res_number() const { return m_max_res_number; }
         const LAYOUT* get_separator() const{ return m_separator_header; }
