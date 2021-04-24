@@ -215,7 +215,7 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
 //
 // 背景色のID( colorid.h にある ID を指定)
 //
-int DrawAreaBase::get_colorid_back()
+int DrawAreaBase::get_colorid_back() const
 {
     if( m_css_body.bg_color >= 0 ) return m_css_body.bg_color;
 
@@ -482,7 +482,7 @@ void DrawAreaBase::focus_out()
 
 
 // 新着セパレータのあるレス番号の取得とセット
-int DrawAreaBase::get_separator_new()
+int DrawAreaBase::get_separator_new() const
 {
     return m_layout_tree->get_separator_new();
 }
@@ -503,7 +503,7 @@ void DrawAreaBase::hide_separator_new()
 
 
 // セパレータが画面に表示されているか
-bool DrawAreaBase::is_separator_on_screen()
+bool DrawAreaBase::is_separator_on_screen() const
 {
     if( ! m_layout_tree ) return false;
 
@@ -522,12 +522,12 @@ bool DrawAreaBase::is_separator_on_screen()
 
 
 // 現在のポインタの下にあるレス番号取得
-int DrawAreaBase::get_current_res_num()
+int DrawAreaBase::get_current_res_num() const
 {
     const int y = m_y_pointer + get_vscr_val();
 
     // 先頭のヘッダブロックから順に調べる
-    LAYOUT* header = m_layout_tree->top_header();
+    const LAYOUT* header = m_layout_tree->top_header();
     while( header ){
 
         // y が含まれているブロックを探す
@@ -542,7 +542,7 @@ int DrawAreaBase::get_current_res_num()
 
 
 // 範囲選択中の文字列
-std::string DrawAreaBase::str_selection()
+std::string DrawAreaBase::str_selection() const
 {
     if( ! m_selection.select ) return std::string();
 
@@ -551,7 +551,7 @@ std::string DrawAreaBase::str_selection()
 
 
 // 範囲選択を開始したレス番号
-int DrawAreaBase::get_selection_resnum_from()
+int DrawAreaBase::get_selection_resnum_from() const
 {
     if( ! m_selection.select ) return 0;
     if( ! m_selection.caret_from.layout ) return 0;
@@ -561,7 +561,7 @@ int DrawAreaBase::get_selection_resnum_from()
 
 
 // 範囲選択を終了したレス番号
-int DrawAreaBase::get_selection_resnum_to()
+int DrawAreaBase::get_selection_resnum_to() const
 {
     if( ! m_selection.select ) return 0;
     if( ! m_selection.caret_to.layout ) return 0;
@@ -574,7 +574,7 @@ int DrawAreaBase::get_selection_resnum_to()
 //
 // 表示されている最後のレスの番号
 //
-int DrawAreaBase::max_number()
+int DrawAreaBase::max_number() const
 {
     assert( m_layout_tree );
 
@@ -2363,7 +2363,8 @@ void DrawAreaBase::paint_backscreen( const Glib::RefPtr< Gdk::Pixbuf >& pixbuf,
 // byte_from : 描画開始位置
 // byte_to : 描画終了位置
 //
-bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from, size_t& byte_to )
+bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTION& selection, size_t& byte_from,
+                                       size_t& byte_to ) const
 {
     if( ! layout ) return false;
     if( ! selection.caret_from.layout ) return false;
@@ -2412,7 +2413,7 @@ bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTION& se
 //
 // ノードで使うフォントを得る
 //
-char DrawAreaBase::get_layout_fontid( LAYOUT* layout )
+char DrawAreaBase::get_layout_fontid( LAYOUT* layout ) const
 {
     if( ! layout->node ) return m_fontid;
 
@@ -3270,7 +3271,7 @@ void DrawAreaBase::exec_scroll()
 //
 // スクロールバーの現在値
 //
-int DrawAreaBase::get_vscr_val()
+int DrawAreaBase::get_vscr_val() const
 {
     if( m_vscrbar ) return ( int ) m_vscrbar->get_adjustment()->get_value();
     return 0;
@@ -3280,7 +3281,7 @@ int DrawAreaBase::get_vscr_val()
 //
 // スクロールバーの最大値値
 //
-int DrawAreaBase::get_vscr_maxval()
+int DrawAreaBase::get_vscr_maxval() const
 {
     if( m_vscrbar ) return ( int ) ( m_vscrbar->get_adjustment()->get_upper()
                                      - m_vscrbar->get_adjustment()->get_page_size() );
@@ -4430,7 +4431,7 @@ bool DrawAreaBase::set_selection_str()
 // caret_pos が範囲選択の上にあるか
 //
 //
-bool DrawAreaBase::is_caret_on_selection( const CARET_POSITION& caret_pos )
+bool DrawAreaBase::is_caret_on_selection( const CARET_POSITION& caret_pos ) const
 {
     LAYOUT* layout = caret_pos.layout;
 
@@ -4455,7 +4456,7 @@ bool DrawAreaBase::is_caret_on_selection( const CARET_POSITION& caret_pos )
 //
 // 範囲選択範囲にcaret_posが含まれていて、かつ条件(IDや数字など)を満たしていたらURLとして範囲選択文字を返す
 //
-std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos )
+std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos ) const
 {
     std::string url;
 
@@ -5111,7 +5112,7 @@ bool DrawAreaBase::motion_mouse()
 //
 // 現在のポインターの下のノードからカーソルのタイプを決定する
 //
-Glib::ustring DrawAreaBase::get_cursor_type()
+Glib::ustring DrawAreaBase::get_cursor_type() const
 {
     Glib::ustring cursor_type = cursor_names::kDefault;
     if( m_layout_current ){
