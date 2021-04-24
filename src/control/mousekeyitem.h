@@ -55,27 +55,29 @@ namespace CONTROL
         bool get_trpclick() const { return m_trpclick; }
 
         // モード無視
-        int equal( const std::string& str_motion )
+        int equal( const std::string& str_motion ) const
         {
             if( str_motion == m_str_motion ) return m_id;
             return CONTROL::None;
         }
 
         // モード無視
-        int equal( const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick, const bool trpclick )
+        int equal( const guint motion, const bool ctrl, const bool shift, const bool alt, const bool dblclick,
+                   const bool trpclick ) const
         {
-            if( motion == m_motion && ctrl == m_ctrl && shift == m_shift && alt == m_alt && dblclick == m_dblclick && trpclick == m_trpclick ) return m_id;
+            if( motion == m_motion && ctrl == m_ctrl && shift == m_shift && alt == m_alt && dblclick == m_dblclick
+                    && trpclick == m_trpclick ) return m_id;
             return CONTROL::None;
         }
 
-        int is_activated( const int mode, const std::string& str_motion )
+        int is_activated( const int mode, const std::string& str_motion ) const
         {
             if( mode == m_mode ) return equal( str_motion );
             return CONTROL::None;
         }
 
         int is_activated( const int mode, const guint motion, const bool ctrl, const bool shift, const bool alt,
-                          const bool dblclick, const bool trpclick )
+                          const bool dblclick, const bool trpclick ) const
         {
             if( mode == m_mode ) return equal( motion, ctrl, shift, alt, dblclick, trpclick );
             return CONTROL::None;
