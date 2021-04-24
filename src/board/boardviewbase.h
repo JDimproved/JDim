@@ -107,7 +107,7 @@ namespace BOARD
         std::string url_for_copy() const override;
 
         // 行数
-        int get_row_size();
+        int get_row_size() const;
 
         // SKELETON::View の関数のオーバロード
 
@@ -175,7 +175,7 @@ namespace BOARD
         void unsorted_column();
 
         // url から row を取得
-        Gtk::TreeModel::Row get_row_from_url( const std::string& url );
+        Gtk::TreeModel::Row get_row_from_url( const std::string& url ) const;
 
         SKELETON::DragTreeView& get_treeview(){ return m_treeview; }
 
@@ -204,26 +204,26 @@ namespace BOARD
         Gtk::TreeModel::Row prepend_row( DBTREE::ArticleBase* art, const int id );
 
         // デフォルトのソート状態
-        virtual int get_default_sort_column();
-        virtual int get_default_view_sort_mode();
-        virtual int get_default_view_sort_pre_column();
-        virtual int get_default_view_sort_pre_mode();
+        virtual int get_default_sort_column() const;
+        virtual int get_default_view_sort_mode() const;
+        virtual int get_default_view_sort_pre_column() const;
+        virtual int get_default_view_sort_pre_mode() const;
 
     private:
 
         void setup_action();
 
         // 通常の右クリックメニューの作成
-        std::string create_context_menu();
-        const char* get_menu_item( const int item );
+        std::string create_context_menu() const;
+        const char* get_menu_item( const int item ) const;
 
         // 次スレ移行処理に使用する前スレのアドレス
         // BOARD::BoardViewNext と BoardViewBase::open_row()を参照せよ
-        virtual std::string get_url_pre_article(){ return std::string(); }
+        virtual std::string get_url_pre_article() const { return {}; }
 
         void update_columns();
 
-        int get_title_id( const int col );
+        int get_title_id( const int col ) const;
 
         // ソート列やソートモードの保存
         virtual void save_sort_columns();

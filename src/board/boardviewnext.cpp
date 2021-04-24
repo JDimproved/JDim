@@ -194,22 +194,22 @@ void BoardViewNext::update_boardname()
 //
 // デフォルトのソート状態
 //
-int BoardViewNext::get_default_sort_column()
+int BoardViewNext::get_default_sort_column() const
 {
     return COL_ID;
 }
 
-int BoardViewNext::get_default_view_sort_mode()
+int BoardViewNext::get_default_view_sort_mode() const
 {
     return SORTMODE_ASCEND;
 }
 
-int BoardViewNext::get_default_view_sort_pre_column()
+int BoardViewNext::get_default_view_sort_pre_column() const
 {
     return COL_ID;
 }
 
-int BoardViewNext::get_default_view_sort_pre_mode()
+int BoardViewNext::get_default_view_sort_pre_mode() const
 {
     return SORTMODE_ASCEND;
 }

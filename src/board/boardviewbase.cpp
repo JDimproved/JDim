@@ -339,7 +339,7 @@ void BoardViewBase::setup_action()
 //
 // 通常の右クリックメニューの作成
 //
-std::string BoardViewBase::create_context_menu()
+std::string BoardViewBase::create_context_menu() const
 {
     std::list< int > list_menu;
 
@@ -395,7 +395,7 @@ std::string BoardViewBase::create_context_menu()
 }
 
 
-const char* BoardViewBase::get_menu_item( const int item )
+const char* BoardViewBase::get_menu_item( const int item ) const
 {
     switch( item ){
 
@@ -466,7 +466,7 @@ const char* BoardViewBase::get_menu_item( const int item )
 //
 // 行数
 //
-int BoardViewBase::get_row_size()
+int BoardViewBase::get_row_size() const
 {
     return m_treeview.get_row_size();
 }
@@ -489,7 +489,7 @@ void BoardViewBase::unsorted_column()
 //
 // url から row を取得
 //
-Gtk::TreeModel::Row BoardViewBase::get_row_from_url( const std::string& url )
+Gtk::TreeModel::Row BoardViewBase::get_row_from_url( const std::string& url ) const
 {
     Gtk::TreeModel::Children child = m_liststore->children();
     Gtk::TreeModel::Children::iterator it;
@@ -695,9 +695,9 @@ void BoardViewBase::update_columns()
 //
 // 失敗の時は-1を変えす
 //
-int BoardViewBase::get_title_id( const int col )
+int BoardViewBase::get_title_id( const int col ) const
 {
-    Gtk::TreeView::Column* column = m_treeview.get_column( col );
+    const Gtk::TreeView::Column* column = m_treeview.get_column( col );
     if( ! column ) return -1;
 
     const std::string title = column->get_title();
@@ -872,22 +872,22 @@ void BoardViewBase::restore_sort()
 //
 // デフォルトのソート状態
 //
-int BoardViewBase::get_default_sort_column()
+int BoardViewBase::get_default_sort_column() const
 {
     return DBTREE::board_view_sort_column( get_url_board() );
 }
 
-int BoardViewBase::get_default_view_sort_mode()
+int BoardViewBase::get_default_view_sort_mode() const
 {
     return DBTREE::board_view_sort_mode( get_url_board() );
 }
 
-int BoardViewBase::get_default_view_sort_pre_column()
+int BoardViewBase::get_default_view_sort_pre_column() const
 {
     return DBTREE::board_view_sort_pre_column( get_url_board() );
 }
 
-int BoardViewBase::get_default_view_sort_pre_mode()
+int BoardViewBase::get_default_view_sort_pre_mode() const
 {
     return DBTREE::board_view_sort_pre_mode( get_url_board() );
 }

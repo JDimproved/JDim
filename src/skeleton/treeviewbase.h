@@ -46,7 +46,7 @@ namespace SKELETON
         ~JDTreeViewBase() noexcept;
 
         // 行数
-        int get_row_size();
+        int get_row_size() const;
 
         // カーソル解除
         void unset_cursor(){ get_selection()->unselect_all(); }

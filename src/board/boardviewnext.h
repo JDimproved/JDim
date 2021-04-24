@@ -37,10 +37,10 @@ namespace BOARD
       protected:
 
         // デフォルトのソート状態
-        int get_default_sort_column() override;
-        int get_default_view_sort_mode() override;
-        int get_default_view_sort_pre_column() override;
-        int get_default_view_sort_pre_mode() override;
+        int get_default_sort_column() const override;
+        int get_default_view_sort_mode() const override;
+        int get_default_view_sort_pre_column() const override;
+        int get_default_view_sort_pre_mode() const override;
 
       private:
 
@@ -49,7 +49,7 @@ namespace BOARD
 
         // 次スレ移行処理に使用する前スレのアドレス
         // 次スレ移行処理に使用する。BoardViewBase::open_row()を参照せよ
-        std::string get_url_pre_article() override { return m_url_pre_article; }
+        std::string get_url_pre_article() const override { return m_url_pre_article; }
 
         void slot_abone_thread() override;
 
