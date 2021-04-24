@@ -226,13 +226,13 @@ void AAManager::save_history()
 
 
 // ラベル、AA取得
-std::string AAManager::get_label( const int id )
+std::string AAManager::get_label( const int id ) const
 {
     if( id >= (int) m_vec_label.size() ) return std::string();
     return m_vec_label[ id ];
 }
 
-std::string AAManager::get_aa( const int id )
+std::string AAManager::get_aa( const int id ) const
 {
     if( id >= (int) m_vec_aa.size() ) return std::string();
     return m_vec_aa[ id ]; 
@@ -261,11 +261,11 @@ std::string AAManager::id2shortcut( const int id )
 
 
 // ショートカットからid取得
-int AAManager::shortcut2id( const char key )
+int AAManager::shortcut2id( const char key ) const
 {
     if( key == '\0' ) return -1;
 
-    std::map< int, char >::iterator it = m_map_shortcut.begin();
+    auto it = m_map_shortcut.begin();
     for( ; it != m_map_shortcut.end(); ++it ){
         if( (*it).second == key ) return (*it).first;
     }
@@ -281,7 +281,7 @@ void AAManager::append_history( const int id )
     if( id >= 0 && id < get_size() ){
 
         // 既に履歴に含まれている場合
-        std::list< int >::iterator it = m_history.begin();
+        auto it = m_history.begin();
         for( ; it != m_history.end(); ++it ){
 
             if( *it == id ){
@@ -299,11 +299,11 @@ void AAManager::append_history( const int id )
 
 
 // num 番目の履歴をIDに変換
-int AAManager::history2id( const int num )
+int AAManager::history2id( const int num ) const
 {
     if( num < 0 || num >= get_historysize() ) return -1;
 
-    std::list< int >::iterator it = m_history.begin();
+    auto it = m_history.begin();
     for( int i = 0; i < num; ++i, ++it );
 
 #ifdef _DEBUG
