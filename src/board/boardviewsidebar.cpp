@@ -154,22 +154,22 @@ void BoardViewSidebar::update_item( const std::string& url, const std::string& i
 //
 // デフォルトのソート状態
 //
-int BoardViewSidebar::get_default_sort_column()
+int BoardViewSidebar::get_default_sort_column() const
 {
     return COL_ID;
 }
 
-int BoardViewSidebar::get_default_view_sort_mode()
+int BoardViewSidebar::get_default_view_sort_mode() const
 {
     return SORTMODE_ASCEND;
 }
 
-int BoardViewSidebar::get_default_view_sort_pre_column()
+int BoardViewSidebar::get_default_view_sort_pre_column() const
 {
     return COL_ID;
 }
 
-int BoardViewSidebar::get_default_view_sort_pre_mode()
+int BoardViewSidebar::get_default_view_sort_pre_mode() const
 {
     return SORTMODE_ASCEND;
 }

@@ -190,28 +190,28 @@ void BoardViewLog::update_item( const std::string& url, const std::string& id )
 //
 // デフォルトのソート状態
 //
-int BoardViewLog::get_default_sort_column()
+int BoardViewLog::get_default_sort_column() const
 {
     if( get_url() != URL_ALLLOG ) return BoardViewBase::get_default_sort_column();
 
     return COL_BOARD;
 }
 
-int BoardViewLog::get_default_view_sort_mode()
+int BoardViewLog::get_default_view_sort_mode() const
 {
     if( get_url() != URL_ALLLOG ) return BoardViewBase::get_default_view_sort_mode();
 
     return SORTMODE_ASCEND;
 }
 
-int BoardViewLog::get_default_view_sort_pre_column()
+int BoardViewLog::get_default_view_sort_pre_column() const
 {
     if( get_url() != URL_ALLLOG ) return BoardViewBase::get_default_view_sort_pre_column();
 
     return COL_ID;
 }
 
-int BoardViewLog::get_default_view_sort_pre_mode()
+int BoardViewLog::get_default_view_sort_pre_mode() const
 {
     if( get_url() != URL_ALLLOG ) return BoardViewBase::get_default_view_sort_pre_mode();
 

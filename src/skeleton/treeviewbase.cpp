@@ -27,7 +27,7 @@ JDTreeViewBase::~JDTreeViewBase() noexcept = default;
 //
 // 行数
 //
-int JDTreeViewBase::get_row_size()
+int JDTreeViewBase::get_row_size() const
 {
     if( ! get_model() ) return 0;
 
