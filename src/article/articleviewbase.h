@@ -98,7 +98,7 @@ namespace ARTICLE
 
         const std::string& url_article() const { return m_url_article; }
 
-        const std::string& get_label_board(){ return m_label_board; }
+        const std::string& get_label_board() const { return m_label_board; }
 
         // SKELETON::View の関数のオーバロード
 
@@ -148,7 +148,7 @@ namespace ARTICLE
         void delete_open_view();
 
         // 実況モードが可能か
-        bool get_enable_live();
+        bool get_enable_live() const;
 
         // 実況モードか
         bool get_live() const { return m_live; }
@@ -252,8 +252,8 @@ namespace ARTICLE
         void setup_action();
 
         // 通常の右クリックメニューの作成
-        std::string create_context_menu();
-        const char* get_menu_item( const int item );
+        std::string create_context_menu() const;
+        const char* get_menu_item( const int item ) const;
 
         virtual void exec_reload();
         void reload_article();
