@@ -141,18 +141,18 @@ namespace BBSLIST
         int path2type( const Gtk::TreePath& path );
 
         // row からタイプを取得
-        int row2type( const Gtk::TreeModel::Row& row );
+        int row2type( const Gtk::TreeModel::Row& row ) const;
 
         // row -> name 変換
-        std::string row2name( const Gtk::TreeModel::Row& row );
+        std::string row2name( const Gtk::TreeModel::Row& row ) const;
 
         // row -> url 変換
         // 板の場合は boardbase
         // スレの場合は dat 型のアドレスを返す
-        std::string row2url( const Gtk::TreeModel::Row& row );
+        std::string row2url( const Gtk::TreeModel::Row& row ) const;
 
         // row -> dirid 変換
-        size_t row2dirid( const Gtk::TreeModel::Row& row );
+        size_t row2dirid( const Gtk::TreeModel::Row& row ) const;
 
         // path からその行の名前を取得
         std::string path2name( const Gtk::TreePath& path );
@@ -238,7 +238,7 @@ namespace BBSLIST
         void append_history();
 
         // 履歴を DATA_INFO_LIST 型で取得
-        void get_history( CORE::DATA_INFO_LIST& info_list );
+        void get_history( CORE::DATA_INFO_LIST& info_list ) const;
 
         // 指定したidのディレクトリに含まれるスレのアドレスを取得
         void get_threads( const size_t dirid, std::vector< std::string >& list_url );
