@@ -48,12 +48,12 @@ namespace ARTICLE
         }
 
         // 後は演算子
-        
-        bool operator != ( const CARET_POSITION& caret_pos ){
 
+        bool operator != ( const CARET_POSITION& caret_pos ) const
+        {
             if( ! layout && ! caret_pos.layout ) return false;
             if( ! layout || ! caret_pos.layout ) return true;
-            
+
             if( layout->id_header != caret_pos.layout->id_header
                 || layout->id != caret_pos.layout->id
                 || byte != caret_pos.byte ) return true;
@@ -61,10 +61,10 @@ namespace ARTICLE
             return false;
         }
 
-        bool operator == ( const CARET_POSITION& caret_pos ) { return ! ( *this != caret_pos ); }
+        bool operator == ( const CARET_POSITION& caret_pos ) const { return ! ( *this != caret_pos ); }
 
-        bool operator > ( const CARET_POSITION& caret_pos ){
-
+        bool operator > ( const CARET_POSITION& caret_pos ) const
+        {
             if( ! layout && ! caret_pos.layout ) return true;
             if( ! layout ) return false;
             if( ! caret_pos.layout ) return true;
@@ -82,9 +82,7 @@ namespace ARTICLE
             return false;
         }
 
-        bool operator < ( const CARET_POSITION& caret_pos ){
-            return ! ( *this > caret_pos );
-        }
+        bool operator < ( const CARET_POSITION& caret_pos ) const { return ! ( *this > caret_pos ); }
     };
 
 }
