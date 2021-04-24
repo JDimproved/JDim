@@ -2056,7 +2056,7 @@ std::string BBSListViewBase::path2url( const Gtk::TreePath& path )
 // 板の場合は boardbase
 // スレの場合は dat 型のアドレスを返す
 //
-std::string BBSListViewBase::row2url( const Gtk::TreeModel::Row& row )
+std::string BBSListViewBase::row2url( const Gtk::TreeModel::Row& row ) const
 {
     if( ! row ) return {};
     const Glib::ustring& ustr_url = row[ m_columns.m_url ];
@@ -2079,7 +2079,7 @@ std::string BBSListViewBase::path2name( const Gtk::TreePath& path )
 //
 // row -> name 変換
 //
-std::string BBSListViewBase::row2name( const Gtk::TreeModel::Row& row )
+std::string BBSListViewBase::row2name( const Gtk::TreeModel::Row& row ) const
 {
     if( ! row ) return {};
     const Glib::ustring& ustr_name = row[ m_columns.m_name ];
@@ -2100,7 +2100,7 @@ int BBSListViewBase::path2type( const Gtk::TreePath& path )
 //
 // row -> type 変換
 //
-int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
+int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row ) const
 {
     if( ! row ) return TYPE_UNKNOWN;
     return row[ m_columns.m_type ];
@@ -2110,7 +2110,7 @@ int BBSListViewBase::row2type( const Gtk::TreeModel::Row& row )
 //
 // row -> dirid 変換
 //
-size_t BBSListViewBase::row2dirid( const Gtk::TreeModel::Row& row )
+size_t BBSListViewBase::row2dirid( const Gtk::TreeModel::Row& row ) const
 {
     if( !row ) return 0;
     return row[ m_columns.m_dirid ];
@@ -2913,15 +2913,15 @@ void BBSListViewBase::append_history()
 //
 // 履歴を DATA_INFO_LIST 型で取得
 //
-void BBSListViewBase::get_history( CORE::DATA_INFO_LIST& info_list )
+void BBSListViewBase::get_history( CORE::DATA_INFO_LIST& info_list ) const
 {
     info_list.clear();
 
     CORE::DATA_INFO info;
 
     // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
-    Gtk::TreeModel::iterator it = get_treestore()->children().begin();
-    for( ; it != get_treestore()->children().end(); ++it ){
+    Gtk::TreeModel::iterator it = m_treestore->children().begin();
+    for( ; it != m_treestore->children().end(); ++it ){
 
         Gtk::TreeModel::Row row = *it;
 
