@@ -452,7 +452,7 @@ void ArticleViewBase::setup_action()
 //
 // 通常の右クリックメニューの作成
 //
-std::string ArticleViewBase::create_context_menu()
+std::string ArticleViewBase::create_context_menu() const
 {
     std::list< int > list_menu;
 
@@ -515,7 +515,7 @@ std::string ArticleViewBase::create_context_menu()
 }
 
 
-const char* ArticleViewBase::get_menu_item( const int item )
+const char* ArticleViewBase::get_menu_item( const int item ) const
 {
     switch( item ){
 
@@ -995,7 +995,7 @@ void ArticleViewBase::delete_open_view()
 
 
 // 実況可能か
-bool ArticleViewBase::get_enable_live()
+bool ArticleViewBase::get_enable_live() const
 {
     return ( m_enable_live && DBTREE::board_get_live_sec( m_url_article ) );
 }
