@@ -39,11 +39,8 @@ namespace ARTICLE
         void pack_buttons() override;
 
         // ボタンを押したときのslot関数
-        void slot_open_board();
-
         void slot_drawout_and();
         void slot_drawout_or();
-        void slot_clear_highlight();
 
         void slot_live_play_stop();
     };
