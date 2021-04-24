@@ -26,23 +26,23 @@ namespace CORE
         AAManager();
         virtual ~AAManager();
 
-        int get_size(){ return m_vec_label.size(); }
-        int get_historysize(){ return m_history.size(); }
+        int get_size() const noexcept { return m_vec_label.size(); }
+        int get_historysize() const noexcept { return m_history.size(); }
 
-        std::string get_label( const int id );
-        std::string get_aa( const int id );
+        std::string get_label( const int id ) const;
+        std::string get_aa( const int id ) const;
 
         // ショートカットキー取得
         std::string id2shortcut( const int id );
 
         // ショートカットからid取得
-        int shortcut2id( const char key );
+        int shortcut2id( const char key ) const;
 
         // id 番を履歴に追加
         void append_history( const int id );
 
         // num 番目の履歴をIDに変換
-        int history2id( const int num );
+        int history2id( const int num ) const;
 
         void save_history();
 
