@@ -39,7 +39,7 @@ namespace BBSLIST
         ~SelectListDialog() noexcept;
 
         std::string get_name();
-        std::string get_path();
+        std::string get_path() const;
 
       protected:
 
