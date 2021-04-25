@@ -60,10 +60,10 @@ void MouseKeyConf::save_conf( const std::string& savefile )
 // 操作からID取得
 int MouseKeyConf::get_id( const int mode,
                           const guint motion, const bool ctrl, const bool shift, const bool alt,
-                          const bool dblclick, const bool trpclick )
+                          const bool dblclick, const bool trpclick ) const
 {
     int id = CONTROL::None;;
-    std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
+    auto it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
 
         id = (*it).is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
@@ -83,9 +83,10 @@ int MouseKeyConf::get_id( const int mode,
 
 // ID から操作を取得
 // (注意) リストの一番上にあるものを出力
-bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick, bool& trpclick )
+bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick,
+                               bool& trpclick ) const
 {
-    std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
+    auto it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
 
         if( (*it).get_id() == id ){
@@ -108,9 +109,9 @@ bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bool& sh
 // ID が割り当てられているかチェック
 bool MouseKeyConf::alloted( const int id,
                             const guint motion, const bool ctrl, const bool shift, const bool alt,
-                            const bool dblclick, const bool trpclick )
+                            const bool dblclick, const bool trpclick ) const
 {
-    std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
+    auto it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
         if( (*it).equal( motion, ctrl, shift, alt, dblclick, trpclick ) == id ) return true;
     }
@@ -121,11 +122,11 @@ bool MouseKeyConf::alloted( const int id,
 
 
 // 同じモード内でモーションが重複していないかチェック
-std::vector< int > MouseKeyConf::check_conflict( const int mode, const std::string& str_motion )
+std::vector< int > MouseKeyConf::check_conflict( const int mode, const std::string& str_motion ) const
 {
     std::vector< int > vec_ids;
 
-    std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
+    auto it = m_vec_items.begin();
     for( ; it != m_vec_items.end(); ++it ){
 
         const int id = (*it).is_activated( mode, str_motion );
