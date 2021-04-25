@@ -37,17 +37,17 @@ namespace CONTROL
         // 操作からID取得
         int get_id( const int mode,
                     const guint motion, const bool ctrl, const bool shift, const bool alt,
-                    const bool dblclick, const bool trpclick );
+                    const bool dblclick, const bool trpclick ) const;
 
         // ID から操作を取得
         // (注意) リストの一番上にあるものを出力
         bool get_motion( const int id,
-                         guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick, bool& trpclick );
+                         guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick, bool& trpclick ) const;
 
         // ID が割り当てられているかチェック
         bool alloted( const int id,
                       const guint motion, const bool ctrl, const bool shift, const bool alt,
-                      const bool dblclick, const bool trpclick );
+                      const bool dblclick, const bool trpclick ) const;
 
         // IDから操作文字列取得
         virtual std::string get_str_motions( const int id );
@@ -57,7 +57,7 @@ namespace CONTROL
 
         // 同じモード内でモーションが重複していないかチェック
         // 戻り値 : コントロールID
-        std::vector< int > check_conflict( const int mode, const std::string& str_motion );
+        std::vector< int > check_conflict( const int mode, const std::string& str_motion ) const;
 
         // スペースで区切られた複数の操作をデータベースに登録
         void set_motions( const int id, const std::string& str_motions );
