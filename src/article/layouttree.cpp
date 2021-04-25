@@ -474,15 +474,18 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
     head->res_number = res_number;
 
     int classid = CORE::get_css_manager()->get_classid( "title" );
-    create_layout_div( classid );
-
+    LAYOUT* layout = create_layout_div( classid );
     DBTREE::NODE* node = node_header->headinfo->block[ DBTREE::BLOCK_NUMBER ]->next_node;
+    layout->node = node; // メール欄フォントを設定
+
     create_layout_link( node->text, node->linkinfo->link, &node->color_text, node->bold );
     create_layout_text( " ", nullptr, false );
     create_layout_link( "あぼ〜ん", PROTO_ABONE, nullptr, false );
 
     classid = CORE::get_css_manager()->get_classid( "mes" );
-    create_layout_div( classid );
+    layout = create_layout_div( classid );
+    layout->node = m_separator_header->node; // デフォルトフォントを設定
+
     create_layout_link( "あぼ〜ん", PROTO_ABONE, nullptr, false );
 }
 
@@ -573,7 +576,7 @@ LAYOUT* LayoutTree::create_separator()
 
     DBTREE::NODE* node = m_heap.heap_alloc<DBTREE::NODE>();
     node->fontid = FONT_DEFAULT; // デフォルトフォントを設定
-    header->node = node;
+    header->node = node; // あぼーんノードが参照する
 
     if( header->css->bg_color < 0 ) header->css->bg_color = COLOR_SEPARATOR_NEW;
 
