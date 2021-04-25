@@ -21,10 +21,10 @@ namespace CONTROL
         void load_conf() override;
 
         // 操作文字列取得
-        std::string get_str_motions( const int id ) override;
+        std::string get_str_motions( const int id ) const override;
 
         // IDからデフォルトの操作文字列取得
-        std::string get_default_motions( const int id ) override;
+        std::string get_default_motions( const int id ) const override;
 
       private:
 
