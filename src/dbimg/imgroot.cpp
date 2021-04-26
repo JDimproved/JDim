@@ -106,7 +106,7 @@ Img* ImgRoot::get_img( const std::string& url )
 // 画像データの先頭のシグネチャを見て画像のタイプを取得
 // 画像ではない場合は T_NOIMG を返す
 //
-int ImgRoot::get_image_type( const unsigned char *sign )
+int ImgRoot::get_image_type( const unsigned char *sign ) const
 {
     int type = T_NOIMG;
 
@@ -141,13 +141,13 @@ int ImgRoot::get_image_type( const unsigned char *sign )
 // 拡張子からタイプを取得
 // 画像ではない場合は T_UNKNOWN を返す
 //
-int ImgRoot::get_type_ext( const std::string& url )
+int ImgRoot::get_type_ext( const std::string& url ) const
 {
     return get_type_ext( url.c_str(), url.length() );
 }
 
 
-int ImgRoot::get_type_ext( const char* url, int n )
+int ImgRoot::get_type_ext( const char* url, int n ) const
 {
     // Urlreplaceによる画像コントロールを取得する
     int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( url );
