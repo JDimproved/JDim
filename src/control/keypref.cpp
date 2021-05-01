@@ -175,6 +175,19 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::ScrollRightBoard );
     append_row( CONTROL::ScrollLeftBoard );
 
+    append_row( CONTROL::SortColumnMark );
+    append_row( CONTROL::SortColumnID );
+    append_row( CONTROL::SortColumnBoard );
+    append_row( CONTROL::SortColumnSubject );
+    append_row( CONTROL::SortColumnRes );
+    append_row( CONTROL::SortColumnStrLoad );
+    append_row( CONTROL::SortColumnStrNew );
+    append_row( CONTROL::SortColumnSince );
+    append_row( CONTROL::SortColumnWrite );
+    append_row( CONTROL::SortColumnAccess );
+    append_row( CONTROL::SortColumnSpeed );
+    append_row( CONTROL::SortColumnDiff );
+
     append_comment_row( "" );
     append_comment_row( "■ " + CONTROL::get_mode_label( CONTROL::MODE_ARTICLE ) );
     append_row( CONTROL::UpMid );
