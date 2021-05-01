@@ -208,7 +208,7 @@ int Img::get_height_mosaic()
 }
 
 
-bool Img::is_cached()
+bool Img::is_cached() const
 {
     if( is_loading() ) return false;
     if( is_wait() ) return false;
@@ -237,7 +237,7 @@ void Img::set_abone( bool abone )
 }
 
 
-std::string Img::get_cache_path()
+std::string Img::get_cache_path() const
 {
     if( m_protect ) return CACHE::path_img_protect( m_url );
 
@@ -420,7 +420,7 @@ void Img::set_protect( bool protect )
 
 
 // 拡張子が偽装されているか
-bool Img::is_fake()
+bool Img::is_fake() const
 {
     if( ! is_cached() ) return false;
     if( m_imgctrl & CORE::IMGCTRL_GENUINE ) return false;

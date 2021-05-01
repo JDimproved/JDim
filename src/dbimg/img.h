@@ -62,7 +62,7 @@ namespace DBIMG
         void clear();
 
         const std::string& url() const { return m_url; }
-        std::string get_cache_path();
+        std::string get_cache_path() const;
 
         bool is_wait() const { return m_wait; }
 
@@ -83,7 +83,7 @@ namespace DBIMG
         int get_width_mosaic();
         int get_height_mosaic();
 
-        bool is_cached();
+        bool is_cached() const;
 
         bool get_abone() const { return m_abone; }
         void set_abone( bool abone );
@@ -107,7 +107,7 @@ namespace DBIMG
         void set_protect( bool protect );
 
         // 拡張子が偽装されているか
-        bool is_fake();
+        bool is_fake() const;
 
         // ロード開始
         // receive_data()　と receive_finish() がコールバックされる
