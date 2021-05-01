@@ -38,19 +38,19 @@ RuleLoader::~RuleLoader()
 }
 
 
-std::string RuleLoader::get_url()
+std::string RuleLoader::get_url() const
 {
     return m_url_boadbase + HEAD_TXT;
 }
 
 
-std::string RuleLoader::get_path()
+std::string RuleLoader::get_path() const
 {
     return CACHE::path_board_root( m_url_boadbase ) + HEAD_TXT;
 }
 
 
-std::string RuleLoader::get_charset()
+std::string RuleLoader::get_charset() const
 {
     return m_override_charset ? m_override_charset : DBTREE::board_charset( m_url_boadbase );
 }

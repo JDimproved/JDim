@@ -36,19 +36,19 @@ SettingLoader::~SettingLoader()
 }
 
 
-std::string SettingLoader::get_url()
+std::string SettingLoader::get_url() const
 {
     return DBTREE::url_settingtxt( m_url_boadbase );
 }
 
 
-std::string SettingLoader::get_path()
+std::string SettingLoader::get_path() const
 {
     return CACHE::path_board_root( m_url_boadbase ) + DBTREE::kSettingTxt;
 }
 
 
-std::string SettingLoader::get_charset()
+std::string SettingLoader::get_charset() const
 {
     return DBTREE::board_charset( m_url_boadbase );
 }

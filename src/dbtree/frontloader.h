@@ -28,9 +28,9 @@ namespace DBTREE
 
       protected:
 
-        std::string get_url() override { return m_url_boadbase; }
-        std::string get_path() override { return {}; } // キャッシュには保存しない
-        std::string get_charset() override;
+        std::string get_url() const override { return m_url_boadbase; }
+        std::string get_path() const override { return {}; } // キャッシュには保存しない
+        std::string get_charset() const override;
 
         // ロード用データ作成
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;

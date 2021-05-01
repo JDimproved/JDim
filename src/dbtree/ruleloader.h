@@ -31,9 +31,9 @@ namespace DBTREE
 
       protected:
 
-        std::string get_url() override;
-        std::string get_path() override;
-        std::string get_charset() override;
+        std::string get_url() const override;
+        std::string get_path() const override;
+        std::string get_charset() const override;
 
         // ロード用データ作成
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;

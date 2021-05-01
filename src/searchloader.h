@@ -33,9 +33,9 @@ namespace CORE
 
       protected:
 
-        std::string get_url() override;
-        std::string get_path() override { return {}; }
-        std::string get_charset() override { return m_charset; }
+        std::string get_url() const override;
+        std::string get_path() const override { return {}; }
+        std::string get_charset() const override { return m_charset; }
 
         // ロード用データ作成
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;
