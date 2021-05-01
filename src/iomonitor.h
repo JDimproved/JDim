@@ -51,10 +51,10 @@ namespace CORE
         ~IOMonitor();
 
         // FIFOの状態を取得
-        int get_fifo_stat(){ return m_fifo_stat; }
+        int get_fifo_stat() const noexcept { return m_fifo_stat; }
 
         // メインプロセスか否かを取得
-        bool is_main_process(){ return m_main_process; }
+        bool is_main_process() const noexcept { return m_main_process; }
 
         // FIFOに書き込み
         bool send_command( const char* command );
