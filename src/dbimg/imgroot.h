@@ -31,7 +31,7 @@ namespace DBIMG
         void set_clock_in( Img* img );
         void reset_clock_in( Img* img );
         void remove_clock_in();
-        int get_wait_size(){ return m_list_wait.size(); }
+        int get_wait_size() const noexcept { return m_list_wait.size(); }
 
         // Imgクラス取得(無ければ作成)
         Img* get_img( const std::string& url );
@@ -41,12 +41,12 @@ namespace DBIMG
 
         // 画像データの先頭のシグネチャを見て画像のタイプを取得
         // 画像ではない場合は T_NOIMG を返す
-        int get_image_type( const unsigned char *sign );
+        int get_image_type( const unsigned char *sign ) const;
 
         // 拡張子から画像タイプを取得
         // 画像ではない場合は T_UNKNOWN を返す
-        int get_type_ext( const std::string& url );
-        int get_type_ext( const char* url, int n );
+        int get_type_ext( const std::string& url ) const;
+        int get_type_ext( const char* url, int n ) const;
 
         // キャッシュ削除
         void delete_cache( const std::string& url );
@@ -56,10 +56,10 @@ namespace DBIMG
 
       private:
 
-        bool is_jpg( const char* url, int n );
-        bool is_png( const char* url, int n );
-        bool is_gif( const char* url, int n );
-        bool is_bmp( const char* url, int n );
+        static bool is_jpg( const char* url, int n );
+        static bool is_png( const char* url, int n );
+        static bool is_gif( const char* url, int n );
+        static bool is_bmp( const char* url, int n );
 
         void reset_imgs();
     };
