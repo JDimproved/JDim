@@ -23,7 +23,7 @@ FrontLoader::FrontLoader( const std::string& url_boadbase )
 }
 
 
-std::string FrontLoader::get_charset()
+std::string FrontLoader::get_charset() const
 {
     return DBTREE::board_charset( m_url_boadbase );
 }
