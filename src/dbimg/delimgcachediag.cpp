@@ -91,7 +91,7 @@ void DelImgCacheDiag::main_thread()
     std::cout << "DelImgCacheDiag::main_thread start\n";
 #endif
 
-    std::time_t days{};
+    int days = 0;
 
     // info と 画像キャッシュ
     std::list< std::string >list_infofile;
@@ -179,13 +179,14 @@ void DelImgCacheDiag::callback_dispatch()
 //
 // エラーの時ははマイナスの値が戻る
 //
-time_t DelImgCacheDiag::get_days( const std::string& path )
+//static member
+int DelImgCacheDiag::get_days( const std::string& path )
 {
     const std::time_t current = std::time( nullptr );
     const std::time_t mtime = CACHE::get_filemtime( path );
     if( ! mtime ) return -1;
 
-    return ( current - mtime ) / ( 60 * 60 * 24 );
+    return static_cast<int>( ( current - mtime ) / ( 60 * 60 * 24 ) );
 }
 
 
