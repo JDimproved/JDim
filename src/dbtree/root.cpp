@@ -558,7 +558,7 @@ void Root::analyze_board_xml()
 //
 // 板のタイプを判定
 //
-int Root::get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc )
+int Root::get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc ) const
 {
     JDLIB::Regex regex;
     const size_t offset = 0;
@@ -642,8 +642,8 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
 //
 // 通常の get_board_type() で得た root を再判定するときに使用する ( 板移転処理用 )
 //
-int Root::get_board_type( const std::string& root, const bool etc ){
-
+int Root::get_board_type( const std::string& root, const bool etc ) const
+{
     int type = TYPE_BOARD_UNKNOWN;
 
     // 2ch

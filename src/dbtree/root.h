@@ -163,8 +163,8 @@ namespace DBTREE
         void analyze_board_xml();
 
         // 板のタイプを判定
-        int get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc );
-        int get_board_type( const std::string& root, const bool etc = false );
+        int get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc ) const;
+        int get_board_type( const std::string& root, const bool etc = false ) const;
 
         // 板のタイプに合わせて板情報をセット
         bool set_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
