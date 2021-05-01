@@ -49,7 +49,7 @@ namespace IMAGE
         Gtk::HBox& tab() { return m_tab; }
         Gtk::Widget* get_widget() override { return &m_view; }
 
-        bool empty() override;
+        bool empty() const override;
         void clock_in() override;
 
         // タブの数

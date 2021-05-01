@@ -163,7 +163,7 @@ void ImageAdmin::switch_admin()
 //
 // ページが含まれていないか
 //
-bool ImageAdmin::empty()
+bool ImageAdmin::empty() const
 {
     return m_list_view.empty();
 }
