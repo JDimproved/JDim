@@ -72,7 +72,7 @@ namespace SKELETON
 
         void setup_menu();
 
-        virtual bool empty();
+        virtual bool empty() const;
         const std::string& get_url() const{ return m_url; }
         virtual Gtk::Widget* get_widget();
         virtual Gtk::Window* get_win();

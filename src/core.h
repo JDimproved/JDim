@@ -138,8 +138,8 @@ namespace CORE
 
     private:
 
-        bool is_3pane();
-        bool is_all_admin_empty();
+        bool is_3pane() const;
+        bool is_all_admin_empty() const;
 
         Gtk::Paned* get_rpane();
         SKELETON::PaneControl* get_rpctrl();
@@ -195,7 +195,7 @@ namespace CORE
         void slot_switch_page( Gtk::Widget*, guint page );
 
         // 右ペーンのnotebookのページ番号
-        int get_right_current_page();
+        int get_right_current_page() const;
 
         // 右ペーンのnotebookのページをセット
         void set_right_current_page( int page );

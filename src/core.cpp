@@ -1134,7 +1134,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
 //
 // 3paneモードか
 //
-bool Core::is_3pane()
+bool Core::is_3pane() const
 {
     int mode_pane = SESSION::get_mode_pane();
 
@@ -1143,7 +1143,7 @@ bool Core::is_3pane()
 
 
 // (bbslistを除く)全adminがemptyか
-bool Core::is_all_admin_empty()
+bool Core::is_all_admin_empty() const
 {
     bool emp_img = ! ( SESSION::get_embedded_img() && ! IMAGE::get_admin()->empty() );
     bool emp_mes = ! ( SESSION::get_embedded_mes() && ! MESSAGE::get_admin()->empty() );
@@ -3488,7 +3488,7 @@ void Core::slot_switch_page( Gtk::Widget*, guint )
 
 
 // 右ペーンのnotebookのページ番号
-int Core::get_right_current_page()
+int Core::get_right_current_page() const
 {
     const int mode = SESSION::get_mode_pane();
     int page = m_notebook_right.get_current_page();

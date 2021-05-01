@@ -296,7 +296,7 @@ bool Admin::is_booting()
 //
 // ページが含まれていないか
 //
-bool Admin::empty()
+bool Admin::empty() const
 {
     return ( m_notebook->get_n_pages() == 0 );
 }
