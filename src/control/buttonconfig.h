@@ -19,10 +19,10 @@ namespace CONTROL
 
         void load_conf() override;
 
-        bool is_toggled_tab_button(); // タブで開くボタンを入れ替えているか
+        bool is_toggled_tab_button() const; // タブで開くボタンを入れ替えているか
         void toggle_tab_button( const bool toggle ); // タブで開くボタンを入れ替える
 
-        bool is_popup_warpmode(); // ポップアップ表示の時にクリックでワープするか
+        bool is_popup_warpmode() const; // ポップアップ表示の時にクリックでワープするか
         void toggle_popup_warpmode(); // ポップアップ表示の時にクリックでワープする
 
       private:
