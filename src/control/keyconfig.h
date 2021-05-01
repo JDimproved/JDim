@@ -22,14 +22,14 @@ namespace CONTROL
         void load_conf() override;
 
         // editviewの操作をemacs風にする
-        bool is_emacs_mode();
+        bool is_emacs_mode() const;
         void toggle_emacs_mode();
 
-        bool is_toggled_tab_key(); // タブで開くキーを入れ替えているか
+        bool is_toggled_tab_key() const; // タブで開くキーを入れ替えているか
         void toggle_tab_key( const bool toggle ); // タブで開くキーを入れ替える
 
         // Gtk アクセラレーションキーを取得
-        Gtk::AccelKey get_accelkey( const int id );
+        Gtk::AccelKey get_accelkey( const int id ) const;
 
       private:
 
