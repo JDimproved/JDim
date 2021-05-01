@@ -207,7 +207,7 @@ bool InputDiag::on_motion_notify_event( GdkEventMotion* event )
 }
 
 
-std::string InputDiag::get_key_label()
+std::string InputDiag::get_key_label() const
 {
     std::string label;
 
@@ -225,7 +225,7 @@ std::string InputDiag::get_key_label()
 
 
 
-std::string InputDiag::get_mouse_label()
+std::string InputDiag::get_mouse_label() const
 {
     std::string label;
 
@@ -242,7 +242,7 @@ std::string InputDiag::get_mouse_label()
 }
 
 
-std::string InputDiag::get_button_label()
+std::string InputDiag::get_button_label() const
 {
     std::string label;
 

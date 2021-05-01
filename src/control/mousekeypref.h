@@ -51,9 +51,9 @@ namespace CONTROL
 
         int get_id() const { return m_id; }
 
-        std::string get_key_label();
-        std::string get_mouse_label();
-        std::string get_button_label();
+        std::string get_key_label() const;
+        std::string get_mouse_label() const;
+        std::string get_button_label() const;
 
       private:
 
