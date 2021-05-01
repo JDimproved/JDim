@@ -42,7 +42,7 @@ namespace DBIMG
         void callback_dispatch() override;
         void wait();
         void slot_cancel_clicked();
-        time_t get_days( const std::string& path );
+        static int get_days( const std::string& path );
         void launch_thread();
     };
 }
