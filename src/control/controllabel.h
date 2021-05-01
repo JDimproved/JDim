@@ -175,6 +175,19 @@ namespace CONTROL
         { "ScrollLeftBoard", "左スクロール" },
         { "ScrollRightBoard", "右スクロール" },
 
+        { "SortColumnMark", "ソート(対象: !)" },
+        { "SortColumnID", "ソート(対象: 番号)" },
+        { "SortColumnBoard", "ソート(対象: 板)" },
+        { "SortColumnSubject", "ソート(対象: タイトル)" },
+        { "SortColumnRes", "ソート(対象: レス)" },
+        { "SortColumnStrLoad", "ソート(対象: 取得)" },
+        { "SortColumnStrNew", "ソート(対象: 新着)" },
+        { "SortColumnSince", "ソート(対象: since)" },
+        { "SortColumnWrite", "ソート(対象: 最終書込)" },
+        { "SortColumnAccess", "ソート(対象: 最終取得)" },
+        { "SortColumnSpeed", "ソート(対象: 速度)" },
+        { "SortColumnDiff", "ソート(対象: 増分)" },
+
         { "OpenArticleButton", "スレを開く" },
         { "OpenArticleTabButton", "タブでスレを開く" },
 

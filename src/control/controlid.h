@@ -168,6 +168,19 @@ namespace CONTROL
         ScrollLeftBoard,
         ScrollRightBoard,
 
+        SortColumnMark,
+        SortColumnID,
+        SortColumnBoard,
+        SortColumnSubject,
+        SortColumnRes,
+        SortColumnStrLoad,
+        SortColumnStrNew,
+        SortColumnSince,
+        SortColumnWrite,
+        SortColumnAccess,
+        SortColumnSpeed,
+        SortColumnDiff,
+
         OpenArticleButton, // 以下、マウスボタン専用の設定
         OpenArticleTabButton,
 

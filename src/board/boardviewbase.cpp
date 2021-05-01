@@ -1535,6 +1535,55 @@ bool BoardViewBase::operate_view( const int control )
             up_search();
             break;
 
+        // 並び替えモードの切り替え
+        case CONTROL::SortColumnMark:
+            slot_col_clicked( COL_MARK );
+            break;
+
+        case CONTROL::SortColumnID:
+            slot_col_clicked( COL_ID );
+            break;
+
+        case CONTROL::SortColumnBoard:
+            slot_col_clicked( COL_BOARD );
+            break;
+
+        case CONTROL::SortColumnSubject:
+            slot_col_clicked( COL_SUBJECT );
+            break;
+
+        case CONTROL::SortColumnRes:
+            slot_col_clicked( COL_RES );
+            break;
+
+        case CONTROL::SortColumnStrLoad:
+            slot_col_clicked( COL_STR_LOAD );
+            break;
+
+        case CONTROL::SortColumnStrNew:
+            slot_col_clicked( COL_STR_NEW );
+            break;
+
+        case CONTROL::SortColumnSince:
+            slot_col_clicked( COL_SINCE );
+            break;
+
+        case CONTROL::SortColumnWrite:
+            slot_col_clicked( COL_WRITE );
+            break;
+
+        case CONTROL::SortColumnAccess:
+            slot_col_clicked( COL_ACCESS );
+            break;
+
+        case CONTROL::SortColumnSpeed:
+            slot_col_clicked( COL_SPEED );
+            break;
+
+        case CONTROL::SortColumnDiff:
+            slot_col_clicked( COL_DIFF );
+            break;
+
             // 板のプロパティ
         case CONTROL::PreferenceView:
             show_preference();

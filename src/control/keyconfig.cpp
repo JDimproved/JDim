@@ -122,6 +122,19 @@ void KeyConfig::load_conf()
     load_keymotions( cf, "ScrollRightBoard", KEYCONF_ScrollRightBoard );
     load_keymotions( cf, "ScrollLeftBoard", KEYCONF_ScrollLeftBoard );
 
+    load_keymotions( cf, "SortColumnMark", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnID", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnBoard", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnSubject", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnRes", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnStrLoad", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnStrNew", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnSince", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnWrite", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnAccess", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnSpeed", KEYCONF_SortColumnNoDefault );
+    load_keymotions( cf, "SortColumnDiff", KEYCONF_SortColumnNoDefault );
+
     // ARTICLE
     load_keymotions( cf, "UpMid", KEYCONF_UpMid );
     load_keymotions( cf, "UpFast", KEYCONF_UpFast );

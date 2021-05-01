@@ -103,6 +103,8 @@ namespace CONTROL
 #define KEYCONF_ScrollRightBoard  "L Shift+Right"
 #define KEYCONF_ScrollLeftBoard  "H Shift+Left"
 
+#define KEYCONF_SortColumnNoDefault  ""
+
 // ARTICLE
 #define KEYCONF_UpMid  "u"
 #define KEYCONF_UpFast  "b Page_Up KP_Prior"
