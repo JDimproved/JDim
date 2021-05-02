@@ -34,8 +34,8 @@ namespace JDLIB
         // もしstr_confがemptyの時はfileから読み込む
         ConfLoader( const std::string& file, std::string str_conf );
 
-        bool empty();
-        bool is_broken(){ return m_broken; }
+        bool empty() const noexcept { return m_data.empty(); }
+        bool is_broken() const noexcept { return m_broken; }
 
         // 保存
         void save();
