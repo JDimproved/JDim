@@ -69,7 +69,7 @@ namespace SKELETON
         void set_spacing( int space );
 
         // hide 中
-        bool is_hide();
+        bool is_hide() const;
 
         // 起動中
         bool is_booting() const { return m_boot; }
@@ -80,7 +80,7 @@ namespace SKELETON
         void set_status( const std::string& stat );
         void set_status_temporary( const std::string& stat );
         void restore_status();
-        std::string get_status(){ return m_status; }
+        std::string get_status() const { return m_status; }
         void set_mginfo( const std::string& mginfo );
 
         // ステータスの色を変える
@@ -104,29 +104,29 @@ namespace SKELETON
 
         virtual void switch_admin(){}
 
-        virtual int get_x_win() = 0;
-        virtual int get_y_win() = 0;
+        virtual int get_x_win() const = 0;
+        virtual int get_y_win() const = 0;
         virtual void set_x_win( const int x ) = 0;
         virtual void set_y_win( const int y ) = 0;
 
-        virtual int get_width_win() = 0;
-        virtual int get_height_win() = 0;
+        virtual int get_width_win() const = 0;
+        virtual int get_height_win() const = 0;
         virtual void set_width_win( const int width ) = 0;
         virtual void set_height_win( const int height ) = 0;
 
-        virtual bool is_focus_win() = 0;
+        virtual bool is_focus_win() const = 0;
         virtual void set_focus_win( const bool set ) = 0;
 
-        virtual bool is_maximized_win() = 0;
+        virtual bool is_maximized_win() const = 0;
         virtual void set_maximized_win( const bool set ) = 0;
 
-        virtual bool is_iconified_win() = 0;
+        virtual bool is_iconified_win() const = 0;
         virtual void set_iconified_win( const bool set ) = 0;
 
-        virtual bool is_full_win() = 0;
+        virtual bool is_full_win() const = 0;
         virtual void set_full_win( const bool set ) = 0;
 
-        virtual bool is_shown_win() = 0;
+        virtual bool is_shown_win() const = 0;
         virtual void set_shown_win( const bool set ) = 0;
 
         bool on_focus_in_event( GdkEventFocus* event ) override;
