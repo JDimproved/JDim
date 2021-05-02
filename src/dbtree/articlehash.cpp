@@ -40,7 +40,7 @@ ArticleHash::~ArticleHash()
 }
 
 
-int ArticleHash::get_hash( const std::string& id )
+int ArticleHash::get_hash( const std::string& id ) const
 {
     const size_t hash = atoi( id.c_str() ) & ( HASH_TBLSIZE -1 );
 
