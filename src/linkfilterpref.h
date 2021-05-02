@@ -26,8 +26,8 @@ namespace CORE
 
         LinkFilterDiag( Gtk::Window* parent, const std::string& url, const std::string& cmd );
 
-        Glib::ustring get_url() { return m_entry_url.get_text(); }
-        Glib::ustring get_cmd() { return m_entry_cmd.get_text(); }
+        Glib::ustring get_url() const { return m_entry_url.get_text(); }
+        Glib::ustring get_cmd() const { return m_entry_cmd.get_text(); }
 
       private:
         void slot_show_manual();
