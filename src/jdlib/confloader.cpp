@@ -53,13 +53,6 @@ ConfLoader::ConfLoader( const std::string& file, std::string str_conf )
 
 
 
-bool ConfLoader::empty()
-{
-    return m_data.empty();
-}
-
-
-
 // 保存
 void ConfLoader::save()
 {

@@ -42,7 +42,7 @@ namespace JDLIB
         JDSSL();
         virtual ~JDSSL();
 
-        const std::string& get_errmsg(){ return m_errmsg; }
+        const std::string& get_errmsg() const { return m_errmsg; }
 
         bool connect( const int soc, const char* host );
         bool close();

@@ -1047,7 +1047,7 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, const int po
 //
 // 送信メッセージ作成
 //
-std::string Loader::create_msg_send()
+std::string Loader::create_msg_send() const
 {
     bool post_msg = ( !m_data.str_post.empty() && !m_data.head );
     bool use_proxy = ( ! m_data.host_proxy.empty() );
@@ -1259,7 +1259,7 @@ bool Loader::analyze_header()
 //
 // analyze_header() から呼ばれるオプションの値を取り出す関数
 //
-std::string Loader::analyze_header_option( const std::string& option )
+std::string Loader::analyze_header_option( const std::string& option ) const
 {
     const std::size_t i = m_data.str_header.find( option, 0 );
     if( i != std::string::npos ){
@@ -1277,7 +1277,7 @@ std::string Loader::analyze_header_option( const std::string& option )
 //
 // analyze_header() から呼ばれるオプションの値を取り出す関数(リスト版)
 //
-std::list< std::string > Loader::analyze_header_option_list( const std::string& option )
+std::list< std::string > Loader::analyze_header_option_list( const std::string& option ) const
 {
     std::list< std::string > str_list;
 
