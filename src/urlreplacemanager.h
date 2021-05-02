@@ -41,13 +41,13 @@ namespace CORE
         virtual ~Urlreplace_Manager() noexcept;
 
         // URLを任意の正規表現で変換する
-        bool exec( std::string& url );
+        bool exec( std::string& url ) const;
 
         // URLからリファラを求める
-        bool referer( const std::string& url, std::string& refstr );
+        bool referer( const std::string& url, std::string& refstr ) const;
 
         // URLの画像コントロールを取得する
-        int get_imgctrl( const std::string& url );
+        int get_imgctrl( const std::string& url ) const;
 
       private:
 
