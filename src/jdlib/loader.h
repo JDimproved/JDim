@@ -85,7 +85,7 @@ namespace JDLIB
         void clear();
         void run_main();
         struct addrinfo* get_addrinfo( const std::string& hostname, const int port );
-        std::string create_msg_send();
+        std::string create_msg_send() const;
         bool wait_recv_send( const int fd, const bool recv );
         bool send_connect( const int soc, std::string& errmsg );
 
@@ -95,8 +95,8 @@ namespace JDLIB
         // ヘッダ用
         int receive_header( char* buf, size_t& read_size );
         bool analyze_header();
-        std::string analyze_header_option( const std::string& option );
-        std::list< std::string > analyze_header_option_list( const std::string& option );
+        std::string analyze_header_option( const std::string& option ) const;
+        std::list< std::string > analyze_header_option_list( const std::string& option ) const;
 
         // chunk用
         bool skip_chunk( char* buf, size_t& read_size );
