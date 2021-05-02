@@ -50,7 +50,7 @@ namespace DBTREE
 
       private:
 
-        int get_hash( const std::string& id );
+        int get_hash( const std::string& id ) const;
 
         // iterator 用関数
         ArticleBase* it_get();
