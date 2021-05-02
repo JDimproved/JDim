@@ -65,7 +65,7 @@ public:
         show_all_children();
     }
 
-    const Glib::ustring get_text() { return m_entry.get_text(); }
+    Glib::ustring get_text() const { return m_entry.get_text(); }
 };
 
 ///////////////////////////////////////////////
@@ -222,7 +222,7 @@ void Usrcmd_Manager::exec( const std::string& command, // コマンド
 //
 // 文字列置換用テキストダイアログ表示
 //
-bool Usrcmd_Manager::show_replacetextdiag( std::string& texti, const std::string& title )
+bool Usrcmd_Manager::show_replacetextdiag( std::string& texti, const std::string& title ) const
 {
     if( ! texti.empty() ) return true;
 
@@ -240,7 +240,7 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
                                          const std::string& url,
                                          const std::string& link,
                                          const std::string& text,
-                                         const int number )
+                                         const int number ) const
 {
     std::string cmd_out = cmd;
     const std::string oldhostl = DBTREE::article_org_host( link );
@@ -354,7 +354,7 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
 //
 // メニューをアクティブにするか
 //
-bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::string& selection )
+bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::string& selection ) const
 {
     const unsigned int max_selection_str = 1024;
 
@@ -394,7 +394,7 @@ bool Usrcmd_Manager::is_sensitive( int num, const std::string& link, const std::
 //
 // メニューを隠すか
 //
-bool Usrcmd_Manager::is_hide( int num, const std::string& url )
+bool Usrcmd_Manager::is_hide( int num, const std::string& url ) const
 {
     if( num >= m_size ) return false;
 

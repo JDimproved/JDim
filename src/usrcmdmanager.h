@@ -58,7 +58,7 @@ namespace CORE
                                  const std::string& url,
                                  const std::string& link,
                                  const std::string& text,
-                                 const int number );
+                                 const int number ) const;
 
         // ユーザコマンドメニューの作成
         std::string create_usrcmd_menu( Glib::RefPtr< Gtk::ActionGroup >& action_group );
@@ -74,11 +74,11 @@ namespace CORE
                                const std::string& str_select );
       private:
 
-        bool show_replacetextdiag( std::string& texti, const std::string& title );
+        bool show_replacetextdiag( std::string& texti, const std::string& title ) const;
         void set_cmd( const std::string& cmd );
 
-        bool is_sensitive( int num, const std::string& link, const std::string& selection );
-        bool is_hide( int num, const std::string& url );
+        bool is_sensitive( int num, const std::string& link, const std::string& selection ) const;
+        bool is_hide( int num, const std::string& url ) const;
     };
 
     ///////////////////////////////////////
