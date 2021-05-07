@@ -1096,7 +1096,6 @@ std::string Loader::create_msg_send() const
     // その他のフィールド
     if( ! m_data.ex_field.empty() ) msg << m_data.ex_field;
 
-    msg << "DNT: 1\r\n";
     msg << "Connection: close\r\n";
 
     // POST する文字列
