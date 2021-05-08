@@ -247,7 +247,7 @@ void SelectItemPref::append_rows( const std::string& str )
 //
 // 全ての有効な項目を文字列で取得
 //
-std::string SelectItemPref::get_items()
+std::string SelectItemPref::get_items() const
 {
     std::string items;
 

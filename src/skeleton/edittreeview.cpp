@@ -89,7 +89,7 @@ class compare_path
     SKELETON::EditColumns& m_columns;
     int m_mode;
 
-    int type_to_order( const int type )
+    int type_to_order( const int type ) const
     {
         int order[]={
 

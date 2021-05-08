@@ -73,12 +73,6 @@ bool CompletionEntry::completion()
 }
 
 
-Glib::ustring CompletionEntry::get_text()
-{
-    return m_entry.get_text();
-}
-
-
 void CompletionEntry::set_text( const Glib::ustring& text )
 {
     m_enable_changed = false;

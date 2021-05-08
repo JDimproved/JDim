@@ -35,8 +35,8 @@ namespace SKELETON
             show_all_children();
         }
 
-        int get_img_width(){ return m_pixbuf->get_width(); }
-        int get_img_height(){ return m_pixbuf->get_height(); }
+        int get_img_width() const { return m_pixbuf->get_width(); }
+        int get_img_height() const { return m_pixbuf->get_height(); }
     };
 
 }

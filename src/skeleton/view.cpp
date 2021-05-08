@@ -167,7 +167,7 @@ bool View::release_keyjump_key( int key )
 
 
 // view 上にマウスポインタがあれば true
-bool View::is_mouse_on_view()
+bool View::is_mouse_on_view() const
 {
     bool ret = false;
 

@@ -202,7 +202,7 @@ namespace SKELETON
         void set_popup_upside( const bool upside ){ m_popup_upside = upside; }
 
         // view 上にマウスポインタがあれば true
-        bool is_mouse_on_view();
+        bool is_mouse_on_view() const;
 
         // 各view個別のコマンド
         virtual bool set_command( const std::string& command,
