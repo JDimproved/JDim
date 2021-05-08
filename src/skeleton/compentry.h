@@ -56,7 +56,7 @@ namespace SKELETON
         // 補完実行
         bool completion();
 
-        Glib::ustring get_text();
+        Glib::ustring get_text() const { return m_entry.get_text(); }
         void set_text( const Glib::ustring& text );
         void grab_focus();
 
