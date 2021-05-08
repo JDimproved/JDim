@@ -106,7 +106,7 @@ namespace SKELETON
         void append_rows( const std::string& str );
 
         // 全ての有効な項目を文字列で取得
-        std::string get_items();
+        std::string get_items() const;
 
         // 表示項目に指定した項目を追加
         Gtk::TreeRow append_shown( const std::string& name, const bool set_cursor );
