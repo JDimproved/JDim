@@ -140,7 +140,7 @@ namespace SKELETON
 
         // pathで指定した行の名前の変更
         void rename_row( const Gtk::TreePath& path );
-        bool is_renaming_row(){ return m_ren_text->property_editable(); }
+        bool is_renaming_row() const { return m_ren_text->property_editable(); }
 
         // list_info を path_dest 以下に追加
         //
