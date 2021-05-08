@@ -109,7 +109,7 @@ void TabLabel::set_dragable( bool dragable, int button )
 //
 // 本体の横幅 - ラベルの横幅
 //
-int TabLabel::get_label_margin()
+int TabLabel::get_label_margin() const
 {
     int label_margin;
 

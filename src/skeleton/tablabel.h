@@ -71,12 +71,12 @@ namespace SKELETON
         Pango::FontDescription get_label_font_description(){
             return m_label.get_pango_context()->get_font_description(); }
 
-        const std::string& get_url(){ return m_url; }
+        const std::string& get_url() const { return m_url; }
 
         void set_dragable( bool dragable, int button );
 
         // 本体の横幅 - ラベルの横幅
-        int get_label_margin();
+        int get_label_margin() const;
 
         // カットしていない全体の文字列
         const std::string& get_fulltext() const { return m_fulltext; }
