@@ -87,9 +87,9 @@ namespace SKELETON
       protected:
 
         bool is_on_paned() const { return m_on_paned; }
-        Gtk::Paned& get_paned(){ return m_paned; }
-        virtual int get_size() = 0;
-        virtual bool is_separater_clicked( GdkEventButton* event ) = 0;
+        const Gtk::Paned& get_paned() const { return m_paned; }
+        virtual int get_size() const = 0;
+        virtual bool is_separater_clicked( GdkEventButton* event ) const = 0;
     };
 
 
@@ -104,9 +104,9 @@ namespace SKELETON
 
       protected:
 
-        int get_size() override { return get_paned().get_width(); }
+        int get_size() const override { return get_paned().get_width(); }
 
-        bool is_separater_clicked( GdkEventButton* event ) override
+        bool is_separater_clicked( GdkEventButton* event ) const override
         {
             if( is_on_paned() && event->type == GDK_BUTTON_PRESS && event->button == 1
                 && event->x >= 0 && event->x <= 8 ) return true;
@@ -126,9 +126,9 @@ namespace SKELETON
 
       protected:
 
-        int get_size() override { return get_paned().get_height(); }
+        int get_size() const override { return get_paned().get_height(); }
 
-        bool is_separater_clicked( GdkEventButton* event ) override
+        bool is_separater_clicked( GdkEventButton* event ) const override
         {
             if( is_on_paned() && event->type == GDK_BUTTON_PRESS && event->button == 1
                 && event->y >= 0 && event->y <= 8 ) return true;
