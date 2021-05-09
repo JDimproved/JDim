@@ -89,7 +89,7 @@ void MessageToolBar::show_entry_new_subject( bool show )
 }
 
 
-std::string MessageToolBar::get_new_subject()
+std::string MessageToolBar::get_new_subject() const
 {
     if( m_show_entry_new_subject && m_entry_new_subject ) return m_entry_new_subject->get_text();
 

@@ -55,7 +55,7 @@ namespace MESSAGE
         ~MessageToolBar() noexcept;
 
         void show_entry_new_subject( bool show );
-        std::string get_new_subject();
+        std::string get_new_subject() const;
         void clear_new_subject();
 
       protected:

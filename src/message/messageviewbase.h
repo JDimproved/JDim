@@ -160,10 +160,10 @@ namespace MESSAGE
         SKELETON::Admin* get_admin() override;
 
         void set_message( const std::string& msg );
-        Glib::ustring get_message();
+        Glib::ustring get_message() const;
 
-        SKELETON::CompletionEntry& get_entry_name(){ return m_entry_name; }
-        SKELETON::CompletionEntry& get_entry_mail(){ return m_entry_mail; }
+        const SKELETON::CompletionEntry& get_entry_name() const { return m_entry_name; }
+        const SKELETON::CompletionEntry& get_entry_mail() const { return m_entry_mail; }
         SKELETON::EditView* get_text_message() { return m_text_message; }
 
         void post_msg( const std::string& msg, bool new_article );
