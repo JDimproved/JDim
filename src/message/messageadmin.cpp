@@ -296,6 +296,8 @@ void MessageAdmin::open_view( const COMMAND_ARGS& command )
     show_toolbar();
 
     SKELETON::View *view = CORE::ViewFactory( type, url_msg, args );
+    view->set_margin_start( 10 );
+    view->set_margin_end( 10 );
     get_notebook()->append_page( url_msg, *view );
 
     // ウィンドウ表示
