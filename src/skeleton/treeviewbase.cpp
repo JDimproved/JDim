@@ -38,7 +38,7 @@ int JDTreeViewBase::get_row_size() const
 //
 // 現在フォーカスしてる行の最初のパスを取得
 //
-Gtk::TreeModel::Path JDTreeViewBase::get_current_path()
+Gtk::TreeModel::Path JDTreeViewBase::get_current_path() const
 {
     Gtk::TreeModel::Path path;
 
@@ -64,7 +64,7 @@ Gtk::TreeModel::Row JDTreeViewBase::get_current_row()
 //
 // x, y 座標の下のパスを取得
 //
-Gtk::TreeModel::Path JDTreeViewBase::get_path_under_xy( int x, int y )
+Gtk::TreeModel::Path JDTreeViewBase::get_path_under_xy( int x, int y ) const
 {
     Gtk::TreeModel::Path path;
     Gtk::TreeViewColumn* column;
@@ -78,7 +78,7 @@ Gtk::TreeModel::Path JDTreeViewBase::get_path_under_xy( int x, int y )
 //
 // 現在のマウスポインタの下のパスを取得
 //
-Gtk::TreeModel::Path JDTreeViewBase::get_path_under_mouse()
+Gtk::TreeModel::Path JDTreeViewBase::get_path_under_mouse() const
 {
     int x, y;
     MISC::get_pointer_at_window( get_window(), x, y );
@@ -89,7 +89,7 @@ Gtk::TreeModel::Path JDTreeViewBase::get_path_under_mouse()
 //
 // 現在のマウスポインタの下のセルの幅高さとセル内での座標を取得
 //
-void JDTreeViewBase::get_cell_xy_wh( int& cell_x, int& cell_y, int& cell_w, int& cell_h )
+void JDTreeViewBase::get_cell_xy_wh( int& cell_x, int& cell_y, int& cell_w, int& cell_h ) const
 {
     cell_x = cell_y = cell_w = cell_h = -1;
 
@@ -365,9 +365,9 @@ bool JDTreeViewBase::is_expand( const Gtk::TreePath& path )
 //
 // 行のセルの高さ
 //
-int JDTreeViewBase::get_row_height()
+int JDTreeViewBase::get_row_height() const
 {
-    Gtk::TreeViewColumn* column = get_column( m_column_for_height );
+    const Gtk::TreeViewColumn* column = get_column( m_column_for_height );
     if( !column ) return 0;
 
     int x,y,w,h;
