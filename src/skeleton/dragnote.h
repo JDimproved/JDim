@@ -117,10 +117,10 @@ namespace SKELETON
         bool get_show_tabs() const { return m_show_tabs; }
         void set_show_tabs( bool show_tabs );
         void set_scrollable( bool scrollable );
-        int get_n_pages();
+        int get_n_pages() const;
         Gtk::Widget* get_nth_page( int page_num );
-        int page_num( const Gtk::Widget& child );
-        int get_current_page();
+        int page_num( const Gtk::Widget& child ) const;
+        int get_current_page() const;
         void set_current_page( int page_num );
 
         int append_page( const std::string& url, Gtk::Widget& child );
@@ -133,7 +133,7 @@ namespace SKELETON
         void hide_toolbar();
         void append_toolbar( Gtk::Widget& toolbar );
         void set_current_toolbar( const int id_toolbar, SKELETON::View* view );
-        int get_current_toolbar();
+        int get_current_toolbar() const;
         void focus_toolbar_search(); // ツールバー内の検索entryにフォーカスを移す
         void update_toolbar_url( const std::string& url_old, const std::string& url_new );
         void update_toolbar_button();
