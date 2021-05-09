@@ -242,7 +242,7 @@ void MessageViewBase::set_message( const std::string& msg )
 }
 
 
-Glib::ustring MessageViewBase::get_message()
+Glib::ustring MessageViewBase::get_message() const
 {
     if( m_text_message ) return m_text_message->get_text();
 
