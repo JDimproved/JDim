@@ -54,7 +54,7 @@ namespace IMAGE
       private:
 
         void set_status_local( const std::string& status ){ m_status_local = status; }
-        const std::string& get_status_local(){ return m_status_local; }
+        const std::string& get_status_local() const { return m_status_local; }
 
         void show_status() override;
         void update_status() override;
