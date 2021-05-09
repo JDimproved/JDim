@@ -59,12 +59,6 @@ void ToolBar::set_url( const std::string& url )
 }
 
 
-bool ToolBar::is_empty()
-{
-    return ( ! m_buttonbar.get_children().size() );
-}
-
-
 //
 // タブが切り替わった時にDragableNoteBook::set_current_toolbar()から呼び出される( Viewの情報を取得する )
 //
