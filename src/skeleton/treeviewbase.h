@@ -52,19 +52,19 @@ namespace SKELETON
         void unset_cursor(){ get_selection()->unselect_all(); }
 
         // 現在フォーカスしてる行の最初のパスを取得
-        Gtk::TreeModel::Path get_current_path();
+        Gtk::TreeModel::Path get_current_path() const;
 
         // 現在フォーカスしてる行の最初のrowを取得
         Gtk::TreeModel::Row get_current_row();
 
         //x, y 座標の下のパスを取得
-        Gtk::TreeModel::Path get_path_under_xy( int x, int y );
+        Gtk::TreeModel::Path get_path_under_xy( int x, int y ) const;
 
         // 現在のマウスポインタの下のパスを取得
-        Gtk::TreeModel::Path get_path_under_mouse();
+        Gtk::TreeModel::Path get_path_under_mouse() const;
 
-        // 現在のマウスポインタの下のセルの幅高さとセル内での座標を取得        
-        void get_cell_xy_wh( int& cell_x, int& cell_y, int& cell_w, int& cell_h );
+        // 現在のマウスポインタの下のセルの幅高さとセル内での座標を取得
+        void get_cell_xy_wh( int& cell_x, int& cell_y, int& cell_w, int& cell_h ) const;
 
         // 選択中の Gtk::TreeModel::iterator のリストを取得
         std::list< Gtk::TreeModel::iterator > get_selected_iterators();
@@ -94,7 +94,7 @@ namespace SKELETON
         bool is_expand( const Gtk::TreePath& path );
 
         // 行のセルの高さ
-        int get_row_height();
+        int get_row_height() const;
         void set_column_for_height( int column ){ m_column_for_height = column; }
 
       protected:
