@@ -50,7 +50,7 @@ namespace MESSAGE
         void save_session() override {}
 
         void show_entry_new_subject( bool show );
-        std::string get_new_subject();
+        std::string get_new_subject() const;
 
         SKELETON::EditView* get_text_message();
 

@@ -52,7 +52,7 @@ void MessageAdmin::show_entry_new_subject( bool show )
 }
 
 
-std::string MessageAdmin::get_new_subject()
+std::string MessageAdmin::get_new_subject() const
 {
     if( m_toolbar ) return m_toolbar->get_new_subject();
 
