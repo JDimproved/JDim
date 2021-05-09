@@ -176,7 +176,7 @@ void AboutDiag::set_version( const Glib::ustring& version )
     m_label_version.override_font( font_discription_version );
 }
 
-Glib::ustring AboutDiag::get_version()
+Glib::ustring AboutDiag::get_version() const
 {
     return m_label_version.get_label();
 }
@@ -190,7 +190,7 @@ void AboutDiag::set_comments( const Glib::ustring& comments )
     m_label_comments.set_label( comments );
 }
 
-Glib::ustring AboutDiag::get_comments()
+Glib::ustring AboutDiag::get_comments() const
 {
     return m_label_comments.get_label();
 }
@@ -204,7 +204,7 @@ void AboutDiag::set_copyright( const Glib::ustring& copyright )
     m_label_copyright.set_label( copyright );
 }
 
-Glib::ustring AboutDiag::get_copyright()
+Glib::ustring AboutDiag::get_copyright() const
 {
     return m_label_copyright.get_label();
 }
@@ -222,7 +222,7 @@ void AboutDiag::set_website( const Glib::ustring& website )
     m_website_url = website;
 }
 
-Glib::ustring AboutDiag::get_website()
+Glib::ustring AboutDiag::get_website() const
 {
     return m_website_url;
 }
@@ -236,7 +236,7 @@ void AboutDiag::set_website_label( const Glib::ustring& website_label )
     m_button_website.set_label( website_label );
 }
 
-Glib::ustring AboutDiag::get_website_label()
+Glib::ustring AboutDiag::get_website_label() const
 {
     return m_button_website.get_label();
 }
@@ -265,7 +265,7 @@ void AboutDiag::set_license( const Glib::ustring& license )
     m_scrollwindow_license.add( m_textview_license );
 }
 
-Glib::ustring AboutDiag::get_license()
+Glib::ustring AboutDiag::get_license() const
 {
     return m_textview_license.get_buffer()->get_text();
 }

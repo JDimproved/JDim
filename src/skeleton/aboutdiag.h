@@ -56,22 +56,22 @@ namespace SKELETON
         Glib::RefPtr< Gdk::Pixbuf > get_logo();
 
         void set_version( const Glib::ustring& version );
-        Glib::ustring get_version();
+        Glib::ustring get_version() const;
 
         void set_comments( const Glib::ustring& comments );
-        Glib::ustring get_comments();
+        Glib::ustring get_comments() const;
 
         void set_website( const Glib::ustring& website );
-        Glib::ustring get_website();
+        Glib::ustring get_website() const;
 
         void set_website_label( const Glib::ustring& website_label );
-        Glib::ustring get_website_label();
+        Glib::ustring get_website_label() const;
 
         void set_copyright( const Glib::ustring& copyright );
-        Glib::ustring get_copyright();
+        Glib::ustring get_copyright() const;
 
         void set_license( const Glib::ustring& license );
-        Glib::ustring get_license();
+        Glib::ustring get_license() const;
     };
 }
 
