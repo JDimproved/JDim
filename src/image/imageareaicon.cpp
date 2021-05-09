@@ -136,12 +136,12 @@ void ImageAreaIcon::load_image_thread()
 
 //
 // インジケータ幅、高さ
-int ImageAreaIcon::width_indicator()
+int ImageAreaIcon::width_indicator() const
 {
     return MAX( 1, get_width()/4 );
 }
 
-int ImageAreaIcon::height_indicator()
+int ImageAreaIcon::height_indicator() const
 {
     return MAX( 1, get_height()/4 );
 }
