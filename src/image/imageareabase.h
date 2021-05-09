@@ -57,7 +57,7 @@ namespace IMAGE
         const std::string& get_errmsg() const{ return m_errmsg;}        
 
         bool is_ready() const { return m_ready; }
-        bool is_loading(){ return m_thread.is_running(); }
+        bool is_loading() const { return m_thread.is_running(); }
 
         int get_width() const { return m_width; }
         int get_height() const { return m_height; }
