@@ -137,7 +137,7 @@ namespace DBTREE
 
         void set_resume( const bool resume );
         void set_broken( const bool broken ) { m_broken = broken; }
-        int id_header() const { return m_id_header; }
+        int id_header() const noexcept { return m_id_header; }
         void set_ext_err( const std::string& ext_err ){ m_ext_err = ext_err; }
 
       public:
