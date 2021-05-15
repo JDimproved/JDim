@@ -373,7 +373,7 @@ namespace DBTREE
         void update_id_name( const int from_number, const int to_number );
 
         // number番のレスの発言数をチェック
-        void check_id_name( const int number );
+        void check_id_name( const int number ) = delete;
 
         // 発言数( num_id_name )の更新
         // IDノードの色も変更する
