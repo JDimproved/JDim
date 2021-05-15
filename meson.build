@@ -64,6 +64,14 @@ configure_args = []
 
 
 #
+# ビルドされたバイナリが実行されるマシンの情報
+#
+if host_machine.endian() == 'big'
+  conf.set('WORDS_BIGENDIAN', 1)
+endif
+
+
+#
 # 必須パッケージのチェック
 #
 gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.22.0')
