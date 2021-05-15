@@ -36,6 +36,11 @@ jobs:
           - cc: clang-7
             cxx: clang++-7
             package: clang-7
+          # failed by SIGABRT on Ubuntu 20.04
+          # https://github.com/JDimproved/JDim/runs/2589523269?check_suite_focus=true
+          - cc: clang-9
+            cxx: clang++-9
+            package: clang-9
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -77,9 +82,6 @@ jobs:
           - cc: clang-8
             cxx: clang++-8
             package: clang-8
-          - cc: clang-9
-            cxx: clang++-9
-            package: clang-9
           - cc: clang-10
             cxx: clang++-10
             package: clang-10

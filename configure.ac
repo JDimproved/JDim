@@ -61,6 +61,9 @@ dnl
 dnl crypt
 dnl
 AC_CHECK_LIB(crypt,crypt)
+AC_CHECK_LIB(crypt, crypt_r,
+  [AC_DEFINE(HAVE_CRYPT_R, [1], [Define to 1 if you have the 'crypt_r' function])],
+)
 
 
 dnl
