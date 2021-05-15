@@ -11,10 +11,13 @@
 
 #ifdef USE_ALSA
 
-#include <gtkmm.h>
-
 #include "skeleton/dispatchable.h"
 #include "jdlib/jdthread.h"
+
+#include <gtkmm.h>
+
+#include <cstdint>
+
 
 namespace SOUND
 {
@@ -22,27 +25,27 @@ namespace SOUND
     struct RIFFCHK
     {
         char id[ 4 ];       // = "RIFF"
-        unsigned int size;    // 全体サイズ
+        std::uint32_t size; // 全体サイズ
     };
 
     // WAVEfmt ( 28 byte )
     struct WAVEFMTCHK
     {
         char id[ 8 ];          // "WAVEfmt "
-        unsigned int size;      // チャンクサイズ
-        unsigned short fmt;    // 種類( PCMは1 )
-        unsigned short chn;
-        unsigned int rate;
-        unsigned int average;  // = rate * block ( byte )
-        unsigned short block;  // = chn * bit / 8 ( byte )
-        unsigned short bit;
+        std::uint32_t size;    // チャンクサイズ
+        std::uint16_t fmt;     // 種類( PCMは1 )
+        std::uint16_t chn;
+        std::uint32_t rate;
+        std::uint32_t average; // = rate * block ( byte )
+        std::uint16_t block;   // = chn * bit / 8 ( byte )
+        std::uint16_t bit;
     };
 
     // data ( 8 byte )
     struct DATACHK
     {
-        char id[ 4 ];      // = "data"
-        unsigned int size; // チャンクサイズ = PCMデータサイズ
+        char id[ 4 ];       // = "data"
+        std::uint32_t size; // チャンクサイズ = PCMデータサイズ
     };
 
 
