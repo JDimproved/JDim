@@ -21,6 +21,24 @@
 using namespace SOUND;
 
 
+#ifdef WORDS_BIGENDIAN
+namespace {
+
+std::uint16_t byteswap16( std::uint16_t us )
+{
+    return ((us & 0xFF00) >> 8) | ((us & 0x00FF) << 8);
+}
+
+std::uint32_t byteswap32( std::uint32_t ui )
+{
+    return ((ui & 0xFF00'0000) >> 24) | ((ui & 0x00FF'0000) >> 8)
+        | ((ui & 0x0000'FF00) << 8) | ((ui & 0x0000'00FF) << 24);
+}
+
+} // namespace
+#endif // WORDS_BIGENDIAN
+
+
 Play_Sound::Play_Sound()
 {
 #ifdef _DEBUG
@@ -121,11 +139,24 @@ void Play_Sound::play_wavfile()
         RIFFCHK riffchk;
         size_t chksize = 8;
         filepos += fread( &riffchk, 1, chksize, fin );
+#ifdef WORDS_BIGENDIAN
+        // RIFFはリトルエンディアンで保存されるためビッグエンディアンの環境ではバイトオーダーを逆にする
+        riffchk.size = byteswap32( riffchk.size );
+#endif
         if( strncmp( riffchk.id, "RIFF", 4 ) != 0 ) throw m_wavfile + " is not a wave file";
 
         WAVEFMTCHK wavefmt;
         chksize = 28;
         filepos += fread( &wavefmt, 1, chksize, fin );
+#ifdef WORDS_BIGENDIAN
+        wavefmt.size = byteswap32( wavefmt.size );
+        wavefmt.fmt = byteswap16( wavefmt.fmt );
+        wavefmt.chn = byteswap16( wavefmt.chn );
+        wavefmt.rate = byteswap32( wavefmt.rate );
+        wavefmt.average = byteswap32( wavefmt.average );
+        wavefmt.block = byteswap16( wavefmt.block );
+        wavefmt.bit = byteswap16( wavefmt.bit );
+#endif
         if( strncmp( wavefmt.id, "WAVEfmt ", 8 ) != 0 ) throw m_wavfile + " is broken";
         if( wavefmt.fmt != 1 ) throw m_wavfile + " is not a PCM format";
 
@@ -138,6 +169,9 @@ void Play_Sound::play_wavfile()
             if( strncmp( datachk.id, "data", 4 ) == 0 ) break;
             ++filepos;
         }
+#ifdef WORDS_BIGENDIAN
+        datachk.size = byteswap32( datachk.size );
+#endif
 
 #ifdef _DEBUG
         std::cout << "rate = " << wavefmt.rate << std::endl
