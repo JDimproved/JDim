@@ -127,12 +127,6 @@ NodeTreeBase::~NodeTreeBase()
 }
 
 
-bool NodeTreeBase::empty()
-{
-    return  m_url.empty();
-}
-
-
 //
 // url の更新
 //
@@ -185,7 +179,7 @@ void NodeTreeBase::clear()
 //
 // ロード中は m_id_header 番のレスはまだ処理中なので m_id_header -1 を返す
 //
-int NodeTreeBase::get_res_number()
+int NodeTreeBase::get_res_number() const
 {
     if( is_loading() ) return m_id_header -1;
     
@@ -2619,7 +2613,7 @@ void NodeTreeBase::parse_write( const char* str, const int lng, const std::size_
 // 戻り値 : アンカーが現れれば true
 //
 bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
-                                 int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo )
+                                 int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo ) const
 {
     char tmp_out[ 64 ];
     int lng_out = 0;
@@ -2781,7 +2775,8 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 //
 // 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
 //
-int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos )
+int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link,
+                                   const int linktype, const int delim_pos ) const
 {
     // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
     const bool loose_url = CONFIG::get_loose_url();
