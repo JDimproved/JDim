@@ -3644,6 +3644,7 @@ void NodeTreeBase::check_fontid( const int number )
 //
 // http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/24
 //
+//static member
 bool NodeTreeBase::remove_imenu( char* str_link )
 {
     char *p = str_link;
@@ -3671,6 +3672,7 @@ bool NodeTreeBase::remove_imenu( char* str_link )
 
 
 // 文字列中の"&amp;"を"&"に変換する
+//static member
 int NodeTreeBase::convert_amp( char* text, const int n )
 {
     int m = n;
