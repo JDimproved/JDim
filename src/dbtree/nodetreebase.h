@@ -145,7 +145,7 @@ namespace DBTREE
         NodeTreeBase( const std::string& url, const std::string& date_modified );
         ~NodeTreeBase();
 
-        bool empty();
+        bool empty() const noexcept { return m_url.empty(); }
         void update_url( const std::string& url );
 
         SIG_UPDATED& sig_updated() { return m_sig_updated; }
@@ -156,7 +156,7 @@ namespace DBTREE
 
         const std::string& get_url() const { return m_url; }
         const std::string& get_subject() const { return m_subject; }
-        int get_res_number();
+        int get_res_number() const;
         size_t get_lng_dat() const { return m_lng_dat; }
         bool is_broken() const{ return m_broken; }
         const std::string& get_ext_err() const { return m_ext_err; }
@@ -328,9 +328,11 @@ namespace DBTREE
         // m_buffer_write に作成した文字列をセットする
         void parse_write( const char* str, const int lng, const std::size_t max_lng_write );
 
-        bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo );
-        int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link );
-        int check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link, const int linktype, const int delim_pos );
+        bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
+                           ANCINFO* ancinfo ) const;
+        int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link ) const;
+        int check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link,
+                             const int linktype, const int delim_pos ) const;
 
         // レジューム時のチェックデータをキャッシュ
         void set_resume_data( const char* data, size_t length );
@@ -399,7 +401,8 @@ namespace DBTREE
     // リンクが現れたかチェックして文字列を取得する関数
     //   (引数の値は、check_link_impl()を見ること)
     //
-    inline int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link )
+    inline int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, char* str_link,
+                                         const int lng_link ) const
     {
         // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
         int delim_pos = 0;
