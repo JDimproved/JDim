@@ -2137,7 +2137,7 @@ bool BBSListViewBase::is_etcdir( Gtk::TreePath path )
 //
 // 外部板か
 //
-bool BBSListViewBase::is_etcboard( Gtk::TreeModel::iterator& it )
+bool BBSListViewBase::is_etcboard( const Gtk::TreeModel::iterator& it )
 {
     Gtk::TreePath path = get_treestore()->get_path( *it );
     return is_etcboard( path );
