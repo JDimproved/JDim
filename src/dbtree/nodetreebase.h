@@ -163,7 +163,11 @@ namespace DBTREE
         bool is_checking_update() const { return m_check_update; }
 
         // number番のレスのヘッダノードのポインタを返す
-        NODE* res_header( int number );
+        const NODE* res_header( int number ) const;
+        NODE* res_header( int number )
+        {
+            return const_cast<NODE*>( static_cast<const NodeTreeBase&>( *this ).res_header( number ) );
+        }
 
         // number番の名前
         std::string get_name( int number );

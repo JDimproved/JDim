@@ -190,7 +190,7 @@ int NodeTreeBase::get_res_number() const
 //
 // number 番のレスのヘッダのポインタを返す
 //
-NODE* NodeTreeBase::res_header( int number )
+const NODE* NodeTreeBase::res_header( int number ) const
 {
     if( number > m_id_header || number <= 0 ) return nullptr;
     
