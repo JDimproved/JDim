@@ -365,17 +365,17 @@ std::list< int > NodeTreeBase::get_res_with_url()
 //
 // 含まれる URL をリストにして取得
 //
-std::list< std::string > NodeTreeBase::get_urls()
+std::list< std::string > NodeTreeBase::get_urls() const
 {
     std::list< std::string > list_urls;
     for( int i = 1; i <= m_id_header; ++i ){
 
-        NODE* head = res_header( i );
+        const NODE* head = res_header( i );
         if( head ){
 
             for( int block = 0; block < BLOCK_NUM; ++block ){
 
-                NODE* node = head->headinfo->block[ block ];
+                const NODE* node = head->headinfo->block[ block ];
 
                 while( node ){
                     if( IS_URL( node ) ) list_urls.push_back( node->linkinfo->link );
@@ -393,7 +393,7 @@ std::list< std::string > NodeTreeBase::get_urls()
 //
 // number番のレスを参照しているレス番号をリストにして取得
 //
-std::list< int > NodeTreeBase::get_res_reference( const int number )
+std::list< int > NodeTreeBase::get_res_reference( const int number ) const
 {
     std::list< int > res_num;
     res_num.push_back( number );
@@ -404,7 +404,7 @@ std::list< int > NodeTreeBase::get_res_reference( const int number )
 //
 // res_num に含まれるレスを参照しているレス番号をリストにして取得
 //
-std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_num )
+std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_num ) const
 {
     std::list< int > list_resnum;
 
@@ -417,12 +417,12 @@ std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_nu
         //  透明あぼーんは除外
         if( m_abone_transparent && get_abone( i ) ) continue;
 
-        NODE* head = res_header( i );
+        const NODE* head = res_header( i );
         if( head ){
 
             for( int block = 0; block < BLOCK_NUM; ++block ){
 
-                NODE* node = head->headinfo->block[ block ];
+                const NODE* node = head->headinfo->block[ block ];
 
                 while( node ){
 
@@ -624,8 +624,8 @@ else if( node->type == DBTREE::NODE_HTAB ) str_res += "\t"; \
 else if( node->text ) str_res += node->text; \
 node = node->next_node; \
 } }while(0) \
-        
-std::string NodeTreeBase::get_res_str( int number, bool ref )
+
+std::string NodeTreeBase::get_res_str( int number, bool ref ) const
 {
     std::string str_res;
 
@@ -633,7 +633,7 @@ std::string NodeTreeBase::get_res_str( int number, bool ref )
     std::cout << "NodeTreeBase::get_res_str : num = " << number << std::endl;
 #endif
 
-    NODE* head = res_header( number );
+    const NODE* head = res_header( number );
     if( ! head ) return std::string();
 
     std::string ref_prefix;
@@ -666,9 +666,9 @@ std::string NodeTreeBase::get_res_str( int number, bool ref )
 //
 // number番を書いた人の名前を取得
 //
-std::string NodeTreeBase::get_name( int number )
+std::string NodeTreeBase::get_name( int number ) const
 {
-    NODE* head = res_header( number );
+    const NODE* head = res_header( number );
     if( ! head ) return std::string();
     if( ! head->headinfo->name ) return std::string();
 
@@ -738,9 +738,9 @@ std::string NodeTreeBase::get_time_str( int number )
 //
 // number番の ID 取得
 //
-std::string NodeTreeBase::get_id_name( int number )
+std::string NodeTreeBase::get_id_name( int number ) const
 {
-    NODE* head = res_header( number );
+    const NODE* head = res_header( number );
     if( ! head ) return std::string();
     if( ! head->headinfo->block[ BLOCK_ID_NAME ] ) return std::string();
 
@@ -2889,9 +2889,9 @@ int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_
 
 
 // あぼーんしているか
-bool NodeTreeBase::get_abone( int number )
+bool NodeTreeBase::get_abone( int number ) const
 {
-    NODE* head = res_header( number );
+    const NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
 

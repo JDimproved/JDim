@@ -170,7 +170,7 @@ namespace DBTREE
         }
 
         // number番の名前
-        std::string get_name( int number );
+        std::string get_name( int number ) const;
 
         // number番の名前の重複数( = 発言数 )
         int get_num_name( int number );
@@ -183,7 +183,7 @@ namespace DBTREE
         std::string get_time_str( int number );
 
         // number番のID
-        std::string get_id_name( int number );
+        std::string get_id_name( int number ) const;
 
         // 指定したID の重複数( = 発言数 )
         // 下のget_num_id_name( int number )と違って検索するので遅い
@@ -204,13 +204,13 @@ namespace DBTREE
         std::list< int > get_res_with_url();
 
         // 含まれる URL をリストにして取得
-        std::list< std::string > get_urls();
+        std::list< std::string > get_urls() const;
 
         // number番のレスを参照しているレス番号をリストにして取得
-        std::list< int > get_res_reference( const int number );
+        std::list< int > get_res_reference( const int number ) const;
 
         // res_num に含まれるレスを参照しているレス番号をリストにして取得
-        std::list< int > get_res_reference( const std::list< int >& res_num );
+        std::list< int > get_res_reference( const std::list< int >& res_num ) const;
 
         // 高参照レスの番号をリストにして取得
         std::list< int > get_highly_referened_res();
@@ -221,8 +221,8 @@ namespace DBTREE
 
 
         // number番のレスの文字列を返す
-        // ref == true なら先頭に ">" を付ける        
-        std::string get_res_str( int number, bool ref = false );
+        // ref == true なら先頭に ">" を付ける
+        std::string get_res_str( int number, bool ref = false ) const;
 
         // 明示的にhtml を加える
         // パースして追加したノードのポインタを返す
@@ -239,7 +239,7 @@ namespace DBTREE
         virtual void download_dat( const bool check_update );
 
         // あぼーんしているか
-        bool get_abone( int number );
+        bool get_abone( int number ) const;
 
         // あぼーん情報を親クラスのarticlebaseからコピーする
         void copy_abone_info( const std::list< std::string >& list_abone_id,
