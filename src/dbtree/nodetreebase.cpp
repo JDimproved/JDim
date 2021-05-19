@@ -246,7 +246,7 @@ int NodeTreeBase::get_num_id_name( const int number ) const
 //
 // 指定した発言者IDを持つレス番号をリストにして取得
 //
-std::list< int > NodeTreeBase::get_res_id_name( const std::string& id_name )
+std::list< int > NodeTreeBase::get_res_id_name( const std::string& id_name ) const
 {
     std::list< int > list_resnum;          
     for( int i = 1; i <= m_id_header ; ++i ){
@@ -265,7 +265,7 @@ std::list< int > NodeTreeBase::get_res_id_name( const std::string& id_name )
 // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
 // list_jointは出力で true のスレは前のスレに連結される (例) "3+4" なら 4が3に連結
 //
-std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std::list< bool >& list_joint )
+std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std::list< bool >& list_joint ) const
 {
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::get_res_str_num " << str_num << std::endl;
@@ -550,7 +550,7 @@ std::list< ANCINFO* > NodeTreeBase::get_res_anchors( const int number )
 //
 // mode_or == true なら OR抽出
 //
-std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bool mode_or )
+std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bool mode_or ) const
 {
     std::list< int > list_resnum;
     if( query.empty() ) return list_resnum;
@@ -679,7 +679,7 @@ std::string NodeTreeBase::get_name( int number ) const
 //
 // number番の名前の重複数( = 発言数 )
 //
-int NodeTreeBase::get_num_name( int number )
+int NodeTreeBase::get_num_name( int number ) const
 {
     int num = 0;
     std::string name = get_name( number );
@@ -697,7 +697,7 @@ int NodeTreeBase::get_num_name( int number )
 //
 // 指定した発言者の名前のレス番号をリストにして取得
 //
-std::list< int > NodeTreeBase::get_res_name( const std::string& name )
+std::list< int > NodeTreeBase::get_res_name( const std::string& name ) const
 {
     std::list< int > list_resnum;          
     for( int i = 1; i <= m_id_header ; ++i ){
@@ -714,7 +714,7 @@ std::list< int > NodeTreeBase::get_res_name( const std::string& name )
 // number番のレスの時刻を文字列で取得
 // 内部で regex　を使っているので遅い
 //
-std::string NodeTreeBase::get_time_str( int number )
+std::string NodeTreeBase::get_time_str( int number ) const
 {
     std::string res_str = get_res_str( number );
     if( res_str.empty() ) return std::string();
@@ -3696,7 +3696,7 @@ int NodeTreeBase::convert_amp( char* text, const int n )
 
 
 // 自分の書き込みにレスしたか
-bool NodeTreeBase::is_refer_posted( const int number )
+bool NodeTreeBase::is_refer_posted( const int number ) const
 {
     return m_refer_posts.find( number ) != m_refer_posts.end();
 }

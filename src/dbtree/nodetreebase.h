@@ -173,14 +173,14 @@ namespace DBTREE
         std::string get_name( int number ) const;
 
         // number番の名前の重複数( = 発言数 )
-        int get_num_name( int number );
+        int get_num_name( int number ) const;
 
         // 指定した発言者の名前のレス番号をリストにして取得
-        std::list< int > get_res_name( const std::string& name );
+        std::list< int > get_res_name( const std::string& name ) const;
 
         // number番のレスの時刻を文字列で取得
         // 内部で regex　を使っているので遅い
-        std::string get_time_str( int number );
+        std::string get_time_str( int number ) const;
 
         // number番のID
         std::string get_id_name( int number ) const;
@@ -193,12 +193,12 @@ namespace DBTREE
         int get_num_id_name( const int number ) const;
 
         // 指定した発言者IDを持つレス番号をリストにして取得
-        std::list< int > get_res_id_name( const std::string& id_name );
+        std::list< int > get_res_id_name( const std::string& id_name ) const;
 
         // str_num で指定したレス番号をリストにして取得
         // str_num は "from-to"　の形式 (例) 3から10をセットしたいなら "3-10"
         // list_jointは出力で true のスレは前のスレに連結される (例) "3+4" なら 4が3に連結
-        std::list< int > get_res_str_num( const std::string& str_num, std::list< bool >& list_joint );
+        std::list< int > get_res_str_num( const std::string& str_num, std::list< bool >& list_joint ) const;
 
         // URL を含むレス番号をリストにして取得
         std::list< int > get_res_with_url() const;
@@ -217,7 +217,7 @@ namespace DBTREE
 
         // query を含むレス番号をリストにして取得
         // mode_or == true なら OR抽出
-        std::list< int > get_res_query( const std::string& query, const bool mode_or );
+        std::list< int > get_res_query( const std::string& query, const bool mode_or ) const;
 
 
         // number番のレスの文字列を返す
@@ -259,7 +259,7 @@ namespace DBTREE
         const std::unordered_set< int >& get_posts() const noexcept { return m_posts; }
 
         // 自分の書き込みにレスしたか
-        bool is_refer_posted( const int number );
+        bool is_refer_posted( const int number ) const;
 
         // 書き込みマークセット
         void set_posted( const int number, const bool set );
