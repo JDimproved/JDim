@@ -203,7 +203,7 @@ const NODE* NodeTreeBase::res_header( int number ) const
 //
 // 下の get_num_id_name( int number ) と違って検索するので遅い
 //
-int NodeTreeBase::get_num_id_name( const std::string& id )
+int NodeTreeBase::get_num_id_name( const std::string& id ) const
 {
     if( id.empty() ) return 0;
 
@@ -231,9 +231,9 @@ int NodeTreeBase::get_num_id_name( const std::string& id )
 //
 // number番の ID の重複数
 //
-int NodeTreeBase::get_num_id_name( const int number )
+int NodeTreeBase::get_num_id_name( const int number ) const
 {
-    NODE* head = res_header( number );
+    const NODE* head = res_header( number );
     if( ! head ) return 0;
 
     // IDの数を数えていない場合
@@ -329,17 +329,17 @@ std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std:
 //
 // URL を含むレス番号をリストにして取得
 //
-std::list< int > NodeTreeBase::get_res_with_url()
+std::list< int > NodeTreeBase::get_res_with_url() const
 {
     std::list< int > list_resnum;
     for( int i = 1; i <= m_id_header; ++i ){
 
-        NODE* head = res_header( i );
+        const NODE* head = res_header( i );
         if( head ){
 
             for( int block = 0; block < BLOCK_NUM; ++block ){
 
-                NODE* node = head->headinfo->block[ block ];
+                const NODE* node = head->headinfo->block[ block ];
 
                 while( node ){
 
@@ -484,12 +484,12 @@ EXIT_LOOP:;
 //
 // 高参照レスの番号をリストにして取得
 //
-std::list< int > NodeTreeBase::get_highly_referened_res()
+std::list< int > NodeTreeBase::get_highly_referened_res() const
 {
     std::list< int > list_resnum;
     for( int i = 1; i <= m_id_header; ++i ){
 
-        NODE* head = res_header( i );
+        const NODE* head = res_header( i );
         if ( ! head ) continue;
         if ( get_abone( i ) ) continue; // あぼーんしているものは飛ばす
         if ( head->headinfo->num_reference < m_num_reference[ LINK_HIGH ] ) continue;

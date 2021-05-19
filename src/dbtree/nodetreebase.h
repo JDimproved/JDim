@@ -187,10 +187,10 @@ namespace DBTREE
 
         // 指定したID の重複数( = 発言数 )
         // 下のget_num_id_name( int number )と違って検索するので遅い
-        int get_num_id_name( const std::string& id );
+        int get_num_id_name( const std::string& id ) const;
 
         // number番のID の重複数( = 発言数 )
-        int get_num_id_name( const int number );
+        int get_num_id_name( const int number ) const;
 
         // 指定した発言者IDを持つレス番号をリストにして取得
         std::list< int > get_res_id_name( const std::string& id_name );
@@ -201,7 +201,7 @@ namespace DBTREE
         std::list< int > get_res_str_num( const std::string& str_num, std::list< bool >& list_joint );
 
         // URL を含むレス番号をリストにして取得
-        std::list< int > get_res_with_url();
+        std::list< int > get_res_with_url() const;
 
         // 含まれる URL をリストにして取得
         std::list< std::string > get_urls() const;
@@ -213,7 +213,7 @@ namespace DBTREE
         std::list< int > get_res_reference( const std::list< int >& res_num ) const;
 
         // 高参照レスの番号をリストにして取得
-        std::list< int > get_highly_referened_res();
+        std::list< int > get_highly_referened_res() const;
 
         // query を含むレス番号をリストにして取得
         // mode_or == true なら OR抽出
