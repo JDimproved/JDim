@@ -21,6 +21,7 @@ namespace DBIMG
         std::list< Img* > m_list_wait; // ロード待ち状態のImgクラス
         std::list< Img* > m_list_delwait; // ロード待ち状態のImgクラスを削除する時の一時変数
         bool m_webp_support{}; // WebP の読み込みに対応しているか
+        bool m_avif_support{}; // AVIF の読み込みに対応しているか
 
       public:
         ImgRoot();
@@ -62,6 +63,7 @@ namespace DBIMG
         static bool is_gif( const char* url, int n );
         static bool is_bmp( const char* url, int n );
         static bool is_webp( const char* url, int n );
+        static bool is_avif( const char* url, int n );
 
         void reset_imgs();
     };
