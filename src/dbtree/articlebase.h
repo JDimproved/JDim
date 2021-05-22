@@ -234,7 +234,7 @@ namespace DBTREE
         virtual std::string url_bbscgi() const { return {}; }
 
         // subbbscgi のURL
-        virtual std::string url_subbbscgi() { return std::string(); }
+        virtual std::string url_subbbscgi() const { return {}; }
 
         // 最終アクセス時間
         std::string get_access_time_str();
