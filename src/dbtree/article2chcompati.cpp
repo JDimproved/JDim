@@ -70,10 +70,11 @@ std::string Article2chCompati::create_write_message( const std::string& name, co
 // (例) "http://www.hoge2ch.net/test/bbs.cgi"
 //
 //
-std::string Article2chCompati::url_bbscgi()
+std::string Article2chCompati::url_bbscgi() const
 {
     std::string cgibase = DBTREE::url_bbscgibase( get_url() );
-    return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
+    if( ! cgibase.empty() ) cgibase.pop_back(); // 最後の '/' を除く
+    return cgibase;
 }
 
 

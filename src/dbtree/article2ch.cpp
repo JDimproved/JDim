@@ -67,19 +67,6 @@ std::string Article2ch::create_write_message( const std::string& name, const std
 
 
 //
-// bbscgi のURL
-//
-// (例) "http://www.hoge2ch.net/test/bbs.cgi"
-//
-//
-std::string Article2ch::url_bbscgi()
-{
-    return Article2chCompati::url_bbscgi();
-}
-
-
-
-//
 // subbbscgi のURL
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
