@@ -78,10 +78,11 @@ std::string ArticleMachi::url_bbscgi() const
 //
 // (例) "http://www.machi.to/bbs/write.cgi"
 //
-std::string ArticleMachi::url_subbbscgi()
+std::string ArticleMachi::url_subbbscgi() const
 {
     std::string cgibase = DBTREE::url_subbbscgibase( get_url() );
-    return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
+    if( ! cgibase.empty() ) cgibase.pop_back(); // 最後の '/' を除く
+    return cgibase;
 }
 
 

@@ -84,10 +84,11 @@ std::string Article2chCompati::url_bbscgi() const
 //
 // (例) "http://www.hoge2ch.net/test/subbbs.cgi"
 //
-std::string Article2chCompati::url_subbbscgi()
+std::string Article2chCompati::url_subbbscgi() const
 {
     std::string cgibase = DBTREE::url_subbbscgibase( get_url() );
-    return cgibase.substr( 0, cgibase.length() -1 ); // 最後の '/' を除く
+    if( ! cgibase.empty() ) cgibase.pop_back(); // 最後の '/' を除く
+    return cgibase;
 }
 
 

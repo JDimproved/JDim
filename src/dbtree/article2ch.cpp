@@ -66,18 +66,6 @@ std::string Article2ch::create_write_message( const std::string& name, const std
 }
 
 
-//
-// subbbscgi のURL
-//
-// (例) "http://www.hoge2ch.net/test/subbbs.cgi"
-//
-std::string Article2ch::url_subbbscgi()
-{
-    return Article2chCompati::url_subbbscgi();
-}
-
-
-
 NodeTreeBase* Article2ch::create_nodetree()
 {
     return new NodeTree2ch( get_url(), get_org_url(), get_date_modified(), get_since_time() );

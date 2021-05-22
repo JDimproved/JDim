@@ -22,9 +22,6 @@ namespace DBTREE
         std::string create_write_message( const std::string& name, const std::string& mail,
                                           const std::string& msg ) override;
 
-        // subbbscgi のURL
-        std::string url_subbbscgi() override;
-
       protected:
 
         // dat落ちしたスレをロードするか
