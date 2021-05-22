@@ -531,15 +531,6 @@ void ArticleBase::update_writetime()
 
 
 //
-// 書き込み数
-//
-int ArticleBase::get_num_posted()
-{
-    return m_posts.size();
-}
-
-
-//
 // スレ自体のスレ一覧でのブックマーク
 //
 void ArticleBase::set_bookmarked_thread( const bool bookmarked )
@@ -851,15 +842,6 @@ void ArticleBase::set_abone_global( const bool set )
 
     m_save_info = true;
 } 
-
-
-//
-// ブックマークの数
-//
-int ArticleBase::get_num_bookmark()
-{
-    return m_bookmarks.size();
-}
 
 
 //

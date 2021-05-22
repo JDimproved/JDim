@@ -248,7 +248,7 @@ namespace DBTREE
         void reset_write_date(){ m_write_time_date = std::string(); }
 
         // 書き込み数
-        int get_num_posted();
+        int get_num_posted() const noexcept { return m_posts.size(); }
 
         // 自分の書き込みか
         bool is_posted( const int number );
@@ -367,7 +367,7 @@ namespace DBTREE
         bool is_bookmarked_thread() const { return m_bookmarked_thread; }
 
         // 「レス」のブックマーク
-        int get_num_bookmark();
+        int get_num_bookmark() const noexcept { return m_bookmarks.size(); }
         bool is_bookmarked( const int number );
         void set_bookmark( const int number, const bool set );
 
