@@ -38,6 +38,7 @@ enum
 {
     MAX_REDIRECT = 5  // 最大リダイレクト回数
 };
+static constexpr const std::size_t kSignatureSizeRequirement = 16;
 
 
 // 情報ファイルから値を読み込み
@@ -383,8 +384,10 @@ void Img::show_large_img()
 
     const int size = 256;
     char data[ size ];
-    CACHE::load_rawdata( get_cache_path(), data, size );
-    m_type = DBIMG::get_image_type( ( const unsigned char* ) data );
+    const std::size_t read_size = CACHE::load_rawdata( get_cache_path(), data, size );
+    if( read_size >= kSignatureSizeRequirement ) {
+        m_type = DBIMG::get_image_type( reinterpret_cast<const unsigned char*>( data ) );
+    }
     if( m_type != T_NOIMG ){
 
         set_code( HTTP_OK );
@@ -456,11 +459,9 @@ void Img::receive_data( const char* data, size_t size )
     // 先頭のシグネチャを見て画像かどうかをチェック
     if( m_type == T_UNKNOWN && get_code() == HTTP_OK ){
 
-#ifdef _DEBUG
-        assert( size > 8 );
-#endif        
-
-        m_type = DBIMG::get_image_type( ( const unsigned char* ) data );
+        if( size >= kSignatureSizeRequirement ) {
+            m_type = DBIMG::get_image_type( reinterpret_cast<const unsigned char*>( data ) );
+        }
 
         if( m_type == T_NOIMG ){
 
