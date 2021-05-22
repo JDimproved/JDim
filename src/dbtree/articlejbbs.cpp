@@ -69,7 +69,7 @@ std::string ArticleJBBS::create_write_message( const std::string& name, const st
 // (例) "http://jbbs.shitaraba.net/bbs/write.cgi/computer/123/1234567/"
 //
 //
-std::string ArticleJBBS::url_bbscgi()
+std::string ArticleJBBS::url_bbscgi() const
 {
     return DBTREE::url_bbscgibase( get_url() ) + DBTREE::board_id( get_url() ) + "/" + get_key() + "/";
 }

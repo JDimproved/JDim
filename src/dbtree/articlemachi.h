@@ -25,8 +25,8 @@ namespace DBTREE
                                           const std::string& msg ) override;
 
         // bbscgi のURL
-        std::string url_bbscgi() override;
-        
+        std::string url_bbscgi() const override;
+
         // subbbscgi のURL
         std::string url_subbbscgi() override;
 
