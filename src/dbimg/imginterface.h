@@ -24,6 +24,7 @@ namespace DBIMG
         T_PNG,
         T_GIF,
         T_BMP,
+        T_WEBP,
 
         T_LARGE,
         T_NOSIZE,
