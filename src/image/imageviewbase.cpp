@@ -908,6 +908,8 @@ void ImageViewBase::slot_cancel_mosaic()
             case DBIMG::T_PNG: type += "PNG"; break;
             case DBIMG::T_GIF: type += "GIF"; break;
             case DBIMG::T_BMP: type += "BMP"; break;
+            case DBIMG::T_WEBP: type += "WebP"; break;
+            case DBIMG::T_AVIF: type += "AVIF"; break;
         }
         type += "です。";
 

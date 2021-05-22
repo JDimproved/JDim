@@ -27,6 +27,16 @@ using namespace DBIMG;
 
 ImgRoot::ImgRoot()
 {
+    // GdkPixbufが直接サポートしていない画像フォーマットは利用できるか確認する
+    for( const Gdk::PixbufFormat& fmt : Gdk::Pixbuf::get_formats() ) {
+        const Glib::ustring name = fmt.get_name();
+        if( name == "webp" ) {
+            m_webp_support = true;
+        }
+        else if( name == "avif" ) {
+            m_avif_support = true;
+        }
+    }
 }
 
 
@@ -130,8 +140,29 @@ int ImgRoot::get_image_type( const unsigned char *sign ) const
              && sign[ 2 ] == 'F' ) type = T_GIF;
 
     // bitmap
-    if( sign[ 0 ] == 'B'
-        && sign[ 1 ] == 'M' ) type = T_BMP;
+    else if( sign[ 0 ] == 'B'
+             && sign[ 1 ] == 'M' ) type = T_BMP;
+
+    // webp
+    else if( sign[ 0 ] == 'R'
+             && sign[ 1 ] == 'I'
+             && sign[ 2 ] == 'F'
+             && sign[ 3 ] == 'F'
+
+             && sign[ 8 ] == 'W'
+             && sign[ 9 ] == 'E'
+             && sign[ 10 ] == 'B'
+             && sign[ 11 ] == 'P' ) type = T_WEBP;
+
+    // avif
+    else if( sign[ 4 ] == 'f'
+             && sign[ 5 ] == 't'
+             && sign[ 6 ] == 'y'
+             && sign[ 7 ] == 'p'
+             && sign[ 8 ] == 'a'
+             && sign[ 9 ] == 'v'
+             && sign[ 10 ] == 'i'
+             && sign[ 11 ] == 'f' ) type = T_AVIF;
 
     return type;
 }
@@ -159,6 +190,8 @@ int ImgRoot::get_type_ext( const char* url, int n ) const
     if( is_png( url, n ) ) return T_PNG;
     if( is_gif( url, n ) ) return T_GIF;
     if( is_bmp( url, n ) ) return T_BMP;
+    if( m_webp_support && is_webp( url, n ) ) return T_WEBP;
+    if( m_avif_support && is_avif( url, n ) ) return T_AVIF;
 
     // URLに拡張子がない場合でも画像として扱うか
     if( imgctrl & CORE::IMGCTRL_FORCEIMAGE ) return T_FORCEIMAGE;
@@ -241,6 +274,44 @@ bool ImgRoot::is_bmp( const char* url, int n )
         *( url + n -3 ) == 'B' &&
         *( url + n -2 ) == 'M' &&
         *( url + n -1 ) == 'P'  ) return true;
+
+    return false;
+}
+
+
+bool ImgRoot::is_webp( const char* url, int n )
+{
+    // .webp
+    if( *( url + n -5 ) == '.' &&
+        *( url + n -4 ) == 'w' &&
+        *( url + n -3 ) == 'e' &&
+        *( url + n -2 ) == 'b' &&
+        *( url + n -1 ) == 'p'  ) return true;
+
+    if( *( url + n -5 ) == '.' &&
+        *( url + n -4 ) == 'W' &&
+        *( url + n -3 ) == 'E' &&
+        *( url + n -2 ) == 'B' &&
+        *( url + n -1 ) == 'P'  ) return true;
+
+    return false;
+}
+
+
+bool ImgRoot::is_avif( const char* url, int n )
+{
+    // .avif
+    if( *( url + n -5 ) == '.' &&
+        *( url + n -4 ) == 'a' &&
+        *( url + n -3 ) == 'v' &&
+        *( url + n -2 ) == 'i' &&
+        *( url + n -1 ) == 'f'  ) return true;
+
+    if( *( url + n -5 ) == '.' &&
+        *( url + n -4 ) == 'A' &&
+        *( url + n -3 ) == 'V' &&
+        *( url + n -2 ) == 'I' &&
+        *( url + n -1 ) == 'F'  ) return true;
 
     return false;
 }

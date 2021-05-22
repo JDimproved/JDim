@@ -53,6 +53,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         case DBIMG::T_PNG: type = "PNG"; break;
         case DBIMG::T_GIF: type = "GIF"; break;
         case DBIMG::T_BMP: type = "BMP"; break;
+        case DBIMG::T_WEBP: type = "WebP"; break;
+        case DBIMG::T_AVIF: type = "AVIF"; break;
     }
 
     if( DBIMG::is_fake( get_url() ) ) type += " ※拡張子が偽装されています※";
