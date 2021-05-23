@@ -132,7 +132,7 @@ namespace DBTREE
         void update_datbase( const std::string& datbase );
 
         // 移転する前のオリジナルのURL
-        std::string get_org_url();
+        std::string get_org_url() const;
 
         // 移転する前のオリジナルのホスト名
         const std::string& get_org_host() const { return m_org_host; }
@@ -307,10 +307,10 @@ namespace DBTREE
         bool is_cache_read() const noexcept { return static_cast<bool>( m_nodetree ); }
 
         // キャッシュがあって、かつ新着の読み込みが可能
-        bool enable_load();
+        bool enable_load() const;
 
         // キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
-        bool is_finished();
+        bool is_finished() const;
 
         // あぼーん情報
         const std::list<std::string>& get_abone_list_id() const { return m_list_abone_id; }
@@ -320,10 +320,10 @@ namespace DBTREE
         const std::unordered_set< int >& get_abone_reses() const noexcept { return m_abone_reses; }
 
         // 透明
-        bool get_abone_transparent();
+        bool get_abone_transparent() const;
 
         // 連鎖
-        bool get_abone_chain();
+        bool get_abone_chain() const;
 
         // ageあぼーん
         bool get_abone_age() const { return m_abone_age; }

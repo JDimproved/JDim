@@ -105,7 +105,7 @@ bool ArticleBase::equal( const std::string& datbase, const std::string& id )
 //
 // 移転する前のオリジナルのURL
 //
-std::string ArticleBase::get_org_url()
+std::string ArticleBase::get_org_url() const
 {
     std::string newhost = MISC::get_hostname( m_url );
     return m_org_host + m_url.substr( newhost.length() );
@@ -546,7 +546,7 @@ void ArticleBase::set_bookmarked_thread( const bool bookmarked )
 //
 // キャッシュがあって、かつ新着の読み込みが可能
 //
-bool ArticleBase::enable_load()
+bool ArticleBase::enable_load() const
 {
     return ( is_cached() && ( m_status & STATUS_UPDATE ) && ! ( m_status & STATUS_OLD ) );
 }
@@ -555,7 +555,7 @@ bool ArticleBase::enable_load()
 //
 // キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
 //
-bool ArticleBase::is_finished()
+bool ArticleBase::is_finished() const
 {
     if( is_cached() && ! enable_load() &&  m_number_max && get_number_seen() >= m_number_max ){
 
@@ -573,7 +573,7 @@ bool ArticleBase::is_finished()
 //
 // 透明あぼーん
 //
-bool ArticleBase::get_abone_transparent()
+bool ArticleBase::get_abone_transparent() const
 {
     if( CONFIG::get_abone_transparent() ) return true;
 
@@ -584,7 +584,7 @@ bool ArticleBase::get_abone_transparent()
 //
 // 連鎖あぼーん
 //
-bool ArticleBase::get_abone_chain()
+bool ArticleBase::get_abone_chain() const
 {
     if( CONFIG::get_abone_chain() ) return true;
 
