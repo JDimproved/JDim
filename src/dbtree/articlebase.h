@@ -313,10 +313,10 @@ namespace DBTREE
         bool is_finished();
 
         // あぼーん情報
-        const std::list< std::string >& get_abone_list_id(){ return m_list_abone_id; }
-        const std::list< std::string >& get_abone_list_name(){ return m_list_abone_name; }
-        const std::list< std::string >& get_abone_list_word(){ return m_list_abone_word; }
-        const std::list< std::string >& get_abone_list_regex(){ return m_list_abone_regex; }
+        const std::list<std::string>& get_abone_list_id() const { return m_list_abone_id; }
+        const std::list<std::string>& get_abone_list_name() const { return m_list_abone_name; }
+        const std::list<std::string>& get_abone_list_word() const { return m_list_abone_word; }
+        const std::list<std::string>& get_abone_list_regex() const { return m_list_abone_regex; }
         const std::unordered_set< int >& get_abone_reses() const noexcept { return m_abone_reses; }
 
         // 透明
