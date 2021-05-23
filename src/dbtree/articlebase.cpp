@@ -96,7 +96,7 @@ ArticleBase::~ArticleBase()
 
 
 // ID がこのスレのものかどうか
-bool ArticleBase::equal( const std::string& datbase, const std::string& id )
+bool ArticleBase::equal( const std::string& datbase, const std::string& id ) const
 {
     return ( id == m_id );
 }

@@ -19,7 +19,7 @@ namespace DBTREE
         ~ArticleLocal();
 
         // ID がこのスレのものかどうか
-        bool equal( const std::string& datbase, const std::string& id ) override;
+        bool equal( const std::string& datbase, const std::string& id ) const override;
 
         // キャッシュの削除をしない
         void delete_cache( const bool cache_only ) override {}
