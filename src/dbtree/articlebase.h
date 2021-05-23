@@ -150,7 +150,7 @@ namespace DBTREE
         void set_number_max( const int number ){ m_number_max = number; }
 
         // スレ速度
-        int get_speed();
+        int get_speed() const;
 
         // キャッシュにあるdatファイルのサイズ
         size_t get_lng_dat();
@@ -237,7 +237,7 @@ namespace DBTREE
         virtual std::string url_subbbscgi() const { return {}; }
 
         // 最終アクセス時間
-        std::string get_access_time_str();
+        std::string get_access_time_str() const;
         time_t get_access_time() const noexcept { return m_access_time; } // 秒
         const std::string& get_access_date(); // string型
         void reset_access_date(){ m_access_date = std::string(); }
@@ -268,12 +268,12 @@ namespace DBTREE
         void reset_since_date(){ m_since_date = std::string(); }
 
         // 更新時間
-        time_t get_time_modified();
-        const std::string& get_date_modified() { return m_date_modified; }
+        std::time_t get_time_modified() const;
+        const std::string& get_date_modified() const { return m_date_modified; }
         void set_date_modified( const std::string& date ){ m_date_modified = date; }
 
         // スレが立ってからの経過時間( 時間 )
-        int get_hour();
+        int get_hour() const;
 
         // http コード
         int get_code() const { return m_code; }
