@@ -126,10 +126,10 @@ const std::string& ArticleBase::get_since_date()
 
 
 // スレ速度
-int ArticleBase::get_speed()
+int ArticleBase::get_speed() const
 {
-    time_t current_t = time( nullptr );
-    return ( static_cast<std::time_t>( get_number() ) * 60 * 60 * 24 ) / MAX( 1, current_t - get_since_time() );
+    std::time_t current = std::time( nullptr );
+    return ( static_cast<std::time_t>( get_number() ) * 60 * 60 * 24 ) / MAX( 1, current - get_since_time() );
 }
 
 
@@ -316,20 +316,19 @@ std::string ArticleBase::get_res_str( int number, bool ref )
 //
 // 更新時刻
 //
-time_t ArticleBase::get_time_modified()
+std::time_t ArticleBase::get_time_modified() const
 {
-    time_t time_out;
-    time_out = MISC::datetotime( m_date_modified );
-    if( time_out == 0 ) time_out = time( nullptr ) - 600;
+    std::time_t time_out = MISC::datetotime( m_date_modified );
+    if( time_out == 0 ) time_out = std::time( nullptr ) - 600;
     return time_out; 
 }
 
 
 
 // スレが立ってからの経過時間( 時間 )
-int ArticleBase::get_hour()
+int ArticleBase::get_hour() const
 {
-    return ( time( nullptr ) - get_since_time() ) / ( 60 * 60 );
+    return ( std::time( nullptr ) - get_since_time() ) / ( 60 * 60 );
 }
 
 
@@ -388,7 +387,7 @@ void ArticleBase::set_org_host( const std::string& host )
 //
 // access_time を 文字列に変換して返す
 //
-std::string ArticleBase::get_access_time_str()
+std::string ArticleBase::get_access_time_str() const
 {
     struct timeval buf{};
     buf.tv_sec = m_access_time;
