@@ -88,7 +88,7 @@ std::string ArticleMachi::url_subbbscgi() const
 
 
 // offlawモードなら更新チェック可能
-bool ArticleMachi::enable_check_update()
+bool ArticleMachi::enable_check_update() const
 {
     return CONFIG::get_use_machi_offlaw();
 }

@@ -76,7 +76,7 @@ NodeTreeBase* Article2ch::create_nodetree()
 //
 // dat落ちしたスレをロードするか
 //
-bool Article2ch::is_load_olddat()
+bool Article2ch::is_load_olddat() const
 {
     // 2chにログインしている場合
     return CORE::get_login2ch()->login_now();

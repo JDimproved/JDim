@@ -25,7 +25,7 @@ namespace DBTREE
       protected:
 
         // dat落ちしたスレをロードするか
-        bool is_load_olddat() override;
+        bool is_load_olddat() const override;
 
       private:
         

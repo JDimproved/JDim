@@ -114,7 +114,7 @@ namespace DBTREE
         void set_is_924( const bool is924 ){ m_924 = is924; }
 
         // dat落ちしたスレをロードするか
-        virtual bool is_load_olddat(){ return false; }
+        virtual bool is_load_olddat() const { return false; }
 
       public:
 
@@ -126,7 +126,7 @@ namespace DBTREE
         const std::string& get_url() const { return m_url; }
 
         // ID がこのスレのものかどうか
-        virtual bool equal( const std::string& datbase, const std::string& id );
+        virtual bool equal( const std::string& datbase, const std::string& id ) const;
 
         // 移転があったときなどにdatファイルのベースアドレスを更新
         void update_datbase( const std::string& datbase );
@@ -404,7 +404,7 @@ namespace DBTREE
       private:
 
         // 更新チェック可能
-        virtual bool enable_check_update() { return true; }
+        virtual bool enable_check_update() const { return true; }
 
         // NodeTree作成
         // もしNodeTreeが作られていなかったら作成

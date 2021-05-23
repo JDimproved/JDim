@@ -30,7 +30,7 @@ ArticleLocal::~ArticleLocal()
 
 
 // ID がこのスレのものかどうか
-bool ArticleLocal::equal( const std::string& datbase, const std::string& id )
+bool ArticleLocal::equal( const std::string& datbase, const std::string& id ) const
 {
     return ( get_url() == datbase + id );
 }
