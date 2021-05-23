@@ -141,11 +141,11 @@ namespace DBTREE
         const std::string& get_id() const { return m_id; }
         const std::string& get_key() const { return m_key; }
         const std::string& get_subject() const { return m_subject; }
-        int get_number() const { return m_number; }
-        int get_number_diff() const { return m_number_diff; }
-        int get_number_new() const { return m_number_new; }
-        int get_number_load() const { return m_number_load; }
-        int get_number_seen() const {  return m_number_seen; }
+        int get_number() const noexcept { return m_number; }
+        int get_number_diff() const noexcept { return m_number_diff; }
+        int get_number_new() const noexcept { return m_number_new; }
+        int get_number_load() const noexcept { return m_number_load; }
+        int get_number_seen() const noexcept {  return m_number_seen; }
 
         void set_number_max( const int number ){ m_number_max = number; }
 
@@ -218,12 +218,12 @@ namespace DBTREE
         // 書き込み時の名前とメアド
         const std::string& get_write_name() const { return m_write_name; }
         void set_write_name( const std::string& str ){ m_save_info = true; m_write_name = str; }
-        bool get_write_fixname() const { return m_write_fixname; }
+        bool get_write_fixname() const noexcept { return m_write_fixname; }
         void set_write_fixname( bool set ){ m_save_info = true;  m_write_fixname = set; }
 
         const std::string& get_write_mail() const { return m_write_mail; }
         void set_write_mail( const std::string& str ){ m_save_info = true;  m_write_mail = str; }
-        bool get_write_fixmail() const { return m_write_fixmail; }
+        bool get_write_fixmail() const noexcept { return m_write_fixmail; }
         void set_write_fixmail( bool set ){ m_save_info = true; m_write_fixmail = set; }
 
         // 書き込みメッセージ作成
@@ -263,7 +263,7 @@ namespace DBTREE
         void clear_post_history();
 
         // スレ立て時刻
-        time_t get_since_time() const { return m_since_time; };
+        time_t get_since_time() const noexcept { return m_since_time; };
         const std::string& get_since_date();
         void reset_since_date(){ m_since_date = std::string(); }
 
@@ -276,14 +276,14 @@ namespace DBTREE
         int get_hour() const;
 
         // http コード
-        int get_code() const { return m_code; }
+        int get_code() const noexcept { return m_code; }
         const std::string& get_str_code() const { return m_str_code; }
 
         // エラーメッセージ
         const std::string& get_ext_err() const { return m_ext_err; }
 
         // DAT落ちかどうかなどの状態 ( global.hで定義 )
-        int get_status() const { return m_status; }
+        int get_status() const noexcept { return m_status; }
         void set_status( const int status ){ m_status = status; }
 
         void set_subject( const std::string& subject );
@@ -300,7 +300,7 @@ namespace DBTREE
         bool save_dat( const std::string& path_to );
 
         // HDDにキャッシュされているか
-        bool is_cached() const { return m_cached; }
+        bool is_cached() const noexcept { return m_cached; }
         void set_cached( const bool set ){ m_cached = set; }
 
         // キャッシュがarticlebaseに読み込まれている(nodetree!=nullptr)か
@@ -364,7 +364,7 @@ namespace DBTREE
 
         // 「スレ」のブックマーク
         void set_bookmarked_thread( const bool bookmarked );
-        bool is_bookmarked_thread() const { return m_bookmarked_thread; }
+        bool is_bookmarked_thread() const noexcept { return m_bookmarked_thread; }
 
         // 「レス」のブックマーク
         int get_num_bookmark() const noexcept { return m_bookmarks.size(); }
@@ -399,7 +399,7 @@ namespace DBTREE
         void copy_article_info( const std::string& url_src );
 
         // スレッド924か
-        bool is_924() const { return m_924; }
+        bool is_924() const noexcept { return m_924; }
 
       private:
 
