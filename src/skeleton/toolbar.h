@@ -174,10 +174,6 @@ namespace SKELETON
         // 書き込みボタン関係
         bool slot_focusout_write_button( GdkEventFocus* event );
 
-        // 閉じるボタン関係
-        static constexpr const char* s_css_leave = u8"jd-leave";
-        void setup_manual_styling( Gtk::ToolButton& toolbutton );
-
         // 検索関係
         void slot_toggle_searchbar();
         void slot_changed_search();

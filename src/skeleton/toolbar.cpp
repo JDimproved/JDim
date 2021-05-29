@@ -31,7 +31,6 @@ using namespace SKELETON;
 
 
 constexpr const char* ToolBar::s_css_label;
-constexpr const char* ToolBar::s_css_leave;
 
 ToolBar::ToolBar( Admin* admin )
     : m_admin( admin )
@@ -755,9 +754,6 @@ Gtk::ToolButton* ToolBar::get_button_close()
         set_tooltip( *m_button_close, CONTROL::get_label_motions( CONTROL::Quit ) );
 
         m_button_close->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_close ) );
-
-        // 閉じるボタンのスタイルを制御可能にするためのセットアップ
-        setup_manual_styling( *m_button_close );
     }
 
     return m_button_close;
@@ -778,9 +774,9 @@ void ToolBar::slot_clicked_close()
     // 枠が残ったままになる
     if( m_admin->get_tab_nums() == 1 ){
         Gtk::Button* button = dynamic_cast< Gtk::Button* >( m_button_close->get_child() );
-        // cssクラスセレクタ leave を追加して枠を消す
-        // Gtk::RELIEF_NORMAL のときは影響を受けない
-        button->get_style_context()->add_class( s_css_leave );
+        // ボタンを一旦非表示にして描画状態をリセットする
+        button->unmap();
+        button->map();
     }
 
     m_admin->set_command( "toolbar_close_view", m_url );
@@ -983,46 +979,4 @@ void ToolBar::slot_lock_clicked()
 {
     if( ! m_enable_slot ) return;
     m_admin->set_command( "toolbar_lock_view", get_url() );
-}
-
-
-void ToolBar::setup_manual_styling( Gtk::ToolButton& toolbutton )
-{
-    auto* const button = dynamic_cast< Gtk::Button* >( toolbutton.get_child() );
-    auto context = button->get_style_context();
-    auto provider = Gtk::CssProvider::create();
-    context->add_provider( provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
-
-    const Gdk::RGBA border_color = context->get_border_color( Gtk::STATE_FLAG_NORMAL );
-    const Gdk::RGBA bg_color = context->get_background_color( Gtk::STATE_FLAG_NORMAL );
-    try {
-        // XXX: フラット表示は装飾がないという前提でcssを設定している
-        provider->load_from_data( Glib::ustring::compose(
-            u8R"(
-            .flat.%1 {
-                background-color: %2;
-                background-image: none;
-                border-color: %3;
-                border-image-source: none;
-                box-shadow: none;
-            }
-            )",
-            s_css_leave, bg_color.to_string(), border_color.to_string() ) );
-    }
-    catch( Gtk::CssProviderError& err ) {
-#ifdef _DEBUG
-        std::cout << "ToolBar::set_custom_flat_relief load css failed." << err.what() << std::endl;
-#endif
-    }
-
-    // enter/leave-notify-eventでcssクラスセレクタを切り替える
-    // フラット表示が設定されているときはシグナルの伝播を止める
-    button->signal_enter_notify_event().connect( [button]( GdkEventCrossing* e ) {
-        button->get_style_context()->remove_class( s_css_leave );
-        return CONFIG::get_flat_button();
-    } );
-    button->signal_leave_notify_event().connect( [button]( GdkEventCrossing* e ) {
-        button->get_style_context()->add_class( s_css_leave );
-        return CONFIG::get_flat_button();
-    } );
 }
