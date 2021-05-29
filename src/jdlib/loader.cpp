@@ -476,6 +476,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     m_data.agent = data_in.agent;
     m_data.origin = data_in.origin;
     m_data.referer = data_in.referer;
+    m_data.accept = data_in.accept;
     m_data.cookie_for_request = data_in.cookie_for_request;
     m_data.timeout = MAX( TIMEOUT_MIN, data_in.timeout );
     m_data.ex_field = data_in.ex_field;
@@ -1080,7 +1081,8 @@ std::string Loader::create_msg_send() const
 
     if( ! m_data.modified.empty() ) msg << "If-Modified-Since: " << m_data.modified << "\r\n";
 
-    msg << "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n";
+    if( ! m_data.accept.empty() ) msg << "Accept: " << m_data.accept << "\r\n";
+    else msg << "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8\r\n";
     msg << "Accept-Language: ja,en-US;q=0.7,en;q=0.3\r\n";
 
     // レジュームするときは gzip は受け取らない

@@ -306,6 +306,11 @@ void Img::download_img( const std::string& refurl, const bool mosaic, const int 
     std::string referer;
     if( CORE::get_urlreplace_manager()->referer( m_url, referer ) ) data.referer = referer;
 
+    // 効率がよい画像形式を受け入れる(Accept)クライアントに対して
+    // URLの拡張子と異なる画像形式でデータを送信するサイトがある
+    // 現状の実装では拡張子の偽装チェックが誤検知するため画像の軽量化は利用しない
+    data.accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+
     if( !start_load( data ) ) receive_finish();
     else CORE::core_set_command( "redraw", m_url );
 }
