@@ -40,6 +40,7 @@ namespace JDLIB
         std::string agent;
         std::string origin;
         std::string referer;
+        std::string accept;
         std::string ex_field;  // 送信時にヘッダに追加するフィールド
         std::string str_header;
         long code;
