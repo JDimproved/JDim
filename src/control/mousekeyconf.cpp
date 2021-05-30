@@ -248,3 +248,19 @@ bool MouseKeyConf::remove_motions( const int id )
 
     return ret;
 }
+
+
+// 設定を一時的にバックアップする (Not thread safe)
+void MouseKeyConf::state_backup()
+{
+    m_backup_vec_items = m_vec_items;
+    m_backup_map_default_motions = m_map_default_motions;
+}
+
+
+// バックアップした設定を復元する (Not thread safe)
+void MouseKeyConf::state_restore()
+{
+    m_vec_items = m_backup_vec_items;
+    m_map_default_motions = m_backup_map_default_motions;
+}

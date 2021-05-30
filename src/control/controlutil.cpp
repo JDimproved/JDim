@@ -25,16 +25,13 @@
 #include <cstring>
 
 
+namespace {
+
 CONTROL::KeyConfig* instance_keyconfig = nullptr;
-CONTROL::KeyConfig* instance_keyconfig_bkup = nullptr;
-
-
 CONTROL::MouseConfig* instance_mouseconfig = nullptr;
-CONTROL::MouseConfig* instance_mouseconfig_bkup = nullptr;
-
-
 CONTROL::ButtonConfig* instance_buttonconfig = nullptr;
-CONTROL::ButtonConfig* instance_buttonconfig_bkup = nullptr;
+
+} // namespace
 
 
 //////////////////////////////////////////////////////////
@@ -57,11 +54,8 @@ CONTROL::KeyConfig* CONTROL::get_keyconfig()
 
 void CONTROL::delete_keyconfig()
 {
-    if( instance_keyconfig ) delete instance_keyconfig;
+    delete instance_keyconfig;
     instance_keyconfig = nullptr;
-
-    if( instance_keyconfig_bkup ) delete instance_keyconfig_bkup;
-    instance_keyconfig_bkup = nullptr;
 }
 
 
@@ -75,11 +69,8 @@ CONTROL::MouseConfig* CONTROL::get_mouseconfig()
 
 void CONTROL::delete_mouseconfig()
 {
-    if( instance_mouseconfig ) delete instance_mouseconfig;
+    delete instance_mouseconfig;
     instance_mouseconfig = nullptr;
-
-    if( instance_mouseconfig_bkup ) delete instance_mouseconfig_bkup;
-    instance_mouseconfig_bkup = nullptr;
 }
 
 
@@ -93,11 +84,8 @@ CONTROL::ButtonConfig* CONTROL::get_buttonconfig()
 
 void CONTROL::delete_buttonconfig()
 {
-    if( instance_buttonconfig ) delete instance_buttonconfig;
+    delete instance_buttonconfig;
     instance_buttonconfig = nullptr;
-
-    if( instance_buttonconfig_bkup ) delete instance_buttonconfig_bkup;
-    instance_buttonconfig_bkup = nullptr;
 }
 
 
@@ -685,15 +673,13 @@ bool CONTROL::operate_common( const int control, const std::string& url, SKELETO
 // キーボード設定の一時的なバックアップと復元
 void CONTROL::bkup_keyconfig()
 {
-    if( ! instance_keyconfig_bkup ) instance_keyconfig_bkup = new CONTROL::KeyConfig();
-    *instance_keyconfig_bkup = * instance_keyconfig;
+    instance_keyconfig->state_backup();
 }
 
 
 void CONTROL::restore_keyconfig()
 {
-    if( ! instance_keyconfig_bkup ) return;
-    *instance_keyconfig = * instance_keyconfig_bkup;
+    instance_keyconfig->state_restore();
 }
 
 
@@ -793,15 +779,13 @@ const std::string convert_mouse_motions_reverse( std::string motions )
 // マウスジェスチャ設定の一時的なバックアップと復元
 void CONTROL::bkup_mouseconfig()
 {
-    if( ! instance_mouseconfig_bkup ) instance_mouseconfig_bkup = new CONTROL::MouseConfig();
-    *instance_mouseconfig_bkup = * instance_mouseconfig;
+    instance_mouseconfig->state_backup();
 }
 
 
 void CONTROL::restore_mouseconfig()
 {
-    if( ! instance_mouseconfig_bkup ) return;
-    *instance_mouseconfig = * instance_mouseconfig_bkup;
+    instance_mouseconfig->state_restore();
 }
 
 
@@ -848,15 +832,13 @@ std::vector< int > CONTROL::check_mouse_conflict( const int mode, const std::str
 // ボタン設定の一時的なバックアップと復元
 void CONTROL::bkup_buttonconfig()
 {
-    if( ! instance_buttonconfig_bkup ) instance_buttonconfig_bkup = new CONTROL::ButtonConfig();
-    *instance_buttonconfig_bkup = * instance_buttonconfig;
+    instance_buttonconfig->state_backup();
 }
 
 
 void CONTROL::restore_buttonconfig()
 {
-    if( ! instance_buttonconfig_bkup ) return;
-    *instance_buttonconfig = * instance_buttonconfig_bkup;
+    instance_buttonconfig->state_restore();
 }
 
 
