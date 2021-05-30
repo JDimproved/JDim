@@ -20,9 +20,11 @@ namespace CONTROL
 {
     class MouseKeyConf
     {
-        std::vector< MouseKeyItem > m_vec_items;
-        std::map< int, std::string > m_map_default_motions;
-        
+        std::vector<MouseKeyItem> m_vec_items;
+        std::vector<MouseKeyItem> m_backup_vec_items;
+        std::map<int, std::string> m_map_default_motions;
+        std::map<int, std::string> m_backup_map_default_motions;
+
       public:
 
         MouseKeyConf();
@@ -64,6 +66,10 @@ namespace CONTROL
 
         // 指定したIDの操作を全て削除
         bool remove_motions( const int id );
+
+        // 設定の一時的なバックアップと復元 (Not thread safe)
+        void state_backup();
+        void state_restore();
 
       protected:
 
