@@ -61,6 +61,12 @@ int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_
             ret = DBTREE::NODE_ZWSP;
             break;
 
+        // U+2028 LINE SEPARATOR を描画処理に渡すと改行が乱れるため空白に置き換える (webブラウザと同じ挙動)
+        case CP_LINE_SEPARATOR:
+            out_char[0] = ' ';
+            n_out = 1;
+            break;
+
         default:
             n_out = MISC::ucs2toutf8( num, out_char );
             if( ! n_out ) return DBTREE::NODE_NONE;
