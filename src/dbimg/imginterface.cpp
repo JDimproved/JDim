@@ -27,6 +27,13 @@ void DBIMG::delete_root()
 }
 
 
+bool DBIMG::is_webp_support()
+{
+    if( instance_dbimg_root ) return instance_dbimg_root->is_webp_support();
+    return false;
+}
+
+
 void DBIMG::clock_in()
 {
     if( instance_dbimg_root ) instance_dbimg_root->clock_in();

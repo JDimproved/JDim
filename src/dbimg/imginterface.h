@@ -43,6 +43,8 @@ namespace DBIMG
     void create_root();
     void delete_root();
 
+    bool is_webp_support();
+
     void clock_in();
 
     // 読み込み待ちのためクロックを回すImgクラスをセット/リセット
