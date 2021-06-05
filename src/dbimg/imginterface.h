@@ -33,6 +33,7 @@ namespace DBIMG
         T_WRITEFAILED,
         T_NOT_FOUND,
         T_NODATA,
+        T_NOT_SUPPORT, // 読み込みに対応していない画像
 
         T_UNKNOWN,    // 画像ではない
         T_FORCEIMAGE, // 拡張子がなくても画像として扱う

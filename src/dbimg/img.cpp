@@ -496,9 +496,13 @@ void Img::receive_data( const char* data, size_t size )
             std::cout << data << std::endl;
 #endif
         }
+        else if( m_type == T_NOT_SUPPORT ) {
+            // GdkPixbufが未対応で表示できない画像なら読み込みを中止する
+            stop_load();
+        }
     }
 
-    if( m_fout && m_type != T_NOIMG && m_type != T_NOT_FOUND ){
+    if( m_fout && m_type != T_NOIMG && m_type != T_NOT_FOUND && m_type != T_NOT_SUPPORT ) {
 
         if( fwrite( data, 1, size, m_fout ) != size ){
             m_type = T_WRITEFAILED; // 書き込み失敗
@@ -608,6 +612,13 @@ void Img::receive_finish()
 
         set_code( HTTP_ERR );
         set_str_code( "画像サイズを取得出来ません" );
+        set_current_length( 0 );
+    }
+
+    else if( m_type == T_NOT_SUPPORT ) {
+        set_code( HTTP_ERR );
+        set_str_code( "拡張子が偽装されています…" + get_contenttype()
+                      + "の表示にはGdkPixbufローダーのインストールが必要です" );
         set_current_length( 0 );
     }
 

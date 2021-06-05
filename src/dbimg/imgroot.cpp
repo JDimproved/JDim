@@ -116,6 +116,9 @@ Img* ImgRoot::get_img( const std::string& url )
 // 画像データの先頭のシグネチャを見て画像のタイプを取得
 // 画像ではない場合は T_NOIMG を返す
 //
+// また、拡張子が偽装されていると未対応の画像が読み込まれる場合がある
+// 読み込みが未対応の場合は T_NOT_SUPPORT を返す
+//
 int ImgRoot::get_image_type( const unsigned char *sign ) const
 {
     int type = T_NOIMG;
@@ -152,7 +155,7 @@ int ImgRoot::get_image_type( const unsigned char *sign ) const
              && sign[ 8 ] == 'W'
              && sign[ 9 ] == 'E'
              && sign[ 10 ] == 'B'
-             && sign[ 11 ] == 'P' ) type = T_WEBP;
+             && sign[ 11 ] == 'P' ) type = m_webp_support ? T_WEBP : T_NOT_SUPPORT;
 
     // avif
     else if( sign[ 4 ] == 'f'
@@ -162,7 +165,7 @@ int ImgRoot::get_image_type( const unsigned char *sign ) const
              && sign[ 8 ] == 'a'
              && sign[ 9 ] == 'v'
              && sign[ 10 ] == 'i'
-             && sign[ 11 ] == 'f' ) type = T_AVIF;
+             && sign[ 11 ] == 'f' ) type = m_avif_support ? T_AVIF : T_NOT_SUPPORT;
 
     return type;
 }
