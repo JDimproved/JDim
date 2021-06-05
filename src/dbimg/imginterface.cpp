@@ -33,6 +33,12 @@ bool DBIMG::is_webp_support()
     return false;
 }
 
+bool DBIMG::is_avif_support()
+{
+    if( instance_dbimg_root ) return instance_dbimg_root->is_avif_support();
+    return false;
+}
+
 
 void DBIMG::clock_in()
 {

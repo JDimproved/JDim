@@ -311,6 +311,7 @@ void Img::download_img( const std::string& refurl, const bool mosaic, const int 
     // 拡張子の偽装をチェックしないURLなら画像の軽量化を利用する
     data.accept = "text/html,application/xhtml+xml,application/xml;q=0.9,";
     if( m_imgctrl & CORE::IMGCTRL_GENUINE ) {
+        if( DBIMG::is_avif_support() ) data.accept.append( "image/avif," );
         if( DBIMG::is_webp_support() ) data.accept.append( "image/webp," );
     }
     data.accept.append( "*/*;q=0.8" );

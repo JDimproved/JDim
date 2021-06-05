@@ -44,6 +44,7 @@ namespace DBIMG
     void delete_root();
 
     bool is_webp_support();
+    bool is_avif_support();
 
     void clock_in();
 
