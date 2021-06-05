@@ -27,6 +27,9 @@ namespace DBIMG
         ImgRoot();
         ~ImgRoot();
 
+        bool is_webp_support() const noexcept { return m_webp_support; }
+        bool is_avif_support() const noexcept { return m_avif_support; }
+
         void clock_in();
 
         // ロード待ちのためクロックを回すImgクラスをセット/リセット
