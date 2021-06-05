@@ -283,6 +283,7 @@ enum
     UCS_ZWJ     = 8205,
     UCS_LRM     = 8206,
     UCS_RLM     = 8207,
+    CP_LINE_SEPARATOR = 8232,
 };
 
 
