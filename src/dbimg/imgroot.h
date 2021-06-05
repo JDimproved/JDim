@@ -46,6 +46,7 @@ namespace DBIMG
 
         // 画像データの先頭のシグネチャを見て画像のタイプを取得
         // 画像ではない場合は T_NOIMG を返す
+        // 読み込みが未対応の場合は T_NOT_SUPPORT を返す
         int get_image_type( const unsigned char *sign ) const;
 
         // 拡張子から画像タイプを取得
