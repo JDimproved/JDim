@@ -84,13 +84,13 @@ void AAManager::load_label()
 #endif
 
             // 先頭に"**"がある場合は、"*"を一つ取り除いて一行AAとして扱う
-            if( asciiart.find( "**", 0 ) == 0 )
+            if( asciiart.rfind( "**", 0 ) == 0 )
             {
                 // **example -> *example
                 asciiart.erase( 0, 1 );
             }
             // "*"が一つだけある場合は、"*"を取り除いてファイル名とみなす
-            else if( asciiart.find( "*", 0 ) == 0 )
+            else if( asciiart.rfind( '*', 0 ) == 0 )
             {
                 // *example -> example
                 asciiart.erase( 0, 1 );
