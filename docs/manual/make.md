@@ -47,6 +47,7 @@ layout: default
 - zlib
 
 #### オプション
+- meson 0.49.0 以上
 - alsa-lib (`--with-alsa`)
 - openssl (`--with-tls=openssl`)
 - oniguruma (`--with-regex=oniguruma`)
@@ -59,7 +60,7 @@ layout: default
 
 OSやディストリビューション別の解説は [#592][dis592] を参照。
 
-configure のかわりに [meson] を使ってビルドする方法は [GitHub][dis556] を参照。
+configure のかわりに [meson] を使ってビルドする方法は [#556][dis556] を参照。
 <small>(v0.4.0+から暫定サポート)</small>
 
 WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
