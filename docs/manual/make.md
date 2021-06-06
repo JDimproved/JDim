@@ -47,15 +47,24 @@ layout: default
 - zlib
 
 #### オプション
+- meson 0.49.0 以上
 - alsa-lib (`--with-alsa`)
 - openssl (`--with-tls=openssl`)
 - oniguruma (`--with-regex=oniguruma`)
 - migemo (`--with-migemo`)
 
-OSやディストリビューション別の解説は[OS/ディストリビューション別インストール方法][wiki-install] (JD wiki) を参照。
+#### 画像表示に必要なパッケージ
+インストールされていない環境では`.webp`や`.avif`で終わるURLは通常リンクになる。
+- libwebp, webp-pixbuf-loader (WebP)
+- libavif (AVIF)
 
-configure のかわりに [meson] を使ってビルドする方法は [GitHub][dis556] を参照。
+OSやディストリビューション別の解説は [#592][dis592] を参照。
+
+configure のかわりに [meson] を使ってビルドする方法は [#556][dis556] を参照。
 <small>(v0.4.0+から暫定サポート)</small>
+
+WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
+<small>(v0.5.0+からサポート)</small>
 
 
 <a name="make-configure"></a>
@@ -150,6 +159,7 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
 以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。
 
 
-[wiki-install]: https://ja.osdn.net/projects/jd4linux/wiki/OS%2F%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95
 [meson]: https://mesonbuild.com
 [dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"
+[dis592]: https://github.com/JDimproved/JDim/discussions/592 "OS/ディストリビューション別インストール方法 - Discussions #592"
+[dis737]: https://github.com/JDimproved/JDim/discussions/737 "[v0.5.0+] WebPやAVIF形式の画像を表示する方法 - Discussions #737"
