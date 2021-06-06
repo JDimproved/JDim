@@ -52,10 +52,18 @@ layout: default
 - oniguruma (`--with-regex=oniguruma`)
 - migemo (`--with-migemo`)
 
+#### 画像表示に必要なパッケージ
+インストールされていない環境では`.webp`や`.avif`で終わるURLは通常リンクになる。
+- libwebp, webp-pixbuf-loader (WebP)
+- libavif (AVIF)
+
 OSやディストリビューション別の解説は [#592][dis592] を参照。
 
 configure のかわりに [meson] を使ってビルドする方法は [GitHub][dis556] を参照。
 <small>(v0.4.0+から暫定サポート)</small>
+
+WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
+<small>(v0.5.0+からサポート)</small>
 
 
 <a name="make-configure"></a>
@@ -153,3 +161,4 @@ configure のかわりに [meson] を使ってビルドする方法は [GitHub][
 [meson]: https://mesonbuild.com
 [dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"
 [dis592]: https://github.com/JDimproved/JDim/discussions/592 "OS/ディストリビューション別インストール方法 - Discussions #592"
+[dis737]: https://github.com/JDimproved/JDim/discussions/737 "[v0.5.0+] WebPやAVIF形式の画像を表示する方法 - Discussions #737"

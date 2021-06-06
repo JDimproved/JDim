@@ -40,10 +40,19 @@
   ・oniguruma (--with-regex=oniguruma)
   ・migemo (--with-migemo)
 
+  画像表示に必要なパッケージ
+  インストールされていない環境では`.webp`や`.avif`で終わるURLは通常リンクになる。
+
+  ・libwebp, webp-pixbuf-loader (WebP)
+  ・libavif (AVIF)
+
   OSやディストリビューション別の解説は https://github.com/JDimproved/JDim/discussions/592 を参照。
 
   configure のかわりに meson を使ってビルドする方法は https://github.com/JDimproved/JDim/discussions/556 を参照。
   (v0.4.0+から暫定サポート)
+
+  GTKがデフォルトでサポートしていないWebPやAVIF形式の画像を表示する方法は
+  https://github.com/JDimproved/JDim/discussions/737 を参照。(v0.5.0+からサポート)
 
 * ビルド方法( configure + make の場合 )
 
