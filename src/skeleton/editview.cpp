@@ -479,8 +479,8 @@ void EditTextView::on_populate_popup( Gtk::Menu* menu )
     menuitem->signal_activate().connect( sigc::mem_fun( *this, &EditTextView::slot_write_jdinfo ) );
     menu->prepend( *menuitem );
 
-    // 変換(スペース⇔&nbsp;)
-    menuitem = Gtk::manage( new Gtk::MenuItem( "変換(スペース⇔&nbsp;)" ) );
+    // 変換(スペース⇔&#160;)
+    menuitem = Gtk::manage( new Gtk::MenuItem( "変換(スペース⇔&#160;)" ) );
     menuitem->signal_activate().connect( sigc::mem_fun( *this, &EditTextView::slot_convert_space ) );
     menu->prepend( *menuitem );
 
@@ -536,7 +536,7 @@ void EditTextView::slot_quote_clipboard()
 
 
 //
-// 変換(スペース⇔&nbsp;)
+// 変換(スペース⇔&#160;)
 //
 void EditTextView::slot_convert_space()
 {
@@ -546,10 +546,10 @@ void EditTextView::slot_convert_space()
     std::string text = buffer->get_text();
     std::string converted;
 
-    // &nbsp;が含まれていたらスペースに変換する
-    if( text.find( "&nbsp;", 0 ) != std::string::npos )
+    // &#160;が含まれていたらスペースに変換する
+    if( text.find( "&#160;" ) != std::string::npos )
     {
-        converted = MISC::replace_str( text, "&nbsp;", " " );
+        converted = MISC::replace_str( text, "&#160;", " " );
     }
     else
     {
@@ -561,13 +561,13 @@ void EditTextView::slot_convert_space()
                 // 行末のスペースを取り除く
                 line.erase( line.find_last_not_of( ' ' ) + 1 );
 
-                // 行頭のスペースを&nbsp;に変換する
-                if( ! line.empty() && line.front() == ' ' ) {
-                    line.replace( 0, 1, "&nbsp;" );
+                // 行頭のスペースを&#160;に変換する
+                if( line.front() == ' ' ) {
+                    line.replace( 0, 1, "&#160;" );
                 }
 
-                // 連続スペースを&nbsp;に変換する
-                converted.append( MISC::replace_str( line, "  ", " &nbsp;" ) );
+                // 連続スペースを&#160;に変換する
+                converted.append( MISC::replace_str( line, "  ", " &#160;" ) );
             }
 
             converted.push_back( '\n' );
