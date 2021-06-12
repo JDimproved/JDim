@@ -2221,7 +2221,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
     }
 
     // レスポップアップ
-    else if( url.find( PROTO_ANCHORE ) == 0 ){
+    else if( url.rfind( PROTO_ANCHORE, 0 ) == 0 ){
 
         args.arg1 = url.substr( strlen( PROTO_ANCHORE) );
         args.arg2 = "false"; // 板名、スレ名非表示
@@ -2235,7 +2235,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
     }
 
     // レス番号
-    else if( url.find( PROTO_RES ) == 0 ){
+    else if( url.rfind( PROTO_RES, 0 ) == 0 ){
 
         args.arg1 = url.substr( strlen( PROTO_RES ) );
         int tmp_num = atoi( args.arg1.c_str() );
@@ -2261,7 +2261,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
     }
 
     // 抽出(or)
-    else if( url.find( PROTO_OR ) == 0 ){
+    else if( url.rfind( PROTO_OR, 0 ) == 0 ){
 
         std::string url_tmp = url.substr( strlen( PROTO_OR ) );
 
@@ -2277,7 +2277,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
     }
 
     // しおり
-    else if( url.find( PROTO_BM ) == 0 ){
+    else if( url.rfind( PROTO_BM, 0 ) == 0 ){
 
         const std::string url_tmp = url.substr( strlen( PROTO_BM ) );
         const std::string url_dat = DBTREE::url_dat( url_tmp );
@@ -2287,7 +2287,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
     }
 
     // 名前ポップアップ
-    else if( CONFIG::get_namepopup_by_mo() && url.find( PROTO_NAME ) == 0 ){
+    else if( CONFIG::get_namepopup_by_mo() && url.rfind( PROTO_NAME, 0 ) == 0 ){
 
         int num_name = m_article->get_num_name( res_number );
         args.arg1 = m_article->get_name( res_number );
@@ -2298,7 +2298,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
     }
 
     // IDポップアップ
-    else if( CONFIG::get_idpopup_by_mo() && url.find( PROTO_ID ) == 0 ){
+    else if( CONFIG::get_idpopup_by_mo() && url.rfind( PROTO_ID, 0 ) == 0 ){
 
         args.arg1 = m_article->get_id_name( res_number );
         int num_id = m_article->get_num_id_name( res_number );
@@ -2309,7 +2309,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
     }
 
     // ID:〜の範囲選択の上にポインタがあるときIDポップアップ
-    else if( url.find( "ID:" ) == 0 ){
+    else if( url.rfind( "ID:", 0 ) == 0 ){
 
         args.arg1 = PROTO_ID + url;
         int num_id = m_article->get_num_id_name( args.arg1 );
@@ -2371,7 +2371,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
         std::string status_url;
 
         // デコードが必要な物
-        if( url.find( "%" ) != std::string::npos )
+        if( url.find( '%' ) != std::string::npos )
         {
             std::string tmp = MISC::url_decode( url );
 
@@ -2465,12 +2465,12 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
     const bool res_exist = ( ! m_article->empty() && m_article->res_header( res_number ) );
 
     // ssspの場合は PROTO_SSSP が前に付いているので取り除く
-    const bool sssp = ( url.find( PROTO_SSSP ) == 0 );
+    const bool sssp = ( url.rfind( PROTO_SSSP, 0 ) == 0 );
     if( sssp ) url = url.substr( strlen( PROTO_SSSP ) );
 
     /////////////////////////////////////////////////////////////////
     // ID クリック
-    if( url.find( PROTO_ID ) == 0 ){
+    if( url.rfind( PROTO_ID, 0 ) == 0 ){
 
         if( ! res_exist ) return true;
 
@@ -2501,7 +2501,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // 名前クリック
-    else if( url.find( PROTO_NAME ) == 0 ){
+    else if( url.rfind( PROTO_NAME, 0 ) == 0 ){
 
         if( ! res_exist ) return true;
 
@@ -2532,7 +2532,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // あぼーんクリック
-    else if( url.find( PROTO_ABONE ) == 0 ){
+    else if( url.rfind( PROTO_ABONE, 0 ) == 0 ){
 
         hide_popup();
 
@@ -2543,7 +2543,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // 壊れていますクリック
-    else if( url.find( PROTO_BROKEN ) == 0 ){
+    else if( url.rfind( PROTO_BROKEN, 0 ) == 0 ){
 
         hide_popup();
 
@@ -2554,7 +2554,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // 荒らし報告用URL表示クリック
-    else if( url.find( PROTO_URL4REPORT ) == 0 ){
+    else if( url.rfind( PROTO_URL4REPORT, 0 ) == 0 ){
 
         hide_popup();
         m_show_url4report = true;
@@ -2563,7 +2563,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // 書き込みログ表示クリック
-    else if( url.find( PROTO_POSTLOG ) == 0 ){
+    else if( url.rfind( PROTO_POSTLOG, 0 ) == 0 ){
 
         hide_popup();
 
@@ -2572,7 +2572,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // BE クリック
-    else if( url.find( PROTO_BE ) == 0 ){
+    else if( url.rfind( PROTO_BE, 0 ) == 0 ){
 
         if( ! res_exist ) return true;
 
@@ -2594,7 +2594,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // アンカーをクリック
-    else if( url.find( PROTO_ANCHORE ) == 0 ){
+    else if( url.rfind( PROTO_ANCHORE, 0 ) == 0 ){
 
         if( is_popup_shown() && control.button_alloted( event, CONTROL::PopupWarpButton ) ) warp_pointer_to_popup();
 
@@ -2619,7 +2619,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // レス番号クリック
-    else if( url.find( PROTO_RES ) == 0 ){
+    else if( url.rfind( PROTO_RES, 0 ) == 0 ){
 
         if( ! res_exist ) return true;
 
@@ -2660,7 +2660,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // OR抽出
-    else if( url.find( PROTO_OR ) == 0 ){
+    else if( url.rfind( PROTO_OR, 0 ) == 0 ){
 
         const std::string url_tmp = url.substr( strlen( PROTO_OR ) );
         int i = url_tmp.find( KEYWORD_SIGN );
@@ -2674,7 +2674,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
     /////////////////////////////////////////////////////////////////
     // しおり抽出
-    else if( url.find( PROTO_BM ) == 0 ){
+    else if( url.rfind( PROTO_BM, 0 ) == 0 ){
 
         const std::string url_tmp = url.substr( strlen( PROTO_BM ) );
         const std::string url_dat = DBTREE::url_dat( url_tmp );
@@ -2750,10 +2750,10 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         std::string tmp_url = url;
 
         // 相対パス
-        if( url.find( "./" ) == 0 ) tmp_url = DBTREE::url_boardbase( m_url_article ) + url.substr( 1 );
+        if( url.rfind( "./", 0 ) == 0 ) tmp_url = DBTREE::url_boardbase( m_url_article ) + url.substr( 1 );
 
         // 絶対パス
-        else if( url.find( "/" ) == 0 ) tmp_url = DBTREE::url_root( m_url_article ) + url.substr( 1 );
+        else if( url.rfind( '/', 0 ) == 0 ) tmp_url = DBTREE::url_root( m_url_article ) + url.substr( 1 );
 
         hide_popup();
 
@@ -2995,12 +2995,12 @@ void ArticleViewBase::activate_act_before_popupmenu( const std::string& url )
         if( act2 ) act2->set_sensitive( true );
 
         // レス番号クリックの場合
-        if( url.find( PROTO_RES ) == 0 ){
+        if( url.rfind( PROTO_RES, 0 ) == 0 ){
             m_url_tmp = DBTREE::url_readcgi( m_url_article, atoi( url.substr( strlen( PROTO_RES ) ).c_str() ), 0 );
         }
 
         // アンカークリックの場合
-        else if( url.find( PROTO_ANCHORE ) == 0 ){
+        else if( url.rfind( PROTO_ANCHORE, 0 ) == 0 ){
             m_url_tmp = DBTREE::url_readcgi( m_url_article, atoi( url.substr( strlen( PROTO_ANCHORE ) ).c_str() ), 0 );
         }
 
@@ -3331,32 +3331,32 @@ Gtk::Menu* ArticleViewBase::get_popupmenu( const std::string& url )
     }
 
     // レス番号ポップアップメニュー
-    else if( url.find( PROTO_RES ) == 0 ){
+    else if( url.rfind( PROTO_RES, 0 ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_res" ) );
     }
 
     //　アンカーポップアップメニュー
-    else if( url.find( PROTO_ANCHORE ) == 0 ){
+    else if( url.rfind( PROTO_ANCHORE, 0 ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_anc" ) );
     }
 
     // IDポップアップメニュー
-    else if( url.find( PROTO_ID ) == 0 ){
+    else if( url.rfind( PROTO_ID, 0 ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_id" ) );
     }
 
     // 名前ポップアップメニュー
-    else if( url.find( PROTO_NAME ) == 0 ){
+    else if( url.rfind( PROTO_NAME, 0 ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_name" ) );
     }
 
     // あぼーんポップアップメニュー
-    else if( url.find( PROTO_ABONE ) == 0 ){
+    else if( url.rfind( PROTO_ABONE, 0 ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_abone" ) );
     }
 
     // 壊れていますポップアップメニュー
-    else if( url.find( PROTO_BROKEN ) == 0 ){
+    else if( url.rfind( PROTO_BROKEN, 0 ) == 0 ){
         popupmenu = dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( "/popup_menu_broken" ) );
     }
 
@@ -3403,7 +3403,7 @@ void ArticleViewBase::slot_drawout_selection_str()
     std::string query = m_drawarea->str_selection();
     query = MISC::remove_spaces( query );
     query = MISC::replace_str( query, "\n", "" );
-    if( query.find( " " ) != std::string::npos ) query = "\"" + query + "\"";
+    if( query.find( ' ' ) != std::string::npos ) query = "\"" + query + "\"";
 
     if( query.empty() ) return;
 
