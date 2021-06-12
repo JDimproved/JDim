@@ -2252,7 +2252,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
             locked = ARTICLE::get_admin()->is_locked( command.url );
             current_url = ARTICLE::get_admin()->get_current_url();
-            if( current_url.find( command.url ) == 0 ) current_url = command.url;
+            if( current_url.rfind( command.url, 0 ) == 0 ) current_url = command.url;
 
             // タブを開く位置を取得
             const std::list<std::string> list_urls = ARTICLE::get_admin()->get_URLs();
@@ -3212,10 +3212,10 @@ void Core::exec_command()
 
         // プロトコルが指定されていない場合
         command.url = MISC::remove_space( command.url );
-        if( command.url.find( "http://" ) != 0
-            && command.url.find( "https://" ) != 0
-            && command.url.find( "file://" ) != 0
-            && command.url.find( "ftp://" ) != 0 ){
+        if( command.url.rfind( "http://", 0 ) != 0
+            && command.url.rfind( "https://", 0 ) != 0
+            && command.url.rfind( "file://", 0 ) != 0
+            && command.url.rfind( "ftp://", 0 ) != 0 ){
 
             // ローカルのファイルかチェック
             std::string path_real = CACHE::get_realpath( command.url );
