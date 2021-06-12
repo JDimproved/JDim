@@ -1406,7 +1406,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         if( name.empty() ) name = name_old;
 
         basicauth = DBTREE::board_basicauth( url_old );
-        size_t i = basicauth.find( ":" );
+        size_t i = basicauth.find( ':' );
 
         if( id.empty() && i != std::string::npos ){
 
@@ -1454,7 +1454,7 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         if( regex.exec( "(.*)/[^/]+\\.html?$" , url, offset, icase, newline, usemigemo, wchar ) ) url = regex.str( 1 );
 
         // 末尾の / を取り除く
-        while( url.rfind( "/" ) == url.length() -1 ) url = url.substr( 0, url.length() -1 );
+        while( url.rfind( '/' ) == url.length() -1 ) url = url.substr( 0, url.length() -1 );
 
         // url の最後に/を付ける
         url += "/";
