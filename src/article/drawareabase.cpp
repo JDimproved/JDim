@@ -4478,13 +4478,13 @@ std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos 
                 if( select_str.empty() ) break;
 
                 std::string tmpstr, tmpstr2;
-                if( select_str.find( "-" ) == 0 ) tmpstr = tmpstr2 = "-";
-                else if ( select_str.find( "=" ) == 0 ) tmpstr = tmpstr2 = "=";
-                else if ( select_str.find( "," ) == 0 ) tmpstr = tmpstr2 = ",";
-                else if( select_str.find( "－" ) == 0 ){ tmpstr = "－"; tmpstr2 = "-"; }
-                else if( select_str.find( "−" ) == 0 ){ tmpstr = "−"; tmpstr2 = "-"; }
-                else if ( select_str.find( "＝" ) == 0 ){ tmpstr = "＝"; tmpstr2 = "="; }
-                else if ( select_str.find( "，" ) == 0 ){ tmpstr = "，"; tmpstr2 = ","; }
+                if( select_str.rfind( '-', 0 ) == 0 ) tmpstr = tmpstr2 = "-";
+                else if ( select_str.rfind( '=', 0 ) == 0 ) tmpstr = tmpstr2 = "=";
+                else if ( select_str.rfind( ',', 0 ) == 0 ) tmpstr = tmpstr2 = ",";
+                else if( select_str.rfind( "－", 0 ) == 0 ){ tmpstr = "－"; tmpstr2 = "-"; }
+                else if( select_str.rfind( "−", 0 ) == 0 ){ tmpstr = "−"; tmpstr2 = "-"; }
+                else if ( select_str.rfind( "＝", 0 ) == 0 ){ tmpstr = "＝"; tmpstr2 = "="; }
+                else if ( select_str.rfind( "，", 0 ) == 0 ){ tmpstr = "，"; tmpstr2 = ","; }
 
                 select_str = select_str.substr( tmpstr.length() );
 
@@ -4495,7 +4495,7 @@ std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos 
         }
 
         // ID
-        else if( select_str.find( "ID:" ) == 0 ) url = select_str;
+        else if( select_str.rfind( "ID:", 0 ) == 0 ) url = select_str;
     }
 
 #ifdef _DEBUG
