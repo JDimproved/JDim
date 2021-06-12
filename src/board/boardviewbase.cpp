@@ -191,7 +191,7 @@ SKELETON::Admin* BoardViewBase::get_admin()
 //
 void BoardViewBase::update_url( const std::string& url_old, const std::string& url_new )
 {
-    if( m_url_board.find( url_old ) == 0 ) m_url_board = url_new + m_url_board.substr( url_old.length() );
+    if( m_url_board.rfind( url_old, 0 ) == 0 ) m_url_board = url_new + m_url_board.substr( url_old.length() );
 
     SKELETON::View::update_url( url_old, url_new );
 }
