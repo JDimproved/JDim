@@ -289,7 +289,7 @@ std::string CACHE::path_article_info( const std::string& url, const std::string&
     std::string id_str = id;
 
     // idに拡張子が付いてたら取る
-    size_t i = id.find( "." );
+    size_t i = id.find( '.' );
     if( i != std::string::npos ) id_str = id.substr( 0, i );
 
     return CACHE::path_article_info_root( url ) + id_str;
@@ -824,7 +824,7 @@ bool CACHE::jdmkdir( const std::string& path )
 
     std::string target = path;
     
-    if( path.find( "~/" ) == 0 ){
+    if( path.rfind( "~/", 0 ) == 0 ){
 
         std::string homedir = MISC::getenv_limited( ENV_HOME, MAX_SAFE_PATH );
         if( homedir.empty() ) return false;
@@ -842,7 +842,7 @@ bool CACHE::jdmkdir( const std::string& path )
     // ルートからディレクトリがあるかチェックしていく。無ければ作る
     size_t i = 0;
 
-    while( ( i = target.find( "/", i ) ) != std::string::npos ){
+    while( ( i = target.find( '/', i ) ) != std::string::npos ){
 
         ++i;
         std::string currentdir = target.substr( 0, i );
