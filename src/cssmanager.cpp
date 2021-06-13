@@ -229,13 +229,13 @@ bool Css_Manager::read_css()
     css_data = MISC::remove_str( css_data, "/*", "*/" );
 
     size_t start_pos = 0, l_pos = 0, r_pos = 0;
-    while( ( l_pos = css_data.find( "{", start_pos ) ) != std::string::npos &&
-            ( r_pos = css_data.find( "}", l_pos + 1 ) ) != std::string::npos )
+    while( ( l_pos = css_data.find( '{', start_pos ) ) != std::string::npos &&
+            ( r_pos = css_data.find( '}', l_pos + 1 ) ) != std::string::npos )
     {
         // セレクタ部分を取り出す
         std::string selector = MISC::remove_spaces( css_data.substr( start_pos, l_pos - start_pos ) );
         start_pos = r_pos + 1;
-        if( selector.find( "." ) == 0 ) selector.erase( 0, 1 );
+        if( selector.rfind( '.', 0 ) == 0 ) selector.erase( 0, 1 );
         if( selector.empty() ) break;
 
         // {中身}を取り出す
@@ -253,7 +253,7 @@ bool Css_Manager::read_css()
         std::list< std::string >::iterator it = properties.begin();
         while( it != properties.end() )
         {
-            size_t colon = (*it).find( ":" );
+            size_t colon = (*it).find( ':' );
             std::string key = MISC::remove_spaces( (*it).substr( 0, colon ) );
             std::string value = MISC::remove_spaces( (*it).substr( colon + 1 ) );
 
@@ -739,7 +739,7 @@ bool Css_Manager::read_html()
         std::cout << "block = " << block << std::endl;
 #endif
 
-        std::string::size_type pos = block.find( "<" );
+        std::string::size_type pos = block.find( '<' );
         if( pos == std::string::npos ){
             create_textnode( block.c_str() );
             continue;
@@ -761,17 +761,17 @@ bool Css_Manager::read_html()
 #endif
             create_divnode( regex.str( 1 ) );
         }
-        else if( block.find( "number" ) == 0 ) create_blocknode( DBTREE::BLOCK_NUMBER );
-        else if( block.find( "namelink" ) == 0 ) create_blocknode( DBTREE::BLOCK_NAMELINK );
-        else if( block.find( "name" ) == 0 ) create_blocknode( DBTREE::BLOCK_NAME );
-        else if( block.find( "mail" ) == 0 ) create_blocknode( DBTREE::BLOCK_MAIL );
-        else if( block.find( "date" ) == 0 ) create_blocknode( DBTREE::BLOCK_DATE );
-        else if( block.find( "id" ) == 0 ) create_blocknode( DBTREE::BLOCK_ID_NAME );
-        else if( block.find( "message" ) == 0 ){
+        else if( block.rfind( "number", 0 ) == 0 ) create_blocknode( DBTREE::BLOCK_NUMBER );
+        else if( block.rfind( "namelink", 0 ) == 0 ) create_blocknode( DBTREE::BLOCK_NAMELINK );
+        else if( block.rfind( "name", 0 ) == 0 ) create_blocknode( DBTREE::BLOCK_NAME );
+        else if( block.rfind( "mail", 0 ) == 0 ) create_blocknode( DBTREE::BLOCK_MAIL );
+        else if( block.rfind( "date", 0 ) == 0 ) create_blocknode( DBTREE::BLOCK_DATE );
+        else if( block.rfind( "id", 0 ) == 0 ) create_blocknode( DBTREE::BLOCK_ID_NAME );
+        else if( block.rfind( "message", 0 ) == 0 ){
             DOM* dom = create_blocknode( DBTREE::BLOCK_MES );
             if( block.find( " br=\"no\"" ) != std::string::npos ) dom->attr |= DOMATTR_NOBR;
         }
-        else if( block.find( "image" ) == 0 ) create_imagenode();
+        else if( block.rfind( "image", 0 ) == 0 ) create_imagenode();
     }
 
     return true;
