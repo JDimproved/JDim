@@ -171,7 +171,7 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
 
         if( m_tmp_buffer.empty() ){
 
-            if( line.find( "<dt>" ) == 0 ){
+            if( line.rfind( "<dt>", 0 ) == 0 ){
 
                 // 既に読み込んでいる場合は飛ばす
                 char num_tmp[ 8 ];

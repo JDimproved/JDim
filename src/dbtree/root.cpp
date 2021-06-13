@@ -1432,7 +1432,7 @@ std::string Root::is_board_moved( const std::string& url,
     std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
     for( ; it_move != m_movetable.end(); ++it_move ){
 
-        if( url.find( ( *it_move ).old_root ) == 0
+        if( url.rfind( ( *it_move ).old_root, 0 ) == 0
             && url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos ){
 
             const std::string new_url = ( *it_move ).new_root + ( *it_move ).new_path_board + "/";

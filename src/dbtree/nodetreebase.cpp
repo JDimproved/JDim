@@ -298,7 +298,7 @@ std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std:
 
                     int num_to = 0;
                     size_t i;
-                    if( ( i = ( *it_pl ).find( "-" ) ) != std::string::npos ) num_to = atol( ( *it_pl ).substr( i +1 ).c_str() );
+                    if( ( i = ( *it_pl ).find( '-' ) ) != std::string::npos ) num_to = atol( ( *it_pl ).substr( i +1 ).c_str() );
                     num_to = MIN( MAX( num_to, num_from ), m_id_header );
 
                     for( int i2 = num_from; i2 <= num_to ; ++i2 ) {
