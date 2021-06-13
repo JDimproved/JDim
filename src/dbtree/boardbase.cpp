@@ -107,7 +107,7 @@ bool BoardBase::empty() const
 //
 bool BoardBase::equal( const std::string& url ) const
 {
-    if( url.find( get_root() ) == 0
+    if( url.rfind( get_root(), 0 ) == 0
         && url.find( get_path_board() + "/" ) != std::string::npos ) return true;
 
     return false;
@@ -669,7 +669,7 @@ std::string BoardBase::url_dat( const std::string& url, int& num_from, int& num_
 
     // もしurl(スレッドのURL)が移転前の旧URLのものだったら対応するarticlebaseクラスに旧ホスト名を教えてあげる
     // ( offlaw による dat落ちスレの読み込み時に使用する )
-    if( m_root.find( MISC::get_hostname( url ) ) != 0 ){
+    if( m_root.rfind( MISC::get_hostname( url ), 0 ) != 0 ){
 #ifdef _DEBUG
         std::cout << "org_host : " << MISC::get_hostname( url ) << std::endl;
 #endif

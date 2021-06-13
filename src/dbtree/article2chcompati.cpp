@@ -22,7 +22,7 @@ Article2chCompati::Article2chCompati( const std::string& datbase, const std::str
     assert( ! get_id().empty() );
 
     // key (idから拡張子を除いたもの)を取得
-    size_t i = get_id().rfind( "." ); // 拡張子は取り除く
+    size_t i = get_id().rfind( '.' ); // 拡張子は取り除く
     if( i != std::string::npos ) set_key( get_id().substr( 0, i ) );
 
     // key から since 計算

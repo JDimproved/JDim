@@ -428,7 +428,7 @@ void ArticleBase::set_subject( const std::string& subject )
     if( subject.empty() ) return;
 
     // 特殊文字の置き換え
-    if( subject.find( "&" ) != std::string::npos ){
+    if( subject.find( '&' ) != std::string::npos ){
 
         std::string subject_tmp = MISC::html_unescape( subject );
 

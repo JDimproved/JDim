@@ -109,7 +109,7 @@ std::string BoardJBBS::create_newarticle_message( const std::string& subject, co
 
     // DIR と BBS を分離する( ID = DIR/BBS )
     std::string boardid = get_id();
-    int i = boardid.find( "/" );
+    int i = boardid.find( '/' );
     std::string dir = boardid.substr( 0, i );
     std::string bbs = boardid.substr( i + 1 );
 

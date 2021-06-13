@@ -38,7 +38,7 @@ std::string ArticleJBBS::create_write_message( const std::string& name, const st
 
     // DIR と BBS を分離する( ID = DIR/BBS )
     std::string boardid = DBTREE::board_id( get_url() );
-    int i = boardid.find( "/" );
+    int i = boardid.find( '/' );
     std::string dir = boardid.substr( 0, i );
     std::string bbs = boardid.substr( i + 1 );
 
