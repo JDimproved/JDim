@@ -57,7 +57,7 @@ std::string ENVIRONMENT::get_configure_args( const int mode )
     if( mode == CONFIGURE_FULL ) return args;
 
     size_t search_pos = 0, found_pos = 0;
-    const size_t end_quote_pos = args.rfind( "'" );
+    const size_t end_quote_pos = args.rfind( '\'' );
 
     // 複数の項目
     bool multi = false;
@@ -65,7 +65,7 @@ std::string ENVIRONMENT::get_configure_args( const int mode )
     // 省略形として"--with-"や"--enable-"などを取り出す
     while( ( found_pos = args.find( "'--", search_pos ) ) != std::string::npos )
     {
-        const size_t quote_pos = args.find( "'", found_pos + 1 );
+        const size_t quote_pos = args.find( '\'', found_pos + 1 );
 
         if( args.compare( found_pos + 3, 4, "with" ) != 0
             && args.compare( found_pos + 3, 6, "enable" ) != 0
@@ -212,7 +212,7 @@ std::string ENVIRONMENT::get_distname()
             std::string name, value;
 
             size_t e;
-            if( ( e = (*it).find( "=" ) ) != std::string::npos )
+            if( ( e = (*it).find( '=' ) ) != std::string::npos )
             {
                 name = MISC::remove_spaces( (*it).substr( 0, e ) );
                 value = MISC::remove_spaces( (*it).substr( e + 1 ) );
@@ -237,7 +237,7 @@ std::string ENVIRONMENT::get_distname()
             std::string lsb_name, lsb_data;
 
             size_t e;
-            if( ( e = (*it).find( "=" ) ) != std::string::npos )
+            if( ( e = (*it).find( '=' ) ) != std::string::npos )
             {
                 lsb_name = MISC::remove_spaces( (*it).substr( 0, e ) );
                 lsb_data = MISC::remove_spaces( (*it).substr( e + 1 ) );
@@ -359,7 +359,7 @@ std::string ENVIRONMENT::get_distname()
     {
         const std::string arch = "(" + std::string( machine ) + ")";
 
-        if ( dist_name.find(arch, 0) == std::string::npos ) dist_name.append( " " + arch);
+        if ( dist_name.find( arch ) == std::string::npos ) dist_name.append( " " + arch );
     }
 
 #endif
