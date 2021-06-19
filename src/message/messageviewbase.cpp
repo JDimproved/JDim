@@ -595,36 +595,39 @@ void MessageViewBase::write()
     // fusianasan チェック
     if( DBTREE::default_noname( get_url() ) == "fusianasan" ) DBTREE::board_set_check_noname( get_url(), true );
 
+    const char* reason = nullptr;
+
     // 名無し書き込みチェック
     if( DBTREE::board_check_noname( get_url() ) ){
 
         std::string name = get_entry_name().get_text();
         if( name.empty() ){
-            SKELETON::MsgDiag mdiag( get_parent_win(), "名前欄が空白です。fusianasan 書き込みになる可能性があります。" );
-            mdiag.run();
-            return;
+            reason = "名前欄が空欄です。fusianasan 書き込みになる可能性があります。";
         }
     }
 
-
     // 行数チェック
-    if( m_max_line ){
+    if( ! reason && m_max_line ){
 
         if( m_text_message && m_text_message->get_buffer()->get_line_count() > m_max_line ){
-            SKELETON::MsgDiag mdiag( get_parent_win(), "行数が多すぎます。" );
-            mdiag.run();
-            return;
+            reason = "行数が多すぎます。";
         }
     }
 
     // バイト数チェック
-    if( m_max_str ){
+    if( ! reason && m_max_str ){
 
         if( m_lng_str_enc > m_max_str ){
-            SKELETON::MsgDiag mdiag( get_parent_win(), "文字数が多すぎます。" );
-            mdiag.run();
-            return;
+            reason = "文字数が多すぎます。";
         }
+    }
+
+    if( reason ) {
+        SKELETON::MsgDiag mdiag( get_parent_win(), "投稿がキャンセルされました。" );
+        mdiag.property_message_type() = Gtk::MESSAGE_WARNING;
+        mdiag.set_secondary_text( reason );
+        mdiag.run();
+        return;
     }
 
     const std::string msg = create_message();

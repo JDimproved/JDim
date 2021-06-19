@@ -59,7 +59,9 @@ std::string MessageViewMain::create_message()
     const std::string mail = get_entry_mail().get_text();
 
     if( msg.empty() ){
-        SKELETON::MsgDiag mdiag( get_parent_win(), "本文が空白です" );
+        SKELETON::MsgDiag mdiag( get_parent_win(), "書き込みがキャンセルされました。" );
+        mdiag.property_message_type() = Gtk::MESSAGE_WARNING;
+        mdiag.set_secondary_text( "本文が空欄です。" );
         mdiag.run();
         return std::string();
     }
@@ -175,16 +177,18 @@ std::string MessageViewNew::create_message()
     std::string name = get_entry_name().get_text();
     std::string mail = get_entry_mail().get_text();
 
-    if( subject.empty() ){
-        SKELETON::MsgDiag mdiag( get_parent_win(), "スレタイトルが空白です" ); mdiag.run();
-        return std::string();
+    const char* reason = nullptr;
+    if( subject.empty() ) reason = "スレタイトルが空欄です。";
+    else if( msg.empty() ) reason = "本文が空欄です。";
+
+    if( reason ) {
+        SKELETON::MsgDiag mdiag( get_parent_win(), "スレ立てがキャンセルされました。" );
+        mdiag.property_message_type() = Gtk::MESSAGE_WARNING;
+        mdiag.set_secondary_text( reason );
+        mdiag.run();
+        return std::string{};
     }
 
-    if( msg.empty() ){
-        SKELETON::MsgDiag mdiag( get_parent_win(), "本文が空白です" ); mdiag.run();
-        return std::string();
-    }
-    
     SKELETON::MsgDiag mdiag( get_parent_win(),
                              "新スレを作成しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() == Gtk::RESPONSE_YES ) return DBTREE::create_newarticle_message( get_url(), subject, name, mail, msg );
