@@ -64,7 +64,7 @@ std::string MISC::htmlcolor_to_str( const std::string& _htmlcolor )
     else if( htmlcolor == "black" )   htmlcolor = "#000000";
 
     int offset = 0;
-    if( htmlcolor.find( "#" ) == 0 ) offset = 1;
+    if( htmlcolor.rfind( '#', 0 ) == 0 ) offset = 1;
 
     std::string tmpstr = htmlcolor.substr( offset, 2 );
     rgb[ 0 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), nullptr, 16 );

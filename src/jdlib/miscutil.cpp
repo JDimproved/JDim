@@ -1718,15 +1718,15 @@ std::string MISC::tolower_str( const std::string& str )
 std::string MISC::get_hostname( const std::string& path, bool protocol )
 {
     int lng = 0;
-    if( path.find( "http://" ) == 0 ) lng = strlen( "http://" );
-    else if( path.find( "https://" ) == 0 ) lng = strlen( "https://" );
-    else if( path.find( "ftp://" ) == 0 ) lng = strlen( "ftp://" );
+    if( path.rfind( "http://", 0 ) == 0 ) lng = strlen( "http://" );
+    else if( path.rfind( "https://", 0 ) == 0 ) lng = strlen( "https://" );
+    else if( path.rfind( "ftp://", 0 ) == 0 ) lng = strlen( "ftp://" );
     if( !lng ) return std::string();
 
     int pos = 0;
     if( ! protocol ) pos = lng;
 
-    size_t i = path.find( "/", lng ); 
+    size_t i = path.find( '/', lng );
 
     if( i == std::string::npos ) return path.substr( pos );
 
@@ -1742,7 +1742,7 @@ std::string MISC::get_filename( const std::string& path )
 {
     if( path.empty() ) return std::string();
 
-    size_t i = path.rfind( "/" );
+    size_t i = path.rfind( '/' );
     if( i == std::string::npos ) return path;
 
     return path.substr( i+1 );
@@ -1757,7 +1757,7 @@ std::string MISC::get_dir( const std::string& path )
 {
     if( path.empty() ) return std::string();
 
-    size_t i = path.rfind( "/" );
+    size_t i = path.rfind( '/' );
     if( i == std::string::npos ) return std::string();
 
     return path.substr( 0, i+1 );
@@ -1979,11 +1979,11 @@ std::vector<MISC::FormDatum> MISC::parse_html_form_data( const std::string& html
 
         if( regex.match( pat, html, offset ) ) {
             const std::string name_value = MISC::tolower_str( regex.str( 3 ) );
-            if( name_value.compare( 0, 5, "name=" ) == 0 ) {
+            if( name_value.rfind( "name=", 0 ) == 0 ) {
                 name = MISC::remove_space( regex.str( 4 ) );
                 value = MISC::remove_space( regex.str( 5 ) );
             }
-            else if( name_value.compare( 0, 6, "value=" ) == 0 ) {
+            else if( name_value.rfind( "value=", 0 ) == 0 ) {
                 name = MISC::remove_space( regex.str( 7 ) );
                 value = MISC::remove_space( regex.str( 6 ) );
             }
