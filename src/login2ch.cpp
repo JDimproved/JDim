@@ -156,14 +156,14 @@ void Login2ch::receive_finish()
         // SID 取得
         std::string sid = m_rawdata;
 
-        if( sid.find( "SESSION-ID=" ) == 0 ){
+        if( sid.rfind( "SESSION-ID=", 0 ) == 0 ){
 
             sid = sid.substr( strlen( "SESSION-ID=" ) );
 
 #ifdef _DEBUG
 //            std::cout << "sid = " << sid << std::endl;
 #endif
-            if( sid.find( "ERROR" ) != 0 ){
+            if( sid.rfind( "ERROR", 0 ) != 0 ){
                 SKELETON::Login::set_login_now( true );
                 SKELETON::Login::set_sessionid( sid );
                 show_err = false;
