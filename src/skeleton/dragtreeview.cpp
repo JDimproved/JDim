@@ -556,7 +556,7 @@ void DragTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel
     int rownum = atoi( path_str.c_str() );
     if( rownum %2 ) even = true;
 
-    size_t pos = path_str.find( ":" );
+    size_t pos = path_str.find( ':' );
     while( pos != std::string::npos ){
         path_str = path_str.substr( pos+1 );
         rownum = atoi( path_str.c_str() );
@@ -564,7 +564,7 @@ void DragTreeView::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel
         if( ( even && ( rownum %2 ) ) || ( ! even && !( rownum %2 ) ) ) even = true;
         else even = false;
 
-        pos = path_str.find( ":" );
+        pos = path_str.find( ':' );
     }
 
     // 偶数行に色を塗る

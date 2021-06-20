@@ -56,7 +56,7 @@ void View::set_url( const std::string& url_new )
 //
 void View::update_url( const std::string& url_old, const std::string& url_new )
 {
-    if( m_url.find( url_old ) != 0 ) return;
+    if( m_url.rfind( url_old, 0 ) != 0 ) return;
 
     std::string url = url_new + m_url.substr( url_old.length() );
 

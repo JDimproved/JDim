@@ -878,7 +878,7 @@ void Admin::update_url( const std::string& url_old, const std::string& url_new )
 
         for( int i = 0; i < pages; ++i ){
             SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-            if( view && view->get_url().find( url_old ) == 0 ){
+            if( view && view->get_url().rfind( url_old, 0 ) == 0 ){
 
                 std::list< std::string >::iterator it
                     = std::find( m_list_switchhistory.begin(), m_list_switchhistory.end(), view->get_url() );
@@ -904,7 +904,7 @@ void Admin::update_boardname( const std::string& url )
 
         for( int i = 0; i < pages; ++i ){
             SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
-            if( view && view->get_url().find( url ) == 0 ) view->update_boardname();
+            if( view && view->get_url().rfind( url, 0 ) == 0 ) view->update_boardname();
         }
 
         redraw_toolbar();
@@ -1088,7 +1088,7 @@ void Admin::open_view( const COMMAND_ARGS& command )
         else if( open_method == "left" ) openpage = page;
 
         // 指定した位置に表示
-        else if( open_method.find( "page" ) == 0 ) openpage = atoi( open_method.c_str() + 4 );
+        else if( open_method.rfind( "page", 0 ) == 0 ) openpage = atoi( open_method.c_str() + 4 );
 
         // ロックされていたら右に表示
         else if( open_method == "false" && page != -1 && is_locked( page ) ) openpage = page +1;
