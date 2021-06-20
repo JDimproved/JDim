@@ -96,7 +96,7 @@ bool Log_Manager::has_items( const std::string& url, const bool newthread ) cons
 #endif
             return true;
         }
-        if( item.newthread && url.find( item.url ) == 0 ){
+        if( item.newthread && url.rfind( item.url, 0 ) == 0 ){
 #ifdef _DEBUG
             std::cout << "found\n";
 #endif
@@ -127,7 +127,7 @@ void Log_Manager::remove_items( const std::string& url )
     for( ; it != m_logitems.end(); ++it ){
 
         if( it->url == url
-            || ( it->newthread && url.find( it->url ) == 0 )
+            || ( it->newthread && url.rfind( it->url, 0 ) == 0 )
             ){
 
             const std::time_t elapsed = current - it->time_write;
@@ -175,7 +175,7 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
         if( item.newthread != newthread ) continue;
 
         if( ! item.newthread && item.url != url ) continue;
-        if( item.newthread && url.find( item.url ) != 0 ) continue;
+        if( item.newthread && url.rfind( item.url, 0 ) != 0 ) continue;
 
         // 先頭のheadsize文字だけ簡易チェックする
         // ヒットしてもitem.remove を true にしない
@@ -376,7 +376,7 @@ int Log_Manager::get_max_num_of_log()
 #ifdef _DEBUG
         std::cout << target << std::endl;
 #endif
-        if( target.find( path ) == 0 ){
+        if( target.rfind( path, 0 ) == 0 ){
 
             const int tmpno = atoi( target.substr( path.length() ).c_str() );
             if( tmpno > maxno ) maxno = tmpno;

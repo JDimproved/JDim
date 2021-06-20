@@ -184,7 +184,7 @@ void Post::post_msg()
     data.agent = DBTREE::get_agent_w( m_url );
     data.referer = m_count < 1 ? m_post_strategy->get_referer( m_url ) : m_post_strategy->url_bbscgi( m_url );
     // WebブラウザのUAならOriginを含める
-    if( data.agent.compare( 0, 11, "Mozilla/5.0" ) == 0 ) {
+    if( data.agent.rfind( "Mozilla/5.0", 0 ) == 0 ) {
         data.origin = MISC::get_hostname( m_url );
     }
     data.str_post = m_msg;
