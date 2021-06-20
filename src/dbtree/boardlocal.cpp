@@ -32,7 +32,7 @@ BoardLocal::~BoardLocal() noexcept = default;
 //
 bool BoardLocal::equal( const std::string& url ) const
 {
-    return url.size() >= 7 && url.compare( 0, 7, "file://" ) == 0;
+    return url.rfind( "file://", 0 ) == 0;
 }
 
 

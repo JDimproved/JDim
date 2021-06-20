@@ -189,14 +189,14 @@ void Usrcmd_Manager::exec( const std::string& command, // コマンド
 #endif
 
     bool use_browser = false;
-    if( cmd.find( "$VIEW" ) == 0 ){
+    if( cmd.rfind( "$VIEW", 0 ) == 0 ){
         use_browser = true;
         cmd = cmd.substr( 5 );
         cmd = MISC::remove_space( cmd );
     }
 
     bool show_dialog = false;
-    if( cmd.find( "$DIALOG" ) == 0 ){
+    if( cmd.rfind( "$DIALOG", 0 ) == 0 ){
         show_dialog = true;
         cmd = cmd.substr( 7 );
         cmd = MISC::remove_space( cmd );
