@@ -197,8 +197,8 @@ void Dom::parse( const std::string& str )
                     }
 
                     // 空要素でない同名の開始タグを見つけたらカウントを増やす
-                    if( close_tag.compare( 0, name.length(), name ) == 0
-                     && close_tag.compare( close_tag.length() - 1, 1, "/" ) != 0 ) ++count;
+                    if( close_tag.rfind( name, 0 ) == 0
+                        && close_tag.compare( close_tag.size() - 1, 1, "/" ) != 0 ) ++count;
                     // 終了タグを見つけたらカウントを減らす
                     else if( close_tag.compare( 0, name.length() + 1, "/" + name ) == 0 ) --count;
 
