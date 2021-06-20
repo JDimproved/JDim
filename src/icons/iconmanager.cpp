@@ -243,8 +243,7 @@ void ICON_Manager::load_theme()
 
         while( iconfiles[ id ][ 0 ] != '\0' ){
 
-            if( iconfiles[ id ][ 0 ] == filename[ 0 ]
-                && filename.compare( iconfiles[ id ] ) == 0 ){
+            if( filename == iconfiles[ id ] ){
 #ifdef _DEBUG
                 std::cout << "hit : " << iconfiles[ id ] << " id = " << id << std::endl;
 #endif
