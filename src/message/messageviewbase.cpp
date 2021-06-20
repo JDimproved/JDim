@@ -890,7 +890,7 @@ void MessageViewBase::slot_switch_page( Gtk::Widget*, guint page )
 
             const std::string name_field = m_entry_name.get_text();
 
-            const size_t trip_pos = name_field.find( "#", 0 );
+            const size_t trip_pos = name_field.find( '#', 0 );
 
             const std::string name = MISC::html_escape( name_field.substr( 0, trip_pos ) );
 
