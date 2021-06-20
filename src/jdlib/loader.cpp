@@ -393,7 +393,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     i += 3;
     m_data.protocol = data_in.url.substr( 0, i );
 
-    size_t i2 = m_data.url.find( "/", i );
+    size_t i2 = m_data.url.find( '/', i );
     if( i2 == std::string::npos ){
 
         m_data.code = HTTP_ERR;
@@ -408,7 +408,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     // ポートセット
 
     // ホスト名の後に指定されている
-    if( ( i = m_data.host.find( ":" ) ) != std::string::npos ){
+    if( ( i = m_data.host.find( ':' ) ) != std::string::npos ){
         m_data.port = atoi( m_data.host.substr( i+1 ).c_str() );
         m_data.host = m_data.host.substr( 0, i );
     }
@@ -1186,7 +1186,7 @@ bool Loader::analyze_header()
         return false;
     }
 
-    size_t i = str_tmp.find( " " );
+    size_t i = str_tmp.find( ' ' );
     if( i == std::string::npos ) m_data.code = atoi( str_tmp.c_str() );
     else m_data.code = atoi( str_tmp.substr( 0, i ).c_str() );
 

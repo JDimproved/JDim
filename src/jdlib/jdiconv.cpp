@@ -37,12 +37,12 @@ Iconv::Iconv( const std::string& coding_to, const std::string& coding_from )
     // "EUCJP-*"で失敗したら"EUCJP"で試してみる
     if( m_cd == ( GIConv ) - 1 && ( errno & EINVAL ) != 0 )
     {
-        if( coding_to.find( "EUCJP-", 0 ) == 0 )
-		{
+        if( coding_to.rfind( "EUCJP-", 0 ) == 0 )
+        {
             m_cd = g_iconv_open( "EUCJP//TRANSLIT", coding_from.c_str() );
         }
-        else if( coding_from.find( "EUCJP-", 0 ) == 0 )
-		{
+        else if( coding_from.rfind( "EUCJP-", 0 ) == 0 )
+        {
             const std::string coding_to_translit = coding_to + "//TRANSLIT";
             m_cd = g_iconv_open( coding_to_translit.c_str(), "EUCJP" );
         }
