@@ -1154,7 +1154,7 @@ void BoardBase::receive_finish()
             if( regex.exec( query, m_rawdata, offset, icase, newline, usemigemo, wchar ) ){
 
                 std::string new_url = regex.str( 1 );
-                if( new_url.compare( 0, 2, "//" ) == 0 ){
+                if( new_url.rfind( "//", 0 ) == 0 ){
                     std::string tmp_url = url_boardbase();
                     size_t pos = tmp_url.find("://");
                     if( pos != std::string::npos )
