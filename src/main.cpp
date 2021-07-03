@@ -282,7 +282,7 @@ void usage( const int status )
     "-m, --multi\n"
     "        Do not quit even if multiple sub-process\n"
     "-n, --norestore\n"
-    "        Do not restore backup files\n"
+    "        **DEPRECATED** Do not restore backup files\n"
     "-s, --skip-setup\n"
     "        Skip the setup dialog\n"
     "-l, --logfile\n"
