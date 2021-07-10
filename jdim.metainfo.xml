@@ -30,8 +30,8 @@
       <image>https://user-images.githubusercontent.com/15698961/72191765-39568200-33fb-11ea-9b2d-f8a997cf9ae8.png</image>
     </screenshot>
     <screenshot>
-      <caption>Extracting a keyword (highlight "外来")</caption>
-      <image>https://user-images.githubusercontent.com/15698961/103151663-7e69f480-47c3-11eb-882c-a8af33e6674b.png</image>
+      <caption>Extracting a keyword (highlight "フェリー")</caption>
+      <image>https://user-images.githubusercontent.com/15698961/124387371-5383ce80-dd19-11eb-97ee-6ad6861368bc.png</image>
     </screenshot>
     <screenshot>
       <caption>Editing message to post</caption>
@@ -39,7 +39,7 @@
     </screenshot>
     <screenshot>
       <caption>Extracting posts which have much referenced</caption>
-      <image>https://user-images.githubusercontent.com/15698961/103151693-b2ddb080-47c3-11eb-9201-32e2ec910246.png</image>
+      <image>https://user-images.githubusercontent.com/15698961/124387374-54b4fb80-dd19-11eb-8a8f-c272d627fdc0.png</image>
     </screenshot>
   </screenshots>
 
@@ -53,6 +53,12 @@
   </provides>
 
   <releases>
+    <release version="0.6.0" date="2021-07-10">
+      <description>
+        <p>Add initial support for Client-Side Decoration</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.6.0</url>
+    </release>
     <release version="0.5.0" date="2021-01-09">
       <description>
         <p>End-of-life for GTK2 support</p>
