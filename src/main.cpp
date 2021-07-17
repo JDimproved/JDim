@@ -50,64 +50,6 @@ enum
 JDWinMain* Win_Main = nullptr;
 
 
-// バックアップ復元
-void restore_bkup( const bool no_restore_bkup )
-{
-    const std::string current_str = std::to_string( std::time( nullptr ) );
-
-    const std::string path_main = CACHE::path_xml_listmain();
-    const std::string path_favor = CACHE::path_xml_favorite();
-    const std::string path_main_bkup = CACHE::path_xml_listmain_bkup();
-    const std::string path_favor_bkup = CACHE::path_xml_favorite_bkup();
-    const std::string path_main_old = path_main + "." + current_str;
-    const std::string path_favor_old = path_favor + "." + current_str;
-
-    const bool bkup_main = ( CACHE::file_exists( path_main_bkup ) == CACHE::EXIST_FILE );
-    const bool bkup_favor = ( CACHE::file_exists( path_favor_bkup ) == CACHE::EXIST_FILE );
-
-    if( bkup_main || bkup_favor ){
-
-        bool restore = false;
-
-        if( ! no_restore_bkup ){
-
-            Gtk::MessageDialog mdiag(
-                "前回の起動時に正しくJDimが終了されませんでした。\n\n"
-                "板リストとお気に入りをバックアップファイルから復元しますか？\n"
-                "いいえを押すとバックアップファイルを削除します。",
-                false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            if( mdiag.run() == Gtk::RESPONSE_YES ) restore = true;
-        }
-
-        if( restore ){
-
-            if( bkup_main ){
-                rename( path_main.c_str(), path_main_old.c_str() );
-                rename( path_main_bkup.c_str(), path_main.c_str() );
-            }
-            if( bkup_favor ){
-                rename( path_favor.c_str(), path_favor_old.c_str() );
-                rename( path_favor_bkup.c_str(), path_favor.c_str() );
-            }
-
-            std::string msg = "更新しました。\n\n古いリストはそれぞれ\n\n";
-
-            if( bkup_main ) msg += path_main_old + "\n";
-            if( bkup_favor ) msg += path_favor_old + "\n";
-
-            msg += "\nに移動しました。";
-
-            Gtk::MessageDialog mdiag( msg );
-            mdiag.run();
-        }
-        else{
-            if( bkup_main ) unlink( to_locale_cstr( path_main_bkup ) );
-            if( bkup_favor ) unlink( to_locale_cstr( path_favor_bkup ) );
-        }
-    }
-}
-
-
 
 // SIGINTのハンドラ
 void sig_handler( int sig )
@@ -281,8 +223,6 @@ void usage( const int status )
     //"        URL open of BBS etc by Tab\n"
     "-m, --multi\n"
     "        Do not quit even if multiple sub-process\n"
-    "-n, --norestore\n"
-    "        **DEPRECATED** Do not restore backup files\n"
     "-s, --skip-setup\n"
     "        Skip the setup dialog\n"
     "-l, --logfile\n"
@@ -322,13 +262,12 @@ int main( int argc, char **argv )
 
     // "現在のタブ/新規タブ"など引数によって開き方を変えたい場合は、--tab=<url>
     // など新しいオプションを追加する
-    // --help, --tab=<url>, --multi, --norestore, --logfile --version
+    // --help, --tab=<url>, --multi, --logfile --version
     const struct option options[] =
     {
         { "help", 0, nullptr, 'h' },
         //{ "tab", 1, nullptr, 't' },
         { "multi", 0, nullptr, 'm' },
-        { "norestore", 0, nullptr, 'n' },
         { "skip-setup", 0, nullptr, 's' },
         { "logfile", 0, nullptr, 'l' },
         { "geometry", required_argument, nullptr, 'g' },
@@ -338,7 +277,6 @@ int main( int argc, char **argv )
 
     std::string url;
     bool multi_mode = false;
-    bool no_restore_bkup = false;
     bool skip_setupdiag = false;
     bool logfile_mode = false;
     int init_w = -1;
@@ -354,9 +292,9 @@ int main( int argc, char **argv )
     const bool wchar = false;
     std::string query;
 
-    // -h, -t <url>, -m, -n, -s, -l, -g WxH+X+Y, -V
+    // -h, -t <url>, -m, -s, -l, -g WxH+X+Y, -V
     int opt = 0;
-    while( ( opt = getopt_long( argc, argv, "ht:mnslg:V", options, nullptr ) ) != -1 )
+    while( ( opt = getopt_long( argc, argv, "ht:mslg:V", options, nullptr ) ) != -1 )
     {
         switch( opt )
         {
@@ -370,10 +308,6 @@ int main( int argc, char **argv )
 
             case 'm':
                 multi_mode = true;
-                break;
-
-            case 'n':
-                no_restore_bkup = true;
                 break;
 
             case 's':
@@ -419,7 +353,7 @@ int main( int argc, char **argv )
             url = argv[ optind ];
         }
         // -m 、-s でなく、URLを含まない引数だけの場合は終了
-        else if( optind > 1 && ! ( multi_mode || no_restore_bkup || skip_setupdiag || logfile_mode ) ){
+        else if( optind > 1 && ! ( multi_mode || skip_setupdiag || logfile_mode ) ){
             usage( EXIT_FAILURE );
         }
     }
@@ -547,10 +481,6 @@ int main( int argc, char **argv )
             }
         }
     }
-
-    /*---------------------------------------------------------------*/
-    // バックアップファイル復元
-    restore_bkup( no_restore_bkup );
 
     Win_Main = new JDWinMain( init, skip_setupdiag, init_w, init_h, init_x, init_y );
     if( Win_Main ){
