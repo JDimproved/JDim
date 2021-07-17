@@ -63,10 +63,6 @@ NOTE:
 <dl>
   <dt>-h, --help</dt><dd>ヘルプを表示</dd>
   <dt>-m, --multi</dt><dd>多重起動時のサブプロセスであっても終了しない</dd>
-  <dt>-n, --norestore</dt><dd><s>前回異常終了した時にバックアップファイルを復元しない</s>
-    <strong>廃止予定</strong> (<a href="https://github.com/JDimproved/JDim/issues/772"
-      title="コマンドラインオプション --norestore を廃止する - Issue #772">#772</a>)
-  </dd>
   <dt>-s, --skip-setup</dt><dd>初回起動時の設定ダイアログを表示しない</dd>
   <dt>-l, --logfile</dt>
   <dd>エラーなどのメッセージをファイル(キャッシュディレクトリの<code>log/msglog</code>)に出力する</dd>

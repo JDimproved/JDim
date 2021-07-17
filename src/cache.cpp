@@ -114,21 +114,11 @@ std::string CACHE::path_xml_listmain()
     return CACHE::path_root() +  "boards.xml";
 }
 
-std::string CACHE::path_xml_listmain_bkup()
-{
-    return CACHE::path_xml_listmain() + ".bkup";
-}
-
 
 // お気に入り
 std::string CACHE::path_xml_favorite()
 {
     return CACHE::path_root() +  "bookmark.xml";
-}
-
-std::string CACHE::path_xml_favorite_bkup()
-{
-    return CACHE::path_xml_favorite() + ".bkup";
 }
 
 

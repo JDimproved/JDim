@@ -220,13 +220,10 @@ NOTE:
 --- | ---
 -h, --help | ヘルプを表示
 -m, --multi | 多重起動時のサブプロセスであっても終了しない
--n, --norestore | ~~前回異常終了した時にバックアップファイルを復元しない~~ **廃止予定** ([#772])
 -s, --skip-setup | 初回起動時の設定ダイアログを表示しない
 -l, --logfile | エラーなどのメッセージをファイル(キャッシュディレクトリのlog/msglog)に出力する
 -g, --geometry WxH-X+Y | 幅(W)高さ(H)横位置(X)縦位置(Y)の指定。WxHは省略可能(例: -g 100x40-10+30, -g -20+100 )
 -V, --version | バージョン及びconfigureオプションを全て表示
-
-[#772]: https://github.com/JDimproved/JDim/issues/772 "コマンドラインオプション --norestore を廃止する- Issue #772"
 
 
 ## 多重起動について

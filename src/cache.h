@@ -51,11 +51,11 @@ namespace CACHE
 
     // 板
     std::string path_xml_listmain();
-    std::string path_xml_listmain_bkup();
+    std::string path_xml_listmain_bkup() = delete; // Removed in v0.6.0 (2021-07)
 
     // お気に入り
     std::string path_xml_favorite();
-    std::string path_xml_favorite_bkup();
+    std::string path_xml_favorite_bkup() = delete; // Removed in v0.6.0 (2021-07)
 
     // 外部板設定ファイル( navi2ch 互換 )
     std::string path_etcboard();
