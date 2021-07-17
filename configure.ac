@@ -142,9 +142,6 @@ AC_HELP_STRING([--with-regex=oniguruma|glib],
 AC_MSG_RESULT($with_regex)
 
 AS_IF(
-  [test "x$with_regex" = xposix],
-  [AC_MSG_ERROR([--with-regex=posix has been removed. Use --with-regex=glib instead.])],
-
   [test "x$with_regex" = xoniguruma],
   [PKG_CHECK_MODULES(ONIG, [oniguruma])
    AC_SUBST(ONIG_CFLAGS)
