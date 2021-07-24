@@ -119,10 +119,12 @@
 
        使用する正規表現ライブラリを設定する。
        デフォルトでは Glib Regex(GRegex) を使用する。(v0.4.0+から変更)
+       非推奨: 正規表現ライブラリを選択するオプションは将来廃止される。
+       https://github.com/JDimproved/JDim/issues/697 を参照すること。
 
     --with-regex=oniguruma
 
-       GRegex のかわりに鬼車を使用する。
+       非推奨: GRegex のかわりに鬼車を使用する。
        鬼車はBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
 
     --with-regex=glib

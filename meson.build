@@ -129,6 +129,7 @@ if regex_opt == 'oniguruma'
   endif
   conf.set('HAVE_ONIGPOSIX_H', 1)
   configure_args += '\'--with-regex=oniguruma\''
+  warning('-Dregex=oniguruma is deprecated. See https://github.com/JDimproved/JDim/issues/697')
 elif regex_opt == 'glib'
   regex_dep = dependency('glib-2.0', version : '>= 2.14.0')
 endif
