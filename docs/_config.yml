@@ -1,7 +1,15 @@
 theme: jekyll-theme-cayman
 plugins:
   - jekyll-redirect-from
-exclude: [ Gemfile*, Makefile, README.md ]
+exclude:
+  - Gemfile*
+  - Makefile
+  - README.md
+  - backup_bund/ruby
+  - vendor/bundle
+  - vendor/cache
+  - vendor/gems
+  - vendor/ruby
 lang: ja
 baseurl: /JDim
 defaults:
