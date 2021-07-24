@@ -50,7 +50,7 @@ layout: default
 - meson 0.49.0 以上
 - alsa-lib (`--with-alsa`)
 - openssl (`--with-tls=openssl`)
-- oniguruma (`--with-regex=oniguruma`)
+- oniguruma (`--with-regex=oniguruma`, 廃止予定)
 - migemo (`--with-migemo`)
 
 #### 画像表示に必要なパッケージ
@@ -132,11 +132,13 @@ WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
   <dt>--with-regex=oniguruma|glib</dt>
   <dd>
     使用する正規表現ライブラリを設定する。
-    デフォルトでは Glib Regex(GRegex) を使用する。<small>(v0.4.0+から変更)</small>
+    デフォルトでは Glib Regex(GRegex) を使用する。<small>(v0.4.0+から変更)</small><br>
+    <strong>非推奨</strong>: 正規表現ライブラリを選択するオプションは将来廃止される。
+    <a href="https://github.com/JDimproved/JDim/issues/697">#697</a> を参照すること。
   </dd>
   <dt>--with-regex=oniguruma</dt>
   <dd>
-    GRegex のかわりに鬼車を使用する。
+    <strong>非推奨</strong>: GRegex のかわりに鬼車を使用する。
     鬼車はBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
   </dd>
   <dt>--with-regex=glib</dt>

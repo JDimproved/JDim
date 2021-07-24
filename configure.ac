@@ -147,7 +147,8 @@ AS_IF(
    AC_SUBST(ONIG_CFLAGS)
    AC_SUBST(ONIG_LIBS)
    AC_CHECK_HEADERS([onigposix.h], , [AC_MSG_ERROR([onigposix.h not found])])
-   AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])],
+   AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])
+   AC_MSG_WARN([--with-regex=onigruma is deprecated. See https://github.com/JDimproved/JDim/issues/697])],
 
   [test "x$with_regex" = xglib],
   [PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.14.0])],
