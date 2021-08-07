@@ -171,21 +171,19 @@ void AAManager::load_history()
     std::vector< bool > tmp_vec;
     tmp_vec.resize( get_size() );
 
-    std::list< std::string >::iterator it_hist = tmp_history.begin();
-    for( ; it_hist != tmp_history.end(); ++it_hist ){
+    for( const std::string& hist : tmp_history ) {
 
         for( int i = 0; i < get_size() ; ++i ){
-            if( ! tmp_vec[ i ] && m_vec_label[ i ] == *it_hist ){
+            if( ! tmp_vec[ i ] && m_vec_label[ i ] == hist ){
                 m_history.push_back( i );
                 tmp_vec[ i ] = true;
                 break;
             }
         }
     }
-    
+
 #ifdef _DEBUG
-    std::list< int >::iterator it_history = m_history.begin();
-    for( ; it_history != m_history.end(); ++it_history ) std::cout << *it_history << std::endl;
+    for( const int index : m_history ) std::cout << index << std::endl;
 #endif
 }
 
@@ -202,10 +200,9 @@ void AAManager::save_history()
     XML::Document document;
     XML::Dom* root = document.appendChild( XML::NODE_TYPE_ELEMENT, std::string( ROOT_NODE_NAME ) );
 
-    std::list< int >::iterator it = m_history.begin();
-    for( ; it != m_history.end(); ++it ){
+    for( const int index : m_history ) {
 
-        const Glib::ustring name = m_vec_label[ *it ];
+        const std::string& name = m_vec_label[ index ];
 
         if( ! name.empty() ){
 
@@ -265,9 +262,10 @@ int AAManager::shortcut2id( const char key ) const
 {
     if( key == '\0' ) return -1;
 
-    auto it = m_map_shortcut.begin();
-    for( ; it != m_map_shortcut.end(); ++it ){
-        if( (*it).second == key ) return (*it).first;
+    auto it = std::find_if( m_map_shortcut.cbegin(), m_map_shortcut.cend(),
+                            [key]( const auto& id_key ) { return id_key.second == key; } );
+    if( it != m_map_shortcut.cend() ) {
+        return it->first;
     }
 
     return -1;
@@ -281,19 +279,18 @@ void AAManager::append_history( const int id )
     if( id >= 0 && id < get_size() ){
 
         // 既に履歴に含まれている場合
-        auto it = m_history.begin();
-        for( ; it != m_history.end(); ++it ){
-
-            if( *it == id ){
-                m_history.remove( id );
-                m_history.push_front( id );
-                return;
-            }
+        auto it = std::find( m_history.cbegin(), m_history.cend(), id );
+        if( it != m_history.end() ) {
+            m_history.splice( m_history.cbegin(), m_history, it );
+            return;
         }
 
         // 含まれていない場合
-        while( (int) m_history.size() >= CONFIG::get_aahistory_size() ) m_history.pop_back();
-        m_history.push_front( id );
+        const int size = CONFIG::get_aahistory_size();
+        if( size > 0 ) {
+            if( static_cast<int>( m_history.size() ) >= size ) m_history.resize( size - 1 );
+            m_history.push_front( id );
+        }
     }
 }
 
@@ -303,8 +300,7 @@ int AAManager::history2id( const int num ) const
 {
     if( num < 0 || num >= get_historysize() ) return -1;
 
-    auto it = m_history.begin();
-    for( int i = 0; i < num; ++i, ++it );
+    auto it = std::next( m_history.cbegin(), num );
 
 #ifdef _DEBUG
     std::cout << "AAManager::conv_history2id " << num << " -> " << *it << std::endl;
