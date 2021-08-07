@@ -463,9 +463,7 @@ void ArticleAdmin::delete_popup()
 void ArticleAdmin::delete_all_popups()
 {
     std::list< SKELETON::View* > list_view = get_list_view();
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        SKELETON::View* view = ( *it );
+    for( SKELETON::View* view : list_view ) {
         if( view ) view->set_command( "delete_popup" );
     }
 }
@@ -702,9 +700,7 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
     else if( command.command == "reset_popupmenu" ){
 
         std::list< SKELETON::View* > list_view = get_list_view();
-        std::list< SKELETON::View* >::iterator it = list_view.begin();
-        for( ; it != list_view.end(); ++it ){
-            SKELETON::View* view = ( *it );
+        for( SKELETON::View* view : list_view ) {
             if( view ) view->set_command( "reset_popupmenu" );
         }
     }
@@ -713,10 +709,7 @@ void ArticleAdmin::command_local( const COMMAND_ARGS& command )
     else if( command.command == "relayout_views" ){
 
         std::list< SKELETON::View* > list_view = get_list_view( command.url );
-        std::list< SKELETON::View* >::iterator it = list_view.begin();
-
-        for( ; it != list_view.end(); ++it ){
-            SKELETON::View* view = ( *it );
+        for( SKELETON::View* view : list_view ) {
             if( view ) view->relayout();
         }
     }
