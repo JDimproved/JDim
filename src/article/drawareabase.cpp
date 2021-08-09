@@ -2799,7 +2799,7 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
             Pango::GlyphString grl;
             Pango::Rectangle pango_rect;
 
-            for( Pango::Item& item : list_item ) {
+            for( const Pango::Item& item : list_item ) {
 
                 font = item.get_analysis().get_font();
                 grl = item.shape( text.substr( item.get_offset(), item.get_length() ) ) ;
@@ -4391,8 +4391,9 @@ bool DrawAreaBase::set_selection_str()
 
                         if( DBIMG::get_type_ext( info.url ) != DBIMG::T_UNKNOWN ) {
 
+                            const std::string& url = info.url;
                             const bool found = std::any_of( m_selection.imgurls.cbegin(), m_selection.imgurls.cend(),
-                                                            [&u = info.url]( const auto& i ) { return u == i.url; } );
+                                                            [&url]( const auto& i ) { return url == i.url; } );
                             if( ! found ) {
                                 m_selection.imgurls.push_back( info );
                             }
