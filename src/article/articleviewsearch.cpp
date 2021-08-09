@@ -280,25 +280,29 @@ void ArticleViewSearch::relayout()
 
         if( ! m_list_searchdata.empty() ){
 
-            std::list< CORE::SEARCHDATA >::iterator it = m_list_searchdata.begin();
-            for(; it != m_list_searchdata.end(); ++it ){
+            for( const CORE::SEARCHDATA& data : m_list_searchdata ) {
 
                 // 板名表示
-                if( m_searchmode == CORE::SEARCHMODE_ALLLOG || m_searchmode == CORE::SEARCHMODE_TITLE  )
-                    comment << "[ <a href=\"" << DBTREE::url_boardbase( (*it).url_readcgi ) << "\">" << (*it).boardname << "</a> ] ";
+                if( m_searchmode == CORE::SEARCHMODE_ALLLOG || m_searchmode == CORE::SEARCHMODE_TITLE  ) {
+                    comment << "[ <a href=\"" << DBTREE::url_boardbase( data.url_readcgi ) << "\">" << data.boardname
+                            << "</a> ] ";
+                }
 
-                comment << "<a href=\"" << (*it).url_readcgi << "\">" << MISC::html_escape( (*it).subject ) << "</a>";
+                comment << "<a href=\"" << data.url_readcgi << "\">" << MISC::html_escape( data.subject ) << "</a>";
 
-                if( (*it).num ) comment << " ( " << (*it).num << " )";
+                if( data.num ) comment << " ( " << data.num << " )";
 
                 // queryの抽出表示
-                if( m_searchmode != CORE::SEARCHMODE_TITLE && has_query )
-                    comment << "<br><a href=\"" << PROTO_OR << (*it).url_readcgi + KEYWORD_SIGN + get_search_query() << "\">" << "抽出表示する" << "</a>";
+                if( m_searchmode != CORE::SEARCHMODE_TITLE && has_query ) {
+                    comment << "<br><a href=\"" << PROTO_OR << data.url_readcgi + KEYWORD_SIGN + get_search_query()
+                            << "\">" << "抽出表示する" << "</a>";
+                }
 
-                if( (*it).bookmarked ) comment << "<br>スレにしおりが付けられています";
+                if( data.bookmarked ) comment << "<br>スレにしおりが付けられています";
 
-                if( (*it).num_bookmarked ){
-                    comment << "<br>レスに付けられたしおり " << (*it).num_bookmarked << "件 <a href=\"" << PROTO_BM << (*it).url_readcgi << "\">" << "抽出表示する" << "</a>";
+                if( data.num_bookmarked ){
+                    comment << "<br>レスに付けられたしおり " << data.num_bookmarked << "件 <a href=\"" << PROTO_BM
+                            << data.url_readcgi << "\">" << "抽出表示する" << "</a>";
                 }
 
                 comment << "<br><br>";
