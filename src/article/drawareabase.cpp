@@ -664,9 +664,8 @@ void DrawAreaBase::append_res( const std::list< int >& list_resnum, const std::l
 
     const bool use_joint = ( list_joint.size() == list_resnum.size() );
 
-    std::list< int >::const_iterator it = list_resnum.begin();
     std::list< bool >::const_iterator it_joint = list_joint.begin();
-    for( ; it != list_resnum.end(); ++it ){
+    for( const int num : list_resnum ) {
 
         bool joint = false;
         if( use_joint ){
@@ -675,10 +674,10 @@ void DrawAreaBase::append_res( const std::list< int >& list_resnum, const std::l
         }
 
 #ifdef _DEBUG
-        std::cout << "append no. " << ( *it ) << " joint = " << joint << std::endl;
+        std::cout << "append no. " << num << " joint = " << joint << std::endl;
 #endif
 
-        m_layout_tree->append_node( m_article->res_header( ( *it ) ), joint );
+        m_layout_tree->append_node( m_article->res_header( num ), joint );
     }
 
     // クライアント領域のサイズをリセットして再レイアウト
@@ -2518,12 +2517,11 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const CLIPINFO& ci )
     // 検索結果のハイライト
     if( m_multi_selection.size() > 0 ){
 
-        std::list< SELECTION >::const_iterator it;
-        for( it = m_multi_selection.begin(); it != m_multi_selection.end(); ++it ){
+        for( const SELECTION& selection : m_multi_selection ) {
 
             size_t byte_from2;
             size_t byte_to2;
-            if( get_selection_byte( layout, *it, byte_from2, byte_to2 )){
+            if( get_selection_byte( layout, selection, byte_from2, byte_to2 )){
 
                 draw_string( layout, ci, COLOR_CHAR_HIGHLIGHT, COLOR_BACK_HIGHLIGHT, byte_from2, byte_to2 );
             }
@@ -2795,16 +2793,14 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
 
             Pango::AttrList attr;
             std::string text = std::string( node->text + pos_start, n_byte );
-            std::list< Pango::Item > list_item = m_context->itemize( text, attr );
+            const std::vector<Pango::Item> list_item = m_context->itemize( text, attr );
 
             Glib::RefPtr< Pango::Font > font;
             Pango::GlyphString grl;
             Pango::Rectangle pango_rect;
 
-            std::list< Pango::Item >::iterator it = list_item.begin();
-            for( ; it != list_item.end(); ++it ){
+            for( const Pango::Item& item : list_item ) {
 
-                Pango::Item &item = *it;
                 font = item.get_analysis().get_font();
                 grl = item.shape( text.substr( item.get_offset(), item.get_length() ) ) ;
                 pango_rect = grl.get_logical_extents( font );
@@ -3559,21 +3555,19 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
                     // 変換テーブルを参照して開始位置と終了位置を求める
                     if( layout_table.size() ){
 
-                        std::vector< LAYOUT_TABLE >::reverse_iterator it = layout_table.rbegin();
-                        for( ; it != layout_table.rend(); ++it ){
-                            if( ( *it ).offset < offset_to ){
-                                layout_to = ( *it ).layout;
-                                offset_to -= ( *it ).offset;
-                                break;
-                            }
+                        std::vector<LAYOUT_TABLE>::const_reverse_iterator it = layout_table.crbegin();
+                        it = std::find_if( it, layout_table.crend(),
+                                           [offset_to]( const auto& t ) { return t.offset < offset_to; } );
+                        if( it != layout_table.crend() ) {
+                            layout_to = it->layout;
+                            offset_to -= it->offset;
                         }
 
-                        for( ; it != layout_table.rend(); ++it ){
-                            if( ( *it ).offset <= offset_from ){
-                                layout_from = ( *it ).layout;
-                                offset_from -= ( *it ).offset;
-                                break;
-                            }
+                        it = std::find_if( it, layout_table.crend(),
+                                           [offset_from]( const auto& t ) { return t.offset <= offset_from; } );
+                        if( it != layout_table.crend() ) {
+                            layout_from = it->layout;
+                            offset_from -= it->offset;
                         }
                     }
 
@@ -3610,15 +3604,14 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
 
     // 初期位置をセット
     // selection.select = true のアイテムが現在選択中
-    std::list< SELECTION >::iterator it;
-    for( it = m_multi_selection.begin(); it != m_multi_selection.end(); ++it ){
-
-        if( ( *it ).caret_from < m_caret_pos ) continue;
-        ( *it ).select = true;
-        break;
+    auto it = std::find_if_not( m_multi_selection.begin(), m_multi_selection.end(),
+                                [this]( const SELECTION& s ) { return s.caret_from < m_caret_pos; } );
+    if( it != m_multi_selection.end() ) {
+        it->select = true;
     }
-
-    if( it == m_multi_selection.end() ) m_multi_selection.back().select = true;
+    else {
+        m_multi_selection.back().select = true;
+    }
 
     // search_move でひとつ進めるのでひとつ前に戻しておく
     if( ! reverse ){
@@ -4394,16 +4387,16 @@ bool DrawAreaBase::set_selection_str()
                 // 画像のURLだけ抽出する
                 if( urls.size() ){
 
-                    std::vector< URLINFO >::const_iterator it = urls.begin();
-                    for( ; it != urls.end(); ++it ){
+                    for( const URLINFO& info : urls ) {
 
-                        if( DBIMG::get_type_ext( (*it).url ) != DBIMG::T_UNKNOWN ){
+                        if( DBIMG::get_type_ext( info.url ) != DBIMG::T_UNKNOWN ) {
 
-                            std::vector< URLINFO >::const_iterator it2 = m_selection.imgurls.begin();
-                            for( ; it2 != m_selection.imgurls.end(); ++it2 ){
-                                if( (*it).url == (*it2).url ) break;
+                            const std::string& url = info.url;
+                            const bool found = std::any_of( m_selection.imgurls.cbegin(), m_selection.imgurls.cend(),
+                                                            [&url]( const auto& i ) { return url == i.url; } );
+                            if( ! found ) {
+                                m_selection.imgurls.push_back( info );
                             }
-                            if( it2 == m_selection.imgurls.end() ) m_selection.imgurls.push_back( *it );
                         }
                     }
                 }
