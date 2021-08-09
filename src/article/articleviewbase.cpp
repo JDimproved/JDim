@@ -497,12 +497,11 @@ std::string ArticleViewBase::create_context_menu() const
 
         if( item == ITEM_END ) break;
         else if( item == ITEM_ETC && list_menu.size() ){
-            menu += std::string( "<menu action='Etc_Menu'>" );
-            std::list< int >::iterator it = list_menu.begin();
-            for( ; it != list_menu.end(); ++it ) menu += get_menu_item( *it );
-            menu += std::string( "</menu>" );
+            menu.append( "<menu action='Etc_Menu'>" );
+            for( int etc_item : list_menu ) menu.append( get_menu_item( etc_item ) );
+            menu.append( "</menu>" );
         }
-        else menu += get_menu_item( item );
+        else menu.append( get_menu_item( item ) );
 
         ++num;
     }
@@ -1581,10 +1580,8 @@ std::string ArticleViewBase::get_html_url4report( const std::list< int >& list_r
 {
     std::string html;
 
-    std::list < int >::const_iterator it = list_resnum.begin();
-    for( ; it != list_resnum.end(); ++it ){
+    for( const int num : list_resnum ) {
 
-        const int num = (*it);
         const std::string time_str = m_article->get_time_str( num );
         const std::string id_str = m_article->get_id_name( num );
 
@@ -4070,11 +4067,10 @@ void ArticleViewBase::slot_show_selection_images()
     if( m_drawarea->get_selection_imgurls().size() ){
 
         bool first = true;
-        std::vector< URLINFO >::const_iterator it = m_drawarea->get_selection_imgurls().begin();
-        for( ; it != m_drawarea->get_selection_imgurls().end(); ++it ){
+        for( const URLINFO& info : m_drawarea->get_selection_imgurls() ) {
 
-            const std::string& url = (*it).url;
-            const int res_number = (*it).res_number;
+            const std::string& url = info.url;
+            const int res_number = info.res_number;
 
             if( DBIMG::get_abone( url ) ) continue;
 
@@ -4114,10 +4110,9 @@ void ArticleViewBase::slot_delete_selection_images()
 
     if( m_drawarea->get_selection_imgurls().size() ){
 
-        std::vector< URLINFO >::const_iterator it = m_drawarea->get_selection_imgurls().begin();
-        for( ; it != m_drawarea->get_selection_imgurls().end(); ++it ){
+        for( const URLINFO& info : m_drawarea->get_selection_imgurls() ) {
 
-            const std::string& url = (*it).url;
+            const std::string& url = info.url;
             if( ! DBIMG::is_protected( url ) ){
                 CORE::core_set_command( "delete_image", url );
             }
@@ -4139,10 +4134,9 @@ void ArticleViewBase::slot_abone_selection_images()
 
     if( m_drawarea->get_selection_imgurls().size() ){
 
-        std::vector< URLINFO >::const_iterator it = m_drawarea->get_selection_imgurls().begin();
-        for( ; it != m_drawarea->get_selection_imgurls().end(); ++it ){
+        for( const URLINFO& info : m_drawarea->get_selection_imgurls() ) {
 
-            const std::string& url = (*it).url;
+            const std::string& url = info.url;
             if( ! DBIMG::is_protected( url ) ){
                 DBIMG::set_abone( url, true );
                 CORE::core_set_command( "delete_image", url );
