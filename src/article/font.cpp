@@ -41,18 +41,17 @@ void ARTICLE::init_font()
     // スレビューで文字幅の近似を厳密にするか
     strict_of_char = CONFIG::get_strict_char_width();
 
-    for( int i = 0; i< FONT_NUM ; i++ ){
+    for( WIDTH_DATA*& char_data : width_of_char ) {
 
-        if( width_of_char[ i ]  ){
+        if( char_data ) {
 
             for( int j = 0; j < kMaxCacheCodePoint; ++j ){
 
-                if( width_of_char[ i ][ j ].width ) delete[] width_of_char[ i ][ j ].width;
+                if( char_data[ j ].width ) delete[] char_data[ j ].width;
             }
-            delete[] width_of_char[ i ];
+            delete[] char_data;
+            char_data = nullptr;
         }
-
-        width_of_char[ i ] = nullptr;
     }
 }
 
