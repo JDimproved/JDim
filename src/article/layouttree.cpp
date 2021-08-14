@@ -537,10 +537,9 @@ void LayoutTree::append_dat( const std::string& dat, int num )
 
     // 改行毎に dat を分割して追加
     std::list< std::string > lines = MISC::get_lines( dat );
-    std::list< std::string >::iterator it = lines.begin();
-    for( ; it != lines.end(); ++it ){
-        if( ! ( *it ).empty() ){
-            DBTREE::NODE* node = m_local_nodetree->append_dat( (*it) + "\n" );
+    for( const std::string& line : lines ) {
+        if( ! line.empty() ) {
+            DBTREE::NODE* node = m_local_nodetree->append_dat( line + "\n" );
             append_node( node, false );
         }
     }
