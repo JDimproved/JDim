@@ -132,8 +132,8 @@ void BBSListViewMain::delete_view()
 {
     // 選択範囲に通常の板が含まれていないか確認
     std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
-    if( std::any_of( list_it.begin(), list_it.end(),
-                     [this]( const auto& iter ) { return ! is_etcboard( iter ); } ) ) {
+    if( std::any_of( list_it.cbegin(), list_it.cend(),
+                     [this]( const Gtk::TreeIter& iter ) { return ! is_etcboard( iter ); } ) ) {
         SKELETON::MsgDiag mdiag( get_parent_win(), "通常の板は削除出来ません", false, Gtk::MESSAGE_ERROR );
         mdiag.run();
         return;
@@ -230,7 +230,7 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
     else{
 
         const bool have_etc = std::all_of( list_it.cbegin(), list_it.cend(),
-                                           [this]( const auto& iter ) { return is_etcboard( iter ); } );
+                                           [this]( const Gtk::TreeIter& iter ) { return is_etcboard( iter ); } );
 
         if( have_etc ) popupmenu = id2popupmenu(  "/popup_menu_mul_etc" );
         else popupmenu = id2popupmenu(  "/popup_menu_mul" );
