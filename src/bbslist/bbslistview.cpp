@@ -132,7 +132,7 @@ void BBSListViewMain::delete_view()
 {
     // 選択範囲に通常の板が含まれていないか確認
     std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
-    if( std::any_of( list_it.cbegin(), list_it.cend(),
+    if( std::any_of( list_it.begin(), list_it.end(),
                      [this]( const auto& iter ) { return ! is_etcboard( iter ); } ) ) {
         SKELETON::MsgDiag mdiag( get_parent_win(), "通常の板は削除出来ません", false, Gtk::MESSAGE_ERROR );
         mdiag.run();
