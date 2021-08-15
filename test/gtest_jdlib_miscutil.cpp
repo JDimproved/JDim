@@ -49,6 +49,33 @@ TEST_F(SplitLineTest, split_doublequote_U_3000)
 }
 
 
+class ConcatWithSuffixTest : public ::testing::Test {};
+
+TEST_F(ConcatWithSuffixTest, empty_list)
+{
+    std::list<std::string> list_in;
+    EXPECT_EQ( "", MISC::concat_with_suffix( list_in, '!' ) );
+}
+
+TEST_F(ConcatWithSuffixTest, one_element)
+{
+    std::list<std::string> list_in = { "hello" };
+    EXPECT_EQ( "hello!", MISC::concat_with_suffix( list_in, '!' ) );
+}
+
+TEST_F(ConcatWithSuffixTest, hello_world)
+{
+    std::list<std::string> list_in = { "hello", "world" };
+    EXPECT_EQ( "hello!world!", MISC::concat_with_suffix( list_in, '!' ) );
+}
+
+TEST_F(ConcatWithSuffixTest, ignore_empty_string)
+{
+    std::list<std::string> list_in = { "", "hello", "", "", "world", "" };
+    EXPECT_EQ( "hello!world!", MISC::concat_with_suffix( list_in, '!' ) );
+}
+
+
 class RemoveSpaceTest : public ::testing::Test {};
 
 TEST_F(RemoveSpaceTest, remove_empty)
