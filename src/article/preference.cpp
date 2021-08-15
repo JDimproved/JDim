@@ -127,13 +127,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     if( DBTREE::article_is_cached( get_url() ) ){ 
 
-        std::string str_id, str_res, str_name, str_word, str_regex;
-        std::list< std::string >::iterator it;
+        std::string str_res;
 
         // id
         std::list< std::string > list_id = DBTREE::get_abone_list_id( get_url() );
-        for( it = list_id.begin(); it != list_id.end(); ++it ) if( ! ( *it ).empty() ) str_id += ( *it ) + "\n";
-        m_edit_id.set_text( str_id );
+        m_edit_id.set_text( MISC::concat_with_suffix( list_id, '\n' ) );
         // あぼーんレス番号
         // 連番は 12-34 の様なフォーマットに変換
         const std::unordered_set< int >& set_res = DBTREE::get_abone_reses( get_url() );
@@ -163,18 +161,15 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
         // name
         std::list< std::string > list_name = DBTREE::get_abone_list_name( get_url() );
-        for( it = list_name.begin(); it != list_name.end(); ++it ) if( ! ( *it ).empty() ) str_name += ( *it ) + "\n";
-        m_edit_name.set_text( str_name );
+        m_edit_name.set_text( MISC::concat_with_suffix( list_name, '\n' ) );
 
         // word
         std::list< std::string > list_word = DBTREE::get_abone_list_word( get_url() );
-        for( it = list_word.begin(); it != list_word.end(); ++it ) if( ! ( *it ).empty() ) str_word += ( *it ) + "\n";
-        m_edit_word.set_text( str_word );
+        m_edit_word.set_text( MISC::concat_with_suffix( list_word, '\n' ) );
 
         // regex
         std::list< std::string > list_regex = DBTREE::get_abone_list_regex( get_url() );
-        for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
-        m_edit_regex.set_text( str_regex );
+        m_edit_regex.set_text( MISC::concat_with_suffix( list_regex, '\n' ) );
     }
     else{
         m_edit_id.set_editable( false );
@@ -226,10 +221,8 @@ void Preferences::slot_ok_clicked()
     std::vector< char > vec_abone_res;
     vec_abone_res.resize( DBTREE::article_number_load( get_url() ) + 1 );
     std::list< std::string > list_res = MISC::get_lines( m_edit_res.get_text() );
-    std::list< std::string >::iterator it = list_res.begin();
-    for( ; it != list_res.end(); ++it ){
+    for( std::string& num_str : list_res ) {
 
-        std::string num_str = ( *it );
         int number = atoi( num_str.c_str() );
         if( number >= 1 ){
             int number_end = number;

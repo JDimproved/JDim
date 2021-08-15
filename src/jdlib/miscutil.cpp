@@ -288,6 +288,25 @@ std::string MISC::listtostr( const std::list< std::string >& list_in )
 
 
 //
+// list_in から空文字列を除き suffix でつなげて返す
+// 他のプログラミング言語にあるjoin()と動作が異なり返り値の末尾にもsuffixが付く
+//
+// (例) {"aa", "", "bb", "cc"}, '!' -> "aa!bb!cc!"
+//
+std::string MISC::concat_with_suffix( const std::list<std::string>& list_in, char suffix )
+{
+    std::string str_out;
+    for( const std::string& s : list_in ) {
+        if( s.empty() ) continue;
+        str_out.append( s );
+        str_out.push_back( suffix );
+    }
+    return str_out;
+}
+
+
+
+//
 // strの前後の空白削除
 //
 std::string MISC::remove_space( const std::string& str )

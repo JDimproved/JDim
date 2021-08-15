@@ -83,6 +83,11 @@ namespace MISC
     // (例)  "aaa" "bbb" "\"ccc\""
     std::string listtostr( const std::list< std::string >& list_in );
 
+    // list_in から空文字列を除き suffix でつなげて返す
+    // 他のプログラミング言語にあるjoin()と動作が異なり返り値の末尾にもsuffixが付く
+    // (例) {"aa", "", "bb", "cc"}, '!' -> "aa!bb!cc!"
+    std::string concat_with_suffix( const std::list<std::string>& list_in, char suffix );
+
     // strの前後の空白削除
     std::string remove_space( const std::string& str );
 
