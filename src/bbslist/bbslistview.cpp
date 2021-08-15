@@ -132,13 +132,11 @@ void BBSListViewMain::delete_view()
 {
     // 選択範囲に通常の板が含まれていないか確認
     std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-    for( ; it != list_it.end(); ++it ){
-        if( ! is_etcboard( *it ) ){
-            SKELETON::MsgDiag mdiag( get_parent_win(), "通常の板は削除出来ません", false, Gtk::MESSAGE_ERROR );
-            mdiag.run();
-            return;
-        }
+    if( std::any_of( list_it.cbegin(), list_it.cend(),
+                     [this]( const auto& iter ) { return ! is_etcboard( iter ); } ) ) {
+        SKELETON::MsgDiag mdiag( get_parent_win(), "通常の板は削除出来ません", false, Gtk::MESSAGE_ERROR );
+        mdiag.run();
+        return;
     }
 
     SKELETON::MsgDiag mdiag( get_parent_win(), "削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
@@ -156,10 +154,9 @@ void BBSListViewMain::delete_view_impl()
 
     // データベースから外部板削除
     std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-    for( ; it != list_it.end(); ++it ){
-        if( is_etcboard( *it ) ){
-            Gtk::TreePath path = get_treestore()->get_path( *it );
+    for( Gtk::TreeModel::iterator& iter : list_it ) {
+        if( is_etcboard( iter ) ) {
+            Gtk::TreePath path = get_treestore()->get_path( iter );
             std::string url = path2rawurl( path );
             std::string name = path2name( path );
 
@@ -232,15 +229,8 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
     }
     else{
 
-        bool have_etc = true;
-
-        std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-        for( ; it != list_it.end(); ++it ){
-            if( ! is_etcboard( *it ) ){
-                have_etc = false;
-                break;
-            }
-        }
+        const bool have_etc = std::all_of( list_it.cbegin(), list_it.cend(),
+                                           [this]( const auto& iter ) { return is_etcboard( iter ); } );
 
         if( have_etc ) popupmenu = id2popupmenu(  "/popup_menu_mul_etc" );
         else popupmenu = id2popupmenu(  "/popup_menu_mul" );
