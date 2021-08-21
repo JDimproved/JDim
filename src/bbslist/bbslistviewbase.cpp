@@ -597,9 +597,7 @@ void BBSListViewBase::clock_in()
 //
 void BBSListViewBase::set_fgcolor_of_comment( const Gtk::TreeModel::Children& children )
 {
-    Gtk::TreeModel::iterator it = children.begin();
-    for( ; it != children.end(); ++it ){
-        Gtk::TreeModel::Row row = *it;
+    for( Gtk::TreeModel::Row row : children ) {
 
         const int type = row2type( row );
         if( type == TYPE_COMMENT ) row[ m_columns.m_fgcolor ] = Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_BBS_COMMENT ) );
@@ -1243,10 +1241,7 @@ void BBSListViewBase::slot_dropped_from_other( const CORE::DATA_INFO_LIST& list_
     std::cout << "BBSListViewBase:slot_dropped_from_other\n";
 #endif
 
-    CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
-    for( ; it != list_info.end() ; ++it ){
-
-        const CORE::DATA_INFO& info = ( *it );
+    for( const CORE::DATA_INFO& info : list_info ) {
         const int type = info.type;
 
         switch( type ){
@@ -1631,14 +1626,12 @@ void BBSListViewBase::slot_select_all()
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
     Gtk::TreeModel::Children child = m_treestore->children();
-    Gtk::TreeModel::Children::iterator it = child.begin();
-    for( ; it != child.end() ; ++it ) expand_all_dir( m_treestore->get_path( *it ) );
+    for( const Gtk::TreeIter& iter : child ) expand_all_dir( m_treestore->get_path( iter ) );
 
-    it = child.begin();
-    m_treeview.scroll_to_row( m_treestore->get_path( *it ), 0 );
-    for( ; it != child.end() ; ++it ){
-        m_treeview.get_selection()->select( *it );
-        m_treeview.select_all_dir( m_treestore->get_path( *it ) );
+    m_treeview.scroll_to_row( m_treestore->get_path( *child.begin() ), 0 );
+    for( const Gtk::TreeIter& iter : child ) {
+        m_treeview.get_selection()->select( iter );
+        m_treeview.select_all_dir( m_treestore->get_path( iter ) );
     }
 }
 
@@ -2866,10 +2859,7 @@ void BBSListViewBase::append_history()
 
         std::vector< Gtk::TreePath > del_path;
 
-        Gtk::TreeModel::iterator it = m_treestore->children().begin();
-        for( ; it != m_treestore->children().end(); ++it ){
-
-            Gtk::TreeModel::Row row = *it;
+        for( Gtk::TreeModel::Row row : m_treestore->children() ) {
             if( row2url( row ) == ( *it_info ).url ) del_path.push_back( GET_PATH( row ) );
         }
 
@@ -2920,10 +2910,7 @@ void BBSListViewBase::get_history( CORE::DATA_INFO_LIST& info_list ) const
     CORE::DATA_INFO info;
 
     // 履歴はサブディレクトリが無いと仮定してサブディレクトリの探査はしない
-    Gtk::TreeModel::iterator it = m_treestore->children().begin();
-    for( ; it != m_treestore->children().end(); ++it ){
-
-        Gtk::TreeModel::Row row = *it;
+    for( Gtk::TreeModel::Row row : m_treestore->children() ) {
 
         info.type = row2type( row );
         info.url = row2url( row );
