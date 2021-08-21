@@ -58,10 +58,7 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
 
     BBSLIST::TreeColumns columns;
     Gtk::TreeModel::Children child = m_treestore->children();
-    Gtk::TreeModel::Children::iterator it = child.begin();
-    for( ; it != child.end() ; ++it ){
-
-        Gtk::TreeModel::Row row = ( *it );
+    for( Gtk::TreeModel::Row row : child ) {
         const int type = row[ columns.m_type ];
         if( type == TYPE_DIR ){
 
