@@ -377,10 +377,9 @@ std::string BoardViewBase::create_context_menu() const
 
         if( item == ITEM_END ) break;
         else if( item == ITEM_ETC && list_menu.size() ){
-            menu += std::string( "<menu action='Etc_Menu'>" );
-            std::list< int >::iterator it = list_menu.begin();
-            for( ; it != list_menu.end(); ++it ) menu += get_menu_item( *it );
-            menu += std::string( "</menu>" );
+            menu.append( "<menu action='Etc_Menu'>" );
+            for( const int etc_item : list_menu ) menu.append( get_menu_item( etc_item ) );
+            menu.append( "</menu>" );
         }
         else menu += get_menu_item( item );
 
@@ -492,10 +491,7 @@ void BoardViewBase::unsorted_column()
 Gtk::TreeModel::Row BoardViewBase::get_row_from_url( const std::string& url ) const
 {
     Gtk::TreeModel::Children child = m_liststore->children();
-    Gtk::TreeModel::Children::iterator it;
-    for( it = child.begin() ; it != child.end() ; ++it ){
-
-        Gtk::TreeModel::Row row = *( it );
+    for( Gtk::TreeModel::Row row : child ) {
         DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
         if( url == art->get_url() ) return row;
     }
@@ -1363,10 +1359,9 @@ void BoardViewBase::close_view()
 void BoardViewBase::slot_delete_logs()
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-    for( ; it != list_it.end(); ++it ){
+    for( Gtk::TreeModel::iterator& iter : list_it ) {
 
-        Gtk::TreeModel::Row row = *( *it );
+        Gtk::TreeModel::Row row = *iter;
         DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
         CORE::core_set_command( "delete_article", art->get_url() );
     }
@@ -1628,18 +1623,12 @@ void BoardViewBase::goto_num( const int num, const int )
     focus_view();
 
     Gtk::TreeModel::Children child = m_liststore->children();
-    Gtk::TreeModel::Children::iterator it = child.begin();
-    for( ; it != child.end() ; ++it ){
-
-        Gtk::TreeModel::Row row = *( it );
-
-        if( row[ m_columns.m_col_id ] == num ){
-
-            Gtk::TreePath path = GET_PATH( row );
-            m_treeview.scroll_to_row( path );
-            m_treeview.set_cursor( path );
-            return;
-        }
+    auto it = std::find_if( child.begin(), child.end(),
+                            [this, num]( const Gtk::TreeRow& row ) { return row[ m_columns.m_col_id ] == num; } );
+    if( it != child.end() ) {
+        Gtk::TreePath path = GET_PATH( *it );
+        m_treeview.scroll_to_row( path );
+        m_treeview.set_cursor( path );
     }
 }
 
@@ -1725,10 +1714,9 @@ void BoardViewBase::activate_act_before_popupmenu( const std::string& url )
         std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
         if( list_it.size() ){
 
-            std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-            for( ; it != list_it.end(); ++it ){
+            for( Gtk::TreeModel::iterator& iter : list_it ) {
 
-                Gtk::TreeModel::Row row = *( *it );
+                Gtk::TreeModel::Row row = *iter;
                 DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
                 if( art->is_cached() ) {
                     act->set_sensitive( true );
@@ -1825,10 +1813,7 @@ void BoardViewBase::update_item_all()
     unsorted_column();
 
     Gtk::TreeModel::Children child = m_liststore->children();
-    Gtk::TreeModel::Children::iterator it;
-    for( it = child.begin() ; it != child.end() ; ++it ){
-
-        Gtk::TreeModel::Row row = *( it );
+    for( Gtk::TreeModel::Row row : child ) {
         if( ! row ) continue;
 
         DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
@@ -2287,15 +2272,14 @@ void BoardViewBase::slot_dropped_url_list( const std::list< std::string >& url_l
 
     // 共有バッファにアドレスをセットしてから import_dat コマンドを発行
     CORE::DATA_INFO_LIST list_info;
-    std::list< std::string >::const_iterator it = url_list.begin();
-    for( ; it != url_list.end(); ++it ){
+    for( const std::string& url : url_list ) {
 
-        if( ( *it ).empty() ) continue;
-        if( ( *it ).find( "file://" ) == std::string::npos ) continue;
+        if( url.empty() ) continue;
+        if( url.find( "file://" ) == std::string::npos ) continue;
 
         CORE::DATA_INFO info;
         info.type = TYPE_FILE;
-        info.url = MISC::remove_str( ( *it ), "file://" );
+        info.url = MISC::remove_str( url, "file://" );
         list_info.push_back( info );
 
 #ifdef _DEBUG
@@ -2314,9 +2298,8 @@ void BoardViewBase::slot_dropped_url_list( const std::list< std::string >& url_l
 void BoardViewBase::slot_bookmark( const int bookmark )
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-    for( ; it != list_it.end(); ++it ){
-        Gtk::TreeModel::Row row = *( *it );
+    for( Gtk::TreeModel::iterator& iter : list_it ) {
+        Gtk::TreeModel::Row row = *iter;
         DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
         if( art ){
             bool set = bookmark;
@@ -2435,9 +2418,7 @@ void BoardViewBase::slot_select_all()
     mdiag.set_default_response( Gtk::RESPONSE_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
-    Gtk::TreeModel::Children child = m_liststore->children();
-    Gtk::TreeModel::Children::iterator it = child.begin();
-    for( ; it != child.end() ; ++it ) m_treeview.get_selection()->select( *it );
+    m_treeview.get_selection()->select_all();
 }
 
 
@@ -2513,7 +2494,6 @@ void BoardViewBase::open_selected_rows( const bool reget )
     std::string mode = std::string();;
     std::string list_url;
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it;
 
     if( reget ){
 
@@ -2523,10 +2503,9 @@ void BoardViewBase::open_selected_rows( const bool reget )
             return;
         }
 
-        it = list_it.begin();
-        for( ; it != list_it.end(); ++it ){
+        for( Gtk::TreeModel::iterator& iter : list_it ) {
 
-            Gtk::TreeModel::Row row = *( *it );
+            Gtk::TreeModel::Row row = *iter;
             DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
 
             if( ! art->is_cached() ) continue;
@@ -2545,12 +2524,11 @@ void BoardViewBase::open_selected_rows( const bool reget )
         mode = "reget";
     }
 
-    it = list_it.begin();
-    for( ; it != list_it.end(); ++it ){
+    for( Gtk::TreeModel::iterator& iter : list_it ) {
 
         if( !list_url.empty() ) list_url += " ";
 
-        Gtk::TreeModel::Row row = *( *it );
+        Gtk::TreeModel::Row row = *iter;
         DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
 
         if( reget && ! art->is_cached() ) continue;
@@ -2616,13 +2594,11 @@ bool BoardViewBase::drawout( const bool force_reset )
     constexpr bool wchar = true;  // 全角半角の区別をしない
 
     Gtk::TreeModel::Children child = m_liststore->children();
-    Gtk::TreeModel::Children::iterator it = child.begin();
 
     if ( ! reset ) regexptn.set( query, icase, newline, usemigemo, wchar );
 
-    for( ; it != child.end() ; ++it ){
+    for( Gtk::TreeModel::Row row : child ) {
 
-        Gtk::TreeModel::Row row = *( it );
         const Glib::ustring subject = row[ m_columns.m_col_subject ];
 
         if( reset ) row[ m_columns.m_col_drawbg ] = false;
@@ -2828,7 +2804,6 @@ void BoardViewBase::slot_save_dat()
     if( ! m_enable_menuslot ) return;
 
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
 
 #ifdef _DEBUG
     std::cout << "BoardViewBase::slot_save_dat size = " << list_it.size() << std::endl;
@@ -2875,9 +2850,9 @@ void BoardViewBase::slot_save_dat()
 
     SESSION::set_dir_dat( path_dir );
 
-    for( ; it != list_it.end(); ++it ){
+    for( Gtk::TreeModel::iterator& iter : list_it ) {
 
-        Gtk::TreeModel::Row row = *( *it );
+        Gtk::TreeModel::Row row = *iter;
         DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
 
         if( ! art->is_cached() ) continue;
@@ -2973,13 +2948,12 @@ void BoardViewBase::slot_search_next()
 void BoardViewBase::slot_abone_thread()
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
     if( ! list_it.size() ) return;
 
     std::list< std::string > threads = DBTREE::get_abone_list_thread( get_url_board() );
 
-    for( ; it != list_it.end(); ++it ){
-        Gtk::TreeModel::Row row = *( *it );
+    for( Gtk::TreeModel::iterator& iter : list_it ) {
+        Gtk::TreeModel::Row row = *iter;
         Glib::ustring subject = row[ m_columns.m_col_subject ];
         threads.push_back( subject );
     }
@@ -3022,10 +2996,9 @@ void BoardViewBase::set_article_to_buffer()
 
         CORE::DATA_INFO_LIST list_info;
         Gtk::TreePath path( "0" );
-        std::list< Gtk::TreeModel::iterator >::iterator it = list_it.begin();
-        for( ; it != list_it.end(); ++it ){
+        for( Gtk::TreeModel::iterator& iter : list_it ) {
 
-            Gtk::TreeModel::Row row = *( *it );
+            Gtk::TreeModel::Row row = *iter;
             DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
             const Glib::ustring name = row[ m_columns.m_col_subject ];
 
@@ -3086,13 +3059,12 @@ void BoardViewBase::draw_bg_articles()
         if( CORE::SBUF_size() == 0 ) return;
 
         const CORE::DATA_INFO_LIST list_info = CORE::SBUF_list_info();
-        CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
 
-        for( ; it != list_info.end(); ++it ){
+        for( const CORE::DATA_INFO& info : list_info ) {
 
-            if( ( *it ).type != TYPE_THREAD ) continue;
+            if( info.type != TYPE_THREAD ) continue;
 
-            m_list_draw_bg_articles.push_back( ( *it ).url );
+            m_list_draw_bg_articles.push_back( info.url );
         }
     }
 
@@ -3107,10 +3079,7 @@ void BoardViewBase::draw_bg_articles()
 
     unsorted_column();
 
-    std::list< std::string >::const_iterator it = m_list_draw_bg_articles.begin();
-    for( ; it != m_list_draw_bg_articles.end(); ++it ){
-
-        const std::string& url = ( *it );
+    for( const std::string& url : m_list_draw_bg_articles ) {
 
 #ifdef _DEBUG
         std::cout << url << std::endl;
