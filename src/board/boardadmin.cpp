@@ -391,9 +391,7 @@ void BoardAdmin::command_local( const COMMAND_ARGS& command )
     if( command.command == "update_columns" ){
 
         std::list< SKELETON::View* > list_view = get_list_view( command.url );
-        std::list< SKELETON::View* >::iterator it = list_view.begin();
-        for( ; it != list_view.end(); ++it ){
-            SKELETON::View* view = ( *it );
+        for( SKELETON::View* view : list_view ) {
             if( view ) view->set_command( "update_columns" );
         }
     }
