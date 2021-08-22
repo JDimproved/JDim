@@ -1262,7 +1262,7 @@ bool Loader::analyze_header()
 //
 std::string Loader::analyze_header_option( const std::string& option ) const
 {
-    const std::size_t i = m_data.str_header.find( option, 0 );
+    const std::size_t i = MISC::ascii_ignore_case_find( m_data.str_header, option );
     if( i != std::string::npos ){
         const std::size_t option_length = option.length();
         std::size_t i2 = m_data.str_header.find( "\r\n", i );
@@ -1287,7 +1287,7 @@ std::list< std::string > Loader::analyze_header_option_list( const std::string& 
     std::size_t i2 = 0;
     for(;;){
 
-        const std::size_t i = m_data.str_header.find( option, i2 );
+        const std::size_t i = MISC::ascii_ignore_case_find( m_data.str_header, option, i2 );
         if( i == std::string::npos ) break;
 
         i2 = m_data.str_header.find( "\r\n", i );
