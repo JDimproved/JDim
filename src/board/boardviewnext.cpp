@@ -17,6 +17,8 @@
 
 #include "session.h"
 
+#include <algorithm>
+
 using namespace BOARD;
 
 
@@ -68,8 +70,8 @@ void BoardViewNext::update_view()
     update_by_tfidf( next_items );
 
     std::vector< DBTREE::ArticleBase* >list_article;
-    std::vector< NEXT_ITEM >::iterator it_next_items = next_items.begin();
-    for( ; it_next_items != next_items.end(); ++it_next_items ) list_article.push_back( ( *it_next_items ).article );
+    std::transform( next_items.cbegin(), next_items.cend(), std::back_inserter( list_article ),
+                    []( const NEXT_ITEM& i ) { return i.article; } );
 
     const bool loading_fin = true;
     update_view_impl( list_article, loading_fin );
@@ -111,13 +113,12 @@ void BoardViewNext::update_by_tfidf( std::vector< NEXT_ITEM >& next_items )
     MISC::tfidf_calc_vec_tfifd( vec_tfidf_src, subject_src, vec_idf, vec_words );
 
     // 類似度検索
-    std::vector< DBTREE::ArticleBase* >::const_iterator it = list_subject.begin();
-    for( ; it != list_subject.end(); ++it ){
+    for( DBTREE::ArticleBase* article : list_subject ) {
 
         NEXT_ITEM item;
 
         // 読み込み済みのスレは除外
-        item.article = ( *it );
+        item.article = article;
         if( item.article->get_number_load() ) continue;
 
         item.since = item.article->get_since_time();

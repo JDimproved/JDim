@@ -250,29 +250,22 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     set_activate_entry( m_proxy_frame_w.entry_port );
 
     // あぼーん
-    std::string str_id, str_name, str_word, str_regex;
-    std::string str_thread, str_word_thread, str_regex_thread;
-    std::list< std::string >::iterator it;
 
     // ID
     std::list< std::string > list_id = DBTREE::get_abone_list_id_board( get_url() );
-    for( it = list_id.begin(); it != list_id.end(); ++it ) if( ! ( *it ).empty() ) str_id += ( *it ) + "\n";
-    m_edit_id.set_text( str_id );
+    m_edit_id.set_text( MISC::concat_with_suffix( list_id, '\n' ) );
 
     // name
     std::list< std::string > list_name = DBTREE::get_abone_list_name_board( get_url() );
-    for( it = list_name.begin(); it != list_name.end(); ++it ) if( ! ( *it ).empty() ) str_name += ( *it ) + "\n";
-    m_edit_name.set_text( str_name );
+    m_edit_name.set_text( MISC::concat_with_suffix( list_name, '\n' ) );
 
     // word
     std::list< std::string > list_word = DBTREE::get_abone_list_word_board( get_url() );
-    for( it = list_word.begin(); it != list_word.end(); ++it ) if( ! ( *it ).empty() ) str_word += ( *it ) + "\n";
-    m_edit_word.set_text( str_word );
+    m_edit_word.set_text( MISC::concat_with_suffix( list_word, '\n' ) );
 
     // regex
     std::list< std::string > list_regex = DBTREE::get_abone_list_regex_board( get_url() );
-    for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
-    m_edit_regex.set_text( str_regex );
+    m_edit_regex.set_text( MISC::concat_with_suffix( list_regex, '\n' ) );
 
     m_label_warning.set_text(
         "ここでのあぼーん設定は「" +  DBTREE::board_name( get_url() ) + "」板の全スレに適用されます。\n\n"
@@ -320,8 +313,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     // スレあぼーん
     std::list< std::string > list_thread = DBTREE::get_abone_list_thread( get_url() );
-    for( it = list_thread.begin(); it != list_thread.end(); ++it ) if( ! ( *it ).empty() ) str_thread += ( *it ) + "\n";
-    m_edit_thread.set_text( str_thread );
+    m_edit_thread.set_text( MISC::concat_with_suffix( list_thread, '\n' ) );
 
     m_button_remove_old_title.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_remove_old_title ) );
     m_vbox_abone_title.pack_start( m_edit_thread );
@@ -329,13 +321,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     // スレwordあぼーん
     std::list< std::string > list_word_thread = DBTREE::get_abone_list_word_thread( get_url() );
-    for( it = list_word_thread.begin(); it != list_word_thread.end(); ++it ) if( ! ( *it ).empty() ) str_word_thread += ( *it ) + "\n";
-    m_edit_word_thread.set_text( str_word_thread );
+    m_edit_word_thread.set_text( MISC::concat_with_suffix( list_word_thread, '\n' ) );
 
     // スレregexあぼーん
     std::list< std::string > list_regex_thread = DBTREE::get_abone_list_regex_thread( get_url() );
-    for( it = list_regex_thread.begin(); it != list_regex_thread.end(); ++it ) if( ! ( *it ).empty() ) str_regex_thread += ( *it ) + "\n";
-    m_edit_regex_thread.set_text( str_regex_thread );
+    m_edit_regex_thread.set_text( MISC::concat_with_suffix( list_regex_thread, '\n' ) );
 
     m_notebook_abone_thread.append_page( m_vbox_abone_thread, "一般" );
     m_notebook_abone_thread.append_page( m_vbox_abone_title, "NG スレタイトル" );
@@ -444,10 +434,7 @@ void Preferences::slot_remove_old_title()
     }
 
     const std::list< std::string > list_thread = DBTREE::get_abone_list_thread_remove( get_url() );
-    std::list< std::string >::const_iterator it = list_thread.begin();
-    std::string str;
-    for( ; it != list_thread.end(); ++it ) if( ! ( *it ).empty() ) str += ( *it ) + "\n";
-    m_edit_thread.set_text( str );
+    m_edit_thread.set_text( MISC::concat_with_suffix( list_thread, '\n' ) );
 }
 
 
