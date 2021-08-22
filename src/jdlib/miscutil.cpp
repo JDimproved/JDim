@@ -12,6 +12,8 @@
 #include "dbtree/spchar_decoder.h"
 #include "dbtree/node.h"
 
+#include <glib.h>
+
 #include <sstream>
 #include <cstring>
 #include <cstdio>
@@ -2055,4 +2057,24 @@ std::string MISC::parse_html_form_action( const std::string& html )
         path = "/test" + regex.str( 2 );
     }
     return path;
+}
+
+
+// haystack の pos 以降から最初に needle と一致する位置を返す (ASCIIだけignore case)
+// 見つからない場合は std::string::npos を返す、needle が空文字列なら pos を返す
+std::size_t MISC::ascii_ignore_case_find( const std::string& haystack, const std::string& needle, std::size_t pos )
+{
+    if( haystack.size() < pos ) return std::string::npos;
+    if( needle.empty() ) return pos;
+
+    const char head[3] = { g_ascii_toupper( needle[0] ), g_ascii_tolower( needle[0] ) };
+    std::size_t i = pos;
+    while( true ) {
+        i = haystack.find_first_of( head, i );
+        if( i == std::string::npos ) break;
+        // ヌル終端文字列が要件なので注意
+        if( g_ascii_strncasecmp( haystack.c_str() + i, needle.c_str(), needle.size() ) == 0 ) break;
+        ++i;
+    }
+    return i;
 }

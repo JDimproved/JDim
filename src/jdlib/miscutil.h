@@ -304,6 +304,10 @@ namespace MISC
     // 2ch互換板に特化して実装しているため他の掲示板で期待した結果を返す保証はない
     // 詳細は実装やテストコードを参照
     std::string parse_html_form_action( const std::string& html );
+
+    // haystack の pos 以降から最初に needle と一致する位置を返す (ASCIIだけignore case)
+    // 見つからない場合は std::string::npos を返す、needle が空文字列なら pos を返す
+    std::size_t ascii_ignore_case_find( const std::string& haystack, const std::string& needle, std::size_t pos = 0 );
 }
 
 

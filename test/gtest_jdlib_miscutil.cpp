@@ -842,4 +842,60 @@ TEST_F(ChrefDecodeTest, escape_html_char_keeping)
     EXPECT_EQ( result, "&lt;&gt;&amp;&quot; &lt;&gt;&amp;&quot; &lt;&gt;&amp;&quot;" );
 }
 
+
+class AsciiIgnoreCaseFindTest : public ::testing::Test {};
+
+TEST_F(AsciiIgnoreCaseFindTest, empty)
+{
+    EXPECT_EQ( 0, MISC::ascii_ignore_case_find( std::string{}, std::string{} ) );
+    EXPECT_EQ( std::string::npos, MISC::ascii_ignore_case_find( std::string{}, std::string{}, 10 ) );
+}
+
+TEST_F(AsciiIgnoreCaseFindTest, not_match)
+{
+    const std::string haystack = "spam ham eggs";
+    EXPECT_EQ( std::string::npos, MISC::ascii_ignore_case_find( haystack, "foo bar" ) );
+}
+
+TEST_F(AsciiIgnoreCaseFindTest, out_of_bounds)
+{
+    const std::string haystack = "out of bounds";
+    EXPECT_EQ( std::string::npos, MISC::ascii_ignore_case_find( haystack, "needle", haystack.size() + 1 ) );
+}
+
+TEST_F(AsciiIgnoreCaseFindTest, match_same_case)
+{
+    const std::string haystack = "helloworld";
+    EXPECT_EQ( 0, MISC::ascii_ignore_case_find( haystack, "hello" ) );
+    EXPECT_EQ( 5, MISC::ascii_ignore_case_find( haystack, "world" ) );
+}
+
+TEST_F(AsciiIgnoreCaseFindTest, match_lowercase)
+{
+    const std::string haystack_lower = "helloworld";
+    EXPECT_EQ( 0, MISC::ascii_ignore_case_find( haystack_lower, "HELLO" ) );
+    EXPECT_EQ( 5, MISC::ascii_ignore_case_find( haystack_lower, "WORLD" ) );
+}
+
+TEST_F(AsciiIgnoreCaseFindTest, match_uppercase)
+{
+    const std::string haystack_upper = "HELLOWORLD";
+    EXPECT_EQ( 0, MISC::ascii_ignore_case_find( haystack_upper, "hello" ) );
+    EXPECT_EQ( 5, MISC::ascii_ignore_case_find( haystack_upper, "world" ) );
+}
+
+TEST_F(AsciiIgnoreCaseFindTest, match_mix_case)
+{
+    const std::string haystack_mix = "HeLlOwOrLd";
+    EXPECT_EQ( 0, MISC::ascii_ignore_case_find( haystack_mix, "hElLo" ) );
+    EXPECT_EQ( 5, MISC::ascii_ignore_case_find( haystack_mix, "WoRlD" ) );
+}
+
+TEST_F(AsciiIgnoreCaseFindTest, match_lead_word)
+{
+    const std::string haystack = "foo bar baz bar";
+    EXPECT_EQ( 4, MISC::ascii_ignore_case_find( haystack, "bar" ) );
+    EXPECT_EQ( 12, MISC::ascii_ignore_case_find( haystack, "BAR", 5 ) );
+}
+
 } // namespace
