@@ -32,17 +32,15 @@ void MouseKeyConf::save_conf( const std::string& savefile )
 
     JDLIB::ConfLoader cf( savefile, std::string() );
 
-    std::map< int, std::string >::iterator it_map = m_map_default_motions.begin();
-    for( ; it_map != m_map_default_motions.end(); ++it_map ){
+    for( const auto& key_val : m_map_default_motions ) {
 
-        const int id = ( *it_map ).first;
+        const int id = key_val.first;
         const std::string name = CONTROL::get_name( id );
         std::string motions;
-        std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
-        for( ; it != m_vec_items.end(); ++it ){
-            if( (*it).get_id() == id  ){
+        for( const MouseKeyItem& item : m_vec_items ) {
+            if( item.get_id() == id  ){
                 if( !motions.empty() ) motions += " ";
-                motions += (*it).get_str_motion();
+                motions.append( item.get_str_motion() );
             }
         }
 
@@ -63,10 +61,9 @@ int MouseKeyConf::get_id( const int mode,
                           const bool dblclick, const bool trpclick ) const
 {
     int id = CONTROL::None;;
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
+    for( const MouseKeyItem& item : m_vec_items ) {
 
-        id = (*it).is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
+        id = item.is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
         if( id != CONTROL::None ) break;
     }
 
@@ -86,18 +83,16 @@ int MouseKeyConf::get_id( const int mode,
 bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick,
                                bool& trpclick ) const
 {
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
-
-        if( (*it).get_id() == id ){
-            motion = (*it).get_motion();
-            ctrl = (*it).get_ctrl();
-            shift = (*it).get_shift();
-            alt = (*it).get_alt();
-            dblclick = (*it).get_dblclick();
-            trpclick = (*it).get_trpclick();
-            return true;
-        }
+    auto it = std::find_if( m_vec_items.cbegin(), m_vec_items.cend(),
+                            [id]( const MouseKeyItem& i ) { return i.get_id() == id; } );
+    if( it != m_vec_items.cend() ) {
+        motion = it->get_motion();
+        ctrl = it->get_ctrl();
+        shift = it->get_shift();
+        alt = it->get_alt();
+        dblclick = it->get_dblclick();
+        trpclick = it->get_trpclick();
+        return true;
     }
 
     return false;
@@ -111,12 +106,11 @@ bool MouseKeyConf::alloted( const int id,
                             const guint motion, const bool ctrl, const bool shift, const bool alt,
                             const bool dblclick, const bool trpclick ) const
 {
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
-        if( (*it).equal( motion, ctrl, shift, alt, dblclick, trpclick ) == id ) return true;
-    }
+    const auto equal = [&]( const MouseKeyItem& item ) {
+        return item.equal( motion, ctrl, shift, alt, dblclick, trpclick ) == id;
+    };
 
-    return false;
+    return std::any_of( m_vec_items.cbegin(), m_vec_items.cend(), equal );
 }
 
 
