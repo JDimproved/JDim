@@ -9,8 +9,9 @@
 
 #include "jdlib/miscutil.h"
 
-
 #include "cache.h"
+
+#include <algorithm>
 
 
 using namespace CONTROL;
