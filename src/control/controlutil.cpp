@@ -215,14 +215,13 @@ guint CONTROL::get_keysym( const std::string& keyname )
 
     if( keyname.empty() ) return 0;
 
-    for( size_t i = 0; i < sizeof( CONTROL::keysyms ) / sizeof( KEYSYMS ); ++i ){
-
-        if( CONTROL::keysyms[ i ].keyname == keyname ){
+    const auto it = std::find_if( std::begin( CONTROL::keysyms ), std::end( CONTROL::keysyms ),
+                                  [&keyname]( const KEYSYMS& ks ) { return ks.keyname == keyname; } );
+    if( it != std::end( CONTROL::keysyms ) ) {
 #ifdef _DEBUG
-            std::cout << " found sym = " << CONTROL::keysyms[ i ].keysym << std::endl;
+        std::cout << " found sym = " << it->keysym << std::endl;
 #endif
-            return CONTROL::keysyms[ i ].keysym;
-        }
+        return it->keysym;
     }
 
     // データベース内に見つからなかったらアスキー文字を返す
@@ -243,14 +242,13 @@ std::string CONTROL::get_keyname( const guint keysym )
     std::cout << "CONTROL::get_keyname sym = " << keysym;
 #endif
 
-    for( size_t i = 0; i < sizeof( CONTROL::keysyms ) / sizeof( KEYSYMS ); ++i ){
-
-        if( CONTROL::keysyms[ i ].keysym == keysym ){
+    const auto it = std::find_if( std::begin( CONTROL::keysyms ), std::end( CONTROL::keysyms ),
+                                  [keysym]( const KEYSYMS& ks ) { return ks.keysym == keysym; } );
+    if( it != std::end( CONTROL::keysyms ) ) {
 #ifdef _DEBUG
-            std::cout << " found name = " << CONTROL::keysyms[ i ].keyname << std::endl;
+        std::cout << " found name = " << it->keyname << std::endl;
 #endif
-            return CONTROL::keysyms[ i ].keyname;
-        }
+        return it->keyname;
     }
 
 #ifdef _DEBUG
