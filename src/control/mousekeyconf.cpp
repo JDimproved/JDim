@@ -120,10 +120,9 @@ std::vector< int > MouseKeyConf::check_conflict( const int mode, const std::stri
 {
     std::vector< int > vec_ids;
 
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
+    for( const MouseKeyItem& item : m_vec_items ) {
 
-        const int id = (*it).is_activated( mode, str_motion );
+        const int id = item.is_activated( mode, str_motion );
         if( id != CONTROL::None ) vec_ids.push_back( id );
     }
 
@@ -136,12 +135,11 @@ std::string MouseKeyConf::get_str_motions( const int id ) const
 {
     std::string motions;
 
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
+    for( const MouseKeyItem& item : m_vec_items ) {
 
-        if( (*it).get_id() == id ){
+        if( item.get_id() == id ){
             if( ! motions.empty() ) motions += " ";
-            motions += (*it).get_str_motion();
+            motions.append( item.get_str_motion() );
         }
     }
 
@@ -195,8 +193,7 @@ void MouseKeyConf::set_motions( const int id, const std::string& str_motions )
     if( mode == CONTROL::MODE_ERROR ) return;
 
     std::list< std::string > list_motion = MISC::StringTokenizer( str_motions, ' ' );
-    std::list< std::string >::iterator it = list_motion.begin();
-    for( ; it != list_motion.end(); ++it ) set_one_motion_impl( id, mode, name, (*it) );
+    for( const std::string& str_motion : list_motion ) set_one_motion_impl( id, mode, name, str_motion );
 }
 
 
@@ -226,21 +223,14 @@ void MouseKeyConf::set_one_motion( const std::string& name, const std::string& s
 // 削除したら true を返す
 bool MouseKeyConf::remove_motions( const int id )
 {
-    bool ret = false;
-
-    std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
-
-        if( (*it).get_id() == id ){
-            m_vec_items.erase( it );
-            ret = true;
-            break;
-        }
+    // erase-remove idiom
+    const auto it = std::remove_if( m_vec_items.begin(), m_vec_items.end(),
+                                    [id]( const MouseKeyItem& i ) { return i.get_id() == id; } );
+    if( it != m_vec_items.end() ) {
+        m_vec_items.erase( it, m_vec_items.end() );
+        return true;
     }
-
-    if( ret ) remove_motions( id );
-
-    return ret;
+    return false;
 }
 
 
