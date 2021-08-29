@@ -9,8 +9,9 @@
 
 #include "jdlib/miscutil.h"
 
-
 #include "cache.h"
+
+#include <algorithm>
 
 
 using namespace CONTROL;
@@ -32,17 +33,15 @@ void MouseKeyConf::save_conf( const std::string& savefile )
 
     JDLIB::ConfLoader cf( savefile, std::string() );
 
-    std::map< int, std::string >::iterator it_map = m_map_default_motions.begin();
-    for( ; it_map != m_map_default_motions.end(); ++it_map ){
+    for( const auto& key_val : m_map_default_motions ) {
 
-        const int id = ( *it_map ).first;
+        const int id = key_val.first;
         const std::string name = CONTROL::get_name( id );
         std::string motions;
-        std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
-        for( ; it != m_vec_items.end(); ++it ){
-            if( (*it).get_id() == id  ){
+        for( const MouseKeyItem& item : m_vec_items ) {
+            if( item.get_id() == id  ){
                 if( !motions.empty() ) motions += " ";
-                motions += (*it).get_str_motion();
+                motions.append( item.get_str_motion() );
             }
         }
 
@@ -63,10 +62,9 @@ int MouseKeyConf::get_id( const int mode,
                           const bool dblclick, const bool trpclick ) const
 {
     int id = CONTROL::None;;
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
+    for( const MouseKeyItem& item : m_vec_items ) {
 
-        id = (*it).is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
+        id = item.is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
         if( id != CONTROL::None ) break;
     }
 
@@ -86,18 +84,16 @@ int MouseKeyConf::get_id( const int mode,
 bool MouseKeyConf::get_motion( const int id, guint& motion, bool& ctrl, bool& shift, bool& alt, bool& dblclick,
                                bool& trpclick ) const
 {
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
-
-        if( (*it).get_id() == id ){
-            motion = (*it).get_motion();
-            ctrl = (*it).get_ctrl();
-            shift = (*it).get_shift();
-            alt = (*it).get_alt();
-            dblclick = (*it).get_dblclick();
-            trpclick = (*it).get_trpclick();
-            return true;
-        }
+    auto it = std::find_if( m_vec_items.cbegin(), m_vec_items.cend(),
+                            [id]( const MouseKeyItem& i ) { return i.get_id() == id; } );
+    if( it != m_vec_items.cend() ) {
+        motion = it->get_motion();
+        ctrl = it->get_ctrl();
+        shift = it->get_shift();
+        alt = it->get_alt();
+        dblclick = it->get_dblclick();
+        trpclick = it->get_trpclick();
+        return true;
     }
 
     return false;
@@ -111,12 +107,11 @@ bool MouseKeyConf::alloted( const int id,
                             const guint motion, const bool ctrl, const bool shift, const bool alt,
                             const bool dblclick, const bool trpclick ) const
 {
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
-        if( (*it).equal( motion, ctrl, shift, alt, dblclick, trpclick ) == id ) return true;
-    }
+    const auto equal = [&]( const MouseKeyItem& item ) {
+        return item.equal( motion, ctrl, shift, alt, dblclick, trpclick ) == id;
+    };
 
-    return false;
+    return std::any_of( m_vec_items.cbegin(), m_vec_items.cend(), equal );
 }
 
 
@@ -126,10 +121,9 @@ std::vector< int > MouseKeyConf::check_conflict( const int mode, const std::stri
 {
     std::vector< int > vec_ids;
 
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
+    for( const MouseKeyItem& item : m_vec_items ) {
 
-        const int id = (*it).is_activated( mode, str_motion );
+        const int id = item.is_activated( mode, str_motion );
         if( id != CONTROL::None ) vec_ids.push_back( id );
     }
 
@@ -142,12 +136,11 @@ std::string MouseKeyConf::get_str_motions( const int id ) const
 {
     std::string motions;
 
-    auto it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
+    for( const MouseKeyItem& item : m_vec_items ) {
 
-        if( (*it).get_id() == id ){
+        if( item.get_id() == id ){
             if( ! motions.empty() ) motions += " ";
-            motions += (*it).get_str_motion();
+            motions.append( item.get_str_motion() );
         }
     }
 
@@ -201,8 +194,7 @@ void MouseKeyConf::set_motions( const int id, const std::string& str_motions )
     if( mode == CONTROL::MODE_ERROR ) return;
 
     std::list< std::string > list_motion = MISC::StringTokenizer( str_motions, ' ' );
-    std::list< std::string >::iterator it = list_motion.begin();
-    for( ; it != list_motion.end(); ++it ) set_one_motion_impl( id, mode, name, (*it) );
+    for( const std::string& str_motion : list_motion ) set_one_motion_impl( id, mode, name, str_motion );
 }
 
 
@@ -232,21 +224,14 @@ void MouseKeyConf::set_one_motion( const std::string& name, const std::string& s
 // 削除したら true を返す
 bool MouseKeyConf::remove_motions( const int id )
 {
-    bool ret = false;
-
-    std::vector< MouseKeyItem >::iterator it = m_vec_items.begin();
-    for( ; it != m_vec_items.end(); ++it ){
-
-        if( (*it).get_id() == id ){
-            m_vec_items.erase( it );
-            ret = true;
-            break;
-        }
+    // erase-remove idiom
+    const auto it = std::remove_if( m_vec_items.begin(), m_vec_items.end(),
+                                    [id]( const MouseKeyItem& i ) { return i.get_id() == id; } );
+    if( it != m_vec_items.end() ) {
+        m_vec_items.erase( it, m_vec_items.end() );
+        return true;
     }
-
-    if( ret ) remove_motions( id );
-
-    return ret;
+    return false;
 }
 
 
