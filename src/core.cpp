@@ -58,6 +58,8 @@
 
 #include "sound/soundmanager.h"
 
+#include <algorithm>
+
 
 using namespace CORE;
 
@@ -155,14 +157,13 @@ Core::~Core()
     // 削除リストに登録されているスレを削除 ( 実況したスレなど )
     const std::vector< std::string >& dellist =  SESSION::get_delete_list();
     if( dellist.size() ){
-        std::vector< std::string >::const_iterator it = dellist.begin();
-        for( ; it != dellist.end(); ++it ){
+        for( const std::string& url : dellist ) {
 
             // しおりが付いている場合は削除しない
-            if( ! DBTREE::is_bookmarked_thread( *it ) && ! DBTREE::get_num_bookmark( *it ) ){
-                DBTREE::delete_article( *it, false );
-                ARTICLE::get_admin()->set_command_immediately( "unlock_views", *it );
-                ARTICLE::get_admin()->set_command_immediately( "close_view", *it, 
+            if( ! DBTREE::is_bookmarked_thread( url ) && ! DBTREE::get_num_bookmark( url ) ){
+                DBTREE::delete_article( url, false );
+                ARTICLE::get_admin()->set_command_immediately( "unlock_views", url );
+                ARTICLE::get_admin()->set_command_immediately( "close_view", url,
                                                                "closeall" // command.url を含む全てのビューを閉じる
                     );
             }
@@ -2256,11 +2257,10 @@ void Core::set_command( const COMMAND_ARGS& command )
 
             // タブを開く位置を取得
             const std::list<std::string> list_urls = ARTICLE::get_admin()->get_URLs();
-            std::list< std::string >::const_iterator it = list_urls.begin();
-            for( ; it != list_urls.end(); ++it ){
+            for( const std::string& url : list_urls ) {
 
-                if( *it == command.url ) break;
-                if( ( *it ).find( command.url ) != std::string::npos ) continue;
+                if( url == command.url ) break;
+                if( url.find( command.url ) != std::string::npos ) continue;
 
                 ++num_open;
             }
@@ -2561,10 +2561,9 @@ void Core::set_command( const COMMAND_ARGS& command )
         else if( CORE::SBUF_size() ){
 
             const CORE::DATA_INFO_LIST list_info = CORE::SBUF_list_info();
-            CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
-            for( ; it != list_info.end(); ++it ){
+            for( const CORE::DATA_INFO& info : list_info ) {
 
-                if( ( *it ).type == TYPE_FILE ) list_files.push_back( ( *it ).url );
+                if( info.type == TYPE_FILE ) list_files.push_back( info.url );
             }
         }
 
@@ -3062,10 +3061,8 @@ void Core::exec_command()
         bool img_locked = false;
         if( ! CONFIG::get_restore_image() ){
             std::list< bool > list_locked = SESSION::get_image_locked();
-            std::list< bool >::iterator it_locked = list_locked.begin();
-            for( ; it_locked != list_locked.end(); ++it_locked ){
-                if( ( *it_locked ) ){ img_locked = true; break; }
-            }
+            img_locked = std::any_of( list_locked.cbegin(), list_locked.cend(), []( bool b ) { return b; } );
+
         }
 
         if( SESSION::image_URLs().size() &&
