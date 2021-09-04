@@ -3062,7 +3062,6 @@ void Core::exec_command()
         if( ! CONFIG::get_restore_image() ){
             std::list< bool > list_locked = SESSION::get_image_locked();
             img_locked = std::any_of( list_locked.cbegin(), list_locked.cend(), []( bool b ) { return b; } );
-
         }
 
         if( SESSION::image_URLs().size() &&
