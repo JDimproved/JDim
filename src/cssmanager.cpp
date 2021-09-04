@@ -294,11 +294,10 @@ CSS_PROPERTY Css_Manager::create_property( std::map< std::string, std::string >&
     const bool usemigemo = false;
     const bool wchar = false;
 
-    std::map< std::string, std::string >::iterator it = css_pair.begin();
-    for( ; it != css_pair.end(); ++it )
+    for( const auto& pair : css_pair )
     {
-        const std::string key = (*it).first;
-        const std::string value = (*it).second;
+        const std::string& key = pair.first;
+        const std::string& value = pair.second;
 
         // background-color
         if( key == "background-color" )
@@ -730,10 +729,7 @@ bool Css_Manager::read_html()
     const bool usemigemo = false;
     const bool wchar = false;
 
-    std::list< std::string >::iterator it_block = blocks.begin();
-    for( ; it_block != blocks.end(); ++it_block ){
-
-        std::string block = ( *it_block );
+    for( std::string& block : blocks ) {
 
 #ifdef _DEBUG
         std::cout << "block = " << block << std::endl;
