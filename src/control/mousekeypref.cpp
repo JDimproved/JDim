@@ -309,8 +309,7 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
     // キー設定をスペース毎に区切って行を作成
     std::list< std::string > list_motions = MISC::StringTokenizer( str_motions, ' ' );
     if( list_motions.size() ){
-        std::list< std::string >::iterator it = list_motions.begin();
-        for( ; it != list_motions.end() ; ++it ) append_row( MISC::remove_space( *it ) );
+        for( const std::string& motion : list_motions ) append_row( MISC::remove_space( motion ) );
 
         // 先頭にカーソルセット
         Gtk::TreeModel::Children children = m_liststore->children();
@@ -335,10 +334,9 @@ std::string MouseKeyDiag::get_str_motions()
     std::string str_motions;
 
     Gtk::TreeModel::Children children = m_liststore->children();
-    Gtk::TreeModel::iterator it = children.begin();
-    for( ; it != children.end(); ++it ){
-        if( it != children.begin() ) str_motions += " ";
-        str_motions += ( *it )[ m_columns.m_col_motion ];
+    for( const Gtk::TreeRow& row : children ) {
+        if( ! str_motions.empty() ) str_motions.push_back( ' ' );
+        str_motions.append( row[ m_columns.m_col_motion ] );
     }
 
 #ifdef _DEBUG
@@ -447,9 +445,8 @@ void MouseKeyDiag::slot_add()
 
     // 既に登録済みか調べる
     Gtk::TreeModel::Children children = m_liststore->children();
-    Gtk::TreeModel::iterator it = children.begin();
-    for( ; it != children.end(); ++it ){
-        const std::string motion_tmp = ( *it )[ m_columns.m_col_motion ];
+    for( const Gtk::TreeRow& row : children ) {
+        const std::string& motion_tmp = row[ m_columns.m_col_motion ];
         if( str_motion == motion_tmp ) return;
     }
 
@@ -586,9 +583,7 @@ void MouseKeyPref::append_comment_row( const std::string& comment )
 void MouseKeyPref::slot_reset()
 {
     const Gtk::TreeModel::Children children = get_liststore()->children();
-    Gtk::TreeModel::iterator it = children.begin();
-    for( ; it != children.end(); ++it ){
-        Gtk::TreeModel::Row row = ( *it );
+    for( Gtk::TreeRow row : children ) {
         if( row ){
             const int id = row[ get_colums().m_col_id ];
             if( id != CONTROL::None ){
