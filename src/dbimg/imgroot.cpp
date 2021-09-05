@@ -53,8 +53,7 @@ void ImgRoot::clock_in()
 {
     if( m_list_wait.size() ){
 
-        std::list< Img* >::iterator it = m_list_wait.begin();
-        for( ; it != m_list_wait.end(); ++it ) ( *it )->clock_in();
+        for( Img* img : m_list_wait ) img->clock_in();
 
         remove_clock_in();
     }
@@ -82,12 +81,11 @@ void ImgRoot::remove_clock_in()
         std::cout << "ImgRoot::remove_clock_in\n";
 #endif
 
-        std::list< Img* >::iterator it = m_list_delwait.begin();
-        for( ; it != m_list_delwait.end(); ++it ){
+        for( Img* img : m_list_delwait ) {
 #ifdef _DEBUG
-            std::cout << ( *it )->url() << std::endl;
+            std::cout << img->url() << std::endl;
 #endif
-            m_list_wait.remove( *it );
+            m_list_wait.remove( img );
         }
 
         m_list_delwait.clear();
