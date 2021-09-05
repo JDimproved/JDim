@@ -94,14 +94,13 @@ void DelImgCacheDiag::main_thread()
     int days = 0;
 
     // info と 画像キャッシュ
-    std::list< std::string >list_infofile;
     std::string path_info_root = CACHE::path_img_info_root();
-    list_infofile = CACHE::get_filelist( path_info_root );
+    std::list<std::string> list_infofile = CACHE::get_filelist( path_info_root );
 
-    std::list< std::string >::iterator it_info = list_infofile.begin();
-    for(; ! m_stop && it_info != list_infofile.end(); ++it_info ){
+    for( const std::string& infofile : list_infofile ) {
+        if( m_stop ) break;
 
-        std::string path_info = path_info_root + ( *it_info );
+        const std::string path_info = path_info_root + infofile;
 
         // info ファイルの作成日時を調べて、設定した日時よりも古かったら消す
         if( CONFIG::get_del_img_day() > 0 ){
@@ -135,10 +134,10 @@ void DelImgCacheDiag::main_thread()
     path_info_root = CACHE::path_img_abone_root();
     list_infofile = CACHE::get_filelist( path_info_root );
 
-    it_info = list_infofile.begin();
-    for(; ! m_stop && it_info != list_infofile.end(); ++it_info ){
+    for( const std::string& infofile : list_infofile ) {
+        if( m_stop ) break;
 
-        std::string path_info = path_info_root + ( *it_info );
+        const std::string path_info = path_info_root + infofile;
 
         // info ファイルの作成日時を調べて、設定した日時よりも古かったら消す
         if( CONFIG::get_del_imgabone_day() > 0 ){
