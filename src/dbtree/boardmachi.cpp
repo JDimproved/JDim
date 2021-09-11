@@ -294,9 +294,7 @@ void BoardMachi::regist_article( const bool is_online )
 
     const std::string datbase = url_datbase();
 
-    for( unsigned int i = 0; i < get_list_artinfo().size(); ++i ){
-
-        const ARTICLE_INFO& artinfo = get_list_artinfo()[ i ];
+    for( const ARTICLE_INFO& artinfo : get_list_artinfo() ) {
 
         // DBに登録されてるならarticle クラスの情報更新
         ArticleBase* article = get_article( datbase, artinfo.id );
