@@ -1590,17 +1590,12 @@ void ArticleBase::delete_cache( const bool cache_only )
         // スレ内の画像キャッシュ削除
         if( CONFIG::get_delete_img_in_thread() != 2 ){
 
-            bool delete_img_cache = false;
+            const auto has_cache = []( const std::string& url ) {
+                return DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && DBIMG::is_cached( url );
+            };
 
             std::list< std::string > list_urls = get_nodetree()->get_urls();
-            std::list< std::string >::iterator it = list_urls.begin();
-            for( ; it != list_urls.end(); ++it ){
-
-                if( DBIMG::get_type_ext( *it ) != DBIMG::T_UNKNOWN && DBIMG::is_cached( *it ) ){
-                    delete_img_cache = true;
-                    break;
-                }
-            }
+            bool delete_img_cache = std::any_of( list_urls.cbegin(), list_urls.cend(), has_cache );
 
             if( delete_img_cache ){
 
@@ -1627,15 +1622,14 @@ void ArticleBase::delete_cache( const bool cache_only )
 
                 if( delete_img_cache ){
 
-                    it = list_urls.begin();
-                    for( ; it != list_urls.end(); ++it ){
+                    for( const std::string& url : list_urls ) {
 
-                        if( DBIMG::get_type_ext( *it ) != DBIMG::T_UNKNOWN && DBIMG::is_cached( *it ) ){
+                        if( has_cache( url ) ) {
 
 #ifdef _DEBUG
-                            std::cout << "delete " << *it << std::endl;
+                            std::cout << "delete " << url << std::endl;
 #endif
-                            DBIMG::delete_cache( *it );
+                            DBIMG::delete_cache( url );
                         }
                     }
                 }
@@ -1996,14 +1990,14 @@ void ArticleBase::read_info()
               << "bookmarked_thread = " << m_bookmarked_thread << std::endl
     ;
 
-    std::cout << "abone-id\n"; std::list < std::string >::iterator it = m_list_abone_id.begin();
-    for( ; it != m_list_abone_id.end(); ++it ) std::cout << (*it) << std::endl;
-    std::cout << "abone-name\n"; it = m_list_abone_name.begin();
-    for( ; it != m_list_abone_name.end(); ++it ) std::cout << (*it) << std::endl;
-    std::cout << "abone-word\n"; it = m_list_abone_word.begin();
-    for( ; it != m_list_abone_word.end(); ++it ) std::cout << (*it) << std::endl;
-    std::cout << "abone-regex\n"; it = m_list_abone_regex.begin();
-    for( ; it != m_list_abone_regex.end(); ++it ) std::cout << (*it) << std::endl;
+    std::cout << "abone-id\n";
+    for( const std::string& s : m_list_abone_id ) std::cout << s << std::endl;
+    std::cout << "abone-name\n";
+    for( const std::string& s : m_list_abone_name ) std::cout << s << std::endl;
+    std::cout << "abone-word\n";
+    for( const std::string& s : m_list_abone_word ) std::cout << s << std::endl;
+    std::cout << "abone-regex\n";
+    for( const std::string& s : m_list_abone_regex ) std::cout << s << std::endl;
 
     if( !m_abone_reses.empty() ) {
         std::cout << "abone-res =";
