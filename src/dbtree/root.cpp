@@ -156,18 +156,17 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 
     if( count == 0 ){
 
-        size_t pos = url.rfind( "http://" );
+        const std::size_t pos = url.rfind( "http://" );
+        const std::size_t pos2 = url.rfind( "https://" );
 
         // ユーザープロフィールアドレス( http://be.2ch.net/test/p.php?u=d:http://〜 )の様に
         // 先頭以外に http:// が入っている場合は失敗
-        if( pos != std::string::npos && pos != 0 ) return m_board_null.get();
+        if( ( pos != std::string::npos && pos != 0 ) || ( pos2 != std::string::npos && pos2 != 0 ) ) {
+            return m_board_null.get();
+        }
 
-        size_t pos2 = url.rfind( "https://" );
-        if ( pos2 != std::string::npos && pos2 != 0 ) return m_board_null.get();
-        if ( pos2 == 0 ) pos = 0;
-
-        // http[s]:// が含まれていなかったら先頭に追加して再帰呼び出し
-        if( pos == std::string::npos && ! is_local( url ) ){
+        // http:// が含まれていなかったら先頭に追加して再帰呼び出し
+        else if( pos == std::string::npos && pos2 == std::string::npos && ! is_local( url ) ){
             BoardBase* board = get_board( "http://" + url , count + 1 );
             m_get_board_url = url;
             return board;
