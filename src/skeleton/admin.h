@@ -206,7 +206,6 @@ namespace SKELETON
         virtual void update_item( const std::string& url,  const std::string& id );
         virtual void update_finish( const std::string& url );        
         virtual void close_view( const std::string& url );
-        virtual void close_view( View* view );
         virtual void unlock_all_view( const std::string& url );
         virtual void close_all_view( const std::string& url );
         virtual void close_other_views( const std::string& url );
@@ -343,6 +342,8 @@ namespace SKELETON
         void append_switchhistory( const std::string& url );
         void remove_switchhistory( const std::string& url );
         std::string get_valid_switchhistory();
+
+        void close_view( View* view );
     };
 }
 
