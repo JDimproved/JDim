@@ -108,7 +108,7 @@ bool BoardBase::empty() const
 bool BoardBase::equal( const std::string& url ) const
 {
     if( url.rfind( get_root(), 0 ) == 0
-        && url.find( get_path_board() + "/" ) != std::string::npos ) return true;
+        && url.find( get_path_board() + "/", get_root().size() ) != std::string::npos ) return true;
 
     return false;
 }

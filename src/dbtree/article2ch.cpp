@@ -56,7 +56,7 @@ std::string Article2ch::create_write_message( const std::string& name, const std
     }
 
 #ifdef _DEBUG
-    std::cout << "Article2chCompati::create_write_message " << ss_post.str() << std::endl;
+    std::cout << "Article2ch::create_write_message " << ss_post.str() << std::endl;
 #endif
 
     // 書き込みメッセージを作成したらキーワードはリセットする
