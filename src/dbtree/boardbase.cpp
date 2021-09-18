@@ -358,12 +358,11 @@ void BoardBase::send_update_board()
 
 
     // ダウンロードを開始したビューの内容を更新する
-    std::list< std::string >::iterator it = m_url_update_views.begin();
-    for( ; it != m_url_update_views.end(); ++it ){
+    for( const std::string& url : m_url_update_views ) {
 #ifdef _DEBUG
-        std::cout << "update : " << *it << std::endl;
+        std::cout << "update : " << url << std::endl;
 #endif 
-        CORE::core_set_command( "update_board", *it );
+        CORE::core_set_command( "update_board", url );
     }
     m_url_update_views.clear();
 }
@@ -1305,14 +1304,11 @@ void BoardBase::receive_finish()
         if( m_is_online ){
 
             // 既読スレに更新があったかチェック
-            std::vector< ArticleBase* >::iterator it_art;
-            for( it_art = m_list_subject.begin(); it_art != m_list_subject.end(); ++it_art ){
-
-                if( ( *it_art )->is_cached() && ( *it_art )->get_number() > ( *it_art )->get_number_load() ){
-
-                    m_status |= STATUS_UPDATED;
-                    break;
-                }
+            const auto is_updated = []( const ArticleBase* a ) {
+                return a->is_cached() && a->get_number() > a->get_number_load();
+            };
+            if( std::any_of( m_list_subject.cbegin(), m_list_subject.cend(), is_updated ) ) {
+                m_status |= STATUS_UPDATED;
             }
 
             show_updateicon( false );
@@ -1470,20 +1466,18 @@ void BoardBase::append_all_article_in_cache()
 #ifdef _DEBUG
     std::cout << "BoardBase::append_all_article_in_cache url = " << datbase << std::endl;
 #endif
-    
-    std::list< std::string >list_file = get_filelist_in_cache();
 
-    std::list< std::string >::iterator it = list_file.begin();
-    for(; it != list_file.end(); ++it ){
+    std::list<std::string> list_file = get_filelist_in_cache();
+    for( const std::string& id : list_file ) {
 
 #ifdef _DEBUG
-        std::cout << "append id = " << ( *it ) << std::endl;
+        std::cout << "append id = " << id << std::endl;
 #endif
 
         // キャッシュあり( cached = true ) 指定でDBに登録
         // キャッシュに無いスレはsubject.txtを読み込んだ時に
         // 派生クラスのparse_subject()で登録する。
-        append_article( datbase, ( *it ),
+        append_article( datbase, id,
                         true  // キャッシュあり
             );
     }
@@ -1535,13 +1529,12 @@ bool BoardBase::is_abone_thread( ArticleBase* article )
     
     // スレあぼーん
     if( check_thread ){
-        std::list< std::string >::iterator it = m_list_abone_thread.begin();
-        for( ; it != m_list_abone_thread.end(); ++it ){
-            if( MISC::remove_space( article->get_subject() ) == MISC::remove_space(*it) ){
+        for( const std::string& subject : m_list_abone_thread ) {
+            if( MISC::remove_space( article->get_subject() ) == MISC::remove_space( subject ) ){
 
                 // 対象スレがDat落ちした場合はあぼーんしなかったスレ名をリストから消去する
                 // remove_old_abone_thread() も参照
-                m_list_abone_thread_remove.push_back( *it );
+                m_list_abone_thread_remove.push_back( subject );
                 return true;
             }
         }
@@ -1549,33 +1542,29 @@ bool BoardBase::is_abone_thread( ArticleBase* article )
 
     // ローカル NG word
     if( check_word ){
-        std::list< std::string >::iterator it = m_list_abone_word_thread.begin();
-        for( ; it != m_list_abone_word_thread.end(); ++it ){
-            if( article->get_subject().find( *it ) != std::string::npos ) return true;
+        for( const std::string& word : m_list_abone_word_thread ) {
+            if( article->get_subject().find( word ) != std::string::npos ) return true;
         }
     }
 
     // ローカル NG regex
     if( check_regex ){
-        std::list< std::string >::iterator it = m_list_abone_regex_thread.begin();
-        for( ; it != m_list_abone_regex_thread.end(); ++it ){
-            if( regex.exec( *it, article->get_subject(), offset, icase, newline, usemigemo, wchar ) ) return true;
+        for( const std::string& pat : m_list_abone_regex_thread ) {
+            if( regex.exec( pat, article->get_subject(), offset, icase, newline, usemigemo, wchar ) ) return true;
         }
     }
 
     // 全体 NG word
     if( check_word_global ){
-        std::list< std::string >::iterator it = CONFIG::get_list_abone_word_thread().begin();
-        for( ; it != CONFIG::get_list_abone_word_thread().end(); ++it ){
-            if( article->get_subject().find( *it ) != std::string::npos ) return true;
+        for( const std::string& word : CONFIG::get_list_abone_word_thread() ) {
+            if( article->get_subject().find( word ) != std::string::npos ) return true;
         }
     }
 
     // 全体 NG regex
     if( check_regex_global ){
-        std::list< std::string >::iterator it = CONFIG::get_list_abone_regex_thread().begin();
-        for( ; it != CONFIG::get_list_abone_regex_thread().end(); ++it ){
-            if( regex.exec( *it, article->get_subject(), offset, icase, newline, usemigemo, wchar ) ) return true;
+        for( const std::string& pat : CONFIG::get_list_abone_regex_thread() ) {
+            if( regex.exec( pat, article->get_subject(), offset, icase, newline, usemigemo, wchar ) ) return true;
         }
     }
 
@@ -1597,11 +1586,9 @@ void BoardBase::remove_old_abone_thread()
 
 #ifdef _DEBUG
     std::cout << "BoardBase::remove_old_abone_thread\n";
-    std::list< std::string >::const_iterator it1 = m_list_abone_thread.begin();
-    for( ; it1 != m_list_abone_thread.end(); ++it1 ) std::cout << ( *it1 ) << std::endl;
+    for( const std::string& s : m_list_abone_thread ) std::cout << s << std::endl;
     std::cout << "->\n";
-    std::list< std::string >::const_iterator it2 = m_list_abone_thread_remove.begin();
-    for( ; it2 != m_list_abone_thread_remove.end(); ++it2 ) std::cout << ( *it2 ) << std::endl;
+    for( const std::string& s : m_list_abone_thread_remove ) std::cout << s << std::endl;
 #endif
 
     if( CONFIG::get_remove_old_abone_thread() == 0 ){
@@ -1628,15 +1615,15 @@ void BoardBase::remove_old_abone_thread()
         if( ret != Gtk::RESPONSE_YES ) return;
     }
 
-    std::list< std::string >::iterator it = m_list_abone_thread.begin();
-    for( ; it != m_list_abone_thread.end(); ++it ){
+    // dat落ちしたスレタイトルをNGリストから取り除く
+    for( auto it = m_list_abone_thread.cbegin(); it != m_list_abone_thread.cend(); ) {
 
-        if( std::find( m_list_abone_thread_remove.begin(), m_list_abone_thread_remove.end(), *it )
-            == m_list_abone_thread_remove.end() ){
-
-            m_list_abone_thread.erase( it );
-            it = m_list_abone_thread.begin();
-            continue;
+        const auto cend = m_list_abone_thread_remove.cend();
+        if( std::find( m_list_abone_thread_remove.cbegin(), cend, *it ) == cend ) {
+            it = m_list_abone_thread.erase( it );
+        }
+        else {
+            ++it;
         }
     }
 }
@@ -1881,21 +1868,13 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
 
         if( CACHE::load_rawdata( path, rawdata ) > 0 ){
 
-            bool apnd = true;
-
 #ifdef _DEBUG
             std::cout << "load " << path << " size = " << rawdata.size() << " byte" << std::endl;
 #endif
+            // 今の所 AND だけ対応
+            const auto search = [&rawdata]( const auto& q ) { return rawdata.find( q ) != std::string::npos; };
+            const bool apnd = std::all_of( list_query.cbegin(), list_query.cend(), search );
 
-            std::list< std::string >::const_iterator it_query = list_query.begin();
-            for( ; it_query != list_query.end(); ++it_query ){
-
-                // 今の所 AND だけ対応
-                if( rawdata.find( *it_query ) == std::string::npos ){
-                    apnd = false;
-                    break;
-                }
-            }
 
             if( apnd ){
 
@@ -2186,10 +2165,8 @@ void BoardBase::save_summary()
     std::ostringstream sstr_out;
     sstr_out << "(";
 
-    std::vector< ArticleBase* >::iterator it;
-    for( it = m_list_subject.begin(); it != m_list_subject.end(); ++it ){
+    for( ArticleBase* art : m_list_subject ) {
 
-        ArticleBase* art = *( it );
         if( art->is_cached()
             && ( art->get_status() & STATUS_NORMAL ) ){
             if( count ) sstr_out << " ";
@@ -2245,12 +2222,10 @@ void BoardBase::save_board_info()
         std::cout << "str_info " << str_info << std::endl;
 #endif
 
-        std::list< std::string > lists = MISC::get_elisp_lists( str_info );
-        std::list< std::string >::iterator it = lists.begin();
-        for( ; it != lists.end(); ++it ){
-            if( ( *it ).find( "bookmark" ) != std::string::npos ) bookmark = *it;
-            if( ( *it ).find( "hide" ) != std::string::npos ) hide = *it;
-            if( ( *it ).find( "logo" ) != std::string::npos ) logo = *it;
+        for( const std::string& elem : MISC::get_elisp_lists( str_info ) ) {
+            if( elem.find( "bookmark" ) != std::string::npos ) bookmark = elem;
+            if( elem.find( "hide" ) != std::string::npos ) hide = elem;
+            if( elem.find( "logo" ) != std::string::npos ) logo = elem;
         }
     }
 
