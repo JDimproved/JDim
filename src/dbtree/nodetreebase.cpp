@@ -275,30 +275,27 @@ std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std:
 
     // "," ごとにブロック分けする (例) "1-2,3-4+5" -> "1-2","3-4+5"
     std::list< std::string > list_str_num = MISC::StringTokenizer( str_num, ',' );
-    std::list< std::string >::iterator it = list_str_num.begin();
-    for( ; it != list_str_num.end(); ++it ){
+    for( const std::string& comma_block : list_str_num ) {
 
         // "=" ごとにブロック分けする (例) "1-2=3-4+5" -> "1-2","3-4+5"
-        std::list< std::string > list_str_num_eq = MISC::StringTokenizer( ( *it ), '=' );
-        std::list< std::string >::iterator it_eq = list_str_num_eq.begin();
-        for( ; it_eq != list_str_num_eq.end(); ++it_eq ){
+        std::list<std::string> list_str_num_eq = MISC::StringTokenizer( comma_block, '=' );
+        for( const std::string& eq_block : list_str_num_eq ) {
 
             // true なら前のスレと結合
             bool joint = false;
 
             // "+"ごとにブロックを分ける (例) "1+2-3+4" -> "1","2-3","4"
-            std::list< std::string > list_str_num_pl = MISC::StringTokenizer( ( *it_eq ), '+' );
-            std::list< std::string >::iterator it_pl = list_str_num_pl.begin();
-            for( ; it_pl != list_str_num_pl.end(); ++it_pl ){
+            std::list<std::string> list_str_num_pl = MISC::StringTokenizer( eq_block, '+' );
+            for( const std::string& plus_block : list_str_num_pl ) {
 
                 // num_from から num_to まで表示
-                int num_from = MAX( 1, atol( ( *it_pl ).c_str() ) );
+                int num_from = MAX( 1, atol( plus_block.c_str() ) );
 
                 if( num_from <= m_id_header  ){
 
                     int num_to = 0;
                     size_t i;
-                    if( ( i = ( *it_pl ).find( '-' ) ) != std::string::npos ) num_to = atol( ( *it_pl ).substr( i +1 ).c_str() );
+                    if( ( i = plus_block.find( '-' ) ) != std::string::npos ) num_to = atol( plus_block.substr( i +1 ).c_str() );
                     num_to = MIN( MAX( num_to, num_from ), m_id_header );
 
                     for( int i2 = num_from; i2 <= num_to ; ++i2 ) {
@@ -306,7 +303,7 @@ std::list< int > NodeTreeBase::get_res_str_num( const std::string& str_num, std:
                         //  透明あぼーんしていない　or あぼーんしていないなら追加
                         if( ! m_abone_transparent || ! get_abone( i2 ) ){ 
 #ifdef _DEBUG
-                            std::cout << *it_pl << " " << num_from << " - " << num_to
+                            std::cout << plus_block << " " << num_from << " - " << num_to
                                       << " i2 = " << i2 << " joint = " << joint << std::endl;
 #endif
                             list_resnum.push_back( i2 );
