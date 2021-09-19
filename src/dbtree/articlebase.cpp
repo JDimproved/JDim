@@ -1590,12 +1590,9 @@ void ArticleBase::delete_cache( const bool cache_only )
         // スレ内の画像キャッシュ削除
         if( CONFIG::get_delete_img_in_thread() != 2 ){
 
-            const auto has_cache = []( const std::string& url ) {
-                return DBIMG::get_type_ext( url ) != DBIMG::T_UNKNOWN && DBIMG::is_cached( url );
-            };
+            const std::list<std::string> list_urls = get_nodetree()->get_imglinks();
 
-            std::list< std::string > list_urls = get_nodetree()->get_urls();
-            bool delete_img_cache = std::any_of( list_urls.cbegin(), list_urls.cend(), has_cache );
+            bool delete_img_cache = std::any_of( list_urls.cbegin(), list_urls.cend(), &DBIMG::is_cached );
 
             if( delete_img_cache ){
 
@@ -1624,7 +1621,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
                     for( const std::string& url : list_urls ) {
 
-                        if( has_cache( url ) ) {
+                        if( DBIMG::is_cached( url ) ){
 
 #ifdef _DEBUG
                             std::cout << "delete " << url << std::endl;
