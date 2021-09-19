@@ -409,8 +409,6 @@ std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_nu
 
     if( ! res_num.size() ) return list_resnum;
 
-    std::list< int >::const_iterator it_res = res_num.begin();
-
     for( int i = 1; i <= m_id_header; ++i ){
 
         //  透明あぼーんは除外
@@ -440,12 +438,8 @@ std::list< int > NodeTreeBase::get_res_reference( const std::list< int >& res_nu
                                 if( anc_from == 0 ) break;
                                 ++anc;
 
-                                it_res = res_num.begin();
-                                for( ; it_res != res_num.end(); ++it_res ){
+                                for( const int number : res_num ) {
 
-                                    const int number = ( *it_res );
-
-                                    
                                     if( i != number
                                         && anc_to - anc_from < RANGE_REF // >>1-1000 みたいなアンカーは弾く
                                         && anc_from <= number && number <= anc_to
@@ -472,8 +466,7 @@ EXIT_LOOP:;
 
 #ifdef _DEBUG
     std::cout << "NodeTreeBase::get_reference\n";
-    std::list < int >::iterator it;
-    for( it = list_resnum.begin(); it != list_resnum.end(); ++it ) std::cout << *it << std::endl;
+    for( const int resnum : list_resnum ) std::cout << resnum << std::endl;
 #endif
     
     return list_resnum;
@@ -3369,19 +3362,17 @@ void NodeTreeBase::check_reference( const int number )
         std::map< int, std::vector< int > >::iterator it_map = m_map_future_refer.find( number );
         if( it_map != m_map_future_refer.end() ){
 
-            const int size = ( (*it_map).second ).size();
+            const auto& refs = it_map->second;
 
-            inc_reference( head, size );
+            inc_reference( head, refs.size() );
 
 #ifdef _DEBUG
-            std::cout << "found number = " << number << " size = " << size << std::endl;
+            std::cout << "found number = " << number << " size = " << refs.size() << std::endl;
 #endif
             // 過去のレスへ自分の書き込みへの参照マークを付ける
             if( posted && m_posts.find( number ) != m_posts.end() ) {
 
-                for( int i = 0; i < size; ++ i ){
-
-                    const int from = ( (*it_map).second )[ i ];
+                for( const int from : refs ) {
 #ifdef _DEBUG
                     std::cout << "from " << from << std::endl;
 #endif
@@ -3727,11 +3718,9 @@ void NodeTreeBase::set_posted( const int number, const bool set )
 
             // レスアンカーのリストを取得
             std::list< ANCINFO* > anchors = get_res_anchors( n );
-            std::list< ANCINFO* >::const_iterator it_anchor = anchors.begin();
-            for( ; it_anchor != anchors.end(); ++it_anchor ){
+            for( const ANCINFO* anchor : anchors ) {
 
                 // 他の自分の書き込みに対するレスになっていないか？
-                ANCINFO* anchor = ( *it_anchor );
                 const auto end = m_posts.end();
                 for( int i = anchor->anc_from; i <= anchor->anc_to; i++ ){
                     // 他の自分の書き込みに対するレス
