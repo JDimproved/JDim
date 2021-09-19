@@ -3367,7 +3367,7 @@ void NodeTreeBase::check_reference( const int number )
             inc_reference( head, refs.size() );
 
 #ifdef _DEBUG
-            std::cout << "found number = " << number << " size = " << size << std::endl;
+            std::cout << "found number = " << number << " size = " << refs.size() << std::endl;
 #endif
             // 過去のレスへ自分の書き込みへの参照マークを付ける
             if( posted && m_posts.find( number ) != m_posts.end() ) {
