@@ -203,8 +203,8 @@ namespace DBTREE
         // URL を含むレス番号をリストにして取得
         std::list< int > get_res_with_url() const;
 
-        // 含まれる URL をリストにして取得
-        std::list< std::string > get_urls() const;
+        // ツリーに含まれてる 画像URL をリストにして取得
+        std::list<std::string> get_imglinks() const;
 
         // number番のレスを参照しているレス番号をリストにして取得
         std::list< int > get_res_reference( const int number ) const;

@@ -360,11 +360,11 @@ std::list< int > NodeTreeBase::get_res_with_url() const
 
 
 //
-// 含まれる URL をリストにして取得
+// ツリーに含まれてる 画像URL をリストにして取得
 //
-std::list< std::string > NodeTreeBase::get_urls() const
+std::list<std::string> NodeTreeBase::get_imglinks() const
 {
-    std::list< std::string > list_urls;
+    std::list<std::string> list_urls;
     for( int i = 1; i <= m_id_header; ++i ){
 
         const NODE* head = res_header( i );
@@ -375,7 +375,9 @@ std::list< std::string > NodeTreeBase::get_urls() const
                 const NODE* node = head->headinfo->block[ block ];
 
                 while( node ){
-                    if( IS_URL( node ) ) list_urls.push_back( node->linkinfo->link );
+                    if( IS_URL( node ) && node->linkinfo->imglink ) {
+                        list_urls.emplace_back( node->linkinfo->imglink );
+                    }
                     node = node->next_node;
                 }
             }
