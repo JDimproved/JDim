@@ -7,7 +7,11 @@ GIT_HASH=""
 GIT_DATE=""
 GIT_DIRTY=0
 
-if test -n "$GIT" ; then
+if test -x "$GIT" ; then
+  # Change current directory to execute git commands in source directory.
+  if test -d "$1"; then
+    cd "$1"
+  fi
   GIT_HASH="$($GIT log --pretty=format:%h --abbrev=10 -n 1 2>/dev/null)"
   GIT_DATE="$($GIT log  --pretty=format:%ad --date=format:%Y%m%d -n 1 2>/dev/null)"
   GIT_STATUS="$($GIT status -uno -s 2>/dev/null | head -n 1)"
