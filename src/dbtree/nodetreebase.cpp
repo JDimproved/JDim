@@ -3039,30 +3039,22 @@ bool NodeTreeBase::check_abone_id( const int number )
     if( ! head->headinfo->block[ BLOCK_ID_NAME ] ) return false;
 
     const int ln_protoid = strlen( PROTO_ID );
+    const char* const link_id = head->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link + ln_protoid;
+    const auto equal_id = [link_id]( const std::string& id ) { return id == link_id; };
 
     // ローカルID
     if( check_id ){
-        std::list< std::string >::iterator it = m_list_abone_id.begin();
-        for( ; it != m_list_abone_id.end(); ++it ){
-
-            // std::string の find は遅いのでstrcmp使う
-            if( strcmp( head->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link + ln_protoid, ( *it ).c_str() ) == 0 ){
-                head->headinfo->abone = true;
-                return true;
-            }
+        if( std::any_of( m_list_abone_id.cbegin(), m_list_abone_id.cend(), equal_id ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
     // 板レベル ID
     if( check_id_board ){
-        std::list< std::string >::iterator it = m_list_abone_id_board.begin();
-        for( ; it != m_list_abone_id_board.end(); ++it ){
-
-            // std::string の find は遅いのでstrcmp使う
-            if( strcmp( head->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link + ln_protoid, ( *it ).c_str() ) == 0 ){
-                head->headinfo->abone = true;
-                return true;
-            }
+        if( std::any_of( m_list_abone_id_board.cbegin(), m_list_abone_id_board.cend(), equal_id ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
