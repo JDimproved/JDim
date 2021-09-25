@@ -5,7 +5,7 @@ config_h = configure_file(output : 'config.h',
 buildinfo_h = custom_target('buildinfo.h',
                             build_always_stale : true,
                             capture : true,
-                            command : ['sh', '@INPUT@'],
+                            command : ['sh', '@INPUT@', '@SOURCE_ROOT@'],
                             input : 'buildinfo.h.sh',
                             output : 'buildinfo.h')
 
