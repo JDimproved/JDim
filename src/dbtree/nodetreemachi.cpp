@@ -164,10 +164,9 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
     // オンラインでかつ read.cgi 形式の場合は
     // 入力データを行ごとに分割して余計なタグを取り除いて本文だけ取り出す
     std::list< std::string > lines = MISC::get_lines( rawlines );
-    std::list< std::string >::iterator it;
-    for( it = lines.begin(); it != lines.end(); ++it ){
+    for( std::string& line : lines ) {
 
-        std::string line = MISC::remove_space( *it );
+        line = MISC::remove_space( line );
 
         if( m_tmp_buffer.empty() ){
 
@@ -251,10 +250,9 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
     const char* str_lines = m_iconv->convert( rawlines, strlen( rawlines ), byte_lines );
 
     std::list< std::string > lines = MISC::get_lines( str_lines );
-    std::list< std::string >::iterator it;
-    for( it = lines.begin(); it != lines.end(); ++it ){
+    for( std::string& line : lines ) {
 
-        std::string line = MISC::remove_space( *it );
+        line = MISC::remove_space( line );
         if( line.empty() ) continue;
 
         int num = 0;
