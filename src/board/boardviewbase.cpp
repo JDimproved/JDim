@@ -1833,9 +1833,6 @@ Gtk::TreeModel::Row BoardViewBase::prepend_row( DBTREE::ArticleBase* art, const 
 
     row[ m_columns.m_col_id ]  = id;
 
-    if( ( art->get_status() & STATUS_NORMAL ) && ! art->is_924() )
-        row[ m_columns.m_col_speed ] = art->get_speed();
-
     row[ m_columns.m_col_diff ] = art->get_number_diff();
 
     if( m_col_board ) row[ m_columns.m_col_board ] = DBTREE::board_name( art->get_url() );
@@ -1882,6 +1879,10 @@ void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
         row[ m_columns.m_col_new ] = -1;
     }
 
+    // 速度
+    if( ( art->get_status() & STATUS_NORMAL ) && ! art->is_924() ) {
+        row[ m_columns.m_col_speed ] = art->get_speed();
+    }
 
     //
     // マーク
