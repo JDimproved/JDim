@@ -504,8 +504,11 @@ namespace CONFIG
     int get_remove_old_abone_thread(); // dat落ちしたスレをNGスレタイトルリストから取り除くか( 0: ダイアログ表示 1: 取り除く 2: 除かない )
     void set_remove_old_abone_thread( const int remove ); 
 
-    int get_abone_number_thread();
-    void set_abone_number_thread( const int number );
+    int get_abone_low_number_thread();
+    void set_abone_low_number_thread( int number );
+
+    int get_abone_high_number_thread();
+    void set_abone_high_number_thread( int number );
 
     int get_abone_hour_thread();
     void set_abone_hour_thread( const int hour );

@@ -53,6 +53,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_label_samba( false, "書き込み規制秒数 (Samba24) ：" )
     , m_button_clearsamba( "秒数クリア" )
     , m_check_oldlog( "過去ログを表示する" )
+    , m_hbox_low_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
+    , m_hbox_high_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
     , m_button_remove_old_title( "dat落ちしたスレのタイトルを削除する" )
 {
     m_edit_cookies.set_editable( false );
@@ -283,16 +285,25 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     // スレ数、時間
     m_label_abone_thread.set_text( "以下の数字が0の時は、設定メニューの全体あぼ〜ん設定で指定した数字が用いられます。\nまたキャッシュにログがあるスレはあぼ〜んされません。\n\n" );
 
-    m_label_number.set_text( "レス以上のスレをあぼ〜ん" );
-    m_spin_number.set_range( 0, 9999 );
-    m_spin_number.set_increments( 1, 1 );
-    m_spin_number.set_value( DBTREE::get_abone_number_thread( get_url() ) );
-            
-    m_hbox_number.set_spacing( 4 );
-    m_hbox_number.pack_start( m_spin_number, Gtk::PACK_SHRINK );
-    m_hbox_number.pack_start( m_label_number, Gtk::PACK_SHRINK );
+    m_label_low_number.set_text( "レス以下のスレをあぼ〜ん" );
+    m_spin_low_number.set_range( 0, CONFIG::get_max_resnumber() );
+    m_spin_low_number.set_increments( 1, 1 );
+    m_spin_low_number.set_value( DBTREE::get_abone_low_number_thread( get_url() ) );
 
-    set_activate_entry( m_spin_number );
+    m_hbox_low_number.pack_start( m_spin_low_number, Gtk::PACK_SHRINK );
+    m_hbox_low_number.pack_start( m_label_low_number, Gtk::PACK_SHRINK );
+
+    set_activate_entry( m_spin_low_number );
+
+    m_label_high_number.set_text( "レス以上のスレをあぼ〜ん" );
+    m_spin_high_number.set_range( 0, CONFIG::get_max_resnumber() );
+    m_spin_high_number.set_increments( 1, 1 );
+    m_spin_high_number.set_value( DBTREE::get_abone_high_number_thread( get_url() ) );
+
+    m_hbox_high_number.pack_start( m_spin_high_number, Gtk::PACK_SHRINK );
+    m_hbox_high_number.pack_start( m_label_high_number, Gtk::PACK_SHRINK );
+
+    set_activate_entry( m_spin_high_number );
 
     m_label_hour.set_text( "時間以上スレ立てから経過したスレをあぼ〜ん" );
     m_spin_hour.set_range( 0, 9999 );
@@ -308,7 +319,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox_abone_thread.set_border_width( 16 );
     m_vbox_abone_thread.set_spacing( 8 );
     m_vbox_abone_thread.pack_start( m_label_abone_thread, Gtk::PACK_SHRINK );
-    m_vbox_abone_thread.pack_start( m_hbox_number, Gtk::PACK_SHRINK );
+    m_vbox_abone_thread.pack_start( m_hbox_low_number, Gtk::PACK_SHRINK );
+    m_vbox_abone_thread.pack_start( m_hbox_high_number, Gtk::PACK_SHRINK );
     m_vbox_abone_thread.pack_start( m_hbox_hour, Gtk::PACK_SHRINK );
 
     // スレあぼーん
@@ -505,11 +517,13 @@ void Preferences::slot_ok_clicked()
     std::list< std::string > list_thread = MISC::get_lines( m_edit_thread.get_text() );
     std::list< std::string > list_word_thread = MISC::get_lines( m_edit_word_thread.get_text() );
     std::list< std::string > list_regex_thread = MISC::get_lines( m_edit_regex_thread.get_text() );
-    const int number = m_spin_number.get_value_as_int();
+    const int low_number = m_spin_low_number.get_value_as_int();
+    const int high_number = m_spin_high_number.get_value_as_int();
     const int hour = m_spin_hour.get_value_as_int();
 
     const bool redraw = true; // ここでスレ一覧の再描画指定をする
-    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread, number, hour, redraw );  
+    DBTREE::reset_abone_thread( get_url(), list_thread, list_word_thread, list_regex_thread,
+                                low_number, high_number, hour, redraw );
 
     DBTREE::board_save_info( get_url() );
 }

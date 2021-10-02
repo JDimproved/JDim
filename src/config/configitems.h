@@ -442,7 +442,8 @@ namespace CONFIG
         int remove_old_abone_thread{};
 
         // スレ あぼーん レス数
-        int abone_number_thread{};
+        int abone_low_number_thread{};
+        int abone_high_number_thread{};
 
         // スレ あぼーん スレ立てからの経過時間
         int abone_hour_thread{};

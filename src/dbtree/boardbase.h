@@ -139,7 +139,8 @@ namespace DBTREE
         std::list< std::string > m_list_abone_thread_remove; // あぼーんするスレのタイトル( dat 落ち判定用、remove_old_abone_thread()を参照せよ )
         std::list< std::string > m_list_abone_word_thread; // あぼーんする文字列
         std::list< std::string > m_list_abone_regex_thread; // あぼーんする正規表現
-        int m_abone_number_thread{}; // レスの数
+        int m_abone_low_number_thread{};  // nレス以下をあぼーんする
+        int m_abone_high_number_thread{}; // nレス以上をあぼーんする
         int m_abone_hour_thread{}; // スレ立てからの経過時間
 
         // 読み込み用ローカルプロキシ設定
@@ -468,7 +469,8 @@ namespace DBTREE
         const std::list< std::string >& get_abone_list_thread_remove(){ return m_list_abone_thread_remove; }
         const std::list< std::string >& get_abone_list_word_thread(){ return m_list_abone_word_thread; }
         const std::list< std::string >& get_abone_list_regex_thread(){ return m_list_abone_regex_thread; }
-        int get_abone_number_thread() const noexcept { return m_abone_number_thread; }
+        int get_abone_low_number_thread() const noexcept { return m_abone_low_number_thread; }
+        int get_abone_high_number_thread() const noexcept { return m_abone_high_number_thread; }
         int get_abone_hour_thread() const noexcept { return m_abone_hour_thread; }
 
         // subject.txtのロード後にdat落ちしたスレッドをスレあぼーんのリストから取り除く
@@ -484,7 +486,8 @@ namespace DBTREE
         void reset_abone_thread( const std::list< std::string >& threads,
                                  const std::list< std::string >& words,
                                  const std::list< std::string >& regexs,
-                                 const int number,
+                                 const int low_number,
+                                 const int high_number,
                                  const int hour,
                                  const bool redraw
             );
@@ -613,7 +616,8 @@ namespace DBTREE
 
         // レス数であぼーん(グローバル)
         // 2ch以外の板ではキャンセルする
-        virtual int get_abone_number_global() const { return 0; }
+        virtual int get_abone_low_number_global() const { return 0; }
+        virtual int get_abone_high_number_global() const { return 0; }
     };
 }
 
