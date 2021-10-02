@@ -936,28 +936,28 @@ void Root::push_movetable( std::string old_root,
 
 #ifdef _DEBUG
         std::cout << "size = " << m_movetable.size() << " "
-                  << ( *it_move ).old_root << ( *it_move ).old_path_board << "/ -> " << ( *it_move ).new_root << std::endl;
-#endif            
+                  << it_move->old_root << it_move->old_path_board << "/ -> " << it_move->new_root << std::endl;
+#endif
 
         if(
-            ( ( *it_move ).old_root == new_root
-              && ( *it_move ).old_path_board == new_path_board )
+            ( it_move->old_root == new_root
+              && it_move->old_path_board == new_path_board )
 
             ||
 
-            ( ( *it_move ).old_root == old_root
-              && ( *it_move ).old_path_board == old_path_board )
+            ( it_move->old_root == old_root
+              && it_move->old_path_board == old_path_board )
 
             ){
 
-            const std::string str_tmp = "削除: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + ( *it_move ).new_root + "\n";
+            const std::string str_tmp = "削除: " + it_move->old_root + it_move->old_path_board + "/ -> "
+                                        + it_move->new_root + "\n";
 #ifdef _DEBUG
             std::cout << str_tmp << std::endl;
 #endif
             str += str_tmp;
 
-            m_movetable.erase( it_move );
-            it_move = m_movetable.begin();
+            it_move = m_movetable.erase( it_move );
             continue;
         }
 
@@ -967,23 +967,23 @@ void Root::push_movetable( std::string old_root,
         // erase した内容と push_back した内容が同じになるので無限ループに落ちる
         else if(
 
-            ( *it_move ).new_root == old_root
-            && ( *it_move ).new_path_board == old_path_board ){
+            it_move->new_root == old_root
+            && it_move->new_path_board == old_path_board ){
 
             MOVETABLE movetable = *it_move;
             movetable.new_root = new_root;
             movetable.new_path_board = new_path_board;
 
-            const std::string str_tmp = "更新: " +( *it_move ).old_root + ( *it_move ).old_path_board + "/ -> " + ( *it_move ).new_root
-            + " => " + movetable.old_root + movetable.old_path_board + "/ -> " + movetable.new_root + "\n";
+            const std::string str_tmp = "更新: " + it_move->old_root + it_move->old_path_board + "/ -> "
+                                        + it_move->new_root + " => " + movetable.old_root + movetable.old_path_board
+                                        + "/ -> " + movetable.new_root + "\n";
 #ifdef _DEBUG
             std::cout << str_tmp << std::endl;
 #endif
             str += str_tmp;
 
-            m_movetable.erase( it_move );
+            it_move = m_movetable.erase( it_move );
             m_movetable.push_back( std::move( movetable ) );
-            it_move = m_movetable.begin();
             continue;
         }
 
