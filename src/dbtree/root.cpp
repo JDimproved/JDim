@@ -1186,10 +1186,9 @@ bool Root::move_etc( const std::string& url_old, const std::string& url_new,
     BoardBase * board = get_board( url_old );
     if( ! board ) return false;
 
-    std::list< DBTREE::ETCBOARDINFO >::iterator it = m_etcboards.begin();
-    for( ; it != m_etcboards.end(); ++it ){
-        if( (*it).url == url_old && (*it).name == name_old ) break;
-    }
+    using Info = DBTREE::ETCBOARDINFO;
+    const auto find_info = [&url_old, &name_old]( const Info& i ) { return i.url == url_old && i.name == name_old; };
+    auto it = std::find_if( m_etcboards.begin(), m_etcboards.end(), find_info );
     if( it == m_etcboards.end() ) return false;
 
 #ifdef _DEBUG
@@ -1232,18 +1231,15 @@ bool Root::remove_etc( const std::string& url, const std::string& name )
 
     if( m_etcboards.empty() ) return false;
 
-    std::list< DBTREE::ETCBOARDINFO >::iterator it = m_etcboards.begin();
-    for( ; it != m_etcboards.end(); ++it ){
-
-        if( (*it).url == url && (*it).name == name ){
+    const auto find_info = [&]( const DBTREE::ETCBOARDINFO& i ) { return i.url == url && i.name == name; };
+    const auto it = std::find_if( m_etcboards.cbegin(), m_etcboards.cend(), find_info );
+    if( it != m_etcboards.cend() ) {
 #ifdef _DEBUG
-            std::cout << "found\n";
+        std::cout << "found\n";
 #endif 
-
-            remove_board( url );
-            m_etcboards.erase( it );
-            return true;
-        }
+        remove_board( url );
+        m_etcboards.erase( it );
+        return true;
     }
 
     return false;
