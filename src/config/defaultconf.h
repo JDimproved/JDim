@@ -134,7 +134,8 @@ namespace CONFIG
         CONF_USE_LINK_AS_BOARD = 0,     // bbsmenu.html内にあるリンクは全て板とみなす
         CONF_SHOW_MOVEDIAG = 1,    // 板移転時に確認ダイアログを表示する
         CONF_REMOVE_OLD_ABONE_THREAD = 0, // dat落ちしたスレをNGスレタイトルリストから取り除くか( 0: ダイアログ表示 1: 取り除く 2: 除かない )
-        CONF_ABONE_NUMBER_THREAD = 0, // スレあぼーん( レス数 )
+        CONF_ABONE_LOW_NUMBER_THREAD = 0,  // nレス以下のスレをあぼーんする
+        CONF_ABONE_HIGH_NUMBER_THREAD = 0, // nレス以上のスレをあぼーんする
         CONF_ABONE_HOUR_THREAD = 0,   // スレあぼーん( スレ立てからの経過時間 )
         CONF_ABONE_TRANSPARENT = 0, // デフォルトで透明あぼーんをする
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする

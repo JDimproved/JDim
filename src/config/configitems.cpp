@@ -9,6 +9,7 @@
 
 #include "configitems.h"
 #include "defaultconf.h"
+#include "globalconf.h"
 
 #include "jdlib/confloader.h"
 #include "jdlib/miscutil.h"
@@ -490,7 +491,11 @@ bool ConfigItems::load( const bool restore )
     remove_old_abone_thread = cf.get_option_int( "remove_old_abone_thread", CONF_REMOVE_OLD_ABONE_THREAD, 0, 2 );
 
     // スレ あぼーん( レス数 )
-    abone_number_thread = cf.get_option_int( "abone_number_thread", CONF_ABONE_NUMBER_THREAD, 0, 9999 );
+    // abone_number_thread は変数や関数と名前が異なるが互換性のため維持する
+    abone_low_number_thread = cf.get_option_int( "abone_low_number_thread", CONF_ABONE_LOW_NUMBER_THREAD, 0,
+                                                 CONFIG::get_max_resnumber() );
+    abone_high_number_thread = cf.get_option_int( "abone_number_thread", CONF_ABONE_HIGH_NUMBER_THREAD, 0,
+                                                  CONFIG::get_max_resnumber() );
 
     // スレ あぼーん( スレ立てからの経過時間 )
     abone_hour_thread = cf.get_option_int( "abone_hour_thread", CONF_ABONE_HOUR_THREAD, 0, 9999 );
@@ -877,7 +882,8 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "remove_old_abone_thread", remove_old_abone_thread );
 
-    cf.update( "abone_number_thread", abone_number_thread );
+    cf.update( "abone_low_number_thread", abone_low_number_thread );
+    cf.update( "abone_number_thread", abone_high_number_thread );
     cf.update( "abone_hour_thread", abone_hour_thread );
 
     // あぼーん情報

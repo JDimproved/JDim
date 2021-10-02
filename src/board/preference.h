@@ -128,9 +128,13 @@ namespace BOARD
         Gtk::VBox m_vbox_abone_thread;
         Gtk::Label m_label_abone_thread;
 
-        Gtk::HBox m_hbox_number;
-        Gtk::Label m_label_number;
-        Gtk::SpinButton m_spin_number;
+        Gtk::Box m_hbox_low_number;
+        Gtk::Label m_label_low_number;
+        Gtk::SpinButton m_spin_low_number;
+
+        Gtk::Box m_hbox_high_number;
+        Gtk::Label m_label_high_number;
+        Gtk::SpinButton m_spin_high_number;
 
         Gtk::HBox m_hbox_hour;
         Gtk::Label m_label_hour;

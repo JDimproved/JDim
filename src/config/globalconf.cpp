@@ -489,8 +489,11 @@ void CONFIG::set_list_abone_regex_thread( std::list< std::string >& regex )
 int CONFIG::get_remove_old_abone_thread(){ return get_confitem()->remove_old_abone_thread; }
 void CONFIG::set_remove_old_abone_thread( const int remove ){ get_confitem()->remove_old_abone_thread = remove; }
 
-int CONFIG::get_abone_number_thread(){ return get_confitem()->abone_number_thread; }
-void CONFIG::set_abone_number_thread( const int number ){ get_confitem()->abone_number_thread = number; }
+int CONFIG::get_abone_low_number_thread(){ return get_confitem()->abone_low_number_thread; }
+void CONFIG::set_abone_low_number_thread( int number ){ get_confitem()->abone_low_number_thread = number; }
+
+int CONFIG::get_abone_high_number_thread(){ return get_confitem()->abone_high_number_thread; }
+void CONFIG::set_abone_high_number_thread( int number ){ get_confitem()->abone_high_number_thread = number; }
 
 int CONFIG::get_abone_hour_thread(){ return get_confitem()->abone_hour_thread; }
 void CONFIG::set_abone_hour_thread( const int hour ){ get_confitem()->abone_hour_thread = hour; }

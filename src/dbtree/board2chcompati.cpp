@@ -516,9 +516,17 @@ void Board2chCompati::download_rule_setting()
 
 
 //
-// レス数であぼーん(グローバル)
+// レス数以下であぼーん(グローバル)
 //
-int Board2chCompati::get_abone_number_global() const
+int Board2chCompati::get_abone_low_number_global() const
 {
-    return CONFIG::get_abone_number_thread();
+    return CONFIG::get_abone_low_number_thread();
+}
+
+//
+// レス数以上であぼーん(グローバル)
+//
+int Board2chCompati::get_abone_high_number_global() const
+{
+    return CONFIG::get_abone_high_number_thread();
 }
