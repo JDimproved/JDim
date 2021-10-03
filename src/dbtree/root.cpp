@@ -1433,23 +1433,22 @@ std::string Root::is_board_moved( const std::string& url,
     }
 
     // 移転テーブルを検索
-    std::list< MOVETABLE >::iterator it_move = m_movetable.begin();
-    for( ; it_move != m_movetable.end(); ++it_move ){
+    for( const MOVETABLE& table : m_movetable ) {
 
-        if( url.rfind( ( *it_move ).old_root, 0 ) == 0
-            && url.find( ( *it_move ).old_path_board + "/" ) != std::string::npos ){
+        if( url.rfind( table.old_root, 0 ) == 0
+            && url.find( table.old_path_board + "/" ) != std::string::npos ){
 
-            const std::string new_url = ( *it_move ).new_root + ( *it_move ).new_path_board + "/";
+            const std::string new_url = table.new_root + table.new_path_board + "/";
 
-            old_root = ( *it_move ).old_root;
-            old_path_board = ( *it_move ).old_path_board;
-            new_root = ( *it_move ).new_root;
-            new_path_board = ( *it_move ).new_path_board;
+            old_root = table.old_root;
+            old_path_board = table.old_path_board;
+            new_root = table.new_root;
+            new_path_board = table.new_path_board;
 
-            const std::string old_root_bkup = old_root;
-            const std::string old_path_board_bkup = old_path_board;
+            std::string old_root_bkup = old_root;
+            std::string old_path_board_bkup = old_path_board;
 
-#ifdef _DEBUG            
+#ifdef _DEBUG
             std::cout << "count = " << count << " : " << url << " is moved to " << new_url << std::endl;
 #endif
 
@@ -1459,15 +1458,15 @@ std::string Root::is_board_moved( const std::string& url,
             // old_root と old_path_board が書き換わっているので戻しておく
             //
             // (注意) もし再帰呼び出ししたis_board_moved() の中で m_movetable.erase を実行すると
-            // it_move は無効になるので、以前の様に
-            // old_root = ( *it_move ).old_root;
-            // old_path_board = ( *it_move ).old_path_board;
-            // と it_move を使ってold_rootなどに代入するとメモリを破壊してセグフォになる時がある
+            // table は無効になるので、以前の様に
+            // old_root = table.old_root;
+            // old_path_board = table.old_path_board;
+            // と table を使ってold_rootなどに代入するとメモリを破壊してセグフォになる時がある
             // (イテレータのメモリが残っていればセグフォにならないので完全に運まかせ)
             // 次にJDを起動したときは再帰呼び出ししたis_board_moved() の中の save_movetable()で
             // 移転テーブルは更新済みで落ちないのでタチが悪い
-            old_root = old_root_bkup;
-            old_path_board = old_path_board_bkup;
+            old_root = std::move( old_root_bkup );
+            old_path_board = std::move( old_path_board_bkup );
 
             return ret_url;
         }
@@ -1533,16 +1532,15 @@ void Root::save_movetable()
     std::string file_move = CACHE::path_movetable();
     std::ostringstream movetable;
 
-    std::list< MOVETABLE >::iterator it_move;
-    for( it_move = m_movetable.begin(); it_move != m_movetable.end(); ++it_move ){
+    for( const MOVETABLE& t : m_movetable ) {
 
-        movetable <<( *it_move ).old_root << " "
-                  << ( *it_move ).new_root << " "
-                  << ( *it_move ).old_path_board;
+        movetable << t.old_root << " "
+                  << t.new_root << " "
+                  << t.old_path_board;
 
         // 新形式
-        if( ! ( *it_move ).new_path_board.empty()
-            && ( *it_move ).old_path_board != ( *it_move ).new_path_board ) movetable << " " << ( *it_move ).new_path_board;
+        if( ! t.new_path_board.empty()
+            && t.old_path_board != t.new_path_board ) movetable << " " << t.new_path_board;
 
         movetable << std::endl;
     }
