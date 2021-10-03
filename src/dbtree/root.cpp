@@ -1261,21 +1261,20 @@ void Root::save_etc()
 
     std::string etcboard;
 
-    std::list< DBTREE::ETCBOARDINFO >::iterator it = m_etcboards.begin();
-    for( ; it != m_etcboards.end(); ++it ){
+    for( const DBTREE::ETCBOARDINFO& info : m_etcboards ) {
 
-        etcboard += (*it).name + "\n";
-        if( (*it).basicauth.empty() ) etcboard += (*it).url + "\n";
+        etcboard += info.name + "\n";
+        if( info.basicauth.empty() ) etcboard += info.url + "\n";
         else{
 
-            size_t i = (*it).url.find( "://" );
+            const std::size_t i = info.url.find( "://" );
             if( i != std::string::npos ){
-                etcboard += (*it).url.substr( 0, i+3 ) + (*it).basicauth + "@" + (*it).url.substr( i+3 ) + "\n";
+                etcboard += info.url.substr( 0, i+3 ) + info.basicauth + "@" + info.url.substr( i+3 ) + "\n";
             }
-            else etcboard += (*it).url + "\n";
+            else etcboard += info.url + "\n";
 
         }
-        etcboard += (*it).boardid + "\n"; 
+        etcboard += info.boardid + "\n";
     }
 
     std::string file_etctxt = CACHE::path_etcboard();
