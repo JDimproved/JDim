@@ -29,10 +29,13 @@
 #include "environment.h"
 #include "global.h"
 
-#include <sstream>
-#include <cstring>
 #include <sys/types.h> // chmod
 #include <sys/stat.h>
+
+#include <cstring>
+#include <iterator>
+#include <sstream>
+
 
 #ifdef _TEST_CACHE
 int cache_hit1 = 0;
@@ -1305,21 +1308,20 @@ void Root::load_movetable()
     if( CACHE::load_rawdata( file_move, movetable_rawdata ) ){
 
         std::list< std::string > list_table = MISC::get_lines( movetable_rawdata );
-        std::list< std::string >::iterator it;
-        for( it = list_table.begin(); it != list_table.end(); ++it ){
+        for( const std::string& line : list_table ) {
 
-            std::list< std::string > lines = MISC::split_line( *it );
+            std::list<std::string> tokens = MISC::split_line( line );
 
-            if( lines.size() == 3 // 旧形式
-                || lines.size() == 4 ){
+            if( tokens.size() == 3 // 旧形式
+                || tokens.size() == 4 ){
 
-                std::list< std::string >::iterator it2 = lines.begin();
+                auto move_it = std::make_move_iterator( tokens.begin() );
 
                 MOVETABLE movetable;
-                movetable.old_root = *(it2++);
-                movetable.new_root = *(it2++);
-                movetable.old_path_board = *(it2++);
-                if( lines.size() == 4 ) movetable.new_path_board = *(it2++);
+                movetable.old_root = *(move_it++);
+                movetable.new_root = *(move_it++);
+                movetable.old_path_board = *(move_it++);
+                if( tokens.size() == 4 ) movetable.new_path_board = *(move_it++);
                 else movetable.new_path_board = movetable.old_path_board;
                 m_movetable.push_back( movetable );
             }
@@ -1328,13 +1330,10 @@ void Root::load_movetable()
 
 #ifdef _DEBUG
     std::cout << "MOVETABLE : \n";
-    std::list< MOVETABLE >::iterator it_move;
-    for( it_move = m_movetable.begin(); it_move != m_movetable.end(); ++it_move )
-        std::cout << ( *it_move ).old_root << ( *it_move ).old_path_board
-                  << " -> " << ( *it_move ).new_root <<  ( *it_move ).new_path_board << std::endl;
+    for( const MOVETABLE& t : m_movetable ) {
+        std::cout << t.old_root << t.old_path_board << " -> " << t.new_root << t.new_path_board << std::endl;
+    }
 #endif
-
-
 }
 
 
