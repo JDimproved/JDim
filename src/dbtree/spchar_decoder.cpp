@@ -109,28 +109,24 @@ int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n
     int ret = DBTREE::NODE_TEXT;
     n_in = n_out = 0;
 
-    int i = 0;
-    for(;;){
+    for( const UCSTBL& t : ucstbl ) {
 
-        const int ucs = ucstbl[ i ].ucs;
+        const int ucs = t.ucs;
         if( ! ucs ) break;
-        if( in_char[ 1 ] == ucstbl[ i ].str[ 0 ] ){
 
-            if( check_spchar( in_char +1, ucstbl[ i ].str ) ){
+        if( in_char[1] == t.str[0]
+                && check_spchar( in_char + 1, t.str ) ) {
 
-                if( only_check ) return ret;
+            if( only_check ) return ret;
 
-                n_in = strlen( ucstbl[ i ].str ) +1;
+            n_in = std::strlen( t.str ) + 1;
 
-                // zwnj, zwj, lrm, rlm は今のところ無視する(zwspにする)
-                if( ucs >= UCS_ZWSP && ucs <= UCS_RLM ) ret = DBTREE::NODE_ZWSP;
-                else n_out = MISC::ucs2toutf8( ucs, out_char );
+            // zwnj, zwj, lrm, rlm は今のところ無視する(zwspにする)
+            if( ucs >= UCS_ZWSP && ucs <= UCS_RLM ) ret = DBTREE::NODE_ZWSP;
+            else n_out = MISC::ucs2toutf8( ucs, out_char );
 
-                break;
-            }
+            break;
         }
-
-        ++i;
     }
 
     if( !n_in ) ret = DBTREE::NODE_NONE;
