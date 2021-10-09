@@ -30,6 +30,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     ,m_check_transpabone( "透明あぼ〜ん" )
     ,m_check_chainabone( "連鎖あぼ〜ん" )
     ,m_check_ageabone( "sage以外をあぼ〜ん" )
+    ,m_check_defnameabone( "デフォルト名無しをあぼ〜ん" )
+    ,m_check_noidabone( "ID無しをあぼ〜ん" )
     ,m_check_boardabone( "板レベルでのあぼ〜んを有効にする" )
     ,m_check_globalabone( "全体レベルでのあぼ〜んを有効にする" )
     ,m_label_since( false, "スレ立て日時 : ", std::string() )
@@ -104,6 +106,12 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     // ageあぼーん
     m_check_ageabone.set_active( DBTREE::get_abone_age( get_url() ) );
 
+    // デフォルト名無しあぼーん
+    m_check_defnameabone.set_active( DBTREE::get_abone_default_name( get_url() ) );
+
+    // ID無しあぼーん
+    m_check_noidabone.set_active( DBTREE::get_abone_noid( get_url() ) );
+
     // 板レベルあぼーん
     m_check_boardabone.set_active( DBTREE::get_abone_board( get_url() ) );
 
@@ -116,6 +124,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox_abone.pack_start( m_check_transpabone, Gtk::PACK_SHRINK );
     m_vbox_abone.pack_start( m_check_chainabone, Gtk::PACK_SHRINK );
     m_vbox_abone.pack_start( m_check_ageabone, Gtk::PACK_SHRINK );
+    m_vbox_abone.pack_start( m_check_defnameabone, Gtk::PACK_SHRINK );
+    m_vbox_abone.pack_start( m_check_noidabone, Gtk::PACK_SHRINK );
     m_vbox_abone.pack_start( m_check_boardabone, Gtk::PACK_SHRINK );
     m_vbox_abone.pack_start( m_check_globalabone, Gtk::PACK_SHRINK );
 
@@ -234,6 +244,7 @@ void Preferences::slot_ok_clicked()
 
     DBTREE::reset_abone( get_url(), list_id, list_name, list_word, list_regex, vec_abone_res
                          , m_check_transpabone.get_active(), m_check_chainabone.get_active(), m_check_ageabone.get_active(),
+                         m_check_defnameabone.get_active(), m_check_noidabone.get_active(),
                          m_check_boardabone.get_active(), m_check_globalabone.get_active() );
 
     // viewの再レイアウト

@@ -39,6 +39,12 @@ namespace ARTICLE
         // ageあぼーん
         Gtk::CheckButton m_check_ageabone;
 
+        // デフォルト名無しあぼーん
+        Gtk::CheckButton m_check_defnameabone;
+
+        // ID無しあぼーん
+        Gtk::CheckButton m_check_noidabone;
+
         // 板レベルでのあぼーん
         Gtk::CheckButton m_check_boardabone;
 
