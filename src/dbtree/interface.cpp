@@ -1231,10 +1231,12 @@ void DBTREE::reset_abone( const std::string& url,
                           const std::list< std::string >& regexs,
                           const std::vector< char >& vec_abone_res,
                           const bool transparent, const bool chain, const bool age,
+                          const bool default_name, const bool noid,
                           const bool board, const bool global
     )
 {
-    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, vec_abone_res, transparent, chain, age, board, global );
+    DBTREE::get_article( url )->reset_abone( ids, names, words, regexs, vec_abone_res, transparent, chain, age,
+                                             default_name, noid, board, global );
 }
 
 
@@ -1297,6 +1299,32 @@ bool DBTREE::get_abone_age( const std::string& url )
 void DBTREE::set_abone_age( const std::string& url, const bool set )
 {
     DBTREE::get_article( url )->set_abone_age( set );
+}
+
+
+// デフォルト名無しあぼーん
+bool DBTREE::get_abone_default_name( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_abone_default_name();
+}
+
+
+void DBTREE::set_abone_default_name( const std::string& url, const bool set )
+{
+    DBTREE::get_article( url )->set_abone_default_name( set );
+}
+
+
+// ID無しあぼーん
+bool DBTREE::get_abone_noid( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_abone_noid();
+}
+
+
+void DBTREE::set_abone_noid( const std::string& url, const bool set )
+{
+    DBTREE::get_article( url )->set_abone_noid( set );
 }
 
 

@@ -614,7 +614,8 @@ void ArticleBase::update_abone()
     if( ! m_nodetree ) return;
 
     get_nodetree()->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_abone_reses,
-                                     m_abone_transparent, m_abone_chain, m_abone_age, m_abone_board, m_abone_global );
+                                     m_abone_transparent, m_abone_chain, m_abone_age, m_abone_default_name, m_abone_noid,
+                                     m_abone_board, m_abone_global );
 
     get_nodetree()->update_abone_all();
 }
@@ -630,6 +631,7 @@ void ArticleBase::reset_abone( const std::list< std::string >& ids,
                                const std::list< std::string >& regexs,
                                const std::vector< char >& vec_abone_res,
                                const bool transparent, const bool chain, const bool age,
+                               const bool default_name, const bool noid,
                                const bool board, const bool global
     )
 {
@@ -668,6 +670,8 @@ void ArticleBase::reset_abone( const std::list< std::string >& ids,
     m_abone_transparent = transparent;
     m_abone_chain = chain;
     m_abone_age = age;
+    m_abone_default_name = default_name;
+    m_abone_noid = noid;
     m_abone_board = board;
     m_abone_global = global;
 
@@ -811,6 +815,36 @@ void ArticleBase::set_abone_age( const bool set )
 
     m_save_info = true;
 } 
+
+
+//
+// デフォルト名無しあぼーん更新
+//
+void ArticleBase::set_abone_default_name( const bool set )
+{
+    if( empty() ) return;
+
+    m_abone_default_name = set;
+
+    update_abone();
+
+    m_save_info = true;
+}
+
+
+//
+// ID無しあぼーん更新
+//
+void ArticleBase::set_abone_noid( const bool set )
+{
+    if( empty() ) return;
+
+    m_abone_noid = set;
+
+    update_abone();
+
+    m_save_info = true;
+}
 
 
 //
@@ -970,7 +1004,8 @@ NodeTreeBase* ArticleBase::get_nodetree()
 
         // あぼーん情報のコピー
         m_nodetree->copy_abone_info( m_list_abone_id, m_list_abone_name, m_list_abone_word, m_list_abone_regex, m_abone_reses,
-                                     m_abone_transparent, m_abone_chain, m_abone_age, m_abone_board, m_abone_global );
+                                     m_abone_transparent, m_abone_chain, m_abone_age, m_abone_default_name, m_abone_noid,
+                                     m_abone_board, m_abone_global );
 
         // 書き込み情報のコピー
         m_nodetree->copy_post_info( m_posts );
@@ -1194,10 +1229,12 @@ void ArticleBase::copy_article_info( const std::string& url_src )
     const bool transparent = DBTREE::get_abone_transparent( url_src );
     const bool chain = DBTREE::get_abone_chain( url_src );
     const bool age = DBTREE::get_abone_age( url_src );
+    const bool default_name = DBTREE::get_abone_default_name( url_src );
+    const bool noid = DBTREE::get_abone_noid( url_src );
     const bool board = DBTREE::get_abone_board( url_src );
     const bool global = DBTREE::get_abone_global( url_src );
 
-    reset_abone( ids, names ,words, regexs, vec_abone_res, transparent, chain, age, board, global );
+    reset_abone( ids, names ,words, regexs, vec_abone_res, transparent, chain, age, default_name, noid, board, global );
 }
 
 
@@ -1665,6 +1702,8 @@ void ArticleBase::delete_cache( const bool cache_only )
         m_abone_transparent = false;
         m_abone_chain = false;
         m_abone_age = false;
+        m_abone_default_name = false;
+        m_abone_noid = false;
         m_abone_board = true;
         m_abone_global = true;
         m_read_info = false;
@@ -1901,6 +1940,16 @@ void ArticleBase::read_info()
         GET_INFOVALUE( str_tmp, "aboneage = " );
         if( ! str_tmp.empty() ) m_abone_age = atoi( str_tmp.c_str() );
 
+        // デフォルト名無しあぼーん
+        m_abone_default_name = false;
+        GET_INFOVALUE( str_tmp, "abonedefaultname = " );
+        if( ! str_tmp.empty() ) m_abone_default_name = std::atoi( str_tmp.c_str() );
+
+        // ID無しあぼーん
+        m_abone_noid = false;
+        GET_INFOVALUE( str_tmp, "abonenoid = " );
+        if( ! str_tmp.empty() ) m_abone_noid = std::atoi( str_tmp.c_str() );
+
         // 最終更新チェック時間 (elisp の Lisp timestamp形式)
         GET_INFOVALUE( str_tmp, "checktime = " );
         if( ! str_tmp.empty() ){
@@ -2120,6 +2169,8 @@ void ArticleBase::save_info( const bool force )
          << "bkmark_thread = " << m_bookmarked_thread << std::endl
          << "posted = " << ss_posted.str() << std::endl
          << "aboneage = " << m_abone_age << std::endl
+         << "abonedefaultname = " << m_abone_default_name << std::endl
+         << "abonenoid = " << m_abone_noid << std::endl
          << "checktime = " << ss_check.str() << std::endl
          << "aboneboard = " << m_abone_board << std::endl
          << "aboneglobal = " << m_abone_global << std::endl

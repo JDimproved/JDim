@@ -97,6 +97,8 @@ namespace DBTREE
         bool m_abone_transparent{}; // 透明あぼーん
         bool m_abone_chain{}; // 連鎖あぼーん
         bool m_abone_age{}; // age ているレスはあぼーん
+        bool m_abone_default_name{}; // デフォルト名無しのレスはあぼーん
+        bool m_abone_noid{}; // ID無しのレスはあぼーん
         bool m_abone_board{}; // 板レベルでのあぼーんを有効にする
         bool m_abone_global{}; // 全体レベルでのあぼーんを有効にする
 
@@ -248,6 +250,7 @@ namespace DBTREE
                               const std::list< std::string >& list_abone_regex,
                               const std::unordered_set< int >& abone_reses,
                               const bool abone_transparent, const bool abone_chain, const bool abone_age,
+                              const bool abone_default_name, const bool abone_noid,
                               const bool abone_board, const bool abone_global );
 
         // 全レスのあぼーん状態の更新
