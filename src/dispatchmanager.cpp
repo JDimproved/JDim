@@ -7,6 +7,7 @@
 
 #include "skeleton/dispatchable.h"
 
+#include <algorithm>
 #include <mutex>
 
 
@@ -56,14 +57,11 @@ void DispatchManager::add( SKELETON::Dispatchable* child )
     std::lock_guard< std::mutex > lock( dispatch_mutex );
 
     // 既にlistに登録されていたらキャンセルする
-    std::list< SKELETON::Dispatchable* >::iterator it = m_children.begin();
-    for( ; it != m_children.end(); ++it ){
-        if( *it == child ){
+    if( std::find( m_children.cbegin(), m_children.cend(), child ) != m_children.cend() ) {
 #ifdef _DEBUG
-            std::cout << "DispatchManager::add canceled\n";
+        std::cout << "DispatchManager::add canceled\n";
 #endif
-            return;
-        }
+        return;
     }
 
     m_children.push_back( child );
