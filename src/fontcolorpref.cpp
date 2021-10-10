@@ -435,17 +435,14 @@ void FontColorPref::slot_cell_data_color( Gtk::CellRenderer* cell, const Gtk::Tr
 //
 void FontColorPref::slot_change_color()
 {
-    Gtk::TreeModel::Path path;
     Gtk::TreeRow row;
 
     std::vector< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
     if( selection_path.empty() ) return;
 
-    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
-
     int colorid = COLOR_NONE;
     if( selection_path.size() == 1 ){
-        row = *m_liststore_color->get_iter( *it );
+        row = *m_liststore_color->get_iter( selection_path.front() );
         if( ! row ) return;
         colorid = row[ m_columns_color.m_col_colorid ];
         if( colorid == COLOR_NONE ) return;
@@ -461,9 +458,9 @@ void FontColorPref::slot_change_color()
 
     if( ret == Gtk::RESPONSE_OK ){
 
-        for( ; it != selection_path.end(); ++it ){
+        for( const Gtk::TreePath& path : selection_path ) {
 
-            row = *m_liststore_color->get_iter( *it );
+            row = *m_liststore_color->get_iter( path );
             if( ! row ) continue;
 
             colorid = row[ m_columns_color.m_col_colorid ];
@@ -484,11 +481,9 @@ void FontColorPref::slot_reset_color()
     std::vector< Gtk::TreePath > selection_path = m_treeview_color.get_selection()->get_selected_rows();
     if( selection_path.empty() ) return;
 
-    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
+    for( const Gtk::TreePath& path : selection_path ) {
 
-    for( ; it != selection_path.end(); ++it ){
-
-        Gtk::TreeRow row = *m_liststore_color->get_iter( *it );
+        Gtk::TreeRow row = *m_liststore_color->get_iter( path );
         if( ! row ) continue;
 
         const int colorid = row[ m_columns_color.m_col_colorid ];
