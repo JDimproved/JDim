@@ -10,9 +10,6 @@
 #include "jdversion.h"
 #include "jdlib/miscutil.h"
 
-#include <cstring>
-#include <sstream>
-
 #include <gtkmm.h>
 
 #if __has_include(<sys/utsname.h>)
@@ -25,6 +22,12 @@
 #elif defined(USE_OPENSSL)
 #  include <openssl/ssl.h>
 #endif
+
+#include <algorithm>
+#include <cctype>
+#include <cstring>
+#include <sstream>
+
 
 std::string ENVIRONMENT::get_progname() { return "JDim"; }
 std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
@@ -106,69 +109,50 @@ std::string ENVIRONMENT::get_configure_args( const int mode )
 //
 std::string get_git_revision (const char *git_date, const char *git_hash, const int git_dirty, const char *fallback_date)
 {
-	std::string git_revision = "";
+    bool date_valid = false;
+    if( git_date )
+    {
+        const std::size_t length = std::strlen( git_date );
+        if( length >= 8 && git_date[0] >= '1' )
+        {
+            // isdigit() requires a value within the range of unsigned char.
+            date_valid = std::all_of( git_date, git_date + length,
+                                      []( unsigned char c ) { return std::isdigit( c ); } );
+        }
+    }
 
-	// ハッシュ省略表記はgit 2.11から長さを自動で調整するようになった
-	// ビルドメタデータが表記揺れするのは紛らわしいので固定長にする
-	constexpr const size_t fixed_hash_length = 10;
-	size_t string_length;
-	size_t n;
+    bool hash_valid = false;
+    if( git_hash )
+    {
+        // ハッシュ省略表記はgit 2.11から長さを自動で調整するようになった
+        // ビルドメタデータが表記揺れするのは紛らわしいので固定長にする
+        constexpr const size_t fixed_hash_length = 10;
+        if( std::strlen( git_hash ) == fixed_hash_length )
+        {
+            // isxdigit() requires a value within the range of unsigned char.
+            hash_valid = std::all_of( git_hash, git_hash + fixed_hash_length,
+                                      []( unsigned char c ) { return std::isxdigit( c ); } );
+        }
+    }
 
-	bool date_valid = false;
-	if (git_date)
-	{
-		date_valid = true;
-		string_length = strlen(git_date);
-		if (string_length < 8) date_valid = false;
-		if (date_valid)
-		{
-			for (n = 0; n < string_length; n++)
-			{
-				if (! isdigit(git_date[n]))
-				{
-					date_valid = false;
-					break;
-				}
-			}
-		}
-		if (git_date[0] < '1') date_valid = false;
-	}
+    std::string git_revision;
 
-	bool hash_valid = false;
-	if (git_hash)
-	{
-		hash_valid = true;
-		string_length = strlen(git_hash);
-		if (string_length != fixed_hash_length) hash_valid = false;
-		if (hash_valid)
-		{
-			for (n = 0; n < fixed_hash_length; n++)
-			{
-				if (! isgraph(git_hash[n]))
-				{
-					hash_valid = false;
-					break;
-				}
-			}
-		}
-	}
+    if( date_valid && hash_valid )
+    {
+        git_revision.append( git_date );
+        git_revision.append( "(git:" );
+        git_revision.append( git_hash );
+        if( git_dirty )
+        {
+            git_revision.append( ":M" );
+        }
+        git_revision.push_back( ')' );
+    }
+    else {
+        git_revision.append( fallback_date );
+    }
 
-
-	if (date_valid && hash_valid)
-	{
-		git_revision.append( std::string(git_date) + "(git:");
-		git_revision.append( std::string(git_hash), 0, fixed_hash_length);
-		if (git_dirty)
-		{
-			git_revision.append(":M");
-		}
-		git_revision.append(")");
-	}
-	else {
-		git_revision.append( std::string(fallback_date) );
-	}
-
-	return git_revision;
+    return git_revision;
 }
 
 
