@@ -12,6 +12,8 @@
 
 #include "dbtree/interface.h"
 
+#include "jdlib/miscutil.h"
+
 #include "command.h"
 
 namespace CORE
@@ -45,23 +47,17 @@ namespace CORE
         GlobalAbonePref( Gtk::Window* parent, const std::string& url )
         : SKELETON::PrefDiag( parent, url )
         {
-            std::string str_name, str_word, str_regex;
-            std::list< std::string >::iterator it;
-
             // name
             std::list< std::string > list_name = CONFIG::get_list_abone_name();
-            for( it = list_name.begin(); it != list_name.end(); ++it ) if( ! ( *it ).empty() ) str_name += ( *it ) + "\n";
-            m_edit_name.set_text( str_name );
+            m_edit_name.set_text( MISC::concat_with_suffix( list_name, '\n' ) );
 
             // word
             std::list< std::string > list_word = CONFIG::get_list_abone_word();
-            for( it = list_word.begin(); it != list_word.end(); ++it ) if( ! ( *it ).empty() ) str_word += ( *it ) + "\n";
-            m_edit_word.set_text( str_word );
+            m_edit_word.set_text( MISC::concat_with_suffix( list_word, '\n' ) );
 
             // regex
             std::list< std::string > list_regex = CONFIG::get_list_abone_regex();
-            for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
-            m_edit_regex.set_text( str_regex );
+            m_edit_regex.set_text( MISC::concat_with_suffix( list_regex, '\n' ) );
 
             m_label_warning.set_text( "ここでのあぼーん設定は全板の全スレに適用されます。\n\n設定のし過ぎは全板の全スレの表示速度を低下させます。\n\n指定のし過ぎに気を付けてください。" );
 

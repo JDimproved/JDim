@@ -12,6 +12,8 @@
 
 #include "dbtree/interface.h"
 
+#include "jdlib/miscutil.h"
+
 #include "command.h"
 
 namespace CORE
@@ -69,9 +71,6 @@ namespace CORE
             , m_hbox_low_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
             , m_hbox_high_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
         {
-            std::string str_word, str_regex;
-            std::list< std::string >::iterator it;
-
             // スレ数、時間
             m_label_abone_thread.set_text( "以下の数字が0の時は未設定になります。\nまたキャッシュにログがあるスレはあぼ〜んされません。\n\n" );
 
@@ -115,13 +114,11 @@ namespace CORE
 
             // word
             std::list< std::string > list_word = CONFIG::get_list_abone_word_thread();
-            for( it = list_word.begin(); it != list_word.end(); ++it ) if( ! ( *it ).empty() ) str_word += ( *it ) + "\n";
-            m_edit_word.set_text( str_word );
+            m_edit_word.set_text( MISC::concat_with_suffix( list_word, '\n' ) );
 
             // regex
             std::list< std::string > list_regex = CONFIG::get_list_abone_regex_thread();
-            for( it = list_regex.begin(); it != list_regex.end(); ++it ) if( ! ( *it ).empty() ) str_regex += ( *it ) + "\n";
-            m_edit_regex.set_text( str_regex );
+            m_edit_regex.set_text( MISC::concat_with_suffix( list_regex, '\n' ) );
 
             m_label_warning.set_text( "ここでのあぼーん設定は全板のスレ一覧に適用されます。\n\n設定のし過ぎは全板の全スレ一覧表示速度を低下させます。\n\n指定のし過ぎに気を付けてください。" );
 
