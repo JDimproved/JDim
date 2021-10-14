@@ -2222,7 +2222,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             if( br ){
 
                 // フラッシュ
-                if( *( pos - 1 ) == ' ' && ! m_parsed_text.empty() ) {
+                if( (pos > str) && *( pos - 1 ) == ' ' && ! m_parsed_text.empty() ) {
                     m_parsed_text.pop_back(); // 改行前の空白を取り除く
                 }
                 create_node_ntext( m_parsed_text.c_str(), m_parsed_text.size(), color_text, bold, fontid );
@@ -2804,12 +2804,14 @@ int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_
 
     // URLスキームを修正
     int str_pos = 0;
+    int n_out = n_in; // 実際に書き込む長さ
     switch( linktype ){
 
         // ttp -> http
         case MISC::SCHEME_TTP:
 
-            if( n_in + 1 >= lng_link ) return MISC::SCHEME_NONE;
+            n_out += 1;
+            if( n_out >= lng_link ) return MISC::SCHEME_NONE;
 
             *pos = 'h';
             pos++;
@@ -2818,7 +2820,8 @@ int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_
         // tp -> http
         case MISC::SCHEME_TP:
 
-            if( n_in + 2 >= lng_link ) return MISC::SCHEME_NONE;
+            n_out += 2;
+            if( n_out >= lng_link ) return MISC::SCHEME_NONE;
 
             *pos  = 'h';
             *(++pos) = 't';
@@ -2849,7 +2852,8 @@ int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_
             if( str_in[ i ] == '^' ){
 
                 // '^' → "%5E"(+2Byte)
-                if( n_in + 2 >= lng_link ) return MISC::SCHEME_NONE;
+                n_out += 2;
+                if( n_out >= lng_link ) return MISC::SCHEME_NONE;
 
                 *pos = '%';
                 *(++pos) = '5';
@@ -2858,7 +2862,8 @@ int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_
             else if( str_in[ i ] == '|' ){
 
                 // '|' → "%7C"(+2Byte)
-                if( n_in + 2 >= lng_link ) return MISC::SCHEME_NONE;
+                n_out += 2;
+                if( n_out >= lng_link ) return MISC::SCHEME_NONE;
 
                 *pos = '%';
                 *(++pos) = '7';
