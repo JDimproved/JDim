@@ -280,20 +280,18 @@ void History_Manager::viewhistory2xml()
     const std::list< std::string >& article_urls = SESSION::get_article_URLs();
     const std::list< std::string >& board_urls = SESSION::get_board_URLs();
 
-    std::list< std::string >::const_iterator it_url = article_urls.begin();
-    for( ; it_url != article_urls.end(); ++it_url ){
+    for( const std::string& url : article_urls ) {
 #ifdef _DEBUG
-        std::cout << "insert " << *it_url << std::endl;
+        std::cout << "insert " << url << std::endl;
 #endif
-        taburls.insert( *it_url );
+        taburls.insert( url );
     }
 
-    it_url = board_urls.begin();
-    for( ; it_url != board_urls.end(); ++it_url ){
+    for( const std::string& url : board_urls ) {
 #ifdef _DEBUG
-        std::cout << "insert " << *it_url << std::endl;
+        std::cout << "insert " << url << std::endl;
 #endif
-        taburls.insert( *it_url );
+        taburls.insert( url );
     }
 
     // root 
