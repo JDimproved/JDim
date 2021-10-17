@@ -1232,8 +1232,8 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
         "AppendFavorite",
         "Save"
     };
-    for( int i = 0; i < 7; ++i ){
-	    act = action_group()->get_action( sizemenus[ i ] );
+    for( const std::string& menu : sizemenus ) {
+        act = action_group()->get_action( menu );
         if( act ){
             if( m_img->is_cached() ) act->set_sensitive( true );
             else act->set_sensitive( false );
