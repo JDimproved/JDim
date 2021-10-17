@@ -227,27 +227,24 @@ void ICON_Manager::load_theme()
     std::cout << "ICON::load_theme\n";
 #endif
 
-    std::list< std::string >::const_iterator it = files.begin();
-    for(; it != files.end(); ++it ){
-
+    for( const std::string& filename : files ) {
 #ifdef _DEBUG
-        std::cout << *it << std::endl;
+        std::cout << filename << std::endl;
 #endif
 
         int id = 0;
 
-        // 拡張子を削除
-        std::string filename = (*it);
-        size_t i = (*it).rfind( '.' );
-        if( i != std::string::npos ) filename = filename.substr( 0, i );
+        // 拡張子を探す
+        const std::size_t i = filename.rfind( '.' );
 
         while( iconfiles[ id ][ 0 ] != '\0' ){
 
-            if( filename == iconfiles[ id ] ){
+            // 拡張子を除いたファイル名を比較
+            if( filename.compare( 0, i, iconfiles[ id ] ) == 0 ) {
 #ifdef _DEBUG
                 std::cout << "hit : " << iconfiles[ id ] << " id = " << id << std::endl;
 #endif
-                m_list_icons[ id ]  = Gdk::Pixbuf::create_from_file( CACHE::path_theme_icon_root() + (*it) );
+                m_list_icons[ id ] = Gdk::Pixbuf::create_from_file( CACHE::path_theme_icon_root() + filename );
                 break;
             }
 
