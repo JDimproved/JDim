@@ -86,6 +86,14 @@ void SettingLoader::parse_data()
     m_line_number = cf.get_option_int( "BBS_LINE_NUMBER", 0, 0, 8192 );
     m_message_count = cf.get_option_int( "BBS_MESSAGE_COUNT", 0, 0, 81920 );
     m_unicode = cf.get_option_str( "BBS_UNICODE", "" );
+    const int num_stop = cf.get_option_int( "BBS_THREAD_STOP", 0, 0, CONFIG::get_max_resnumber() );
+    if( num_stop ) {
+        // 板設定の最大レス数がデフォルト(0:未設定)でないときは BBS_THREAD_STOP の値に上書きする
+        const int max_res = DBTREE::board_get_number_max_res( m_url_boadbase );
+        if( !max_res && max_res != num_stop ) {
+            DBTREE::board_set_number_max_res( m_url_boadbase, num_stop );
+        }
+    }
     DBTREE::board_set_modified_setting( m_url_boadbase, get_date_modified() );
 
 #ifdef _DEBUG
