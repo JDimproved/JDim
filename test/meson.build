@@ -1,3 +1,4 @@
+# Add test code source files to following list.
 sources = [
   'gtest_jdlib_cookiemanager.cpp',
   'gtest_jdlib_jdiconv.cpp',

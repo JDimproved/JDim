@@ -250,6 +250,22 @@ esac
 
 
 dnl
+dnl checking googletest
+dnl
+dnl テストプログラムは明示的にコマンド(make test)を実行しなければビルドされない
+dnl 1. 環境変数 GTEST_SRCDIR が設定されていればgoogletestのソースコードをコンパイルして使う
+dnl 2. インストールされたパッケージがあればライブラリを使う
+dnl 3. それ以外のときはmake testが失敗する
+AM_CONDITIONAL([USE_GTEST_SOURCES], [test -d "$GTEST_SRCDIR"])
+dnl PKG_CHECK_MODULES()の4番目の引数(action-if-not-found)を空欄にすると
+dnl パッケージが見つからないときエラーになるためダミーの処理を入れる
+AM_COND_IF([USE_GTEST_SOURCES], [],
+           [PKG_CHECK_MODULES(GTEST, [gtest_main >= 1.10.0], [], [ac_gtest_main_found=no])])
+AC_SUBST(GTEST_CFLAGS)
+AC_SUBST(GTEST_LIBS)
+
+
+dnl
 dnl checking pangolayout
 dnl
 AC_MSG_CHECKING(for --with-pangolayout)
@@ -295,7 +311,7 @@ AS_IF(
 )
 
 
-AC_ARG_VAR(GTEST_SRCDIR, [path overriding googletest framework source directory])
+AC_ARG_VAR(GTEST_SRCDIR, [path for googletest framework source directory])
 
 
 AC_OUTPUT(Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/history/Makefile src/config/Makefile src/icons/Makefile src/sound/Makefile src/xml/Makefile src/control/Makefile test/Makefile)

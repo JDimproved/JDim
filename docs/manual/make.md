@@ -52,6 +52,7 @@ layout: default
 - openssl (`--with-tls=openssl`, バージョン 1.1.0 未満のサポートは将来のリリースで廃止される )
 - oniguruma (`--with-regex=oniguruma`, 廃止予定)
 - migemo (`--with-migemo`)
+- googletest ([test/RADME.md][testreadme]を参照)
 
 #### 画像表示に必要なパッケージ
 インストールされていない環境では`.webp`や`.avif`で終わるURLは通常リンクになる。
@@ -161,6 +162,7 @@ WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
 以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。
 
 
+[testreadme]: https://github.com/JDimproved/JDim/blob/master/test/README.md
 [meson]: https://mesonbuild.com
 [dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"
 [dis592]: https://github.com/JDimproved/JDim/discussions/592 "OS/ディストリビューション別インストール方法 - Discussions #592"

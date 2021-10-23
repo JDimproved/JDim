@@ -39,6 +39,7 @@
   ・openssl (--with-tls=openssl, バージョン 1.1.0 未満のサポートは将来のリリースで廃止される )
   ・oniguruma (--with-regex=oniguruma, 廃止予定)
   ・migemo (--with-migemo)
+  ・googletest (`test/RADME.md`を参照)
 
   画像表示に必要なパッケージ
   インストールされていない環境では`.webp`や`.avif`で終わるURLは通常リンクになる。

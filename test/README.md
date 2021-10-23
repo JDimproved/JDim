@@ -7,43 +7,51 @@ makeのかわりに [Meson][mesonbuild] を利用することもできます。(
 
 ## テストプログラムのビルドに必要なもの
 - JDimソースコードの各namespaceで生成されるオブジェクトファイル(\*.o)や静的ライブラリ(\*.a)
-- googletestのソースコード (セットアップを参照)
+- googletestのライブラリ、またはソースコード (セットアップを参照)
 
 
 ## セットアップ
+(a)ディストリビューションのパッケージをインストールするか、
+(b)ソースコード(googletestリポジトリ)を利用してください。
 
-1. はじめにgoogletestのソースコードを用意します。
-   (a)ディストリビューションのソースパッケージをインストールするか、
-   (b)googletestリポジトリをクローンしてください。
+#### (a) ディストリビューションのパッケージを利用する場合
+ディストロのパッケージ管理ツールを使ってgoogletestのパッケージをインストールします。
 
-   #### (a) ディストリビューションのソースパッケージを利用する場合
-   ディストロのパッケージ管理ツールを使ってgoogletestのソースコードをインストールします。
-
-   ##### Debian系
-   `googletest`をインストールします。
+##### Debian系
+1. `libgtest-dev`をインストールします。
 
    ```sh
-   sudo apt install googletest
+   sudo apt install libgtest-dev
    ```
 
-   #### (b) googletestリポジトリを利用する場合
-   GitHubの"[google/googletest][google_test]"リポジトリからmasterブランチをクローンします。
+2. ./configureを実行してmakeコマンドでJDimをビルドします。
+
+   ```sh
+   autoreconf -i
+   ./configure
+   make
+   ```
+
+#### (b) ソースコード(googletestリポジトリ)を利用する場合
+1. GitHubの"[google/googletest][google_test]"リポジトリからmasterブランチをクローンします。
    他のgoogletestリポジトリでも可能なはずです。
 
    ```sh
    git clone -b master --depth 1 https://github.com/google/googletest.git /path/to/googletest
    ```
 
-2. 次にJDimをビルドします。configureスクリプトの引数 **GTEST_SRCDIR** に
-   インストールしたソースディレクトリまたはクローンしたリポジトリのフルパスを指定してください。
+2. configureスクリプトの引数 **GTEST_SRCDIR** にリポジトリのフルパスを指定してください。
+   makeコマンドでJDimをビルドします。
 
    ```sh
    autoreconf -i
-   ./configure GTEST_SRCDIR=/usr/src/googletest
+   ./configure GTEST_SRCDIR=/path/to/googletest
    make
    ```
 
-   NOTE: **GTEST_SRCDIR** を指定しない場合は `test/` ディレクトリ内の `googletest` がデフォルトのパスになります。
+#### セットアップの注意
+互換性のためディストロのパッケージよりソースコードが優先されます。
+パッケージを利用するときは **GTEST_SRCDIR** を設定しないでください。
 
 
 ## テストのビルドと実行
@@ -51,12 +59,11 @@ makeのかわりに [Meson][mesonbuild] を利用することもできます。(
 makeの **test** サブコマンドでテストコードのビルドと実行を行います。
 結果表示など詳細はGoogle Testを解説しているwebページを参照してください。
 
-* test/ で`make test`するとテストコードのみビルドしてテスト実行
-* トップで`make test`するとJDimとテストコードをビルドしてテスト実行
-
 ```sh
 make test
 ```
+
+ライブラリとソースコードどちらも見つからないときは `make test` (及び `make check`)は失敗します。
 
 
 ## テストを追加する
@@ -69,12 +76,14 @@ make test
 * `src/jdlib/miscutil.cpp` → `test/gtest_jdlib_miscutil.cpp`
 * `src/core.cpp` → `test/gtest_core.cpp`
 
+追加したテストコードのファイルを **test/Makefile.am** の `gtest_jdim_SOURCES` にリストします。
+(行末のバックスラッシュ`\`に注意)
+
 
 ## 制限
 
 以下は今のところサポートしておりません。
 * JDim全体ではなくテスト対象のソースコードだけをビルドする
-* googletestのライブラリファイルやオブジェクトファイルを直接指定してテストプログラムをビルドする
 * `src/main.cpp` をテストする (ファイル名やエントリーポイントが衝突する)
 
 
