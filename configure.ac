@@ -1,8 +1,8 @@
 dnl
 dnl JDim用 configure.ac
 dnl
-AC_PREREQ(2.69)
-AC_INIT(jdim, 1.0)
+AC_PREREQ([2.69])
+AC_INIT([jdim],[1.0])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
 
@@ -10,13 +10,12 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_CXXCPP
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_MKDIR_P
 
 AC_C_BIGENDIAN
-AC_HEADER_STDC
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 
 AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 
@@ -103,8 +102,7 @@ dnl セッション管理
 dnl
 AC_MSG_CHECKING(for --with-sessionlib)
 AC_ARG_WITH(sessionlib,
-AC_HELP_STRING([--with-sessionlib=xsmp|no],
-               [use session control library @<:@default=xsmp@:>@]),
+AS_HELP_STRING([--with-sessionlib=xsmp|no],[use session control library @<:@default=xsmp@:>@]),
 [with_sessionlib="$withval"], [with_sessionlib=xsmp])
 AC_MSG_RESULT($with_sessionlib)
 
@@ -136,8 +134,7 @@ dnl 正規表現ライブラリ
 dnl
 AC_MSG_CHECKING(for --with-regex)
 AC_ARG_WITH(regex,
-AC_HELP_STRING([--with-regex=oniguruma|glib],
-               [use regular expression library @<:@default=glib@:>@]),
+AS_HELP_STRING([--with-regex=oniguruma|glib],[use regular expression library @<:@default=glib@:>@]),
 [], [with_regex=glib])
 AC_MSG_RESULT($with_regex)
 
@@ -162,8 +159,7 @@ dnl TLS
 dnl
 AC_MSG_CHECKING(for --with-tls)
 AC_ARG_WITH(tls,
-AC_HELP_STRING([--with-tls=@<:@gnutls|openssl@:>@],
-               [use TLS library @<:@default=gnutls@:>@]),
+AS_HELP_STRING([--with-tls=@<:@gnutls|openssl@:>@],[use TLS library @<:@default=gnutls@:>@]),
 [with_tls="$withval"], [with_tls=gnutls])
 AC_MSG_RESULT($with_tls)
 
@@ -189,7 +185,7 @@ dnl enable gprof
 dnl
 AC_MSG_CHECKING(for --enable-gprof)
 AC_ARG_ENABLE(gprof,
-AC_HELP_STRING([--enable-gprof],[enable gprof]),
+AS_HELP_STRING([--enable-gprof],[enable gprof]),
 [enable_gprof="$enableval"], [enable_gprof=no])
 AC_MSG_RESULT($enable_gprof)
 
@@ -204,7 +200,7 @@ dnl checking migemo
 dnl
 AC_MSG_CHECKING(for --with-migemo)
 AC_ARG_WITH(migemo,
-AC_HELP_STRING([--with-migemo],[enable migemo search]),
+AS_HELP_STRING([--with-migemo],[enable migemo search]),
 [with_migemo="$withval"], [with_migemo=no])
 AC_MSG_RESULT($with_migemo)
 
@@ -217,7 +213,7 @@ AS_IF(
 
 AC_MSG_CHECKING(for --with-migemodict)
 AC_ARG_WITH(migemodict,
-AC_HELP_STRING([--with-migemodict=PATH],[specifiy the path of migemo dictionary]),
+AS_HELP_STRING([--with-migemodict=PATH],[specifiy the path of migemo dictionary]),
 [with_migemodict="$withval"], [with_migemodict=])
 AC_MSG_RESULT($with_migemodict)
 
@@ -234,7 +230,7 @@ case "${host_os}" in
   linux*|*linux)
   AC_MSG_CHECKING(for --with-alsa)
   AC_ARG_WITH(alsa,
-  AC_HELP_STRING([--with-alsa],[enable alsa]),
+  AS_HELP_STRING([--with-alsa],[enable alsa]),
   [with_alsa="$withval"], [with_alsa=no])
   AC_MSG_RESULT($with_alsa)
 
@@ -250,11 +246,27 @@ esac
 
 
 dnl
+dnl checking googletest
+dnl
+dnl テストプログラムは明示的にコマンド(make test)を実行しなければビルドされない
+dnl 1. 環境変数 GTEST_SRCDIR が設定されていればgoogletestのソースコードをコンパイルして使う
+dnl 2. インストールされたパッケージがあればライブラリを使う
+dnl 3. それ以外のときはmake testが失敗する
+AM_CONDITIONAL([USE_GTEST_SOURCES], [test -d "$GTEST_SRCDIR"])
+dnl PKG_CHECK_MODULES()の4番目の引数(action-if-not-found)を空欄にすると
+dnl パッケージが見つからないときエラーになるためダミーの処理を入れる
+AM_COND_IF([USE_GTEST_SOURCES], [],
+           [PKG_CHECK_MODULES(GTEST, [gtest_main >= 1.10.0], [], [ac_gtest_main_found=no])])
+AC_SUBST(GTEST_CFLAGS)
+AC_SUBST(GTEST_LIBS)
+
+
+dnl
 dnl checking pangolayout
 dnl
 AC_MSG_CHECKING(for --with-pangolayout)
 AC_ARG_WITH(pangolayout,
-AC_HELP_STRING([--with-pangolayout],[use pangolayout]),
+AS_HELP_STRING([--with-pangolayout],[use pangolayout]),
 [with_pangolayout="$withval"], [with_pangolayout=no])
 AC_MSG_RESULT($with_pangolayout)
 
@@ -269,7 +281,7 @@ dnl checking compatible cache directory
 dnl
 AC_MSG_CHECKING(for --disable-compat-cache-dir)
 AC_ARG_ENABLE(compat-cache-dir,
-AC_HELP_STRING([--disable-compat-cache-dir], [disable compatible cache directory]),
+AS_HELP_STRING([--disable-compat-cache-dir],[disable compatible cache directory]),
 [enable_compat_cache_dir="$enableval"], [enable_compat_cache_dir=yes])
 
 AS_IF(
@@ -287,7 +299,7 @@ AS_IF(
   dnl gprofを利用する場合最適化オプションは無視される
   [test "x$enable_gprof" = xno],
   [AC_MSG_CHECKING(for --with-native)
-   AC_ARG_WITH(native, AC_HELP_STRING([--with-native], [produce code optimized for the local machine]),
+   AC_ARG_WITH(native, AS_HELP_STRING([--with-native],[produce code optimized for the local machine]),
                [with_native="$withval"], [with_native=no])
    AC_MSG_RESULT($with_native)
    AS_IF([test "x$with_native" != xno],
@@ -295,7 +307,8 @@ AS_IF(
 )
 
 
-AC_ARG_VAR(GTEST_SRCDIR, [path overriding googletest framework source directory])
+AC_ARG_VAR(GTEST_SRCDIR, [path for googletest framework source directory])
 
 
-AC_OUTPUT(Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/history/Makefile src/config/Makefile src/icons/Makefile src/sound/Makefile src/xml/Makefile src/control/Makefile test/Makefile)
+AC_CONFIG_FILES([Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/history/Makefile src/config/Makefile src/icons/Makefile src/sound/Makefile src/xml/Makefile src/control/Makefile test/Makefile])
+AC_OUTPUT

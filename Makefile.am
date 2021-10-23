@@ -48,9 +48,10 @@ $(jdim_BUILDINFO_HEADER):
 	GIT_STATUS="" ; \
 	if test -n "$(GIT)" ; \
 	then \
-		GIT_HASH=`LANG=C.utf8 "$(GIT)" log --pretty=format:%h --abbrev=10 -n 1 2>/dev/null`; \
-		GIT_DATE=`LANG=C.utf8 "$(GIT)" log --pretty=format:%ad --date=format:%Y%m%d -n 1 2>/dev/null`; \
-		GIT_STATUS="`LANG=C.utf8 "$(GIT)" status -uno -s 2>/dev/null | head -n 1`" ; \
+		WORK_TREE="$(abs_top_srcdir)" ; \
+		GIT_HASH=`LANG=C.utf8 "$(GIT)" -C "$${WORK_TREE}" log --pretty=format:%h --abbrev=10 -n 1 2>/dev/null`; \
+		GIT_DATE=`LANG=C.utf8 "$(GIT)" -C "$${WORK_TREE}" log --pretty=format:%ad --date=format:%Y%m%d -n 1 2>/dev/null`; \
+		GIT_STATUS="`LANG=C.utf8 "$(GIT)" -C "$${WORK_TREE}" status -uno -s 2>/dev/null | head -n 1`" ; \
 		if test -n "$${GIT_HASH}" ; \
 		then \
 			echo "GIT: Hash = \"$${GIT_HASH}\"" ; \
