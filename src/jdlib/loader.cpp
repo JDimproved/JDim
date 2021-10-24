@@ -97,7 +97,8 @@ bool JDLIB::get_token( JDLIB::Loader* loader )
 
     if( token_loader >= MAX_LOADER ) return false;
 
-    const auto compare_host = [&h = loader->data().host]( const auto* ldr ) { return ldr && ldr->data().host == h; };
+    const std::string& host = loader->data().host;
+    const auto compare_host = [&host]( const auto* ldr ) { return ldr && ldr->data().host == host; };
     const int count = std::count_if( vec_loader.cbegin(), vec_loader.cend(), compare_host );
 #ifdef _DEBUG
     std::cout << "count = " << count << std::endl;
