@@ -97,9 +97,9 @@ bool JDLIB::get_token( JDLIB::Loader* loader )
 
     if( token_loader >= MAX_LOADER ) return false;
 
-    int count = 0;
-    std::vector< JDLIB::Loader* >::iterator it = vec_loader.begin();
-    for( ; it != vec_loader.end(); ++it ) if( ( *it ) && ( *it )->data().host == loader->data().host ) ++count;
+    const std::string& host = loader->data().host;
+    const auto compare_host = [&host]( const auto* ldr ) { return ldr && ldr->data().host == host; };
+    const int count = std::count_if( vec_loader.cbegin(), vec_loader.cend(), compare_host );
 #ifdef _DEBUG
     std::cout << "count = " << count << std::endl;
 #endif
@@ -113,8 +113,8 @@ bool JDLIB::get_token( JDLIB::Loader* loader )
 
     ++token_loader;
 
-    it = vec_loader.begin();
-    for( ; it != vec_loader.end(); ++it ) if( ! ( *it ) ){ ( *it ) = loader; break; }
+    auto it = std::find( vec_loader.begin(), vec_loader.end(), nullptr );
+    if( it != vec_loader.end() ) *it = loader;
 
     return true;
 }
@@ -128,8 +128,8 @@ void JDLIB::return_token( JDLIB::Loader* loader )
     --token_loader;
     assert( token_loader >= 0 );
 
-    std::vector< JDLIB::Loader* >::iterator it = vec_loader.begin();
-    for( ; it != vec_loader.end(); ++it ) if( ( *it ) == loader ) ( *it ) = nullptr;
+    auto it = std::find( vec_loader.begin(), vec_loader.end(), loader );
+    if( it != vec_loader.end() ) *it = nullptr;
 
 #ifdef _DEBUG
     std::cout << "JDLIB::return_token : url = " << loader->data().url << " token = " << token_loader << std::endl;
@@ -147,8 +147,8 @@ void JDLIB::push_loader_queue( JDLIB::Loader* loader )
     if( loader->get_low_priority() ) queue_loader.push_back( loader );
     else{
 
-        std::list< JDLIB::Loader* >::iterator pos = queue_loader.begin();
-        for( ; pos != queue_loader.end(); ++pos ) if( ( *pos )->get_low_priority() ) break;
+        auto pos = std::find_if( queue_loader.cbegin(), queue_loader.cend(),
+                                 []( const auto* ql ) { return ql->get_low_priority(); } );
         queue_loader.insert( pos, loader );
     }
 
@@ -186,10 +186,9 @@ void JDLIB::pop_loader_queue()
 
 #ifdef _DEBUG
     std::cout << "JDLIB::pop_loader_queue size = " << queue_loader.size() << std::endl;
-#endif    
+#endif
 
-    std::list< JDLIB::Loader* >::iterator it = queue_loader.begin();
-    for( ; it != queue_loader.end(); ++it ) if( JDLIB::get_token( *it ) ) break;
+    auto it = std::find_if( queue_loader.begin(), queue_loader.end(), &JDLIB::get_token );
     if( it == queue_loader.end() ) return;
 
     JDLIB::Loader* loader = *it;
@@ -1240,8 +1239,7 @@ bool Loader::analyze_header()
     std::cout << "date = " << m_data.date << std::endl;
     std::cout << "modified = " << m_data.modified << std::endl;
 
-    std::list< std::string >::iterator it = m_data.list_cookies.begin();
-    for( ; it != m_data.list_cookies.end(); ++it ) std::cout << "cookie = " << (*it) << std::endl;
+    for( const std::string& s : m_data.list_cookies ) std::cout << "cookie " << s << std::endl;
 
     std::cout << "location = " << m_data.location << std::endl;
     std::cout << "contenttype = " << m_data.contenttype<< std::endl;            
