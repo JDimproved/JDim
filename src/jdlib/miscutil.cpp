@@ -100,8 +100,7 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
     }
 
 #ifdef _DEBUG
-    std::list < std::string >::iterator it;
-    for( it = lists.begin(); it != lists.end(); ++it ) std::cout << "[" << *it << "]" << std::endl;
+    for( const std::string& s : lists ) std::cout << "[" << s << "]" << std::endl;
 #endif
     
     return lists;
@@ -201,10 +200,9 @@ std::list< std::string > MISC::StringTokenizer( const std::string& str, const ch
 std::list< std::string > MISC::remove_nullline_from_list( const std::list< std::string >& list_in )
 {
     std::list< std::string > list_ret;
-    std::list< std::string >::const_iterator it;    
-    for( it = list_in.begin(); it != list_in.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        if( ! tmp_str.empty() ) list_ret.push_back( *it );
+    for( const std::string& s : list_in ) {
+        std::string tmp_str = MISC::remove_space( s );
+        if( ! tmp_str.empty() ) list_ret.push_back( s );
     }
 
     return list_ret;
@@ -217,10 +215,9 @@ std::list< std::string > MISC::remove_nullline_from_list( const std::list< std::
 std::list< std::string > MISC::remove_space_from_list( const std::list< std::string >& list_in )
 {
     std::list< std::string > list_ret;
-    std::list< std::string >::const_iterator it;    
-    for( it = list_in.begin(); it != list_in.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        list_ret.push_back( tmp_str );
+    for( const std::string& s : list_in ) {
+        std::string tmp_str = MISC::remove_space( s );
+        list_ret.push_back( std::move( tmp_str ) );
     }
 
     return list_ret;
@@ -235,10 +232,9 @@ std::list< std::string > MISC::remove_commentline_from_list( const std::list< st
     const char commentchr = '#';
 
     std::list< std::string > list_ret;
-    std::list< std::string >::const_iterator it;    
-    for( it = list_in.begin(); it != list_in.end(); ++it ){
-        std::string tmp_str = MISC::remove_space( (*it) );
-        if( tmp_str.c_str()[ 0 ] != commentchr ) list_ret.push_back( *it );
+    for( const std::string& s : list_in ) {
+        std::string tmp_str = MISC::remove_space( s );
+        if( tmp_str[0] != commentchr ) list_ret.push_back( s );
     }
 
     return list_ret;
@@ -255,13 +251,11 @@ std::list< std::string > MISC::remove_commentline_from_list( const std::list< st
 //
 std::list< std::string > MISC::strtolist( const std::string& str_in )
 {
-    std::list< std::string > list_tmp;
     std::list< std::string > list_ret;
 
-    list_tmp = MISC::split_line( str_in );
-    std::list< std::string >::iterator it = list_tmp.begin();
-    for( ; it != list_tmp.end(); ++it ){
-        if( !( *it ).empty() ) list_ret.push_back( MISC::recover_quot( ( *it ) ) );
+    std::list<std::string> list_tmp = MISC::split_line( str_in );
+    for( const std::string& s : list_tmp ) {
+        if( ! s.empty() ) list_ret.push_back( MISC::recover_quot( s ) );
     }
 
     return list_ret;
@@ -279,9 +273,8 @@ std::list< std::string > MISC::strtolist( const std::string& str_in )
 std::string MISC::listtostr( const std::list< std::string >& list_in )
 {
     std::string str_out;
-    std::list< std::string >::const_iterator it = list_in.begin();
-    for( ; it != list_in.end(); ++it ){
-        if( ! ( *it ).empty() ) str_out += " \"" + MISC::replace_quot( ( *it ) )  + "\"";
+    for( const std::string& s : list_in ) {
+        if( ! s.empty() ) str_out.append( " \"" + MISC::replace_quot( s )  + "\"" );
     }
 
     return str_out;
@@ -475,8 +468,8 @@ std::list< std::string > MISC::replace_str_list( const std::list< std::string >&
                                                  const std::string& str1, const std::string& str2 )
 {
     std::list< std::string > list_out;
-    std::list< std::string >::const_iterator it = list_in.begin();
-    for( ; it != list_in.end(); ++it ) list_out.push_back( replace_str( *it, str1, str2 ) );
+    std::transform( list_in.cbegin(), list_in.cend(), std::back_inserter( list_out ),
+                    [&]( const std::string& s ) { return replace_str( s, str1, str2 ); } );
     return list_out;
 }
 
@@ -1240,12 +1233,10 @@ std::string MISC::charset_url_encode( const std::string& str, const std::string&
 std::string MISC::charset_url_encode_split( const std::string& str, const std::string& charset )
 {
     std::list< std::string > list_str = MISC::split_line( str );
-    std::list< std::string >::iterator it = list_str.begin();
     std::string str_out;
-    for( ; it != list_str.end(); ++it ){
-
-        if( it != list_str.begin() ) str_out += "+";
-        str_out += MISC::charset_url_encode( *it, charset );
+    for( const std::string& s : list_str ) {
+        if( ! str_out.empty() ) str_out.push_back( '+' );
+        str_out.append( MISC::charset_url_encode( s, charset ) );
     }
 
     return str_out;
@@ -1694,9 +1685,8 @@ std::string MISC::utf8_fix_wavedash( const std::string& str, const int mode )
 std::string MISC::toupper_str( const std::string& str )
 {
     std::string str_out;
-    const size_t str_length = str.length();
-
-    for( size_t i = 0; i < str_length ; ++i ) str_out += toupper( str[ i ] );
+    std::transform( str.cbegin(), str.cend(), std::back_inserter( str_out ),
+                    []( unsigned char c ) { return std::toupper( c ); } );
 
     return str_out;
 }
@@ -1708,8 +1698,8 @@ std::string MISC::toupper_str( const std::string& str )
 std::list< std::string > MISC::toupper_list( const std::list< std::string >& list_str )
 {
     std::list< std::string > list_out;
-    std::list< std::string >::const_iterator it = list_str.begin();
-    for( ; it != list_str.end() ; ++it ) list_out.push_back( MISC::toupper_str( *it ) );
+    std::transform( list_str.cbegin(), list_str.cend(), std::back_inserter( list_out ),
+                    []( const std::string& s ) { return MISC::toupper_str( s ); } );
 
     return list_out;
 }
@@ -1722,9 +1712,8 @@ std::list< std::string > MISC::toupper_list( const std::list< std::string >& lis
 std::string MISC::tolower_str( const std::string& str )
 {
     std::string str_out;
-    const size_t str_length = str.length();
-
-    for( size_t i = 0; i < str_length; ++i ) str_out += tolower( str[ i ] );
+    std::transform( str.cbegin(), str.cend(), std::back_inserter( str_out ),
+                    []( unsigned char c ) { return std::tolower( c ); } );
 
     return str_out;
 }
