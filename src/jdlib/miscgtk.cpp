@@ -6,6 +6,8 @@
 #include "miscgtk.h"
 #include "imgloader.h"
 
+#include <vector>
+
 
 enum
 {
@@ -101,13 +103,12 @@ std::set< std::string > MISC::get_font_families()
     std::set< std::string > set_out;
 
     Gtk::DrawingArea dummy;
-    std::list< Glib::RefPtr< Pango::FontFamily > > list_families = dummy.get_pango_context()->list_families();
-    std::list< Glib::RefPtr< Pango::FontFamily > >::iterator it = list_families.begin();
-    for(; it != list_families.end(); ++it ){
+    const std::vector<Glib::RefPtr<Pango::FontFamily>> list_families = dummy.get_pango_context()->list_families();
+    for( const auto& family : list_families ) {
 #ifdef _DEBUG
-        std::cout << (*it)->get_name() << std::endl;
+        std::cout << family->get_name() << std::endl;
 #endif
-        set_out.insert( (*it)->get_name() );
+        set_out.insert( family->get_name() );
     }
 
     return set_out;
