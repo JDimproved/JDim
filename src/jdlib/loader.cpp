@@ -128,8 +128,8 @@ void JDLIB::return_token( JDLIB::Loader* loader )
     --token_loader;
     assert( token_loader >= 0 );
 
-    auto it = std::find( vec_loader.begin(), vec_loader.end(), loader );
-    if( it != vec_loader.end() ) *it = nullptr;
+    constexpr JDLIB::Loader* null_loader = nullptr;
+    std::replace( vec_loader.begin(), vec_loader.end(), loader, null_loader );
 
 #ifdef _DEBUG
     std::cout << "JDLIB::return_token : url = " << loader->data().url << " token = " << token_loader << std::endl;
