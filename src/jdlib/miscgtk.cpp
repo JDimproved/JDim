@@ -7,6 +7,7 @@
 #include "miscutil.h"
 #include "imgloader.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <iterator>
 #include <vector>
@@ -20,34 +21,21 @@ enum
 
 // 色キーワードの検索で使う色名と16進表記を対応付ける配列
 // https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
+// 二分探索するため配列の要素は予めnameで辞書順にソートしておく
 static struct color_map {
     const char *name;
     const char *rgb;
 } constexpr const color_names[] = {
-    { "black",          "#000000" }, // since CSS1
-    { "silver",         "#c0c0c0" }, // since CSS1
-    { "gray",           "#808080" }, // since CSS1
-    { "white",          "#ffffff" }, // since CSS1
-    { "maroon",         "#800000" }, // since CSS1
-    { "red",            "#ff0000" }, // since CSS1
-    { "purple",         "#800080" }, // since CSS1
-    { "fuchsia",        "#ff00ff" }, // since CSS1
-    { "green",          "#008000" }, // since CSS1
-    { "lime",           "#00ff00" }, // since CSS1
-    { "olive",          "#808000" }, // since CSS1
-    { "yellow",         "#ffff00" }, // since CSS1
-    { "navy",           "#000080" }, // since CSS1
-    { "blue",           "#0000ff" }, // since CSS1
-    { "teal",           "#008080" }, // since CSS1
-    { "aqua",           "#00ffff" }, // since CSS1
-    { "orange",         "#ffa500" }, // since CSS2.1
     { "aliceblue",      "#F0F8FF" }, // since CSS3
     { "antiquewhite",   "#FAEBD7" }, // since CSS3
+    { "aqua",           "#00ffff" }, // since CSS1
     { "aquamarine",     "#7FFFD4" }, // since CSS3
     { "azure",          "#F0FFFF" }, // since CSS3
     { "beige",          "#F5F5DC" }, // since CSS3
     { "bisque",         "#FFE4C4" }, // since CSS3
+    { "black",          "#000000" }, // since CSS1
     { "blanchedalmond", "#FFEBCD" }, // since CSS3
+    { "blue",           "#0000ff" }, // since CSS1
     { "blueviolet",     "#8A2BE2" }, // since CSS3
     { "brown",          "#A52A2A" }, // since CSS3
     { "burlywood",      "#DEB887" }, // since CSS3
@@ -86,10 +74,13 @@ static struct color_map {
     { "firebrick",      "#B22222" }, // since CSS3
     { "floralwhite",    "#FFFAF0" }, // since CSS3
     { "forestgreen",    "#228B22" }, // since CSS3
+    { "fuchsia",        "#ff00ff" }, // since CSS1
     { "gainsboro",      "#DCDCDC" }, // since CSS3
     { "ghostwhite",     "#F8F8FF" }, // since CSS3
     { "gold",           "#FFD700" }, // since CSS3
     { "goldenrod",      "#DAA520" }, // since CSS3
+    { "gray",           "#808080" }, // since CSS1
+    { "green",          "#008000" }, // since CSS1
     { "greenyellow",    "#ADFF2F" }, // since CSS3
     { "grey",           "#808080" }, // since CSS3
     { "honeydew",       "#F0FFF0" }, // since CSS3
@@ -117,9 +108,11 @@ static struct color_map {
     { "lightslategrey", "#778899" }, // since CSS3
     { "lightsteelblue", "#B0C4DE" }, // since CSS3
     { "lightyellow",    "#FFFFE0" }, // since CSS3
+    { "lime",           "#00ff00" }, // since CSS1
     { "limegreen",      "#32CD32" }, // since CSS3
     { "linen",          "#FAF0E6" }, // since CSS3
     { "magenta",        "#FF00FF" }, // since CSS3
+    { "maroon",         "#800000" }, // since CSS1
     { "mediumaquamarine",   "#66CDAA" }, // since CSS3
     { "mediumblue",     "#0000CD" }, // since CSS3
     { "mediumorchid",   "#BA55D3" }, // since CSS3
@@ -134,8 +127,11 @@ static struct color_map {
     { "mistyrose",      "#FFE4E1" }, // since CSS3
     { "moccasin",       "#FFE4B5" }, // since CSS3
     { "navajowhite",    "#FFDEAD" }, // since CSS3
+    { "navy",           "#000080" }, // since CSS1
     { "oldlace",        "#FDF5E6" }, // since CSS3
+    { "olive",          "#808000" }, // since CSS1
     { "olivedrab",      "#6B8E23" }, // since CSS3
+    { "orange",         "#ffa500" }, // since CSS2.1
     { "orangered",      "#FF4500" }, // since CSS3
     { "orchid",         "#DA70D6" }, // since CSS3
     { "palegoldenrod",  "#EEE8AA" }, // since CSS3
@@ -148,6 +144,9 @@ static struct color_map {
     { "pink",           "#FFC0CB" }, // since CSS3
     { "plum",           "#DDA0DD" }, // since CSS3
     { "powderblue",     "#B0E0E6" }, // since CSS3
+    { "purple",         "#800080" }, // since CSS1
+    { "rebeccapurple",  "#663399" }, // since CSS4
+    { "red",            "#ff0000" }, // since CSS1
     { "rosybrown",      "#BC8F8F" }, // since CSS3
     { "royalblue",      "#4169E1" }, // since CSS3
     { "saddlebrown",    "#8B4513" }, // since CSS3
@@ -156,6 +155,7 @@ static struct color_map {
     { "seagreen",       "#2E8B57" }, // since CSS3
     { "seashell",       "#FFF5EE" }, // since CSS3
     { "sienna",         "#A0522D" }, // since CSS3
+    { "silver",         "#c0c0c0" }, // since CSS1
     { "skyblue",        "#87CEEB" }, // since CSS3
     { "slateblue",      "#6A5ACD" }, // since CSS3
     { "slategray",      "#708090" }, // since CSS3
@@ -164,15 +164,22 @@ static struct color_map {
     { "springgreen",    "#00FF7F" }, // since CSS3
     { "steelblue",      "#4682B4" }, // since CSS3
     { "tan",            "#D2B48C" }, // since CSS3
+    { "teal",           "#008080" }, // since CSS1
     { "thistle",        "#D8BFD8" }, // since CSS3
     { "tomato",         "#FF6347" }, // since CSS3
     { "turquoise",      "#40E0D0" }, // since CSS3
     { "violet",         "#EE82EE" }, // since CSS3
     { "wheat",          "#F5DEB3" }, // since CSS3
+    { "white",          "#ffffff" }, // since CSS1
     { "whitesmoke",     "#F5F5F5" }, // since CSS3
+    { "yellow",         "#ffff00" }, // since CSS1
     { "yellowgreen",    "#9ACD32" }, // since CSS3
-    { "rebeccapurple",  "#663399" }, // since CSS4
 };
+
+static bool color_map_less( const color_map& a, const color_map& b )
+{
+    return std::strcmp( a.name, b.name ) < 0;
+}
 
 
 // int[3] -> 16進数表記の文字列
@@ -211,8 +218,8 @@ std::string MISC::htmlcolor_to_str( const std::string& _htmlcolor )
     std::string htmlcolor = MISC::tolower_str( _htmlcolor );
 
     if( htmlcolor[0] != '#' ) {
-        auto it = std::find_if( std::begin( color_names ), std::end( color_names ),
-                                [&htmlcolor]( const color_map& c ) { return htmlcolor == c.name; } );
+        const color_map key{ htmlcolor.c_str(), nullptr };
+        auto it = std::lower_bound( std::begin( color_names ), std::end( color_names ), key, color_map_less );
 
         // キーワードに一致しないときは空文字列を返す
         if( it == std::end( color_names ) ) return {};
