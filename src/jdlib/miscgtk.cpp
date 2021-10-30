@@ -4,14 +4,174 @@
 #include "jddebug.h"
 
 #include "miscgtk.h"
+#include "miscutil.h"
 #include "imgloader.h"
 
+#include <cstdlib>
+#include <iterator>
 #include <vector>
 
 
 enum
 {
     CHAR_BUF = 256 // char の初期化用
+};
+
+
+// 色キーワードの検索で使う色名と16進表記を対応付ける配列
+// https://developer.mozilla.org/en-US/docs/Web/CSS/color_value
+static struct color_map {
+    const char *name;
+    const char *rgb;
+} constexpr const color_names[] = {
+    { "black",          "#000000" }, // since CSS1
+    { "silver",         "#c0c0c0" }, // since CSS1
+    { "gray",           "#808080" }, // since CSS1
+    { "white",          "#ffffff" }, // since CSS1
+    { "maroon",         "#800000" }, // since CSS1
+    { "red",            "#ff0000" }, // since CSS1
+    { "purple",         "#800080" }, // since CSS1
+    { "fuchsia",        "#ff00ff" }, // since CSS1
+    { "green",          "#008000" }, // since CSS1
+    { "lime",           "#00ff00" }, // since CSS1
+    { "olive",          "#808000" }, // since CSS1
+    { "yellow",         "#ffff00" }, // since CSS1
+    { "navy",           "#000080" }, // since CSS1
+    { "blue",           "#0000ff" }, // since CSS1
+    { "teal",           "#008080" }, // since CSS1
+    { "aqua",           "#00ffff" }, // since CSS1
+    { "orange",         "#ffa500" }, // since CSS2.1
+    { "aliceblue",      "#F0F8FF" }, // since CSS3
+    { "antiquewhite",   "#FAEBD7" }, // since CSS3
+    { "aquamarine",     "#7FFFD4" }, // since CSS3
+    { "azure",          "#F0FFFF" }, // since CSS3
+    { "beige",          "#F5F5DC" }, // since CSS3
+    { "bisque",         "#FFE4C4" }, // since CSS3
+    { "blanchedalmond", "#FFEBCD" }, // since CSS3
+    { "blueviolet",     "#8A2BE2" }, // since CSS3
+    { "brown",          "#A52A2A" }, // since CSS3
+    { "burlywood",      "#DEB887" }, // since CSS3
+    { "cadetblue",      "#5F9EA0" }, // since CSS3
+    { "chartreuse",     "#7FFF00" }, // since CSS3
+    { "chocolate",      "#D2691E" }, // since CSS3
+    { "coral",          "#FF7F50" }, // since CSS3
+    { "cornflowerblue", "#6495ED" }, // since CSS3
+    { "cornsilk",       "#FFF8DC" }, // since CSS3
+    { "crimson",        "#DC143C" }, // since CSS3
+    { "cyan",           "#00FFFF" }, // since CSS3
+    { "darkblue",       "#00008B" }, // since CSS3
+    { "darkcyan",       "#008B8B" }, // since CSS3
+    { "darkgoldenrod",  "#B8860B" }, // since CSS3
+    { "darkgray",       "#A9A9A9" }, // since CSS3
+    { "darkgreen",      "#006400" }, // since CSS3
+    { "darkgrey",       "#A9A9A9" }, // since CSS3
+    { "darkkhaki",      "#BDB76B" }, // since CSS3
+    { "darkmagenta",    "#8B008B" }, // since CSS3
+    { "darkolivegreen", "#556B2F" }, // since CSS3
+    { "darkorange",     "#FF8C00" }, // since CSS3
+    { "darkorchid",     "#9932CC" }, // since CSS3
+    { "darkred",        "#8B0000" }, // since CSS3
+    { "darksalmon",     "#E9967A" }, // since CSS3
+    { "darkseagreen",   "#8FBC8F" }, // since CSS3
+    { "darkslateblue",  "#483D8B" }, // since CSS3
+    { "darkslategray",  "#2F4F4F" }, // since CSS3
+    { "darkslategrey",  "#2F4F4F" }, // since CSS3
+    { "darkturquoise",  "#00CED1" }, // since CSS3
+    { "darkviolet",     "#9400D3" }, // since CSS3
+    { "deeppink",       "#FF1493" }, // since CSS3
+    { "deepskyblue",    "#00BFFF" }, // since CSS3
+    { "dimgray",        "#696969" }, // since CSS3
+    { "dimgrey",        "#696969" }, // since CSS3
+    { "dodgerblue",     "#1E90FF" }, // since CSS3
+    { "firebrick",      "#B22222" }, // since CSS3
+    { "floralwhite",    "#FFFAF0" }, // since CSS3
+    { "forestgreen",    "#228B22" }, // since CSS3
+    { "gainsboro",      "#DCDCDC" }, // since CSS3
+    { "ghostwhite",     "#F8F8FF" }, // since CSS3
+    { "gold",           "#FFD700" }, // since CSS3
+    { "goldenrod",      "#DAA520" }, // since CSS3
+    { "greenyellow",    "#ADFF2F" }, // since CSS3
+    { "grey",           "#808080" }, // since CSS3
+    { "honeydew",       "#F0FFF0" }, // since CSS3
+    { "hotpink",        "#FF69B4" }, // since CSS3
+    { "indianred",      "#CD5C5C" }, // since CSS3
+    { "indigo",         "#4B0082" }, // since CSS3
+    { "ivory",          "#FFFFF0" }, // since CSS3
+    { "khaki",          "#F0E68C" }, // since CSS3
+    { "lavender",       "#E6E6FA" }, // since CSS3
+    { "lavenderblush",  "#FFF0F5" }, // since CSS3
+    { "lawngreen",      "#7CFC00" }, // since CSS3
+    { "lemonchiffon",   "#FFFACD" }, // since CSS3
+    { "lightblue",      "#ADD8E6" }, // since CSS3
+    { "lightcoral",     "#F08080" }, // since CSS3
+    { "lightcyan",      "#E0FFFF" }, // since CSS3
+    { "lightgoldenrodyellow",   "#FAFAD2" }, // since CSS3
+    { "lightgray",      "#D3D3D3" }, // since CSS3
+    { "lightgreen",     "#90EE90" }, // since CSS3
+    { "lightgrey",      "#D3D3D3" }, // since CSS3
+    { "lightpink",      "#FFB6C1" }, // since CSS3
+    { "lightsalmon",    "#FFA07A" }, // since CSS3
+    { "lightseagreen",  "#20B2AA" }, // since CSS3
+    { "lightskyblue",   "#87CEFA" }, // since CSS3
+    { "lightslategray", "#778899" }, // since CSS3
+    { "lightslategrey", "#778899" }, // since CSS3
+    { "lightsteelblue", "#B0C4DE" }, // since CSS3
+    { "lightyellow",    "#FFFFE0" }, // since CSS3
+    { "limegreen",      "#32CD32" }, // since CSS3
+    { "linen",          "#FAF0E6" }, // since CSS3
+    { "magenta",        "#FF00FF" }, // since CSS3
+    { "mediumaquamarine",   "#66CDAA" }, // since CSS3
+    { "mediumblue",     "#0000CD" }, // since CSS3
+    { "mediumorchid",   "#BA55D3" }, // since CSS3
+    { "mediumpurple",   "#9370DB" }, // since CSS3
+    { "mediumseagreen", "#3CB371" }, // since CSS3
+    { "mediumslateblue","#7B68EE" }, // since CSS3
+    { "mediumspringgreen",  "#00FA9A" }, // since CSS3
+    { "mediumturquoise","#48D1CC" }, // since CSS3
+    { "mediumvioletred","#C71585" }, // since CSS3
+    { "midnightblue",   "#191970" }, // since CSS3
+    { "mintcream",      "#F5FFFA" }, // since CSS3
+    { "mistyrose",      "#FFE4E1" }, // since CSS3
+    { "moccasin",       "#FFE4B5" }, // since CSS3
+    { "navajowhite",    "#FFDEAD" }, // since CSS3
+    { "oldlace",        "#FDF5E6" }, // since CSS3
+    { "olivedrab",      "#6B8E23" }, // since CSS3
+    { "orangered",      "#FF4500" }, // since CSS3
+    { "orchid",         "#DA70D6" }, // since CSS3
+    { "palegoldenrod",  "#EEE8AA" }, // since CSS3
+    { "palegreen",      "#98FB98" }, // since CSS3
+    { "paleturquoise",  "#AFEEEE" }, // since CSS3
+    { "palevioletred",  "#DB7093" }, // since CSS3
+    { "papayawhip",     "#FFEFD5" }, // since CSS3
+    { "peachpuff",      "#FFDAB9" }, // since CSS3
+    { "peru",           "#CD853F" }, // since CSS3
+    { "pink",           "#FFC0CB" }, // since CSS3
+    { "plum",           "#DDA0DD" }, // since CSS3
+    { "powderblue",     "#B0E0E6" }, // since CSS3
+    { "rosybrown",      "#BC8F8F" }, // since CSS3
+    { "royalblue",      "#4169E1" }, // since CSS3
+    { "saddlebrown",    "#8B4513" }, // since CSS3
+    { "salmon",         "#FA8072" }, // since CSS3
+    { "sandybrown",     "#F4A460" }, // since CSS3
+    { "seagreen",       "#2E8B57" }, // since CSS3
+    { "seashell",       "#FFF5EE" }, // since CSS3
+    { "sienna",         "#A0522D" }, // since CSS3
+    { "skyblue",        "#87CEEB" }, // since CSS3
+    { "slateblue",      "#6A5ACD" }, // since CSS3
+    { "slategray",      "#708090" }, // since CSS3
+    { "slategrey",      "#708090" }, // since CSS3
+    { "snow",           "#FFFAFA" }, // since CSS3
+    { "springgreen",    "#00FF7F" }, // since CSS3
+    { "steelblue",      "#4682B4" }, // since CSS3
+    { "tan",            "#D2B48C" }, // since CSS3
+    { "thistle",        "#D8BFD8" }, // since CSS3
+    { "tomato",         "#FF6347" }, // since CSS3
+    { "turquoise",      "#40E0D0" }, // since CSS3
+    { "violet",         "#EE82EE" }, // since CSS3
+    { "wheat",          "#F5DEB3" }, // since CSS3
+    { "whitesmoke",     "#F5F5F5" }, // since CSS3
+    { "yellowgreen",    "#9ACD32" }, // since CSS3
+    { "rebeccapurple",  "#663399" }, // since CSS4
 };
 
 
@@ -43,39 +203,33 @@ std::string MISC::color_to_str( const Gdk::RGBA& rgba )
 
 
 // htmlカラー (#ffffffなど) -> 16進数表記の文字列
+//
+// 入力文字列は大文字小文字を区別しない
+// 未知のキーワードや不正な値は変換して返す
 std::string MISC::htmlcolor_to_str( const std::string& _htmlcolor )
 {
-    std::string htmlcolor = _htmlcolor;
-    int rgb[ 3 ];
+    std::string htmlcolor = MISC::tolower_str( _htmlcolor );
 
-    if( htmlcolor == "red" )          htmlcolor = "#ff0000";
-    else if( htmlcolor == "fuchsia" ) htmlcolor = "#ff00ff";
-    else if( htmlcolor == "purple" )  htmlcolor = "#800080";
-    else if( htmlcolor == "maroon" )  htmlcolor = "#800000";
-    else if( htmlcolor == "yellow" )  htmlcolor = "#ffff00";
-    else if( htmlcolor == "lime" )    htmlcolor = "#00ff00";
-    else if( htmlcolor == "green" )   htmlcolor = "#008000";
-    else if( htmlcolor == "olive" )   htmlcolor = "#808000";
-    else if( htmlcolor == "blue" )    htmlcolor = "#0000ff";
-    else if( htmlcolor == "aqua" )    htmlcolor = "#00ffff";
-    else if( htmlcolor == "teal" )    htmlcolor = "#008080";
-    else if( htmlcolor == "navy" )    htmlcolor = "#000080";
-    else if( htmlcolor == "white" )   htmlcolor = "#ffffff";
-    else if( htmlcolor == "silver" )  htmlcolor = "#c0c0c0";
-    else if( htmlcolor == "gray" )    htmlcolor = "#808080";
-    else if( htmlcolor == "black" )   htmlcolor = "#000000";
+    if( htmlcolor[0] != '#' ) {
+        auto it = std::find_if( std::begin( color_names ), std::end( color_names ),
+                                [&htmlcolor]( const color_map& c ) { return htmlcolor == c.name; } );
 
-    int offset = 0;
-    if( htmlcolor.rfind( '#', 0 ) == 0 ) offset = 1;
+        // キーワードに一致しないときは空文字列を返す
+        if( it == std::end( color_names ) ) return {};
+        htmlcolor = it->rgb;
+    }
 
-    std::string tmpstr = htmlcolor.substr( offset, 2 );
-    rgb[ 0 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), nullptr, 16 );
+    const int digits = ( htmlcolor.size() == 4 ) ? 1 : 2;
+    constexpr int len = 3;
+    int rgb[len];
 
-    tmpstr = htmlcolor.substr( 2 + offset, 2 );
-    rgb[ 1 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), nullptr, 16 );
-
-    tmpstr = htmlcolor.substr( 4 + offset, 2 );
-    rgb[ 2 ] = strtol( std::string( "0x" + tmpstr + tmpstr  ).c_str(), nullptr, 16 );
+    for( int i = 0; i < len; ++i ) {
+        constexpr int offset = 1;
+        std::string tmpstr = htmlcolor.substr( offset + ( i * digits ), digits );
+        for( int j = 0; j < ( len - digits ); ++j ) tmpstr.append( tmpstr );
+        // 不正な値はstrtol()の挙動に従って変換される
+        rgb[i] = std::strtol( tmpstr.c_str(), nullptr, 16 );
+    }
 
 #ifdef _DEBUG
     std::cout << "MISC::htmlcolor_to_gdkcolor color = " << htmlcolor 

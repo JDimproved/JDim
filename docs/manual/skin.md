@@ -42,22 +42,32 @@ JDimはスタイルシートによるスレビュー表示のカスタマイズ�
 
 <style>.box { display: block; text-align: center; width: 10em; }</style>
 
-- <span class="box" style="color: white; background: red;">red</span>
-- <span class="box" style="color: white; background: fuchsia;">fuchsia</span>
-- <span class="box" style="color: white; background: purple;">purple</span>
-- <span class="box" style="color: white; background: maroon;">maroon</span>
-- <span class="box" style="color: black; background: yellow;">yellow</span>
-- <span class="box" style="color: black; background: lime;">lime</span>
-- <span class="box" style="color: white; background: green;">green</span>
-- <span class="box" style="color: white; background: olive;">olive</span>
-- <span class="box" style="color: white; background: blue;">blue</span>
-- <span class="box" style="color: black; background: aqua;">aqua</span>
-- <span class="box" style="color: white; background: teal;">teal</span>
-- <span class="box" style="color: white; background: navy;">navy</span>
-- <span class="box" style="color: black; background: white;">white</span>
-- <span class="box" style="color: black; background: silver;">silver</span>
-- <span class="box" style="color: white; background: gray;">gray</span>
-- <span class="box" style="color: white; background: black;">black</span>
+- CSS Level 1
+  - <span class="box" style="color: white; background: red;">red</span>
+  - <span class="box" style="color: white; background: fuchsia;">fuchsia</span>
+  - <span class="box" style="color: white; background: purple;">purple</span>
+  - <span class="box" style="color: white; background: maroon;">maroon</span>
+  - <span class="box" style="color: black; background: yellow;">yellow</span>
+  - <span class="box" style="color: black; background: lime;">lime</span>
+  - <span class="box" style="color: white; background: green;">green</span>
+  - <span class="box" style="color: white; background: olive;">olive</span>
+  - <span class="box" style="color: white; background: blue;">blue</span>
+  - <span class="box" style="color: black; background: aqua;">aqua</span>
+  - <span class="box" style="color: white; background: teal;">teal</span>
+  - <span class="box" style="color: white; background: navy;">navy</span>
+  - <span class="box" style="color: black; background: white;">white</span>
+  - <span class="box" style="color: black; background: silver;">silver</span>
+  - <span class="box" style="color: white; background: gray;">gray</span>
+  - <span class="box" style="color: white; background: black;">black</span>
+- CSS Level 2 <small>(v0.6.0+からサポート)</small>
+  - <span class="box" style="color: black; background: orange;">orange</span>
+- CSS Colors Level 3 <small>(v0.6.0+からサポート)</small>
+  - X11色, 数が多いため下記リンク参照
+- CSS Colors Level 4 <small>(v0.6.0+からサポート)</small>
+  - <span class="box" style="color: white; background: rebeccapurple;">rebeccapurple</span>
+
+外部リンク: [&lt;color&gt; - CSS: カスケーディングスタイルシート &#x7c; MDN][color_value]
+
 
 #### 単位
 `px`, `em` のみに対応。単位を省略すると `px` になる。
@@ -189,6 +199,7 @@ Res.htmlでは次のように定義済み要素を指定して文字列の置換
 ```
 
 
+[color_value]: https://developer.mozilla.org/ja/docs/Web/CSS/color_value#color_keywords
 [iconfiles]: https://github.com/JDimproved/JDim/blob/master/src/icons/iconfiles.h "JDim/iconfiles.h at master"
 
 <!-- 相対URLで GitHub Pages と GitHub.com 両方に対応する -->
