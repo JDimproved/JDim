@@ -39,10 +39,6 @@ void MISC::tfidf_create_vec_words( VEC_WORDS& vec_words, const Glib::ustring& do
             vec_words.push_back( word );
         }
     }
-
-#ifdef _DEBUG
-//    for( int i = 0; i < (int)vec_words.size(); ++i ) std::cout << vec_words[ i ].raw() << std::endl;
-#endif
 }
 
 
@@ -54,10 +50,6 @@ void MISC::tfidf_create_vec_words( VEC_WORDS& vec_words, const Glib::ustring& do
 void MISC::tfidf_create_vec_idf( VEC_IDF& vec_idf, const Glib::ustring& document, const VEC_WORDS& vec_words )
 {
     const int n = vec_words.size();
-
-#ifdef _DEBUG
-//    std::cout << "MISC::tfidf_create_vec_idf n = " << n << std::endl;
-#endif
 
     if( ! n || n != (int)vec_idf.size() ) return;
 
@@ -103,19 +95,11 @@ void MISC::tfidf_calc_vec_tfifd( VEC_TFIDF& vec_tfidf, const Glib::ustring& docu
 
     for( int i = 0; i < n; ++i ){
 
-#ifdef _DEBUG
-//        std::cout << vec_words[ i ].raw() << " : hit = " << (int)vec_tfidf[ i ];
-#endif
-
         if( total ){
             vec_tfidf[ i ] /= total;
             vec_tfidf[ i ] *= vec_idf[ i ];
         }
         else vec_tfidf[ i ] = 0;
-
-#ifdef _DEBUG
-//        std::cout << " tfidf = " << vec_tfidf[ i ] << std::endl;
-#endif
     }
 }
 
@@ -172,13 +156,12 @@ void MISC::tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
     MISC::tfidf_create_vec_idf( vec_idf, subject_src, vec_words );
 
     int D = 1;
-    std::vector< DBTREE::ArticleBase* >::const_iterator it = list_subject.begin();
-    for( ; it != list_subject.end(); ++it ){
+    for( const DBTREE::ArticleBase* art : list_subject ) {
 
         // DAT落ちのスレは除く
-        if( ( *it )->get_status() & STATUS_OLD ) continue;
+        if( art->get_status() & STATUS_OLD ) continue;
 
-        const Glib::ustring subject = ( *it )->get_subject();
+        const Glib::ustring subject = art->get_subject();
         if( subject != subject_src ){
 
             MISC::tfidf_create_vec_idf( vec_idf, subject, vec_words );
