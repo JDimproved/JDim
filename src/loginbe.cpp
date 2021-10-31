@@ -152,11 +152,10 @@ void LoginBe::receive_finish()
 
     if( get_code() == HTTP_OK ){
 
-        std::list< std::string >::const_iterator it = cookies().begin();
-        for( ; it != cookies().end(); ++it ){
+        for( const std::string& cookie : cookies() ) {
 
 #ifdef _DEBUG
-            std::cout << ( *it ) << std::endl;
+            std::cout << cookie << std::endl;
 #endif
 
             JDLIB::Regex regex;
@@ -167,10 +166,10 @@ void LoginBe::receive_finish()
             const bool wchar = false;
 
             std::string query = "DMDM=([^;]*)";
-            if( regex.exec( query, (*it), offset, icase, newline, usemigemo, wchar ) ) dmdm = regex.str( 1 );
+            if( regex.exec( query, cookie, offset, icase, newline, usemigemo, wchar ) ) dmdm = regex.str( 1 );
 
             query = "MDMD=([^;]*)";
-            if( regex.exec( query, (*it), offset, icase, newline, usemigemo, wchar ) ) mdmd = regex.str( 1 );
+            if( regex.exec( query, cookie, offset, icase, newline, usemigemo, wchar ) ) mdmd = regex.str( 1 );
         }
     }
 
