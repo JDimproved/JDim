@@ -132,9 +132,8 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
 void LinkFilterPref::append_rows()
 {
     std::vector< LinkFilterItem >& list_item = CORE::get_linkfilter_manager()->get_list();
-    const int size = list_item.size();
-    if( ! size ) return;
-    for( int i = 0; i < size; ++i ) append_row( list_item[ i ].url, list_item[ i ].cmd );
+    if( list_item.empty() ) return;
+    for( const LinkFilterItem& item : list_item ) append_row( item.url, item.cmd );
 
     select_row( get_top_row() );
 }
