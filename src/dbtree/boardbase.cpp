@@ -1126,7 +1126,7 @@ void BoardBase::receive_finish()
         send_update_board();
 
         // Locationヘッダーで移転先を指定された場合
-        if( get_code() == HTTP_MOVED_PERM && ! location().empty() ) {
+        if( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT ) && ! location().empty() ) {
 
             // location() は url_boardbase() の移転先 (start_checkking_if_board_moved() を参照)
             if( DBTREE::move_board( url_boardbase(), location() ) ) {
