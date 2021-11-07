@@ -14,8 +14,6 @@
 #include "skeleton/dispatchable.h"
 #include "jdlib/jdthread.h"
 
-#include <gtkmm.h>
-
 #include <cstdint>
 
 

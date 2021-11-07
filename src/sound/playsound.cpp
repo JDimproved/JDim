@@ -12,6 +12,7 @@
 #include <alsa/asoundlib.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <string>
 #include <vector>
 
