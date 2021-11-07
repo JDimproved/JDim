@@ -123,8 +123,7 @@ void Log_Manager::remove_items( const std::string& url )
               << "size = " << m_logitems.size() << std::endl;
 #endif 
 
-    std::list<LogItem>::iterator it = m_logitems.begin();
-    for( ; it != m_logitems.end(); ++it ){
+    for( auto it = m_logitems.begin(); it != m_logitems.end(); ) {
 
         if( it->url == url
             || ( it->newthread && url.rfind( it->url, 0 ) == 0 )
@@ -143,8 +142,10 @@ void Log_Manager::remove_items( const std::string& url )
                 std::cout << "removed url = " << it->url << std::endl;
 #endif
                 it = m_logitems.erase( it );
+                continue;
             }
         }
+        ++it;
     }
 
 #ifdef _DEBUG
