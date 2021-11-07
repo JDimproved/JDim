@@ -9,14 +9,12 @@
 
 #include "jdlib/miscmsg.h"
 
+#include <alsa/asoundlib.h>
+
 #include <algorithm>
 #include <string>
 #include <vector>
-#if __has_include(<alsa/asoundlib.h>)
-#include <alsa/asoundlib.h>
-#else
-#include <asoundlib.h>
-#endif
+
 
 using namespace SOUND;
 
