@@ -123,8 +123,7 @@ void Log_Manager::remove_items( const std::string& url )
               << "size = " << m_logitems.size() << std::endl;
 #endif 
 
-    std::list<LogItem>::iterator it = m_logitems.begin();
-    for( ; it != m_logitems.end(); ++it ){
+    for( auto it = m_logitems.begin(); it != m_logitems.end(); ) {
 
         if( it->url == url
             || ( it->newthread && url.rfind( it->url, 0 ) == 0 )
@@ -143,8 +142,10 @@ void Log_Manager::remove_items( const std::string& url )
                 std::cout << "removed url = " << it->url << std::endl;
 #endif
                 it = m_logitems.erase( it );
+                continue;
             }
         }
+        ++it;
     }
 
 #ifdef _DEBUG
@@ -369,10 +370,9 @@ int Log_Manager::get_max_num_of_log()
     const std::string path = CACHE::path_postlog() + "-";
 
     int maxno = 0;
-    std::list< std::string >::iterator it = filelist.begin();
-    for( ; it != filelist.end(); ++it ){
+    for( const std::string& filename : filelist ) {
 
-        const std::string target = CACHE::path_logroot() + (*it);
+        const std::string target = CACHE::path_logroot() + filename;
 #ifdef _DEBUG
         std::cout << target << std::endl;
 #endif
