@@ -1074,8 +1074,7 @@ void Core::slot_clear_post_history()
     CORE::core_set_command( "redraw_article" );
 
     std::list< std::string > list_urls = BOARD::get_admin()->get_URLs();
-    std::list< std::string >::iterator it = list_urls.begin();
-    for( ; it != list_urls.end(); ++it ) CORE::core_set_command( "update_board", *it );
+    for( const std::string& url : list_urls ) CORE::core_set_command( "update_board", url );
 }
 
 
