@@ -375,8 +375,7 @@ void Post::receive_finish()
     std::cout << "MSG: [" << msg << "]\n";
     std::cout << "ERR: [" << m_errmsg << "]\n";
 
-    std::list< std::string >::const_iterator it = list_cookies.begin();
-    for( ; it != list_cookies.end(); ++it ) std::cout << "cookie : [" << (*it) << "]\n";
+    for( const std::string& cookie : list_cookies ) std::cout << "cookie : [" << cookie << "]\n";
 
     std::cout << "location: [" << location() << "]\n";
 #endif
