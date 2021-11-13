@@ -15,7 +15,9 @@
 #include "article/articleadmin.h"
 #include "article/articleviewbase.h"
 
+#include <algorithm>
 #include <sstream>
+
 
 bool booting = true;
 bool quitting = false;
@@ -270,10 +272,9 @@ std::vector< int > parse_items( const std::string& items_str )
 {
     std::vector< int > items;
     const std::list< std::string > list_order = MISC::split_line( items_str );
-    std::list< std::string >::const_iterator it = list_order.begin();
-    for( ; it != list_order.end(); ++it ){
+    for( const std::string& item_str : list_order ) {
 
-        const int item = SESSION::parse_item( *it );
+        const int item = SESSION::parse_item( item_str );
         if( item != ITEM_END ) items.push_back( item );
     }
     items.push_back( ITEM_END );
@@ -286,15 +287,10 @@ void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls,  std::li
 {
     list_urls.clear();
 
-    std::string str_tmp;
-    std::list< std::string > list_tmp;
-    std::list< std::string >::iterator it_tmp;
-
-    str_tmp = cf.get_option_str( id_urls, "" );
+    const std::string str_tmp = cf.get_option_str( id_urls, "" );
     if( ! str_tmp.empty() ){
-        list_tmp = MISC::split_line( str_tmp );
-        it_tmp = list_tmp.begin();
-        for( ; it_tmp != list_tmp.end(); ++it_tmp ) if( !(*it_tmp).empty() ) list_urls.push_back( (*it_tmp));
+        std::list<std::string> list_tmp = MISC::split_line( str_tmp );
+        for( std::string& url : list_tmp ) if( ! url.empty() ) list_urls.push_back( std::move( url ) );
     }
 }
 
@@ -303,18 +299,11 @@ void read_list_locked( JDLIB::ConfLoader& cf, const std::string& id_locked, std:
 {
     list_locked.clear();
 
-    std::string str_tmp;
-    std::list< std::string > list_tmp;
-    std::list< std::string >::iterator it_tmp;
-
-    str_tmp = cf.get_option_str( id_locked, "" );
+    const std::string str_tmp = cf.get_option_str( id_locked, "" );
     if( ! str_tmp.empty() ){
-        list_tmp = MISC::split_line( str_tmp );
-        it_tmp = list_tmp.begin();
-        for( ; it_tmp != list_tmp.end(); ++it_tmp ){
-            if( ( *it_tmp ) == "1" ) list_locked.push_back( true );
-            else list_locked.push_back( false );
-        }
+        const std::list<std::string> list_tmp = MISC::split_line( str_tmp );
+        std::transform( list_tmp.cbegin(), list_tmp.cend(), std::back_inserter( list_locked ),
+                        []( const auto& lock_str ) { return lock_str == "1"; } );
     }
 }
 
@@ -508,17 +497,13 @@ void SESSION::init_session()
               << "image_page=" << win_image_page << std::endl;
 
     std::cout << "board_urls\n";
-
-    std::list< std::string >::iterator it_tmp = board_urls.begin();
-    for( ; it_tmp != board_urls.end(); ++it_tmp ) if( !(*it_tmp).empty() ) std::cout << (*it_tmp);
+    for( const std::string& url : board_urls ) if( ! url.empty() ) std::cout << url;
 
     std::cout << "article_urls\n";
-    it_tmp = article_urls.begin();
-    for( ; it_tmp != article_urls.end(); ++it_tmp ) if( !(*it_tmp).empty() ) std::cout << (*it_tmp);
+    for( const std::string& url : article_urls ) if( ! url.empty() ) std::cout << url;
 
     std::cout << "image_urls\n";
-    it_tmp = image_urls.begin();
-    for( ; it_tmp != image_urls.end(); ++it_tmp ) if( !(*it_tmp).empty() ) std::cout << (*it_tmp);
+    for( const std::string& url : image_urls ) if( ! url.empty() ) std::cout << url;
 
     std::cout << "columns\n"
               << board_col_mark << std::endl
@@ -552,17 +537,14 @@ void SESSION::save_session()
     std::string str_article_urls;
     std::string str_image_urls;
 
-    std::list< std::string >::iterator it_url = board_urls.begin();
-    for( ; it_url != board_urls.end(); ++it_url ){
-        if( ! ( *it_url ).empty() ) str_board_urls += " \"" + ( *it_url ) + "\"";
+    for( const std::string& url : board_urls ) {
+        if( ! url.empty() ) str_board_urls.append( " \"" + url + "\"" );
     }
-    it_url = article_urls.begin();
-    for( ; it_url != article_urls.end(); ++it_url ){
-        if( ! ( *it_url ).empty() ) str_article_urls += " \"" + ( *it_url ) + "\"";
+    for( const std::string& url : article_urls ) {
+        if( ! url.empty() ) str_article_urls.append( " \"" + url + "\"" );
     }
-    it_url = image_urls.begin();
-    for( ; it_url != image_urls.end(); ++it_url ){
-        if( ! ( *it_url ).empty() ) str_image_urls += " \"" + ( *it_url ) + "\"";
+    for( const std::string& url : image_urls ) {
+        if( ! url.empty() ) str_image_urls.append( " \"" + url + "\"" );
     }
 
     // 開いているタブのロック状態
@@ -570,36 +552,25 @@ void SESSION::save_session()
     std::string str_article_locked;
     std::string str_image_locked;
 
-    std::list< bool >::iterator it_locked = board_locked.begin();
-    for( ; it_locked != board_locked.end(); ++it_locked ){
-        if( *it_locked ) str_board_locked += " 1";
-        else str_board_locked += " 0";
+    for( const bool lock : board_locked ) {
+        str_board_locked.append( lock ? " 1" : " 0" );
     }
-
-    it_locked = article_locked.begin();
-    for( ; it_locked != article_locked.end(); ++it_locked ){
-        if( *it_locked ) str_article_locked += " 1";
-        else str_article_locked += " 0";
+    for( const bool lock : article_locked ) {
+        str_article_locked.append( lock ? " 1" : " 0" );
     }
-
-    it_locked = image_locked.begin();
-    for( ; it_locked != image_locked.end(); ++it_locked ){
-        if( *it_locked ) str_image_locked += " 1";
-        else str_image_locked += " 0";
+    for( const bool lock : image_locked ) {
+        str_image_locked.append( lock ? " 1" : " 0" );
     }
 
     // タブの切り替え履歴
     std::string str_board_switchhistory;
     std::string str_article_switchhistory;
 
-    it_url = board_switchhistory.begin();
-    for( ; it_url != board_switchhistory.end(); ++it_url ){
-        if( ! ( *it_url ).empty() ) str_board_switchhistory += " \"" + ( *it_url ) + "\"";
+    for( const std::string& url : board_switchhistory ) {
+        if( ! url.empty() ) str_board_switchhistory.append( " \"" + url + "\"" );
     }
-
-    it_url = article_switchhistory.begin();
-    for( ; it_url != article_switchhistory.end(); ++it_url ){
-        if( ! ( *it_url ).empty() ) str_article_switchhistory += " \"" + ( *it_url ) + "\"";
+    for( const std::string& url : article_switchhistory ) {
+        if( ! url.empty() ) str_article_switchhistory.append( " \"" + url + "\"" );
     }
 
     // 保存内容作成
@@ -1243,9 +1214,8 @@ const std::vector< std::string >& SESSION::get_delete_list()
 
 void SESSION::append_delete_list( const std::string& url )
 {
-    std::vector< std::string >::iterator it = delete_list.begin();
-    for( ; it != delete_list.end(); ++it ){
-        if( ( *it ) == url ) return;
+    if( std::find( delete_list.cbegin(), delete_list.cend(), url ) != delete_list.cend() ) {
+        return;
     }
 
     delete_list.push_back( url );
@@ -1260,8 +1230,8 @@ void SESSION::remove_delete_list( const std::string& url )
 {
     if( delete_list.empty() ) return;
 
-    std::vector< std::string >::iterator it = delete_list.begin();
-    for( ; it != delete_list.end(); ++it ) if( ( *it ) == url ){ delete_list.erase( it ); break; }
+    const auto it = std::find( delete_list.cbegin(), delete_list.cend(), url );
+    if( it != delete_list.cend() ) delete_list.erase( it );
 
 #ifdef _DEBUG
     std::cout << "SESSION::remove_delete_list urls == " << delete_list.size() << " url = " << url << std::endl;
@@ -1278,15 +1248,8 @@ bool SESSION::is_live( const std::string& url )
 
     if( live_urls.empty() ) return false;
 
-    std::vector< std::string >::iterator it = live_urls.begin();
-    for( ; it != live_urls.end(); ++it ){
-#ifdef _DEBUG
-        std::cout << (*it) << std::endl;
-#endif
-        if( ( *it ) == url ) return true;
-    }
-
-    return false;
+    const auto it = std::find( live_urls.cbegin(), live_urls.cend(), url );
+    return it != live_urls.cend();
 }
 
 
@@ -1303,8 +1266,8 @@ void SESSION::remove_live( const std::string& url )
 {
     if( live_urls.empty() ) return;
 
-    std::vector< std::string >::iterator it = live_urls.begin();
-    for( ; it != live_urls.end(); ++it ) if( ( *it ) == url ){ live_urls.erase( it ); break; }
+    const auto it = std::find( live_urls.cbegin(), live_urls.cend(), url );
+    if( it != live_urls.cend() ) live_urls.erase( it );
 
 #ifdef _DEBUG
     std::cout << "SESSION::remove_live live_urls == " << live_urls.size() << " url = " << url << std::endl;
