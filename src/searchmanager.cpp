@@ -125,10 +125,7 @@ void Search_Manager::thread_search()
 
     if( m_calc_data ){
 
-        std::vector< DBTREE::ArticleBase* >::iterator it = m_list_article.begin();
-        for( ; it != m_list_article.end(); ++it ){
-
-            DBTREE::ArticleBase* article = ( *it );
+        for( const DBTREE::ArticleBase* article : m_list_article ) {
 
             SEARCHDATA data;
             data.url_readcgi = DBTREE::url_readcgi( article->get_url(), 0, 0 );
