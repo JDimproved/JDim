@@ -106,9 +106,7 @@ Admin::~Admin()
 void Admin::save_session()
 {
     std::list< SKELETON::View* > list_view = get_list_view();
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        SKELETON::View* view = ( *it );
+    for( SKELETON::View* view : list_view ) {
         if( view ) view->save_session();
     }
 }
@@ -1437,9 +1435,8 @@ void Admin::redraw_views( const std::string& url )
     SKELETON::View* current_view = get_current_view();
     std::list< SKELETON::View* > list_view = get_list_view( url );
 
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        if( ( *it ) == current_view ) ( *it )->redraw_view();
+    for( SKELETON::View* view : list_view ) {
+        if( view == current_view ) view->redraw_view();
     }
 }
 
@@ -1525,10 +1522,7 @@ void Admin::unlock_all_view( const std::string& url )
 
     std::list< View* > list_view = get_list_view( url );
 
-    std::list< View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-
-        SKELETON::View* view = ( *it );
+    for( SKELETON::View* view : list_view ) {
         if( view && view->is_locked() ){
             view->unlock();
             redraw_toolbar();
@@ -1548,10 +1542,7 @@ void Admin::close_all_view( const std::string& url )
 
     std::list< View* > list_view = get_list_view( url );
 
-    std::list< View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-
-        SKELETON::View* view = ( *it );
+    for( SKELETON::View* view : list_view ) {
         close_view( view );
     }
 }
@@ -1608,12 +1599,9 @@ void Admin::update_item( const std::string& url,  const std::string& id )
 #endif
 
     std::list< SKELETON::View* > list_view = get_list_view();
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        SKELETON::View* view = ( *it );
+    for( SKELETON::View* view : list_view ) {
         if( view ) view->update_item( url, id );
     }
-
 }
 
 
@@ -1825,9 +1813,7 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label )
 void Admin::relayout_all()
 {
     std::list< SKELETON::View* > list_view = get_list_view();
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        SKELETON::View* view = ( *it );
+    for( SKELETON::View* view : list_view ) {
         if( view ) view->relayout();
     }
 }
@@ -2741,16 +2727,14 @@ void Admin::clear_viewhistory()
     if( ! m_use_viewhistory ) return;
 
     std::list< SKELETON::View* > list_view = get_list_view();
-    std::list< SKELETON::View* >::iterator it = list_view.begin();
-    for( ; it != list_view.end(); ++it ){
-        SKELETON::View* view = ( *it );
+    for( const SKELETON::View* view : list_view ) {
         if( view ){
-            HISTORY::get_history_manager()->delete_viewhistory( (*it)->get_url() );
-            HISTORY::get_history_manager()->create_viewhistory( (*it)->get_url() );
+            HISTORY::get_history_manager()->delete_viewhistory( view->get_url() );
+            HISTORY::get_history_manager()->create_viewhistory( view->get_url() );
 
-            int page = m_notebook->page_num( *(*it) );
+            const int page = m_notebook->page_num( *view );
             const std::string& str_label = m_notebook->get_tab_fulltext( page );
-            HISTORY::get_history_manager()->replace_current_title_viewhistory( (*it)->get_url(), str_label );
+            HISTORY::get_history_manager()->replace_current_title_viewhistory( view->get_url(), str_label );
         }
     }
 
@@ -2779,9 +2763,8 @@ void Admin::append_switchhistory( const std::string& url )
     m_list_switchhistory.push_back( url );
 
 #ifdef _DEBUG
-    std::list< std::string >::iterator it = m_list_switchhistory.begin();
-    for( ; it != m_list_switchhistory.end(); ++it ){
-        std::cout << (*it) << std::endl;
+    for( const std::string& hist_url : m_list_switchhistory ) {
+        std::cout << hist_url << std::endl;
     }
 #endif
 }
@@ -2802,9 +2785,8 @@ void Admin::remove_switchhistory( const std::string& url )
     m_list_switchhistory.remove( url );
 
 #ifdef _DEBUG
-    std::list< std::string >::iterator it = m_list_switchhistory.begin();
-    for( ; it != m_list_switchhistory.end(); ++it ){
-        std::cout << (*it) << std::endl;
+    for( const std::string& hist_url : m_list_switchhistory ) {
+        std::cout << hist_url << std::endl;
     }
 #endif
 }
