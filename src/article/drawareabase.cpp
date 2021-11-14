@@ -2792,19 +2792,17 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
             gdk_cairo_set_source_rgba( text_cr, m_color[ color ].gobj() );
 
             Pango::AttrList attr;
-            std::string text = std::string( node->text + pos_start, n_byte );
+            const auto text = Glib::ustring( node->text + pos_start, n_ustr );
             const std::vector<Pango::Item> list_item = m_context->itemize( text, attr );
 
             Glib::RefPtr< Pango::Font > font;
             Pango::GlyphString grl;
-            Pango::Rectangle pango_rect;
 
             for( const Pango::Item& item : list_item ) {
 
                 font = item.get_analysis().get_font();
-                grl = item.shape( text.substr( item.get_offset(), item.get_length() ) ) ;
-                pango_rect = grl.get_logical_extents( font );
-                int width = PANGO_PIXELS( pango_rect.get_width() );
+                grl = item.shape( item.get_segment( text ) );
+                const int width = PANGO_PIXELS( grl.get_width() );
 
                 cairo_move_to( text_cr, x, y + m_font->ascent );
                 pango_cairo_show_glyph_string( text_cr, font->gobj(), grl.gobj() );
