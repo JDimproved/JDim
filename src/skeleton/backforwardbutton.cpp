@@ -10,6 +10,9 @@
 
 #include "icons/iconmanager.h"
 
+#include <algorithm>
+
+
 using namespace SKELETON;
 
 BackForwardButton::BackForwardButton( const std::string& url, const bool back )
@@ -48,19 +51,19 @@ void BackForwardButton::show_popupmenu()
     std::cout << "BackForwardButton::show_popupmenu back = " << m_back << " url = " << m_url << std::endl;
 #endif
     std::vector< std::string > items;
+    auto inserter = std::back_inserter( items );
+    const auto get_title = []( const HISTORY::ViewHistoryItem* item ) { return item->title; };
 
     // 戻る更新
     if( m_back ){
         std::vector< HISTORY::ViewHistoryItem* >& histitems
         = HISTORY::get_history_manager()->get_items_back_viewhistory( m_url, MAX_MENU_SIZE );
-        std::vector< HISTORY::ViewHistoryItem* >::iterator it = histitems.begin();
-        for( ; it != histitems.end(); ++it ) items.push_back( (*it)->title );
+        std::transform( histitems.cbegin(), histitems.cend(), inserter, get_title );
     }
     else{
         std::vector< HISTORY::ViewHistoryItem* >& histitems
         = HISTORY::get_history_manager()->get_items_forward_viewhistory( m_url, MAX_MENU_SIZE );
-        std::vector< HISTORY::ViewHistoryItem* >::iterator it = histitems.begin();
-        for( ; it != histitems.end(); ++it ) items.push_back( (*it)->title );
+        std::transform( histitems.cbegin(), histitems.cend(), inserter, get_title );
     }
 
     append_menu( items );
