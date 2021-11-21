@@ -116,11 +116,10 @@ void CompletionEntry::show_popup( const bool show_all )
     m_liststore->clear();
     Gtk::TreeModel::Row row;
 
-    CORE::COMPLIST_ITERATOR it = complist.begin();
-    for( ; it != complist.end(); ++it ){
-        if( *it != m_entry.get_text() ){
+    for( const std::string& comp : complist ) {
+        if( comp != m_entry.get_text() ) {
             row = *( m_liststore->append() );
-            row[ m_column ] = *it;
+            row[ m_column ] = comp;
         }
     }
 
