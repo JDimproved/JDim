@@ -170,10 +170,9 @@ void ToolBar::update_button()
 void ToolBar::unpack_buttons()
 {
     std::vector< Gtk::Widget* > lists = m_buttonbar.get_children();
-    std::vector< Gtk::Widget* >::iterator it = lists.begin();
-    for( ; it != lists.end(); ++it ){
-        m_buttonbar.remove( *(*it) );
-        if( dynamic_cast< Gtk::SeparatorToolItem* >( *it ) ) delete *it;
+    for( Gtk::Widget* widget : lists ) {
+        m_buttonbar.remove( *widget );
+        if( dynamic_cast<Gtk::SeparatorToolItem*>( widget ) ) delete widget;
     }
 }
 
@@ -183,10 +182,9 @@ void ToolBar::unpack_search_buttons()
     if( ! m_searchbar ) return;
 
     std::vector< Gtk::Widget* > lists = m_searchbar->get_children();
-    std::vector< Gtk::Widget* >::iterator it = lists.begin();
-    for( ; it != lists.end(); ++it ){
-        m_searchbar->remove( *(*it) );
-        if( dynamic_cast< Gtk::SeparatorToolItem* >( *it ) ) delete *it;
+    for( Gtk::Widget* widget : lists ) {
+        m_searchbar->remove( *widget );
+        if( dynamic_cast<Gtk::SeparatorToolItem*>( widget ) ) delete widget;
     }
 }
 
@@ -194,21 +192,19 @@ void ToolBar::unpack_search_buttons()
 void ToolBar::set_relief()
 {
     std::vector< Gtk::Widget* > lists_toolbar = get_children();
-    std::vector< Gtk::Widget* >::iterator it_toolbar = lists_toolbar.begin();
-    for( ; it_toolbar != lists_toolbar.end(); ++it_toolbar ){
+    for( Gtk::Widget* bar_widget : lists_toolbar ) {
 
-        Gtk::Toolbar* toolbar = dynamic_cast< Gtk::Toolbar* >( *it_toolbar );
+        Gtk::Toolbar* toolbar = dynamic_cast<Gtk::Toolbar*>( bar_widget );
         if( ! toolbar ) continue;
 
         std::vector< Gtk::Widget* > lists = toolbar->get_children();
-        std::vector< Gtk::Widget* >::iterator it = lists.begin();
-        for( ; it != lists.end(); ++it ){
+        for( Gtk::Widget* btn_widget : lists ) {
 
             Gtk::Button* button = nullptr;
-            Gtk::ToolButton* toolbutton = dynamic_cast< Gtk::ToolButton* >( *it );
+            Gtk::ToolButton* toolbutton = dynamic_cast<Gtk::ToolButton*>( btn_widget );
             if( toolbutton ) button = dynamic_cast< Gtk::Button* >( toolbutton->get_child() );
             if( ! button ){
-                Gtk::ToolItem* toolitem = dynamic_cast< Gtk::ToolItem* >( *it );
+                Gtk::ToolItem* toolitem = dynamic_cast<Gtk::ToolItem*>( btn_widget );
                 if( toolitem ) button = dynamic_cast< Gtk::Button* >( toolitem->get_child() );
             }
             if( button ){
