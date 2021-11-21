@@ -745,20 +745,19 @@ void EditTreeView::on_drag_data_received( const Glib::RefPtr<Gdk::DragContext>& 
         // 同じ widget からドロップされた場合は上書きになっていないかチェックする
         if( m_row_dest && ! m_dropped_from_other ){
 
-            CORE::DATA_INFO_LIST::iterator it = list_info.begin();
-            for( ; it != list_info.end(); ++it ){
+            for( const CORE::DATA_INFO& data : list_info ) {
 
 #ifdef _DEBUG
-                std::cout << ( *it ).name << " path = " << ( *it ).path << std::endl;
+                std::cout << data.name << " path = " << data.path << std::endl;
 #endif
 
-                if( ( *it ).path.empty() ) continue;
+                if( data.path.empty() ) continue;
 
                 // 移動先と送り側が同じならキャンセル
-                if( ( *it ).path == path_dest.to_string() ) return;
+                if( data.path == path_dest.to_string() ) return;
 
                 // 移動先がサブディレクトリに含まれないかチェック
-                if( Gtk::TreePath( ( *it ).path ).is_ancestor( path_dest ) ){
+                if( Gtk::TreePath( data.path ).is_ancestor( path_dest ) ){
 
                     SKELETON::MsgDiag mdiag( get_parent_win(), "移動先は送り側のディレクトリのサブディレクトリです", false, Gtk::MESSAGE_ERROR );
                     mdiag.run();
@@ -1051,10 +1050,7 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
         std::cout << "checking duplicatiion\n";
 #endif
 
-        CORE::DATA_INFO_LIST::const_iterator it_info = list_info.begin();
-        for( ; it_info != list_info.end(); ++it_info ){
-
-            const CORE::DATA_INFO& info = ( *it_info );
+        for( const CORE::DATA_INFO& info : list_info ) {
 
             if( exist_row( info.url, info.type ) ){
 
@@ -1125,17 +1121,16 @@ void EditTreeView::delete_path( std::list< Gtk::TreePath >& list_path, const boo
     const Gtk::TreePath path_selected = get_current_path();
 
     CORE::DATA_INFO_LIST list_info;
-    std::list< Gtk::TreePath >::iterator it = list_path.begin();
-    for( ; it != list_path.end(); ++it ){
+    for( const Gtk::TreePath& path : list_path ) {
 
-        if( path_selected == ( *it ) ) selected = true;
+        if( path_selected == path ) selected = true;
 
 #ifdef _DEBUG
-        std::cout << "path = " << ( *it ).to_string() << std::endl;
+        std::cout << "path = " << path.to_string() << std::endl;
 #endif
 
         CORE::DATA_INFO info;
-        path2info( info, *it );
+        path2info( info, path );
         list_info.push_back( info );
     }
 
@@ -1174,10 +1169,9 @@ void EditTreeView::delete_selected_rows( const bool force )
     if( ! list_selected.size() ) return;
 
     // ディレクトリが含まれていないか無いか確認
-    std::list< Gtk::TreeModel::iterator >::iterator it_selected = list_selected.begin();
-    for( ; it_selected != list_selected.end(); ++it_selected ){
+    for( const Gtk::TreeModel::iterator& iter : list_selected ) {
 
-        if( is_dir( ( *it_selected ) ) ){
+        if( is_dir( iter ) ){
             SKELETON::MsgDiag mdiag( get_parent_win(), "ディレクトリを削除するとディレクトリ内の行も全て削除されます。削除しますか？",
                                       false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             if( mdiag.run() != Gtk::RESPONSE_YES ) return;
@@ -1275,36 +1269,35 @@ void EditTreeView::redo()
     if( ! m_undo_buffer->get_enable_redo() ) return;
 
     const UNDO_DATA& data = m_undo_buffer->get_undo_data();
-    const int size = data.size();
 
 #ifdef _DEBUG
-    std::cout << "EditTreeView::redo size = " << size << std::endl;
+    std::cout << "EditTreeView::redo size = " << data.size() << std::endl;
 #endif
 
-    for( int i = 0; i < size; ++i ){
+    for( const UNDO_ITEM& item : data ) {
 
-        if( ! data[ i ].list_info_selected.empty() ){
+        if( ! item.list_info_selected.empty() ){
 
-            set_scroll( Gtk::TreePath( data[ i ].list_info_selected.front().path ) );
-            select_info( data[ i ].list_info_selected );
+            set_scroll( Gtk::TreePath( item.list_info_selected.front().path ) );
+            select_info( item.list_info_selected );
         }
 
         // 削除
-        if( ! data[ i ].list_info_delete.empty() ) delete_rows( data[ i ].list_info_delete, Gtk::TreePath() );
+        if( ! item.list_info_delete.empty() ) delete_rows( item.list_info_delete, Gtk::TreePath() );
 
         // 追加
-        if( ! data[ i ].list_info_append.empty() ){
-            expand_rows( data[ i ].list_info_append );
-            append_rows( data[ i ].list_info_append );
+        if( ! item.list_info_append.empty() ){
+            expand_rows( item.list_info_append );
+            append_rows( item.list_info_append );
         }
 
         // 名前変更
-        Gtk::TreeRow row = get_row( data[ i ].path_renamed );
+        Gtk::TreeRow row = get_row( item.path_renamed );
         if( row ){
 
-            scroll_to_row( data[ i ].path_renamed, 0.5 );  // ツリー構造に変化は無いのですぐにスクロールする
-            set_cursor( data[ i ].path_renamed );
-            if( ! data[ i ].name_new.empty() ) row[ m_columns.m_name ] = data[ i ].name_new;
+            scroll_to_row( item.path_renamed, 0.5 );  // ツリー構造に変化は無いのですぐにスクロールする
+            set_cursor( item.path_renamed );
+            if( ! item.name_new.empty() ) row[ m_columns.m_name ] = item.name_new;
         }
     }
 
@@ -1447,23 +1440,15 @@ void EditTreeView::get_info_in_selection( CORE::DATA_INFO_LIST& list_info, const
     std::list< Gtk::TreeModel::iterator > list_selected = get_selected_iterators();
     if( ! list_selected.size() ) return;
 
-    std::list< Gtk::TreeModel::iterator >::iterator it = list_selected.begin();
-    for( ; it != list_selected.end(); ++it ){
+    for( const Gtk::TreeModel::iterator& iter : list_selected ) {
 
-        Gtk::TreePath path = get_model()->get_path( *it );
+        Gtk::TreePath path = get_model()->get_path( iter );
         CORE::DATA_INFO info;
         path2info( info, path );
 
         // 既に path が list_info に登録されていたら登録しない
-        bool cancel = false;
-        CORE::DATA_INFO_LIST::iterator it_info = list_info.begin();
-        for( ; it_info != list_info.end(); ++it_info ){
-            if( ( *it_info ).path == info.path ){
-                cancel = true;
-                break;
-            }
-        }
-        if( cancel ) continue;
+        const auto equal_to = [&info]( const CORE::DATA_INFO& i ) { return i.path == info.path; };
+        if( std::any_of( list_info.cbegin(), list_info.cend(), equal_to ) ) continue;
 
         list_info.push_back( info );
         if( dir ) get_info_in_dir( list_info, path );
@@ -1590,10 +1575,7 @@ void EditTreeView::expand_rows( const CORE::DATA_INFO_LIST& list_info )
 
     if( ! list_info.size() ) return;
 
-    CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
-    for( ; it != list_info.end(); ++it ){
-
-        const CORE::DATA_INFO& info = ( *it );
+    for( const CORE::DATA_INFO& info : list_info ) {
 #ifdef _DEBUG
         std::cout << "path = " << info.path << std::endl;
 #endif
@@ -1619,10 +1601,8 @@ void EditTreeView::append_rows( const CORE::DATA_INFO_LIST& list_info )
     bool expand_parent = false;
     bool head_info = true;
 
-    CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
-    for( ; it != list_info.end(); ++it ){
+    for( const CORE::DATA_INFO& info : list_info ) {
 
-        const CORE::DATA_INFO& info = ( *it );
         Gtk::TreePath path( info.path );
 
 #ifdef _DEBUG
@@ -1667,9 +1647,7 @@ void EditTreeView::append_rows( const CORE::DATA_INFO_LIST& list_info )
     // ディレクトリを開く
     if( expand_parent ) expand_row( path_parent, false );
 
-    it = list_info.begin();
-    for( ; it != list_info.end(); ++it ){
-        const CORE::DATA_INFO& info = ( *it );
+    for( const CORE::DATA_INFO& info : list_info ) {
         if( info.expanded ){
             const Gtk::TreePath path( info.path );
             expand_row( path, false );
@@ -1744,9 +1722,8 @@ void EditTreeView::select_info( const CORE::DATA_INFO_LIST& list_info )
 {
     get_selection()->unselect_all();
 
-    CORE::DATA_INFO_LIST::const_iterator it = list_info.begin();
-    for( ; it != list_info.end(); ++it ){
-        Gtk::TreePath path( ( *it ).path );
+    for( const CORE::DATA_INFO& info : list_info ) {
+        Gtk::TreePath path( info.path );
         get_selection()->select( path );
     }
 }
@@ -1791,22 +1768,21 @@ void EditTreeView::sort( const Gtk::TreePath& path, const int mode )
     }
     list_path.sort( compare_path( *this, m_columns, mode ) );
 
-    std::list< Gtk::TreePath >::const_iterator it_path = list_path.begin();
-    for( ; it_path != list_path.end(); ++it_path ){
+    for( const Gtk::TreePath& p : list_path ) {
 
-        const Gtk::TreeRow row = get_row( *it_path );
+        const Gtk::TreeRow row = get_row( p );
         if( row ){
 
 #ifdef _DEBUG
-            std::cout << ( *it_path ).to_string()
+            std::cout << p.to_string()
                       << " type = " << row[ m_columns.m_type ]
                       << " name = " << row[ m_columns.m_name ] << std::endl;
 #endif
 
             CORE::DATA_INFO info;
-            path2info( info, *it_path );
+            path2info( info, p );
             list_info.push_back( info );
-            get_info_in_dir( list_info, *it_path );
+            get_info_in_dir( list_info, p );
         }
     }
 
