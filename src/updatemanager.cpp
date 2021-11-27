@@ -138,8 +138,7 @@ void CheckUpdate_Manager::push_back( const std::string& url, const bool open )
 #ifdef _DEBUG
     std::cout << "size = " << m_list_item.size() << std::endl;
 
-    std::list< std::string >::const_iterator it = urllist.begin();
-    for( ; it != urllist.end(); ++it ) std::cout << ( *it ) << std::endl;
+    for( const std::string& u : urllist ) std::cout << u << std::endl;
 #endif
 }
 
@@ -164,10 +163,7 @@ void CheckUpdate_Manager::pop_front()
             std::string urls_article = std::string();
             std::string urls_board = std::string();
 
-            std::list< std::string >::const_iterator it = m_list_open.begin();
-            for( ; it != m_list_open.end(); ++it ){
-
-                const std::string& url = ( *it );
+            for( const std::string& url : m_list_open ) {
 
                 // urlが板のアドレスかスレのアドレスか判断する
                 int num_from, num_to;
