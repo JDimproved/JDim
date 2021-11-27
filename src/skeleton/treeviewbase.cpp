@@ -7,6 +7,8 @@
 
 #include "jdlib/miscgtk.h"
 
+#include <algorithm>
+
 
 using namespace SKELETON;
 
@@ -120,8 +122,8 @@ std::list< Gtk::TreeModel::iterator > JDTreeViewBase::get_selected_iterators()
     if( get_model() ){
 
         std::vector< Gtk::TreeModel::Path > paths = get_selection()->get_selected_rows();
-        std::vector< Gtk::TreeModel::Path >::iterator it = paths.begin();
-        for( ; it != paths.end(); ++it ) list_it.push_back( get_model()->get_iter( ( *it ) ) );
+        std::transform( paths.begin(), paths.end(), std::back_inserter( list_it ),
+                        [this]( Gtk::TreeModel::Path& p ) { return get_model()->get_iter( p ); } );
     }
 
     return list_it;
@@ -150,9 +152,8 @@ void JDTreeViewBase::delete_selected_rows( const bool force )
     const bool gotobottom = ( ! get_row( next ) );
     if( ! gotobottom ) set_cursor( next );
 
-    std::vector< Gtk::TreePath >::reverse_iterator it = list_path.rbegin();
-    for( ; it != list_path.rend(); ++it ){
-        Gtk::TreeRow row = get_row( *it );
+    for( const Gtk::TreePath& path : list_path ) {
+        Gtk::TreeRow row = get_row( path );
 
         if( treestore ) treestore->erase( row );
         else liststore->erase( row );
