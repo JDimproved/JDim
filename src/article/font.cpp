@@ -79,7 +79,7 @@ bool ARTICLE::get_width_of_char( const char* utfstr, int& byte, const char pre_c
     }
 
     const int c32 = MISC::utf8toucs2( utfstr, byte );
-    if( byte && c32 < kMaxCacheCodePoint ){
+    if( byte > 0 && c32 < kMaxCacheCodePoint ){
 
         // 全角モードの幅
         width_wide = width_of_char[ mode ][ c32 ].width_wide;
