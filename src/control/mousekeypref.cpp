@@ -554,8 +554,7 @@ void MouseKeyPref::append_row( const int id, const std::string& label )
         }
         row[ get_colums().m_col_motions ] = motions;
         row[ get_colums().m_col_id ] = id;
-        if( motions != get_default_motions( id ) ) row[ get_colums().m_col_drawbg ] = true;
-        else row[ get_colums().m_col_drawbg ] = false;
+        row.set_value( get_colums().m_col_drawbg, motions != get_default_motions( id ) );
     }
 }
 
@@ -622,8 +621,7 @@ void MouseKeyPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tr
         const std::string motions = diag->get_str_motions();
 
         row[ get_colums().m_col_motions ] = motions;
-        if( motions != get_default_motions( id ) ) row[ get_colums().m_col_drawbg ] = true;
-        else row[ get_colums().m_col_drawbg ] = false;
+        row.set_value( get_colums().m_col_drawbg, motions != get_default_motions( id ) );
 
         remove_motions( id );
         set_motions( id, motions );
