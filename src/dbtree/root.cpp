@@ -1123,7 +1123,6 @@ void Root::load_etc()
 
             // board id
             info.boardid = *( it );
-            if( it == list_etc.end() ) break;
 
 #ifdef _DEBUG
             std::cout << "etc board : name = " << info.name << std::endl
