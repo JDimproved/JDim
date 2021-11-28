@@ -168,7 +168,7 @@ void BoardViewLog::update_item( const std::string& url, const std::string& id )
     if( id.empty() || row ) BoardViewBase::update_item( url, id );
 
     // もし row が無く、かつキャッシュがあるならば行を追加
-    else if( ! id.empty() ){ 
+    else {
 
         DBTREE::ArticleBase* art = DBTREE::get_article( url_dat );
         if( art && art->is_cached() ){
