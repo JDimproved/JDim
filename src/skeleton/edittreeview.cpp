@@ -595,7 +595,7 @@ void EditTreeView::slot_ren_text_on_edited( const Glib::ustring& path, const Gli
     if( row ){
 
         const Glib::ustring text_before = row[ m_columns.m_name ];
-        row[ m_columns.m_name ] = text;
+        row.set_value( m_columns.m_name, text );
 
         if( m_editable && m_undo_buffer ) m_undo_buffer->set_name( Gtk::TreePath( path ), text, text_before );
     }

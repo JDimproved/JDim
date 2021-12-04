@@ -349,11 +349,11 @@ void ReplaceStrPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::
 
     ReplaceStrDiag dlg( this, condition, row[ m_columns.m_col_pattern ], row[ m_columns.m_col_replace ] );
     if( dlg.run() == Gtk::RESPONSE_OK ) {
-        row[ m_columns.m_col_active ] = dlg.get_active();
-        row[ m_columns.m_col_icase ] = dlg.get_icase();
-        row[ m_columns.m_col_regex ] = dlg.get_regex();
-        row[ m_columns.m_col_pattern ] = dlg.get_pattern();
-        row[ m_columns.m_col_replace ] = dlg.get_replace();
+        row.set_value( m_columns.m_col_active, dlg.get_active() );
+        row.set_value( m_columns.m_col_icase, dlg.get_icase() );
+        row.set_value( m_columns.m_col_regex, dlg.get_regex() );
+        row.set_value( m_columns.m_col_pattern, dlg.get_pattern() );
+        row.set_value( m_columns.m_col_replace, dlg.get_replace() );
 
         if( dlg.get_regex() ) {
             JDLIB::RegexPattern ptn;
