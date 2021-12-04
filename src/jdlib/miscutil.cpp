@@ -570,11 +570,11 @@ int MISC::str_to_uint( const char* str, size_t& dig, size_t& n )
 
         else{
 
-            const unsigned char in2 = (* ( str +1 ));
-            const unsigned char in3 = (* ( str +2 ));
+            const auto in2 = static_cast<unsigned char>( in == 0xEF ? *( str + 1 ) : 0 );
+            const auto in3 = static_cast<unsigned char>( in2 == 0xBC ? *( str + 2 ) : 0 );
 
             // utf-8
-            if( in == 0xef && in2 == 0xbc && ( 0x90 <= in3 && in3 <= 0x99 ) ){
+            if( 0x90 <= in3 && in3 <= 0x99 ){
                 out = out*10 + ( in3 - 0x90 );
                 ++dig;
                 str += 3;
@@ -1816,8 +1816,8 @@ bool MISC::has_widechar( const char* str )
 
             if( in == 0xef ){
 
-                const unsigned char in2 = * ( str + 1 );
-                const unsigned char in3 = * ( str + 2 );
+                const auto in2 = static_cast<unsigned char>( *( str + 1 ) );
+                const auto in3 = static_cast<unsigned char>( in2 != '\0' ? *( str + 2 ) : 0 );
 
                 if( in2 == 0xbc ){
 
