@@ -161,7 +161,7 @@ namespace SKELETON
 
         // pathをまとめて削除
         // force = true なら m_editable が false でも削除
-        void delete_path( std::list< Gtk::TreePath >& list_path, const bool force );
+        void delete_path( const std::list<Gtk::TreePath>& list_path, const bool force );
 
         // 選択した行をまとめて削除
         // force = true なら m_editable が false でも削除
