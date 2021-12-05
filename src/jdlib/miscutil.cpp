@@ -1248,7 +1248,7 @@ std::string MISC::charset_url_encode_split( const std::string& str, const std::s
 //
 std::string MISC::base64( const std::string& str )
 {
-    char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    constexpr const char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     int lng = str.length();
 
