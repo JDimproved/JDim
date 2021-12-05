@@ -91,7 +91,7 @@ class compare_path
 
     int type_to_order( const int type ) const
     {
-        int order[]={
+        constexpr const int order[] = {
 
             TYPE_DIR,
 
