@@ -1107,7 +1107,7 @@ CORE::DATA_INFO_LIST EditTreeView::append_info( const CORE::DATA_INFO_LIST& list
 //
 // force = true なら m_editable が false でも削除
 //
-void EditTreeView::delete_path( std::list< Gtk::TreePath >& list_path, const bool force )
+void EditTreeView::delete_path( const std::list<Gtk::TreePath>& list_path, const bool force )
 {
     if( ! list_path.size() ) return;
     if( ! force && ! m_editable ) return;
