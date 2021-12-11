@@ -133,7 +133,12 @@ void BoardBase::update_name( const std::string& name )
 // ダウンロード用
 const std::string& BoardBase::get_agent() const
 {
-    return CONFIG::get_agent_for_data();
+    if( get_board_agent().empty() ) {
+        return CONFIG::get_agent_for_data();
+    }
+    else {
+        return get_board_agent();
+    }
 }
 
 // 書き込み用
@@ -2062,6 +2067,9 @@ void BoardBase::read_board_info()
     // 最大レス数
     m_number_max_res = cf.get_option_int( "max_res", get_default_number_max_res(), 0, CONFIG::get_max_resnumber() );
 
+    // 板のユーザーエージェント設定
+    m_board_agent = cf.get_option_str( "user_agent", std::string{} );
+
 #ifdef _DEBUG
     std::cout << "modified = " << get_date_modified() << std::endl;
 #endif
@@ -2152,6 +2160,7 @@ void BoardBase::save_jdboard_info()
          << "last_access_time = " << m_last_access_time << std::endl
          << "status = " << m_status << std::endl
          << "max_res = " << m_number_max_res << std::endl
+         << "user_agent = " << m_board_agent << std::endl
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );

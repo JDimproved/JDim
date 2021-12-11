@@ -42,13 +42,23 @@ Board2ch::~Board2ch() noexcept
 // ダウンロード用
 const std::string& Board2ch::get_agent() const
 {
-    return CONFIG::get_agent_for2ch();
+    if( get_board_agent().empty() ) {
+        return CONFIG::get_agent_for2ch();
+    }
+    else {
+        return get_board_agent();
+    }
 }
 
 // 書き込み用
 const std::string& Board2ch::get_agent_w() const
 {
-    return CONFIG::get_agent_for2ch();
+    if( get_board_agent().empty() ) {
+        return CONFIG::get_agent_for2ch();
+    }
+    else {
+        return get_board_agent();
+    }
 }
 
 
