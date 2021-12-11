@@ -81,9 +81,17 @@ namespace BOARD
         Gtk::CheckButton m_check_live;
         Gtk::SpinButton m_spin_live;
 
+        // ネットワーク設定
+        Gtk::Box m_vbox_network;
+
+        // ユーザーエージェント
+        Gtk::Label m_comment_agent;
+        Gtk::Box m_hbox_agent;
+        Gtk::Label m_label_agent;
+        Gtk::Entry m_entry_agent;
+
         // プロキシ
-        Gtk::VBox m_vbox_proxy;
-        Gtk::Label m_label_proxy;
+        Gtk::Label m_comment_proxy;
         ProxyFrame m_proxy_frame;
         ProxyFrame m_proxy_frame_w;
 
