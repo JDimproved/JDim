@@ -36,6 +36,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     , m_check_live( "実況する" )
 
+    , m_vbox_network{ Gtk::ORIENTATION_VERTICAL, 8 }
+    , m_hbox_agent{ Gtk::ORIENTATION_HORIZONTAL, 2 }
+    , m_label_agent{ "_User-Agent：", true }
     , m_proxy_frame( "読み込み用" )
     , m_proxy_frame_w( "書き込み用" )
 
@@ -209,18 +212,42 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_check_oldlog, Gtk::PACK_SHRINK );
-    m_vbox.pack_end( m_frame_cookie, Gtk::PACK_SHRINK );
-    m_vbox.pack_end( m_frame_write, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_frame_write, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_frame_cookie, Gtk::PACK_SHRINK );
 
     // ローカルルール
     m_localrule.reset( CORE::ViewFactory( CORE::VIEW_ARTICLEINFO, get_url() ) );
 
+    // ネットワーク設定
+    m_vbox_network.set_border_width( 16 );
+
+    // ユーザーエージェント
+    m_comment_agent.set_text( "通常は about:config で設定したユーザーエージェント(UA)で板にアクセスします\n"
+                              "about:config の設定と異なるUAを使用する場合はここで設定してください (最大200字)\n"
+                              "空欄または不適切な文字が含まれている状態でOKを押すと設定が消去されます" );
+
+    m_label_agent.set_hexpand( false );
+    m_label_agent.set_mnemonic_widget( m_entry_agent );
+
+    m_entry_agent.property_truncate_multiline() = true;
+    m_entry_agent.set_input_purpose( Gtk::INPUT_PURPOSE_ALPHA );
+    m_entry_agent.set_max_length( 200 );
+    m_entry_agent.set_placeholder_text( "空欄のときは about:config の設定が使われます" );
+    const std::string& board_agent = DBTREE::board_get_board_agent( get_url() );
+    if( ! board_agent.empty() ) {
+        m_entry_agent.set_text( board_agent );
+    }
+
+    m_hbox_agent.set_margin_top( 8 );
+    m_hbox_agent.set_margin_bottom( 12 );
+    m_hbox_agent.pack_start( m_label_agent, Gtk::PACK_SHRINK );
+    m_hbox_agent.pack_start( m_entry_agent );
+
     // プロキシ
     std::string host;
-    m_vbox_proxy.set_border_width( 16 );
-    m_vbox_proxy.set_spacing( 8 );
 
-    m_label_proxy.set_text( "通常は全体プロキシ設定でプロキシを設定します\n全体プロキシ設定と異なるプロキシを使用する場合はここで設定して下さい");
+    m_comment_proxy.set_text( "通常は全体プロキシ設定でプロキシを設定します\n"
+                              "全体プロキシ設定と異なるプロキシを使用する場合はここで設定してください" );
 
     switch( DBTREE::board_get_mode_local_proxy( get_url() ) ){
         case DBTREE::PROXY_GLOBAL: m_proxy_frame.rd_global.set_active(); break;
@@ -242,9 +269,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_proxy_frame_w.entry_host.set_text( host );
     m_proxy_frame_w.entry_port.set_text( std::to_string( DBTREE::board_get_local_proxy_port_w( get_url() ) ) );
 
-    m_vbox_proxy.pack_start( m_label_proxy, Gtk::PACK_SHRINK );
-    m_vbox_proxy.pack_start( m_proxy_frame, Gtk::PACK_SHRINK );
-    m_vbox_proxy.pack_start( m_proxy_frame_w, Gtk::PACK_SHRINK );
+    m_vbox_network.pack_start( m_comment_agent, Gtk::PACK_SHRINK );
+    m_vbox_network.pack_start( m_hbox_agent, Gtk::PACK_SHRINK );
+    m_vbox_network.pack_start( m_comment_proxy, Gtk::PACK_SHRINK );
+    m_vbox_network.pack_start( m_proxy_frame, Gtk::PACK_SHRINK );
+    m_vbox_network.pack_start( m_proxy_frame_w, Gtk::PACK_SHRINK );
 
     set_activate_entry( m_proxy_frame.entry_host );
     set_activate_entry( m_proxy_frame.entry_port );
@@ -351,7 +380,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_notebook.append_page( m_vbox, "一般" );
     const int page_localrule = 1;
     m_notebook.append_page( *m_localrule, "ローカルルール" );
-    m_notebook.append_page( m_vbox_proxy, "プロキシ設定" );
+    m_notebook.append_page( m_vbox_network, "ネットワーク設定" );
     const int page_abone_article = 3;
     m_notebook.append_page( m_notebook_abone, "あぼ〜ん設定(スレビュー)" );
     m_notebook.append_page( m_notebook_abone_thread, "あぼ〜ん設定(スレ一覧)" );
@@ -505,6 +534,20 @@ void Preferences::slot_ok_clicked()
 
     // 過去ログ表示
     if( ! CONFIG::get_show_oldarticle() ) DBTREE::board_set_show_oldlog( get_url(), m_check_oldlog.get_active() );
+
+    // ユーザーエージェント
+    std::string board_agent;
+    const Glib::ustring agent_text = m_entry_agent.get_text();
+    if( ! agent_text.empty() ) {
+        // 不適切な文字が含まれてないかチェックと先頭末尾の空白文字を削除する
+        const std::string& raw = agent_text.raw();
+        if( std::all_of( raw.begin(), raw.end(), []( char c ) { return g_ascii_isprint( c ); } ) ) {
+            board_agent = MISC::remove_spaces( raw );
+        }
+    }
+    if( board_agent != DBTREE::board_get_board_agent( get_url() ) ) {
+        DBTREE::board_set_board_agent( get_url(), board_agent );
+    }
 
     // あぼーん再設定
     std::list< std::string > list_id = MISC::get_lines( m_edit_id.get_text() );

@@ -210,6 +210,9 @@ namespace DBTREE
         // Null artice クラス
         std::unique_ptr<ArticleBase> m_article_null;
 
+        /// 板のユーザーエージェント設定 (空のときは全体設定を使う)
+        std::string m_board_agent;
+
       protected:
 
         ARTICLE_INFO_LIST& get_list_artinfo(){ return m_list_artinfo; }
@@ -540,6 +543,10 @@ namespace DBTREE
 
         // 最終アクセス時刻
         time_t get_last_access_time() const{ return m_last_access_time; }
+
+        // 板のユーザーエージェント設定
+        const std::string& get_board_agent() const { return m_board_agent; }
+        void set_board_agent( const std::string& user_agent ) { m_board_agent = user_agent; }
 
         // 最大レス数
         int get_number_max_res() const { return m_number_max_res; }

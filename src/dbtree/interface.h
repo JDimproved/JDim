@@ -191,6 +191,10 @@ namespace DBTREE
     void board_set_live_sec( const std::string& url, time_t sec );
     time_t board_last_access_time( const std::string& url );
 
+    // 板のユーザーエージェント設定
+    const std::string& board_get_board_agent( const std::string& url );
+    void board_set_board_agent( const std::string& url, const std::string& user_agent );
+
     // 全スレの書き込み履歴のリセット
     void clear_all_post_history();
 

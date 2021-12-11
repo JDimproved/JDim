@@ -705,6 +705,16 @@ time_t DBTREE::board_last_access_time( const std::string& url )
     return DBTREE::get_board( url )->get_last_access_time();
 }
 
+const std::string& DBTREE::board_get_board_agent( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_board_agent();
+}
+
+void DBTREE::board_set_board_agent( const std::string& url, const std::string& user_agent )
+{
+    DBTREE::get_board( url )->set_board_agent( user_agent );
+}
+
 
 /////////////////////////////////////////////////
 
