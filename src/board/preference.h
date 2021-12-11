@@ -70,9 +70,8 @@ namespace BOARD
 
         // クッキー と キーワード表示
         Gtk::Frame m_frame_cookie;
-        Gtk::HBox m_hbox_cookie;
+        Gtk::Grid m_grid_cookie;
         SKELETON::EditView m_edit_cookies;
-        Gtk::VBox m_vbox_cookie;
         Gtk::Button m_button_cookie;
 
         // 実況の更新間隔

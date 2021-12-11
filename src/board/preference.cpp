@@ -122,16 +122,17 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     keyword = DBTREE::board_keyword_for_newarticle( get_url() );
     if( ! keyword.empty() ) str_cookies.append( "\nスレ立て用キーワード: " + keyword + "\n" );
 
+    m_edit_cookies.set_hexpand( true );
+    m_edit_cookies.set_propagate_natural_height( true );
     m_edit_cookies.set_text( str_cookies );
 
-    m_hbox_cookie.set_border_width( 8 );
-    m_hbox_cookie.set_spacing( 8 );
-    m_hbox_cookie.pack_start( m_edit_cookies );
-    m_hbox_cookie.pack_start( m_vbox_cookie, Gtk::PACK_SHRINK );
-    m_vbox_cookie.pack_end( m_button_cookie, Gtk::PACK_SHRINK );
+    m_grid_cookie.property_margin() = 8;
+    m_grid_cookie.attach( m_edit_cookies, 0, 0, 1, 1 );
+    m_grid_cookie.attach( m_button_cookie, 1, 0, 1, 1 );
+    m_button_cookie.set_valign( Gtk::ALIGN_END );
     m_button_cookie.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_delete_cookie ) );
 
-    m_frame_cookie.add( m_hbox_cookie );
+    m_frame_cookie.add( m_grid_cookie );
 
     // 実況
     const int live_sec = DBTREE::board_get_live_sec( get_url() );
