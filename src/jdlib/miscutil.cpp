@@ -594,20 +594,23 @@ int MISC::str_to_uint( const char* str, size_t& dig, size_t& n )
 //
 std::string MISC::intlisttostr( const std::list< int >& list_num )
 {
+    assert( ! list_num.empty() );
+
     std::ostringstream comment;
 
     std::list < int >::const_iterator it = list_num.begin();
 
     bool comma = false;
     int num_from = *it;
-    int num_to = -1;
-    int i = 0;
+    int num_to = -1; // -1 は番兵
+    int i = 0; // 連番判定に使う
     for(;;){
 
         ++i;
         ++it;
-        const int num = *it;
-        if( num_from + i != num || it == list_num.end() ){
+        const bool loop_end{ it == list_num.end() };
+        const int num{ loop_end ? -1 : *it };
+        if( num_from + i != num || loop_end ) {
 
             if( comma ) comment << ",";
             comment << num_from;
@@ -617,8 +620,9 @@ std::string MISC::intlisttostr( const std::list< int >& list_num )
             i = 0;
             comma = true;
 
-            if( it == list_num.end() ) break;
+            if( loop_end ) break;
         }
+        // 数字が連番のときは記録しておく
         else num_to = num;
     }
 
