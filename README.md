@@ -213,6 +213,7 @@ NOTE:
 
 - 環境変数 `XDG_CACHE_HOME` が未設定または空のときはかわりに `$HOME/.cache/jdim` が使われます。
 - `~/.jd` が無効化されている場合は `jdim --version` の出力に `--disable-compat-cache-dir` が追加されます。
+- キャッシュディレクトリはJDimを起動すると作成されます。
 
 ### コマンドライン オプション
 
