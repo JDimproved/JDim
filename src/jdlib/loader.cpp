@@ -1032,11 +1032,22 @@ struct addrinfo* Loader::get_addrinfo( const std::string& hostname, const int po
         MISC::ERRMSG( m_data.str_code );
         return nullptr;
     }
-    
-#ifdef _DEBUG    
-    std::cout << "host = " << hostname
-              << " ipv6 = " << m_data.use_ipv6
-              << ", ip =" << inet_ntoa( (  ( sockaddr_in* )( res->ai_addr ) )->sin_addr ) << std::endl;
+
+#ifdef _DEBUG
+    const auto family = res->ai_addr->sa_family;
+    const void* src;
+    if( family == AF_INET ) {
+        src = &reinterpret_cast<sockaddr_in*>( res->ai_addr )->sin_addr;
+    }
+    else {
+        src = &reinterpret_cast<sockaddr_in6*>( res->ai_addr )->sin6_addr;
+    }
+    char buf[ INET6_ADDRSTRLEN ]{};
+    if( inet_ntop( family, src, buf, sizeof(buf) ) ) {
+        std::cout << "host = " << hostname
+                  << ", ipv6 = " << m_data.use_ipv6
+                  << ", ip = " << buf << std::endl;
+    }
 #endif
 
     return res;
