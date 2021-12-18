@@ -703,15 +703,15 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 
     // 移転チェック
     BoardBase* board = nullptr;
-    const int stat = is_moved( root, path_board, name, &board, etc );
+    const int state = is_moved( root, path_board, name, &board, etc );
 
 #ifdef _SHOW_BOARD
     std::cout << "root = " << root << " path_board = " << path_board
-              << " basicauth = " << basicauth <<" type = " << type << " stat = " << stat << std::endl;
+              << " basicauth = " << basicauth <<" type = " << type << " state = " << state << std::endl;
 #endif
 
     // 新板登録
-    if( stat == BOARD_NEW ){
+    if( state == BOARD_NEW ){
 
         auto uniq = DBTREE::BoardFactory( type, root, path_board, name, basicauth );
         if( uniq ){
@@ -722,7 +722,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     }
 
     // 移転処理
-    else if( stat == BOARD_MOVED ){
+    else if( state == BOARD_MOVED ){
 
         // XML解析中に、
         // <board name="ニュース実況+" url="http://anchorage.2ch.net/liveplus/" />
