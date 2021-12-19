@@ -76,9 +76,6 @@ namespace HISTORY
         void create_viewhistory( const std::string& url );
         void delete_viewhistory( const std::string& url );
 
-        // 現在表示中のViewのURL( url_old) を新しいURL( url_new )に変更
-        bool replace_current_url_viewhistory( const std::string& url_old, const std::string& url_new ); 
-
         // 履歴全体で url_old を url_new に変更
         void replace_url_viewhistory( const std::string& url_old, const std::string& url_new ); 
 

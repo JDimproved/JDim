@@ -426,25 +426,6 @@ void History_Manager::delete_viewhistory( const std::string& url )
 
 
 //
-// 現在表示中のViewのURL( url_old) を新しいURL( url_new )に変更
-//
-bool History_Manager::replace_current_url_viewhistory( const std::string& url_old, const std::string& url_new )
-{
-#ifdef _DEBUG
-    std::cout << "History_Manager::replace_current_url_viewhistory\n"
-              << "old = " << url_old << std::endl
-              << "new = " << url_new << std::endl;
-#endif
-
-    ViewHistory* history = get_viewhistory( url_old );
-    if( !history ) return false;
-
-    history->replace_current_url( url_new );
-    return true;
-}
-
-
-//
 // 履歴全体で url_old を url_new に変更
 //
 void History_Manager::replace_url_viewhistory( const std::string& url_old, const std::string& url_new )
