@@ -129,7 +129,6 @@ namespace BOARD
         void write() override;
         void stop() override;
         void show_view() override;
-        void redraw_scrollbar() override;
         void relayout() override;
         void focus_view() override;
         void focus_out() override;
