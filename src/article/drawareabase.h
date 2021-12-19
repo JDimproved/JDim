@@ -279,9 +279,6 @@ namespace ARTICLE
         void set_separator_new( int num );
         void hide_separator_new();
 
-        // セパレータが画面に表示されているか
-        bool is_separator_on_screen() const;
-
         // 現在のポインタの下にあるレス番号取得
         int get_current_res_num() const;
 
