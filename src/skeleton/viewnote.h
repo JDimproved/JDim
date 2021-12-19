@@ -3,7 +3,6 @@
 // DragableNoteBookを構成するview表示用の Notebook
 //
 // TODO: 使われなくなったコンストラクタの引数を整理する
-// TODO: 使われなくなった SKELETON::View::redraw_scrollbar() を整理する
 
 #ifndef _VIEWNOTE_H
 #define _VIEWNOTE_H
