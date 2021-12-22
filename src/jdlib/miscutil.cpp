@@ -1195,7 +1195,7 @@ std::string MISC::url_encode( const char* str, const size_t n )
             ( c != '@' ) &&
             ( c != '_' )){
 
-            snprintf( str_tmp, tmplng , "%%%02x", c );
+            std::snprintf( str_tmp, tmplng, "%%%02X", c );
         }
         else {
             str_tmp[ 0 ] = c;
