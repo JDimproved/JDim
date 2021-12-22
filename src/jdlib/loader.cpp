@@ -1109,6 +1109,7 @@ std::string Loader::create_msg_send() const
     if( ! m_data.ex_field.empty() ) msg << m_data.ex_field;
 
     msg << "Connection: close\r\n";
+    msg << "Upgrade-Insecure-Requests: 1\r\n";
 
     // POST する文字列
     if( post_msg ){
@@ -1116,9 +1117,7 @@ std::string Loader::create_msg_send() const
         msg << "Content-Length: " << m_data.str_post.length() << "\r\n";
         msg << "\r\n";
         msg << m_data.str_post;
-        msg << "\r\n";
     }
-    msg << "Upgrade-Insecure-Requests: 1\r\n";
     msg << "\r\n";
     
     return msg.str();
