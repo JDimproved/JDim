@@ -381,7 +381,7 @@ void Post::receive_finish()
 #endif
 
     // クッキーのセット
-    const bool empty_cookies = DBTREE::board_cookie_for_request( m_url ).empty();
+    const bool empty_cookies = DBTREE::board_cookie_for_post( m_url ).empty();
     if( list_cookies.size() ) DBTREE::board_set_list_cookies( m_url, list_cookies );
 
     // 成功
