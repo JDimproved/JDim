@@ -133,9 +133,9 @@ yay -S jdim-git
 * **CPUに合わせた最適化**
 
   `./configure`を実行するときにCPUの種類(`-march=ARCH`や`-mcpu=CPU`)と最適化レベル(`-O`)を`CXXFLAGS`に設定します。
-  ###### 例 (Intel Core 2)
+  ###### 例 (第2世代Coreプロセッサー)
   ```sh
-  ./configure CXXFLAGS="-march=core2 -O2"
+  ./configure CXXFLAGS="-march=sandybridge -O2"
   ```
 
   マシンのCPUは下のコマンドで調べることができます。([GCCの最適化][gentoo-gcc] - Gentoo Wikiより)
