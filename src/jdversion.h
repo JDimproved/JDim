@@ -17,7 +17,7 @@
 #define MAJORVERSION 0
 #define MINORVERSION 7
 #define MICROVERSION 0
-#define JDDATE_FALLBACK    "20211225"
+#define JDDATE_FALLBACK    "20220103"
 #define JDTAG     "beta"
 
 //---------------------------------
@@ -25,7 +25,7 @@
 #define JDCOMMENT "JDim (JD improved) は gtkmm/GTK+ を用いた2chブラウザです。"
 #define JDCOPYRIGHT "(c) 2006-2015 JD project" "\n" \
                     "(c) 2017-2019 yama-natuki" "\n" \
-                    "(c) 2019-2021 JDimproved project"
+                    "(c) 2019-2022 JDimproved project"
 #define JDBBS CONFIG::get_url_jdhp()+"cgi-bin/bbs/support/"
 #define JD2CHLOG CONFIG::get_url_jdhp()+"old2ch/"
 #define JDHELP "https://jdimproved.github.io/JDim/"

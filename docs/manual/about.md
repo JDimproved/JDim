@@ -27,7 +27,7 @@ JDimはGPLv2の下で公開されている [JD][] からforkしたソフトウ�
 <a name="copyright"></a>
 ### 著作権
 © 2017-2019 [yama-natuki][]  
-© 2019-2021 [JDimproved project][repository]
+© 2019-2022 [JDimproved project][repository]
 
 パッチやファイルを取り込んだ場合、それらのコピーライトは「JDimproved project」に統一します。
 
