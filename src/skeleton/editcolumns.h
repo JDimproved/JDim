@@ -53,7 +53,6 @@ namespace SKELETON
 
         virtual void setup_row( Gtk::TreeModel::Row& row,
                                 const Glib::ustring url, const Glib::ustring name, const Glib::ustring data, const int type, const size_t dirid );
-        virtual void copy_row( const Gtk::TreeModel::Row& row_src, Gtk::TreeModel::Row& row_dest );
     };
 }
 
