@@ -184,16 +184,17 @@ void xsmp_session_init( XSMPDATA* xsmpdata )
     smc_callbacks.shutdown_cancelled.callback  = xsmp_session_shutdown_cancelled;
 
     gchar *id = nullptr;
-    gchar errstr[ 1024 ];
+    char errstr[1024] = "[XSMP] Failed connecting to the session manager. ";
+    const int header_msg_size = std::strlen( errstr );
     xsmpdata->smc_connect
     = SmcOpenConnection( nullptr, nullptr, SmProtoMajor, SmProtoMinor,
                          SmcSaveYourselfProcMask | SmcDieProcMask | SmcSaveCompleteProcMask | SmcShutdownCancelledProcMask,
                          &smc_callbacks,
                          nullptr,
                          &id,
-                         1024, errstr );
+                         1023 - header_msg_size, errstr + header_msg_size );
     if( ! xsmpdata->smc_connect ){
-        MISC::ERRMSG( "SmcOpenConnection failed." );
+        MISC::ERRMSG( errstr );
         return;
     }
 }
