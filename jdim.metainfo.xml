@@ -53,6 +53,12 @@
   </provides>
 
   <releases>
+    <release version="0.7.0" date="2022-01-15">
+      <description>
+        <p>Implement User-Agent configuration for board</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.7.0</url>
+    </release>
     <release version="0.6.0" date="2021-07-10">
       <description>
         <p>Add initial support for Client-Side Decoration</p>
