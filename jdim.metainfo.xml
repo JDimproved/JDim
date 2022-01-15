@@ -30,8 +30,8 @@
       <image>https://user-images.githubusercontent.com/15698961/72191765-39568200-33fb-11ea-9b2d-f8a997cf9ae8.png</image>
     </screenshot>
     <screenshot>
-      <caption>Extracting a keyword (highlight "フェリー")</caption>
-      <image>https://user-images.githubusercontent.com/15698961/124387371-5383ce80-dd19-11eb-97ee-6ad6861368bc.png</image>
+      <caption>Extracting a keyword (highlight "肥料")</caption>
+      <image>https://user-images.githubusercontent.com/15698961/148783880-8ca23f37-f111-4d80-ba3d-4e3178fe372b.png</image>
     </screenshot>
     <screenshot>
       <caption>Editing message to post</caption>
@@ -39,7 +39,7 @@
     </screenshot>
     <screenshot>
       <caption>Extracting posts which have much referenced</caption>
-      <image>https://user-images.githubusercontent.com/15698961/124387374-54b4fb80-dd19-11eb-8a8f-c272d627fdc0.png</image>
+      <image>https://user-images.githubusercontent.com/15698961/148783874-66aec37b-b492-4199-9749-f69022031783.png</image>
     </screenshot>
   </screenshots>
 
@@ -53,6 +53,12 @@
   </provides>
 
   <releases>
+    <release version="0.7.0" date="2022-01-15">
+      <description>
+        <p>Implement User-Agent configuration for board</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.7.0</url>
+    </release>
     <release version="0.6.0" date="2021-07-10">
       <description>
         <p>Add initial support for Client-Side Decoration</p>
