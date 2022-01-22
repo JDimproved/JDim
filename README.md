@@ -44,7 +44,7 @@ JDim は GPLv2 の下で公開されている [JD][jd-project] からforkした�
 LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
 
 ##### サポートの最新情報
-gccのバージョンが7未満のプラットフォームはサポートを終了する予定となりました。
+gccのバージョンが7未満のプラットフォームはサポートを終了しました。
 Ubuntu 18.04(2018年)より前にリリースされたディストリビューションを利用されている場合は更新をお願いいたします。
 
 メンテナンスの都合によりWindows(MinGW)版のサポートは[終了][#445]しました。
@@ -73,16 +73,16 @@ configure のかわりに meson を使ってビルドする方法は [Discussion
 dnf install gtkmm30-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
 ```
 
-#### Debian (stretch-backportsあるいはbuster以降)
+#### Debian (buster以降)
 ```sh
 sudo apt install libc6-dev make gcc g++ git
 sudo vi /etc/apt/sources.list
-# ↑エディタは何でも良い。deb-src行でstretch-backportsあるいはbuster以降を有効にする
+# ↑エディタは何でも良い。deb-src行でbuster以降を有効にする
 sudo apt update
 sudo apt build-dep jdim
 ```
 
-#### Ubuntu 18.04
+#### Ubuntu (18.04以降)
 開発環境が入っていない場合は、
 
 ```sh
@@ -151,7 +151,7 @@ yay -S jdim-git
 
   1. `configure.ac` の `AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])` の行を削除する。
   2. `autoreconf -i` で `configure` を作りconfigureチェックをやり直す。
-  3. `make CXXFLAGS+="-std=c++1z"` でビルドする。
+  3. `make CXXFLAGS+="-std=c++17"` でビルドする。
 
   もしこれで駄目な場合はgccのversionが古すぎるので、
   gccのバージョンアップをするか、ディストリをバージョンアップしてください。

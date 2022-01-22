@@ -18,18 +18,12 @@ jobs:
     strategy:
       matrix:
         sets:
-          - cc: gcc-6
-            cxx: g++-6
-            package: g++-6
           - cc: gcc-7
             cxx: g++-7
             package: g++-7
           - cc: gcc-8
             cxx: g++-8
             package: g++-8
-          - cc: clang-5.0
-            cxx: clang++-5.0
-            package: clang-5.0
           - cc: clang-6.0
             cxx: clang++-6.0
             package: clang-6.0
@@ -85,6 +79,12 @@ jobs:
           - cc: clang-10
             cxx: clang++-10
             package: clang-10
+          - cc: clang-11
+            cxx: clang++-11
+            package: clang-11
+          - cc: clang-12
+            cxx: clang++-12
+            package: clang-12
     steps:
       - uses: actions/checkout@v2
       - name: dependencies installation
