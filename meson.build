@@ -20,7 +20,7 @@
 #   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
 #   ```
 #
-# Debian Stretch, Ubuntu 18.04
+# Ubuntu 18.04
 #   ディストロのmesonパッケージはバージョンが古いためpypiからインストールする
 #   $HOME/.local/bin にパスを通す
 #   ```
@@ -47,7 +47,7 @@ project('jdim', 'cpp',
         version : '0.7.0',
         license : 'GPL2',
         meson_version : '>= 0.49.0',
-        default_options : ['warning_level=3', 'cpp_std=c++1z'])
+        default_options : ['warning_level=3', 'cpp_std=c++17'])
 
 # 追加コンパイルオプション
 add_project_arguments('-DHAVE_CONFIG_H=1', language : 'cpp')
@@ -137,10 +137,10 @@ endif
 # TLS
 tls_opt = get_option('tls')
 if tls_opt == 'gnutls'
-  tls_dep = dependency('gnutls', version : '>= 3.5.8')
+  tls_dep = dependency('gnutls', version : '>= 3.5.18')
   conf.set('USE_GNUTLS', 1)
 elif tls_opt == 'openssl'
-  tls_dep = dependency('openssl', version : '>= 0.9.0')
+  tls_dep = dependency('openssl', version : '>= 1.1.0')
   conf.set('USE_OPENSSL', 1)
   configure_args += '\'--with-tls=openssl\''
 endif
