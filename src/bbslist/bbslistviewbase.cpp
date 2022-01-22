@@ -1872,7 +1872,7 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
         case TYPE_THREAD_OLD:
             toggle_articleicon( url ); // break;しない
-            // fallthrough
+            [[fallthrough]];
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
             CORE::core_set_command( "open_article", url, str_tab, str_mode );
