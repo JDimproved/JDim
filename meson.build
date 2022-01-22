@@ -40,7 +40,7 @@
 # Tips
 #   - JDimのビルドオプションは `meson configure` を実行してProject optionsの段落を確認する
 #     または meson_options.txt を見る
-#   - ビルドオプションは `meson builddir -Dregex=glib` のように指定する
+#   - ビルドオプションは `meson builddir -Dpangolayout=enabled` のように指定する
 #   - 生成された実行ファイルの場所は builddir/src/jdim
 
 project('jdim', 'cpp',
@@ -120,18 +120,10 @@ elif sessionlib_opt == 'no'
   configure_args += '\'--with-sessionlib=no\''
 endif
 
-# 正規表現ライブラリ
+# 正規表現ライブラリのオプションは廃止された
 regex_opt = get_option('regex')
-if regex_opt == 'oniguruma'
-  regex_dep = dependency('oniguruma')
-  if not cpp_compiler.has_header('onigposix.h')
-    error('onigposix.h not found')
-  endif
-  conf.set('HAVE_ONIGPOSIX_H', 1)
-  configure_args += '\'--with-regex=oniguruma\''
-  warning('-Dregex=oniguruma is deprecated. See https://github.com/JDimproved/JDim/issues/697')
-elif regex_opt == 'glib'
-  regex_dep = dependency('glib-2.0', version : '>= 2.14.0')
+if regex_opt != ''
+  error('regex library options have been removed. see https://github.com/JDimproved/JDim/issues/697')
 endif
 
 # TLS
@@ -259,7 +251,6 @@ message('migemo = @0@'.format(migemo_dep.found()))
 message('migemodict = @0@'.format(migemodict))
 message('native = @0@'.format(native))
 message('pangolayout = @0@'.format(pangolayout))
-message('regex = @0@'.format(regex_opt))
 message('sessionlib = @0@'.format(sessionlib_opt))
 message('tls = @0@'.format(tls_opt))
 message('*********************')

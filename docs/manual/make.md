@@ -50,7 +50,6 @@ layout: default
 - meson 0.49.0 以上
 - alsa-lib (`--with-alsa`)
 - openssl 1.1.0 以上 (`--with-tls=openssl`)
-- oniguruma (`--with-regex=oniguruma`, 廃止予定)
 - migemo (`--with-migemo`)
 - googletest ([test/RADME.md][testreadme]を参照)
 
@@ -85,7 +84,7 @@ WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
 3. 起動は `./builddir/src/jdim`
 
 #### mesonのビルドオプション
-- `meson builddir -Dregex=glib` のように指定する。
+- `meson builddir -Dpangolayout=enabled` のように指定する。
 - オプションの一覧は `meson configure` を実行してProject optionsの段落を参照する。
 
 
@@ -128,24 +127,6 @@ WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
     gprof によるプロファイリングを行う。
     コンパイルオプションに <code>-pg</code> が付き、JDimを実行すると <code>gmon.out</code> が出来るので
     <code>gprof  ./jdim  gmon.out</code> で解析できる。CPUの最適化は効かなくなるので注意する。
-  </dd>
-
-  <dt>--with-regex=oniguruma|glib</dt>
-  <dd>
-    使用する正規表現ライブラリを設定する。
-    デフォルトでは Glib Regex(GRegex) を使用する。<small>(v0.4.0+から変更)</small><br>
-    <strong>非推奨</strong>: 正規表現ライブラリを選択するオプションは将来廃止される。
-    <a href="https://github.com/JDimproved/JDim/issues/697">#697</a> を参照すること。
-  </dd>
-  <dt>--with-regex=oniguruma</dt>
-  <dd>
-    <strong>非推奨</strong>: GRegex のかわりに鬼車を使用する。
-    鬼車はBSDライセンスなのでJDimをバイナリ配布する場合には注意すること(ライセンスはGPLになる)。
-  </dd>
-  <dt>--with-regex=glib</dt>
-  <dd>
-    Perl互換の正規表現なので、従来の POSIX 拡張の正規表現から設定変更が必要になる場合がある。
-    <small>(v0.3.0+から追加)</small>
   </dd>
 
   <dt>--disable-compat-cache-dir</dt>

@@ -83,7 +83,6 @@ jdim_deps = [
   gtkmm_dep,
   ice_dep,
   migemo_dep,
-  regex_dep,
   sm_dep,
   socket_dep,
   threads_dep,

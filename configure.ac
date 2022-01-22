@@ -130,28 +130,11 @@ AS_IF(
 
 
 dnl
-dnl 正規表現ライブラリ
+dnl 正規表現ライブラリのオプションは廃止された
 dnl
-AC_MSG_CHECKING(for --with-regex)
 AC_ARG_WITH(regex,
-AS_HELP_STRING([--with-regex=oniguruma|glib],[use regular expression library @<:@default=glib@:>@]),
-[], [with_regex=glib])
-AC_MSG_RESULT($with_regex)
-
-AS_IF(
-  [test "x$with_regex" = xoniguruma],
-  [PKG_CHECK_MODULES(ONIG, [oniguruma])
-   AC_SUBST(ONIG_CFLAGS)
-   AC_SUBST(ONIG_LIBS)
-   AC_CHECK_HEADERS([onigposix.h], , [AC_MSG_ERROR([onigposix.h not found])])
-   AC_CHECK_LIB([onig], [regexec], , [AC_MSG_ERROR([libonig.a not found])])
-   AC_MSG_WARN([--with-regex=onigruma is deprecated. See https://github.com/JDimproved/JDim/issues/697])],
-
-  [test "x$with_regex" = xglib],
-  [PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.14.0])],
-
-  [AC_MSG_ERROR([regular expression library not found])]
-)
+AS_HELP_STRING([--with-regex], [NO LONGER AVAILABLE]),
+[AC_MSG_ERROR([regex library options have been removed. see https://github.com/JDimproved/JDim/issues/697])])
 
 
 dnl
