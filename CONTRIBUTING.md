@@ -50,12 +50,25 @@ Pull requestは`master`ブランチに対してお願いいたします。
 
 #### :pencil: C++ソースコードを修正するときの注意
 
-* C++14の機能を使う。迷ったときは[C++ Core Guidelines][isocpp]を参考にする。
-* C++17の機能はgcc-6が[サポート][support] [\[1\]][lang] [\[2\]][lib]していれば使ってもよい。(メンテナーと相談)
+* C++17の機能を使う。迷ったときは[C++ Core Guidelines][isocpp]を参考にする。
+* CIのビルドで失敗する機能は使わなくてもビルドできるようにする。(下記参照)
 * コーディングスタイルは周囲のコードになるべく合わせる。
 * ソースコードを修正したときはビルド可能なことチェックする。
 * 修正前よりコンパイル時警告を増やさないように気をつける。
 
+C++17で追加された標準ライブラリのうちg++ 7またはclang++ 6.0が[サポート][support]していないものに注意
+
+| JDimの動作環境に合わない標準ライブラリ | ヘッダー | gcc | clang |
+| --- | --- | ---:| ---:|
+| [Standardization of Parallelism TS][cpp17exe] | `<execution>` | 9 | n/a |
+| [Hardware interference size][cpp17his]  | | 12 | n/a |
+| [File system library][cpp17fs] | `<filesystem>` | 8 | 7 |
+| [Polymorphic memory resources][cpp17pmr] | `<memory_resources>` | 9 | n/a |
+| [Mathematical special functions][cpp17math] | | 7 | n/a |
+| Splicing [Maps][cpp17maps] and [Sets][cpp17sets] | | 7 | 8 |
+| [Elementary string conversions][cpp17conv] (integer support) | `<charconv>` | 8 | 7 |
+| [Elementary string conversions][cpp17conv] (floating-point support) | `<charconv>` | 11 | n/a |
+| `std::shared_ptr` and `std::weak_ptr` with array support | | 7 | 11 |
 
 [readme-md]: https://github.com/JDimproved/JDim/tree/master/README.md
 [issues]: https://github.com/JDimproved/JDim/issues
@@ -69,6 +82,12 @@ Pull requestは`master`ブランチに対してお願いいたします。
 [docs-readme]: https://github.com/JDimproved/JDim/tree/master/docs/README.md
 [test-readme]: https://github.com/JDimproved/JDim/tree/master/test/README.md
 [isocpp]: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
-[support]: https://en.cppreference.com/w/Template:cpp/compiler_support/17
-[lang]: https://gcc.gnu.org/projects/cxx-status.html#cxx17
-[lib]: https://gcc.gnu.org/onlinedocs/libstdc++/manual/status.html#status.iso.2017
+[support]: https://en.cppreference.com/w/cpp/compiler_support/17
+[cpp17exe]: https://en.cppreference.com/w/cpp/header/execution
+[cpp17his]: https://en.cppreference.com/w/cpp/thread/hardware_destructive_interference_size
+[cpp17fs]: https://en.cppreference.com/w/cpp/filesystem
+[cpp17pmr]: https://en.cppreference.com/w/cpp/header/memory_resource
+[cpp17math]: https://en.cppreference.com/w/cpp/numeric/special_functions
+[cpp17maps]: https://en.cppreference.com/w/cpp/container/map/merge
+[cpp17sets]: https://en.cppreference.com/w/cpp/container/set/merge
+[cpp17conv]: https://en.cppreference.com/w/cpp/header/charconv
