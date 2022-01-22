@@ -102,7 +102,7 @@ gtest_jdim_LDADD = \
 	$(top_builddir)/src/winmain.o \
 \
 	$(GTEST_MAIN_LIB) \
-	@LIBS@ @GTKMM_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@ @X11_LIBS@ @GTEST_LIBS@
+	@LIBS@ @GTKMM_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @X11_LIBS@ @GTEST_LIBS@
 
 
 # テストコードのファイルを追加したらここにリストします

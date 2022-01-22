@@ -146,12 +146,12 @@ jobs:
     strategy:
       matrix:
         deps:
-          - config_args: --with-tls=gnutls --with-regex=oniguruma --with-sessionlib=xsmp --with-migemo --with-alsa --with-pangolayout
-            packages: libgnutls28-dev libonig-dev libmigemo-dev libasound2-dev
-          - config_args: --with-tls=openssl --with-regex=glib --with-sessionlib=no --with-migemo --disable-compat-cache-dir
+          - config_args: --with-tls=gnutls --with-sessionlib=xsmp --with-migemo --with-alsa --with-pangolayout
+            packages: libgnutls28-dev libmigemo-dev libasound2-dev
+          - config_args: --with-tls=openssl --with-sessionlib=no --with-migemo --disable-compat-cache-dir
             packages: libssl-dev libmigemo-dev
-          - config_args: --with-tls=openssl --with-regex=oniguruma --with-sessionlib=xsmp --with-alsa --with-pangolayout
-            packages: libssl-dev libonig-dev libasound2-dev
+          - config_args: --with-tls=openssl --with-sessionlib=xsmp --with-alsa --with-pangolayout
+            packages: libssl-dev libasound2-dev
     steps:
       - uses: actions/checkout@v2
       - name: dependencies installation (${{ matrix.deps.packages }})
@@ -178,12 +178,12 @@ jobs:
     strategy:
       matrix:
         deps:
-          - config_args: -Dtls=gnutls -Dregex=oniguruma -Dsessionlib=xsmp -Dmigemo=enabled -Dalsa=enabled -Dpangolayout=enabled
-            packages: libgnutls28-dev libonig-dev libmigemo-dev libasound2-dev
-          - config_args: -Dtls=openssl -Dregex=glib -Dsessionlib=no -Dmigemo=enabled -Dcompat_cache_dir=disabled
+          - config_args: -Dtls=gnutls -Dsessionlib=xsmp -Dmigemo=enabled -Dalsa=enabled -Dpangolayout=enabled
+            packages: libgnutls28-dev libmigemo-dev libasound2-dev
+          - config_args: -Dtls=openssl -Dsessionlib=no -Dmigemo=enabled -Dcompat_cache_dir=disabled
             packages: libssl-dev libmigemo-dev
-          - config_args: -Dtls=openssl -Dregex=oniguruma -Dsessionlib=xsmp -Dalsa=enabled -Dpangolayout=enabled
-            packages: libssl-dev libonig-dev libasound2-dev
+          - config_args: -Dtls=openssl -Dsessionlib=xsmp -Dalsa=enabled -Dpangolayout=enabled
+            packages: libssl-dev libasound2-dev
     steps:
       - uses: actions/checkout@v2
       - name: dependencies installation (${{ matrix.deps.packages }})

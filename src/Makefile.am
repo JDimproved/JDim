@@ -18,7 +18,7 @@ jdim_LDADD = \
 	./sound/libsound.a \
 	./xml/libxml.a \
 	./control/libcontrol.a \
-	@LIBS@ @GTKMM_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @ONIG_LIBS@ @X11_LIBS@
+	@LIBS@ @GTKMM_LIBS@ @GNUTLS_LIBS@ @OPENSSL_LIBS@ @LIBSM_LIBS@ @ALSA_LIBS@ @X11_LIBS@
 
 
 jdim_SOURCES = \

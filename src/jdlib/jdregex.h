@@ -10,15 +10,7 @@
 #include "config.h"
 #endif
 
-#if defined(HAVE_ONIGPOSIX_H)
-#include <onigposix.h>
-#else
 #include <glib.h>
-#endif
-
-#if defined(HAVE_ONIGPOSIX_H)
-#define POSIX_STYLE_REGEX_API 1
-#endif
 
 
 namespace JDLIB
@@ -29,21 +21,11 @@ namespace JDLIB
     {
         friend class Regex;
 
-#ifdef POSIX_STYLE_REGEX_API
-        // onigurumaではregexec()の引数regex_t*がconst修飾されていない
-        // そのためRegex::match()のコンパイルエラーを回避するためmutable修飾が必要
-        mutable regex_t m_regex;
-#else
         GRegex* m_regex{};
-#endif
         bool m_compiled{};
         bool m_newline{};
         bool m_wchar{};
-#ifdef POSIX_STYLE_REGEX_API
-        int m_error{};
-#else
         GError *m_error{};
-#endif
 
     public:
         RegexPattern() noexcept = default;
