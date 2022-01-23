@@ -1436,7 +1436,7 @@ void Admin::redraw_views( const std::string& url )
     std::list< SKELETON::View* > list_view = get_list_view( url );
 
     for( SKELETON::View* view : list_view ) {
-        if( view == current_view ) view->redraw_view();
+        if( view && view == current_view ) view->redraw_view();
     }
 }
 
