@@ -33,8 +33,8 @@ ReplaceStrDiag::ReplaceStrDiag( Gtk::Window* parent, ReplaceStrCondition conditi
 {
     resize( 600, 1 );
 
-    m_button_copy.signal_clicked().connect( [this] { slot_copy(); } );
-    m_check_regex.signal_clicked().connect( [this] { slot_sens(); } );
+    m_button_copy.signal_clicked().connect( sigc::mem_fun( *this, &ReplaceStrDiag::slot_copy ) );
+    m_check_regex.signal_clicked().connect( sigc::mem_fun( *this, &ReplaceStrDiag::slot_sens ) );
 
     m_check_active.set_active( condition.active );
     m_check_icase.set_active( condition.icase );
@@ -135,12 +135,12 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
     m_button_down.set_image_from_icon_name( "go-down" );
     m_button_bottom.set_image_from_icon_name( "go-bottom" );
 
-    m_button_top.signal_clicked().connect( [this] { slot_top(); } );
-    m_button_up.signal_clicked().connect( [this] { slot_up(); } );
-    m_button_down.signal_clicked().connect( [this] { slot_down(); } );
-    m_button_bottom.signal_clicked().connect( [this] { slot_bottom(); } );
-    m_button_delete.signal_clicked().connect( [this] { slot_delete(); } );
-    m_button_add.signal_clicked().connect( [this] { slot_add(); } );
+    m_button_top.signal_clicked().connect( sigc::mem_fun( *this, &ReplaceStrPref::slot_top ) );
+    m_button_up.signal_clicked().connect( sigc::mem_fun( *this, &ReplaceStrPref::slot_up ) );
+    m_button_down.signal_clicked().connect( sigc::mem_fun( *this, &ReplaceStrPref::slot_down ) );
+    m_button_bottom.signal_clicked().connect( sigc::mem_fun( *this, &ReplaceStrPref::slot_bottom ) );
+    m_button_delete.signal_clicked().connect( sigc::mem_fun( *this, &ReplaceStrPref::slot_delete ) );
+    m_button_add.signal_clicked().connect( sigc::mem_fun( *this, &ReplaceStrPref::slot_add ) );
 
     std::generate( m_store.begin(), m_store.end(), [this] { return Gtk::ListStore::create( m_columns ); } );
     m_current_store = m_store.back();
@@ -191,7 +191,7 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
     // スレタイトルは未実装のため省略する
     std::for_each( kReplStrTargetLabels.begin() + kReplStrTargetReserved_0, kReplStrTargetLabels.end(),
                    [this]( const char* target ) { m_menu_target.append( target ); } );
-    m_menu_target.signal_changed().connect( [this] { slot_target_changed(); } );
+    m_menu_target.signal_changed().connect( sigc::mem_fun( *this, &ReplaceStrPref::slot_target_changed ) );
     m_menu_target.set_active_text( kReplStrTargetLabels.back() );
     m_label_target.set_mnemonic_widget( m_menu_target );
 

@@ -138,7 +138,7 @@ void SelectListDialog::slot_show_tree()
 
         m_selectview->set_parent_win( this );
         m_selectview->copy_treestore( m_treestore );
-        m_selectview->sig_close_dialog().connect( [this] { hide(); } );
+        m_selectview->sig_close_dialog().connect( sigc::mem_fun( *this, &SelectListDialog::hide ) );
 
         get_content_area()->pack_start( *m_selectview );
         m_selectview->set_size_request( -1, SELECTDIAG_TREEHEIGHT );
