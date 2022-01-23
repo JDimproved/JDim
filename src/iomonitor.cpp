@@ -118,7 +118,7 @@ void IOMonitor::init()
         m_main_process = true;
 
         // Glib::IOChannel
-        Glib::signal_io().connect( sigc::mem_fun( this, &IOMonitor::slot_ioin ), m_fifo_fd, Glib::IO_IN );
+        Glib::signal_io().connect( sigc::mem_fun( *this, &IOMonitor::slot_ioin ), m_fifo_fd, Glib::IO_IN );
         m_iochannel = Glib::IOChannel::create_from_fd( m_fifo_fd );
     }
 }
