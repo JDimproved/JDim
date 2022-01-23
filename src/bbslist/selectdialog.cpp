@@ -83,7 +83,7 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
 
     get_content_area()->pack_start( m_label_name, Gtk::PACK_SHRINK );
     get_content_area()->pack_start( m_hbox_dirs, Gtk::PACK_SHRINK );
-    m_bt_show_tree.signal_clicked().connect( sigc::mem_fun( this, &SelectListDialog::slot_show_tree ) );
+    m_bt_show_tree.signal_clicked().connect( sigc::mem_fun( *this, &SelectListDialog::slot_show_tree ) );
 
     set_title( "お気に入り追加先選択" );
     resize( SELECTDIAG_WIDTH, 1 );

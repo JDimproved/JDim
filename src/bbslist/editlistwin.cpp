@@ -33,15 +33,15 @@ EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeS
     m_toolbar->show_toolbar();
 
     // Adminクラスが無いのでツールバーのボタン等のシグナルを直接つなぐ
-    m_toolbar->get_button_close()->signal_clicked().connect( sigc::mem_fun( this, &EditListWin::slot_close ) );
+    m_toolbar->get_button_close()->signal_clicked().connect( sigc::mem_fun( *this, &EditListWin::slot_close ) );
 
     m_toolbar->get_entry_search()->signal_changed().connect( sigc::mem_fun( *this, &EditListWin::slot_changed_search ) );
     m_toolbar->get_entry_search()->signal_activate().connect( sigc::mem_fun( *this, &EditListWin::slot_active_search ) );
     m_toolbar->get_entry_search()->signal_operate().connect( sigc::mem_fun( *this, &EditListWin::slot_operate_search ) );
-    m_toolbar->get_button_up_search()->signal_clicked().connect( sigc::mem_fun( this, &EditListWin::slot_up_search ) );
-    m_toolbar->get_button_down_search()->signal_clicked().connect( sigc::mem_fun( this, &EditListWin::slot_down_search ) );
-    m_toolbar->get_button_undo()->signal_clicked().connect( sigc::mem_fun( this, &EditListWin::slot_undo ) );
-    m_toolbar->get_button_redo()->signal_clicked().connect( sigc::mem_fun( this, &EditListWin::slot_redo ) );
+    m_toolbar->get_button_up_search()->signal_clicked().connect( sigc::mem_fun( *this, &EditListWin::slot_up_search ) );
+    m_toolbar->get_button_down_search()->signal_clicked().connect( sigc::mem_fun( *this, &EditListWin::slot_down_search ) );
+    m_toolbar->get_button_undo()->signal_clicked().connect( sigc::mem_fun( *this, &EditListWin::slot_undo ) );
+    m_toolbar->get_button_redo()->signal_clicked().connect( sigc::mem_fun( *this, &EditListWin::slot_redo ) );
 
     // ラベル
     m_vbox.pack_start( m_label, Gtk::PACK_SHRINK );
