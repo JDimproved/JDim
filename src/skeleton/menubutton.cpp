@@ -54,7 +54,7 @@ MenuButton::MenuButton( const bool show_arrow, Gtk::Widget* label, Gtk::PackOpti
         Glib::RefPtr< Gtk::Action > action = Gtk::Action::create( "menu" + std::to_string( i ), "dummy" );
         action->set_accel_group( agroup );
         Gtk::MenuItem* item = Gtk::manage( action->create_menu_item() );
-        actiongroup->add( action, [this, i] { slot_menu_selected( i ); } );
+        actiongroup->add( action, sigc::bind( sigc::mem_fun( *this, &MenuButton::slot_menu_selected ), i ) );
         m_menuitems.push_back( item );
     }
 
