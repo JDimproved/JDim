@@ -232,6 +232,20 @@ bool Regex::match( const RegexPattern& creg, const std::string& target,
 }
 
 
+bool Regex::match( const RegexPattern& creg, const std::string& target,
+                   const std::size_t offset, const bool notbol, const bool noteol,
+                   const std::vector<std::string>& named_captures )
+{
+    m_named_numbers.clear();
+    for( const std::string& name : named_captures ) {
+        const int num = g_regex_get_string_number( creg.m_regex, name.c_str() );
+        if( num != -1 ) m_named_numbers.emplace( name, num );
+    }
+
+    return match( creg, target, offset, notbol, noteol );
+}
+
+
 //
 // マッチした文字列と \0〜\9 を置換する
 //
@@ -282,4 +296,20 @@ std::string Regex::str( std::size_t num ) const
     if( m_results.size() > num ) return m_results[num];
 
     return {};
+}
+
+
+/**
+ * @brief パターン中にグループ名が有れば名前付きキャプチャ、無ければグループ番号でマッチした部分を取得する。
+ *
+ * どちらにもマッチしなかったときは空文字列を返す
+ * @param[in] name グループ名
+ * @param[in] fallback_num パターン中にグループ名が無かったときに取得するグループ番号
+ */
+std::string Regex::named_or_num( const std::string& name, std::size_t fallback_num ) const
+{
+    const auto it = m_named_numbers.find( name );
+    if( it != m_named_numbers.end() ) return m_results[it->second];
+
+    return str( fallback_num );
 }

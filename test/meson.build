@@ -2,6 +2,7 @@
 sources = [
   'gtest_jdlib_cookiemanager.cpp',
   'gtest_jdlib_jdiconv.cpp',
+  'gtest_jdlib_jdregex.cpp',
   'gtest_jdlib_misctime.cpp',
   'gtest_jdlib_misctrip.cpp',
   'gtest_jdlib_miscutil.cpp',
