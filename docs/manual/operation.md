@@ -671,6 +671,28 @@ layout: default
 
 検索ビューの操作方法はスレビューの操作方法と同じである。
 
+#### スレタイ検索の設定
+about:configの設定 `スレタイ検索時にアドレスとスレタイを取得する正規表現`
+はグループ番号のかわりに名前付きキャプチャを利用することができる。<small>( v0.7.0+から暫定的にサポート )</small>
+
+正規表現パターン中にグループ名が有れば名前付きキャプチャ、無ければグループ番号で対象を取得する。
+
+取得対象 | グループ番号 | グループ名 | 備考
+--- | --- | --- | ---
+スレURL | 1 | `url` | 必須
+スレタイトル | 2 | `subject` | 必須
+レス数 | 3 | `number` | オプション
+
+グループ番号は順序固定のため取得対象が番号順に並んでいないときは名前付きキャプチャを使うと分かりやすい。
+(下の例はスレタイ、レス数、URLの順に並んでいるデータにマッチする)
+
+設定例 | 正規表現パターン
+--- | ---
+グループ番号 | `^(?=[^\t\n]+\t[^\t\n]+\t([^\t\n]+))([^\t\n]+)\t([^\t\n]+)`
+名前付きキャプチャ | `^(?<subject>[^\t\n]+)\t(?<number>[^\t\n]+)\t(?<url>[^\t\n]+)`
+
+正規表現の構文は[Glib公式][gregex]など外部サイトを参照する。
+
 
 <a name="checkupdate"></a>
 ### 更新チェック
@@ -739,3 +761,4 @@ layout: default
 [thread_old]: ../assets/thread_old.png
 [thread_update]: ../assets/thread_update.png
 [thread_updated]: ../assets/thread_updated.png
+[gregex]: https://developer-old.gnome.org/glib/stable/glib-regex-syntax.html
