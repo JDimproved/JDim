@@ -895,11 +895,11 @@ NODE* NodeTreeBase::create_node_link( const char* text, const int n, const char*
 //
 // アンカーノード作成
 //
-NODE* NodeTreeBase::create_node_anc( const char* text, const int n, const char* link, const int n_link,
+NODE* NodeTreeBase::create_node_anc( std::string_view text, const char* link, const int n_link,
                                      const int color_text,  const bool bold,
                                      const ANCINFO* ancinfo, const int lng_ancinfo, const char fontid )
 {
-    NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold, fontid );
+    NODE* tmpnode = create_node_link( text.data(), text.size(), link, n_link, color_text, bold, fontid );
     if( tmpnode ){
 
         tmpnode->linkinfo->ancinfo = m_heap.heap_alloc<ANCINFO>( lng_ancinfo + 1 );
@@ -2296,7 +2296,8 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 pos += n_in; 
             }
 
-            create_node_anc( tmpstr, lng_str, tmplink, lng_link, COLOR_CHAR_LINK, bold, ancinfo, lng_anc, fontid );
+            std::string_view tmp_view( tmpstr, lng_str );
+            create_node_anc( tmp_view, tmplink, lng_link, COLOR_CHAR_LINK, bold, ancinfo, lng_anc, fontid );
 
             // forのところで++されるので--しておく
             --pos;
