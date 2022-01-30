@@ -847,9 +847,9 @@ NODE* NodeTreeBase::create_node_space( const int type )
 //
 // 連続半角スペース
 //
-NODE* NodeTreeBase::create_node_multispace( const char* text, const int n, const char fontid )
+NODE* NodeTreeBase::create_node_multispace( std::string_view text, const char fontid )
 {
-    NODE* tmpnode = create_node_ntext( text, n, COLOR_CHAR, false, fontid );
+    NODE* tmpnode = create_node_ntext( text.data(), text.size(), COLOR_CHAR, false, fontid );
     tmpnode->type = NODE_MULTISP;
     return tmpnode;
 }
@@ -2031,7 +2031,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             while( *pos == ' ' ) {
                 m_parsed_text.push_back( *(pos++) );
             }
-            create_node_multispace( m_parsed_text.c_str(), m_parsed_text.size(), fontid );
+            create_node_multispace( m_parsed_text, fontid );
             m_parsed_text.clear();
         }
     }
@@ -2247,7 +2247,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                         while( *pos == ' ' ) {
                             m_parsed_text.push_back( *(pos++) );
                         }
-                        create_node_multispace( m_parsed_text.c_str(), m_parsed_text.size(), fontid );
+                        create_node_multispace( m_parsed_text, fontid );
                         m_parsed_text.clear();
                     }
                 }
@@ -2454,7 +2454,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             while( *pos == ' ' ) {
                 m_parsed_text.push_back( *(pos++) );
             }
-            create_node_multispace( m_parsed_text.c_str(), m_parsed_text.size(), fontid );
+            create_node_multispace( m_parsed_text, fontid );
             m_parsed_text.clear();
 
             // forのところで++されるので--しておく

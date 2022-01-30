@@ -16,8 +16,9 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
 
-#include <map>
 #include <cstring>
+#include <map>
+#include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 
@@ -301,7 +302,7 @@ namespace DBTREE
         NODE* create_node_br();
         NODE* create_node_hr();
         NODE* create_node_space( const int type );
-        NODE* create_node_multispace( const char* text, const int n, const char fontid = FONT_MAIN );
+        NODE* create_node_multispace( std::string_view text, const char fontid = FONT_MAIN );
         NODE* create_node_htab();
         NODE* create_node_link( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold, const char fontid = FONT_MAIN );
         NODE* create_node_anc( const char* text, const int n, const char* link, const int n_link,
