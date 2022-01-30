@@ -951,9 +951,11 @@ NODE* NodeTreeBase::create_node_img( const char* text, const int n, const char* 
 //
 // サムネイル画像ノード ( youtubeなどのサムネイル表示用 )
 //
-NODE* NodeTreeBase::create_node_thumbnail( const char* text, const int n, const char* link, const int n_link, const char* thumb, const int n_thumb, const int color_text, const bool bold, const char fontid )
+NODE* NodeTreeBase::create_node_thumbnail( std::string_view text, const char* link, const int n_link,
+                                           const char* thumb, const int n_thumb, const int color_text, const bool bold,
+                                           const char fontid )
 {
-    NODE* tmpnode = create_node_link( text, n, link, n_link, color_text, bold, fontid );
+    NODE* tmpnode = create_node_link( text.data(), text.size(), link, n_link, color_text, bold, fontid );
 
     if( tmpnode ){
         // サムネイル画像のURLをセット
@@ -2368,12 +2370,14 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             }
 
             else {
+                std::string_view tmp_view( tmpstr, lng_str );
+
                 // Urlreplaceによる画像コントロールを取得する
                 int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( std::string( tmpreplace, lng_replace ) );
 
                 // youtubeなどのサムネイル画像リンク
                 if( imgctrl & CORE::IMGCTRL_THUMBNAIL ){
-                    create_node_thumbnail( tmpstr, lng_str, tmplink , lng_link, tmpreplace, lng_replace, COLOR_CHAR_LINK, bold, fontid );
+                    create_node_thumbnail( tmp_view, tmplink , lng_link, tmpreplace, lng_replace, COLOR_CHAR_LINK, bold, fontid );
                 }
 
                 // 画像リンク
