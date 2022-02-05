@@ -1402,14 +1402,19 @@ bool BoardViewBase::operate_view( const int control )
             // お気に入りに追加
         case CONTROL::AppendFavorite:
         {
-            SKELETON::MsgDiag mdiag( get_parent_win(), "板と選択中のスレのどちらを登録しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "板と選択中のスレのどちらを登録しますか？", false,
+                                     Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_CANCEL );
 
-            mdiag.add_button( "板を登録", Gtk::RESPONSE_NO );
-            mdiag.add_button( "スレを登録", Gtk::RESPONSE_YES );
-            mdiag.set_default_response( Gtk::RESPONSE_YES );
-            int ret = mdiag.run();
-            if( ret == Gtk::RESPONSE_YES ) slot_favorite_thread();
-            else slot_favorite_board();
+            mdiag.add_button( "板を登録(_B)", 0xB0A );
+            mdiag.add_button( "スレを登録(_T)", 0xEAD );
+            mdiag.set_default_response( 0xEAD );
+            mdiag.set_title( "お気に入りに追加" );
+            if( const int ret = mdiag.run(); ret == 0xB0A ) {
+                slot_favorite_board();
+            }
+            else if( ret == 0xEAD ) {
+                slot_favorite_thread();
+            }
         }
         break;
 
