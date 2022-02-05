@@ -149,7 +149,12 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::STOPLOADING ] = icon_theme->load_icon( "process-stop", size_menu );
     m_list_icons[ ICON::WRITE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_write ), icon_write );
     m_list_icons[ ICON::RELOAD ] = icon_theme->load_icon( "view-refresh", size_menu );
-    m_list_icons[ ICON::APPENDFAVORITE ] = icon_theme->load_icon( "edit-copy", size_menu );
+    try {
+        m_list_icons[ ICON::APPENDFAVORITE ] = icon_theme->load_icon( "emblem-favorite", size_menu );
+    }
+    catch( Gtk::IconThemeError& ) {
+        m_list_icons[ ICON::APPENDFAVORITE ] = icon_theme->load_icon( "edit-copy", size_menu );
+    }
     m_list_icons[ ICON::DELETE ] = icon_theme->load_icon( "edit-delete", size_menu );
     m_list_icons[ ICON::QUIT ] = icon_theme->load_icon( "window-close", size_menu );
     m_list_icons[ ICON::BACK ] = icon_theme->load_icon( "go-previous", size_menu );
