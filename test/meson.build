@@ -6,6 +6,7 @@ sources = [
   'gtest_jdlib_misctime.cpp',
   'gtest_jdlib_misctrip.cpp',
   'gtest_jdlib_miscutil.cpp',
+  'gtest_jdlib_span.cpp',
   'gtest_xml_dom.cpp',
 ]
 

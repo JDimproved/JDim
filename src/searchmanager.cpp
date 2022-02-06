@@ -257,7 +257,7 @@ void Search_Manager::search_fin_title()
         const bool usemigemo = false;
         const bool wchar = false;
         const JDLIB::RegexPattern regexptn( pattern, icase, newline, usemigemo, wchar );
-        const std::vector<std::string> named_caps = { "url", "subject", "number" };
+        const std::string named_caps[3] = { "url", "subject", "number" };
 
         std::size_t offset = 0;
         while( regex.match( regexptn, source, offset, false, false, named_caps ) ){

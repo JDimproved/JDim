@@ -42,6 +42,7 @@ noinst_HEADERS = \
 	confloader.h \
 	jdregex.h \
 	jdmigemo.h \
+	span.h \
 	tfidf.h \
 	timeout.h \
 	hkana.h

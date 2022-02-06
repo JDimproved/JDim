@@ -3,6 +3,8 @@
 #ifndef _JDREGEX_H
 #define _JDREGEX_H
 
+#include "span.h"
+
 #include <map>
 #include <string>
 #include <vector>
@@ -73,7 +75,7 @@ namespace JDLIB
         // named_captures : 後で利用する名前付きキャプチャを登録する
         bool match( const RegexPattern& creg, const std::string& target, const std::size_t offset,
                     const bool notbol, const bool noteol,
-                    const std::vector<std::string>& named_captures );
+                    JDLIB::span<const std::string> named_captures );
 
         // icase : 大文字小文字区別しない
         // newline :  . に改行をマッチさせない
