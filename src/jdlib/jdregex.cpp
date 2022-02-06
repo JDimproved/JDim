@@ -234,7 +234,7 @@ bool Regex::match( const RegexPattern& creg, const std::string& target,
 
 bool Regex::match( const RegexPattern& creg, const std::string& target,
                    const std::size_t offset, const bool notbol, const bool noteol,
-                   const std::vector<std::string>& named_captures )
+                   JDLIB::span<const std::string> named_captures )
 {
     m_named_numbers.clear();
     for( const std::string& name : named_captures ) {
