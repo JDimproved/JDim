@@ -871,9 +871,10 @@ NODE* NodeTreeBase::create_node_htab()
 //
 // bold : 太字か
 //
-NODE* NodeTreeBase::create_node_link( const char* text, const int n, const char* link, const int n_link, const int color_text, const bool bold, const char fontid )
+NODE* NodeTreeBase::create_node_link( std::string_view text, const char* link, const int n_link,
+                                      const int color_text, const bool bold, const char fontid )
 {
-    NODE* tmpnode = create_node_ntext( text, n, color_text, bold, fontid );
+    NODE* tmpnode = create_node_ntext( text.data(), text.size(), color_text, bold, fontid );
 
     if( tmpnode ){
         tmpnode->type = NODE_LINK;
@@ -899,7 +900,7 @@ NODE* NodeTreeBase::create_node_anc( std::string_view text, const char* link, co
                                      const int color_text,  const bool bold,
                                      const ANCINFO* ancinfo, const int lng_ancinfo, const char fontid )
 {
-    NODE* tmpnode = create_node_link( text.data(), text.size(), link, n_link, color_text, bold, fontid );
+    NODE* tmpnode = create_node_link( text, link, n_link, color_text, bold, fontid );
     if( tmpnode ){
 
         tmpnode->linkinfo->ancinfo = m_heap.heap_alloc<ANCINFO>( lng_ancinfo + 1 );
@@ -939,7 +940,7 @@ NODE* NodeTreeBase::create_node_sssp( const char* link, const int n_link )
 NODE* NodeTreeBase::create_node_img( std::string_view text, const char* link, const int n_link, const int color_text,
                                      const bool bold, const char fontid )
 {
-    NODE* tmpnode = create_node_link( text.data(), text.size(), link, n_link, color_text, bold, fontid );
+    NODE* tmpnode = create_node_link( text, link, n_link, color_text, bold, fontid );
     if( tmpnode ){
         tmpnode->linkinfo->image = true;
         tmpnode->linkinfo->imglink = tmpnode->linkinfo->link;
@@ -956,7 +957,7 @@ NODE* NodeTreeBase::create_node_thumbnail( std::string_view text, const char* li
                                            const char* thumb, const int n_thumb, const int color_text, const bool bold,
                                            const char fontid )
 {
-    NODE* tmpnode = create_node_link( text.data(), text.size(), link, n_link, color_text, bold, fontid );
+    NODE* tmpnode = create_node_link( text, link, n_link, color_text, bold, fontid );
 
     if( tmpnode ){
         // サムネイル画像のURLをセット
@@ -1537,7 +1538,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 
     node = header->headinfo->block[ BLOCK_NUMBER ] = create_node_block();
     node->fontid = FONT_MAIL;
-    create_node_link( tmpstr.c_str(), tmpstr.size(), tmplink.c_str(), tmplink.size(), COLOR_CHAR_LINK_RES, true, FONT_MAIL );
+    create_node_link( tmpstr, tmplink.c_str(), tmplink.size(), COLOR_CHAR_LINK_RES, true, FONT_MAIL );
 
     const char* section[ SECTION_NUM ]{};
     int section_lng[ SECTION_NUM ]{};
@@ -1629,8 +1630,8 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
         constexpr const char message[] = "<br> <br> 壊れています<br>";
         parse_html( message, std::strlen( message ), COLOR_CHAR, digitlink, bold, ahref, FONT_MAIL );
 
-        const char str_broken[] = "ここ";
-        create_node_link( str_broken, strlen( str_broken ) , PROTO_BROKEN, strlen( PROTO_BROKEN ), COLOR_CHAR_LINK, false );
+        constexpr const char str_broken[] = "ここ";
+        create_node_link( str_broken, PROTO_BROKEN, strlen( PROTO_BROKEN ), COLOR_CHAR_LINK, false );
         create_node_text( "をクリックしてスレを再取得して下さい。", COLOR_CHAR );
 
         return pos;
@@ -1707,8 +1708,8 @@ void NodeTreeBase::parse_name( NODE* header, const char* str, const int lng, con
     // デフォルトの名前で無いときはリンクにする
     if( defaultname ) create_node_text( "名前", COLOR_CHAR, false, FONT_MAIL );
     else{
-        const char namestr[] = "名前";
-        create_node_link( namestr, strlen( namestr ) , PROTO_NAME, strlen( PROTO_NAME ), COLOR_CHAR, false, FONT_MAIL );
+        constexpr const char namestr[] = "名前";
+        create_node_link( namestr, PROTO_NAME, strlen( PROTO_NAME ), COLOR_CHAR, false, FONT_MAIL );
     }
 
     node = header->headinfo->block[ BLOCK_NAME ] = create_node_block();
@@ -1924,7 +1925,8 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             // リンク作成
             node = header->headinfo->block[ BLOCK_ID_NAME ] = create_node_block();
             node->fontid = FONT_MAIL;
-            create_node_link( tmpid, offset, tmplink, lng_link_tmp, COLOR_CHAR, false, FONT_MAIL );
+            std::string_view view_idhead( tmpid, offset );
+            create_node_link( view_idhead, tmplink, lng_link_tmp, COLOR_CHAR, false, FONT_MAIL );
             create_node_ntext( tmpid +offset, lng_id_tmp -offset, COLOR_CHAR, false, FONT_MAIL);
 
             // 発言回数ノード作成
@@ -1957,7 +1959,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             memcpy( tmplink + sizeof( PROTO_BE ) -1, tmpid, lng_id_tmp + 1 );
 
             // リンク作成
-            create_node_link( "?", 1, tmplink, strlen( tmplink ), COLOR_CHAR, false, FONT_MAIL );
+            create_node_link( "?", tmplink, strlen( tmplink ), COLOR_CHAR, false, FONT_MAIL );
             create_node_ntext( str + start_block + lng_header, lng_block - lng_header, COLOR_CHAR, false, FONT_MAIL );
 
             // 次のブロックへ移動
@@ -2124,7 +2126,8 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                         lng_str = m_parsed_text.size();
                     }
 
-                    create_node_link( pos_str_start, lng_str , pos_link_start, lng_link, COLOR_CHAR_LINK, false, fontid );
+                    std::string_view view_str( pos_str_start, lng_str );
+                    create_node_link( view_str, pos_link_start, lng_link, COLOR_CHAR_LINK, false, fontid );
                     m_parsed_text.clear();
                 }
             }
@@ -2388,7 +2391,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 }
     
                 // 一般リンク
-                else create_node_link( tmpstr, lng_str, tmpreplace , lng_replace, COLOR_CHAR_LINK, bold, fontid );
+                else create_node_link( tmp_view, tmpreplace , lng_replace, COLOR_CHAR_LINK, bold, fontid );
             }
 
             pos += n_in;
