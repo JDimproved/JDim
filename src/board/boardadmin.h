@@ -56,6 +56,7 @@ namespace BOARD
 
         // タブをお気に入りにドロップした時にお気に入りがデータ送信を要求してきた
         void slot_drag_data_get( Gtk::SelectionData& selection_data, const int page ) override;
+        void append_favorite_impl( const std::string& url ) override;
     };
     
     BoardAdmin* get_admin();
