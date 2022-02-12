@@ -449,3 +449,24 @@ void BoardAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const i
 
     selection_data.set( DNDTARGET_FAVORITE, get_url() );
 }
+
+
+
+/**
+ * @brief page をお気に入りに追加するダイアログを開く
+ */
+void BoardAdmin::append_favorite_impl( const std::string& url )
+{
+    CORE::DATA_INFO info;
+    info.type = TYPE_BOARD;
+    info.url = DBTREE::url_boardbase( url );
+    info.name = DBTREE::board_name( info.url );
+    info.path = Gtk::TreePath( "0" ).to_string();
+
+    if( info.url.empty() ) return;
+
+    CORE::DATA_INFO_LIST list_info;
+    list_info.push_back( std::move( info ) );
+    CORE::SBUF_set_list( list_info );
+    CORE::core_set_command( "append_favorite", URL_FAVORITEVIEW );
+}

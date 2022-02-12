@@ -787,3 +787,23 @@ void ArticleAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const
 
     selection_data.set( DNDTARGET_FAVORITE, get_url() );
 }
+
+
+/**
+ * @brief page をお気に入りに追加するダイアログを開く
+ */
+void ArticleAdmin::append_favorite_impl( const std::string& url )
+{
+    CORE::DATA_INFO info;
+    info.type = TYPE_THREAD;
+    info.url = DBTREE::url_readcgi( url, 0, 0 );
+    info.name = DBTREE::article_subject( info.url );
+    info.path = Gtk::TreePath( "0" ).to_string();
+
+    if( info.url.empty() ) return;
+
+    CORE::DATA_INFO_LIST list_info;
+    list_info.push_back( std::move( info ) );
+    CORE::SBUF_set_list( list_info );
+    CORE::core_set_command( "append_favorite", URL_FAVORITEVIEW );
+}

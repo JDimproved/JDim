@@ -24,8 +24,9 @@
 #include "config/globalconf.h"
 
 #include "command.h"
-#include "session.h"
 #include "global.h"
+#include "session.h"
+#include "sign.h"
 #include "updatemanager.h"
 
 #include <algorithm>
@@ -144,6 +145,7 @@ void Admin::setup_menu()
     m_action_group->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL "(_L)" ),
                          sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
 
+    m_action_group->add( Gtk::Action::create( "AppendFavorite", "お気に入りに追加(_F)..." ), sigc::mem_fun( *this, &Admin::slot_append_favorite ) );
     m_action_group->add( Gtk::Action::create( "Preference", "プロパティ(_P)..."), sigc::mem_fun( *this, &Admin::show_preference ) );
 
     // 戻る、進む
@@ -195,6 +197,8 @@ void Admin::setup_menu()
     "<menuitem action='CopyURL'/>"
     "<menuitem action='CopyTitleURL'/>"
 
+    "<separator/>"
+    "<menuitem action='AppendFavorite'/>"
     "<separator/>"
     "<menuitem action='Preference'/>"
 
@@ -2180,6 +2184,28 @@ void Admin::slot_tab_menu( int page, int x, int y )
         }
     }
 
+    // 仮想板や抽出ビューなどはお気に入りに追加を選択不可にする
+    if( act = m_action_group->get_action( "AppendFavorite" ); view && act ) {
+        const std::string& url = view->get_url();
+
+        // 仮想板 global.h を参照
+        if( url.rfind( "jdview://", 0 ) == 0 ) {
+            act->set_sensitive( false );
+        }
+        // 抽出ビュー sign.h と ArticleAdmin::command_to_url() を参照
+        // XXX: 判定に使うマクロ文字列がurl部分にマッチすると誤って選択不可になってしまう可能性がある
+        else if( const auto i = url.find( '_' ); i != std::string::npos
+                 && ( url.find( ARTICLE_SIGN, i ) != std::string::npos
+                      || url.find( POSTLOG_SIGN, i ) != std::string::npos
+                      || url.find( BOARD_SIGN KEYWORD_SIGN, i ) != std::string::npos
+                      || url.find( TITLE_SIGN KEYWORD_SIGN, i ) != std::string::npos ) ) {
+            act->set_sensitive( false );
+        }
+        else {
+            act->set_sensitive( true );
+        }
+    }
+
     m_clicked_page = page;
 
     Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
@@ -2519,6 +2545,21 @@ void Admin::slot_copy_title_url()
     if( view ) str += "\n" + view->url_for_copy();
     
     MISC::CopyClipboard( str );
+}
+
+
+/**
+ * @brief 右クリックメニューのお気に入りに追加
+ */
+void Admin::slot_append_favorite()
+{
+    if( m_clicked_page < 0 ) return;
+
+    const SKELETON::View* view = dynamic_cast<SKELETON::View*>( get_notebook()->get_nth_page( m_clicked_page ) );
+    if( ! view ) return;
+
+    const std::string url = view->get_url();
+    append_favorite_impl( url );
 }
 
 

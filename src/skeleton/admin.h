@@ -299,6 +299,8 @@ namespace SKELETON
         virtual void slot_open_by_browser();
         virtual void slot_copy_url();
         virtual void slot_copy_title_url();
+        void slot_append_favorite();
+        virtual void append_favorite_impl( const std::string& url ) {}
 
         // ページがロックされているかリストで取得
         virtual std::list< bool > get_locked();
