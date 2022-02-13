@@ -314,7 +314,7 @@ namespace DBTREE
                                const bool bold, const char fontid = FONT_MAIN );
         NODE* create_node_text( const char* text, const int color_text, const bool bold = false, const char fontid = FONT_MAIN );
         NODE* create_node_ntext( const char* text, const int n, const int color_text, const bool bold = false, const char fontid = FONT_MAIN );
-        NODE* create_node_thumbnail( std::string_view text, std::string_view link, const char* thumb, const int n_thumb,
+        NODE* create_node_thumbnail( std::string_view text, std::string_view link, std::string_view thumb,
                                      const int color_text, const bool bold, const char fontid = FONT_MAIN );
 
         // 以下、構文解析用関数
