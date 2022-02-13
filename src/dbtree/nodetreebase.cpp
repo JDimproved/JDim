@@ -2320,8 +2320,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
         ///////////////////////
         // リンク(http)のチェック
-        char tmpreplace[ LNG_LINK +16 ]; // Urlreplaceで変換した後のリンク文字列
-        int lng_replace = 0;
+        std::string tmpreplace; // Urlreplaceで変換した後のリンク文字列
         int linktype = check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK );
         if( linktype != MISC::SCHEME_NONE ){
             // リンクノードで実際にアクセスするURLの変換
@@ -2329,27 +2328,20 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
             lng_link = convert_amp( tmplink, strlen( tmplink ) ); // &amp; → &
 
             // Urlreplaceによる正規表現変換
-            std::string tmpurl( tmplink, lng_link );
-            if( CORE::get_urlreplace_manager()->exec( tmpurl ) == false ){
-                // 変換されてない
-                lng_replace = lng_link;
-                memcpy( tmpreplace, tmplink, lng_replace +1 );
+            tmpreplace.assign( tmplink, lng_link );
+            if( CORE::get_urlreplace_manager()->exec( tmpreplace ) ){
+                // 変換が行われた
 
-            } else {
-                if( tmpurl.size() > LNG_LINK ){
+                if( tmpreplace.size() > LNG_LINK ){
                     MISC::ERRMSG( std::string( "too long replaced url : " ) + tmplink );
 
                     // 変換後のURLが長すぎるので、元のURLのままにする
-                    lng_replace = lng_link;
-                    memcpy( tmpreplace, tmplink, lng_replace +1 );
+                    tmpreplace.assign( tmplink, lng_link );
                 } else {
                     // 正常に変換された
-                    lng_replace = tmpurl.size();
-                    memcpy( tmpreplace, tmpurl.c_str(), lng_replace +1 );
-
                     // 正規表現変換の結果、スキームだけの簡易チェックをする
                     int delim_pos = 0;
-                    if( MISC::SCHEME_NONE == MISC::is_url_scheme( tmpreplace, &delim_pos ) ){
+                    if( MISC::SCHEME_NONE == MISC::is_url_scheme( tmpreplace.c_str(), &delim_pos ) ){
                         // スキーム http:// が消えていた
                         linktype = MISC::SCHEME_NONE;
                     }
@@ -2369,7 +2361,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
             // ssspアイコン
             if( linktype == MISC::SCHEME_SSSP ){
-                node = create_node_sssp( tmpreplace, lng_replace );
+                node = create_node_sssp( tmpreplace.c_str(), tmpreplace.size() );
                 if (fontid != FONT_MAIN) node->fontid = fontid;
             }
 
@@ -2377,21 +2369,21 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
                 std::string_view tmp_view( tmpstr, lng_str );
 
                 // Urlreplaceによる画像コントロールを取得する
-                int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( std::string( tmpreplace, lng_replace ) );
+                const int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( tmpreplace );
 
                 // youtubeなどのサムネイル画像リンク
                 if( imgctrl & CORE::IMGCTRL_THUMBNAIL ){
-                    create_node_thumbnail( tmp_view, tmplink , lng_link, tmpreplace, lng_replace, COLOR_CHAR_LINK, bold, fontid );
+                    create_node_thumbnail( tmp_view, tmplink , lng_link, tmpreplace.c_str(), tmpreplace.size(), COLOR_CHAR_LINK, bold, fontid );
                 }
 
                 // 画像リンク
-                else if( DBIMG::get_type_ext( tmpreplace, lng_replace ) != DBIMG::T_UNKNOWN ){
-                    node = create_node_img( tmp_view, tmpreplace , lng_replace, COLOR_IMG_NOCACHE, bold );
+                else if( DBIMG::get_type_ext( tmpreplace ) != DBIMG::T_UNKNOWN ){
+                    node = create_node_img( tmp_view, tmpreplace.c_str(), tmpreplace.size(), COLOR_IMG_NOCACHE, bold );
                     if ( fontid != FONT_MAIN ) node->fontid = fontid;
                 }
     
                 // 一般リンク
-                else create_node_link( tmp_view, tmpreplace , lng_replace, COLOR_CHAR_LINK, bold, fontid );
+                else create_node_link( tmp_view, tmpreplace.c_str(), tmpreplace.size(), COLOR_CHAR_LINK, bold, fontid );
             }
 
             pos += n_in;
