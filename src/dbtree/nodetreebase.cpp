@@ -953,11 +953,11 @@ NODE* NodeTreeBase::create_node_img( std::string_view text, const char* link, co
 //
 // サムネイル画像ノード ( youtubeなどのサムネイル表示用 )
 //
-NODE* NodeTreeBase::create_node_thumbnail( std::string_view text, const char* link, const int n_link,
+NODE* NodeTreeBase::create_node_thumbnail( std::string_view text, std::string_view link,
                                            const char* thumb, const int n_thumb, const int color_text, const bool bold,
                                            const char fontid )
 {
-    NODE* tmpnode = create_node_link( text, link, n_link, color_text, bold, fontid );
+    NODE* tmpnode = create_node_link( text, link.data(), link.size(), color_text, bold, fontid );
 
     if( tmpnode ){
         // サムネイル画像のURLをセット
@@ -2373,7 +2373,8 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
                 // youtubeなどのサムネイル画像リンク
                 if( imgctrl & CORE::IMGCTRL_THUMBNAIL ){
-                    create_node_thumbnail( tmp_view, tmplink , lng_link, tmpreplace.c_str(), tmpreplace.size(), COLOR_CHAR_LINK, bold, fontid );
+                    std::string_view view_tmplink( tmplink, lng_link );
+                    create_node_thumbnail( tmp_view, view_tmplink, tmpreplace.c_str(), tmpreplace.size(), COLOR_CHAR_LINK, bold, fontid );
                 }
 
                 // 画像リンク
