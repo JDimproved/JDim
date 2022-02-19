@@ -249,7 +249,16 @@ void ICON_Manager::load_theme()
 #ifdef _DEBUG
                 std::cout << "hit : " << iconfiles[ id ] << " id = " << id << std::endl;
 #endif
-                m_list_icons[ id ] = Gdk::Pixbuf::create_from_file( CACHE::path_theme_icon_root() + filename );
+                // ツールバーボタンのアイコンより大きな画像はサイズ調整する
+                // 視認性を良くするため組み込みのアイコンよりサイズを一回り大きめにとる
+                auto pixbuf = Gdk::Pixbuf::create_from_file( CACHE::path_theme_icon_root() + filename );
+                constexpr int size_menu = 24; // Gtk::ICON_SIZE_LARGE_TOOLBAR
+                if( pixbuf->get_width() > size_menu || pixbuf->get_height() > size_menu ) {
+                    m_list_icons[id] = pixbuf->scale_simple( size_menu, size_menu, Gdk::INTERP_HYPER );
+                }
+                else {
+                    m_list_icons[id] = pixbuf;
+                }
                 break;
             }
 
