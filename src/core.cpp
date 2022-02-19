@@ -1547,17 +1547,22 @@ void Core::slot_activate_menubar()
     if( ! BOARD::get_admin()->empty() ) act->set_sensitive( true );
     else act->set_sensitive( false );
 
+    // スレッド関連以外のサイドバーはタブを開いても何も表示されないため無効にする
+    const std::string sidebar = SESSION::get_sidebar_current_url();
+    const bool can_opening_view{
+        sidebar != URL_BBSLISTVIEW
+        && sidebar != URL_HISTBOARDVIEW
+        && sidebar != URL_HISTCLOSEBOARDVIEW
+        && sidebar != URL_HISTCLOSEIMGVIEW
+    };
+
     // サイドバーのスレ一覧表示
     act = m_action_group->get_action( "ShowSidebarBoard" );
-    if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW
-        && SESSION::get_sidebar_current_url() != URL_HISTBOARDVIEW ) act->set_sensitive( true );
-    else act->set_sensitive( false );
+    act->set_sensitive( can_opening_view );
 
     // 仮想板作成
     act = m_action_group->get_action( "CreateVBoard" );
-    if( SESSION::get_sidebar_current_url() != URL_BBSLISTVIEW
-        && SESSION::get_sidebar_current_url() != URL_HISTBOARDVIEW ) act->set_sensitive( true );
-    else act->set_sensitive( false );
+    act->set_sensitive( can_opening_view );
 
     m_enable_menuslot = true;
 }
