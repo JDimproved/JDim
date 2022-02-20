@@ -937,10 +937,10 @@ NODE* NodeTreeBase::create_node_sssp( std::string_view link )
 //
 // 画像ノード作成
 //
-NODE* NodeTreeBase::create_node_img( std::string_view text, const char* link, const int n_link, const int color_text,
+NODE* NodeTreeBase::create_node_img( std::string_view text, std::string_view link, const int color_text,
                                      const bool bold, const char fontid )
 {
-    NODE* tmpnode = create_node_link( text, link, n_link, color_text, bold, fontid );
+    NODE* tmpnode = create_node_link( text, link.data(), link.size(), color_text, bold, fontid );
     if( tmpnode ){
         tmpnode->linkinfo->image = true;
         tmpnode->linkinfo->imglink = tmpnode->linkinfo->link;
@@ -2379,7 +2379,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
                 // 画像リンク
                 else if( DBIMG::get_type_ext( tmpreplace ) != DBIMG::T_UNKNOWN ){
-                    node = create_node_img( tmp_view, tmpreplace.c_str(), tmpreplace.size(), COLOR_IMG_NOCACHE, bold );
+                    node = create_node_img( tmp_view, tmpreplace, COLOR_IMG_NOCACHE, bold );
                     if ( fontid != FONT_MAIN ) node->fontid = fontid;
                 }
     
