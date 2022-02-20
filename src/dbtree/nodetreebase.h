@@ -309,7 +309,7 @@ namespace DBTREE
         NODE* create_node_anc( std::string_view text, const char* link, const int n_link,
                                const int color_text, const bool bold,
                                const ANCINFO* ancinfo, const int lng_ancinfo, const char fontid = FONT_MAIN );
-        NODE* create_node_sssp( const char* link, const int n_link );
+        NODE* create_node_sssp( std::string_view link );
         NODE* create_node_img( std::string_view text, const char* link, const int n_link, const int color_text,
                                const bool bold, const char fontid = FONT_MAIN );
         NODE* create_node_text( const char* text, const int color_text, const bool bold = false, const char fontid = FONT_MAIN );

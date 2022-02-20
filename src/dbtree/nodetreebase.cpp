@@ -914,15 +914,15 @@ NODE* NodeTreeBase::create_node_anc( std::string_view text, const char* link, co
 //
 // SSSPノード
 //
-NODE* NodeTreeBase::create_node_sssp( const char* link, const int n_link )
+NODE* NodeTreeBase::create_node_sssp( std::string_view link )
 {
     NODE* tmpnode = create_node();
     tmpnode->type = NODE_SSSP;
 
     // リンク情報作成
-    char *tmplink = m_heap.heap_alloc<char>( n_link + 1 );
-    memcpy( tmplink, link, n_link );
-    tmplink[ n_link ] = '\0';
+    char *tmplink = m_heap.heap_alloc<char>( link.size() + 1 );
+    link.copy( tmplink, link.size() );
+    tmplink[ link.size() ] = '\0';
 
     // リンク情報セット
     tmpnode->linkinfo = m_heap.heap_alloc<LINKINFO>();
@@ -2361,7 +2361,7 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 
             // ssspアイコン
             if( linktype == MISC::SCHEME_SSSP ){
-                node = create_node_sssp( tmpreplace.c_str(), tmpreplace.size() );
+                node = create_node_sssp( tmpreplace );
                 if (fontid != FONT_MAIN) node->fontid = fontid;
             }
 
