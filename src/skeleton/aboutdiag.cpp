@@ -168,12 +168,12 @@ void AboutDiag::set_version( const Glib::ustring& version )
 {
     m_label_version.set_label( version );
 
-    // TODO: GTKのcssで設定するか？
-    Pango::FontDescription font_discription_version = m_label_version.get_style_context()->get_font();
-    const int label_version_font_size = font_discription_version.get_size();
-    font_discription_version.set_size( label_version_font_size * 5 / 3 );
-    font_discription_version.set_weight( Pango::WEIGHT_BOLD );
-    m_label_version.override_font( font_discription_version );
+    auto scale = Pango::Attribute::create_attr_scale( 5.0 / 3.0 );
+    auto weight = Pango::Attribute::create_attr_weight( Pango::WEIGHT_BOLD );
+    Pango::AttrList list;
+    list.insert( scale );
+    list.insert( weight );
+    m_label_version.set_attributes( list );
 }
 
 Glib::ustring AboutDiag::get_version() const
