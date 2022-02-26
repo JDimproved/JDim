@@ -28,6 +28,7 @@
 #include "urlreplacemanager.h"
 
 #include <algorithm>
+#include <cstring>
 #include <fstream>
 #include <limits>
 #include <sstream>
@@ -2770,9 +2771,15 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 //
 // 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
 //
-int NodeTreeBase::check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link,
-                                   const int linktype, const int delim_pos ) const
+int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, char* str_link,
+                              const int lng_link ) const
 {
+    // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
+    int delim_pos = 0;
+    const int linktype = MISC::is_url_scheme( str_in, &delim_pos );
+
+    if( linktype == MISC::SCHEME_NONE ) return linktype;
+
     // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
     const bool loose_url = CONFIG::get_loose_url();
 

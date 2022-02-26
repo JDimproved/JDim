@@ -13,10 +13,8 @@
 #include "skeleton/loadable.h"
 
 #include "jdlib/heap.h"
-#include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
 
-#include <cstring>
 #include <map>
 #include <string_view>
 #include <unordered_map>
@@ -339,9 +337,8 @@ namespace DBTREE
 
         bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
                            ANCINFO* ancinfo ) const;
+        /// リンクが現れたかチェックして文字列を取得する関数
         int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link ) const;
-        int check_link_impl( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link,
-                             const int linktype, const int delim_pos ) const;
 
         // レジューム時のチェックデータをキャッシュ
         void set_resume_data( const char* data, size_t length );
@@ -404,23 +401,6 @@ namespace DBTREE
         // 文字列中の"&amp;"を"&"に変換する
         static int convert_amp( char* text, const int n );
     };
-
-
-    //
-    // リンクが現れたかチェックして文字列を取得する関数
-    //   (引数の値は、check_link_impl()を見ること)
-    //
-    inline int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, char* str_link,
-                                         const int lng_link ) const
-    {
-        // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
-        int delim_pos = 0;
-        const int linktype = MISC::is_url_scheme( str_in, &delim_pos );
-
-        if( linktype == MISC::SCHEME_NONE ) return linktype;
-
-        return check_link_impl( str_in, lng_in, n_in, str_link, lng_link, linktype, delim_pos );
-    }
 }
 
 #endif
