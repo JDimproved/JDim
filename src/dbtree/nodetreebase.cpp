@@ -1541,15 +1541,14 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     node->fontid = FONT_MAIL;
     create_node_link( tmpstr, tmplink, COLOR_CHAR_LINK_RES, true, FONT_MAIL );
 
-    const char* section[ SECTION_NUM ]{};
-    int section_lng[ SECTION_NUM ]{};
+    std::string_view section[SECTION_NUM]{};
 
     // セクション分けしながら壊れてないかチェック
     for( i = 0; i < SECTION_NUM; ++i ) {
 
-        section[i] = pos;
+        const char* start = pos;
         while( *pos != '\0' && *pos != '\n' && ! ( pos[0] == '<' && pos[1] == '>' ) ) ++pos;
-        section_lng[i] = pos - section[i];
+        section[i] = std::string_view( start, pos - start );
 
         if( *pos == '\0' || *pos == '\n' ) {
             ++i;
@@ -1564,9 +1563,9 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 
         for( i = 0; i < SECTION_NUM; ++i ) {
 
-            section[i] = pos;
+            const char* start = pos;
             while( *pos != ',' && *pos != '\0' && *pos != '\n' ) ++pos;
-            section_lng[i] = pos - section[i];
+            section[i] = std::string_view( start, pos - start );
 
             if( *pos == '\0' || *pos == '\n' ) {
                 ++i;
@@ -1580,22 +1579,22 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     while( *pos != '\0' && *pos != '\n' ) ++pos;
 
     // 名前
-    const int color_name = section_lng[1] ? COLOR_CHAR_NAME : COLOR_CHAR_NAME_NOMAIL;
-    parse_name( header, section[0], section_lng[0], color_name );
+    const int color_name = section[1].size() ? COLOR_CHAR_NAME : COLOR_CHAR_NAME_NOMAIL;
+    parse_name( header, section[0].data(), section[0].size(), color_name );
 
     // メール
-    if( i > 1 ) parse_mail( header, section[1], section_lng[1] );
+    if( i > 1 ) parse_mail( header, section[1].data(), section[1].size() );
 
     // 日付とID
-    if( i > 2 ) parse_date_id( header, section[2], section_lng[2] );
+    if( i > 2 ) parse_date_id( header, section[2].data(), section[2].size() );
 
     // 本文
     if( i > 3 ) {
 
         header->headinfo->block[ BLOCK_MES ] = create_node_block();
 
-        const char* str = section[3];
-        int lng_msg = section_lng[3];
+        const char* str = section[3].data();
+        int lng_msg = section[3].size();
         std::string str_msg;
 
         // 文字列置換
@@ -1640,7 +1639,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 
     // サブジェクト
     if( header->id_header == 1 ) {
-        m_subject.assign( section[4], section_lng[4] );
+        m_subject.assign( section[4] );
 
 #ifdef _DEBUG
         std::cout << "subject = " << m_subject << std::endl;
@@ -1657,12 +1656,12 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
         // 簡易チェック
         // 最初の lng_check 文字だけ見る
         const bool newthread = ( header->id_header == 1 );
-        const std::size_t lng_check = MIN( section_lng[ 3 ], 32 );
-        parse_write( section[ 3 ], section_lng[ 3 ], lng_check );
+        const std::size_t lng_check = MIN( section[3].size(), 32 );
+        parse_write( section[3].data(), section[3].size(), lng_check );
         if( MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write.c_str(), lng_check ) ){
 
             // 全ての文字列で一致しているかチェック
-            parse_write( section[ 3 ], section_lng[ 3 ], 0 );
+            parse_write( section[3].data(), section[3].size(), 0 );
 
             const bool hit = MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write.c_str(), 0 );
             if( hit ){
