@@ -11,10 +11,11 @@
 #include "cache.h"
 #include "jdlib/miscmsg.h"
 
-#include <fcntl.h>
-#include <errno.h>
 #include <cstring>
+#include <errno.h>
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 
 using namespace CORE;
@@ -187,11 +188,6 @@ bool IOMonitor::slot_ioin( Glib::IOCondition io_condition )
     {
         MISC::ERRMSG( "IOMonitor::slot_ioin(): read error." );
     }
-
-#ifdef _DEBUG
-    std::cout << "入力文字: " << buffer << std::endl;
-    if( buffer == "Q" ) Gtk::Main::quit();
-#endif // _DEBUG
 
     // FIFOに書き込まれたURLを開く
     // "現在のタブ/新しいタブ"など、開き方を選ぶ必要があるかも知れない
