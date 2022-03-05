@@ -11,10 +11,11 @@
 #include "cache.h"
 #include "jdlib/miscmsg.h"
 
-#include <fcntl.h>
-#include <errno.h>
 #include <cstring>
+#include <errno.h>
+#include <fcntl.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 
 using namespace CORE;
