@@ -188,11 +188,6 @@ bool IOMonitor::slot_ioin( Glib::IOCondition io_condition )
         MISC::ERRMSG( "IOMonitor::slot_ioin(): read error." );
     }
 
-#ifdef _DEBUG
-    std::cout << "入力文字: " << buffer << std::endl;
-    if( buffer == "Q" ) Gtk::Main::quit();
-#endif // _DEBUG
-
     // FIFOに書き込まれたURLを開く
     // "現在のタブ/新しいタブ"など、開き方を選ぶ必要があるかも知れない
     //core_set_command( "open_article", buffer, "left", "auto" );

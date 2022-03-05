@@ -6,7 +6,7 @@
 #ifndef _IOMONITOR_H
 #define _IOMONITOR_H
 
-#include <gtkmm.h>
+#include <glibmm.h>
 
 
 namespace CORE
