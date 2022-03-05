@@ -16,6 +16,7 @@
 #include "embeddedimage.h"
 
 #include "jdlib/jdregex.h"
+#include "jdlib/misccharcode.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/miscutil.h"
@@ -1515,8 +1516,7 @@ bool DrawAreaBase::set_init_wide_mode( const char* str, const int pos_start, con
     int i = pos_start;
     while( i < pos_to ){
 
-        int byte_tmp;
-        MISC::utf8toucs2( str + i, byte_tmp );
+        const int byte_tmp = MISC::utf8bytes( str + i );
 
         // 文字列に全角が含まれていたら全角モードで開始
         if( byte_tmp != 1 ) break;
