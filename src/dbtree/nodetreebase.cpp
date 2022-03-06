@@ -1583,7 +1583,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     parse_name( header, section[0], color_name );
 
     // メール
-    if( i > 1 ) parse_mail( header, section[1].data(), section[1].size() );
+    if( i > 1 ) parse_mail( header, section[1] );
 
     // 日付とID
     if( i > 2 ) parse_date_id( header, section[2].data(), section[2].size() );
@@ -1790,33 +1790,28 @@ void NodeTreeBase::parse_name( NODE* header, std::string_view str, const int col
 //
 // メール
 //
-void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
+void NodeTreeBase::parse_mail( NODE* header, std::string_view str )
 {
     // sage 以外の時は色を変える
     int color = COLOR_CHAR;
-    int i = 0;
-    NODE *node;
-    while( i < lng && str[ i ] != 's' ) ++i;
-    if( str[ i ] != 's' || str[ i+1 ] != 'a' || str[ i+2 ] != 'g' || str[ i+3 ] != 'e' ){
+    if( str.find( "sage" ) == std::string_view::npos ) {
         color = COLOR_CHAR_AGE;
-        header->headinfo->sage = FALSE;
+        header->headinfo->sage = false;
     }
-    else header->headinfo->sage = TRUE;
+    else header->headinfo->sage = true;
 
-    node = header->headinfo->block[ BLOCK_MAIL ] = create_node_block();
+    NODE* node = header->headinfo->block[ BLOCK_MAIL ] = create_node_block();
     node->fontid = FONT_MAIL;
 
     // 文字列置換
     std::string str_mail;
-    int lng_mail = lng;
     const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
     if( mgr->list_get_active( CORE::REPLACETARGET_MAIL ) ) {
-        str_mail = mgr->replace( str, lng, CORE::REPLACETARGET_MAIL );
-        str = str_mail.c_str();
-        lng_mail = str_mail.size();
+        str_mail = mgr->replace( str.data(), str.size(), CORE::REPLACETARGET_MAIL );
+        str = str_mail;
     }
 
-    if( lng_mail == 0 ) {
+    if( str.empty() ) {
         create_node_text( "[]", color, false, FONT_MAIL );
     }
     else{
@@ -1826,7 +1821,7 @@ void NodeTreeBase::parse_mail( NODE* header, const char* str, const int lng )
         const bool ahref = false;
 
         create_node_text( "[", color, false, FONT_MAIL );
-        parse_html( str, lng_mail, color, digitlink, bold, ahref, FONT_MAIL );
+        parse_html( str.data(), str.size(), color, digitlink, bold, ahref, FONT_MAIL );
         create_node_text( "]", color, false, FONT_MAIL );
     }
 }
