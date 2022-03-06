@@ -319,7 +319,7 @@ namespace DBTREE
         void add_raw_lines( char* rawines, size_t size );
         const char* add_one_dat_line( const char* datline );
 
-        void parse_name( NODE* header, const char* str, const int lng, const int color_name );
+        void parse_name( NODE* header, std::string_view str, const int color_name );
         void parse_mail( NODE* header, const char* str, const int lng );
         void parse_date_id( NODE* header, const char* str, const int lng );
 
