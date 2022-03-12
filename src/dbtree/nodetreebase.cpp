@@ -1657,11 +1657,11 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
         // 最初の lng_check 文字だけ見る
         const bool newthread = ( header->id_header == 1 );
         const std::size_t lng_check = MIN( section[3].size(), 32 );
-        parse_write( section[3].data(), section[3].size(), lng_check );
+        parse_write( section[3], lng_check );
         if( MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write.c_str(), lng_check ) ){
 
             // 全ての文字列で一致しているかチェック
-            parse_write( section[3].data(), section[3].size(), 0 );
+            parse_write( section[3], 0 );
 
             const bool hit = MESSAGE::get_log_manager()->check_write( m_url, newthread, m_buffer_write.c_str(), 0 );
             if( hit ){
@@ -2466,15 +2466,15 @@ void NodeTreeBase::parse_html( const char* str, const int lng, const int color_t
 //
 // max_lng_write > 0 のときは m_buffer_write の文字数が max_lng_write 以上になったら停止
 //
-void NodeTreeBase::parse_write( const char* str, const int lng, const std::size_t max_lng_write )
+void NodeTreeBase::parse_write( std::string_view str, const std::size_t max_lng_write )
 {
 #ifdef _DEBUG
-    std::cout << "NodeTreeBase::parse_write lng = " << lng << " max = " << max_lng_write << std::endl;
+    std::cout << "NodeTreeBase::parse_write lng = " << str.size() << " max = " << max_lng_write << std::endl;
 #endif
 
     bool head = true;
-    const char* pos = str;
-    const char* pos_end = str + lng;
+    const char* pos = str.data();
+    const char* pos_end = str.data() + str.size();
 
     int offset_num;
     int lng_num;

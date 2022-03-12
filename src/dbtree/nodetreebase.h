@@ -333,7 +333,7 @@ namespace DBTREE
 
         // 書き込みログ比較用文字列作成
         // m_buffer_write に作成した文字列をセットする
-        void parse_write( const char* str, const int lng, const std::size_t max_lng_write );
+        void parse_write( std::string_view str, const std::size_t max_lng_write );
 
         bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
                            ANCINFO* ancinfo ) const;
