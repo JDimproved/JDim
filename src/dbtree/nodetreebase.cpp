@@ -1586,7 +1586,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
     if( i > 1 ) parse_mail( header, section[1] );
 
     // 日付とID
-    if( i > 2 ) parse_date_id( header, section[2].data(), section[2].size() );
+    if( i > 2 ) parse_date_id( header, section[2] );
 
     // 本文
     if( i > 3 ) {
@@ -1830,21 +1830,18 @@ void NodeTreeBase::parse_mail( NODE* header, std::string_view str )
 //
 // 日付とID、及びBE、株、その他
 //
-void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
+void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
 {
     std::string str_date;
-    int lng_date = lng;
 
     // 文字列置換
     const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
     if( mgr->list_get_active( CORE::REPLACETARGET_DATE ) ) {
-        str_date = mgr->replace( str, lng, CORE::REPLACETARGET_DATE );
-        str = str_date.c_str();
-        lng_date = str_date.size();
+        str_date = mgr->replace( str.data(), str.size(), CORE::REPLACETARGET_DATE );
+        str = str_date;
     }
 
-    int start = 0;
-    int lng_text = 0;
+    std::size_t lng_text = 0;
     int lng_link_tmp;
     char tmplink[ LNG_LINK ];
     NODE *node;
@@ -1858,12 +1855,12 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
     for(;;){
 
         // 先頭の空白を飛ばす
-        while( start + lng_text < lng_date && str[ start + lng_text ] == ' ' ) ++lng_text;
+        while( lng_text < str.size() && str[ lng_text ] == ' ' ) ++lng_text;
 
         // 空白ごとにブロック分けしてパースする
-        int start_block = start + lng_text;
-        int lng_block = 0; // ブロックの長さ
-        while( start_block + lng_block < lng_date && str[ start_block + lng_block ] != ' ' ) ++lng_block;
+        const std::size_t start_block = lng_text;
+        std::size_t lng_block = 0; // ブロックの長さ
+        while( start_block + lng_block < str.size() && str[ start_block + lng_block ] != ' ' ) ++lng_block;
         if( !lng_block ) break;
 
         if(
@@ -1871,20 +1868,17 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             ( str[ start_block ] == 'I' && str[ start_block + 1 ] == 'D' && str[ start_block + 3 ] != '?' )
 
             // HOST
-            || ( str[ start_block + 0 ] == 'H' && str[ start_block + 1 ] == 'O' && str[ start_block + 2 ] == 'S' && str[ start_block + 3 ] == 'T' )
+            || ( str.compare( start_block, 4, "HOST" ) == 0 )
 
-            // 発言元
-            || (    str[ start_block + 0 ] == (char)0xe7 && str[ start_block + 1 ] == (char)0x99 && str[ start_block + 2 ] == (char)0xba // 発
-                 && str[ start_block + 3 ] == (char)0xe4 && str[ start_block + 4 ] == (char)0xbf && str[ start_block + 5 ] == (char)0xa1 // 言
-                 && str[ start_block + 6 ] == (char)0xe5 && str[ start_block + 7 ] == (char)0x85 && str[ start_block + 8 ] == (char)0x83 // 元
-                )
+            // 発信元
+            || ( str.compare( start_block, 9, "発信元" ) == 0 )
 
             ){
 
             // フラッシュ
             if( lng_text ){
-                if( *( str + start + lng_text - 1 ) == ' ' ) --lng_text;
-                create_node_ntext( str + start, lng_text, COLOR_CHAR, false, FONT_MAIL );
+                if( str[ lng_text - 1 ] == ' ' ) --lng_text;
+                create_node_ntext( str.data(), lng_text, COLOR_CHAR, false, FONT_MAIL );
             }
 
             int offset = 0;
@@ -1893,13 +1887,13 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
                 offset = 5;
 
                 // HOST: の場合は途中で空白が入るときがあるので最後までブロックを伸ばす
-                lng_block = lng_date - start_block;
+                lng_block = str.size() - start_block;
             }
             else if( str[ start_block ] == (char)0xe7 ) offset = 10;
 
             // id 取得
             lng_id_tmp = MIN( lng_block, LNG_ID - 16 );
-            memcpy( tmpid, str + start_block, lng_id_tmp );
+            memcpy( tmpid, str.data() + start_block, lng_id_tmp );
             tmpid[ lng_id_tmp ] = '\0';
             
             // リンク文字作成
@@ -1925,7 +1919,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             node->fontid = FONT_MAIL;
 
             // 次のブロックへ移動
-            start = start_block + lng_block;
+            str = str.substr( start_block + lng_block );
             lng_text = 0;
         }
 
@@ -1935,14 +1929,14 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             const int strlen_of_BE = 3; // = strlen( "BE:" );
 
             // フラッシュ
-            if( lng_text ) create_node_ntext( str + start, lng_text, COLOR_CHAR, false, FONT_MAIL );
+            if( lng_text ) create_node_ntext( str.data(), lng_text, COLOR_CHAR, false, FONT_MAIL );
 
             // id 取得
-            int lng_header = 0;
+            std::size_t lng_header = 0;
             while( str[ start_block + lng_header ] != '-' && lng_header < lng_block ) ++lng_header;
             lng_id_tmp = lng_header - strlen_of_BE;
             if( str[ start_block + lng_header ] == '-' ) ++lng_header;
-            memcpy( tmpid, str + start_block + strlen_of_BE, lng_id_tmp );
+            memcpy( tmpid, str.data() + start_block + strlen_of_BE, lng_id_tmp );
             tmpid[ lng_id_tmp ] = '\0';
 
             // リンク文字作成
@@ -1951,10 +1945,10 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
 
             // リンク作成
             create_node_link( "?", tmplink, COLOR_CHAR, false, FONT_MAIL );
-            create_node_ntext( str + start_block + lng_header, lng_block - lng_header, COLOR_CHAR, false, FONT_MAIL );
+            create_node_ntext( str.data() + start_block + lng_header, lng_block - lng_header, COLOR_CHAR, false, FONT_MAIL );
 
             // 次のブロックへ移動
-            start = start_block + lng_block;
+            str = str.substr( start_block + lng_block );
             lng_text = 0;
         }
 
@@ -1964,10 +1958,10 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
                  && str[ start_block + 2 ] == ' ' ){
 
             // フラッシュ
-            if( lng_text ) create_node_ntext( str + start, lng_text, COLOR_CHAR, false, FONT_MAIL );
+            if( lng_text ) create_node_ntext( str.data(), lng_text, COLOR_CHAR, false, FONT_MAIL );
 
             // </a>までブロックの長さを伸ばす
-            while( start_block + lng_block < lng_date
+            while( start_block + lng_block < str.size()
                    && ! ( ( str[ start_block + lng_block -1 ] == 'a' || str[ start_block + lng_block -1 ] == 'A' )
                           && str[ start_block + lng_block ] == '>' ) ) ++lng_block;
             ++lng_block;
@@ -1975,10 +1969,10 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
             const bool digitlink = false;
             const bool bold = false;
             const bool ahref = true;
-            parse_html( str + start_block, lng_block, COLOR_CHAR, digitlink, bold, ahref, FONT_MAIL );
+            parse_html( str.data() + start_block, lng_block, COLOR_CHAR, digitlink, bold, ahref, FONT_MAIL );
 
             // 次のブロックへ移動
-            start = start_block + lng_block;
+            str = str.substr( start_block + lng_block );
             lng_text = 0;
         }
 
@@ -1987,7 +1981,7 @@ void NodeTreeBase::parse_date_id( NODE* header, const char* str, const int lng )
     }
 
     // フラッシュ
-    if( lng_text ) create_node_ntext( str + start, lng_text, COLOR_CHAR, false, FONT_MAIL );
+    if( lng_text ) create_node_ntext( str.data(), lng_text, COLOR_CHAR, false, FONT_MAIL );
 }
 
 

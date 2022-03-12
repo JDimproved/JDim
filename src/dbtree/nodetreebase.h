@@ -321,7 +321,7 @@ namespace DBTREE
 
         void parse_name( NODE* header, std::string_view str, const int color_name );
         void parse_mail( NODE* header, std::string_view str );
-        void parse_date_id( NODE* header, const char* str, const int lng );
+        void parse_date_id( NODE* header, std::string_view str );
 
         // HTMLパーサ
         // digitlink : true の時は先頭に数字が現れたらアンカーにする( parse_name() などで使う )
