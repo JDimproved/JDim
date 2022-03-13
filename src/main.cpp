@@ -382,6 +382,13 @@ int main( int argc, char **argv )
         fprintf( stderr, "sigaction failed\n" );
         exit( 1 );
     }
+    // 接続が切れたソケットに書き込むと SIGPIPE が発生して強制終了するので無視するように設定する
+    std::memset( &sigact, 0, sizeof(struct sigaction) );
+    sigact.sa_handler = SIG_IGN;
+    if( sigaction( SIGPIPE, &sigact, nullptr ) != 0 ) {
+        std::cerr << "sigaction failed (SIGPIPE)\n";
+        std::exit( 1 );
+    }
 
     Gtk::Main m( &argc, &argv );
 
