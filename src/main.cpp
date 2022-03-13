@@ -450,7 +450,7 @@ int main( int argc, char **argv )
             if( ! url_real.empty() ) url = url_real;
 
             // FIFOに書き込む
-            iomonitor.send_command( url.c_str() );
+            iomonitor.send_command( url );
 
             // マルチモードでなく、メインプロセスでもない場合は終了
             if( ! multi_mode && ! iomonitor.is_main_process() ) return 0;

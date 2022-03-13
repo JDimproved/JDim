@@ -57,7 +57,7 @@ namespace CORE
         bool is_main_process() const noexcept { return m_main_process; }
 
         // FIFOに書き込み
-        bool send_command( const char* command );
+        bool send_command( const std::string& command );
     };
 }
 #endif
