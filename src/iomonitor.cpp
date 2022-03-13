@@ -148,21 +148,15 @@ void IOMonitor::delete_fifo()
 //
 // 戻り値: 全て書き込まれたか否か
 /*-------------------------------------------------------------------*/
-bool IOMonitor::send_command( const char* command )
+bool IOMonitor::send_command( const std::string& command )
 {
-    if( ! command ) return false;
-
-    const size_t command_length = strlen( command );
-
     // 異常に長かったら書き込まない
-    if( command_length > COMMAND_MAX_LENGTH ) return false;
+    if( command.size() > COMMAND_MAX_LENGTH ) return false;
 
     g_assert( m_fifo_fd >= 0 );
 
-    int status = -1;
-    status = write( m_fifo_fd, command, command_length );
-
-    return ( (size_t)status == command_length );
+    const ssize_t status = write( m_fifo_fd, command.c_str(), command.size() );
+    return static_cast<std::size_t>( status ) == command.size();
 }
 
 
