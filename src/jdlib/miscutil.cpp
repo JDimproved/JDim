@@ -987,18 +987,18 @@ static std::string chref_decode_one( const char* str, int& n_in, const bool comp
 //
 // completely = true の時は'"' '&' '<' '>'もデコードする
 //
-std::string MISC::chref_decode( const char* str, const int lng, const bool completely )
+std::string MISC::chref_decode( std::string_view str, const bool completely )
 {
     std::string str_out;
 
-    if( lng <= 0 ) return str_out;
-    if( std::memchr( str, '&', lng ) == nullptr ) {
-        str_out.assign( str, lng );
+    if( str.empty() ) return str_out;
+    if( str.find( '&' ) == std::string_view::npos ) {
+        str_out.assign( str );
         return str_out;
     }
 
-    const char* pos = str;
-    const char* pos_end = str + lng;
+    const char* pos = str.data();
+    const char* pos_end = str.data() + str.size();
 
     while( pos < pos_end ) {
 
