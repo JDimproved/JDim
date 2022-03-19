@@ -235,14 +235,14 @@ std::string ReplaceStr_Manager::target_name( const int id )
 //
 // 実行
 //
-std::string ReplaceStr_Manager::replace( const char* str, const int lng, const int id ) const
+std::string ReplaceStr_Manager::replace( std::string_view str, const int id ) const
 {
-    if( id >= REPLACETARGET_MAX || ( m_list[id].empty() && ! m_chref[id] ) ) return std::string( str, lng );
+    if( id >= REPLACETARGET_MAX || ( m_list[id].empty() && ! m_chref[id] ) ) return std::string{ str };
 
     std::string buffer;
 
-    if( m_chref[id] ) buffer = MISC::chref_decode( std::string_view( str, lng ), false );
-    else buffer.assign( str, lng );
+    if( m_chref[id] ) buffer = MISC::chref_decode( str, false );
+    else buffer.assign( str );
 
 #ifdef _DEBUG
     std::cout << "ReplaceStr_Manager::replace str=" << buffer << std::endl;
