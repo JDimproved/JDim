@@ -306,7 +306,7 @@ namespace MISC
 
     // haystack の pos 以降から最初に needle と一致する位置を返す (ASCIIだけignore case)
     // 見つからない場合は std::string::npos を返す、needle が空文字列なら pos を返す
-    std::size_t ascii_ignore_case_find( const std::string& haystack, const std::string& needle, std::size_t pos = 0 );
+    std::size_t ascii_ignore_case_find( const std::string& haystack, std::string_view needle, std::size_t pos = 0 );
 }
 
 
