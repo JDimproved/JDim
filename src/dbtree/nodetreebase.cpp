@@ -1599,7 +1599,7 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
         // 文字列置換
         const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
         if( mgr->list_get_active( CORE::REPLACETARGET_MESSAGE ) ) {
-            str_msg = mgr->replace( str.data(), str.size(), CORE::REPLACETARGET_MESSAGE );
+            str_msg = mgr->replace( str, CORE::REPLACETARGET_MESSAGE );
             str = str_msg;
         }
 
@@ -1694,7 +1694,7 @@ void NodeTreeBase::parse_name( NODE* header, std::string_view str, const int col
     std::string str_name;
     const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
     if( mgr->list_get_active( CORE::REPLACETARGET_NAME ) ) {
-        str_name = mgr->replace( str.data(), str.size(), CORE::REPLACETARGET_NAME );
+        str_name = mgr->replace( str, CORE::REPLACETARGET_NAME );
         str = str_name;
     }
 
@@ -1805,7 +1805,7 @@ void NodeTreeBase::parse_mail( NODE* header, std::string_view str )
     std::string str_mail;
     const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
     if( mgr->list_get_active( CORE::REPLACETARGET_MAIL ) ) {
-        str_mail = mgr->replace( str.data(), str.size(), CORE::REPLACETARGET_MAIL );
+        str_mail = mgr->replace( str, CORE::REPLACETARGET_MAIL );
         str = str_mail;
     }
 
@@ -1835,7 +1835,7 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
     // 文字列置換
     const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
     if( mgr->list_get_active( CORE::REPLACETARGET_DATE ) ) {
-        str_date = mgr->replace( str.data(), str.size(), CORE::REPLACETARGET_DATE );
+        str_date = mgr->replace( str, CORE::REPLACETARGET_DATE );
         str = str_date;
     }
 

@@ -12,6 +12,7 @@
 #include <array>
 #include <list>
 #include <string>
+#include <string_view>
 
 namespace XML
 {
@@ -81,7 +82,7 @@ namespace CORE
         void save_xml();
 
         // 文字列を置換
-        std::string replace( const char* str, const int lng, const int id ) const;
+        std::string replace( std::string_view str, const int id ) const;
 
         static XML::Dom* dom_append( XML::Dom* node, const int id, const bool chref );
         static XML::Dom* dom_append( XML::Dom* node, ReplaceStrCondition condition,
