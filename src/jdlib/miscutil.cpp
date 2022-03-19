@@ -2054,9 +2054,17 @@ std::string MISC::parse_html_form_action( const std::string& html )
 }
 
 
-// haystack の pos 以降から最初に needle と一致する位置を返す (ASCIIだけignore case)
-// 見つからない場合は std::string::npos を返す、needle が空文字列なら pos を返す
-std::size_t MISC::ascii_ignore_case_find( const std::string& haystack, const std::string& needle, std::size_t pos )
+/** @brief haystack の pos 以降から最初に needle と一致する位置を返す (ASCIIだけignore case)
+ *
+ * @param[in] haystack 検索する文字列
+ * @param[in] needle 探す文字列 (ASCIIだけ大文字小文字を無視)
+ * @param[in] pos 検索を開始する位置
+ * @return
+ * - 最初に needle と一致した位置を返す
+ * - 見つからない場合は std::string::npos を返す
+ * - needle が空文字列なら pos を返す
+ */
+std::size_t MISC::ascii_ignore_case_find( const std::string& haystack, std::string_view needle, std::size_t pos )
 {
     if( haystack.size() < pos ) return std::string::npos;
     if( needle.empty() ) return pos;
@@ -2067,7 +2075,7 @@ std::size_t MISC::ascii_ignore_case_find( const std::string& haystack, const std
         i = haystack.find_first_of( head, i );
         if( i == std::string::npos ) break;
         // ヌル終端文字列が要件なので注意
-        if( g_ascii_strncasecmp( haystack.c_str() + i, needle.c_str(), needle.size() ) == 0 ) break;
+        if( g_ascii_strncasecmp( haystack.c_str() + i, needle.data(), needle.size() ) == 0 ) break;
         ++i;
     }
     return i;
