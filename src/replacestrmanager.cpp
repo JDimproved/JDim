@@ -241,7 +241,7 @@ std::string ReplaceStr_Manager::replace( const char* str, const int lng, const i
 
     std::string buffer;
 
-    if( m_chref[id] ) buffer = MISC::chref_decode( str, lng, false );
+    if( m_chref[id] ) buffer = MISC::chref_decode( std::string_view( str, lng ), false );
     else buffer.assign( str, lng );
 
 #ifdef _DEBUG
