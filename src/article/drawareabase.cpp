@@ -1550,8 +1550,22 @@ int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pr
     int width = 0;
     int width_wide = 0;
 
+    const char32_t code = MISC::utf8toucs2( utfstr, byte );
+
+    if( ! byte ){
+#ifdef _DEBUG
+        std::cout << "DrawAreaBase::get_width_of_one_char "
+                  << "invalid char " << (unsigned char)utfstr[ 0 ]
+                  << " " << (unsigned char)utfstr[ 1 ]
+                  << " " << (unsigned char)utfstr[ 2 ]
+                  << " " << (unsigned char)utfstr[ 3 ] << std::endl;
+#endif
+        byte = 1;
+        return 0;
+    }
+
     // キャッシュに無かったら幅を調べてキャッシュに登録
-    if( ! ARTICLE::get_width_of_char( utfstr, byte, pre_char, width, width_wide, mode ) ){
+    if( ! ARTICLE::get_width_of_char( code, pre_char, width, width_wide, mode ) ){
 
         const std::string tmpchar( utfstr, byte );
 
@@ -1613,26 +1627,26 @@ int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pr
         // フォントが無い
         if( width_wide <= 0 ){
 
-            int byte_tmp;
-            const unsigned int code = MISC::utf8toucs2( tmpchar.c_str(), byte_tmp );
-
-            std::stringstream ss_err;
-            ss_err << "unknown font byte = " << byte_tmp << " ucs2 = " << code << " width = " << width;
-
 #ifdef _DEBUG
             std::cout << "DrawAreaBase::get_width_of_one_char "
                       << "byte = " << byte
-                      << " byte_tmp = " << byte_tmp
                       << " code = " << code
                       << " [" << tmpchar << "]\n";
 #endif
 
-            MISC::ERRMSG( ss_err.str() );
+            if( ( code < 0xE000 || code > 0xF8FF ) // 基本面私用領域ではない
+                && ( code < 0xF0000 || code > 0x10FFFF ) // 私用面ではない
+              ){
+                std::stringstream ss_err;
+                ss_err << "unknown font byte = " << byte << " ucs = " << code << " width = " << width;
 
-            ARTICLE::set_width_of_char( utfstr, byte, pre_char, -1, -1, mode );
+                MISC::ERRMSG( ss_err.str() );
+            }
+
+            ARTICLE::set_width_of_char( code, pre_char, -1, -1, mode );
             width = width_wide = 0;
         }
-        else ARTICLE::set_width_of_char( utfstr, byte, pre_char, width, width_wide, mode );
+        else ARTICLE::set_width_of_char( code, pre_char, width, width_wide, mode );
     }
 
     int ret = 0;
