@@ -2976,7 +2976,7 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 
         m_wheel_scroll_time = event->time;
 
-        if( m_vscrbar && ( m_scrollinfo.mode == SCROLL_NOT || m_scrollinfo.mode == SCROLL_NORMAL ) ){
+        if( m_scrollinfo.mode == SCROLL_NOT || m_scrollinfo.mode == SCROLL_NORMAL ){
 
             const auto adjust = m_vscrbar->get_adjustment();
 
