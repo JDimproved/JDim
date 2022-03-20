@@ -20,7 +20,8 @@ namespace ARTICLE
 
     // 文字幅を登録する関数
     // width == -1 はフォント幅の取得に失敗した場合
-    void set_width_of_char( const char* utfstr, int& byte, const char pre_char, const int width, const int width_wide, const int mode );
+    void set_width_of_char( const char32_t code, const char pre_char, const int width, const int width_wide,
+                            const int mode );
 }
 
 #endif

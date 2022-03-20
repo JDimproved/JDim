@@ -5,8 +5,6 @@
 
 #include "font.h"
 
-#include "jdlib/miscutil.h"
-
 #include "fontid.h"
 #include "config/globalconf.h"
 
@@ -131,24 +129,27 @@ bool ARTICLE::get_width_of_char( const char32_t code, const char pre_char, int& 
 
 
 
-//
-// 文字幅を登録する関数
-//
-// width == -1 はフォント幅の取得に失敗した場合
-//
-void ARTICLE::set_width_of_char( const char* utfstr, int& byte, const char pre_char, const int width, const int width_wide, const int mode )
-{    
-    const int c32 = MISC::utf8toucs2( utfstr, byte );
-    if( ! byte ) return;
-    if( c32 >= kMaxCacheCodePoint ) return;
+/** @brief 文字幅を登録する関数
+ *
+ * width == -1 はフォント幅の取得に失敗した場合
+ * @param[in] code      入力文字 (コードポイント)
+ * @param[in] pre_char  ひとつ前の文字 ( 前の文字が全角の場合は 0 )
+ * @param[in] width     半角モードでの幅
+ * @param[in] width_wide  全角モードでの幅
+ * @param[in] mode      fontid.h で定義されているフォントのID
+ */
+void ARTICLE::set_width_of_char( const char32_t code, const char pre_char, const int width, const int width_wide,
+                                 const int mode )
+{
+    if( code >= kMaxCacheCodePoint ) return;
 
     // 半角モードの幅を厳密に求める場合
-    if( byte == 1 && strict_of_char ){
+    if( code < 128 && strict_of_char ){
 
-        const int pre_char_num = ( int ) pre_char;
-        if( pre_char_num < 128 ) width_of_char[ mode ][ c32 ].width[ pre_char_num ] = width;
+        const int pre_char_num = pre_char;
+        if( pre_char_num < 128 ) width_of_char[ mode ][ code ].width[ pre_char_num ] = width;
     }
 
     // 全角モードの幅
-    width_of_char[ mode ][ c32 ].width_wide = width_wide;
+    width_of_char[ mode ][ code ].width_wide = width_wide;
 }

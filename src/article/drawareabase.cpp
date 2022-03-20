@@ -1627,26 +1627,26 @@ int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pr
         // フォントが無い
         if( width_wide <= 0 ){
 
-            int byte_tmp;
-            const unsigned int code = MISC::utf8toucs2( tmpchar.c_str(), byte_tmp );
-
-            std::stringstream ss_err;
-            ss_err << "unknown font byte = " << byte_tmp << " ucs2 = " << code << " width = " << width;
-
 #ifdef _DEBUG
             std::cout << "DrawAreaBase::get_width_of_one_char "
                       << "byte = " << byte
-                      << " byte_tmp = " << byte_tmp
                       << " code = " << code
                       << " [" << tmpchar << "]\n";
 #endif
 
-            MISC::ERRMSG( ss_err.str() );
+            if( ( code < 0xE000 || code > 0xF8FF ) // 基本面私用領域ではない
+                && ( code < 0xF0000 || code > 0x10FFFF ) // 私用面ではない
+              ){
+                std::stringstream ss_err;
+                ss_err << "unknown font byte = " << byte << " ucs = " << code << " width = " << width;
 
-            ARTICLE::set_width_of_char( utfstr, byte, pre_char, -1, -1, mode );
+                MISC::ERRMSG( ss_err.str() );
+            }
+
+            ARTICLE::set_width_of_char( code, pre_char, -1, -1, mode );
             width = width_wide = 0;
         }
-        else ARTICLE::set_width_of_char( utfstr, byte, pre_char, width, width_wide, mode );
+        else ARTICLE::set_width_of_char( code, pre_char, width, width_wide, mode );
     }
 
     int ret = 0;
