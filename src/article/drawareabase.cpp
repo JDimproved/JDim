@@ -1550,8 +1550,22 @@ int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pr
     int width = 0;
     int width_wide = 0;
 
+    const char32_t code = MISC::utf8toucs2( utfstr, byte );
+
+    if( ! byte ){
+#ifdef _DEBUG
+        std::cout << "DrawAreaBase::get_width_of_one_char "
+                  << "invalid char " << (unsigned char)utfstr[ 0 ]
+                  << " " << (unsigned char)utfstr[ 1 ]
+                  << " " << (unsigned char)utfstr[ 2 ]
+                  << " " << (unsigned char)utfstr[ 3 ] << std::endl;
+#endif
+        byte = 1;
+        return 0;
+    }
+
     // キャッシュに無かったら幅を調べてキャッシュに登録
-    if( ! ARTICLE::get_width_of_char( utfstr, byte, pre_char, width, width_wide, mode ) ){
+    if( ! ARTICLE::get_width_of_char( code, pre_char, width, width_wide, mode ) ){
 
         const std::string tmpchar( utfstr, byte );
 
