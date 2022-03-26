@@ -158,6 +158,30 @@ yay -S jdim-git
 
 [gentoo-gcc]: https://wiki.gentoo.org/wiki/GCC_optimization/ja#-march
 
+<a name="crash-with-asan"></a>
+* **AddressSanitizer(ASan) を有効にするときの注意**
+
+  gcc(バージョン10以降)を使いASanを有効にしてビルドすると
+  書き込みのプレビューで[トリップ][trip]を表示するときにクラッシュすることがある。
+  詳細は <https://github.com/JDimproved/JDim/issues/943> を参照。
+
+  #### ASanを有効にするときクラッシュを回避する方法
+
+  * 事前に環境変数 LDFLAGS を設定してビルドする
+    ```
+    export LDFLAGS="$LDFLAGS -Wl,--push-state,--no-as-needed -lcrypt -Wl,--pop-state"
+    meson asan -Db_sanitize=address
+    ninja -C asan
+    ```
+
+  * または、mesonのコマンドラインオプション`-Db_asneeded`でフラグを変更する
+    ```
+    meson asan -Db_sanitize=address -Db_asneeded=false
+    ninja -C asan
+    ```
+
+[trip]: https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AA%E3%83%83%E3%83%97_(%E9%9B%BB%E5%AD%90%E6%8E%B2%E7%A4%BA%E6%9D%BF)
+
 
 ### Snapパッケージ
 JDim はSnapパッケージとして[Snap Storeで公開][snapcraft]されています。
@@ -273,6 +297,8 @@ WaylandやXWaylandではX11限定の機能を使うことができないため�
   スレビューの上に別のウインドウを重ねて移動させると残像でスレビュー内のみ描画が乱れる。
   スレビューをスクロール等させて再描画すると直る。([背景事情][mate-background])
 * Wayland環境では画像ビュー(ウインドウ表示)のフォーカスが外れたら折りたたむ機能が正常に動作しない。
+* gcc(バージョン10以降)を使いAddressSanitizer(ASan)を有効にしてビルドすると
+  書き込みのプレビューでトリップを表示するときにクラッシュすることがある。([上記](#crash-with-asan)を参照)
 
 [mate-1-10]: https://mate-desktop.org/blog/2015-06-11-mate-1-10-released/ "GTK3の実験的なサポート追加"
 [mate-1-16]: https://mate-desktop.org/blog/2016-09-21-mate-1-16-released/ "GTK3に移行途中"
