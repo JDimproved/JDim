@@ -97,7 +97,7 @@ namespace JDLIB
         int receive_header( char* buf, size_t& read_size );
         bool analyze_header();
         std::string analyze_header_option( std::string_view option ) const;
-        std::list< std::string > analyze_header_option_list( const std::string& option ) const;
+        std::list< std::string > analyze_header_option_list( std::string_view option ) const;
 
         // chunk用
         bool skip_chunk( char* buf, size_t& read_size );

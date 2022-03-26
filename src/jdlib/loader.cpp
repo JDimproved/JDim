@@ -1286,7 +1286,7 @@ std::string Loader::analyze_header_option( std::string_view option ) const
 //
 // analyze_header() から呼ばれるオプションの値を取り出す関数(リスト版)
 //
-std::list< std::string > Loader::analyze_header_option_list( const std::string& option ) const
+std::list< std::string > Loader::analyze_header_option_list( std::string_view option ) const
 {
     std::list< std::string > str_list;
 
