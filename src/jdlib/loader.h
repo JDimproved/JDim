@@ -12,11 +12,12 @@
 #include "loaderdata.h"
 #include "jdthread.h"
 
-#include <string>
-#include <list>
+#include <netdb.h>
 #include <zlib.h>
 
-#include <netdb.h>
+#include <list>
+#include <string>
+#include <string_view>
 
 
 namespace SKELETON
@@ -95,7 +96,7 @@ namespace JDLIB
         // ヘッダ用
         int receive_header( char* buf, size_t& read_size );
         bool analyze_header();
-        std::string analyze_header_option( const std::string& option ) const;
+        std::string analyze_header_option( std::string_view option ) const;
         std::list< std::string > analyze_header_option_list( const std::string& option ) const;
 
         // chunk用

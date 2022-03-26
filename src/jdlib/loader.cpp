@@ -1268,7 +1268,7 @@ bool Loader::analyze_header()
 //
 // analyze_header() から呼ばれるオプションの値を取り出す関数
 //
-std::string Loader::analyze_header_option( const std::string& option ) const
+std::string Loader::analyze_header_option( std::string_view option ) const
 {
     const std::size_t i = MISC::ascii_ignore_case_find( m_data.str_header, option );
     if( i != std::string::npos ){
