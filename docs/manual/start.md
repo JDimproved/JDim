@@ -140,10 +140,13 @@ WaylandやXWaylandではX11限定の機能を使うことができないため�
   スレビューの上に別のウインドウを重ねて移動させると残像でスレビュー内のみ描画が乱れる。
   スレビューをスクロール等させて再描画すると直る。([背景事情][mate-background])
 * Wayland環境では画像ビュー(ウインドウ表示)のフォーカスが外れたら折りたたむ機能が正常に動作しない。
+* gcc(バージョン10以降)を使いAddressSanitizer(ASan)を有効にしてビルドすると
+  書き込みのプレビューでトリップを表示するときにクラッシュすることがある。([Issue #943][#943]を参照)
 
 [mate-1-10]: https://mate-desktop.org/blog/2015-06-11-mate-1-10-released/ "GTK3の実験的なサポート追加"
 [mate-1-16]: https://mate-desktop.org/blog/2016-09-21-mate-1-16-released/ "GTK3に移行途中"
 [mate-background]: https://github.com/JDimproved/JDim/commit/ffbce60ede#commitcomment-40911816 "別の不具合が再発する"
+[#943]: https://github.com/JDimproved/JDim/issues/943
 
 
 <a name="compatibility"></a>
