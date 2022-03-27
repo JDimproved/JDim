@@ -1550,7 +1550,7 @@ int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pr
     int width = 0;
     int width_wide = 0;
 
-    const char32_t code = MISC::utf8toucs2( utfstr, byte );
+    const char32_t code = MISC::utf8toutf32( utfstr, byte );
 
     if( ! byte ){
 #ifdef _DEBUG
@@ -3991,41 +3991,41 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 //
 
 // 区切り文字
-bool is_separate_char( const int ucs2 )
+bool is_separate_char( const char32_t unich )
 {
-    if( ucs2 == ' '
+    if( unich == ' '
 
-        || ucs2 == '.'
-        || ucs2 == ','
+        || unich == '.'
+        || unich == ','
 
-        || ucs2 == '('
-        || ucs2 == ')'
+        || unich == '('
+        || unich == ')'
 
-        || ucs2 == '='
+        || unich == '='
 
         // 全角空白
-        || ucs2 == 0x3000
+        || unich == 0x3000
 
         // 。、
-        || ucs2 == 0x3001
-        || ucs2 == 0x3002
+        || unich == 0x3001
+        || unich == 0x3002
 
         // ．，
-        || ucs2 == 0xff0c
-        || ucs2 == 0xff0e
+        || unich == 0xFF0C
+        || unich == 0xFF0E
 
         // 全角()
-        || ucs2 == 0xff08
-        || ucs2 == 0xff09
+        || unich == 0xFF08
+        || unich == 0xFF09
 
         // 全角 =
-        || ucs2 == 0xff1d
+        || unich == 0xFF1D
 
         // 「」
-        || ucs2 == 0x300c
-        || ucs2 == 0x300d
-        || ucs2 == 0x300e
-        || ucs2 == 0x300f
+        || unich == 0x300C
+        || unich == 0x300D
+        || unich == 0x300E
+        || unich == 0x300F
 
         ) return true;
 
@@ -4103,15 +4103,15 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 }
 
                 int byte_char_pointer;
-                const int ucs2_pointer = MISC::utf8toucs2( layout->text + pos, byte_char_pointer );
-                const int ucs2mode_pointer = MISC::get_ucs2mode( ucs2_pointer );
+                const char32_t uch_pointer = MISC::utf8toutf32( layout->text + pos, byte_char_pointer );
+                const int ucstype_pointer = MISC::get_ucs2mode( uch_pointer );
 #ifdef _DEBUG
-                std::cout << "ucs2 = " << std::hex << ucs2_pointer << std::dec
-                          << " mode = " << ucs2mode_pointer << " pos = " << pos << std::endl;
+                std::cout << "utf32 = " << std::hex << uch_pointer << std::dec
+                          << " type = " << ucstype_pointer << " pos = " << pos << std::endl;
 #endif
 
                 // 区切り文字をダブルクリックした
-                if( is_separate_char( ucs2_pointer ) ){
+                if( is_separate_char( uch_pointer ) ){
                     caret_left.set( layout, pos );
                     caret_right.set( layout, pos + byte_char_pointer );
                     return true;
@@ -4123,20 +4123,17 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 while( pos_tmp < pos ){
 
                     int byte_char;
-                    const int ucs2 = MISC::utf8toucs2( layout->text + pos_tmp, byte_char );
-                    const int ucs2mode = MISC::get_ucs2mode( ucs2 );
+                    const char32_t uch = MISC::utf8toutf32( layout->text + pos_tmp, byte_char );
+                    const int ucstype = MISC::get_ucs2mode( uch );
 
                     int byte_char_next;
-                    const int ucs2_next = MISC::utf8toucs2( layout->text + pos_tmp + byte_char, byte_char_next );
-                    const int ucs2mode_next = MISC::get_ucs2mode( ucs2_next );
+                    const char32_t uch_next = MISC::utf8toutf32( layout->text + pos_tmp + byte_char, byte_char_next );
+                    const int ucstype_next = MISC::get_ucs2mode( uch_next );
 
                     // 区切り文字が来たら左位置を移動する
-                    if( ucs2_next == '\0'
-
-                        || is_separate_char( ucs2 )
-
+                    if( uch_next == '\0' || is_separate_char( uch )
                         // 文字種が変わった
-                        || ( ucs2mode != ucs2mode_pointer && ucs2mode_next == ucs2mode_pointer )
+                        || ( ucstype != ucstype_pointer && ucstype_next == ucstype_pointer )
 
                         ) pos_left = pos_tmp + byte_char;
 
@@ -4148,21 +4145,21 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 while( pos_right < layout->lng_text ){
 
                     int byte_char;
-                    const int ucs2 = MISC::utf8toucs2( layout->text + pos_right, byte_char );
-                    const int ucs2mode = MISC::get_ucs2mode( ucs2 );
+                    const char32_t uch = MISC::utf8toutf32( layout->text + pos_right, byte_char );
+                    const int ucstype = MISC::get_ucs2mode( uch );
 
                     int byte_char_next;
-                    const int ucs2_next = MISC::utf8toucs2( layout->text + pos_right + byte_char, byte_char_next );
-                    const int ucs2mode_next = MISC::get_ucs2mode( ucs2_next );
+                    const char32_t uch_next = MISC::utf8toutf32( layout->text + pos_right + byte_char, byte_char_next );
+                    const int ucstype_next = MISC::get_ucs2mode( uch_next );
 
                     // 区切り文字が来たらbreak
-                    if( is_separate_char( ucs2 ) ) break;
+                    if( is_separate_char( uch ) ) break;
 
                     pos_right += ( byte_char ? byte_char : 1 );
 
                     // 文字種が変わった
-                    if( ucs2_next == '\0'
-                        || ( ucs2mode == ucs2mode_pointer && ucs2mode_next != ucs2mode_pointer )
+                    if( uch_next == '\0'
+                        || ( ucstype == ucstype_pointer && ucstype_next != ucstype_pointer )
                         ) break;
                 }
 

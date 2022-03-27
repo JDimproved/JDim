@@ -311,3 +311,45 @@ int MISC::utf8bytes( const char* utf8str )
 
     return byte;
 }
+
+
+/** @brief UTF-8 バイト列から UTF-32 コードポイント に変換
+ *
+ * @param[in] utf8str 入力文字 (UTF-8)
+ * @param[out] byte 長さ(バイト数). utf8str が ASCII なら 1, UTF-8 なら 2 or 3 or 4, NULまたは不正な文字なら 0 を返す
+ * @return Unicode コードポイント
+ */
+char32_t MISC::utf8toutf32( const char* utf8str, int& byte )
+{
+    char32_t unich = 0;
+    byte = MISC::utf8bytes( utf8str );
+
+    switch( byte ){
+    case 1:
+        unich = utf8str[0];
+        break;
+
+    case 2:
+        unich = utf8str[0] & 0x1F;
+        unich = ( unich << 6 ) + ( utf8str[1] & 0x3F );
+        break;
+
+    case 3:
+        unich = utf8str[0] & 0x0F;
+        unich = ( unich << 6 ) + ( utf8str[1] & 0x3F );
+        unich = ( unich << 6 ) + ( utf8str[2] & 0x3F );
+        break;
+
+    case 4:
+        unich = utf8str[0] & 0x07;
+        unich = ( unich << 6 ) + ( utf8str[1] & 0x3F );
+        unich = ( unich << 6 ) + ( utf8str[2] & 0x3F );
+        unich = ( unich << 6 ) + ( utf8str[3] & 0x3F );
+        break;
+
+    default:
+        break;
+    }
+
+    return unich;
+}

@@ -5,8 +5,8 @@
 #include "jddebug.h"
 
 #include "jdiconv.h"
+#include "misccharcode.h"
 #include "miscmsg.h"
-#include "miscutil.h"
 
 #include <errno.h>
 #include <cstring>
@@ -168,34 +168,35 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
 
                     for ( ; ; ) {
                         int byte;
-                        const int ucs2 = MISC::utf8toucs2( m_buf_in_tmp, byte );
+                        const char32_t unich = MISC::utf8toutf32( m_buf_in_tmp, byte );
                         if( byte <= 1 ) break;
 
                         // emoji subdivision flags の処理
                         if ( is_handling_emoji_subdivision_flag ) {
                             // Tag Latin Small Letterの範囲か、Cancel Tagでなければ、処理中断
                             if ( byte != 4 ) break;
-                            if ( ucs2 < 917601 ) break; // U+E0061 TAG LATIN SMALL LETTER A
-                            if ( ucs2 > 917631 ) break; // U+E007F CANCEL TAG
+                            if ( unich < 917601 ) break; // U+E0061 TAG LATIN SMALL LETTER A
+                            if ( unich > 917631 ) break; // U+E007F CANCEL TAG
                         }
 
-                        const std::string ucs2_str = std::to_string( ucs2 );
+                        const std::string uni_str = std::to_string( unich );
 #ifdef _DEBUG
-                        std::cout << "ucs2 = " << ucs2_str << " byte = " << byte << std::endl;
+                        std::cout << "utf32 = " << unich << " byte = " << byte << std::endl;
 #endif
                         m_buf_in_tmp += byte;
                         m_byte_left_in -= byte;
 
                         *(buf_out++) = '&';
                         *(buf_out++) = '#';
-                        memcpy( buf_out, ucs2_str.c_str(), ucs2_str.size() ); buf_out += ucs2_str.size();
+                        memcpy( buf_out, uni_str.c_str(), uni_str.size() );
+                        buf_out += uni_str.size();
                         *(buf_out++) = ';';
 
-                        byte_left_out -= ucs2_str.size() + 3;
+                        byte_left_out -= uni_str.size() + 3;
                         is_converted_to_ucs2 = true;  // 一度変換されたのでマーク
 
                         if ( ! is_handling_emoji_subdivision_flag ) {
-                            if ( ( byte == 4 ) && ( ucs2 == 127988 ) ){ // U+1F3F4 WAVING BLACK FLAG
+                            if ( ( byte == 4 ) && ( unich == 127988 ) ){ // U+1F3F4 WAVING BLACK FLAG
                                 // emoji subdivision flags の処理開始
                                 is_handling_emoji_subdivision_flag = true;
                                 continue; // 連続処理
