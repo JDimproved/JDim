@@ -102,4 +102,66 @@ TEST_F(Utf8BytesTest, invalid_seq)
     EXPECT_EQ( 4, MISC::utf8bytes( "\xF0\x8F\x80\x80" ) ); // F0 90-BF 80-BF 80-BF
 }
 
+
+class Utf8ToUtf32Test : public ::testing::Test {};
+
+TEST_F(Utf8ToUtf32Test, null_data)
+{
+    int byte;
+    EXPECT_EQ( 0, MISC::utf8toutf32( nullptr, byte ) );
+    EXPECT_EQ( 0, byte );
+    EXPECT_EQ( 0, MISC::utf8toutf32( "", byte ) );
+    EXPECT_EQ( 0, byte );
+}
+
+TEST_F(Utf8ToUtf32Test, ascii)
+{
+    int byte;
+    EXPECT_EQ( 0x0001, MISC::utf8toutf32( "\x01", byte ) );
+    EXPECT_EQ( 1, byte );
+    EXPECT_EQ( 0x007F, MISC::utf8toutf32( "\x7F", byte ) );
+    EXPECT_EQ( 1, byte );
+}
+
+TEST_F(Utf8ToUtf32Test, two_bytes)
+{
+    int byte;
+    EXPECT_EQ( 0x0080, MISC::utf8toutf32( "\xC2\x80", byte ) );
+    EXPECT_EQ( 2, byte );
+    EXPECT_EQ( 0x07FF, MISC::utf8toutf32( "\xDF\xBF", byte ) );
+    EXPECT_EQ( 2, byte );
+}
+
+TEST_F(Utf8ToUtf32Test, three_bytes)
+{
+    int byte;
+    EXPECT_EQ( 0x0800, MISC::utf8toutf32( "\xE0\xA0\x80", byte ) );
+    EXPECT_EQ( 3, byte );
+    EXPECT_EQ( 0xFFFF, MISC::utf8toutf32( "\xEF\xBF\xBF", byte ) );
+    EXPECT_EQ( 3, byte );
+}
+
+TEST_F(Utf8ToUtf32Test, four_bytes)
+{
+    int byte;
+    EXPECT_EQ( 0x00010000, MISC::utf8toutf32( "\xF0\x90\x80\x80", byte ) );
+    EXPECT_EQ( 4, byte );
+    EXPECT_EQ( 0x0010FFFF, MISC::utf8toutf32( "\xF4\x8F\xBF\xBF", byte ) );
+    EXPECT_EQ( 4, byte );
+}
+
+TEST_F(Utf8ToUtf32Test, invalid_bytes)
+{
+    // 範囲外のうち一部の4バイトシーケンスは 0 にならない
+    // Utf8BytesTest::obsolete_four_bytes を参照
+    int byte;
+    EXPECT_EQ( 0x00110000, MISC::utf8toutf32( "\xF4\x90\x80\x80", byte ) );
+    EXPECT_EQ( 4, byte );
+    EXPECT_EQ( 0x0013FFFF, MISC::utf8toutf32( "\xF4\xBF\xBF\xBF", byte ) );
+    EXPECT_EQ( 4, byte );
+
+    EXPECT_EQ( 0, MISC::utf8toutf32( "\xF5\x80\x80\x80", byte ) ); // U+140000
+    EXPECT_EQ( 0, byte );
+}
+
 } // namespace

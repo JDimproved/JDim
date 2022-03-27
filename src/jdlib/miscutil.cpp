@@ -1523,61 +1523,6 @@ std::string MISC::decode_spchar_number( const std::string& str )
 
 
 //
-// utf-8 -> ucs2 変換
-//
-// 入力 : utfstr 入力文字 (UTF-8)
-//
-// 出力 :  byte  長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 or 4 を入れて返す
-//
-// 戻り値 : ucs2
-//
-int MISC::utf8toucs2( const char* utfstr, int& byte )
-{
-    int ucs2 = 0;
-    byte = 0;
-
-    if( utfstr[ 0 ] == '\0' ) return '\0';
-    
-    else if( ( ( unsigned char ) utfstr[ 0 ] & 0xf0 ) == 0xe0 ){
-        byte = 3;
-        ucs2 = utfstr[ 0 ] & 0x0f;
-        ucs2 = ( ucs2 << 6 ) + ( utfstr[ 1 ] & 0x3f );
-        ucs2 = ( ucs2 << 6 ) + ( utfstr[ 2 ] & 0x3f );        
-    }
-
-    else if( ( ( unsigned char ) utfstr[ 0 ] & 0x80 ) == 0 ){ // ascii
-        byte = 1;
-        ucs2 =  utfstr[ 0 ];
-    }
-
-    else if( ( ( unsigned char ) utfstr[ 0 ] & 0xe0 ) == 0xc0 ){
-        byte = 2;
-        ucs2 = utfstr[ 0 ] & 0x1f;
-        ucs2 = ( ucs2 << 6 ) + ( utfstr[ 1 ] & 0x3f );
-    }
-
-    else if( ( ( unsigned char ) utfstr[ 0 ] & 0xf8 ) == 0xf0 ){
-        byte = 4;
-        ucs2 = utfstr[ 0 ] & 0x07;
-        ucs2 = ( ucs2 << 6 ) + ( utfstr[ 1 ] & 0x3f );
-        ucs2 = ( ucs2 << 6 ) + ( utfstr[ 2 ] & 0x3f );
-        ucs2 = ( ucs2 << 6 ) + ( utfstr[ 3 ] & 0x3f );        
-    }
-
-    // 不正なUTF8
-    else {
-        byte = 1;
-        ucs2 =  utfstr[ 0 ];
-        ERRMSG( "MISC::utf8toucs2 : invalid code = " + std::to_string( ucs2 ) );
-    }
-
-    return ucs2;
-}
-
-
-
-
-//
 // ucs2 -> utf8 変換
 //
 // 出力 : utfstr 変換後の文字

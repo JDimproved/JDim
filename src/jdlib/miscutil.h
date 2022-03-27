@@ -231,12 +231,6 @@ namespace MISC
     // str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
     std::string decode_spchar_number( const std::string& str );
 
-    // utf-8 -> ucs2 変換
-    // 入力 : utfstr 入力文字 (UTF-8)
-    // 出力 :  byte  長さ(バイト) utfstr が ascii なら 1, UTF-8 なら 2 or 3 or 4 を入れて返す
-    // 戻り値 : ucs2
-    int utf8toucs2( const char* utfstr, int& byte );
-
     // ucs2 の種類
     int get_ucs2mode( const int ucs2 );
 
