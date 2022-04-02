@@ -386,12 +386,17 @@ std::string MISC::remove_str( const std::string& str1, const std::string& str2 )
 }
 
 
-//
-// start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
-//
-std::string MISC::remove_str( const std::string& str, const std::string& start, const std::string& end )
+/// @brief start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
+/**
+ * @param[in] str 処理する文字列
+ * @param[in] start 取り除く範囲の先頭
+ * @param[in] end 取り除く範囲の末尾
+ * @return 取り除いた結果。
+ */
+std::string MISC::remove_str( std::string_view str, std::string_view start, std::string_view end )
 {
-    std::string str_out = str;
+    std::string str_out{ str };
+    if( str_out.empty() || start.empty() || end.empty() ) return str_out;
 
     size_t l_pos = 0, r_pos = 0;
     const size_t start_length = start.length();
