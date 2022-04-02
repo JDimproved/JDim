@@ -525,10 +525,9 @@ void EditTextView::slot_quote_clipboard()
     if( m_context_menu ) m_context_menu->hide();
 
     Glib::RefPtr< Gtk::Clipboard > clip = Gtk::Clipboard::get();
-    Glib::ustring text = clip->wait_for_text();
+    std::string text = clip->wait_for_text();
 
-    std::string str_res;
-    str_res = CONFIG::get_ref_prefix();
+    std::string str_res = CONFIG::get_ref_prefix();
 
     text = MISC::replace_str( text, "\n", "\n" + str_res );
     insert_str( str_res + text, false );

@@ -150,6 +150,37 @@ TEST_F(RemoveStrStartEndTest, much_end_marks)
 }
 
 
+class ReplaceStrTest : public ::testing::Test {};
+
+TEST_F(ReplaceStrTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::replace_str( "", "", "" ) );
+    EXPECT_EQ( "", MISC::replace_str( "", "AA", "" ) );
+    EXPECT_EQ( "", MISC::replace_str( "", "AA", "BB" ) );
+    EXPECT_EQ( "", MISC::replace_str( "", "", "BB" ) );
+}
+
+TEST_F(ReplaceStrTest, empty_match)
+{
+    EXPECT_EQ( "Quick Brown Fox", MISC::replace_str( "Quick Brown Fox", "", "Red" ) );
+}
+
+TEST_F(ReplaceStrTest, replace_with_empty)
+{
+    EXPECT_EQ( "Quick//Fox", MISC::replace_str( "Quick/Brown/Fox", "Brown", "" ) );
+}
+
+TEST_F(ReplaceStrTest, not_match)
+{
+    EXPECT_EQ( "Quick Brown Fox", MISC::replace_str( "Quick Brown Fox", "Red", "Blue" ) );
+}
+
+TEST_F(ReplaceStrTest, multi_match)
+{
+    EXPECT_EQ( "Quick Red Red Fox", MISC::replace_str( "Quick Brown Brown Fox", "Brown", "Red" ) );
+}
+
+
 class IsUrlSchemeTest : public ::testing::Test {};
 
 TEST_F(IsUrlSchemeTest, url_none)
