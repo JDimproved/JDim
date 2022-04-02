@@ -444,23 +444,29 @@ std::string MISC::cut_str( const std::string& str, const std::string& str1, cons
 }
 
 
-//
-// str1 を str2 に置き換え
-//
-std::string MISC::replace_str( const std::string& str, const std::string& str1, const std::string& str2 )
+/** @brief pattern を replacement に置き換える
+ *
+ * @param[in] str 置き換えを実行する文字列
+ * @param[in] pattern 置き換える文字列のパターン
+ * @param[in] replacement マッチした文字列を置き換える内容
+ * @return 置き換えを実行した結果。str や pattern が空文字列のときは str をそのまま返す。
+ */
+std::string MISC::replace_str( std::string_view str, std::string_view pattern, std::string_view replacement )
 {
+    if( str.empty() || pattern.empty() ) return std::string( str );
+
     size_t i, pos = 0;
-    if( ( i = str.find( str1 , pos ) ) == std::string::npos ) return str;
+    if( ( i = str.find( pattern ) ) == std::string_view::npos ) return std::string( str );
 
     std::string str_out;
     str_out.reserve( str.length() );
 
     do {
         str_out.append( str, pos, ( i - pos ) );
-        str_out.append( str2 );
-        pos = i + str1.length();
+        str_out.append( replacement );
+        pos = i + pattern.length();
     }
-    while( ( i = str.find( str1 , pos ) ) != std::string::npos );
+    while( ( i = str.find( pattern, pos ) ) != std::string_view::npos );
 
     str_out.append( str, pos, str.length() );
     return str_out;
