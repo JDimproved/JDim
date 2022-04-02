@@ -100,8 +100,8 @@ namespace MISC
     // str1からstr2で示された文字列を除く
     std::string remove_str( const std::string& str1, const std::string& str2 );
 
-    // start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
-    std::string remove_str( const std::string& str, const std::string& start, const std::string& end );
+    /// start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
+    std::string remove_str( std::string_view str, std::string_view start, std::string_view end );
 
     // 正規表現を使ってstr1からqueryで示された文字列を除く
     std::string remove_str_regex( const std::string& str1, const std::string& query );

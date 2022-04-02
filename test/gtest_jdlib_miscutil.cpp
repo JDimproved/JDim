@@ -109,6 +109,47 @@ TEST_F(RemoveSpaceTest, remove_doublequote)
 }
 
 
+class RemoveStrStartEndTest : public ::testing::Test {};
+
+TEST_F(RemoveStrStartEndTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::remove_str( "", "", "" ) );
+    EXPECT_EQ( "", MISC::remove_str( "", "<<", "" ) );
+    EXPECT_EQ( "", MISC::remove_str( "", "<<", ">>" ) );
+    EXPECT_EQ( "", MISC::remove_str( "", "", ">>" ) );
+}
+
+TEST_F(RemoveStrStartEndTest, empty_start)
+{
+    EXPECT_EQ( "Quick<<Brown>>Fox", MISC::remove_str( "Quick<<Brown>>Fox", "", ">>" ) );
+}
+
+TEST_F(RemoveStrStartEndTest, empty_end)
+{
+    EXPECT_EQ( "Quick<<Brown>>Fox", MISC::remove_str( "Quick<<Brown>>Fox", "<<", "" ) );
+}
+
+TEST_F(RemoveStrStartEndTest, different_marks)
+{
+    EXPECT_EQ( "QuickFox", MISC::remove_str( "Quick<<Brown>>Fox", "<<", ">>" ) );
+}
+
+TEST_F(RemoveStrStartEndTest, same_marks)
+{
+    EXPECT_EQ( "QuickFox", MISC::remove_str( "Quick!!Brown!!Fox", "!!", "!!" ) );
+}
+
+TEST_F(RemoveStrStartEndTest, much_start_marks)
+{
+    EXPECT_EQ( "TheFox", MISC::remove_str( "The(Quick(Brown)Fox", "(", ")" ) );
+}
+
+TEST_F(RemoveStrStartEndTest, much_end_marks)
+{
+    EXPECT_EQ( "TheBrown)Fox", MISC::remove_str( "The(Quick)Brown)Fox", "(", ")" ) );
+}
+
+
 class IsUrlSchemeTest : public ::testing::Test {};
 
 TEST_F(IsUrlSchemeTest, url_none)
