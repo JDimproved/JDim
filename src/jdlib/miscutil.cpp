@@ -473,15 +473,19 @@ std::string MISC::replace_str( std::string_view str, std::string_view pattern, s
 }
 
 
-//
-// list_inから str1 を str2 に置き換えてリストを返す
-//
-std::list< std::string > MISC::replace_str_list( const std::list< std::string >& list_in,
-                                                 const std::string& str1, const std::string& str2 )
+/** @brief list_inから pattern を replacement に置き換えてリストを返す
+ *
+ * @param[in] list_in 置き換えを実行する文字列のリスト
+ * @param[in] pattern 置き換える文字列のパターン
+ * @param[in] replacement マッチした文字列を置き換える内容
+ * @return 置き換えを実行したリスト。
+ */
+std::list<std::string> MISC::replace_str_list( const std::list<std::string>& list_in,
+                                               std::string_view pattern, std::string_view replacement )
 {
     std::list< std::string > list_out;
     std::transform( list_in.cbegin(), list_in.cend(), std::back_inserter( list_out ),
-                    [&]( const std::string& s ) { return replace_str( s, str1, str2 ); } );
+                    [&]( const std::string& s ) { return replace_str( s, pattern, replacement ); } );
     return list_out;
 }
 

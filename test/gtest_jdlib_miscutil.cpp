@@ -181,6 +181,23 @@ TEST_F(ReplaceStrTest, multi_match)
 }
 
 
+class ReplaceStrListTest : public ::testing::Test {};
+
+TEST_F(ReplaceStrListTest, empty_data)
+{
+    std::list<std::string> empty;
+    std::list<std::string> expect;
+    EXPECT_EQ( expect, MISC::replace_str_list( empty, "AA", "BB" ) );
+}
+
+TEST_F(ReplaceStrListTest, sample_match)
+{
+    std::list<std::string> input = { "hello", "world", "sample" };
+    std::list<std::string> expect = { "hell123", "w123rld", "sample" };
+    EXPECT_EQ( expect, MISC::replace_str_list( input, "o", "123" ) );
+}
+
+
 class IsUrlSchemeTest : public ::testing::Test {};
 
 TEST_F(IsUrlSchemeTest, url_none)
