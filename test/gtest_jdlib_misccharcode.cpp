@@ -164,4 +164,35 @@ TEST_F(Utf8ToUtf32Test, invalid_bytes)
     EXPECT_EQ( 0, byte );
 }
 
+class GetUnicodeBlockTest : public ::testing::Test {};
+
+TEST_F(GetUnicodeBlockTest, basic_latin)
+{
+    EXPECT_EQ( MISC::UnicodeBlock::BasicLatin, MISC::get_unicodeblock( 0x0000 ) );
+    EXPECT_EQ( MISC::UnicodeBlock::BasicLatin, MISC::get_unicodeblock( 0x007F ) );
+}
+
+TEST_F(GetUnicodeBlockTest, hiragana)
+{
+    EXPECT_EQ( MISC::UnicodeBlock::Hira, MISC::get_unicodeblock( 0x3040 ) );
+    EXPECT_EQ( MISC::UnicodeBlock::Hira, MISC::get_unicodeblock( 0x309F ) );
+}
+
+TEST_F(GetUnicodeBlockTest, katanaka)
+{
+    EXPECT_EQ( MISC::UnicodeBlock::Kata, MISC::get_unicodeblock( 0x30A0 ) );
+    EXPECT_EQ( MISC::UnicodeBlock::Kata, MISC::get_unicodeblock( 0x30FF ) );
+}
+
+TEST_F(GetUnicodeBlockTest, other)
+{
+    EXPECT_EQ( MISC::UnicodeBlock::Other, MISC::get_unicodeblock( 0x0080 ) );
+
+    EXPECT_EQ( MISC::UnicodeBlock::Other, MISC::get_unicodeblock( 0x303F ) );
+    EXPECT_EQ( MISC::UnicodeBlock::Other, MISC::get_unicodeblock( 0x3100 ) );
+
+    EXPECT_EQ( MISC::UnicodeBlock::Other, MISC::get_unicodeblock( 0x10FFFF ) );
+    EXPECT_EQ( MISC::UnicodeBlock::Other, MISC::get_unicodeblock( 0x110000 ) );
+}
+
 } // namespace
