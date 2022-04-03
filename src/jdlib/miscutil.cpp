@@ -1580,18 +1580,6 @@ int MISC::ucs2toutf8( const int ucs2,  char* utfstr )
 
 
 //
-// ucs2 の種類
-//
-int MISC::get_ucs2mode( const int ucs2 )
-{
-    if( ucs2 >= 0x0000 && ucs2 <= 0x007f ) return UCS2MODE_BASIC_LATIN;
-    if( ucs2 >= 0x3040 && ucs2 <= 0x309f ) return UCS2MODE_HIRA;
-    if( ucs2 >= 0x30a0 && ucs2 <= 0x30ff ) return UCS2MODE_KATA;
-
-    return UCS2MODE_OTHER;
-}
-
-//
 // WAVEDASHなどのWindows系UTF-8文字をUnix系文字と相互変換
 //
 std::string MISC::utf8_fix_wavedash( const std::string& str, const int mode )

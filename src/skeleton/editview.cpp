@@ -14,6 +14,7 @@
 #include "environment.h"
 #include "session.h"
 
+#include "jdlib/misccharcode.h"
 #include "jdlib/miscutil.h"
 #include "config/globalconf.h"
 
@@ -733,10 +734,10 @@ static gboolean EditTextView_slot_extend_selection( GtkTextView*,
     Gtk::TextIter& end_iter = Glib::wrap( end );
 
     if( granularity == GTK_TEXT_EXTEND_SELECTION_WORD ) {
-        const auto mode = MISC::get_ucs2mode( loc_char );
+        const auto block = MISC::get_unicodeblock( loc_char );
         const bool sep = is_separate_char( loc_char );
-        const auto find_char = [mode, sep]( char32_t c ) {
-            return mode != MISC::get_ucs2mode( c ) || sep != is_separate_char( c );
+        const auto find_char = [block, sep]( char32_t c ) {
+            return block != MISC::get_unicodeblock( c ) || sep != is_separate_char( c );
         };
         if( start_iter.backward_find_char( find_char ) ) {
             start_iter.forward_char();

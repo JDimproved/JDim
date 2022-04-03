@@ -28,16 +28,6 @@ namespace MISC
                 SCHEME_SSSP
 	};
 
-     // get_ucs2mode()の戻り値
-     enum
-     {
-         UCS2MODE_BASIC_LATIN = 0,
-         UCS2MODE_HIRA,
-         UCS2MODE_KATA,
-
-         UCS2MODE_OTHER
-     };
-
 
      // utf8_fix_wavedash のモード
      enum
@@ -230,9 +220,6 @@ namespace MISC
 
     // str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
     std::string decode_spchar_number( const std::string& str );
-
-    // ucs2 の種類
-    int get_ucs2mode( const int ucs2 );
 
     // ucs2 -> utf8 変換
     // 出力 : utfstr 変換後の文字

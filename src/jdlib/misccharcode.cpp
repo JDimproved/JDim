@@ -353,3 +353,18 @@ char32_t MISC::utf8toutf32( const char* utf8str, int& byte )
 
     return unich;
 }
+
+
+/** @brief 特定のUnicodeブロックかコードポイントを調べる
+ *
+ * @param[in] unich Unicodeコードポイント
+ * @return MISC::UnicodeBlock 列挙体
+ */
+MISC::UnicodeBlock MISC::get_unicodeblock( const char32_t unich )
+{
+    if( unich <= 0x007F ) return UnicodeBlock::BasicLatin;
+    if( unich >= 0x3040 && unich <= 0x309F ) return UnicodeBlock::Hira;
+    if( unich >= 0x30A0 && unich <= 0x30FF ) return UnicodeBlock::Kata;
+
+    return UnicodeBlock::Other;
+}
