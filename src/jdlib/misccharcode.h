@@ -19,6 +19,16 @@ namespace MISC
         CHARCODE_UTF
     };
 
+    /// @brief get_unicodeblock() の戻り値
+    enum class UnicodeBlock
+    {
+        BasicLatin, ///< 基本ラテン文字 [U+0000, U+007F]
+        Hira, ///< 平仮名 [U+3040, U+309F]
+        Kata, ///< 片仮名 [U+30A0, U+30FF]
+
+        Other, ///< 上記以外
+    };
+
     bool is_euc( const char* input, size_t read_byte );
     bool is_jis( const char* input, size_t& read_byte );
     bool is_sjis( const char* input, size_t read_byte );
@@ -33,6 +43,9 @@ namespace MISC
     // 出力 :  byte  長さ(バイト) utf8str が ASCII なら 1, UTF-8 なら 2 or 3 or 4, それ以外は 0 を入れて返す
     // 戻り値 : unicode code point
     char32_t utf8toutf32( const char* utf8str, int& byte );
+
+    /// 特定のUnicodeブロックかコードポイントを調べる
+    UnicodeBlock get_unicodeblock( const char32_t unich );
 }
 
 #endif
