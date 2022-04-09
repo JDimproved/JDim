@@ -80,14 +80,19 @@ x11_dep = dependency('x11')
 zlib_dep = dependency('zlib', version : '>= 1.2.0')
 
 
-# crypt
+# crypt(3)
 crypt_dep = cpp_compiler.find_library('crypt', required : false)
 if not crypt_dep.found()
   crypt_dep = dependency('libcrypt', required : false)
 endif
 if not crypt_dep.found()
-  crypt_dep = dependency('libxcrypt')
+  crypt_dep = dependency('libxcrypt', required : false)
 endif
+# OpenBSD's crypt(3) is provided by libc.
+if not crypt_dep.found() and not cpp_compiler.has_function('crypt')
+  error('crypt(3) is not found... Please report to <https://github.com/JDimproved/JDim/issues>')
+endif
+
 if cpp_compiler.has_function('crypt_r', dependencies : crypt_dep)
   conf.set('HAVE_CRYPT_R', 1)
 endif
