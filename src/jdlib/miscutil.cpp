@@ -536,24 +536,6 @@ std::string MISC::recover_quot( const std::string& str )
 
 
 //
-// str 中に含まれている str2 の 数を返す
-//
-int MISC::count_str( const std::string& str, const std::string& str2  )
-{
-    int count = 0;
-    size_t found, pos = 0;
-
-    while( ( found = str.find( str2, pos ) ) != std::string::npos )
-    {
-        ++count;
-        pos = found + 1;
-    }
-
-    return count;
-}
-
-
-//
 // 文字列(utf-8も) -> 整数変換
 //
 // (例) "12３" -> 123
