@@ -150,6 +150,47 @@ TEST_F(RemoveStrStartEndTest, much_end_marks)
 }
 
 
+class CutStrFrontBackTest : public ::testing::Test {};
+
+TEST_F(CutStrFrontBackTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::cut_str( "", "", "" ) );
+    EXPECT_EQ( "", MISC::cut_str( "", "AA", "" ) );
+    EXPECT_EQ( "", MISC::cut_str( "", "AA", "BB" ) );
+    EXPECT_EQ( "", MISC::cut_str( "", "", "BB" ) );
+}
+
+TEST_F(CutStrFrontBackTest, empty_front_separator)
+{
+    EXPECT_EQ( "", MISC::cut_str( "Quick<<Brown>>Fox", "", ">>" ) );
+}
+
+TEST_F(CutStrFrontBackTest, empty_back_separator)
+{
+    EXPECT_EQ( "", MISC::cut_str( "Quick<<Brown>>Fox", "<<", "" ) );
+}
+
+TEST_F(CutStrFrontBackTest, different_separators)
+{
+    EXPECT_EQ( "Brown", MISC::cut_str( "Quick<<Brown>>Fox", "<<", ">>" ) );
+}
+
+TEST_F(CutStrFrontBackTest, same_separators)
+{
+    EXPECT_EQ( "Brown", MISC::cut_str( "Quick!!Brown!!Fox", "!!", "!!" ) );
+}
+
+TEST_F(CutStrFrontBackTest, much_front_separators)
+{
+    EXPECT_EQ( "Quick(Brown", MISC::cut_str( "The(Quick(Brown)Fox", "(", ")" ) );
+}
+
+TEST_F(CutStrFrontBackTest, much_back_separators)
+{
+    EXPECT_EQ( "Quick", MISC::cut_str( "The(Quick)Brown)Fox", "(", ")" ) );
+}
+
+
 class ReplaceStrTest : public ::testing::Test {};
 
 TEST_F(ReplaceStrTest, empty_data)

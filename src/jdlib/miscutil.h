@@ -96,8 +96,8 @@ namespace MISC
     // 正規表現を使ってstr1からqueryで示された文字列を除く
     std::string remove_str_regex( const std::string& str1, const std::string& query );
 
-    // str1, str2 に囲まれた文字列を切り出す
-    std::string cut_str( const std::string& str, const std::string& str1, const std::string& str2 );
+    /// front_sep, back_sep に囲まれた文字列を切り出す
+    std::string cut_str( const std::string& str, std::string_view front_sep, std::string_view back_sep );
 
     /// pattern を replacement に置き換える
     std::string replace_str( std::string_view str, std::string_view pattern, std::string_view replacement );
