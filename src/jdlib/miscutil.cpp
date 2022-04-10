@@ -432,15 +432,21 @@ std::string MISC::remove_str_regex( const std::string& str1, const std::string& 
 }
 
 
-//
-// str1, str2 に囲まれた文字列を切り出す
-//
-std::string MISC::cut_str( const std::string& str, const std::string& str1, const std::string& str2 )
+/** @brief front_sep, back_sep に囲まれた文字列を切り出す
+ *
+ * @param[in] str 処理する文字列
+ * @param[in] front_sep 前の区切り
+ * @param[in] back_sep 後の区切り
+ * @return 切り出した結果。引数が空文字列または区切りが見つからないときは空文字列を返す。
+ */
+std::string MISC::cut_str( const std::string& str, std::string_view front_sep, std::string_view back_sep )
 {
-    size_t i = str.find( str1 );
+    if( str.empty() || front_sep.empty() || back_sep.empty() ) return std::string{};
+
+    std::size_t i = str.find( front_sep );
     if( i == std::string::npos ) return std::string();
-    i += str1.length();
-    size_t i2 = str.find( str2, i );
+    i += front_sep.size();
+    const std::size_t i2 = str.find( back_sep, i );
     if( i2 == std::string::npos ) return std::string();
     
     return str.substr( i, i2 - i );
