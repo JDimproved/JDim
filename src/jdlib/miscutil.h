@@ -106,8 +106,8 @@ namespace MISC
     std::list<std::string> replace_str_list( const std::list<std::string>& list_in,
                                              std::string_view pattern, std::string_view replacement );
 
-    // str_in に含まれる改行文字を replace に置き換え
-    std::string replace_newlines_to_str( const std::string& str_in, const std::string& replace );
+    /// str に含まれる改行文字(`\r\n`)を replace に置き換え
+    std::string replace_newlines_to_str( const std::string& str, std::string_view replace );
 
     // " を \" に置き換え
     std::string replace_quot( const std::string& str );

@@ -239,6 +239,37 @@ TEST_F(ReplaceStrListTest, sample_match)
 }
 
 
+class ReplaceNewlinesToStrTest : public ::testing::Test {};
+
+TEST_F(ReplaceNewlinesToStrTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::replace_newlines_to_str( "", "" ) );
+    EXPECT_EQ( "", MISC::replace_newlines_to_str( "", "A\nA" ) );
+}
+
+TEST_F(ReplaceNewlinesToStrTest, empty_replacement)
+{
+    EXPECT_EQ( "\nBrown\nFox\n", MISC::replace_newlines_to_str( "\nBrown\nFox\n", "" ) );
+    EXPECT_EQ( "\rBrown\rFox\r", MISC::replace_newlines_to_str( "\rBrown\rFox\r", "" ) );
+    EXPECT_EQ( "\r\nBrown\r\nFox\r\n", MISC::replace_newlines_to_str( "\r\nBrown\r\nFox\r\n", "" ) );
+}
+
+TEST_F(ReplaceNewlinesToStrTest, replace_cr)
+{
+    EXPECT_EQ( "!!Brown!!Fox!!", MISC::replace_newlines_to_str( "\rBrown\rFox\r", "!!" ) );
+}
+
+TEST_F(ReplaceNewlinesToStrTest, replace_lf)
+{
+    EXPECT_EQ( "!!Brown!!Fox!!", MISC::replace_newlines_to_str( "\nBrown\nFox\n", "!!" ) );
+}
+
+TEST_F(ReplaceNewlinesToStrTest, replace_crlf)
+{
+    EXPECT_EQ( "!!Brown!!Fox!!", MISC::replace_newlines_to_str( "\r\nBrown\r\nFox\r\n", "!!" ) );
+}
+
+
 class IsUrlSchemeTest : public ::testing::Test {};
 
 TEST_F(IsUrlSchemeTest, url_none)

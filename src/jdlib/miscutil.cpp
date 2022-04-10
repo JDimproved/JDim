@@ -499,28 +499,31 @@ std::list<std::string> MISC::replace_str_list( const std::list<std::string>& lis
 }
 
 
-//
-// str_in に含まれる改行文字を replace に置き換え
-//
-std::string MISC::replace_newlines_to_str( const std::string& str_in, const std::string& replace )
+/** @brief str に含まれる改行文字(`\r\n`)を replace に置き換え
+ *
+ * @param[in] str_in 処理する文字列
+ * @param[in] replace マッチした改行文字と置き換える内容
+ * @return 置き換えを実行した結果。str や replace が空文字列のときは str をそのまま返す。
+ */
+std::string MISC::replace_newlines_to_str( const std::string& str, std::string_view replace )
 {
-    if( str_in.empty() || replace.empty() ) return str_in;
+    if( str.empty() || replace.empty() ) return str;
 
     std::string str_out;
-    str_out.reserve( str_in.length() );
+    str_out.reserve( str.size() );
 
     size_t pos = 0, found = 0;
-    while( ( found = str_in.find_first_of( "\r\n", pos ) ) != std::string::npos )
+    while( ( found = str.find_first_of( "\r\n", pos ) ) != std::string::npos )
     {
-        str_out.append( str_in, pos, ( found - pos ) );
+        str_out.append( str, pos, ( found - pos ) );
         str_out.append( replace );
 
         pos = found + 1;
 
-        if( str_in[ found ] == '\r' && str_in[ found + 1 ] == '\n' ) ++pos;
+        if( str[ found ] == '\r' && str[ found + 1 ] == '\n' ) ++pos;
     }
 
-    str_out.append( str_in, pos, str_in.length() );
+    str_out.append( str, pos );
 
     return str_out;
 }
