@@ -87,8 +87,8 @@ namespace MISC
     // str前後の改行、タブ、スペースを削除
     std::string remove_spaces( const std::string& str );
 
-    // str1からstr2で示された文字列を除く
-    std::string remove_str( const std::string& str1, const std::string& str2 );
+    /// strからpatternで示された文字列を除く
+    std::string remove_str( std::string_view str, std::string_view pattern );
 
     /// start 〜 end の範囲をstrから取り除く ( /* コメント */ など )
     std::string remove_str( std::string_view str, std::string_view start, std::string_view end );
