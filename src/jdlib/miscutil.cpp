@@ -377,12 +377,15 @@ std::string MISC::remove_spaces( const std::string& str )
 
 
 
-//
-// str1からstr2で示された文字列を除く
-//
-std::string MISC::remove_str( const std::string& str1, const std::string& str2 )
+/** @brief strからpatternで示された文字列を除く
+ *
+ * @param[in] str 処理する文字列
+ * @param[in] pattern 取り除く文字列
+ * @return 取り除いた結果
+ */
+std::string MISC::remove_str( std::string_view str, std::string_view pattern )
 {
-    return MISC::replace_str( str1, str2, "" );
+    return MISC::replace_str( str, pattern, "" );
 }
 
 
