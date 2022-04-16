@@ -390,7 +390,9 @@ int main( int argc, char **argv )
         std::exit( 1 );
     }
 
-    Gtk::Main m( &argc, &argv );
+    // NOTE: 現状ではプロセスの排他制御を自前で行っている。
+    const Glib::ustring application_id = "com.github.jdimproved.jdim";
+    auto app = Gtk::Application::create( argc, argv, application_id, Gio::APPLICATION_NON_UNIQUE );
 
     // XSMPによるセッション管理
 #ifdef USE_XSMP
@@ -493,7 +495,7 @@ int main( int argc, char **argv )
     Win_Main = new JDWinMain( init, skip_setupdiag, init_w, init_h, init_x, init_y );
     if( Win_Main ){
 
-        m.run( *Win_Main );
+        app->run( *Win_Main );
 
         delete Win_Main;
         Win_Main = nullptr;
