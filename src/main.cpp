@@ -20,14 +20,10 @@
 #include "jdlib/ssl.h"
 #include "jdlib/jdregex.h"
 
+#include <cstring>
+#include <iostream>
 #include <signal.h>
 #include <string>
-#include <sys/time.h>
-#include <errno.h>
-#include <cstring>
-#include <sstream>
-#include <iostream>
-#include <getopt.h>
 
 #ifdef USE_XSMP
 #include <X11/ICE/ICElib.h>
@@ -41,11 +37,6 @@ struct XSMPDATA
 };
 #endif
 
-enum
-{
-    MAX_SAFE_ARGC = 4,   // 引数の数の制限値
-    MAX_SAFE_ARGV = 1024 // 各引数の文字列の制限値
-};
 
 JDWinMain* Win_Main = nullptr;
 
@@ -211,215 +202,157 @@ void xsmp_session_end( XSMPDATA* xsmpdata )
 
 ////////////////////////////////////////////////////////////
 
-void usage( const int status )
+
+/** @brief Gioのアプリケーションを管理する
+ *
+ * シグナルハンドラを安全に切断するため sigc::trackable を継承する
+ */
+class App : public sigc::trackable
 {
-    // -h, --help で表示するメッセージ
-    std::stringstream help_message;
-    help_message <<
-    "Usage: jdim [OPTION] [URL,FILE]\n"
-    "\n"
-    "-h, --help\n"
-    "        Display this information\n"
-    //"-t <url>, --tab=<url>\n"
-    //"        URL open of BBS etc by Tab\n"
-    "-m, --multi\n"
-    "        Do not quit even if multiple sub-process\n"
-    "-s, --skip-setup\n"
-    "        Skip the setup dialog\n"
-    "-l, --logfile\n"
-    "        Write message to msglog file\n"
-    "-g, --geometry WxH-X+Y\n"
-    "        The initial size and location\n"
-    "-V, --version\n"
-    "        Display version of this program\n";
+    Glib::RefPtr<Gio::Application> m_app;
 
-    std::cout << help_message.str() << std::endl;
+    bool multi_mode{}; ///< サブプロセスのとき多重起動するか
+    bool skip_setupdiag{}; ///< 初回起動時の設定ダイアログを表示するか
+    bool logfile_mode{}; ///< エラーなどのメッセージをファイルに出力するか
 
-    exit( status );
+    int init_w = -1; ///< メインウィンドウの幅
+    int init_h = -1; ///< メインウィンドウの高さ
+    int init_x = -1; ///< メインウィンドウを表示する位置(横軸)
+    int init_y = -1; ///< メインウィンドウを表示する位置(縦軸)
+
+    bool init{}; ///< 初回起動か
+    CORE::IOMonitor iomonitor;
+
+    bool m_with_gui{};
+
+public:
+    App();
+    ~App() noexcept = default;
+
+    int run( int argc, char* argv[] ) { return m_app->run( argc, argv ); }
+    void quit() { m_app->quit(); }
+
+private:
+    int slot_handle_local_options( const Glib::RefPtr<Glib::VariantDict>& options );
+    bool slot_option_geometry( const Glib::ustring& option_name, const Glib::ustring& value, bool has_value );
+
+    void slot_startup();
+    bool setup_fifo( std::string url );
+    JDWinMain* create_window();
+    void slot_activate();
+    void slot_open( const Gtk::Application::type_vec_files& files, const Glib::ustring& hint );
+    void slot_hide_window();
+};
+
+
+App::App()
+{
+    Glib::ustring app_id = "com.github.jdimproved.jdim";
+    // アプリケーションの排他制御は {Gtk,Gio}::Application ではなくロックファイルで行う
+    const auto flags = Gio::APPLICATION_NON_UNIQUE | Gio::APPLICATION_HANDLES_OPEN;
+
+    if( gtk_init_check( nullptr, nullptr ) ) {
+        m_app = Gtk::Application::create( app_id, flags );
+        m_with_gui = true;
+    }
+    else {
+        // デスクトップが無い環境でもヘルプやバージョンを出力できるように初期化する
+        m_app = Gio::Application::create( app_id, flags );
+    }
+    Gio::Application::set_default( m_app );
+
+    m_app->add_main_option_entry( Gio::Application::OPTION_TYPE_BOOL,
+                                  "multi", 'm', "Do not quit even if multiple sub-process" );
+    m_app->add_main_option_entry( Gio::Application::OPTION_TYPE_BOOL,
+                                  "skip-setup", 's', "Skip the setup dialog" );
+    m_app->add_main_option_entry( Gio::Application::OPTION_TYPE_BOOL,
+                                  "logfile", 'l', "Write message to msglog file" );
+    m_app->add_main_option_entry( sigc::mem_fun( *this, &App::slot_option_geometry ),
+                                  "geometry", 'g', "The initial size and location", "WxH-X+Y" );
+    m_app->add_main_option_entry( Gio::Application::OPTION_TYPE_BOOL,
+                                  "version", 'V', "Display version of this program" );
+
+    m_app->signal_handle_local_options().connect( sigc::mem_fun( *this, &App::slot_handle_local_options ) );
+    m_app->signal_startup().connect( sigc::mem_fun( *this, &App::slot_startup ) );
+    m_app->signal_activate().connect( sigc::mem_fun( *this, &App::slot_activate ) );
+    m_app->signal_open().connect( sigc::mem_fun( *this, &App::slot_open ) );
 }
 
 
-int main( int argc, char **argv )
+/** @brief コマンドラインオプションの解析
+ *
+ * @param[in] options オプションの解析結果
+ * @return プログラムを続行するときは-1、それ以外は終了コード
+ */
+int App::slot_handle_local_options( const Glib::RefPtr<Glib::VariantDict>& options )
 {
-    /*--- 引数処理 --------------------------------------------------*/
-
-    // 引数の数を制限
-    if( argc > MAX_SAFE_ARGC )
-    {
-        MISC::ERRMSG( "main(): Too many arguments." );
-        exit( EXIT_FAILURE );
+    if( options->contains( "version" ) ) {
+        // バージョンと完全なconfigureオプションを表示
+        std::cout << ENVIRONMENT::get_progname() << " " << ENVIRONMENT::get_jdversion() << "\n" <<
+        ENVIRONMENT::get_jdcopyright() << "\n"
+        "configure: " << ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_FULL ) << std::endl;
+        return 0;
     }
 
-    // 各引数の文字数を制限
-    int i;
-    for( i = 0; i < argc; ++i )
-    {
-        if( strlen( argv[ i ] ) > MAX_SAFE_ARGV )
-        {
-            MISC::ERRMSG( "main(): Too many the strings in argument." );
-            exit( EXIT_FAILURE );
-        }
-    }
+    multi_mode = options->contains( "multi" );
+    skip_setupdiag = options->contains( "skip-setup" );
+    logfile_mode = options->contains( "logfile" );
 
-    // "現在のタブ/新規タブ"など引数によって開き方を変えたい場合は、--tab=<url>
-    // など新しいオプションを追加する
-    // --help, --tab=<url>, --multi, --logfile --version
-    const struct option options[] =
-    {
-        { "help", 0, nullptr, 'h' },
-        //{ "tab", 1, nullptr, 't' },
-        { "multi", 0, nullptr, 'm' },
-        { "skip-setup", 0, nullptr, 's' },
-        { "logfile", 0, nullptr, 'l' },
-        { "geometry", required_argument, nullptr, 'g' },
-        { "version", 0, nullptr, 'V' },
-        { nullptr, 0, nullptr, 0 }
-    };
+    return -1;
+}
 
-    std::string url;
-    bool multi_mode = false;
-    bool skip_setupdiag = false;
-    bool logfile_mode = false;
-    int init_w = -1;
-    int init_h = -1;
-    int init_x = -1;
-    int init_y = -1;
+
+/** @brief geometryオプションの解析
+ *
+ * @param[in] option_name オプション名
+ * @param[in] value       解析前のオプション値
+ * @param[in] has_value   オプション値を持っているか
+ * @return 解析に成功したかどうか
+ */
+bool App::slot_option_geometry( const Glib::ustring& option_name, const Glib::ustring& value, bool has_value )
+{
+    if( ! has_value ) return false;
 
     JDLIB::Regex regex;
-    const size_t offset = 0;
-    const bool icase = false;
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = false;
-    std::string query;
+    constexpr size_t offset = 0;
+    constexpr bool icase = false;
+    constexpr bool newline = true;
+    constexpr bool usemigemo = false;
+    constexpr bool wchar = false;
+    const std::string query = "(([0-9]*)x([0-9]*))?\\-([0-9]*)\\+([0-9]*)";
+    if( regex.exec( query, value, offset, icase, newline, usemigemo, wchar ) ) {
 
-    // -h, -t <url>, -m, -s, -l, -g WxH+X+Y, -V
-    int opt = 0;
-    while( ( opt = getopt_long( argc, argv, "ht:mslg:V", options, nullptr ) ) != -1 )
-    {
-        switch( opt )
-        {
-            case 'h':
-                usage( EXIT_SUCCESS );
-                break;
-
-            //case 't':
-                //url = optarg;
-                //break;
-
-            case 'm':
-                multi_mode = true;
-                break;
-
-            case 's':
-                skip_setupdiag = true;
-                break;
-
-            case 'l': // メッセージをログファイルに出力
-                logfile_mode = true;
-                break;
-
-            case 'g':
-                if( ! optarg ) usage( EXIT_FAILURE );
-
-                query = "(([0-9]*)x([0-9]*))?\\-([0-9]*)\\+([0-9]*)";
-                if( regex.exec( query, optarg, offset, icase, newline, usemigemo, wchar ) ){
-
-                    if( regex.length( 2 ) ) init_w = atoi( regex.str( 2 ).c_str() );
-                    if( regex.length( 3 ) ) init_h = atoi( regex.str( 3 ).c_str() );
-                    if( regex.length( 4 ) ) init_x = atoi( regex.str( 4 ).c_str() );
-                    if( regex.length( 5 ) ) init_y = atoi( regex.str( 5 ).c_str() );
-                }
-                else usage( EXIT_FAILURE );
-
-                break;
-
-            case 'V': // バージョンと完全なconfigureオプションを表示
-                std::cout << ENVIRONMENT::get_progname() << " " << ENVIRONMENT::get_jdversion() << "\n" <<
-                ENVIRONMENT::get_jdcopyright() << "\n"
-                "configure: " << ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_FULL ) << std::endl;
-                exit( 0 );
-                break;
-
-            default:
-                usage( EXIT_FAILURE );
-        }
+        if( regex.length( 2 ) > 0 ) init_w = std::atoi( regex.str( 2 ).c_str() );
+        if( regex.length( 3 ) > 0 ) init_h = std::atoi( regex.str( 3 ).c_str() );
+        if( regex.length( 4 ) > 0 ) init_x = std::atoi( regex.str( 4 ).c_str() );
+        if( regex.length( 5 ) > 0 ) init_y = std::atoi( regex.str( 5 ).c_str() );
+        return true;
     }
+    return false;
+}
 
-    if( url.empty() )
-    {
-        // 引数がURLのみの場合
-        if( argc > optind )
-        {
-            url = argv[ optind ];
-        }
-        // -m 、-s でなく、URLを含まない引数だけの場合は終了
-        else if( optind > 1 && ! ( multi_mode || skip_setupdiag || logfile_mode ) ){
-            usage( EXIT_FAILURE );
-        }
-    }
-    /*---------------------------------------------------------------*/
 
-    // SIGINT、SIGQUITのハンドラ設定
-    struct sigaction sigact;
-    sigset_t blockset;
-
-    sigemptyset( &blockset );
-    sigaddset( &blockset, SIGHUP );
-    sigaddset( &blockset, SIGINT );
-    sigaddset( &blockset, SIGQUIT );
-    sigaddset( &blockset, SIGTERM );
-
-    memset( &sigact, 0, sizeof(struct sigaction) );  
-    sigact.sa_handler = sig_handler;
-    sigact.sa_mask = blockset;
-    sigact.sa_flags = SA_RESETHAND;
-
-    // シグナルハンドラ設定
-    if( sigaction( SIGHUP, &sigact, nullptr ) != 0
-        || sigaction( SIGINT, &sigact, nullptr ) != 0
-        || sigaction( SIGQUIT, &sigact, nullptr ) != 0 ){
-        fprintf( stderr, "sigaction failed\n" );
-        exit( 1 );
-    }
-    // 接続が切れたソケットに書き込むと SIGPIPE が発生して強制終了するので無視するように設定する
-    std::memset( &sigact, 0, sizeof(struct sigaction) );
-    sigact.sa_handler = SIG_IGN;
-    if( sigaction( SIGPIPE, &sigact, nullptr ) != 0 ) {
-        std::cerr << "sigaction failed (SIGPIPE)\n";
-        std::exit( 1 );
-    }
-
-    Gtk::Main m( &argc, &argv );
-
-    // XSMPによるセッション管理
-#ifdef USE_XSMP
-
-#ifdef _DEBUG
-    std::cout << "USE_XSMP\n";
-#endif
-
-    XSMPDATA xsmpdata;
-    memset( &xsmpdata, 0, sizeof( XSMPDATA ) );
-    xsmp_session_init( &xsmpdata );    
-#endif
-
-    JDLIB::init_ssl();
+/**
+ * @brief {Gtk,Gio}::Application で排他制御を行わないためスタートアップは必ず実行される
+ */
+void App::slot_startup()
+{
+    if( ! m_with_gui ) return;
 
     // 全体設定ロード
-    bool init = !( CONFIG::load_conf() );
+    init = !( CONFIG::load_conf() );
 
     if( init ){
 
         // 設定ファイルが読み込めないときに存在するか確認
-        int exists = CACHE::file_exists( CACHE::path_conf() );
+        const int exists = CACHE::file_exists( CACHE::path_conf() );
         if( exists == CACHE::EXIST_FILE || exists == CACHE::EXIST_DIR ){
 
             std::string msg = "JDimの設定ファイル(" + CACHE::path_conf()
                               + ")は存在しますが読み込むことが出来ませんでした。\n\n起動しますか？";
             Gtk::MessageDialog mdiag( msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             const int ret = mdiag.run();
-            if( ret != Gtk::RESPONSE_YES ) return 0;
+            if( ret != Gtk::RESPONSE_YES ) return quit();
         }
 
         // 初回起動時にルートを作る
@@ -428,17 +361,27 @@ int main( int argc, char **argv )
 
     // メッセージをログファイルに出力
     if( logfile_mode && CACHE::mkdir_logroot() ){
-        FILE *tmp; // warning 消し
+        FILE* tmp; // warning 消し
         const std::string logfile = Glib::locale_from_utf8( CACHE::path_msglog() );
         tmp = freopen( logfile.c_str(), "ab", stdout );
         setbuf( tmp, nullptr );
         tmp = freopen( logfile.c_str(), "ab", stderr );
         setbuf( tmp, nullptr );
+        // tmp のクローズはプロセス終了にまかせる
     }
 
     /*--- IOMonitor -------------------------------------------------*/
-    CORE::IOMonitor iomonitor;
+    iomonitor.init_connection();
+}
 
+
+/** @brief ロックファイル(FIFO)による排他処理を行う。
+ *
+ * @param[in] url 板やスレッドののURL、またはDATのファイルパス
+ * @return ウインドウを表示せずプロセスを終了するときはfalseを返す
+ */
+bool App::setup_fifo( std::string url )
+{
     // FIFOの状態をチェックする
     if( iomonitor.get_fifo_stat() == CORE::FIFO_OK )
     {
@@ -446,14 +389,14 @@ int main( int argc, char **argv )
         if( ! url.empty() )
         {
             // ローカルファイルかどうかチェック
-            const std::string url_real = CACHE::get_realpath( url );
-            if( ! url_real.empty() ) url = url_real;
+            std::string url_real = CACHE::get_realpath( url );
+            if( ! url_real.empty() ) url = std::move( url_real );
 
             // FIFOに書き込む
             iomonitor.send_command( url );
 
             // マルチモードでなく、メインプロセスでもない場合は終了
-            if( ! multi_mode && ! iomonitor.is_main_process() ) return 0;
+            if( ! multi_mode && ! iomonitor.is_main_process() ) return false;
         }
         // マルチモードでなく、メインプロセスでもない場合は問い合わせる
         else if( ! multi_mode && ! iomonitor.is_main_process() )
@@ -462,8 +405,8 @@ int main( int argc, char **argv )
                                           + CACHE::path_lock() + " を削除してください。",
                                       false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
             mdiag.set_title( "ロックファイルが見つかりました" );
-            int ret = mdiag.run();
-            if( ret != Gtk::RESPONSE_YES ) return 0;
+            const int ret = mdiag.run();
+            if( ret != Gtk::RESPONSE_YES ) return false;
         }
     }
     // FIFOに問題がある(FATで作成出来ないなど)
@@ -485,25 +428,131 @@ int main( int argc, char **argv )
             if( ret != Gtk::RESPONSE_YES )
             {
                 CONFIG::save_conf();
-                return 1;
+                return false;
             }
         }
     }
+    return true;
+}
 
-    Win_Main = new JDWinMain( init, skip_setupdiag, init_w, init_h, init_x, init_y );
-    if( Win_Main ){
 
-        m.run( *Win_Main );
+/**
+ * @brief 解析したコマンドラインオプションでウインドウを作成して Gtk::Application に追加する
+ */
+JDWinMain* App::create_window()
+{
+    assert( m_with_gui );
+    auto win = new JDWinMain( init, skip_setupdiag, init_w, init_h, init_x, init_y );
+    win->signal_hide().connect( sigc::mem_fun( *this, &App::slot_hide_window ) );
+    win->show_all();
+    Glib::RefPtr<Gtk::Application>::cast_dynamic( m_app )->add_window( *win );
+    return win;
+}
 
-        delete Win_Main;
-        Win_Main = nullptr;
+
+void App::slot_activate()
+{
+    if( ! m_with_gui ) return;
+
+    if( ! setup_fifo( std::string{} ) ) return;
+
+    // メインプロセスまたは多重起動のときはウインドウを作成して表示
+    if( ! Win_Main ) {
+        Win_Main = create_window();
     }
+    Win_Main->present();
+}
+
+
+/** @brief URLやDATファイルを開く
+ *
+ * URLを複数渡して起動しても最初の一つのみ開く
+ * @param[in] files URLやDATファイルのリスト
+ * @param[in] hint  未使用
+ */
+void App::slot_open( const Gio::Application::type_vec_files& files, const Glib::ustring& )
+{
+    if( ! m_with_gui ) return;
+
+    std::string url;
+    for( auto& f : files ) {
+        url = f->get_uri();
+        if( ! url.empty() ) break;
+    }
+
+    if( ! setup_fifo( std::move( url ) ) ) return;
+
+    // メインプロセスまたは多重起動のときはウインドウを作成して表示
+    if( ! Win_Main ) {
+        Win_Main = create_window();
+    }
+    Win_Main->present();
+}
+
+
+void App::slot_hide_window()
+{
+    // ウインドウを削除すると Gtk::Application から取り除かれる
+    // 最後のウインドウが削除されるとアプリケーションは終了する
+    delete Win_Main;
+    Win_Main = nullptr;
+}
+
+
+int main( int argc, char **argv )
+{
+    // SIGINT、SIGQUITのハンドラ設定
+    struct sigaction sigact;
+    sigset_t blockset;
+
+    sigemptyset( &blockset );
+    sigaddset( &blockset, SIGHUP );
+    sigaddset( &blockset, SIGINT );
+    sigaddset( &blockset, SIGQUIT );
+    sigaddset( &blockset, SIGTERM );
+
+    std::memset( &sigact, 0, sizeof(struct sigaction) );
+    sigact.sa_handler = sig_handler;
+    sigact.sa_mask = blockset;
+    sigact.sa_flags = SA_RESETHAND;
+
+    // シグナルハンドラ設定
+    if( sigaction( SIGHUP, &sigact, nullptr ) != 0
+        || sigaction( SIGINT, &sigact, nullptr ) != 0
+        || sigaction( SIGQUIT, &sigact, nullptr ) != 0 ){
+        std::cerr << "sigaction failed\n";
+        std::exit( 1 );
+    }
+    // 接続が切れたソケットに書き込むと SIGPIPE が発生して強制終了するので無視するように設定する
+    std::memset( &sigact, 0, sizeof(struct sigaction) );
+    sigact.sa_handler = SIG_IGN;
+    if( sigaction( SIGPIPE, &sigact, nullptr ) != 0 ) {
+        std::cerr << "sigaction failed (SIGPIPE)\n";
+        std::exit( 1 );
+    }
+
+    // XSMPによるセッション管理
+#ifdef USE_XSMP
+
+#ifdef _DEBUG
+    std::cout << "USE_XSMP\n";
+#endif
+
+    XSMPDATA xsmpdata;
+    std::memset( &xsmpdata, 0, sizeof(XSMPDATA) );
+    xsmp_session_init( &xsmpdata );
+#endif
+
+    JDLIB::init_ssl();
+
+    App app;
+    const int exit_status = app.run( argc, argv );
+
+    JDLIB::deinit_ssl();
 
 #ifdef USE_XSMP
     xsmp_session_end( &xsmpdata );
 #endif
 
-    JDLIB::deinit_ssl();
-
-    return 0;
+    return exit_status;
 }

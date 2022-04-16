@@ -31,7 +31,6 @@ IOMonitor::IOMonitor()
     , m_fifo_file( CACHE::path_lock() )
     , m_fifo_stat( FIFO_OK )
 {
-    init();
 }
 
 
@@ -50,7 +49,7 @@ IOMonitor::~IOMonitor()
 /*-------------------------------------------------------------------*/
 // このクラスの初期化( FIFO作成、FIFOオープン、Glib::IOChannelの作成 )
 /*-------------------------------------------------------------------*/
-void IOMonitor::init()
+void IOMonitor::init_connection()
 {
     // 既にFIFOと同名のファイルが存在するか確認
     const int status = CACHE::file_exists( m_fifo_file );

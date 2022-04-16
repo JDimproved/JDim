@@ -36,9 +36,6 @@ namespace CORE
 
       private:
 
-        // 初期化
-        void init();
-
         // FIFOを削除する
         void delete_fifo();
 
@@ -49,6 +46,9 @@ namespace CORE
 
         IOMonitor();
         ~IOMonitor();
+
+        /// FIFOの初期化
+        void init_connection();
 
         // FIFOの状態を取得
         int get_fifo_stat() const noexcept { return m_fifo_stat; }
