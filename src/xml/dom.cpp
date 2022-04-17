@@ -386,7 +386,7 @@ std::string Dom::get_xml( const int n ) const
         // テキストノード
         case NODE_TYPE_TEXT:
 
-            text = MISC::remove_spaces( m_nodeValue );
+            text = MISC::ascii_trim( m_nodeValue );
             if( ! text.empty() )
             {
                 // インデントを追加

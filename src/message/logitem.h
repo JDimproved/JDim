@@ -54,7 +54,7 @@ namespace MESSAGE
 
             // MISC::replace_str( ..., "\n", " \n" ) しているのは MISC::get_lines 実行時に
             // 改行のみの行を削除しないようにするため
-            msg_lines = MISC::get_lines( MISC::replace_str( MISC::remove_spaces( msg ), "\n", " \n" ) );
+            msg_lines = MISC::get_lines( MISC::replace_str( MISC::ascii_trim( msg ), "\n", " \n" ) );
 
             // 簡易チェック用に先頭の文字列をコピー(空白は除く)
             for( size_t i = 0, i2 = 0; i < LOGITEM_SIZE_HEAD -1 && i2 < msg.length(); ++i2 ){

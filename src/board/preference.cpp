@@ -543,7 +543,7 @@ void Preferences::slot_ok_clicked()
         // 不適切な文字が含まれてないかチェックと先頭末尾の空白文字を削除する
         const std::string& raw = agent_text.raw();
         if( std::all_of( raw.begin(), raw.end(), []( char c ) { return g_ascii_isprint( c ); } ) ) {
-            board_agent = MISC::remove_spaces( raw );
+            board_agent = MISC::ascii_trim( raw );
         }
     }
     if( board_agent != DBTREE::board_get_board_agent( get_url() ) ) {

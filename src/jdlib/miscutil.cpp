@@ -349,30 +349,21 @@ std::string MISC::remove_space( const std::string& str )
 }
 
 
-//
-// str前後の改行、タブ、スペースを削除
-//
-std::string MISC::remove_spaces( const std::string& str )
+/** @brief str前後の改行(\r, \\n)、タブ(\t)、スペース(U+0020)を削除
+ *
+ * @param[in] str トリミングする文字列
+ * @return トリミングした結果
+ */
+std::string MISC::ascii_trim( const std::string& str )
 {
     if( str.empty() ) return std::string();
 
-    size_t l = 0, r = str.length();
+    constexpr std::string_view space_chars = " \n\t\r";
+    const auto start = str.find_first_not_of( space_chars );
+    if( start == std::string::npos ) return str;
 
-    while( l < r
-         && ( str[l] == '\n'
-           || str[l] == '\r'
-           || str[l] == '\t'
-           || str[l] == ' ' ) ) ++l;
-
-    // 最後の文字の位置は文字数より1少ない
-    size_t p = r - 1;
-    while( p > 0
-         && ( str[p] == '\n'
-           || str[p] == '\r'
-           || str[p] == '\t'
-           || str[p] == ' ' ) ){ --p; --r; }
-
-    return str.substr( l, r - l );
+    const auto end = str.find_last_not_of( space_chars ) + 1;
+    return str.substr( start, end - start );
 }
 
 
