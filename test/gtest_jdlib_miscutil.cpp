@@ -109,6 +109,55 @@ TEST_F(RemoveSpaceTest, remove_doublequote)
 }
 
 
+class AsciiTrimTest : public ::testing::Test {};
+
+TEST_F(AsciiTrimTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::ascii_trim( "" ) );
+}
+
+TEST_F(AsciiTrimTest, no_space_chars_at_start_and_end)
+{
+    EXPECT_EQ( "Hello \n \r \t World", MISC::ascii_trim( "Hello \n \r \t World" ) );
+    EXPECT_EQ( "あいうえお", MISC::ascii_trim( "あいうえお" ) );
+}
+
+TEST_F(AsciiTrimTest, trim_front)
+{
+    EXPECT_EQ( "Hello", MISC::ascii_trim( " Hello" ) );
+    EXPECT_EQ( "Hello", MISC::ascii_trim( "\nHello" ) );
+    EXPECT_EQ( "Hello", MISC::ascii_trim( "\rHello" ) );
+    EXPECT_EQ( "Hello", MISC::ascii_trim( "\tHello" ) );
+    EXPECT_EQ( "Hello", MISC::ascii_trim( "\n \r \t Hello" ) );
+}
+
+TEST_F(AsciiTrimTest, trim_back)
+{
+    EXPECT_EQ( "World", MISC::ascii_trim( "World " ) );
+    EXPECT_EQ( "World", MISC::ascii_trim( "World\n" ) );
+    EXPECT_EQ( "World", MISC::ascii_trim( "World\r" ) );
+    EXPECT_EQ( "World", MISC::ascii_trim( "World\t" ) );
+    EXPECT_EQ( "World", MISC::ascii_trim( "World\n \r \t" ) );
+}
+
+TEST_F(AsciiTrimTest, trim_both_side)
+{
+    EXPECT_EQ( "Hello\t \n \rWorld", MISC::ascii_trim( "\n \r \t Hello\t \n \rWorld \n \r \t" ) );
+}
+
+TEST_F(AsciiTrimTest, not_trim_ascii)
+{
+    EXPECT_EQ( "\vHello\v", MISC::ascii_trim( "\vHello\v" ) ); // VERTICAL TAB
+    EXPECT_EQ( "\fHello\f", MISC::ascii_trim( "\fHello\f" ) ); // FORM FEED
+}
+
+TEST_F(AsciiTrimTest, not_trim_unicode)
+{
+    EXPECT_EQ( "\u00A0Hello\u00A0", MISC::ascii_trim( "\u00A0Hello\u00A0" ) ); // NO-BREAK SPACE
+    EXPECT_EQ( "\u3000Hello\u3000", MISC::ascii_trim( "\u3000Hello\u3000" ) ); // IDEOGRAPHIC SPACE
+}
+
+
 class RemoveStrStartEndTest : public ::testing::Test {};
 
 TEST_F(RemoveStrStartEndTest, empty_data)
