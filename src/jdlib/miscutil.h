@@ -218,11 +218,6 @@ namespace MISC
     // str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
     std::string decode_spchar_number( const std::string& str );
 
-    // ucs2 -> utf8 変換
-    // 出力 : utfstr 変換後の文字
-    // 戻り値 : バイト数
-    int ucs2toutf8( const int ucs2, char* utfstr );
-
     // WAVEDASHなどのWindows系UTF-8文字をUnix系文字と相互変換
     std::string utf8_fix_wavedash( const std::string& str, const int mode );
 

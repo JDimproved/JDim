@@ -164,6 +164,58 @@ TEST_F(Utf8ToUtf32Test, invalid_bytes)
     EXPECT_EQ( 0, byte );
 }
 
+
+class Utf32ToUtf8Test : public ::testing::Test {};
+
+TEST_F(Utf32ToUtf8Test, null_data)
+{
+    EXPECT_EQ( 0, MISC::utf32toutf8( 0x1000, nullptr ) );
+}
+
+TEST_F(Utf32ToUtf8Test, ascii)
+{
+    char out_char[8];
+    EXPECT_EQ( 1, MISC::utf32toutf8( 0x0000, out_char ) );
+    EXPECT_STREQ( "\u0000", out_char );
+    EXPECT_EQ( 1, MISC::utf32toutf8( 0x007F, out_char ) );
+    EXPECT_STREQ( "\u007F", out_char );
+}
+
+TEST_F(Utf32ToUtf8Test, two_bytes)
+{
+    char out_char[8];
+    EXPECT_EQ( 2, MISC::utf32toutf8( 0x0080, out_char ) );
+    EXPECT_STREQ( "\u0080", out_char );
+    EXPECT_EQ( 2, MISC::utf32toutf8( 0x07FF, out_char ) );
+    EXPECT_STREQ( "\u07FF", out_char );
+}
+
+TEST_F(Utf32ToUtf8Test, three_bytes)
+{
+    char out_char[8];
+    EXPECT_EQ( 3, MISC::utf32toutf8( 0x0800, out_char ) );
+    EXPECT_STREQ( "\u0800", out_char );
+    EXPECT_EQ( 3, MISC::utf32toutf8( 0xFFFF, out_char ) );
+    EXPECT_STREQ( "\uFFFF", out_char );
+}
+
+TEST_F(Utf32ToUtf8Test, four_bytes)
+{
+    char out_char[8];
+    EXPECT_EQ( 4, MISC::utf32toutf8( 0x00010000, out_char ) );
+    EXPECT_STREQ( "\U00010000", out_char );
+    EXPECT_EQ( 4, MISC::utf32toutf8( 0x0010FFFF, out_char ) );
+    EXPECT_STREQ( "\U0010FFFF", out_char );
+}
+
+TEST_F(Utf32ToUtf8Test, out_of_range)
+{
+    char out_char[8];
+    EXPECT_EQ( 0, MISC::utf32toutf8( 0x00110000, out_char ) );
+    EXPECT_STREQ( "", out_char );
+}
+
+
 class GetUnicodeBlockTest : public ::testing::Test {};
 
 TEST_F(GetUnicodeBlockTest, basic_latin)

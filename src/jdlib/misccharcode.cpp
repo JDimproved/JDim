@@ -355,6 +355,51 @@ char32_t MISC::utf8toutf32( const char* utf8str, int& byte )
 }
 
 
+/**
+ * @brief UTF-32 から UTF-8 に変換する
+ *
+ * @param[in]  uch     変換するコードポイント。有効範囲は [0, 0x10FFFF]
+ * @param[out] utf8str 変換後の文字。渡された文字列は末尾にヌル文字を追加する
+ * @return 変換したUTF-8のバイト数。入力が有効範囲外のときは 0 が返る
+ */
+int MISC::utf32toutf8( const char32_t uch,  char* utf8str )
+{
+    int byte = 0;
+    if( ! utf8str ) return byte;
+
+    if( uch <= 0x7F ){ // ascii
+        byte = 1;
+        utf8str[0] = uch;
+    }
+    else if( uch <= 0x07FF ){
+        byte = 2;
+        utf8str[0] = ( 0xC0 ) + ( uch >> 6 );
+        utf8str[1] = ( 0x80 ) + ( uch & 0x3F );
+    }
+    else if( uch <= 0xFFFF ){
+        byte = 3;
+        utf8str[0] = ( 0xE0 ) + ( uch >> 12 );
+        utf8str[1] = ( 0x80 ) + ( ( uch >> 6 ) & 0x3F );
+        utf8str[2] = ( 0x80 ) + ( uch & 0x3F );
+    }
+    else if( uch <= 0x10FFFF ){
+        byte = 4;
+        utf8str[0] = ( 0xF0 ) + ( uch >> 18 );
+        utf8str[1] = ( 0x80 ) + ( ( uch >> 12 ) & 0x3F );
+        utf8str[2] = ( 0x80 ) + ( ( uch >> 6 ) & 0x3F );
+        utf8str[3] = ( 0x80 ) + ( uch & 0x3F );
+    }
+#ifdef _DEBUG
+    else{
+        std::cout << "MISC::utf32toutf8 : invalid uch = " << uch << std::endl;
+    }
+#endif
+
+    utf8str[byte] = 0;
+    return byte;
+}
+
+
 /** @brief 特定のUnicodeブロックかコードポイントを調べる
  *
  * @param[in] unich Unicodeコードポイント

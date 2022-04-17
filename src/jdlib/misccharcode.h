@@ -44,6 +44,11 @@ namespace MISC
     // 戻り値 : unicode code point
     char32_t utf8toutf32( const char* utf8str, int& byte );
 
+    // UTF-32 から UTF-8 に変換する
+    // 出力 : utf8str 変換後の文字
+    // 戻り値 : バイト数
+    int utf32toutf8( const char32_t uch, char* utf8str );
+
     /// 特定のUnicodeブロックかコードポイントを調べる
     UnicodeBlock get_unicodeblock( const char32_t unich );
 }
