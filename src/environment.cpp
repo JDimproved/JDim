@@ -198,8 +198,8 @@ std::string ENVIRONMENT::get_distname()
             size_t e;
             if( ( e = (*it).find( '=' ) ) != std::string::npos )
             {
-                name = MISC::remove_spaces( (*it).substr( 0, e ) );
-                value = MISC::remove_spaces( (*it).substr( e + 1 ) );
+                name = MISC::ascii_trim( it->substr( 0, e ) );
+                value = MISC::ascii_trim( it->substr( e + 1 ) );
             }
 
             if( name == "PRETTY_NAME" && ! value.empty() )
@@ -223,8 +223,8 @@ std::string ENVIRONMENT::get_distname()
             size_t e;
             if( ( e = (*it).find( '=' ) ) != std::string::npos )
             {
-                lsb_name = MISC::remove_spaces( (*it).substr( 0, e ) );
-                lsb_data = MISC::remove_spaces( (*it).substr( e + 1 ) );
+                lsb_name = MISC::ascii_trim( it->substr( 0, e ) );
+                lsb_data = MISC::ascii_trim( it->substr( e + 1 ) );
             }
 
             // 「DISTRIB_DESCRIPTION="Ubuntu 7.10"」などから「Ubuntu 7.10」を取得
@@ -308,7 +308,7 @@ std::string ENVIRONMENT::get_distname()
     }
 
     // 文字列両端のスペースなどを削除する
-    std::string dist_name = MISC::remove_spaces( tmp );
+    std::string dist_name = MISC::ascii_trim( tmp );
 
     // 取得した文字が異常に長い場合は空にする
     if( dist_name.length() > 50 ) dist_name.clear();

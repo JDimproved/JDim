@@ -3398,7 +3398,7 @@ void ArticleViewBase::slot_select_all()
 void ArticleViewBase::slot_drawout_selection_str()
 {
     std::string query = m_drawarea->str_selection();
-    query = MISC::remove_spaces( query );
+    query = MISC::ascii_trim( query );
     query = MISC::replace_str( query, "\n", "" );
     if( query.find( ' ' ) != std::string::npos ) query = "\"" + query + "\"";
 

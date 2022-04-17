@@ -219,7 +219,7 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
         
         // MISC::replace_str( ..., "\n", " \n" ) しているのは MISC::get_lines 実行時に
         // 改行のみの行を削除しないようにするため
-        std::list< std::string > msg_lines = MISC::get_lines( MISC::replace_str( MISC::remove_spaces( msg ), "\n", " \n" ) );
+        std::list< std::string > msg_lines = MISC::get_lines( MISC::replace_str( MISC::ascii_trim( msg ), "\n", " \n" ) );
 
 #ifdef _DEBUG
         std::cout << "lines = " << msg_lines.size() << " : " << item.msg_lines.size() << std::endl;
@@ -234,7 +234,7 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
 #ifdef _DEBUG
             std::cout << (*it_msg) << " | " << (*it_item) << std::endl;
 #endif
-            if( MISC::remove_spaces( (*it_msg) ) != MISC::remove_spaces( (*it_item ) ) ) break;
+            if( MISC::ascii_trim( *it_msg ) != MISC::ascii_trim( *it_item ) ) break;
         }
         if( it_msg != msg_lines.end() ) continue;
 
