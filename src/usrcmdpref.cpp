@@ -95,47 +95,24 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     get_content_area()->pack_start( m_ckbt_hide_usrcmd, Gtk::PACK_SHRINK );
 
     // ポップアップメニュー
-    m_action_group = Gtk::ActionGroup::create();
-    m_action_group->add( Gtk::Action::create( "NewCmd", "新規コマンド(_C)"), sigc::mem_fun( *this, &UsrCmdPref::slot_newcmd ) );
-    m_action_group->add( Gtk::Action::create( "NewDir", "新規ディレクトリ(_N)"), sigc::mem_fun( *this, &UsrCmdPref::slot_newdir ) );
-    m_action_group->add( Gtk::Action::create( "NewSepa", "区切り(_S)"), sigc::mem_fun( *this, &UsrCmdPref::slot_newsepa ) );
-    m_action_group->add( Gtk::Action::create( "Rename", "名前変更(_R)"), sigc::mem_fun( *this, &UsrCmdPref::slot_rename ) );
-    m_action_group->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
-    m_action_group->add( Gtk::Action::create( "Delete", "削除する(_D)"), sigc::mem_fun( *this, &UsrCmdPref::slot_delete ) );
+    m_action_group = Gio::SimpleActionGroup::create();
+    m_action_group->add_action( "NewCmd", sigc::mem_fun( *this, &UsrCmdPref::slot_newcmd ) );
+    m_action_group->add_action( "NewDir", sigc::mem_fun( *this, &UsrCmdPref::slot_newdir ) );
+    m_action_group->add_action( "NewSepa", sigc::mem_fun( *this, &UsrCmdPref::slot_newsepa ) );
+    m_action_group->add_action( "Rename", sigc::mem_fun( *this, &UsrCmdPref::slot_rename ) );
+    m_action_group->add_action( "Delete", sigc::mem_fun( *this, &UsrCmdPref::slot_delete ) );
+    m_treeview.insert_action_group( "usrcmd", m_action_group );
 
-    Glib::ustring str_ui =
-    "<ui>"
-
-    "<popup name='popup_menu'>"
-    "<menuitem action='NewCmd'/>"
-    "<separator/>"
-    "<menuitem action='Rename'/>"
-    "<menuitem action='NewDir'/>"
-    "<menuitem action='NewSepa'/>"
-    "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
-    "</popup>"
-
-    // 複数選択
-    "<popup name='popup_menu_mul'>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete'/>"
-    "</menu>"
-    "</popup>"
-
-    "</ui>";
-
-    m_ui_manager = Gtk::UIManager::create();
-    m_ui_manager->insert_action_group( m_action_group );
-    m_ui_manager->add_ui_from_string( str_ui );
-
-    // ポップアップメニューにキーアクセレータを表示
-    Gtk::Menu* menu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
-    CONTROL::set_menu_motion( menu );
-    menu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu_mul" ) );
-    CONTROL::set_menu_motion( menu );
+    auto gmenu = Gio::Menu::create();
+    gmenu->append( "新規コマンド(_C)", "usrcmd.NewCmd" );
+    gmenu->append( "名前変更(_R)", "usrcmd.Rename" );
+    gmenu->append( "新規ディレクトリ(_N)", "usrcmd.NewDir" );
+    gmenu->append( "区切り(_S)", "usrcmd.NewSepa" );
+    auto submenu = Gio::Menu::create();
+    submenu->append( "削除する(_D)", "usrcmd.Delete" );
+    gmenu->append_submenu( "削除(_D)", submenu );
+    m_treeview_menu.bind_model( gmenu, true );
+    m_treeview_menu.attach_to_widget( m_treeview );
 
     m_treeview.xml2tree( CORE::get_usrcmd_manager()->xml_document(), m_treestore, ROOT_NODE_NAME_USRCMD );
 
@@ -241,35 +218,32 @@ bool UsrCmdPref::slot_key_release( GdkEventKey* event )
 // ポップアップメニュー表示
 void UsrCmdPref::show_popupmenu()
 {
-    Gtk::Menu* menu = nullptr;
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    if( list_it.size() <= 1 ) menu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
-    else menu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu_mul" ) );
+    const bool multi_selected{ list_it.size() > 1 };
 
-    if( ! menu ) return;
+    auto get_action = [this]( const char* name ) {
+        return Glib::RefPtr<Gio::SimpleAction>::cast_dynamic( m_action_group->lookup_action( name ) );
+    };
+    get_action( "NewCmd" )->set_enabled( ! multi_selected );
+    get_action( "NewDir" )->set_enabled( ! multi_selected );
+    get_action( "NewSepa" )->set_enabled( ! multi_selected );
 
-    Glib::RefPtr< Gtk::Action > act_del, act_rename;
-    act_rename = m_action_group->get_action( "Rename" );
-    act_del = m_action_group->get_action( "Delete_Menu" );
-
+    auto act_rename = get_action( "Rename" );
+    auto act_delete = get_action( "Delete" );
     if( m_path_selected.empty() ){
-        if( act_rename ) act_rename->set_sensitive( false );
-        if( act_del ) act_del->set_sensitive( false );
+        act_rename->set_enabled( false );
+        act_delete->set_enabled( false );
     }
     else{
-
         Gtk::TreeModel::Row row = *( m_treestore->get_iter( m_path_selected ) );
         int type = row[ m_columns.m_type ];
 
-        if( act_rename ){
-            if( type != TYPE_SEPARATOR ) act_rename->set_sensitive( true );
-            else act_rename->set_sensitive( false );
-        }
-        if( act_del ) act_del->set_sensitive( true );
+        act_rename->set_enabled( type != TYPE_SEPARATOR && ! multi_selected );
+        act_delete->set_enabled( true );
     }
 
     // Specify the current event by nullptr.
-    menu->popup_at_pointer( nullptr );
+    m_treeview_menu.popup_at_pointer( nullptr );
 }
 
 
