@@ -50,8 +50,8 @@ namespace CORE
         Gtk::TreeModel::Path m_path_selected;
 
         // ポップアップメニュー
-        Glib::RefPtr< Gtk::ActionGroup > m_action_group;
-        Glib::RefPtr< Gtk::UIManager > m_ui_manager;
+        Glib::RefPtr<Gio::SimpleActionGroup> m_action_group;
+        Gtk::Menu m_treeview_menu;
 
         CONTROL::Control m_control;
 
