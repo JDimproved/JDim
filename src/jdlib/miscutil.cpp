@@ -1523,59 +1523,6 @@ std::string MISC::decode_spchar_number( const std::string& str )
 
 
 //
-// WAVEDASHなどのWindows系UTF-8文字をUnix系文字と相互変換
-//
-std::string MISC::utf8_fix_wavedash( const std::string& str, const int mode )
-{
-    // WAVE DASH 問題
-    const size_t size = 4;
-    const unsigned char Win[size][4] = {
-        { 0xef, 0xbd, 0x9e, '\0' }, // FULLWIDTH TILDE (U+FF5E)
-        { 0xe2, 0x80, 0x95, '\0' }, // HORIZONTAL BAR (U+2015)
-        { 0xe2, 0x88, 0xa5, '\0' }, // PARALLEL TO (U+2225)
-        { 0xef, 0xbc, 0x8d, '\0' }  // FULLWIDTH HYPHEN-MINUS (U+FF0D)
-    };
-    const unsigned char Unix[size][4] = {
-        { 0xe3, 0x80, 0x9c, '\0' }, // WAVE DASH (U+301C)
-        { 0xe2, 0x80, 0x94, '\0' }, // EM DASH(U+2014)
-        { 0xe2, 0x80, 0x96, '\0' }, // DOUBLE VERTICAL LINE (U+2016)
-        { 0xe2, 0x88, 0x92, '\0' }  // MINUS SIGN (U+2212)
-    };
-    
-    std::string ret(str);
-
-    if( mode == WINtoUNIX ){
-
-        for( size_t i = 0; i < ret.length(); i++ ) {
-            for( size_t s = 0; s < size; s++ ) {
-                if( ret[ i ] != (char)Win[ s ][ 0 ] || ret[ i+1 ] != (char)Win[ s ][ 1 ] || ret[ i+2 ] != (char)Win[ s ][ 2 ] )
-                    continue;
-                for( size_t t = 0; t < 3; t++ )
-                    ret[ i+t ] = (char)Unix[ s ][ t ];
-                i += 2;
-                break;
-            }
-        }
-
-    }else{
-   
-        for( size_t i = 0; i < ret.length(); i++ ) {
-            for( size_t s = 0; s < size; s++ ) {
-                if( ret[ i ] != (char)Unix[ s ][ 0 ] || ret[ i+1 ] != (char)Unix[ s ][ 1 ] || ret[ i+2 ] != (char)Unix[ s ][ 2 ] )
-                    continue;
-                for( size_t t = 0; t < 3; t++ )
-                    ret[ i+t ] = (char)Win[ s ][ t ];
-                i += 2;
-                break;
-            }
-        }
-    }
-
-    return ret;
-}
-
-
-//
 // str を大文字化
 //
 std::string MISC::toupper_str( const std::string& str )

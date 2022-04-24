@@ -28,14 +28,6 @@ namespace MISC
                 SCHEME_SSSP
 	};
 
-
-     // utf8_fix_wavedash のモード
-     enum
-     {
-         UNIXtoWIN = 0,
-         WINtoUNIX
-     };
-
      // parse_html_form_data() の戻り値
      struct FormDatum
      {
@@ -217,9 +209,6 @@ namespace MISC
 
     // str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
     std::string decode_spchar_number( const std::string& str );
-
-    // WAVEDASHなどのWindows系UTF-8文字をUnix系文字と相互変換
-    std::string utf8_fix_wavedash( const std::string& str, const int mode );
 
     // str を大文字化
     std::string toupper_str( const std::string& str );

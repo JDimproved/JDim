@@ -247,4 +247,51 @@ TEST_F(GetUnicodeBlockTest, other)
     EXPECT_EQ( MISC::UnicodeBlock::Other, MISC::get_unicodeblock( 0x110000 ) );
 }
 
+
+class Utf8FixWaveDashTest : public ::testing::Test {};
+
+TEST_F(Utf8FixWaveDashTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::utf8_fix_wavedash( "", MISC::WaveDashFix::UnixToWin ) );
+    EXPECT_EQ( "", MISC::utf8_fix_wavedash( "", MISC::WaveDashFix::WinToUnix ) );
+}
+
+TEST_F(Utf8FixWaveDashTest, not_fix)
+{
+    EXPECT_EQ( "Hello World", MISC::utf8_fix_wavedash( "Hello World", MISC::WaveDashFix::UnixToWin ) );
+    EXPECT_EQ( "いろはにほへ", MISC::utf8_fix_wavedash( "いろはにほへ", MISC::WaveDashFix::WinToUnix ) );
+}
+
+TEST_F(Utf8FixWaveDashTest, fix_unix_to_win)
+{
+    EXPECT_EQ( "\uFF5E+a", MISC::utf8_fix_wavedash( "\u301C+a", MISC::WaveDashFix::UnixToWin ) );
+    EXPECT_EQ( "\u2015-b", MISC::utf8_fix_wavedash( "\u2014-b", MISC::WaveDashFix::UnixToWin ) );
+    EXPECT_EQ( "\u2225*c", MISC::utf8_fix_wavedash( "\u2016*c", MISC::WaveDashFix::UnixToWin ) );
+    EXPECT_EQ( "\uFF0D/d", MISC::utf8_fix_wavedash( "\u2212/d", MISC::WaveDashFix::UnixToWin ) );
+}
+
+TEST_F(Utf8FixWaveDashTest, fix_win_to_unix)
+{
+    EXPECT_EQ( "a+\u301C", MISC::utf8_fix_wavedash( "a+\uFF5E", MISC::WaveDashFix::WinToUnix ) );
+    EXPECT_EQ( "b-\u2014", MISC::utf8_fix_wavedash( "b-\u2015", MISC::WaveDashFix::WinToUnix ) );
+    EXPECT_EQ( "c*\u2016", MISC::utf8_fix_wavedash( "c*\u2225", MISC::WaveDashFix::WinToUnix ) );
+    EXPECT_EQ( "d/\u2212", MISC::utf8_fix_wavedash( "d/\uFF0D", MISC::WaveDashFix::WinToUnix ) );
+}
+
+TEST_F(Utf8FixWaveDashTest, not_fix_unix_to_win)
+{
+    EXPECT_EQ( "a+\uFF5E", MISC::utf8_fix_wavedash( "a+\uFF5E", MISC::WaveDashFix::UnixToWin ) );
+    EXPECT_EQ( "b-\u2015", MISC::utf8_fix_wavedash( "b-\u2015", MISC::WaveDashFix::UnixToWin ) );
+    EXPECT_EQ( "c*\u2225", MISC::utf8_fix_wavedash( "c*\u2225", MISC::WaveDashFix::UnixToWin ) );
+    EXPECT_EQ( "d/\uFF0D", MISC::utf8_fix_wavedash( "d/\uFF0D", MISC::WaveDashFix::UnixToWin ) );
+}
+
+TEST_F(Utf8FixWaveDashTest, not_fix_win_to_unix)
+{
+    EXPECT_EQ( "\u301C+a", MISC::utf8_fix_wavedash( "\u301C+a", MISC::WaveDashFix::WinToUnix ) );
+    EXPECT_EQ( "\u2014-b", MISC::utf8_fix_wavedash( "\u2014-b", MISC::WaveDashFix::WinToUnix ) );
+    EXPECT_EQ( "\u2016*c", MISC::utf8_fix_wavedash( "\u2016*c", MISC::WaveDashFix::WinToUnix ) );
+    EXPECT_EQ( "\u2212/d", MISC::utf8_fix_wavedash( "\u2212/d", MISC::WaveDashFix::WinToUnix ) );
+}
+
 } // namespace

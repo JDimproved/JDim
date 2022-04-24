@@ -29,6 +29,13 @@ namespace MISC
         Other, ///< 上記以外
     };
 
+    /// utf8_fix_wavedash() の変換モード
+    enum class WaveDashFix
+    {
+        UnixToWin, ///< Unix から Windows へ
+        WinToUnix, ///< Windows から Unix へ
+    };
+
     bool is_euc( const char* input, size_t read_byte );
     bool is_jis( const char* input, size_t& read_byte );
     bool is_sjis( const char* input, size_t read_byte );
@@ -51,6 +58,9 @@ namespace MISC
 
     /// 特定のUnicodeブロックかコードポイントを調べる
     UnicodeBlock get_unicodeblock( const char32_t unich );
+
+    /// WAVE DASH(U+301C)などのWindows系UTF-8文字をUnix系文字と相互変換
+    std::string utf8_fix_wavedash( const std::string& str, const WaveDashFix mode );
 }
 
 #endif
