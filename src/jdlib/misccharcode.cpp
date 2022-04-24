@@ -6,6 +6,7 @@
 #include "misccharcode.h"
 
 #include <cstring>
+#include <string_view>
 
 
 // チェックする最大バイト数
@@ -412,4 +413,61 @@ MISC::UnicodeBlock MISC::get_unicodeblock( const char32_t unich )
     if( unich >= 0x30A0 && unich <= 0x30FF ) return UnicodeBlock::Kata;
 
     return UnicodeBlock::Other;
+}
+
+
+/** @brief WAVE DASH(U+301C)などのWindows系UTF-8文字をUnix系文字と相互変換
+ *
+ * @param[in] str  変換する文字列
+ * @param[in] mode 変換モード
+ * @return 変換した結果
+ */
+std::string MISC::utf8_fix_wavedash( const std::string& str, const MISC::WaveDashFix mode )
+{
+    // WAVE DASH 問題
+    constexpr std::size_t size = 4;
+    constexpr const std::string_view Win[size] = {
+        "\xEF\xBD\x9E", // U+FF5E FULLWIDTH TILDE
+        "\xE2\x80\x95", // U+2015 HORIZONTAL BAR
+        "\xE2\x88\xA5", // U+2225 PARALLEL TO
+        "\xEF\xBC\x8D", // U+FF0D FULLWIDTH HYPHEN-MINUS
+    };
+    constexpr const std::string_view Unix[size] = {
+        "\xE3\x80\x9C", // U+301C WAVE DASH
+        "\xE2\x80\x94", // U+2014 EM DASH
+        "\xE2\x80\x96", // U+2016 DOUBLE VERTICAL LINE
+        "\xE2\x88\x92", // U+2012 MINUS SIGN
+    };
+
+    const char* head_bytes;
+    const std::string_view* from_list;
+    const std::string_view* to_list;
+    if( mode == WaveDashFix::WinToUnix ) {
+        head_bytes = "\xE2\xEF";
+        from_list = Win;
+        to_list = Unix;
+    }
+    else {
+        head_bytes = "\xE2\xE3";
+        from_list = Unix;
+        to_list = Win;
+    }
+
+    std::string result = str;
+
+    for( std::size_t i = 0; i < result.size(); ++i ) {
+        i = result.find_first_of( head_bytes, i ); // UTF-8の先頭バイトを探す
+        if( i == result.npos ) break;
+
+        for( std::size_t s = 0; s < size; ++s ) {
+            // 後続のバイト列が一致するかチェック
+            if( result.compare( i + 1, 2, from_list[s].data() + 1 ) != 0 ) continue;
+
+            to_list[s].copy( result.data() + i, 3 );
+            i += 2;
+            break;
+        }
+    }
+
+    return result;
 }

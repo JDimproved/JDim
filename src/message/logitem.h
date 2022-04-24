@@ -9,6 +9,7 @@
 
 #include "messageadmin.h"
 
+#include "jdlib/misccharcode.h"
 #include "jdlib/miscutil.h"
 
 #include <ctime>
@@ -44,7 +45,7 @@ namespace MESSAGE
             if( newthread && url.find( ID_OF_NEWTHREAD ) != std::string::npos ) url = url.substr( 0, url.find( ID_OF_NEWTHREAD ) );
 
             // WAVE DASH 問題
-            msg = MISC::utf8_fix_wavedash( msg, MISC::UNIXtoWIN );
+            msg = MISC::utf8_fix_wavedash( msg, MISC::WaveDashFix::UnixToWin );
 
             // 水平タブを空白に置き換える
             msg = MISC::replace_str( msg, "\t", " " );
