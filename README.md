@@ -182,6 +182,22 @@ yay -S jdim-git
 
 [trip]: https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AA%E3%83%83%E3%83%97_(%E9%9B%BB%E5%AD%90%E6%8E%B2%E7%A4%BA%E6%9D%BF)
 
+<a name="sudo-meson-install"></a>
+* **`sudo meson install`するとバージョンからgitコミット情報が消える場合**
+
+  [CVE-2022-24765] の対策が入ったgitを使う場合、
+  rootユーザー(sudo)でmesonを実行するとバージョンからビルド時のコミット情報が消去されることがあります。
+  詳細は <https://github.com/JDimproved/JDim/issues/965> を見てください。
+
+  インストール時にコミット情報の消去を回避するには最新のJDimをビルドする、
+  または`--no-rebuild`を追加してinstallコマンドを実行します。([他の回避策][sudo-quickfix])
+  ```sh
+  sudo meson install --no-rebuild -C _build
+  ```
+
+[CVE-2022-24765]: https://nvd.nist.gov/vuln/detail/CVE-2022-24765
+[sudo-quickfix]: https://github.com/JDimproved/JDim/issues/965#issuecomment-1107459351
+
 
 ### Snapパッケージ
 JDim はSnapパッケージとして[Snap Storeで公開][snapcraft]されています。

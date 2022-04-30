@@ -4,8 +4,7 @@ config_h = configure_file(output : 'config.h',
 # 作業ディレクトリの状態を反映するためにビルド毎に更新する
 buildinfo_h = custom_target('buildinfo.h',
                             build_always_stale : true,
-                            capture : true,
-                            command : ['sh', '@INPUT@', '@SOURCE_ROOT@'],
+                            command : ['sh', '@INPUT@', '@OUTPUT@', '@SOURCE_ROOT@'],
                             input : 'buildinfo.h.sh',
                             output : 'buildinfo.h')
 
