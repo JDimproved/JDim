@@ -5,6 +5,8 @@ OUTPUT="$1"
 WORK_TREE="$2"
 
 GIT="${GIT:-$(command -v git 2>/dev/null)}"
+XSUM="${XSUM:-$(command -v md5sum 2>/dev/null)}"
+XSUM="${XSUM:-$(command -v cksum 2>/dev/null)}" # fallback
 
 GIT_HASH=""
 GIT_DATE=""
@@ -58,4 +60,23 @@ echo ""
 echo "#define GIT_HASH \"${GIT_HASH}\""
 echo "#define GIT_DATE \"${GIT_DATE}\""
 echo "#define GIT_DIRTY ${GIT_DIRTY}"
-) > "${OUTPUT}"
+) > "${OUTPUT}.new"
+
+if test ! -f "${OUTPUT}" ; then
+  mv "${OUTPUT}.new" "${OUTPUT}"
+  echo "INFO: ${OUTPUT} is created."
+elif test ! -x "${XSUM}" ; then
+  mv "${OUTPUT}.new" "${OUTPUT}"
+  echo "INFO: ${OUTPUT} is refreshed."
+else
+  # Compare file hashes to check update need.
+  HASH1="$("${XSUM}" < "${OUTPUT}")"
+  HASH2="$("${XSUM}" < "${OUTPUT}.new")"
+  if test "${HASH1}" = "${HASH2}" ; then
+    rm "${OUTPUT}.new"
+    echo "INFO: ${OUTPUT} is not modified."
+  else
+    mv "${OUTPUT}.new" "${OUTPUT}"
+    echo "INFO: ${OUTPUT} is modified."
+  fi
+fi
