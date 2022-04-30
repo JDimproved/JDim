@@ -100,16 +100,12 @@ void BBSListViewMain::update_view()
     subdir->setAttribute( "name", std::string( SUBDIR_ETCLIST ) );
 
     // 子要素( <board> )を追加
-    std::list< DBTREE::ETCBOARDINFO > list_etc = DBTREE::get_etcboards(); // 外部板情報( dbtree/etcboardinfo.h )
-    if( ! list_etc.empty() )
-    {
-        std::list< DBTREE::ETCBOARDINFO >::iterator it = list_etc.begin();
-        while( it != list_etc.end() )
-        {
+    if( const auto list_etc = DBTREE::get_etcboards(); // 外部板情報( dbtree/etcboardinfo.h )
+        !list_etc.empty() ) {
+        for( const DBTREE::ETCBOARDINFO& info : list_etc ) {
             XML::Dom* board = subdir->appendChild( XML::NODE_TYPE_ELEMENT, "board" );
-            board->setAttribute( "name", (*it).name );
-            board->setAttribute( "url", (*it).url );
-            ++it;
+            board->setAttribute( "name", info.name );
+            board->setAttribute( "url", info.url );
         }
     }
 

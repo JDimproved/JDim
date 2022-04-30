@@ -1449,10 +1449,10 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
         if( regex.exec( "(.*)/[^/]+\\.html?$" , url, offset, icase, newline, usemigemo, wchar ) ) url = regex.str( 1 );
 
         // 末尾の / を取り除く
-        while( url.rfind( '/' ) == url.length() -1 ) url = url.substr( 0, url.length() -1 );
+        url.erase( url.find_last_not_of( '/' ) + 1 );
 
         // url の最後に/を付ける
-        url += "/";
+        url.push_back( '/' );
 
         // boardid 取得
         if( ! regex.exec( "(https?://.*)/([^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
