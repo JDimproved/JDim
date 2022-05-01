@@ -250,20 +250,16 @@ bool Css_Manager::read_css()
 
         // プロパティペア(名前, 値)の作成
         std::map< std::string, std::string > css_pair;
-        std::list< std::string >::iterator it = properties.begin();
-        while( it != properties.end() )
-        {
-            size_t colon = (*it).find( ':' );
-            std::string key = MISC::ascii_trim( it->substr( 0, colon ) );
-            std::string value = MISC::ascii_trim( it->substr( colon + 1 ) );
+        for( const std::string& prop : properties ) {
+            const std::size_t colon = prop.find( ':' );
+            std::string key = MISC::ascii_trim( prop.substr( 0, colon ) );
+            std::string value = MISC::ascii_trim( prop.substr( colon + 1 ) );
 
 #ifdef _DEBUG
             std::cout << "  key = " << key << " value = " << value << std::endl;
 #endif
 
-            css_pair.insert( make_pair( key, value ) );
-
-            ++it;
+            css_pair.emplace( std::move( key ), std::move( value ) );
         }
 
         // 各プロパティを作成
