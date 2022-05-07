@@ -108,6 +108,75 @@ TEST_F(IsEucjpTest, lack_following_bytes)
 }
 
 
+class IsJisTest : public ::testing::Test {};
+
+TEST_F(IsJisTest, null_data)
+{
+    std::size_t byte = 0;
+    EXPECT_FALSE( MISC::is_jis( "", byte ) );
+}
+
+TEST_F(IsJisTest, ascii_only)
+{
+    std::size_t byte = 0;
+    EXPECT_FALSE( MISC::is_jis( "!\"#$%&'()*+,-./ :;<=>?@ [\\]^_` {|}~", byte ) );
+    EXPECT_EQ( 35, byte );
+    byte = 0;
+    EXPECT_FALSE( MISC::is_jis( "0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ", byte ) );
+    EXPECT_EQ( 64, byte );
+}
+
+TEST_F(IsJisTest, hiragana_katakana)
+{
+    std::size_t byte = 0;
+    EXPECT_TRUE( MISC::is_jis( "\x1B$B$\"$$$&$($*\x1B(B", byte ) ); // あいうえお
+    EXPECT_EQ( 0, byte );
+    EXPECT_TRUE( MISC::is_jis( "\x1B$B%\"%$%&%(%*\x1B(B", byte ) ); // アイウエオ
+    EXPECT_EQ( 0, byte );
+}
+
+TEST_F(IsJisTest, fullwidth_alnum)
+{
+    std::size_t byte = 0;
+    EXPECT_TRUE( MISC::is_jis( "\x1B$B!*!I!t!p!s\x1B(B", byte ) ); // ！”＃＄％
+    EXPECT_EQ( 0, byte );
+    EXPECT_TRUE( MISC::is_jis( "\x1B$B#1#2#3#4#5\x1B(B", byte ) ); // １２３４５
+    EXPECT_EQ( 0, byte );
+    EXPECT_TRUE( MISC::is_jis( "\x1B$B#A#B#C#D#E\x1B(B", byte ) ); // ＡＢＣＤＥ
+    EXPECT_EQ( 0, byte );
+    EXPECT_TRUE( MISC::is_jis( "\x1B$B#a#b#c#d#e\x1B(B", byte ) ); // ａｂｃｄｅ
+    EXPECT_EQ( 0, byte );
+}
+
+TEST_F(IsJisTest, eucjp)
+{
+    std::size_t byte = 0;
+    EXPECT_FALSE( MISC::is_jis( "\xA4\xA2\xA4\xA4\xA4\xA6\xA4\xA8\xA4\xAA", byte ) );
+    EXPECT_EQ( 0, byte );
+}
+
+TEST_F(IsJisTest, sjis)
+{
+    std::size_t byte = 0;
+    EXPECT_FALSE( MISC::is_jis( "\x82\xA0\x82\xA2\x82\xA4\x82\xA6\x82\xA8", byte ) );
+    EXPECT_EQ( 0, byte );
+}
+
+TEST_F(IsJisTest, utf8)
+{
+    std::size_t byte = 0;
+    EXPECT_FALSE( MISC::is_jis( "\u3042", byte ) ); // U+3042
+    EXPECT_EQ( 0, byte );
+}
+
+TEST_F(IsJisTest, skip_data)
+{
+    std::size_t byte = 3;
+    EXPECT_TRUE( MISC::is_jis( "\u3042\x1B$B#A#B#C#D#E\x1B(B", byte ) ); // U+3042ＡＢＣＤＥ
+    EXPECT_EQ( 3, byte );
+}
+
+
 class Utf8BytesTest : public ::testing::Test {};
 
 TEST_F(Utf8BytesTest, null_data)

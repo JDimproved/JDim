@@ -98,13 +98,22 @@ bool MISC::is_eucjp( std::string_view input, std::size_t read_byte )
 // エスケープシーケンスの開始文字 ESC(0x1B)
 #define JIS_ESC_SEQ_START( target ) ( target == 0x1B )
 //
-bool MISC::is_jis( const char* input, size_t& byte )
+/** @brief 文字列のエンコーディングがISO-2022-JPか簡易判定する
+ *
+ * エスケープシーケンス(ESC = \x1B)の有無と該当しないバイトが含まれるかチェックする。
+ * 呼び出し元の処理のため空文字列に対する返り値は他の`is_*`関数と逆(false)になっている。
+ * @param[in] input 入力
+ * @param[in,out] byte チェックを開始する位置、チェックを打ち切った位置を返す
+ * @return
+ *   - ESCを見つけたらtrue
+ *   - 0x80以上を見つけたらfalse
+ *   - 空文字列またはASCIIのみならfalse
+ */
+bool MISC::is_jis( std::string_view input, std::size_t& byte )
 {
-    if( ! input ) return false;
+    if( input.empty() ) return false;
 
-    const size_t input_length = strlen( input );
-
-    while( byte < input_length && byte < CHECK_LIMIT )
+    while( byte < input.size() && byte < CHECK_LIMIT )
     {
         // ESCが出現したか否かだけで判断
         if( JIS_ESC_SEQ_START( input[ byte ] ) ) return true;
@@ -265,7 +274,7 @@ int MISC::judge_char_code( const std::string& str )
     size_t read_byte = 0;
 
     // JISの判定
-    if( is_jis( str.c_str(), read_byte ) ) code = CHARCODE_JIS;
+    if( is_jis( str, read_byte ) ) code = CHARCODE_JIS;
     // JISの判定で最後まで進んでいたら制御文字かアスキー
     else if( read_byte == str.length() ) code = CHARCODE_ASCII;
     // is_jis()でASCII範囲外のバイトが現れた箇所から判定する
