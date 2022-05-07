@@ -7,6 +7,107 @@
 
 namespace {
 
+class IsEucjpTest : public ::testing::Test {};
+
+TEST_F(IsEucjpTest, null_data)
+{
+    EXPECT_TRUE( MISC::is_eucjp( "", 0 ) );
+}
+
+TEST_F(IsEucjpTest, ascii_only)
+{
+    EXPECT_TRUE( MISC::is_eucjp( "!\"#$%&'()*+,-./ :;<=>?@ [\\]^_` {|}~", 0 ) );
+    EXPECT_TRUE( MISC::is_eucjp( "0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ", 0 ) );
+}
+
+TEST_F(IsEucjpTest, hiragana_katakana)
+{
+    EXPECT_TRUE( MISC::is_eucjp( "\xA4\xA2\xA4\xA4\xA4\xA6\xA4\xA8\xA4\xAA", 0 ) ); // あいうえお
+    EXPECT_TRUE( MISC::is_eucjp( "\xA5\xA2\xA5\xA4\xA5\xA6\xA5\xA8\xA5\xAA", 0 ) ); // アイウエオ
+}
+
+TEST_F(IsEucjpTest, fullwidth_alnum)
+{
+    EXPECT_TRUE( MISC::is_eucjp( "\xA3\xB1\xA3\xB2\xA3\xB3\xA3\xB4\xA3\xB5", 0 ) ); // １２３４５
+    EXPECT_TRUE( MISC::is_eucjp( "\xA3\xC1\xA3\xC2\xA3\xC3\xA3\xC4\xA3\xC5", 0 ) ); // ＡＢＣＤＥ
+    EXPECT_TRUE( MISC::is_eucjp( "\xA3\xE1\xA3\xE2\xA3\xE3\xA3\xE4\xA3\xE5", 0 ) ); // ａｂｃｄｅ
+}
+
+TEST_F(IsEucjpTest, halfwidth_katakana)
+{
+    EXPECT_TRUE( MISC::is_eucjp( "\x8E\xA7\x8E\xA8\x8E\xA9\x8E\xAA\x8E\xAB", 0 ) ); // ｱｲｳｴｵ
+}
+
+TEST_F(IsEucjpTest, three_byte_sub_kanji)
+{
+    EXPECT_TRUE( MISC::is_eucjp( "\x8F\xB0\xD0\x8F\xB0\xD1\x8F\xB0\xD2\x8F\xB0\xD2\x8F\xB0\xD3", 0 ) ); // 仾仿伀
+}
+
+TEST_F(IsEucjpTest, jis)
+{
+    EXPECT_TRUE( MISC::is_eucjp( "\x1B$B$\"$$$&$($*\x1B(B", 0 ) );
+}
+
+TEST_F(IsEucjpTest, sjis)
+{
+    EXPECT_FALSE( MISC::is_eucjp( "\x82\xA0\x82\xA2\x82\xA4\x82\xA6\x82\xA8", 0 ) );
+}
+
+TEST_F(IsEucjpTest, utf8)
+{
+    EXPECT_FALSE( MISC::is_eucjp( "\u3042", 0 ) );
+}
+
+TEST_F(IsEucjpTest, skip_data)
+{
+    EXPECT_TRUE( MISC::is_eucjp( "\u3042\xA4\xA2\xA3\xB1", 3 ) );
+}
+
+TEST_F(IsEucjpTest, lack_head_byte)
+{
+    // hiragana
+    EXPECT_FALSE( MISC::is_eucjp( "\xA2", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\xA2\xA4\xA4", 0 ) );
+
+    // fullwidth
+    EXPECT_FALSE( MISC::is_eucjp( "\xB1\xA3\xB2", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\xC1\xA3\xC2", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\xE1\xA3\xE2", 0 ) );
+
+    // halfwidth katakana
+    EXPECT_FALSE( MISC::is_eucjp( "\xA7\x8E\xA8", 0 ) );
+
+    // three byte sub kanji
+    EXPECT_FALSE( MISC::is_eucjp( "\xB0", 0 ) );
+    EXPECT_TRUE( MISC::is_eucjp( "\xB0\xD0", 0 ) );
+    EXPECT_TRUE( MISC::is_eucjp( "\xB0\xD0\x8F\xB0\xD1", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\xD0", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\xD0\x8F\xB0\xD1", 0 ) );
+}
+
+TEST_F(IsEucjpTest, lack_following_bytes)
+{
+    // hiragana
+    EXPECT_FALSE( MISC::is_eucjp( "\xA4", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\xA4\xA2\xA4", 0 ) );
+
+    // fullwidth
+    EXPECT_FALSE( MISC::is_eucjp( "\xA3\xB1\xA3", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\xA3\xC1\xA3", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\xA3\xE1\xA3", 0 ) );
+
+    // halfwidth katakana
+    EXPECT_FALSE( MISC::is_eucjp( "\x8E", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\x8E\xA7\x8E", 0 ) );
+
+    // three byte sub kanji
+    EXPECT_FALSE( MISC::is_eucjp( "\x8F", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\x8F\xB0", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\x8F\xB0\xD0\x8F", 0 ) );
+    EXPECT_FALSE( MISC::is_eucjp( "\x8F\xB0\xD0\x8F\xB0", 0 ) );
+}
+
+
 class Utf8BytesTest : public ::testing::Test {};
 
 TEST_F(Utf8BytesTest, null_data)

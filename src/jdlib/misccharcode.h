@@ -6,6 +6,8 @@
 #define _MISCCHARCODE_H
 
 #include <string>
+#include <string_view>
+
 
 namespace MISC
 {
@@ -36,7 +38,7 @@ namespace MISC
         WinToUnix, ///< Windows から Unix へ
     };
 
-    bool is_euc( const char* input, size_t read_byte );
+    bool is_eucjp( std::string_view input, std::size_t read_byte );
     bool is_jis( const char* input, size_t& read_byte );
     bool is_sjis( const char* input, size_t read_byte );
     bool is_utf8( const char* input, size_t read_byte );
