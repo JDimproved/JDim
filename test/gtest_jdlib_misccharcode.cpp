@@ -113,7 +113,6 @@ class IsJisTest : public ::testing::Test {};
 TEST_F(IsJisTest, null_data)
 {
     std::size_t byte = 0;
-    EXPECT_FALSE( MISC::is_jis( nullptr, byte ) );
     EXPECT_FALSE( MISC::is_jis( "", byte ) );
 }
 
