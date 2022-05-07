@@ -6,7 +6,6 @@
 #include "misccharcode.h"
 
 #include <cstring>
-#include <string_view>
 
 
 // チェックする最大バイト数
@@ -41,36 +40,45 @@
 // 2バイト目 0xA1〜0xFE
 #define EUC_RANGE_MULTI( target ) ( (unsigned char)( target - 0xA1 ) < 0x5E )
 //
-bool MISC::is_euc( const char* input, size_t read_byte )
+/** @brief 文字列のエンコーディングがEUC-JPかチェックする
+ *
+ * @param[in] input 入力文字列
+ * @param[in] read_byte チェックを開始する位置
+ * @return EUC-JPのシーケンスに一致していればtrue
+ */
+bool MISC::is_eucjp( std::string_view input, std::size_t read_byte )
 {
-    if( ! input ) return false;
+    if( input.empty() ) return true;
 
     size_t byte = read_byte;
-    const size_t input_length = strlen( input );
 
-    while( byte < input_length && byte < CHECK_LIMIT )
+    while( byte < input.size() && byte < CHECK_LIMIT )
     {
         // 制御文字かアスキー
         if( CTRL_AND_ASCII_RANGE( input[ byte ] ) )
         {
             ++byte;
         }
+        // std::string_view はヌル終端の保証がないため長さをチェックする
         // カナ
-        else if( EUC_CODE_KANA( input[ byte ] )
-            && EUC_RANGE_KANA( input[ byte + 1 ] ) )
+        else if( byte + 1 < input.size()
+                 && EUC_CODE_KANA( input[ byte ] )
+                 && EUC_RANGE_KANA( input[ byte + 1 ] ) )
         {
             byte += 2;
         }
         // 補助漢字
-        else if( EUC_CODE_SUB_KANJI( input[ byte ] )
-                  && EUC_RANGE_MULTI( input[ byte + 1 ] )
-                  && EUC_RANGE_MULTI( input[ byte + 2 ] ) )
+        else if( byte + 2 < input.size()
+                 && EUC_CODE_SUB_KANJI( input[ byte ] )
+                 && EUC_RANGE_MULTI( input[ byte + 1 ] )
+                 && EUC_RANGE_MULTI( input[ byte + 2 ] ) )
         {
             byte += 3;
         }
         // 漢字
-        else if( EUC_RANGE_MULTI( input[ byte ] )
-                  && EUC_RANGE_MULTI( input[ byte + 1 ] ) )
+        else if( byte + 1 < input.size()
+                 && EUC_RANGE_MULTI( input[ byte ] )
+                 && EUC_RANGE_MULTI( input[ byte + 1 ] ) )
         {
             byte += 2;
         }
@@ -264,7 +272,7 @@ int MISC::judge_char_code( const std::string& str )
     // UTF-8の範囲
     else if( is_utf8( str.c_str(), read_byte ) ) code = CHARCODE_UTF;
     // EUC-JPの範囲
-    else if( is_euc( str.c_str(), read_byte ) ) code = CHARCODE_EUC_JP;
+    else if( is_eucjp( str, read_byte ) ) code = CHARCODE_EUC_JP;
     // Shift_JISの範囲
     else if( is_sjis( str.c_str(), read_byte ) ) code = CHARCODE_SJIS;
 
