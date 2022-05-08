@@ -177,6 +177,102 @@ TEST_F(IsJisTest, skip_data)
 }
 
 
+class IsSjisTest : public ::testing::Test {};
+
+TEST_F(IsSjisTest, null_data)
+{
+    EXPECT_FALSE( MISC::is_sjis( nullptr, 0 ) );
+    EXPECT_TRUE( MISC::is_sjis( "", 0 ) );
+}
+
+TEST_F(IsSjisTest, ascii_only)
+{
+    EXPECT_TRUE( MISC::is_sjis( "!\"#$%&'()*+,-./ :;<=>?@ [\\]^_` {|}~", 0 ) );
+    EXPECT_TRUE( MISC::is_sjis( "0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ", 0 ) );
+}
+
+TEST_F(IsSjisTest, hiragana_katakana)
+{
+    EXPECT_TRUE( MISC::is_sjis( "\x82\xA0\x82\xA2\x82\xA4\x82\xA6\x82\xA8", 0 ) ); // あいうえお
+    EXPECT_TRUE( MISC::is_sjis( "\x83\x41\x83\x43\x83\x45\x83\x47\x83\x49", 0 ) ); // アイウエオ
+}
+
+TEST_F(IsSjisTest, fullwidth_alnum)
+{
+    EXPECT_TRUE( MISC::is_sjis( "\x81\x41\x81\x42\x81\x43\x81\x44\x81\x45", 0 ) ); // 、 。 ， ． ・
+    EXPECT_TRUE( MISC::is_sjis( "\x82\x50\x82\x51\x82\x52\x82\x53\x82\x54", 0 ) ); // １２３４５
+    EXPECT_TRUE( MISC::is_sjis( "\x82\x60\x82\x61\x82\x62\x82\x63\x82\x64", 0 ) ); // ＡＢＣＤＥ
+    EXPECT_TRUE( MISC::is_sjis( "\x82\x81\x82\x82\x82\x83\x82\x84\x82\x85", 0 ) ); // ａｂｃｄｅ
+}
+
+TEST_F(IsSjisTest, kanji)
+{
+    EXPECT_TRUE( MISC::is_sjis( "\x89\x40\x89\x41\x89\x42\x89\x43\x89\x45", 0 ) ); // 院陰隠韻吋
+}
+
+TEST_F(IsSjisTest, halfwidth_katakana)
+{
+    EXPECT_TRUE( MISC::is_sjis( "\xB1\xB2\xB3\xB4\xB5", 0 ) ); // ｱｲｳｴｵ
+}
+
+TEST_F(IsSjisTest, eucjp)
+{
+    EXPECT_TRUE( MISC::is_sjis( "\xA4\xA2\xA4\xA4\xA4\xA6\xA4\xA8\xA4\xAA", 0 ) );
+}
+
+TEST_F(IsSjisTest, jis)
+{
+    EXPECT_TRUE( MISC::is_sjis( "\x1B$B$\"$$$&$($*\x1B(B", 0 ) );
+}
+
+TEST_F(IsSjisTest, utf8)
+{
+    EXPECT_FALSE( MISC::is_sjis( "\u3042", 0 ) );
+}
+
+TEST_F(IsSjisTest, skip_data)
+{
+    EXPECT_TRUE( MISC::is_sjis( "\u3042\x82\xA0\x83\x41", 0 ) );
+}
+
+TEST_F(IsSjisTest, lack_head_byte)
+{
+    // 後続バイトがASCIIの値と同じ範囲の場合はASCII扱いでエラーにならない
+    // hiragana
+    EXPECT_FALSE( MISC::is_sjis( "\xA0", 0 ) );
+    EXPECT_TRUE( MISC::is_sjis( "\xA0\x82\xA2", 0 ) );
+
+    // fullwidth
+    EXPECT_TRUE( MISC::is_sjis( "\x41", 0 ) );
+    EXPECT_TRUE( MISC::is_sjis( "\x41\x81\x42", 0 ) );
+
+    EXPECT_TRUE( MISC::is_sjis( "\x50\x82\x51", 0 ) );
+    EXPECT_TRUE( MISC::is_sjis( "\x60\x82\x61", 0 ) );
+    EXPECT_FALSE( MISC::is_sjis( "\x81\x82\x82", 0 ) );
+
+    // kanji
+    EXPECT_TRUE( MISC::is_sjis( "\x40", 0 ) );
+    EXPECT_TRUE( MISC::is_sjis( "\x40\x89\x41", 0 ) );
+}
+
+TEST_F(IsSjisTest, lack_following_bytes)
+{
+    // hiragana
+    EXPECT_FALSE( MISC::is_sjis( "\x82", 0 ) );
+    EXPECT_FALSE( MISC::is_sjis( "\x82\xA0\x82", 0 ) );
+
+    // fullwidth
+    EXPECT_FALSE( MISC::is_sjis( "\x81\x41\x81", 0 ) );
+    EXPECT_FALSE( MISC::is_sjis( "\x82\x50\x82", 0 ) );
+    EXPECT_FALSE( MISC::is_sjis( "\x82\x60\x82", 0 ) );
+    EXPECT_FALSE( MISC::is_sjis( "\x82\x81\x82", 0 ) );
+
+    // kanji
+    EXPECT_FALSE( MISC::is_sjis( "\x89", 0 ) );
+    EXPECT_FALSE( MISC::is_sjis( "\x89\x40\x89", 0 ) );
+}
+
+
 class Utf8BytesTest : public ::testing::Test {};
 
 TEST_F(Utf8BytesTest, null_data)
