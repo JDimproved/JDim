@@ -149,14 +149,19 @@ bool MISC::is_jis( std::string_view input, std::size_t& byte )
 // 0x80〜0xFC
 #define SJIS_RANGE_2_T( target ) ( (unsigned char)( target - 0x80 ) < 0x7D )
 //
-bool MISC::is_sjis( const char* input, size_t read_byte )
+/** @brief 文字列のエンコーディングがShift_JISか簡易チェックする
+ *
+ * @param[in] input 入力文字列
+ * @param[in] read_byte チェックを開始する位置
+ * @return Shitt_JISのシーケンスに一致していればtrue
+ */
+bool MISC::is_sjis( std::string_view input, std::size_t read_byte )
 {
-    if( ! input ) return false;
+    if( input.empty() ) return true;
 
     size_t byte = read_byte;
-    const size_t input_length = strlen( input );
 
-    while( byte < input_length && byte < CHECK_LIMIT )
+    while( byte < input.size() && byte < CHECK_LIMIT )
     {
         // 制御文字かアスキー
         if( CTRL_AND_ASCII_RANGE( input[ byte ] ) )
@@ -168,9 +173,11 @@ bool MISC::is_sjis( const char* input, size_t read_byte )
         {
             ++byte;
         }
+        // std::string_view はヌル終端の保証がないため長さをチェックする
         // 漢字(MS932)
-        else if( SJIS_RANGE_1( input[ byte ] )
-                  && SJIS_RANGE_2( input[ byte + 1 ] ) )
+        else if( byte + 1 < input.size()
+                 && SJIS_RANGE_1( input[ byte ] )
+                 && SJIS_RANGE_2( input[ byte + 1 ] ) )
         {
             byte += 2;
         }
@@ -283,7 +290,7 @@ int MISC::judge_char_code( const std::string& str )
     // EUC-JPの範囲
     else if( is_eucjp( str, read_byte ) ) code = CHARCODE_EUC_JP;
     // Shift_JISの範囲
-    else if( is_sjis( str.c_str(), read_byte ) ) code = CHARCODE_SJIS;
+    else if( is_sjis( str, read_byte ) ) code = CHARCODE_SJIS;
 
     return code;
 }
