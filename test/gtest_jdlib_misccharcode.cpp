@@ -181,7 +181,6 @@ class IsSjisTest : public ::testing::Test {};
 
 TEST_F(IsSjisTest, null_data)
 {
-    EXPECT_FALSE( MISC::is_sjis( nullptr, 0 ) );
     EXPECT_TRUE( MISC::is_sjis( "", 0 ) );
 }
 
