@@ -214,16 +214,21 @@ inline bool utf8_following_byte( std::uint8_t x ) { return ( x & 0xC0 ) == 0x80;
 
 } // namespace
 
-bool MISC::is_utf8( const char* input, size_t read_byte )
+/** @brief 文字列のエンコーディングがUTF-8か簡易判定する
+ *
+ * 2バイト目以降の部分は大まかな判定で厳密ではない。
+ * バイト列のチェックだけなのでUTF-8表現のサロゲートペアや非文字、未割り当てのコードポイントでもtrueを返す。
+ * @param[in] input 入力
+ * @param[in] read_byte チェックを開始する位置
+ * @return UTF-8のシーケンスに一致していればtrue
+ */
+bool MISC::is_utf8( std::string_view input, std::size_t read_byte )
 {
-    if( ! input ) return false;
-
-    bool valid = true;
+    if( input.empty() ) return true;
 
     size_t byte = read_byte;
-    const size_t input_length = strlen( input );
 
-    while( byte < input_length && byte < CHECK_LIMIT )
+    while( byte < input.size() && byte < CHECK_LIMIT )
     {
         // 制御文字かアスキー
         if( CTRL_AND_ASCII_RANGE( input[ byte ] ) )
@@ -244,25 +249,23 @@ bool MISC::is_utf8( const char* input, size_t read_byte )
         else if( utf8_head_bytes3( input[ byte ] ) ) byte_count = 3;
         else if( utf8_head_bytes2( input[ byte ] ) ) byte_count = 2;
 
+        // std::string_view はヌル終端の保証がないため長さをチェックする
+        if( byte + byte_count > input.size() ) return false;
+
         ++byte;
 
         // 2バイト目以降
-        while( byte_count > 1 )
+        for( ; byte_count > 1; --byte_count )
         {
-            if( utf8_following_byte( input[ byte ] ) )
+            if( ! utf8_following_byte( input[ byte ] ) )
             {
-                ++byte;
+                return false;
             }
-            else
-            {
-                valid = false;
-                break;
-            }
-            --byte_count;
+            ++byte;
         }
     }
 
-    return valid;
+    return true;
 }
 
 
@@ -286,7 +289,7 @@ int MISC::judge_char_code( const std::string& str )
     else if( read_byte == str.length() ) code = CHARCODE_ASCII;
     // is_jis()でASCII範囲外のバイトが現れた箇所から判定する
     // UTF-8の範囲
-    else if( is_utf8( str.c_str(), read_byte ) ) code = CHARCODE_UTF;
+    else if( is_utf8( str, read_byte ) ) code = CHARCODE_UTF;
     // EUC-JPの範囲
     else if( is_eucjp( str, read_byte ) ) code = CHARCODE_EUC_JP;
     // Shift_JISの範囲

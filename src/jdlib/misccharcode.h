@@ -41,7 +41,7 @@ namespace MISC
     bool is_eucjp( std::string_view input, std::size_t read_byte );
     bool is_jis( std::string_view input, std::size_t& read_byte );
     bool is_sjis( std::string_view input, std::size_t read_byte );
-    bool is_utf8( const char* input, size_t read_byte );
+    bool is_utf8( std::string_view input, std::size_t read_byte );
     int judge_char_code( const std::string& str );
 
     /// utf-8文字のbyte数を返す
