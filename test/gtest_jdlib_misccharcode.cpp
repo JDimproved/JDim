@@ -272,6 +272,146 @@ TEST_F(IsSjisTest, lack_following_bytes)
 }
 
 
+class IsUtf8Test : public ::testing::Test {};
+
+TEST_F(IsUtf8Test, null_data)
+{
+    EXPECT_FALSE( MISC::is_utf8( nullptr, 0 ) );
+    EXPECT_TRUE( MISC::is_utf8( "", 0 ) );
+}
+
+TEST_F(IsUtf8Test, ascii_only)
+{
+    EXPECT_TRUE( MISC::is_utf8( "!\"#$%&'()*+,-./ :;<=>?@ [\\]^_` {|}~", 0 ) );
+    EXPECT_TRUE( MISC::is_utf8( "0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ", 0 ) );
+}
+
+TEST_F(IsUtf8Test, two_bytes)
+{
+    EXPECT_TRUE( MISC::is_utf8( "\xC2\x80", 0 ) ); // U+0080
+    EXPECT_TRUE( MISC::is_utf8( "\xDF\xBF", 0 ) ); // U+07FF
+}
+
+TEST_F(IsUtf8Test, three_bytes)
+{
+    EXPECT_TRUE( MISC::is_utf8( "\xE0\xA0\x80", 0 ) ); // U+0800
+    EXPECT_TRUE( MISC::is_utf8( "\xEF\xBF\xBF", 0 ) ); // U+FFFF
+}
+
+TEST_F(IsUtf8Test, surrogate_pair)
+{
+    // surrogate pair の universal character names はコンパイルエラーになった
+    // error: \uD800 is not a valid universal character
+    EXPECT_TRUE( MISC::is_utf8( "\xED\xA0\x80\xED\xAF\xBF", 0 ) ); // U+D800 U+DBFF
+    EXPECT_TRUE( MISC::is_utf8( "\xED\xB0\x80\xED\xBF\xBF", 0 ) ); // U+DC00 U+DFFF
+}
+
+TEST_F(IsUtf8Test, four_bytes)
+{
+    EXPECT_TRUE( MISC::is_utf8( "\xF0\x90\x80\x80", 0 ) ); // U+10000
+    EXPECT_TRUE( MISC::is_utf8( "\xF4\x8F\xBF\xBF", 0 ) ); // U+10FFFF
+}
+
+TEST_F(IsUtf8Test, obsolete_four_bytes)
+{
+    // 廃止された RFC2279
+    // 簡易的なチェックのため先頭が F4 のシーケンスはtrueが返る
+    EXPECT_TRUE( MISC::is_utf8( "\xF4\x90\x80\x80", 0 ) ); // U+110000
+    EXPECT_TRUE( MISC::is_utf8( "\xF4\xBF\xBF\xBF", 0 ) ); // U+13FFFF
+
+    EXPECT_FALSE( MISC::is_utf8( "\xF5\x80\x80\x80", 0 ) ); // U+140000
+    EXPECT_FALSE( MISC::is_utf8( "\xF6\x80\x80\x80", 0 ) ); // U+180000
+    EXPECT_FALSE( MISC::is_utf8( "\xF7\x80\x80\x80", 0 ) ); // U+1C0000
+    EXPECT_FALSE( MISC::is_utf8( "\xF7\xBF\xBF\xBF", 0 ) ); // U+1FFFFF
+}
+
+TEST_F(IsUtf8Test, obsolete_five_bytes)
+{
+    // 廃止された RFC2279
+    EXPECT_FALSE( MISC::is_utf8( "\xF8\x88\x80\x80\x80", 0 ) ); // U+200000
+    EXPECT_FALSE( MISC::is_utf8( "\xF9\x80\x80\x80\x80", 0 ) ); // U+1000000
+    EXPECT_FALSE( MISC::is_utf8( "\xFA\x80\x80\x80\x80", 0 ) ); // U+2000000
+    EXPECT_FALSE( MISC::is_utf8( "\xFB\x80\x80\x80\x80", 0 ) ); // U+3000000
+    EXPECT_FALSE( MISC::is_utf8( "\xFB\xBF\xBF\xBF\xBF", 0 ) ); // U+3FFFFFF
+}
+
+TEST_F(IsUtf8Test, obsolete_six_bytes)
+{
+    // 廃止された RFC2279
+    EXPECT_FALSE( MISC::is_utf8( "\xFC\x84\x80\x80\x80\x80", 0 ) ); // U+4000000
+    EXPECT_FALSE( MISC::is_utf8( "\xFD\x80\x80\x80\x80\x80", 0 ) ); // U+40000000
+    EXPECT_FALSE( MISC::is_utf8( "\xFD\xBF\xBF\xBF\xBF\xBF", 0 ) ); // U+7FFFFFFF
+}
+
+TEST_F(IsUtf8Test, non_characters)
+{
+    EXPECT_TRUE( MISC::is_utf8( "\uFDD0\uFDEF", 0 ) );
+    EXPECT_TRUE( MISC::is_utf8( "\uFFFE\uFFFF", 0 ) );
+    EXPECT_TRUE( MISC::is_utf8( "\U0001FF80\U0001FFFF", 0 ) );
+}
+
+TEST_F(IsUtf8Test, invalid_byte)
+{
+    // マルチバイトの後続部分
+    char invalid_seq[2]{};
+    for( int i = 0x80; i < 0xC0; ++i ) {
+        invalid_seq[0] = i;
+        EXPECT_FALSE( MISC::is_utf8( invalid_seq, 0 ) );
+    }
+
+    // C0 C1 は禁止
+    EXPECT_FALSE( MISC::is_utf8( "\xC0", 0 ) );
+    EXPECT_FALSE( MISC::is_utf8( "\xC1", 0 ) );
+
+    // UTF-16, UTF-32 で使われるバイトオーダーマーク
+    EXPECT_FALSE( MISC::is_utf8( "\xFE", 0 ) );
+    EXPECT_FALSE( MISC::is_utf8( "\xFF", 0 ) );
+}
+
+TEST_F(IsUtf8Test, invalid_seq)
+{
+    EXPECT_FALSE( MISC::is_utf8( "\xC2\x7F", 0 ) );
+    EXPECT_FALSE( MISC::is_utf8( "\xC2\xC0", 0 ) );
+
+    // 簡易的なチェックのためtrueが返る (右コメントは正しい範囲)
+    EXPECT_TRUE( MISC::is_utf8( "\xE0\x9F\x80", 0 ) ); // E0 A0-BF 80-BF
+    EXPECT_TRUE( MISC::is_utf8( "\xED\xA0\x80", 0 ) ); // ED 80-9F 80-BF
+    EXPECT_TRUE( MISC::is_utf8( "\xF0\x8F\x80\x80", 0 ) ); // F0 90-BF 80-BF 80-BF
+}
+
+TEST_F(IsUtf8Test, eucjp)
+{
+    EXPECT_FALSE( MISC::is_utf8( "\xA4\xA2\xA4\xA4\xA4\xA6\xA4\xA8\xA4\xAA", 0 ) );
+}
+
+TEST_F(IsUtf8Test, jis)
+{
+    EXPECT_TRUE( MISC::is_utf8( "\x1B$B$\"$$$&$($*\x1B(B", 0 ) );
+}
+
+TEST_F(IsUtf8Test, sjis)
+{
+    EXPECT_FALSE( MISC::is_utf8( "\x82\xA0\x82\xA2\x82\xA4\x82\xA6\x82\xA8", 0 ) );
+}
+
+TEST_F(IsUtf8Test, skip_data)
+{
+    EXPECT_TRUE( MISC::is_utf8( "\x82\xA0\u3042", 2 ) );
+}
+
+TEST_F(IsUtf8Test, lack_following_bytes)
+{
+    constexpr char one_byte[1] = { '\xC2' }; // C2 80
+    EXPECT_FALSE( MISC::is_utf8( std::string_view{ one_byte, 1 }, 0 ) );
+
+    constexpr char two_bytes[2] = { '\xE0', '\xA0' }; // E0 A0 80
+    EXPECT_FALSE( MISC::is_utf8( std::string_view{ two_bytes, 2 }, 0 ) );
+
+    constexpr char three_bytes[3] = { '\xF0', '\x90', '\x80' }; // F0 90 80 80
+    EXPECT_FALSE( MISC::is_utf8( std::string_view{ three_bytes, 3 }, 0 ) );
+}
+
+
 class Utf8BytesTest : public ::testing::Test {};
 
 TEST_F(Utf8BytesTest, null_data)
