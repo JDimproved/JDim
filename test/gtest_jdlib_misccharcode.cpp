@@ -276,7 +276,6 @@ class IsUtf8Test : public ::testing::Test {};
 
 TEST_F(IsUtf8Test, null_data)
 {
-    EXPECT_FALSE( MISC::is_utf8( nullptr, 0 ) );
     EXPECT_TRUE( MISC::is_utf8( "", 0 ) );
 }
 
