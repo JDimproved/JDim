@@ -190,16 +190,14 @@ std::string ENVIRONMENT::get_distname()
     if( CACHE::load_rawdata( "/etc/os-release", text_data ) )
     {
         std::list< std::string > lines = MISC::get_lines( text_data );
-        std::list< std::string >::reverse_iterator it = lines.rbegin();
-        while( it != lines.rend() )
+        for( auto it = lines.rbegin(); it != lines.rend(); ++it )
         {
             std::string name, value;
 
-            size_t e;
-            if( ( e = (*it).find( '=' ) ) != std::string::npos )
+            if( const auto sep = it->find( '=' ); sep != std::string::npos )
             {
-                name = MISC::ascii_trim( it->substr( 0, e ) );
-                value = MISC::ascii_trim( it->substr( e + 1 ) );
+                name = MISC::ascii_trim( it->substr( 0, sep ) );
+                value = MISC::ascii_trim( it->substr( sep + 1 ) );
             }
 
             if( name == "PRETTY_NAME" && ! value.empty() )
@@ -207,24 +205,20 @@ std::string ENVIRONMENT::get_distname()
                 tmp = MISC::cut_str( value, "\"", "\"" );
                 break;
             }
-
-            ++it;
         }
     }
     // LSB系 ( Ubuntu ..etc )
     else if( CACHE::load_rawdata( "/etc/lsb-release", text_data ) )
     {
         std::list< std::string > lines = MISC::get_lines( text_data );
-        std::list< std::string >::reverse_iterator it = lines.rbegin();
-        while( it != lines.rend() )
+        for( auto it = lines.rbegin(); it != lines.rend(); ++it )
         {
             std::string lsb_name, lsb_data;
 
-            size_t e;
-            if( ( e = (*it).find( '=' ) ) != std::string::npos )
+            if( const auto sep = it->find( '=' ); sep != std::string::npos )
             {
-                lsb_name = MISC::ascii_trim( it->substr( 0, e ) );
-                lsb_data = MISC::ascii_trim( it->substr( e + 1 ) );
+                lsb_name = MISC::ascii_trim( it->substr( 0, sep ) );
+                lsb_data = MISC::ascii_trim( it->substr( sep + 1 ) );
             }
 
             // 「DISTRIB_DESCRIPTION="Ubuntu 7.10"」などから「Ubuntu 7.10」を取得
@@ -233,8 +227,6 @@ std::string ENVIRONMENT::get_distname()
                 tmp = MISC::cut_str( lsb_data, "\"", "\"" );
                 break;
             }
-
-            ++it;
         }
     }
     // KNOPPIX (LSB？)
@@ -259,20 +251,17 @@ std::string ENVIRONMENT::get_distname()
     else if( CACHE::load_rawdata( "/etc/release", text_data ) )
     {
         std::list< std::string > lines = MISC::get_lines( text_data );
-        std::list< std::string >::iterator it = lines.begin();
-        while( it != lines.end() )
+        for( std::string& line : lines )
         {
             // 名前が含まれている行を取得
-            if( (*it).find( "BeleniX" ) != std::string::npos
-                || (*it).find( "Nexenta" ) != std::string::npos
-                || (*it).find( "SchilliX" ) != std::string::npos
-                || (*it).find( "Solaris" ) != std::string::npos )
+            if( line.find( "BeleniX" ) != std::string::npos
+                || line.find( "Nexenta" ) != std::string::npos
+                || line.find( "SchilliX" ) != std::string::npos
+                || line.find( "Solaris" ) != std::string::npos )
             {
-                tmp = *it;
+                tmp = std::move( line );
                 break;
             }
-
-            ++it;
         }
     }
     // ファイルの中身がそのままディストリ名として扱える物
