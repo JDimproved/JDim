@@ -208,19 +208,16 @@ void LinkFilterPref::slot_ok_clicked()
     list_item.clear();
 
     const Gtk::TreeModel::Children children = m_liststore->children();
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() ){
-        Gtk::TreeModel::Row row = ( *it );
+    for( const Gtk::TreeRow& row : children ) {
         if( row ){
             LinkFilterItem item;
             item.url = row[ m_columns.m_col_url ];
             item.cmd = row[ m_columns.m_col_cmd ];
-            list_item.push_back( item );
+            list_item.push_back( std::move( item ) );
 #ifdef _DEBUG
             std::cout << item.url << " " << item.cmd << std::endl;
 #endif
         }
-        ++it;
     }
 
     CORE::get_linkfilter_manager()->save_xml();
