@@ -85,11 +85,8 @@ namespace JDLIB
 
         // chunk 用変数
         bool m_use_chunk;
-        long m_status_chunk;
-        char m_str_sizepart[ 64 ]; // サイズ部のバッファ。64byte以下と仮定(超えるとエラー)
-        char* m_pos_sizepart;
-        size_t m_lng_leftdata;
-    
+        ChunkedDecoder m_chunk_decoder;
+
         // zlib 用変数
         bool m_use_zlib;
         z_stream m_zstream;
@@ -130,9 +127,6 @@ namespace JDLIB
         bool analyze_header();
         std::string analyze_header_option( std::string_view option ) const;
         std::list< std::string > analyze_header_option_list( std::string_view option ) const;
-
-        // chunk用
-        bool skip_chunk( char* buf, size_t& read_size );
 
         // unzip 用
         bool init_unzip();

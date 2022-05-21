@@ -1,7 +1,6 @@
 // ライセンス: GPL2
 
 //#define _DEBUG
-//#define _DEBUG_CHUNKED
 //#define _DEBUG_TIME
 #include "jddebug.h"
 
@@ -412,6 +411,7 @@ void Loader::clear()
     m_loadable = nullptr;
     
     m_use_chunk = false;
+    m_chunk_decoder.clear();
 
     if( m_buf ) free( m_buf );
     m_buf = nullptr;
@@ -1031,11 +1031,11 @@ void Loader::run_main()
         
         //  chunkedな場合
         if( m_use_chunk ){
-            
-            if( !skip_chunk( m_buf, read_size ) ){
+
+            if( ! m_chunk_decoder.decode( m_buf, read_size ) ) {
 
                 m_data.code = HTTP_ERR;
-                errmsg = "skip_chunk() failed : " + m_data.url;
+                errmsg = "ChunkedDecoder::decode() failed: " + m_data.url;
                 goto EXIT_LOADING;
             }
             if( ! read_size ) break;
@@ -1059,7 +1059,8 @@ void Loader::run_main()
         }
 
         if( m_data.length && m_data.length <= m_data.length_current ) break;
-        
+        if( m_use_chunk && m_chunk_decoder.is_completed() ) break;
+
     } while( !m_stop );
 
 #ifdef _DEBUG_TIME
@@ -1352,8 +1353,7 @@ bool Loader::analyze_header()
     if( str_tmp.find( "chunked" ) != std::string::npos ){
         
         m_use_chunk = true;
-        m_status_chunk = 0;
-        m_pos_sizepart = m_str_sizepart;
+        m_chunk_decoder.clear();
     }
 
     // gzip か
@@ -1426,124 +1426,6 @@ std::list< std::string > Loader::analyze_header_option_list( std::string_view op
     }
 
     return str_list;
-}
-
-
-
-
-//
-// chunked なデータを切りつめる関数
-//
-// 入力
-// buf : 生データ
-// readsize: 生データサイズ
-//
-// 出力
-// buf : 切りつめられたデータ
-// readsize: 出力データサイズ
-//
-bool Loader::skip_chunk( char* buf, size_t& read_size )
-{
-#ifdef _DEBUG_CHUNKED    
-    std::cout << "\n[[ skip_chunk : start read_size = " << read_size << " ]]\n";
-#endif    
-    
-    size_t pos_chunk = 0;
-    size_t pos_data_chunk_start = 0;
-    size_t buf_size = 0;
-    
-    for(;;){
-
-        // サイズ部
-        if( m_status_chunk == 0 ){  
-        
-            // \nが来るまで m_str_sizepart[] に文字をコピーしていく
-            for( ; pos_chunk < read_size; ++pos_chunk, ++m_pos_sizepart ){
-
-                // バッファオーバーフローのチェック
-                if( ( long )( m_pos_sizepart - m_str_sizepart ) >= 64 ){
-                    MISC::ERRMSG( "buffer over flow at skip_chunk" );
-                    return false;
-                }
-                
-                *( m_pos_sizepart ) =  buf[ pos_chunk ];
-
-                // \n が来たらデータ部のサイズを取得
-                if( buf[ pos_chunk ] == '\n' ){
-
-                    ++pos_chunk;
-                    
-                    *( m_pos_sizepart ) = '\0';
-                    if( *( m_pos_sizepart -1 ) == '\r' ) *( m_pos_sizepart -1 ) = '\0'; // "\r\n"の場合
-                    m_lng_leftdata = strtol( m_str_sizepart, nullptr, 16 );
-                    m_pos_sizepart = m_str_sizepart;
-                    
-#ifdef _DEBUG_CHUNKED
-                    std::cout << "[[ skip_chunk : size chunk finished : str = 0x" << m_str_sizepart << " ]]\n";                    
-                    std::cout << "[[ skip_chunk : enter the data chunk, data size = " << m_lng_leftdata << " ]]\n";
-#endif
-                    pos_data_chunk_start = pos_chunk;
-                    m_status_chunk = 1;
-                    
-                    break;
-                }
-            }
-        }
-
-        // データ部
-        if( m_status_chunk == 1 ){ 
-
-            // データを前に詰める
-            if( m_lng_leftdata ){
-                for( ; m_lng_leftdata > 0 && pos_chunk < read_size; --m_lng_leftdata, ++pos_chunk );
-                size_t buf_size_tmp = pos_chunk - pos_data_chunk_start;
-                if( buf_size != pos_data_chunk_start && buf_size_tmp ) memmove( buf + buf_size , buf + pos_data_chunk_start,  buf_size_tmp );
-                buf_size +=  buf_size_tmp;
-            }
-
-            // データを全部読み込んだらデータ部終わり
-            if( m_lng_leftdata == 0 ) m_status_chunk = 2;
-        }
-
-        // データ部→サイズ部切り替え中("\r"の前)
-        if( m_status_chunk == 2 && pos_chunk != read_size ){
-
-            if( buf[ pos_chunk++ ] != '\r' ){
-                MISC::ERRMSG( "broken chunked data." );
-                return false;
-            }
-
-            m_status_chunk = 3;
-        }
-
-        // データ部→サイズ部切り替え中("\n"の前: "\r" と "\n" の間でサーバからの入力が分かれる時がある)
-        if( m_status_chunk == 3 && pos_chunk != read_size ){
-
-            if( buf[ pos_chunk++ ] != '\n' ){
-                MISC::ERRMSG( "broken chunked data." );
-                return false;
-            }
-
-#ifdef _DEBUG_CHUNKED
-            std::cout << "[[ skip_chunk : data chunk finished. ]]\n";
-#endif
-            m_status_chunk = 0;
-        }
-
-        // バッファ終わり
-        if( pos_chunk == read_size ){
-            
-            read_size = buf_size;
-            buf[ read_size ] = '\0';
-            
-#ifdef _DEBUG_CHUNKED
-            std::cout << "[[ skip_chunk : output = " << read_size << " ]]\n\n";
-#endif
-            return true;
-        }
-    }
-
-    return true;
 }
 
 
