@@ -247,6 +247,126 @@ void JDLIB::check_loader_alive()
 using namespace JDLIB;
 
 
+/**
+ * @brief デコーダーの状態を初期化する
+ */
+void ChunkedDecoder::clear()
+{
+    m_state = State::parse_size;
+    m_lng_leftdata = 0;
+    m_buf_sizepart.clear();
+}
+
+
+/** @brief chunked なデータを切りつめる
+ *
+ * @param[in,out] buf 生データ -> 切りつめられたデータ (not null)
+ * @param[in,out] read_size 生データサイズ -> 出力データサイズ
+ * @return 生データが壊れていて処理できないときはfalse
+ */
+bool ChunkedDecoder::decode( char* buf, std::size_t& read_size )
+{
+    assert( buf );
+    std::size_t pos_chunk = 0;
+    std::size_t pos_body_start = 0; // データ部の先頭位置
+    std::size_t decoded_size = 0; // デコード済みのデータ長
+
+    while(1) {
+
+        // サイズ部
+        if( m_state == State::parse_size ) {
+
+            // サイズ部の途中でデータが途切れても再開できるように
+            // \r\nが来るまで m_buf_sizepart に文字をコピーしていく
+            for( ; pos_chunk < read_size; ++pos_chunk ) {
+
+                m_buf_sizepart.push_back( buf[pos_chunk] );
+
+                // \r\n が来たらデータ部のサイズを取得
+                if( const auto size = m_buf_sizepart.size();
+                        size >= 2 && m_buf_sizepart.compare( size - 2, 2, "\r\n" ) == 0 ) {
+
+                    char* end;
+                    m_lng_leftdata = std::strtoul( m_buf_sizepart.data(), &end, 16 );
+                    // 非数字で解析しなかったときもstrtoul()の結果が0になるためendをチェックする
+                    if( m_buf_sizepart.data() == end ) {
+                        MISC::ERRMSG( "broken chunked data that size part is not hexadecimal." );
+                        return false;
+                    }
+                    m_buf_sizepart.clear();
+
+                    // 最後のチャンク(長さ0)に達したら終了してトレーラー部は無視する
+                    if( m_lng_leftdata == 0 ) {
+                        read_size = decoded_size;
+                        buf[read_size] = '\0';
+                        m_state = State::completed;
+                        return true;
+                    }
+
+                    pos_chunk += 1; // \n をスキップする
+                    pos_body_start = pos_chunk;
+                    m_state = State::format_body;
+                    break;
+                }
+            }
+        }
+
+        // データ部
+        if( m_state == State::format_body ) {
+
+            // データを前に詰める
+            if( m_lng_leftdata ){
+                // 残りのチャンクデータと残りの入力バッファの少ないほう
+                const std::size_t cut_size = (std::min)( m_lng_leftdata, read_size - pos_chunk );
+                m_lng_leftdata -= cut_size;
+                pos_chunk += cut_size;
+
+                const std::size_t chunk_size = pos_chunk - pos_body_start;
+                if( decoded_size != pos_body_start && chunk_size ) {
+                    std::memmove( buf + decoded_size, buf + pos_body_start, chunk_size );
+                }
+                decoded_size += chunk_size;
+            }
+
+            // データを全部読み込んだらデータ部終わり
+            if( m_lng_leftdata == 0 ) m_state = State::check_body_cr;
+        }
+
+        // データ部→サイズ部切り替え中("\r"の前)
+        if( m_state == State::check_body_cr && pos_chunk != read_size ) {
+
+            if( buf[pos_chunk] != '\r' ) {
+                MISC::ERRMSG( "broken chunked data that is missing last CR." );
+                return false;
+            }
+            ++pos_chunk;
+            m_state = State::check_body_lf;
+        }
+
+        // データ部→サイズ部切り替え中("\n"の前: "\r" と "\n" の間でサーバからの入力が分かれる時がある)
+        if( m_state == State::check_body_lf && pos_chunk != read_size ) {
+
+            if( buf[pos_chunk] != '\n' ) {
+                MISC::ERRMSG( "broken chunked data that is missing last LF." );
+                return false;
+            }
+            ++pos_chunk;
+            m_state = State::parse_size;
+        }
+
+        // バッファ終わり
+        if( pos_chunk == read_size ){
+            read_size = decoded_size;
+            buf[read_size] = '\0';
+            // 処理の途中なので m_state は変更しない
+            return true;
+        }
+    }
+    return true;
+}
+
+
+
 //
 // low_priority = true の時はスレッド起動待ち状態になった時に、起動順のプライオリティを下げる
 //

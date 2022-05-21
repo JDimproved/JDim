@@ -28,6 +28,38 @@ namespace SKELETON
 
 namespace JDLIB
 {
+    /**
+     * @brief Chunked transfer encodingで送られてきたデータをデコードする
+     */
+    class ChunkedDecoder
+    {
+        /// @brief デコーダーの状態
+        enum class State
+        {
+            parse_size, ///< 初期状態、サイズ部の解析
+            format_body, ///< データ部の整形
+            check_body_cr, ///< データ部の後ろにあるCRのチェック
+            check_body_lf, ///< データ部の後ろにあるLFのチェック
+            completed, ///< 最後のチャンク(長さ0)を読み込んで処理が完了した
+        };
+
+        State m_state = State::parse_size; ///< デコーダーの状態
+        std::size_t m_lng_leftdata{}; ///< データ部の残りサイズ
+        std::string m_buf_sizepart; ///< 解析途中のサイズ部を保存しておくバッファ
+
+    public:
+        ChunkedDecoder() = default;
+        ~ChunkedDecoder() noexcept = default;
+
+        /// 最後のチャンク(長さ0)まで読み込んで処理が完了したか
+        bool is_completed() const noexcept { return m_state == State::completed; }
+
+        /// デコーダーの状態を初期化する
+        void clear();
+        /// chunked なデータを切りつめる
+        bool decode( char* buf, std::size_t& read_size );
+    };
+
     class Loader
     {
         LOADERDATA m_data;
