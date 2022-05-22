@@ -332,12 +332,10 @@ void EditTreeView::xml2tree( const XML::Document& document, Glib::RefPtr< Gtk::T
     set_dirid();
 
     // ディレクトリオープン
-    std::list< Gtk::TreePath >::iterator it_path = list_path_expand.begin();
-    while( it_path != list_path_expand.end() )
+    for( const Gtk::TreePath& path : list_path_expand )
     {
-        expand_parents( *it_path );
-        expand_row( *it_path, false );
-        ++it_path;
+        expand_parents( path );
+        expand_row( path, false );
     }
 }
 
@@ -426,19 +424,16 @@ void EditTreeView::set_dirid()
 //
 void EditTreeView::set_expanded_row( Glib::RefPtr< Gtk::TreeStore >& treestore, const Gtk::TreeModel::Children& children )
 {
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
-    {
-        const Gtk::TreePath path = treestore->get_path( *it );
+    for( const Gtk::TreeRow& row : children ) {
+        const Gtk::TreePath path = treestore->get_path( row );
 
         // ツリーが開いているか
-        if( row_expanded( path ) ) (*it)[ m_columns.m_expand ] = true;
-        else (*it)[ m_columns.m_expand ] = false;
+        row[ m_columns.m_expand ] = row_expanded( path );
 
         // 再帰
-        if( ! (*it)->children().empty() ) set_expanded_row( treestore, (*it)->children() );
-
-        ++it;
+        if( const auto chldn = row.children(); ! chldn.empty() ) {
+            set_expanded_row( treestore, chldn );
+        }
     }
 }
 
