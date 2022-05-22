@@ -163,16 +163,10 @@ Glib::RefPtr< Gdk::Pixbuf > SelectItemPref::get_icon( const Glib::ustring& name 
 {
     Glib::RefPtr< Gdk::Pixbuf > icon;
 
-    std::list< DEFAULT_DATA >::iterator it = m_list_default_data.begin();
-    while( it != m_list_default_data.end() )
-    {
-        if( (*it).name == name )
-        {
-            icon = (*it).icon;
-            break;
-        }
-
-        ++it;
+    auto it = std::find_if( m_list_default_data.cbegin(), m_list_default_data.cend(),
+                            [&name]( const DEFAULT_DATA& data ) { return data.name == name; } );
+    if( it != m_list_default_data.cend() ) {
+        icon = it->icon;
     }
 
     return icon;
@@ -216,30 +210,24 @@ void SelectItemPref::append_rows( const std::string& str )
     bool found_separator = false;
 
     // "非表示"にデフォルトデータを全て追加
-    std::list< DEFAULT_DATA >::iterator def_it = m_list_default_data.begin();
-    while( def_it != m_list_default_data.end() )
+    for( const DEFAULT_DATA& data : m_list_default_data )
     {
         // 2つ以上セパレータを追加しない
-        if( (*def_it).name == ITEM_NAME_SEPARATOR )
+        if( data.name == ITEM_NAME_SEPARATOR )
         {
-            if( ! found_separator ) append_hidden( (*def_it).name, false );
+            if( ! found_separator ) append_hidden( data.name, false );
             found_separator = true;
         }
-        else append_hidden( (*def_it).name, false );
-
-        ++def_it;
+        else append_hidden( data.name, false );
     }
 
     if( str.empty() ) return;
 
     // "表示"に追加と不要な"非表示"を削除
     std::list< std::string > items = MISC::split_line( str );
-    std::list< std::string >::iterator it = items.begin();
-    while( it != items.end() )
+    for( const std::string& name : items )
     {
-        if( append_shown( *it, false ) ) erase_hidden( *it );
-
-        ++it;
+        if( append_shown( name, false ) ) erase_hidden( name );
     }
 }
 
@@ -252,12 +240,9 @@ std::string SelectItemPref::get_items() const
     std::string items;
 
     const Gtk::TreeModel::Children children = m_store_shown->children();
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
+    for( const Gtk::TreeRow& row : children )
     {
-        Gtk::TreeModel::Row row = *it;
         items.append( row[ m_columns_shown.m_column_text ] + " " );
-        ++it;
     }
 
     return items;
@@ -318,17 +303,11 @@ void SelectItemPref::erase_hidden( const std::string& name )
     if( name == ITEM_NAME_SEPARATOR ) return;
 
     const Gtk::TreeModel::Children children = m_store_hidden->children();
-    Gtk::TreeModel::iterator it = children.begin();
-    while( it != children.end() )
-    {
-        Gtk::TreeModel::Row row = *it;
-        if( row[ m_columns_hidden.m_column_text ] == name )
-        {
-            m_store_hidden->erase( *it );
-            break;
-        }
-
-        ++it;
+    const auto& col = m_columns_hidden.m_column_text;
+    auto it = std::find_if( children.begin(), children.end(),
+                            [&col, &name]( const Gtk::TreeRow& row ) { return row[ col ] == name; } );
+    if( it != children.end() ) {
+        m_store_hidden->erase( *it );
     }
 }
 
@@ -399,10 +378,9 @@ void SelectItemPref::slot_top()
     Gtk::TreeIter upper_it = children.begin();
 
     std::vector< Gtk::TreePath > selection_path = m_tree_shown.get_selection()->get_selected_rows();
-    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
-    while( it != selection_path.end() )
+    for( const Gtk::TreePath& path : selection_path )
     {
-        Gtk::TreeIter src_it = m_store_shown->get_iter( *it );
+        Gtk::TreeIter src_it = m_store_shown->get_iter( path );
         Gtk::TreeIter dst_it = upper_it;
 
         // 元と先が同じでない
@@ -416,7 +394,6 @@ void SelectItemPref::slot_top()
         // 移動先の位置を下げる
         if( upper_it != children.end() ) ++upper_it;
 
-        ++it;
     }
 
     // フォーカスを移す
@@ -436,10 +413,8 @@ void SelectItemPref::slot_up()
     Gtk::TreeIter upper_it = children.begin();
 
     std::vector< Gtk::TreePath > selection_path = m_tree_shown.get_selection()->get_selected_rows();
-    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
-    while( it != selection_path.end() )
+    for( const Gtk::TreePath& src : selection_path )
     {
-        Gtk::TreePath src = *it;
         Gtk::TreeIter src_it = m_store_shown->get_iter( src );
 
         // 限度位置に達していなければ入れ替え
@@ -456,8 +431,6 @@ void SelectItemPref::slot_up()
         }
         // 上限に達していたら次の限度位置を下げる
         else if( upper_it != children.end() ) ++upper_it;
-
-        ++it;
     }
 
     // フォーカスを移す
@@ -477,8 +450,7 @@ void SelectItemPref::slot_down()
     Gtk::TreeIter bottom_it = --children.end();
 
     std::vector< Gtk::TreePath > selection_path = m_tree_shown.get_selection()->get_selected_rows();
-    std::vector< Gtk::TreePath >::reverse_iterator it = selection_path.rbegin();
-    while( it != selection_path.rend() )
+    for( auto it = selection_path.rbegin(); it != selection_path.rend(); ++it )
     {
         Gtk::TreePath src = *it;
         Gtk::TreeIter src_it = m_store_shown->get_iter( src );
@@ -499,8 +471,6 @@ void SelectItemPref::slot_down()
         }
         // 下限に達していたら次の限度位置を上げる
         else if( bottom_it != children.begin() ) --bottom_it;
-
-        ++it;
     }
 
     // フォーカスを移す
@@ -520,8 +490,7 @@ void SelectItemPref::slot_bottom()
     Gtk::TreeIter bottom_it = children.end();
 
     std::vector< Gtk::TreePath > selection_path = m_tree_shown.get_selection()->get_selected_rows();
-    std::vector< Gtk::TreePath >::reverse_iterator it = selection_path.rbegin();
-    while( it != selection_path.rend() )
+    for( auto it = selection_path.rbegin(); it != selection_path.rend(); ++it )
     {
         Gtk::TreeIter src_it = m_store_shown->get_iter( *it );
         Gtk::TreeIter dst_it = bottom_it;
@@ -536,8 +505,6 @@ void SelectItemPref::slot_bottom()
 
         // 移動先の位置を上げる
         if( bottom_it != children.begin() ) --bottom_it;
-
-        ++it;
     }
 
     // フォーカスを移す
@@ -562,10 +529,8 @@ void SelectItemPref::slot_delete()
     std::list< Gtk::TreeRow > erase_rows;
     bool set_cursor = true;  // 一番上の選択項目にカーソルをセット
 
-    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
-    while( it != selection_path.end() )
+    for( const Gtk::TreePath& path : selection_path )
     {
-        Gtk::TreePath path = *it;
         Gtk::TreeRow row = *m_store_shown->get_iter( path );
 
         if( row )
@@ -582,17 +547,12 @@ void SelectItemPref::slot_delete()
             // 表示項目から削除するリストに追加
             erase_rows.push_back( row );
         }
-
-        ++it;
     }
 
     // 追加と削除を同時にすると滅茶苦茶になるので、分けて削除する
-    std::list< Gtk::TreeRow >::iterator erase_it = erase_rows.begin();
-    while( erase_it != erase_rows.end() )
+    for( const Gtk::TreeRow& row : erase_rows )
     {
-        m_store_shown->erase( *erase_it );
-
-        ++erase_it;
+        m_store_shown->erase( row );
     }
 
     // フォーカスを移す
@@ -618,10 +578,9 @@ void SelectItemPref::slot_add()
     bool set_cursor = true; // 一番上の選択項目にカーソルをセット
 
     // 選択したアイテムを追加
-    std::vector< Gtk::TreePath >::iterator it = selection_path.begin();
-    while( it != selection_path.end() )
+    for( const Gtk::TreePath& path : selection_path )
     {
-        Gtk::TreeRow row = *m_store_hidden->get_iter( *it );
+        Gtk::TreeRow row = *m_store_hidden->get_iter( path );
 
         if( row )
         {
@@ -634,17 +593,12 @@ void SelectItemPref::slot_add()
             // 非表示項目から削除するリストに追加
             if( name != ITEM_NAME_SEPARATOR ) erase_rows.push_back( row );
         }
-
-        ++it;
     }
 
     // 追加と削除を同時にすると滅茶苦茶になるので、分けて削除する
-    std::list< Gtk::TreeRow >::iterator erase_it = erase_rows.begin();
-    while( erase_it != erase_rows.end() )
+    for( const Gtk::TreeRow& row : erase_rows )
     {
-        m_store_hidden->erase( *erase_it );
-
-        ++erase_it;
+        m_store_hidden->erase( row );
     }
 
     // フォーカスを移す
