@@ -184,6 +184,13 @@ int JDSSL::read( char* buf, const size_t bufsize )
 
 // OpenSSL 使用
 
+#include "miscmsg.h"
+
+#include <openssl/err.h>
+
+#include <cstring>
+
+
 void JDLIB::init_ssl()
 {
 #ifdef _DEBUG
@@ -217,37 +224,80 @@ JDSSL::~JDSSL()
 }
 
 
+/// SSL_get_error() の戻り値からエラーメッセージを返す
+static const char* openssl_error_string( int error )
+{
+    switch( error ) {
+        case SSL_ERROR_NONE:
+            return "SSL_ERROR_NONE";
+        case SSL_ERROR_ZERO_RETURN:
+            return "SSL_ERROR_ZERO_RETURN";
+        case SSL_ERROR_WANT_READ:
+            return "SSL_ERROR_WANT_READ";
+        case SSL_ERROR_WANT_WRITE:
+            return "SSL_ERROR_WANT_WRITE";
+        case SSL_ERROR_WANT_CONNECT:
+            return "SSL_ERROR_WANT_CONNECT";
+        case SSL_ERROR_WANT_X509_LOOKUP:
+            return "SSL_ERROR_WANT_X509_LOOKUP";
+        case SSL_ERROR_SYSCALL:
+            if( const char* reason = std::strerror( errno ); reason ) {
+                return reason;
+            }
+            return "SSL_ERROR_SYSCALL";
+        case SSL_ERROR_SSL:
+            if( const char* reason = ERR_reason_error_string( ERR_get_error() ); reason ) {
+                return reason;
+            }
+            return "SSL_ERROR_SSL";
+    }
+    return "unrecognized error";
+}
+
+
 bool JDSSL::connect( const int soc, const char *host )
 {
 #ifdef _DEBUG
     std::cout << "JDSSL::connect(openssl)\n";
 #endif
+    constexpr const int success = 1;
 
     if( soc < 0 ) return false;
     if( m_ctx ) return false;
     if( m_ssl ) return false;
 
-    SSL_library_init();
-    m_ctx = SSL_CTX_new( SSLv23_client_method() );
-    if( ! m_ctx ){
-        m_errmsg = "SSL_CTX_new failed";
+    auto failure = [this]( const char* err ) {
+        m_errmsg.assign( err );
+        m_errmsg.append( openssl_error_string( SSL_ERROR_SSL ) );
         return false;
+    };
+
+    if( m_ctx = SSL_CTX_new( TLS_client_method() ); ! m_ctx ) {
+        return failure( "SSL_CTX_new failed: " );
+    }
+    if( SSL_CTX_set_min_proto_version( m_ctx, TLS1_2_VERSION ) != success ) {
+        return failure( "SSL_CTX_set_min_proto_version(TLS1_2_VERSION) failed: " );
     }
 
-    m_ssl = SSL_new( m_ctx );
-    if( ! m_ssl ){
-        m_errmsg = "SSL_new failed";
-        return false;
+    // load the trusted client CA certificate into context
+    if( SSL_CTX_set_default_verify_paths( m_ctx ) != success ){
+        return failure( "SSL_CTX_set_default_verify_paths failed: " );
+    }
+    SSL_CTX_set_verify( m_ctx, SSL_VERIFY_PEER, nullptr );
+
+    if( m_ssl = SSL_new( m_ctx ); ! m_ssl ) {
+        return failure( "SSL_new failed: " );
+    }
+    if( SSL_set_fd( m_ssl, soc ) != success ) {
+        return failure( "SSL_set_fd failed: " );
+    }
+    if( SSL_set_tlsext_host_name( m_ssl, host ) != success ) {
+        return failure( "SSL_set_tlsext_host_name failed: " );
     }
 
-    if( SSL_set_fd( m_ssl, soc ) == 0 ){
-        m_errmsg = "SSL_set_fd failed";
-        return false;
-    }
-
-    SSL_set_tlsext_host_name( m_ssl, host ) ;
-    if( SSL_connect( m_ssl ) != 1 ){
-        m_errmsg = "SSL_connect failed";
+    if( const int err = SSL_connect( m_ssl ); err != success ) {
+        m_errmsg.assign( "SSL_connect failed: " );
+        m_errmsg.append( openssl_error_string( SSL_get_error( m_ssl, err ) ) );
         return false;
     }
 
@@ -266,7 +316,13 @@ bool JDSSL::close()
 #endif
 
     if( m_ssl ){
-        SSL_shutdown( m_ssl );
+        int err;
+        // SSL_shutdown() returning 0 does not indicate an error.
+        if( ! SSL_in_init( m_ssl ) && ( err = SSL_shutdown( m_ssl ) ) < 0 ) {
+            m_errmsg.assign( "SSL_shutdown failed: " );
+            m_errmsg.append( openssl_error_string( SSL_get_error( m_ssl, err ) ) );
+            MISC::ERRMSG( m_errmsg );
+        }
         SSL_free( m_ssl );
         m_ssl = nullptr;
     }
@@ -281,18 +337,38 @@ bool JDSSL::close()
 
 int JDSSL::write( const char* buf, const size_t bufsize )
 {
-    int tmpsize = SSL_write( m_ssl, buf, bufsize );
-    if( tmpsize < 0 ) m_errmsg = "SSL_write failed";
+    int tmpsize;
+    while(1) {
+        tmpsize = SSL_write( m_ssl, buf, bufsize );
+        if( tmpsize > 0 ) break;
 
+        const int err = SSL_get_error( m_ssl, tmpsize );
+        // TLSハンドシェイクの処理はプロトコル中いつでも発生する可能性がある
+        if( err == SSL_ERROR_WANT_WRITE || err == SSL_ERROR_WANT_READ ) continue;
+
+        m_errmsg.assign( "SSL_write failed: " );
+        m_errmsg.append( openssl_error_string( err ) );
+        break;
+    }
     return tmpsize;
 }
 
 
 int JDSSL::read( char* buf, const size_t bufsize )
 {
-    int tmpsize = SSL_read( m_ssl, buf, bufsize );
-    if( tmpsize < 0 ) m_errmsg = "SSL_read failed";
+    int tmpsize;
+    while(1) {
+        tmpsize = SSL_read( m_ssl, buf, bufsize );
+        if( tmpsize > 0 ) break;
 
+        const int err = SSL_get_error( m_ssl, tmpsize );
+        // TLSハンドシェイクの処理はプロトコル中いつでも発生する可能性がある
+        if( err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE ) continue;
+
+        m_errmsg.assign( "SSL_read failed: " );
+        m_errmsg.append( openssl_error_string( err ) );
+        break;
+    }
     return tmpsize;
 }
 
