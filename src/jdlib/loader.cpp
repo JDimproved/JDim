@@ -354,10 +354,10 @@ bool ChunkedDecoder::decode( char* buf, std::size_t& read_size )
         }
 
         // バッファ終わり
-        if( pos_chunk == read_size ){
+        if( pos_chunk == read_size || m_state == State::completed ) {
             read_size = decoded_size;
             buf[read_size] = '\0';
-            // 処理の途中なので m_state は変更しない
+            // 処理の途中または完了したので m_state は変更しない
             return true;
         }
     }

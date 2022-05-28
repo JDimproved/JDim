@@ -169,7 +169,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, fail_pase_size)
     JDLIB::ChunkedDecoder decoder;
     char buf[64];
     std::size_t size;
-    for( auto [input, output, output_size, is_completed] : chunks ) {
+    for( auto [input, unused_1, unused_2, is_completed] : chunks ) {
         std::strcpy( buf, input );
         size = std::strlen( buf );
         EXPECT_FALSE( decoder.decode( buf, size ) );
@@ -187,12 +187,31 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, fail_pase_body_cr_lf)
     JDLIB::ChunkedDecoder decoder;
     char buf[64];
     std::size_t size;
-    for( auto [input, output, output_size, is_completed] : chunks ) {
+    for( auto [input, unused_1, unused_2, is_completed] : chunks ) {
         std::strcpy( buf, input );
         size = std::strlen( buf );
         EXPECT_FALSE( decoder.decode( buf, size ) );
         EXPECT_FALSE( decoder.is_completed() );
         decoder.clear();
+    }
+}
+
+TEST_F(JDLIB_ChunkedDecoder_Decode, call_again_after_completed)
+{
+    constexpr const ChunkedDecoderDataSet chunks[] = {
+        { "F\r\nQuick Brown Fox\r\n0\r\n", "Quick Brown Fox", 15, true },
+        { "F\r\nQuick Brown Fox\r\n0\r\n", "", 0, true },
+    };
+    JDLIB::ChunkedDecoder decoder;
+    char buf[64];
+    std::size_t size;
+    for( auto [input, output, output_size, is_completed] : chunks ) {
+        std::strcpy( buf, input );
+        size = std::strlen( buf );
+        EXPECT_TRUE( decoder.decode( buf, size ) );
+        EXPECT_STREQ( buf, output );
+        EXPECT_EQ( size, output_size );
+        EXPECT_TRUE( decoder.is_completed() );
     }
 }
 
