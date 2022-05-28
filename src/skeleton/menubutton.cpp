@@ -127,8 +127,14 @@ void MenuButton::show_popupmenu()
 {
     if( ! m_popupmenu ) return;
 
+#if GTK_CHECK_VERSION(3,24,6)
     // Specify the current event by nullptr.
     m_popupmenu->popup_at_widget( this, Gdk::GRAVITY_SOUTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr );
+#else
+    // GTK 3.24.5 以下のバージョンではメニューのスクロールが出来なくなることがあるため廃止予定APIを使う
+    m_popupmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &MenuButton::slot_popup_pos ) ),
+                        0, gtk_get_current_event_time() );
+#endif
 }
 
 
@@ -157,6 +163,22 @@ void MenuButton::on_clicked()
     if( ! m_enable_sig_clicked || m_on_arrow ) show_popupmenu();
     else m_sig_clicked.emit();
 }
+
+
+#if ! GTK_CHECK_VERSION(3,24,6)
+/**
+ * @brief ポップアップメニューの位置決め
+ */
+void MenuButton::slot_popup_pos( int& x, int& y, bool& push_in )
+{
+    int ox, oy;
+    get_window()->get_origin( ox, oy );
+    Gdk::Rectangle rect = get_allocation();
+    x = ox + rect.get_x();
+    y = oy + rect.get_y() + rect.get_height();
+    push_in = false;
+}
+#endif
 
 
 bool MenuButton::slot_enter( GdkEventCrossing* event )

@@ -284,6 +284,11 @@ namespace SKELETON
         // タブ切り替えメニュー表示
         void slot_show_tabswitchmenu();
 
+#if ! GTK_CHECK_VERSION(3,24,6)
+        /// タブ切り替えメニューの位置決め
+        void slot_popup_pos( int& x, int& y, bool& push_in );
+#endif
+
         // 右クリックメニュー
         virtual void slot_close_tab();
         virtual void slot_lock();
