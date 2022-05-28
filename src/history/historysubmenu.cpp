@@ -210,7 +210,12 @@ bool HistorySubMenu::slot_button_press( GdkEventButton* event, int i )
     // ポップアップメニュー表示
     if( event->button == 3 )
     {
+#if GTK_CHECK_VERSION(3,24,6)
         m_popupmenu.popup_at_pointer( reinterpret_cast<GdkEvent*>( event ) );
+#else
+        // GTK 3.24.5 以下のバージョンではメニューのスクロールが出来なくなることがあるため廃止予定APIを使う
+        m_popupmenu.popup( 0, gtk_get_current_event_time() );
+#endif
     }
 
     return true;

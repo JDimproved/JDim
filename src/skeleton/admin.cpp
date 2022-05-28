@@ -2220,7 +2220,12 @@ void Admin::slot_tab_menu( int page, int x, int y )
         if( label ) label->set_text_with_mnemonic( ITEM_NAME_GO + std::string( " [ タブ数 " )
                                                    + std::to_string( m_notebook->get_n_pages() ) +" ](_M)" );
 
+#if GTK_CHECK_VERSION(3,24,6)
         popupmenu->popup_at_pointer( nullptr ); // current event
+#else
+        // GTK 3.24.5 以下のバージョンではメニューのスクロールが出来なくなることがあるため廃止予定APIを使う
+        popupmenu->popup( 0, gtk_get_current_event_time() );
+#endif
     }
 }
 
@@ -2239,10 +2244,40 @@ void Admin::slot_show_tabswitchmenu()
     m_tabswitchmenu->update_labels();
     m_tabswitchmenu->update_icons();
 
+#if GTK_CHECK_VERSION(3,24,6)
     // Specify the current event by nullptr.
     m_tabswitchmenu->popup_at_widget( &( m_notebook->get_tabswitch_button() ),
                                       Gdk::GRAVITY_SOUTH_EAST, Gdk::GRAVITY_NORTH_EAST, nullptr );
+#else
+    // GTK 3.24.5 以下のバージョンではメニューのスクロールが出来なくなることがあるため廃止予定APIを使う
+    m_tabswitchmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &Admin::slot_popup_pos ) ),
+                            0, gtk_get_current_event_time() );
+#endif
 }
+
+
+#if ! GTK_CHECK_VERSION(3,24,6)
+/**
+ * @brief タブ切り替えメニューの位置決め
+ */
+void Admin::slot_popup_pos( int& x, int& y, bool& push_in )
+{
+    if( ! m_tabswitchmenu ) return;
+
+    const int mrg = 16;
+
+    m_notebook->get_tabswitch_button().get_pointer( x, y );
+
+    int ox, oy;
+    m_notebook->get_tabswitch_button().get_window()->get_origin( ox, oy );
+    const Gdk::Rectangle rect = m_notebook->get_tabswitch_button().get_allocation();
+
+    x += ox + rect.get_x() - mrg;
+    y = oy + rect.get_y() + rect.get_height();
+
+    push_in = false;
+}
+#endif
 
 
 //
