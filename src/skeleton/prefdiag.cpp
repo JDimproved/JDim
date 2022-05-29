@@ -97,8 +97,8 @@ int PrefDiag::run(){
     CORE::core_set_command( "dialog_shown" );
 
     // タイマーセット
-    sigc::slot< bool > slot_timeout = sigc::bind( sigc::mem_fun(*this, &PrefDiag::slot_timeout), 0 );
-    m_conn_timer = JDLIB::Timeout::connect( slot_timeout, TIMER_TIMEOUT );
+    sigc::slot< bool > slot_tmout = sigc::bind( sigc::mem_fun(*this, &PrefDiag::slot_timeout), 0 );
+    m_conn_timer = JDLIB::Timeout::connect( slot_tmout, TIMER_TIMEOUT );
 
     int ret = Gtk::Dialog::run();
 
