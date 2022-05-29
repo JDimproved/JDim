@@ -119,19 +119,19 @@ void ImageAdmin::restore( const bool only_locked )
     for( int page = 0; it_url != list_url.end(); ++it_url, ++page ){
 
         // タブのロック状態
-        bool lock = false;
+        bool lock_img = false;
         if( it_locked != list_locked.end() ){
-            if( (*it_locked ) ) lock = true;
+            if( *it_locked ) lock_img = true;
             ++it_locked;
         }
 
         // ロックされているものだけ表示
-        if( only_locked && ! lock ) continue;
+        if( only_locked && ! lock_img ) continue;
 
         if( page == SESSION::image_page() ) set_page_num = get_tab_nums();
 
-        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock );
-        if( ! command_arg.url.empty() ) open_view( command_arg );        
+        COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock_img );
+        if( ! command_arg.url.empty() ) open_view( command_arg );
     }
 
     SKELETON::View* view = get_nth_icon( set_page_num );
