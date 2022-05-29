@@ -618,7 +618,7 @@ bool JDWindow::on_delete_event( GdkEventAny* event )
         else{
 
             // hideする前に座標保存
-            if( ! is_maximized_win() && ! is_iconified_win() && get_window() ) set_win_pos();
+            if( ! is_iconified_win() && get_window() ) set_win_pos();
 
             hide();
             m_mode = JDWIN_HIDE;
