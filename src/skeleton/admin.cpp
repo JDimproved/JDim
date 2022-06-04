@@ -2307,7 +2307,7 @@ void Admin::slot_show_tabswitchmenu()
  */
 void Admin::slot_popup_pos( int& x, int& y, bool& push_in )
 {
-    if( ! m_tabswitchmenu ) return;
+    if( ! m_model_tabswitch ) return;
 
     const int mrg = 16;
 
