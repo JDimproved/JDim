@@ -43,7 +43,7 @@ Board2chCompati::Board2chCompati( const std::string& root, const std::string& pa
     set_path_dat( "/dat" );
     set_path_readcgi( "/test/read.cgi" );
     set_path_bbscgi( "/test/bbs.cgi" );
-    set_path_subbbscgi( "/test/subbbs.cgi" );
+    set_path_subbbscgi( "/test/bbs.cgi" );
     set_subjecttxt( "subject.txt" );
     set_ext( ".dat" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く
