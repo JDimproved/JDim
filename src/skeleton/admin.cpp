@@ -31,11 +31,6 @@
 
 #include <algorithm>
 
-enum
-{
-    MAX_TABS = 50
-};
-
 
 // open_view で使うモード
 enum
@@ -54,6 +49,7 @@ using namespace SKELETON;
 Admin::Admin( const std::string& url )
     : m_url( url )
     , m_notebook{ std::make_unique<DragableNoteBook>() }
+    , m_prev_n_pages{ -1 }
 {
     m_notebook->signal_switch_page().connect( sigc::mem_fun( *this, &Admin::slot_switch_page ) );
     m_notebook->set_scrollable( true );
@@ -119,147 +115,180 @@ void Admin::save_session()
 void Admin::setup_menu()
 {
     // 右クリックメニュー
-    m_action_group = Gtk::ActionGroup::create();
-    m_action_group->add( Gtk::Action::create( "Quit", "Quit" ), sigc::mem_fun( *this, &Admin::slot_close_tab ) );
+    m_action_group = Gio::SimpleActionGroup::create();
+    m_action_group->add_action( "Quit", sigc::mem_fun( *this, &Admin::slot_close_tab ) );
 
-    m_action_group->add( Gtk::ToggleAction::create( "LockTab", "タブをロックする(_K)", std::string(), false ),
-                         sigc::mem_fun( *this, &Admin::slot_lock ) );
+    m_action_group->add_action_bool( "LockTab", sigc::mem_fun( *this, &Admin::slot_lock ), false );
 
-    m_action_group->add( Gtk::Action::create( "Close_Tab_Menu", "複数のタブを閉じる(_T)" ) );
-    m_action_group->add( Gtk::Action::create( "CloseOther", "他のタブ(_O)" ), sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseLeft", "左←のタブ(_L)" ), sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseRight", "右→のタブ(_R)" ), sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseAll", "全てのタブ(_A)" ), sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CloseSameIcon", "同じアイコンのタブ(_I)" ), sigc::mem_fun( *this, &Admin::slot_close_same_icon_tabs ) );
+    m_action_group->add_action( "CloseOther", sigc::mem_fun( *this, &Admin::slot_close_other_tabs ) );
+    m_action_group->add_action( "CloseLeft", sigc::mem_fun( *this, &Admin::slot_close_left_tabs ) );
+    m_action_group->add_action( "CloseRight", sigc::mem_fun( *this, &Admin::slot_close_right_tabs ) );
+    m_action_group->add_action( "CloseAll", sigc::mem_fun( *this, &Admin::slot_close_all_tabs ) );
+    m_action_group->add_action( "CloseSameIcon", sigc::mem_fun( *this, &Admin::slot_close_same_icon_tabs ) );
 
-    m_action_group->add( Gtk::Action::create( "Reload_Tab_Menu", "全てのタブの再読み込み(_A)" ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdateAll", "更新チェックのみ(_U)" ), sigc::mem_fun( *this, &Admin::slot_check_update_all_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CheckUpdateReloadAll", "更新されたタブを再読み込み(_A)" ),
-                         sigc::mem_fun( *this, &Admin::slot_check_update_reload_all_tabs ) );
-    m_action_group->add( Gtk::Action::create( "ReloadAll", "再読み込み(_R)" ), sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
-    m_action_group->add( Gtk::Action::create( "CancelReloadAll", "キャンセル(_C)" ), sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
+    m_action_group->add_action( "CheckUpdateAll", sigc::mem_fun( *this, &Admin::slot_check_update_all_tabs ) );
+    m_action_group->add_action( "CheckUpdateReloadAll", sigc::mem_fun( *this, &Admin::slot_check_update_reload_all_tabs ) );
+    m_action_group->add_action( "ReloadAll", sigc::mem_fun( *this, &Admin::slot_reload_all_tabs ) );
+    m_action_group->add_action( "CancelReloadAll", sigc::mem_fun( *this, &Admin::slot_cancel_reload_all_tabs ) );
 
-    m_action_group->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER "(_W)" ),
-                         sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
-    m_action_group->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL "(_U)" ), sigc::mem_fun( *this, &Admin::slot_copy_url ) );
-    m_action_group->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL "(_L)" ),
-                         sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
+    m_action_group->add_action( "OpenBrowser", sigc::mem_fun( *this, &Admin::slot_open_by_browser ) );
+    m_action_group->add_action( "CopyURL", sigc::mem_fun( *this, &Admin::slot_copy_url ) );
+    m_action_group->add_action( "CopyTitleURL", sigc::mem_fun( *this, &Admin::slot_copy_title_url ) );
 
-    m_action_group->add( Gtk::Action::create( "AppendFavorite", "お気に入りに追加(_F)..." ), sigc::mem_fun( *this, &Admin::slot_append_favorite ) );
-    m_action_group->add( Gtk::Action::create( "Preference", "プロパティ(_P)..."), sigc::mem_fun( *this, &Admin::show_preference ) );
+    m_action_group->add_action( "AppendFavorite", sigc::mem_fun( *this, &Admin::slot_append_favorite ) );
+    m_action_group->add_action( "Preference", sigc::mem_fun( *this, &Admin::show_preference ) );
 
     // 戻る、進む
-    m_action_group->add( Gtk::Action::create( "PrevView", "PrevView"),
-                         sigc::bind< int >( sigc::mem_fun( *this, &Admin::back_clicked_viewhistory ), 1 ) );
-    m_action_group->add( Gtk::Action::create( "NextView", "NextView"),
-                         sigc::bind< int >( sigc::mem_fun( *this, &Admin::forward_clicked_viewhistory ), 1 ) );
+    m_action_group->add_action( "PrevView", sigc::bind( sigc::mem_fun( *this, &Admin::back_clicked_viewhistory ), 1 ) );
+    m_action_group->add_action( "NextView", sigc::bind( sigc::mem_fun( *this, &Admin::forward_clicked_viewhistory ), 1 ) );
 
-    m_ui_manager = Gtk::UIManager::create();    
-    m_ui_manager->insert_action_group( m_action_group );
+    m_action_group->add_action( "tab-head-focus", sigc::mem_fun( *this, &Admin::tab_head_focus ) );
+    m_action_group->add_action( "tab-tail-focus", sigc::mem_fun( *this, &Admin::tab_tail_focus ) );
+
+    m_action_group->add_action_with_parameter( "tab-switch", Glib::Variant<gint32>::variant_type(),
+                                               sigc::mem_fun( *this, &Admin::set_current_page_focus ) );
+
+    m_notebook->insert_action_group( "admin", m_action_group );
 
     // ポップアップメニューのレイアウト
-    Glib::ustring str_ui = 
+    Glib::ustring str_ui = R"(
+<interface>
+  <menu id="popup_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">タブをロックする(_K)</attribute>
+        <attribute name="action">admin.LockTab</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">)" ITEM_NAME_QUIT R"((_C)</attribute>
+        <attribute name="action">admin.Quit</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">複数のタブを閉じる(_T)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">全てのタブ(_A)</attribute>
+          <attribute name="action">admin.CloseAll</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">他のタブ(_O)</attribute>
+          <attribute name="action">admin.CloseOther</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">左←のタブ(_L)</attribute>
+          <attribute name="action">admin.CloseLeft</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">右→のタブ(_R)</attribute>
+          <attribute name="action">admin.CloseRight</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">同じアイコンのタブ(_I)</attribute>
+          <attribute name="action">admin.CloseSameIcon</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">全てのタブの再読み込み(_A)</attribute>
+        <section>
+          <item>
+            <attribute name="label" translatable="yes">再読み込み(_R)</attribute>
+            <attribute name="action">admin.ReloadAll</attribute>
+          </item>
+          <item>
+            <attribute name="label" translatable="yes">更新チェックのみ(_U)</attribute>
+            <attribute name="action">admin.CheckUpdateAll</attribute>
+          </item>
+          <item>
+            <attribute name="label" translatable="yes">更新されたタブを再読み込み(_A)</attribute>
+            <attribute name="action">admin.CheckUpdateReloadAll</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="label" translatable="yes">更新キャンセル(_C)</attribute>
+            <attribute name="action">admin.CancelReloadAll</attribute>
+          </item>
+        </section>
+      </submenu>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">)" ITEM_NAME_OPEN_BROWSER R"((_W)</attribute>
+        <attribute name="action">admin.OpenBrowser</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">)" ITEM_NAME_COPY_URL R"((_U)</attribute>
+        <attribute name="action">admin.CopyURL</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">)" ITEM_NAME_COPY_TITLE_URL R"((_L)</attribute>
+        <attribute name="action">admin.CopyTitleURL</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">admin.AppendFavorite</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">プロパティ(_P)...</attribute>
+        <attribute name="action">admin.Preference</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="move_submenu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">)" ITEM_NAME_BACK R"((_P)</attribute>
+        <attribute name="action">admin.PrevView</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">)" ITEM_NAME_FORWARD R"((_N)</attribute>
+        <attribute name="action">admin.NextView</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">先頭のタブに移動(_H)</attribute>
+        <attribute name="action">admin.tab-head-focus</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">最後のタブに移動(_T)</attribute>
+        <attribute name="action">admin.tab-tail-focus</attribute>
+      </item>
+    </section>
+  </menu>
+</interface>)";
 
-    "<ui>"
+    // アクセラレーターキーやマウスジェスチャーの追加は行わない
+    // CONTROL::set_menu_motion() はGTK4で廃止されるGtk::MenuのAPIを使っている
+    auto builder = Gtk::Builder::create_from_string( str_ui );
+    m_model_popup = Glib::RefPtr<Gio::Menu>::cast_dynamic( builder->get_object( "popup_menu" ) );
 
-    // 通常
-    "<popup name='popup_menu'>"
-
-    "<menuitem action='LockTab'/>"
-    "<separator/>"
-
-    "<menuitem action='Quit'/>"
-    "<separator/>"
-
-    "<menu action='Close_Tab_Menu'>"
-    "<menuitem action='CloseAll'/>"
-    "<menuitem action='CloseOther'/>"
-    "<menuitem action='CloseLeft'/>"
-    "<menuitem action='CloseRight'/>"
-    "<menuitem action='CloseSameIcon'/>"
-    "</menu>"
-    "<separator/>"
-
-    "<menu action='Reload_Tab_Menu'>"
-    "<menuitem action='ReloadAll'/>"
-
-    "<menuitem action='CheckUpdateAll'/>"
-    "<menuitem action='CheckUpdateReloadAll'/>"
-
-    "<separator/>"
-    "<menuitem action='CancelReloadAll'/>"
-    "</menu>"
-    "<separator/>"
-
-    "<menuitem action='OpenBrowser'/>"
-    "<separator/>"
-
-    "<menuitem action='CopyURL'/>"
-    "<menuitem action='CopyTitleURL'/>"
-
-    "<separator/>"
-    "<menuitem action='AppendFavorite'/>"
-    "<separator/>"
-    "<menuitem action='Preference'/>"
-
-    "</popup>"
-
-
-    "</ui>";
-
-    m_ui_manager->add_ui_from_string( str_ui );    
-
-    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
-    Gtk::MenuItem* item;
+    // タブの切り替えメニュー
+    m_model_tabswitch = SKELETON::TabSwitchMenu::create( m_notebook.get() );
 
     // 移動サブメニュー
-    m_move_menu = std::make_unique<SKELETON::TabSwitchMenu>( m_notebook.get(), this );
+    auto submenu = Glib::RefPtr<Gio::Menu>::cast_dynamic( builder->get_object( "move_submenu" ) );
+    submenu->append_section( m_model_tabswitch );
+    m_item_sub = Gio::MenuItem::create( ITEM_NAME_GO, submenu );
 
-    // 進む、戻る
-    Glib::RefPtr< Gtk::Action > act;
-    act = m_action_group->get_action( "PrevView" );
-    act->set_accel_group( m_ui_manager->get_accel_group() );
-    item = Gtk::manage( act->create_menu_item() );
-    m_move_menu->append( *item );
-
-    act = m_action_group->get_action( "NextView" );
-    act->set_accel_group( m_ui_manager->get_accel_group() );
-    item = Gtk::manage( act->create_menu_item() );
-    m_move_menu->append( *item );
-
-    m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
-
-    // 先頭、最後に移動
-    item = Gtk::manage( new Gtk::MenuItem( "先頭のタブに移動(_H)", true ) );
-    m_move_menu->append( *item );
-    item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_head_focus ) );
-
-    item = Gtk::manage( new Gtk::MenuItem( "最後のタブに移動(_T)", true ) );
-    m_move_menu->append( *item );
-    item->signal_activate().connect( sigc::mem_fun( *this, &Admin::tab_tail_focus ) );
-
-    m_move_menu->append( *Gtk::manage( new Gtk::SeparatorMenuItem() ) );
-
-    m_move_menuitem  = Gtk::manage( new Gtk::MenuItem( "移動" ) );
-    m_move_menuitem->set_submenu( *m_move_menu );
-
-    popupmenu->insert( *m_move_menuitem, 0 );
-    m_move_menuitem->show_all();
-
-    item = Gtk::manage( new Gtk::SeparatorMenuItem() );
-    popupmenu->insert( *item, 1 );
-    item->show_all();
-
-    // ポップアップメニューにアクセレータを表示
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu->signal_deactivate().connect( sigc::mem_fun( *this, &Admin::slot_popupmenu_deactivate ) );
+    m_model_popup->prepend_item( m_item_sub );
 }
 
 
 void Admin::slot_popupmenu_deactivate()
 {
-    if( m_move_menu ) m_move_menu->deactivate();
+    if( m_model_tabswitch ) m_model_tabswitch->deactivate();
 }
 
 
@@ -1875,8 +1904,7 @@ void Admin::toggle_icon( const std::string& url )
         const int id = view->get_icon( iconname );
         get_notebook()->set_tabicon( iconname, get_notebook()->page_num( *view ), id );
 
-        if( m_move_menu ) m_move_menu->update_icons();
-        if( m_tabswitchmenu ) m_tabswitchmenu->update_icons();
+        if( m_model_tabswitch ) m_model_tabswitch->update_icons();
     }
 }
 
@@ -2013,10 +2041,11 @@ void Admin::set_current_page( const int page )
 //
 // フォーカスしてから指定したページに表示切替え
 //
-void Admin::set_current_page_focus( const int page )
+void Admin::set_current_page_focus( const Glib::VariantBase& page )
 {
     if( ! m_focus ) switch_admin();
-    m_notebook->set_current_page( page );
+    auto v = Glib::VariantBase::cast_dynamic<Glib::Variant<gint32>>( page );
+    m_notebook->set_current_page( v.get() );
 }
 
 
@@ -2138,93 +2167,103 @@ void Admin::slot_tab_reload( const int page )
 //
 void Admin::slot_tab_menu( int page, int x, int y )
 {
-    if( ! m_ui_manager ) return;
+    if( ! m_model_popup ) return;
 
 #ifdef _DEBUG
     std::cout << "Admin::slot_tab_menu " << page << std::endl;
 #endif
 
-    Glib::RefPtr< Gtk::Action > act;
+    Glib::RefPtr<Gio::SimpleAction> act;
     m_clicked_page = -1; // メニューのactive状態を変えたときにslot関数が呼び出されるのをキャンセル
 
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    auto get_action = [this]( const char* name ) {
+        return Glib::RefPtr<Gio::SimpleAction>::cast_dynamic( m_action_group->lookup_action( name ) );
+    };
 
     // ロック
-    act = m_action_group->get_action( "LockTab" );
+    act = get_action( "LockTab" );
     if( page >= 0 && act ){
 
-        if( ! is_lockable( page ) ) act->set_sensitive( false );
-        else{
-            act->set_sensitive( true );
+        if( ! is_lockable( page ) ) act->set_enabled( false );
+        else {
+            act->set_enabled( true );
 
-            Glib::RefPtr< Gtk::ToggleAction > tact = Glib::RefPtr< Gtk::ToggleAction >::cast_dynamic( act ); 
-            if( is_locked( page ) ) tact->set_active( true );
-            else tact->set_active( false );
+            auto state = Glib::Variant<bool>::create( is_locked( page ) );
+            act->set_state( state );
         }
     }
 
     // 閉じる
-    act = m_action_group->get_action( "Quit" );
-    if( act ){
-        if( is_locked( page ) ) act->set_sensitive( false );
-        else act->set_sensitive( true );
+    if( act = get_action( "Quit" ); act ) {
+        act->set_enabled( ! is_locked( page ) );
     }
+
+    SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( page ) );
 
     // 進む、戻る
     if( view ){
-        act = m_action_group->get_action( "PrevView" );
-        if( act ){
-            if( HISTORY::get_history_manager()->can_back_viewhistory( view->get_url(), 1 ) ) act->set_sensitive( true );
-            else act->set_sensitive( false );
+        if( act = get_action( "PrevView" ); act ) {
+            const bool enabled = HISTORY::get_history_manager()->can_back_viewhistory( view->get_url(), 1 );
+            act->set_enabled( enabled );
         }
-        act = m_action_group->get_action( "NextView" );
-        if( act ){
-            if( HISTORY::get_history_manager()->can_forward_viewhistory( view->get_url(), 1 ) ) act->set_sensitive( true );
-            else act->set_sensitive( false );
+        if( act = get_action( "NextView" ); act ) {
+            const bool enabled = HISTORY::get_history_manager()->can_forward_viewhistory( view->get_url(), 1 );
+            act->set_enabled( enabled );
         }
-    }
 
-    // 仮想板や抽出ビューなどはお気に入りに追加を選択不可にする
-    if( act = m_action_group->get_action( "AppendFavorite" ); view && act ) {
-        const std::string& url = view->get_url();
+        // 仮想板や抽出ビューなどはお気に入りに追加を選択不可にする
+        if( act = get_action( "AppendFavorite" ); act ) {
+            const std::string& url = view->get_url();
 
-        // 仮想板 global.h を参照
-        if( url.rfind( "jdview://", 0 ) == 0 ) {
-            act->set_sensitive( false );
-        }
-        // 抽出ビュー sign.h と ArticleAdmin::command_to_url() を参照
-        // XXX: 判定に使うマクロ文字列がurl部分にマッチすると誤って選択不可になってしまう可能性がある
-        else if( const auto i = url.find( '_' ); i != std::string::npos
-                 && ( url.find( ARTICLE_SIGN, i ) != std::string::npos
-                      || url.find( POSTLOG_SIGN, i ) != std::string::npos
-                      || url.find( BOARD_SIGN KEYWORD_SIGN, i ) != std::string::npos
-                      || url.find( TITLE_SIGN KEYWORD_SIGN, i ) != std::string::npos ) ) {
-            act->set_sensitive( false );
-        }
-        else {
-            act->set_sensitive( true );
+            // 仮想板 global.h を参照
+            if( url.rfind( "jdview://", 0 ) == 0 ) {
+                act->set_enabled( false );
+            }
+            // 抽出ビュー sign.h と ArticleAdmin::command_to_url() を参照
+            // XXX: 判定に使うマクロ文字列がurl部分にマッチすると誤って選択不可になってしまう可能性がある
+            else if( const auto i = url.find( '_' ); i != std::string::npos
+                     && ( url.find( ARTICLE_SIGN, i ) != std::string::npos
+                          || url.find( POSTLOG_SIGN, i ) != std::string::npos
+                          || url.find( BOARD_SIGN KEYWORD_SIGN, i ) != std::string::npos
+                          || url.find( TITLE_SIGN KEYWORD_SIGN, i ) != std::string::npos ) ) {
+                act->set_enabled( false );
+            }
+            else {
+                act->set_enabled( true );
+            }
         }
     }
 
     m_clicked_page = page;
 
-    Gtk::Menu* popupmenu = dynamic_cast< Gtk::Menu* >( m_ui_manager->get_widget( "/popup_menu" ) );
-    if( popupmenu && m_move_menu ){
+    if( m_model_tabswitch ){
+        m_model_tabswitch->update_labels_and_icons();
 
-        m_move_menu->remove_items();
-        m_move_menu->append_items();
-        m_move_menu->update_labels();
-        m_move_menu->update_icons();
+        // 起動時間を短縮するためメニューを表示するタイミングでGio::Menuをバインドする
+        if( ! m_tablabel_menu.get_attach_widget() ) {
+            m_tablabel_menu.bind_model( m_model_popup, true );
+            m_tablabel_menu.attach_to_widget( *m_notebook );
+            m_tablabel_menu.signal_deactivate().connect( sigc::mem_fun( *this, &Admin::slot_popupmenu_deactivate ) );
+        }
 
-        Gtk::Label* label = dynamic_cast< Gtk::Label* >( m_move_menuitem->get_child() );
-        if( label ) label->set_text_with_mnemonic( ITEM_NAME_GO + std::string( " [ タブ数 " )
-                                                   + std::to_string( m_notebook->get_n_pages() ) +" ](_M)" );
+        // メニュー項目ラベルの更新は重いためタブ数が変わらないときは更新しない
+        const int n_pages = m_notebook->get_n_pages();
+        if( n_pages != m_prev_n_pages ) {
+            // Gio::Menuを使うとメニューに追加された項目のラベルは変更できない
+            // 動的なメニュー項目を実現するには一旦メニューから項目を取り除く必要がある
+            m_model_popup->remove( 0 );
+            auto label = Glib::ustring::compose( ITEM_NAME_GO " [ タブ数 %1 ](_M)", n_pages );
+            m_item_sub->set_label( label );
+            m_model_popup->prepend_item( m_item_sub );
+
+            m_prev_n_pages = n_pages;
+        }
 
 #if GTK_CHECK_VERSION(3,24,6)
-        popupmenu->popup_at_pointer( nullptr ); // current event
+        m_tablabel_menu.popup_at_pointer( nullptr ); // current event
 #else
         // GTK 3.24.5 以下のバージョンではメニューのスクロールが出来なくなることがあるため廃止予定APIを使う
-        popupmenu->popup( 0, gtk_get_current_event_time() );
+        m_tablabel_menu.popup( 0, gtk_get_current_event_time() );
 #endif
     }
 }
@@ -2237,21 +2276,27 @@ void Admin::slot_show_tabswitchmenu()
     std::cout << "Admin::slot_show_tabswitchmenu\n";
 #endif
 
-    if( ! m_tabswitchmenu ) m_tabswitchmenu = std::make_unique<SKELETON::TabSwitchMenu>( m_notebook.get(), this );
+    if( ! m_model_tabswitch ) {
+        m_model_tabswitch = SKELETON::TabSwitchMenu::create( m_notebook.get() );
+    }
 
-    m_tabswitchmenu->remove_items();
-    m_tabswitchmenu->append_items();
-    m_tabswitchmenu->update_labels();
-    m_tabswitchmenu->update_icons();
+    m_model_tabswitch->update_labels_and_icons();
+
+    // 起動時間を短縮するためメニューを表示するタイミングでGio::Menuをバインドする
+    if( ! m_tabswitchmenu.get_attach_widget() ) {
+        m_tabswitchmenu.bind_model( m_model_tabswitch, true );
+        m_tabswitchmenu.attach_to_widget( *m_notebook );
+        m_tabswitchmenu.signal_deactivate().connect( sigc::mem_fun( *this, &Admin::slot_popupmenu_deactivate ) );
+    }
 
 #if GTK_CHECK_VERSION(3,24,6)
     // Specify the current event by nullptr.
-    m_tabswitchmenu->popup_at_widget( &( m_notebook->get_tabswitch_button() ),
-                                      Gdk::GRAVITY_SOUTH_EAST, Gdk::GRAVITY_NORTH_EAST, nullptr );
+    m_tabswitchmenu.popup_at_widget( &( m_notebook->get_tabswitch_button() ),
+                                     Gdk::GRAVITY_SOUTH_EAST, Gdk::GRAVITY_NORTH_EAST, nullptr );
 #else
     // GTK 3.24.5 以下のバージョンではメニューのスクロールが出来なくなることがあるため廃止予定APIを使う
-    m_tabswitchmenu->popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &Admin::slot_popup_pos ) ),
-                            0, gtk_get_current_event_time() );
+    m_tabswitchmenu.popup( Gtk::Menu::SlotPositionCalc( sigc::mem_fun( *this, &Admin::slot_popup_pos ) ),
+                           0, gtk_get_current_event_time() );
 #endif
 }
 

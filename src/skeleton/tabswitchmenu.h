@@ -4,41 +4,42 @@
 //
 
 #include <gtkmm.h>
+
 #include <vector>
 
 namespace SKELETON
 {
     class DragableNoteBook;
-    class Admin;
 
-    class TabSwitchMenu : public Gtk::Menu
+    /**
+     * @brief タブを切り替えるメニューのモデル
+     *
+     * SKELETON::Admin でメニュー項目の部品として使われる
+     */
+    class TabSwitchMenu : public Gio::Menu
     {
-        Admin* m_parentadmin;
+        /// Admin メンバー変数への参照で所有しない
         DragableNoteBook* m_parentnote;
+        std::vector<Glib::RefPtr<Gio::MenuItem>> m_items;
         bool m_deactivated;
-        int m_size{};
-
-        std::vector< Gtk::MenuItem* > m_vec_items;
-        std::vector< Gtk::Label* > m_vec_labels;
-        std::vector< Gtk::Image* > m_vec_images;
-
 
       public:
 
-        TabSwitchMenu( DragableNoteBook* notebook, Admin* admin );
-        ~TabSwitchMenu();
+        static Glib::RefPtr<TabSwitchMenu> create( DragableNoteBook* notebook );
 
-        void remove_items();
-        void append_items();
+        explicit TabSwitchMenu( DragableNoteBook* notebook );
+        ~TabSwitchMenu() noexcept = default;
 
-        void update_labels();
+        /// メニュー項目を作り直してラベルとアイコンを更新する
+        void update_labels_and_icons();
+        /// メニュー項目を作り直してアイコンを更新する
         void update_icons();
-
+        /// メニューがスクリーンから消されるときに呼び出す
         void deactivate();
 
-      protected:
+      private:
 
-        void on_deactivate() override;
-
+        /// メニュー項目を必要な分だけ確保しておき使い回す
+        void alloc_items();
     };
 }

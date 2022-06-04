@@ -40,16 +40,18 @@ namespace SKELETON
         std::list< COMMAND_ARGS > m_list_command;
 
         // 右クリックメニュー用
-        Glib::RefPtr< Gtk::ActionGroup > m_action_group;
-        Glib::RefPtr< Gtk::UIManager > m_ui_manager;
+        Glib::RefPtr<Gio::SimpleActionGroup> m_action_group;
+        Glib::RefPtr<Gio::Menu> m_model_popup;
+        Gtk::Menu m_tablabel_menu;
+        int m_prev_n_pages; ///< 前回表示したときのタブ数
         int m_clicked_page;
 
         // 移動サブメニュー
-        Gtk::MenuItem* m_move_menuitem;
-        std::unique_ptr<TabSwitchMenu> m_move_menu;
+        Glib::RefPtr<Gio::MenuItem> m_item_sub;
+        Glib::RefPtr<SKELETON::TabSwitchMenu> m_model_tabswitch;
 
         // タブ切り替えメニュー
-        std::unique_ptr<TabSwitchMenu> m_tabswitchmenu;
+        Gtk::Menu m_tabswitchmenu;
 
         // view履歴使用
         bool m_use_viewhistory{};
@@ -138,7 +140,7 @@ namespace SKELETON
         void set_current_page( const int page );
 
         // フォーカスしてから指定したページに表示切替え
-        void set_current_page_focus( const int page );
+        void set_current_page_focus( const Glib::VariantBase& page );
 
         virtual View* get_current_view();
 
