@@ -374,9 +374,6 @@ Loader::Loader( const bool low_priority )
       m_stop( false ),
       m_loading( false ),
       m_low_priority( low_priority ),
-      m_buf( nullptr ),
-      m_buf_zlib_in ( nullptr ),
-      m_buf_zlib_out ( nullptr ),
       m_use_zlib ( 0 )
 {
 #ifdef _DEBUG
@@ -413,14 +410,10 @@ void Loader::clear()
     m_use_chunk = false;
     m_chunk_decoder.clear();
 
-    if( m_buf ) free( m_buf );
-    m_buf = nullptr;
+    m_buf.clear();
 
-    if( m_buf_zlib_in ) free( m_buf_zlib_in );
-    m_buf_zlib_in = nullptr;
-
-    if( m_buf_zlib_out ) free( m_buf_zlib_out );
-    m_buf_zlib_out = nullptr;
+    m_buf_zlib_in.clear();
+    m_buf_zlib_out.clear();
     
     if( m_use_zlib ) inflateEnd( &m_zstream );
     m_use_zlib = false;
@@ -919,8 +912,8 @@ void Loader::run_main()
     // 受信用バッファを作ってメッセージ受信
     size_t mrg;
     mrg = 64; // 一応オーバーフロー避けのおまじない
-    assert( m_buf == nullptr );
-    m_buf = ( char* )malloc( m_lng_buf + mrg );
+    assert( m_buf.empty() );
+    m_buf.resize( m_lng_buf + mrg );
 
     bool receiving_header;
 
@@ -954,7 +947,7 @@ void Loader::run_main()
                     goto EXIT_LOADING;
                 }
 
-                tmpsize = recv( soc, m_buf + read_size, m_lng_buf - read_size - mrg, 0 );
+                tmpsize = recv( soc, m_buf.data() + read_size, m_lng_buf - read_size - mrg, 0 );
                 if( tmpsize < 0 && errno != EINTR ){
                     m_data.code = HTTP_ERR;         
                     errmsg = "recv() failed";
@@ -970,7 +963,7 @@ void Loader::run_main()
             // SSL
             else{
 
-                tmpsize = ssl->read(  m_buf + read_size, m_lng_buf - read_size - mrg );
+                tmpsize = ssl->read( m_buf.data() + read_size, m_lng_buf - read_size - mrg );
                 if( tmpsize < 0 ){
                     m_data.code = HTTP_ERR;         
                     errmsg = ssl->get_errmsg() + " : " + m_data.url;
@@ -986,7 +979,7 @@ void Loader::run_main()
                 // ヘッダ取得
                 if( receiving_header ){
 
-                    const int http_code = receive_header( m_buf, read_size );
+                    const int http_code = receive_header( m_buf.data(), read_size );
                     if( http_code == HTTP_ERR ){
 
                         m_data.code = HTTP_ERR;
@@ -1032,7 +1025,7 @@ void Loader::run_main()
         //  chunkedな場合
         if( m_use_chunk ){
 
-            if( ! m_chunk_decoder.decode( m_buf, read_size ) ) {
+            if( ! m_chunk_decoder.decode( m_buf.data(), read_size ) ) {
 
                 m_data.code = HTTP_ERR;
                 errmsg = "ChunkedDecoder::decode() failed: " + m_data.url;
@@ -1047,11 +1040,11 @@ void Loader::run_main()
             m_data.size_data += read_size;
 
             // コールバック呼び出し
-            if( m_loadable ) m_loadable->receive( m_buf, read_size );
+            if( m_loadable ) m_loadable->receive( m_buf.data(), read_size );
         }
         
         // 圧縮されているときは unzip してからコールバック呼び出し
-        else if( !unzip( m_buf, read_size ) ){
+        else if( !unzip( m_buf.data(), read_size ) ){
             
             m_data.code = HTTP_ERR;
             errmsg = "unzip() failed : " + m_data.url;
@@ -1454,10 +1447,10 @@ bool Loader::init_unzip()
         return false;
     }
 
-    assert( m_buf_zlib_in == nullptr );
-    assert( m_buf_zlib_out == nullptr );
-    m_buf_zlib_in = ( Bytef* )malloc( sizeof( Bytef ) * m_lng_buf_zlib_in + 64 );
-    m_buf_zlib_out = ( Bytef* )malloc( sizeof( Bytef ) * m_lng_buf_zlib_out + 64 );
+    assert( m_buf_zlib_in.empty() );
+    assert( m_buf_zlib_out.empty() );
+    m_buf_zlib_in.resize( m_lng_buf_zlib_in + 64 );
+    m_buf_zlib_out.resize( m_lng_buf_zlib_out + 64 );
 
     return true;
 }
@@ -1475,15 +1468,15 @@ bool Loader::unzip( char* buf, std::size_t read_size )
         MISC::ERRMSG( "buffer over flow at zstream_in : " + m_data.url );
         return false;
     }
-    memcpy( m_buf_zlib_in + m_zstream.avail_in , buf, read_size );
+    std::memcpy( m_buf_zlib_in.data() + m_zstream.avail_in, buf, read_size );
     m_zstream.avail_in += read_size;
-    m_zstream.next_in = m_buf_zlib_in;
+    m_zstream.next_in = m_buf_zlib_in.data();
             
     size_t byte_out = 0;
     do{
 
         // 出力バッファセット
-        m_zstream.next_out = m_buf_zlib_out;
+        m_zstream.next_out = m_buf_zlib_out.data();
         m_zstream.avail_out = m_lng_buf_zlib_out;
 
         // 解凍
@@ -1499,14 +1492,16 @@ bool Loader::unzip( char* buf, std::size_t read_size )
 #endif
             
             // コールバック呼び出し
-            if( byte_out && m_loadable ) m_loadable->receive( reinterpret_cast<char*>( m_buf_zlib_out ), byte_out );
+            if( byte_out && m_loadable ) m_loadable->receive( reinterpret_cast<char*>( m_buf_zlib_out.data() ), byte_out );
         }
         else return true;
                 
     } while ( byte_out );
 
     // 入力バッファに使ってないデータが残っていたら前に移動
-    if( m_zstream.avail_in ) memmove( m_buf_zlib_in, m_buf_zlib_in + ( read_size - m_zstream.avail_in ),  m_zstream.avail_in );
+    if( m_zstream.avail_in ) {
+        std::memmove( m_buf_zlib_in.data(), m_buf_zlib_in.data() + ( read_size - m_zstream.avail_in ),  m_zstream.avail_in );
+    }
 
     return true;
 }
