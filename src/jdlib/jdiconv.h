@@ -4,6 +4,7 @@
 #define _JDICONV_H
 
 #include <string>
+#include <vector>
 
 #include <gmodule.h> // GIConv
 
@@ -23,10 +24,10 @@ namespace JDLIB
         GIConv m_cd; // iconv実装は環境で違いがあるためGlibのラッパーAPIを利用する
 
         size_t m_byte_left_in{};
-        char* m_buf_in{};
+        std::vector<char> m_buf_in;
         char* m_buf_in_tmp{};
 
-        char* m_buf_out{};
+        std::vector<char> m_buf_out;
 
         std::string m_coding_from;
 

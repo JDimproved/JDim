@@ -8,10 +8,10 @@
 #include "misccharcode.h"
 #include "miscmsg.h"
 
-#include <errno.h>
-#include <cstring>
+#include <algorithm>
 #include <cstdio>
-#include <cstdlib>
+#include <cstring>
+#include <errno.h>
 
 
 using namespace JDLIB;
@@ -22,9 +22,9 @@ Iconv::Iconv( const std::string& coding_to, const std::string& coding_from )
 #ifdef _DEBUG
     std::cout << "Iconv::Iconv coding = " << m_coding_from << " to " << coding_to << std::endl;
 #endif
-    
-    m_buf_in = ( char* )malloc( BUF_SIZE_ICONV_IN );
-    m_buf_out = ( char* )malloc( BUF_SIZE_ICONV_OUT );
+
+    m_buf_in.reserve( BUF_SIZE_ICONV_IN );
+    m_buf_out.resize( BUF_SIZE_ICONV_OUT );
     
     m_cd = g_iconv_open( coding_to.c_str(), m_coding_from.c_str() );
 
@@ -59,8 +59,6 @@ Iconv::~Iconv()
     std::cout << "Iconv::~Iconv\n";
 #endif    
     
-    if( m_buf_in ) free( m_buf_in );
-    if( m_buf_out ) free( m_buf_out );
     if( m_cd != ( GIConv ) -1 ) g_iconv_close( m_cd );
 }
 
@@ -76,13 +74,14 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
     if( m_cd == ( GIConv ) -1 ) return nullptr;
     
     size_t byte_left_out = BUF_SIZE_ICONV_OUT;
-    char* buf_out = m_buf_out;
+    char* buf_out = m_buf_out.data();
 
     // 前回の残りをコピー
     if( m_byte_left_in ){
-        memcpy( m_buf_in, m_buf_in_tmp, m_byte_left_in );
-        m_buf_in_tmp = m_buf_in;
-        memcpy( m_buf_in + m_byte_left_in , str_in, size_in );    
+        m_buf_in.clear();
+        std::copy_n( m_buf_in_tmp, m_byte_left_in, std::back_inserter( m_buf_in ) );
+        std::copy_n( str_in, size_in, std::back_inserter( m_buf_in ) );
+        m_buf_in_tmp = m_buf_in.data();
     }
     else m_buf_in_tmp = str_in;
 
@@ -245,5 +244,5 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
     size_out = BUF_SIZE_ICONV_OUT - byte_left_out;
     m_buf_out[ size_out ] = '\0';
     
-    return m_buf_out;
+    return m_buf_out.data();
 }
