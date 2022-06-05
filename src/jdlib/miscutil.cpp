@@ -1264,7 +1264,7 @@ std::string MISC::base64( const std::string& str )
 
     for( int i = 0; i < lng; i += 3 ){
 
-        unsigned char* cstr = (unsigned char*)( data.c_str() + i );
+        const auto cstr = reinterpret_cast<const unsigned char*>( data.c_str() + i );
         unsigned char key[ 4 ];
 
         key[ 0 ] = (*cstr) >> 2;

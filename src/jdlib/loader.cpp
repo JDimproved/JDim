@@ -1499,7 +1499,7 @@ bool Loader::unzip( char* buf, std::size_t read_size )
 #endif
             
             // コールバック呼び出し
-            if( byte_out && m_loadable ) m_loadable->receive( ( char* )m_buf_zlib_out, byte_out );
+            if( byte_out && m_loadable ) m_loadable->receive( reinterpret_cast<char*>( m_buf_zlib_out ), byte_out );
         }
         else return true;
                 

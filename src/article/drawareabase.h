@@ -513,7 +513,7 @@ namespace ARTICLE
     //
     inline bool DrawAreaBase::is_wrapped( const int x, const int border, const char* str ) const
     {
-        const unsigned char* tmpchar = ( const unsigned char* ) str;
+        const unsigned char* tmpchar = reinterpret_cast<const unsigned char*>( str );
 
         if( x < border ) return false;
         if( ! tmpchar ) return true;
