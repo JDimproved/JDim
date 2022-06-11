@@ -2732,12 +2732,10 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
                 int byte_to_tmp = byte_to;
                 if( rect->pos_start + n_byte < byte_to_tmp ) byte_to_tmp = rect->pos_start + n_byte;
                 width_line = 0;
-                n_byte = 0;
                 n_ustr = 0;
                 while( pos_to < byte_to_tmp ){
                     width_line += get_width_of_one_char( node->text + pos_to, byte_char, pre_char, wide_mode, get_layout_fontid( node ) );
                     pos_to += byte_char;
-                    n_byte += byte_char;
                     ++n_ustr;
                 }
 
