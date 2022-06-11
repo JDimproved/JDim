@@ -461,13 +461,14 @@ bool History_Manager::replace_current_title_viewhistory( const std::string& url,
 }
 
 
+static std::vector<ViewHistoryItem*> s_nullitems;
+
+
 // item の取得
 std::vector< ViewHistoryItem* >& History_Manager::get_items_back_viewhistory( const std::string& url, const int count )
 {
-    static std::vector< ViewHistoryItem* > nullitems;
-
     ViewHistory* history = get_viewhistory( url );
-    if( !history ) return nullitems;
+    if( !history ) return s_nullitems;
 
     return history->get_items_back( count );
 }
@@ -475,10 +476,8 @@ std::vector< ViewHistoryItem* >& History_Manager::get_items_back_viewhistory( co
 
 std::vector< ViewHistoryItem* >& History_Manager::get_items_forward_viewhistory( const std::string& url, const int count )
 {
-    static std::vector< ViewHistoryItem* > nullitems;
-
     ViewHistory* history = get_viewhistory( url );
-    if( !history ) return nullitems;
+    if( !history ) return s_nullitems;
 
     return history->get_items_forward( count );
 }
