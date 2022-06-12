@@ -30,6 +30,9 @@ namespace CONTROL
     // メニューにショートカットキーやマウスジェスチャを表示
     void set_menu_motion( Gtk::Menu* menu );
 
+    /// メニュー項目にアクセラレーターキーの表示を追加する
+    const Glib::RefPtr<Gio::MenuItem>& set_accel_abbrev( const Glib::RefPtr<Gio::MenuItem>& item, int id );
+
     // IDからモードを取得
     // 例えば id == CONTROL::Up の時は CONTROL::COMMONMOTION を返す
     int get_mode( const int id );
