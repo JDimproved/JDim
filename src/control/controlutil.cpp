@@ -168,6 +168,36 @@ static void slot_set_menu_motion( Gtk::Widget& widget )
 }
 
 
+/** @brief メニュー項目にアクセラレーターキーの表示を追加する
+ *
+ * コントロールIDに対応するアクセラレーターキーがないときはそのままitemを返す
+ * @param[in] item アクセラレーターキーを追加するメニュー項目
+ * @param[in] id   コントロールID、 controlid.h を参照
+ * @return メニュー項目
+ */
+const Glib::RefPtr<Gio::MenuItem>& CONTROL::set_accel_abbrev( const Glib::RefPtr<Gio::MenuItem>& item, int id )
+{
+    // メニューのラベルとコントロールのIDが異なる、共通コントロールIDの場合は、ここで変換する
+    switch( id ) {
+        // 表示中のビューのプロパティを表示
+    case CONTROL::PreferenceArticle:    //スレのプロパティ...
+    case CONTROL::PreferenceBoard:      //板のプロパティ...
+    case CONTROL::PreferenceImage:      //画像のプロパティ...
+        id = CONTROL::PreferenceView;
+        break;
+        //名前を付けて保存...
+    case CONTROL::SaveDat:              //datを保存...
+        id = CONTROL::Save;
+        break;
+    }
+
+    if( const Gtk::AccelKey key = CONTROL::get_accelkey( id ); ! key.is_null() ) {
+        item->set_attribute_value( "accel", Glib::Variant<Glib::ustring>::create( key.get_abbrev() ) );
+    }
+    return item;
+}
+
+
 // メニューにショートカットキーやマウスジェスチャを表示
 void CONTROL::set_menu_motion( Gtk::Menu* menu )
 {
