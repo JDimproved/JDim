@@ -98,6 +98,14 @@ namespace BOARD
         // 連続クリック防止用カウンタ
         int m_cancel_openrow_counter{};
 
+        // 右クリックメニュー
+        Glib::RefPtr<Gio::SimpleActionGroup> m_action_group;
+        Gtk::Menu m_popup_menu_delete;
+        Gtk::Menu m_popup_menu_favorite_article;
+        Gtk::Menu m_popup_menu_favorite;
+        Gtk::Menu m_popup_menu_mul;
+        Gtk::Menu m_popup_menu;
+
     public:
 
         BoardViewBase( const std::string& url, const bool show_col_board );
@@ -211,10 +219,11 @@ namespace BOARD
     private:
 
         void setup_action();
+        void setup_popupmenu( Gtk::Menu& menu, const Glib::RefPtr<Glib::Object>& model );
 
         // 通常の右クリックメニューの作成
-        std::string create_context_menu() const;
-        const char* get_menu_item( const int item ) const;
+        Glib::RefPtr<Gio::MenuModel> create_context_menu() const;
+        bool add_menu_item( const int item, const Glib::RefPtr<Gio::Menu>& section ) const;
 
         // 次スレ移行処理に使用する前スレのアドレス
         // BOARD::BoardViewNext と BoardViewBase::open_row()を参照せよ
