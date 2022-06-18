@@ -235,6 +235,10 @@ endif
 # ビルドの情報
 #
 conf.set('HAVE_BUILDINFO_H', 1)
+packager_opt = get_option('packager')
+if packager_opt != ''
+  conf.set_quoted('PACKAGE_PACKAGER', packager_opt)
+endif
 
 if configure_args.length() > 0
   conf.set_quoted('CONFIGURE_ARGS', ' '.join(configure_args))
@@ -255,6 +259,7 @@ message('gprof = @0@'.format(gprof))
 message('migemo = @0@'.format(migemo_dep.found()))
 message('migemodict = @0@'.format(migemodict))
 message('native = @0@'.format(native))
+message('packager: \'@0@\''.format(packager_opt))
 message('pangolayout = @0@'.format(pangolayout))
 message('sessionlib = @0@'.format(sessionlib_opt))
 message('tls = @0@'.format(tls_opt))

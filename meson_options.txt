@@ -5,6 +5,7 @@ option('gprof', type : 'feature', value : 'disabled', description : 'Output prof
 option('migemo', type : 'feature', value : 'disabled', description : 'Use text search by romaji')
 option('migemodict', type : 'string', value : '', description : 'Default path for migemo dictionary file')
 option('native', type : 'feature', value : 'disabled', description : 'Optimize to your machine')
+option('packager', type : 'string', value : '', description : 'String identifying the packager of this software')
 option('pangolayout', type : 'feature', value : 'disabled', description : 'Render text by PangoLayout')
 option('regex', type : 'string', value : '', description : 'NO LONGER AVAILABLE')
 option('sessionlib', type : 'combo', choices : ['xsmp', 'no'], value : 'xsmp', description : 'Use Session Management Protocol')

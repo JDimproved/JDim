@@ -471,7 +471,7 @@ std::string ENVIRONMENT::get_jdinfo()
     jd_info <<
     "[バージョン] " << progname << " " << version << "\n" <<
     "[ディストリ ] " << distribution << "\n" <<
-    "[パッケージ] " << "バイナリ/ソース( <配布元> )" << "\n" <<
+    "[パッケージ] " << JDIM_PACKAGER << "\n" <<
     "[ DE／WM ] " << desktop << "\n" <<
     "[　gtkmm 　] " << get_gtkmm_version() << "\n" <<
     "[　glibmm 　] " << get_glibmm_version() << "\n" <<
