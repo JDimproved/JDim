@@ -32,6 +32,7 @@ parts:
       - -Dbuild_tests=disabled
       - -Dcompat_cache_dir=disabled
       - -Dpangolayout=enabled
+      - -Dpackager=Snap (JDimproved proejct)
     build-environment:
       # https://wiki.debian.org/Hardening
       # Use -isystem to suppress compiler warning:
