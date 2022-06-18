@@ -16,6 +16,7 @@
 
 #include <gtkmm.h>
 
+#include <map>
 #include <memory>
 #include <string>
 #include <unordered_set>
@@ -86,6 +87,10 @@ namespace BBSLIST
 
         // スレを追加したときにそのスレにしおりを付ける
         bool m_set_bookmark{};
+
+        Glib::RefPtr<Gio::SimpleActionGroup> m_action_group;
+        Glib::RefPtr<Gtk::Builder> m_builder;
+        std::map<std::string, Gtk::Menu> m_map_popupmenu;
 
       protected:
 

@@ -74,19 +74,19 @@ void FavoriteListView::show_view()
 Gtk::Menu* FavoriteListView::get_popupmenu( const std::string& url )
 {
     Gtk::Menu* popupmenu = nullptr;
-    if( url.empty() ) popupmenu = id2popupmenu(  "/popup_menu_favorite_space" );
+    if( url.empty() ) popupmenu = id2popupmenu(  "popup_menu_favorite_space" );
     else{
         std::list< Gtk::TreeModel::iterator > list_it = get_treeview().get_selected_iterators();
         if( list_it.size() == 1 ){
 
             const int type = path2type( *( get_treeview().get_selection()->get_selected_rows().begin() ) );
 
-            if( type == TYPE_DIR ) popupmenu = id2popupmenu(  "/popup_menu_favorite_dir" );
-            else if( type == TYPE_COMMENT ) popupmenu = id2popupmenu(  "/popup_menu_favorite_com" );
-            else if( type == TYPE_VBOARD ) popupmenu = id2popupmenu(  "/popup_menu_favorite_vboard" );
-            else popupmenu = id2popupmenu(  "/popup_menu_favorite" );
+            if( type == TYPE_DIR ) popupmenu = id2popupmenu(  "popup_menu_favorite_dir" );
+            else if( type == TYPE_COMMENT ) popupmenu = id2popupmenu(  "popup_menu_favorite_com" );
+            else if( type == TYPE_VBOARD ) popupmenu = id2popupmenu(  "popup_menu_favorite_vboard" );
+            else popupmenu = id2popupmenu(  "popup_menu_favorite" );
         }
-        else popupmenu = id2popupmenu(  "/popup_menu_favorite_mul" );
+        else popupmenu = id2popupmenu(  "popup_menu_favorite_mul" );
     }
 
     return popupmenu;

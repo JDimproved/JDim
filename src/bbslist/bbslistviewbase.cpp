@@ -68,62 +68,362 @@ show_popupmenu( url, slot ); \
 }while(0)
 
 
+// GtkMenu の項目
+// GtkBuilderのUI definitionはボイラープレートコードが多いためマクロで整理する
+
+/// メニュー項目のUI definitionを作る
+#define MENU_ITEM_ELEM(label, action) \
+    R"(<item><attribute name="label" translatable="yes">)" label "</attribute>" \
+    R"(<attribute name="action">)" action "</attribute></item>"
+
+/// サブメニューのUI definitionを作る
+#define SUBMENU_ELEM(label, ...) \
+    R"(<submenu><attribute name="label" translatable="yes">)" label "</attribute>" __VA_ARGS__ "</submenu>"
+
+
 #define POPUPMENU_BOARD1 \
-    "<menuitem action='OpenTab'/>" \
-    "<menuitem action='OpenBrowser'/>" \
-    "<separator/>" \
-    "<menuitem action='CopyURL'/>" \
-    "<menuitem action='CopyTitleURL'/>" \
-    "<separator/>" \
-    "<menuitem action='AppendFavorite'/>" \
-    "<separator/>"
+    "<section>" \
+    MENU_ITEM_ELEM("タブで開く(_T)", "bbslist.OpenTab") \
+    MENU_ITEM_ELEM(ITEM_NAME_OPEN_BROWSER "(_W)", "bbslist.OpenBrowser") \
+    "</section>" \
+    "<section>" \
+    MENU_ITEM_ELEM(ITEM_NAME_COPY_URL "(_U)", "bbslist.CopyURL") \
+    MENU_ITEM_ELEM(ITEM_NAME_COPY_TITLE_URL "(_L)", "bbslist.CopyTitleURL") \
+    "</section>" \
+    "<section>" \
+    MENU_ITEM_ELEM(ITEM_NAME_APPENDFAVORITE "(_F)...", "bbslist.AppendFavorite") \
+    "</section>"
 
 #define POPUPMENU_BOARD2 \
-    "<menuitem action='SearchCacheBoard'/>" \
-    "<separator/>" \
-    "<menuitem action='ImportDat'/>" \
-    "<separator/>" \
-    "<menuitem action='PreferenceBoard'/>" \
-    "</popup>" \
-
-#define POPUPMENU_ARRANGE_BASE \
-    "<menuitem action='Arrange_Type'/>" \
-    "<menuitem action='Arrange_Name'/>" \
-    "</menu>" \
-    "<separator/>"
-
-#define POPUPMENU_ARRANGE \
-    "<menu action='Arrange_Menu'>" \
-    POPUPMENU_ARRANGE_BASE
-
-#define POPUPMENU_ARRANGEDIR \
-    "<menu action='ArrangeDir_Menu'>" \
-    POPUPMENU_ARRANGE_BASE
-
-#define POPUPMENU_DELETE \
-    "<menu action='Delete_Menu'>" \
-    "<menuitem action='Delete'/>" \
+    "<section>" \
+    MENU_ITEM_ELEM("キャッシュ内ログ検索(_S)", "bbslist.SearchCacheBoard") \
+    "</section>" \
+    "<section>" \
+    MENU_ITEM_ELEM("datのインポート(_I)", "bbslist.ImportDat") \
+    "</section>" \
+    "<section>" \
+    MENU_ITEM_ELEM(ITEM_NAME_PREF_BOARD "(_O)...", "bbslist.PreferenceBoard") \
+    "</section>" \
     "</menu>"
 
+#define POPUPMENU_ARRANGE_BASE \
+    MENU_ITEM_ELEM("種類順(_T)", "bbslist.ArrangeType") \
+    MENU_ITEM_ELEM("名前順(_N)", "bbslist.ArrangeName")
+
+#define POPUPMENU_ARRANGE \
+    "<section>" \
+    SUBMENU_ELEM("並び替え(_G)", POPUPMENU_ARRANGE_BASE) \
+    "</section>"
+
+#define POPUPMENU_ARRANGEDIR \
+    "<section>" \
+    SUBMENU_ELEM("ディレクトリ内の並び替え(_G)", POPUPMENU_ARRANGE_BASE) \
+    "</section>"
+
+#define POPUPMENU_DELETE \
+    "<section>" \
+    SUBMENU_ELEM(ITEM_NAME_DELETE "(_D)", MENU_ITEM_ELEM("お気に入りから削除する(_D)", "bbslist.Delete")) \
+    "</section>"
+
 #define POPUPMENU_SELECT \
-    "<menuitem action='CopyURL'/>" \
-    "<menuitem action='CopyTitleURL'/>" \
-    "<separator/>" \
-    "<menuitem action='Rename'/>" \
-    "<menuitem action='NewDir'/>" \
-    "<menuitem action='NewCom'/>" \
-    "<separator/>" \
+    "<section>" \
+    MENU_ITEM_ELEM(ITEM_NAME_COPY_URL "(_U)", "bbslist.CopyURL") \
+    MENU_ITEM_ELEM(ITEM_NAME_COPY_TITLE_URL "(_L)", "bbslist.CopyTitleURL") \
+    "</section>" \
+    "<section>" \
+    MENU_ITEM_ELEM("名前変更(_R)", "bbslist.Rename") \
+    MENU_ITEM_ELEM("新規ディレクトリ(_N)", "bbslist.NewDir") \
+    MENU_ITEM_ELEM("コメント挿入(_I)", "bbslist.NewCom") \
+    "</section>" \
     POPUPMENU_ARRANGE \
-    "<separator/>" \
     POPUPMENU_DELETE \
-    "<separator/>" \
-    "<menuitem action='SearchCacheBoard'/>" \
-    "<separator/>" \
-    "<menuitem action='ImportDat'/>" \
-    "<separator/>" \
-    "<menuitem action='PreferenceArticle'/>" \
-    "<menuitem action='PreferenceBoard'/>" \
-    "<menuitem action='PreferenceImage'/>"
+    "<section>" \
+    MENU_ITEM_ELEM("キャッシュ内ログ検索(_S)", "bbslist.SearchCacheBoard") \
+    "</section>" \
+    "<section>" \
+    MENU_ITEM_ELEM("datのインポート(_I)", "bbslist.ImportDat") \
+    "</section>" \
+    "<section>" \
+    MENU_ITEM_ELEM(ITEM_NAME_PREF_THREAD "(_P)...", "bbslist.PreferenceArticle") \
+    MENU_ITEM_ELEM(ITEM_NAME_PREF_BOARD "(_O)...", "bbslist.PreferenceBoard") \
+    MENU_ITEM_ELEM(ITEM_NAME_PREF_IMAGE "(_M)...", "bbslist.PreferenceImage") \
+    "</section>"
+
+
+// GtkBuilderのUI definitionはメニューごとに分けて使うものだけ構築する
+namespace {
+
+/// 板一覧 (板)
+constexpr const char* popup_menu =
+    "<interface>"
+    R"(<menu id="popup_menu">)"
+    POPUPMENU_BOARD1
+    POPUPMENU_BOARD2
+    "</interface>";
+
+/// 板一覧 (外部板)
+constexpr const char* popup_menu_etc =
+    "<interface>"
+    R"(<menu id="popup_menu_etc">)"
+    POPUPMENU_BOARD1
+    MENU_ITEM_ELEM("編集(_E)...", "bbslist.MoveEtc")
+    "<section>"
+    SUBMENU_ELEM(ITEM_NAME_DELETE "(_D)", MENU_ITEM_ELEM("外部板を削除する(_D)", "bbslist.DeleteEtc"))
+    "</section>"
+    POPUPMENU_BOARD2
+    "</interface>";
+
+/// 板一覧 (複数選択)
+constexpr const char* popup_menu_mul =
+    "<interface>"
+    R"(<menu id="popup_menu_mul">)"
+    MENU_ITEM_ELEM("選択した行を開く(_O)", "bbslist.OpenRows")
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_APPENDFAVORITE "(_F)...", "bbslist.AppendFavorite")
+    "</section>"
+    "</menu>"
+    "</interface>";
+
+/// 板一覧 (複数選択, 外部板含む)
+constexpr const char* popup_menu_mul_etc =
+    "<interface>"
+    R"(<menu id="popup_menu_mul_etc">)"
+    MENU_ITEM_ELEM("選択した行を開く(_O)", "bbslist.OpenRows")
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_APPENDFAVORITE "(_F)...", "bbslist.AppendFavorite")
+    "</section>"
+    SUBMENU_ELEM(ITEM_NAME_DELETE "(_D)", MENU_ITEM_ELEM("外部板を削除する(_D)", "bbslist.DeleteEtc"))
+    "</menu>"
+    "</interface>";
+
+/// 板一覧 (ディレクトリ)
+constexpr const char* popup_menu_dir =
+    "<interface>"
+    R"(<menu id="popup_menu_dir">)"
+    MENU_ITEM_ELEM("全て選択(_A)", "bbslist.SelectDir")
+    "</menu>"
+    "</interface>";
+
+/// 板一覧 (外部板ディレクトリ)
+constexpr const char* popup_menu_etcdir =
+    "<interface>"
+    R"(<menu id="popup_menu_etcdir">)"
+    MENU_ITEM_ELEM("全て選択(_A)", "bbslist.SelectDir")
+    "<section>"
+    MENU_ITEM_ELEM("外部板追加(_E)...", "bbslist.NewEtc")
+    "</section>"
+    "</menu>"
+    "</interface>";
+
+/////////////////////////////////////////
+
+/// お気に入り
+constexpr const char* popup_menu_favorite =
+    "<interface>"
+    R"(<menu id="popup_menu_favorite">)"
+    "<section>"
+    MENU_ITEM_ELEM("タブで開く(_T)", "bbslist.OpenTab")
+    MENU_ITEM_ELEM(ITEM_NAME_OPEN_BROWSER "(_W)", "bbslist.OpenBrowser")
+    MENU_ITEM_ELEM(ITEM_NAME_OPEN_CACHE_BROWSER "(_X)", "bbslist.OpenCacheBrowser")
+    "</section>"
+    POPUPMENU_SELECT
+    "</menu>"
+    "</interface>";
+
+/// お気に入り (複数選択)
+constexpr const char* popup_menu_favorite_mul =
+    "<interface>"
+    R"(<menu id="popup_menu_favorite_mul">)"
+    MENU_ITEM_ELEM("選択した行を開く(_O)", "bbslist.OpenRows")
+    "<section>"
+    SUBMENU_ELEM("更新チェック(_M)",
+    MENU_ITEM_ELEM("更新チェックのみ(_H)", "bbslist.CheckUpdateRows")
+    MENU_ITEM_ELEM("更新された行をタブで開く(_E)", "bbslist.CheckUpdateOpenRows")
+    "<section>"
+    MENU_ITEM_ELEM("キャンセル(_C)", "bbslist.CancelCheckUpdate")
+    "</section>"
+    )
+    "</section>"
+    POPUPMENU_DELETE
+    "</menu>"
+    "</interface>";
+
+/// お気に入り (何もないところをクリック)
+constexpr const char* popup_menu_favorite_space =
+    "<interface>"
+    R"(<menu id="popup_menu_favorite_space">)"
+    MENU_ITEM_ELEM("新規ディレクトリ(_N)", "bbslist.NewDir")
+    MENU_ITEM_ELEM("コメント挿入(_I)", "bbslist.NewCom")
+    "</menu>"
+    "</interface>";
+
+/// お気に入り (ディレクトリ)
+constexpr const char* popup_menu_favorite_dir =
+    "<interface>"
+    R"(<menu id="popup_menu_favorite_dir">)"
+    SUBMENU_ELEM("更新チェック(_M)",
+    MENU_ITEM_ELEM("更新チェックのみ(_R)", "bbslist.CheckUpdateDir")
+    MENU_ITEM_ELEM("更新された行をタブで開く(_A)", "bbslist.CheckUpdateOpenDir")
+    "<section>"
+    MENU_ITEM_ELEM("キャンセル(_C)", "bbslist.CancelCheckUpdate")
+    "</section>"
+    )
+    "<section>"
+    MENU_ITEM_ELEM("全て選択(_A)", "bbslist.SelectDir")
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM("名前変更(_R)", "bbslist.Rename")
+    MENU_ITEM_ELEM("新規ディレクトリ(_N)", "bbslist.NewDir")
+    MENU_ITEM_ELEM("コメント挿入(_I)", "bbslist.NewCom")
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM("ディレクトリをスレ一覧に表示(_B)", "bbslist.OpenAsBoard")
+    MENU_ITEM_ELEM("仮想板作成(_V)", "bbslist.CreateVBoard")
+    "</section>"
+    POPUPMENU_ARRANGEDIR
+    POPUPMENU_DELETE
+    "</menu>"
+    "</interface>";
+
+/// お気に入り (コメント)
+constexpr const char* popup_menu_favorite_com =
+    "<interface>"
+    R"(<menu id="popup_menu_favorite_com">)"
+    "<section>"
+    MENU_ITEM_ELEM("名前変更(_R)", "bbslist.Rename")
+    MENU_ITEM_ELEM("新規ディレクトリ(_N)", "bbslist.NewDir")
+    MENU_ITEM_ELEM("コメント挿入(_I)", "bbslist.NewCom")
+    "</section>"
+    POPUPMENU_ARRANGE
+    POPUPMENU_DELETE
+    "</menu>"
+    "</interface>";
+
+/// お気に入り (仮想板)
+constexpr const char* popup_menu_favorite_vboard =
+    "<interface>"
+    R"(<menu id="popup_menu_favorite_vboard">)"
+    MENU_ITEM_ELEM("タブで開く(_T)", "bbslist.OpenTab")
+    "<section>"
+    MENU_ITEM_ELEM("名前変更(_R)", "bbslist.Rename")
+    MENU_ITEM_ELEM("新規ディレクトリ(_N)", "bbslist.NewDir")
+    MENU_ITEM_ELEM("コメント挿入(_I)", "bbslist.NewCom")
+    "</section>"
+    POPUPMENU_ARRANGE
+    POPUPMENU_DELETE
+    "</menu>"
+    "</interface>";
+
+//////////////////////////////////////
+
+/// 選択(selectlistview)
+constexpr const char* popup_menu_select =
+    "<interface>"
+    R"(<menu id="popup_menu_select">)"
+    POPUPMENU_SELECT
+    "</menu>"
+    "</interface>";
+
+/////////////////////////////////////////
+
+/// 履歴
+constexpr const char* popup_menu_history =
+    "<interface>"
+    R"(<menu id="popup_menu_history">)"
+    MENU_ITEM_ELEM("タブで開く(_T)", "bbslist.OpenTab")
+    MENU_ITEM_ELEM(ITEM_NAME_OPEN_BROWSER "(_W)", "bbslist.OpenBrowser")
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_COPY_URL "(_U)", "bbslist.CopyURL")
+    MENU_ITEM_ELEM(ITEM_NAME_COPY_TITLE_URL "(_L)", "bbslist.CopyTitleURL")
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_APPENDFAVORITE "(_F)...", "bbslist.AppendFavorite")
+    "</section>"
+    "<section>"
+    SUBMENU_ELEM(ITEM_NAME_DELETE "(_D)", MENU_ITEM_ELEM("履歴から削除する(_D)", "bbslist.DeleteHist"))
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM("キャッシュ内ログ検索(_S)", "bbslist.SearchCacheBoard")
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM("datのインポート(_I)", "bbslist.ImportDat")
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_PREF_THREAD "(_P)...", "bbslist.PreferenceArticle")
+    MENU_ITEM_ELEM(ITEM_NAME_PREF_BOARD "(_O)...", "bbslist.PreferenceBoard")
+    MENU_ITEM_ELEM(ITEM_NAME_PREF_IMAGE "(_M)...", "bbslist.PreferenceImage")
+    "</section>"
+    "</menu>"
+    "</interface>";
+
+/// 履歴 (複数選択)
+constexpr const char* popup_menu_history_mul =
+    "<interface>"
+    R"(<menu id="popup_menu_history_mul">)"
+    MENU_ITEM_ELEM("選択した行を開く(_O)", "bbslist.OpenRows")
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_APPENDFAVORITE "(_F)...", "bbslist.AppendFavorite")
+    "</section>"
+    "<section>"
+    SUBMENU_ELEM("更新チェック(_M)",
+    MENU_ITEM_ELEM("更新チェックのみ(_H)", "bbslist.CheckUpdateRows")
+    MENU_ITEM_ELEM("更新された行をタブで開く(_E)", "bbslist.CheckUpdateOpenRows")
+    "<section>"
+    MENU_ITEM_ELEM("キャンセル(_C)", "bbslist.CancelCheckUpdate")
+    "</section>"
+    )
+    "</section>"
+    "<section>"
+    SUBMENU_ELEM(ITEM_NAME_DELETE "(_D)", MENU_ITEM_ELEM("履歴から削除する(_D)", "bbslist.DeleteHist"))
+    "</section>"
+    "</menu>"
+    "</interface>";
+
+/// 履歴 (仮想板)
+constexpr const char* popup_menu_history_vboard =
+    "<interface>"
+    R"(<menu id="popup_menu_history_vboard">)"
+    MENU_ITEM_ELEM("タブで開く(_T)", "bbslist.OpenTab")
+    "<section>"
+    SUBMENU_ELEM(ITEM_NAME_DELETE "(_D)", MENU_ITEM_ELEM("履歴から削除する(_D)", "bbslist.DeleteHist"))
+    "</section>"
+    "</menu>"
+    "</interface>";
+
+
+/** @brief メニューIDからUI definitionのデータを取得する
+ *
+ * @param[in] id メニューID
+ * @return GtkBuilder で実体化させるメニューの UI definition
+ */
+const char* get_menu_ui( const std::string& id )
+{
+    const char* menu_ui;
+    if( id == "popup_menu" ) menu_ui = popup_menu;
+    else if( id == "popup_menu" ) menu_ui = popup_menu;
+    else if( id == "popup_menu_etc" ) menu_ui = popup_menu_etc;
+    else if( id == "popup_menu_mul" ) menu_ui = popup_menu_mul;
+    else if( id == "popup_menu_mul_etc" ) menu_ui = popup_menu_mul_etc;
+    else if( id == "popup_menu_dir" ) menu_ui = popup_menu_dir;
+    else if( id == "popup_menu_etcdir" ) menu_ui = popup_menu_etcdir;
+    else if( id == "popup_menu_favorite" ) menu_ui = popup_menu_favorite;
+    else if( id == "popup_menu_favorite_mul" ) menu_ui = popup_menu_favorite_mul;
+    else if( id == "popup_menu_favorite_space" ) menu_ui = popup_menu_favorite_space;
+    else if( id == "popup_menu_favorite_dir" ) menu_ui = popup_menu_favorite_dir;
+    else if( id == "popup_menu_favorite_com" ) menu_ui = popup_menu_favorite_com;
+    else if( id == "popup_menu_favorite_vboard" ) menu_ui = popup_menu_favorite_vboard;
+    else if( id == "popup_menu_select" ) menu_ui = popup_menu_select;
+    else if( id == "popup_menu_history" ) menu_ui = popup_menu_history;
+    else if( id == "popup_menu_history_mul" ) menu_ui = popup_menu_history_mul;
+    else if( id == "popup_menu_history_vboard" ) menu_ui = popup_menu_history_vboard;
+    else menu_ui = nullptr;
+
+    assert( menu_ui );
+    return menu_ui;
+}
+
+} // namespace
+
 
 using namespace BBSLIST;
 
@@ -186,308 +486,54 @@ BBSListViewBase::BBSListViewBase( const std::string& url, const std::string& arg
     ///////////////////
 
     // ポップアップメニューの設定
-    // アクショングループを作ってUIマネージャに登録
-    action_group() = Gtk::ActionGroup::create();
-    action_group()->add( Gtk::Action::create( "OpenTab", "タブで開く(_T)"), sigc::mem_fun( *this, &BBSListViewBase::slot_open_tab ) );
-    action_group()->add( Gtk::Action::create( "OpenBrowser", ITEM_NAME_OPEN_BROWSER "(_W)" ),
-                         sigc::mem_fun( *this, &BBSListViewBase::slot_open_browser ) );
-    action_group()->add( Gtk::Action::create( "OpenCacheBrowser", ITEM_NAME_OPEN_CACHE_BROWSER "(_X)" ),
-                         sigc::mem_fun( *this, &BBSListViewBase::slot_open_cache_browser ) );
-    action_group()->add( Gtk::Action::create( "AppendFavorite", "AppendFavorite"), sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
-    action_group()->add( Gtk::Action::create( "NewDir", "新規ディレクトリ(_N)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newdir ) );
-    action_group()->add( Gtk::Action::create( "NewCom", "コメント挿入(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
-    action_group()->add( Gtk::Action::create( "NewEtc", "外部板追加(_E)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_newetcboard ) );
-    action_group()->add( Gtk::Action::create( "MoveEtc", "編集(_E)..."), sigc::mem_fun( *this, &BBSListViewBase::slot_moveetcboard ) );
-    action_group()->add( Gtk::Action::create( "Rename", "名前変更(_R)"), sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
-    action_group()->add( Gtk::Action::create( "Delete_Menu", "Delete" ) );
-    action_group()->add( Gtk::Action::create( "Delete", "お気に入りから削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
-    action_group()->add( Gtk::Action::create( "Delete_etc", "外部板を削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
-    action_group()->add( Gtk::Action::create( "Delete_hist", "履歴から削除する(_D)"), sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
-    action_group()->add( Gtk::Action::create( "OpenRows", "選択した行を開く(_O)"), sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
+    // アクショングループを作ってビューに登録
+    m_action_group = Gio::SimpleActionGroup::create();
+    m_action_group->add_action( "OpenTab", sigc::mem_fun( *this, &BBSListViewBase::slot_open_tab ) );
+    m_action_group->add_action( "OpenBrowser", sigc::mem_fun( *this, &BBSListViewBase::slot_open_browser ) );
+    m_action_group->add_action( "OpenCacheBrowser", sigc::mem_fun( *this, &BBSListViewBase::slot_open_cache_browser ) );
+    m_action_group->add_action( "AppendFavorite", sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
+    m_action_group->add_action( "NewDir", sigc::mem_fun( *this, &BBSListViewBase::slot_newdir ) );
+    m_action_group->add_action( "NewCom", sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
+    m_action_group->add_action( "NewEtc", sigc::mem_fun( *this, &BBSListViewBase::slot_newetcboard ) );
+    m_action_group->add_action( "MoveEtc", sigc::mem_fun( *this, &BBSListViewBase::slot_moveetcboard ) );
+    m_action_group->add_action( "Rename", sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
+    m_action_group->add_action( "Delete", sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
+    m_action_group->add_action( "DeleteEtc", sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
+    m_action_group->add_action( "DeleteHist", sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
+    m_action_group->add_action( "OpenRows", sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
 
-    action_group()->add( Gtk::Action::create( "CheckUpdateRows", "更新チェックのみ(_H)"), sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_selected_rows ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateOpenRows", "更新された行をタブで開く(_E)"),
-                         sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_open_selected_rows ) );
+    m_action_group->add_action( "CheckUpdateRows",
+                                sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_selected_rows ) );
+    m_action_group->add_action( "CheckUpdateOpenRows",
+                                sigc::mem_fun( *this, &BBSListViewBase::slot_checkupdate_open_selected_rows ) );
 
-    action_group()->add( Gtk::Action::create( "CopyURL", ITEM_NAME_COPY_URL "(_U)"), sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
-    action_group()->add( Gtk::Action::create( "CopyTitleURL", ITEM_NAME_COPY_TITLE_URL "(_L)" ),
-                         sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
-    action_group()->add( Gtk::Action::create( "SelectDir", "全て選択(_A)"), sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
+    m_action_group->add_action( "CopyURL", sigc::mem_fun( *this, &BBSListViewBase::slot_copy_url ) );
+    m_action_group->add_action( "CopyTitleURL", sigc::mem_fun( *this, &BBSListViewBase::slot_copy_title_url ) );
+    m_action_group->add_action( "SelectDir", sigc::mem_fun( *this, &BBSListViewBase::slot_select_all_dir ) );
 
-    action_group()->add( Gtk::Action::create( "CheckUpdate_Menu", "更新チェック(_M)" ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateDir", "更新チェックのみ(_R)"), sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_dir ) );
-    action_group()->add( Gtk::Action::create( "CheckUpdateOpenDir", "更新された行をタブで開く(_A)"),
-                         sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_open_dir ) );
-    action_group()->add( Gtk::Action::create( "CancelCheckUpdate", "キャンセル(_C)" ),
-                         sigc::mem_fun( *this, &BBSListViewBase::stop ) );
+    m_action_group->add_action( "CheckUpdateDir", sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_dir ) );
+    m_action_group->add_action( "CheckUpdateOpenDir",
+                                sigc::mem_fun( *this, &BBSListViewBase::slot_check_update_open_dir ) );
+    m_action_group->add_action( "CancelCheckUpdate", sigc::mem_fun( *this, &BBSListViewBase::stop ) );
 
-    action_group()->add( Gtk::Action::create( "Arrange_Menu", "並び替え(_G)" ) );
-    action_group()->add( Gtk::Action::create( "ArrangeDir_Menu", "ディレクトリ内の並び替え(_G)" ) );
-    action_group()->add( Gtk::Action::create( "Arrange_Type", "種類順(_T)"),
-                         sigc::bind< int >( sigc::mem_fun( *this, &BBSListViewBase::slot_sort ), SKELETON::SORT_BY_TYPE ) );
-    action_group()->add( Gtk::Action::create( "Arrange_Name", "名前順(_N)"),
-                         sigc::bind< int >( sigc::mem_fun( *this, &BBSListViewBase::slot_sort ), SKELETON::SORT_BY_NAME ) );
+    m_action_group->add_action( "ArrangeType",
+                                sigc::bind( sigc::mem_fun( *this, &BBSListViewBase::slot_sort ), SKELETON::SORT_BY_TYPE ) );
+    m_action_group->add_action( "ArrangeName",
+                                sigc::bind( sigc::mem_fun( *this, &BBSListViewBase::slot_sort ), SKELETON::SORT_BY_NAME ) );
 
-    action_group()->add( Gtk::Action::create( "OpenAsBoard", "ディレクトリをスレ一覧に表示(_B)"), sigc::mem_fun( *this, &BBSListViewBase::slot_opendir_as_board ) );
-    action_group()->add( Gtk::Action::create( "CreateVBoard", "仮想板作成(_V)"), sigc::mem_fun( *this, &BBSListViewBase::slot_create_vboard ) );
-    action_group()->add( Gtk::Action::create( "SearchCacheBoard", "キャッシュ内ログ検索(_S)"), sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
-    action_group()->add( Gtk::Action::create( "ImportDat", "datのインポート(_I)"), sigc::mem_fun( *this, &BBSListViewBase::slot_import_dat ) );
+    m_action_group->add_action( "OpenAsBoard", sigc::mem_fun( *this, &BBSListViewBase::slot_opendir_as_board ) );
+    m_action_group->add_action( "CreateVBoard", sigc::mem_fun( *this, &BBSListViewBase::slot_create_vboard ) );
+    m_action_group->add_action( "SearchCacheBoard", sigc::mem_fun( *this, &BBSListViewBase::slot_search_cache_board ) );
+    m_action_group->add_action( "ImportDat", sigc::mem_fun( *this, &BBSListViewBase::slot_import_dat ) );
 
-    action_group()->add( Gtk::Action::create( "PreferenceArticle", ITEM_NAME_PREF_THREAD "(_P)..." ), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
-    action_group()->add( Gtk::Action::create( "PreferenceBoard", ITEM_NAME_PREF_BOARD "(_O)..." ), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
-    action_group()->add( Gtk::Action::create( "PreferenceImage", ITEM_NAME_PREF_IMAGE "(_M)..." ), sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
+    m_action_group->add_action( "PreferenceArticle", sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
+    m_action_group->add_action( "PreferenceBoard", sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
+    m_action_group->add_action( "PreferenceImage", sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
 
+    insert_action_group( "bbslist", m_action_group );
 
-    ui_manager() = Gtk::UIManager::create();
-    ui_manager()->insert_action_group( action_group() );
-
-    // ポップアップメニューのレイアウト
-    Glib::ustring str_ui =
-
-    "<ui>"
-
-    // 板一覧 + 板
-    "<popup name='popup_menu'>"
-    POPUPMENU_BOARD1
-    POPUPMENU_BOARD2
-
-    // 板一覧 + 外部板
-    "<popup name='popup_menu_etc'>"
-    POPUPMENU_BOARD1
-    "<menuitem action='MoveEtc'/>"
-    "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete_etc'/>"
-    "</menu>"
-    "<separator/>"
-    POPUPMENU_BOARD2
-
-    // 板一覧 + 複数選択
-    "<popup name='popup_menu_mul'>"
-    "<menuitem action='OpenRows'/>"
-    "<separator/>"
-    "<menuitem action='AppendFavorite'/>"
-    "</popup>"
-
-    // 板一覧 + 複数選択 + 外部板含む
-    "<popup name='popup_menu_mul_etc'>"
-    "<menuitem action='OpenRows'/>"
-    "<separator/>"
-    "<menuitem action='AppendFavorite'/>"
-
-    "<separator/>"
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete_etc'/>"
-    "</menu>"
-
-    "</popup>"
-
-    // 板一覧 + ディレクトリ
-    "<popup name='popup_menu_dir'>"
-    "<menuitem action='SelectDir'/>"
-    "</popup>"
-
-    // 板一覧 + 外部板ディレクトリ
-    "<popup name='popup_menu_etcdir'>"
-    "<menuitem action='SelectDir'/>"
-    "<separator/>"
-    "<menuitem action='NewEtc'/>"
-    "</popup>"
-
-
-    /////////////////////////////////////////
-
-
-    // お気に入り
-    "<popup name='popup_menu_favorite'>"
-    "<menuitem action='OpenTab'/>"
-    "<menuitem action='OpenBrowser'/>"
-    "<menuitem action='OpenCacheBrowser'/>"
-    "<separator/>"
-    POPUPMENU_SELECT
-    "</popup>"
-
-    // お気に入り + 複数選択
-    "<popup name='popup_menu_favorite_mul'>"
-    "<menuitem action='OpenRows'/>"
-    "<separator/>"
-    "<menu action='CheckUpdate_Menu'>"
-    "<menuitem action='CheckUpdateRows'/>"
-    "<menuitem action='CheckUpdateOpenRows'/>"
-    "<separator/>"
-    "<menuitem action='CancelCheckUpdate'/>"
-    "</menu>"
-    "<separator/>"
-
-    POPUPMENU_DELETE
-    "</popup>"
-
-    // お気に入り + 何もないところをクリック
-    "<popup name='popup_menu_favorite_space'>"
-    "<menuitem action='NewDir'/>"
-    "<menuitem action='NewCom'/>"
-    "</popup>"
-
-    // お気に入り + ディレクトリ
-    "<popup name='popup_menu_favorite_dir'>"
-    "<menu action='CheckUpdate_Menu'>"
-    "<menuitem action='CheckUpdateDir'/>"
-    "<menuitem action='CheckUpdateOpenDir'/>"
-    "<separator/>"
-    "<menuitem action='CancelCheckUpdate'/>"
-    "</menu>"
-    "<separator/>"
-
-    "<menuitem action='SelectDir'/>"
-    "<separator/>"
-    "<menuitem action='Rename'/>"
-    "<menuitem action='NewDir'/>"
-    "<menuitem action='NewCom'/>"
-    "<separator/>"
-    "<menuitem action='OpenAsBoard'/>"
-    "<menuitem action='CreateVBoard'/>"
-    "<separator/>"
-    POPUPMENU_ARRANGEDIR
-    "<separator/>"
-    POPUPMENU_DELETE
-    "</popup>"
-
-    // お気に入り + コメント
-    "<popup name='popup_menu_favorite_com'>"
-    "<menuitem action='Rename'/>"
-    "<menuitem action='NewDir'/>"
-    "<menuitem action='NewCom'/>"
-    "<separator/>"
-    POPUPMENU_ARRANGE
-    "<separator/>"
-    POPUPMENU_DELETE
-    "</popup>"
-
-    // お気に入り + 仮想板
-    "<popup name='popup_menu_favorite_vboard'>"
-    "<menuitem action='OpenTab'/>"
-    "<separator/>"
-    "<menuitem action='Rename'/>"
-    "<menuitem action='NewDir'/>"
-    "<menuitem action='NewCom'/>"
-    "<separator/>"
-    POPUPMENU_ARRANGE
-    "<separator/>"
-    POPUPMENU_DELETE
-    "</popup>"
-
-    //////////////////////////////////////
-
-
-    // 選択(selectlistview)
-    "<popup name='popup_menu_select'>"
-    POPUPMENU_SELECT
-    "</popup>"
-
-    /////////////////////////////////////////
-
-    // 履歴
-    "<popup name='popup_menu_history'>"
-    "<menuitem action='OpenTab'/>"
-    "<menuitem action='OpenBrowser'/>"
-    "<separator/>"
-    "<menuitem action='CopyURL'/>" \
-    "<menuitem action='CopyTitleURL'/>" \
-    "<separator/>"
-    "<menuitem action='AppendFavorite'/>"
-    "<separator/>" \
-    "<menu action='Delete_Menu'>" \
-    "<menuitem action='Delete_hist'/>" \
-    "</menu>" \
-    "<separator/>" \
-    "<menuitem action='SearchCacheBoard'/>" \
-    "<separator/>" \
-    "<menuitem action='ImportDat'/>" \
-    "<separator/>" \
-    "<menuitem action='PreferenceArticle'/>" \
-    "<menuitem action='PreferenceBoard'/>" \
-    "<menuitem action='PreferenceImage'/>" \
-    "</popup>"
-
-    // 履歴 + 複数選択
-    "<popup name='popup_menu_history_mul'>"
-    "<menuitem action='OpenRows'/>"
-    "<separator/>"
-    "<menuitem action='AppendFavorite'/>"
-    "<separator/>"
-    "<menu action='CheckUpdate_Menu'>"
-    "<menuitem action='CheckUpdateRows'/>"
-    "<menuitem action='CheckUpdateOpenRows'/>"
-    "<separator/>"
-    "<menuitem action='CancelCheckUpdate'/>"
-    "</menu>"
-    "<separator/>"
-
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete_hist'/>"
-    "</menu>"
-    "</popup>"
-
-    // 履歴 + 仮想板
-    "<popup name='popup_menu_history_vboard'>"
-    "<menuitem action='OpenTab'/>"
-    "<separator/>"
-
-    "<menu action='Delete_Menu'>"
-    "<menuitem action='Delete_hist'/>"
-    "</menu>"
-
-    "</popup>"
-
-    "</ui>";
-
-    ui_manager()->add_ui_from_string( str_ui );
-
-    // ポップアップメニューにキーアクセレータを表示
-    Gtk::Menu* popupmenu = id2popupmenu(  "/popup_menu" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_etc" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_mul" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_mul_etc" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_dir" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_favorite" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_favorite_mul" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_favorite_space" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_favorite_dir" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_favorite_com" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_favorite_vboard" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_history" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_history_mul" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_history_vboard" );
-    CONTROL::set_menu_motion( popupmenu );
-
-    popupmenu = id2popupmenu(  "/popup_menu_select" );
-    CONTROL::set_menu_motion( popupmenu );
+    // メニューは使う直前まで構築しない、 id2popupmenu() を参照
+    m_builder = Gtk::Builder::create();
 
     // マウスジェスチャ可
     set_enable_mg( true );
@@ -890,49 +936,49 @@ bool BBSListViewBase::operate_view( const int control )
 //
 void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 {
-    Glib::RefPtr< Gtk::Action > act_search, act_import, act_board, act_article, act_image, act_opencache, act_opentab;
-    act_search = action_group()->get_action( "SearchCacheBoard" );
-    act_import = action_group()->get_action( "ImportDat" );
-    act_board = action_group()->get_action( "PreferenceBoard" );
-    act_article = action_group()->get_action( "PreferenceArticle" );
-    act_image = action_group()->get_action( "PreferenceImage" );
-    act_opencache = action_group()->get_action( "OpenCacheBrowser" );
-    act_opentab = action_group()->get_action( "OpenTab" );
+    using P = Glib::RefPtr<Gio::SimpleAction>;
+    auto act_search = P::cast_dynamic( m_action_group->lookup_action( "SearchCacheBoard" ) );
+    auto act_import = P::cast_dynamic( m_action_group->lookup_action( "ImportDat" ) );
+    auto act_board = P::cast_dynamic( m_action_group->lookup_action( "PreferenceBoard" ) );
+    auto act_article = P::cast_dynamic( m_action_group->lookup_action( "PreferenceArticle" ) );
+    auto act_image = P::cast_dynamic( m_action_group->lookup_action( "PreferenceImage" ) );
+    auto act_opencache = P::cast_dynamic( m_action_group->lookup_action( "OpenCacheBrowser" ) );
+    auto act_opentab = P::cast_dynamic( m_action_group->lookup_action( "OpenTab" ) );
 
-    if( act_search ) act_search->set_sensitive( false );
-    if( act_import ) act_import->set_sensitive( false );
-    if( act_board ) act_board->set_sensitive( false );
-    if( act_article ) act_article->set_sensitive( false );
-    if( act_image ) act_image->set_sensitive( false );
-    if( act_opencache ) act_opencache->set_sensitive( false );
-    if( act_opentab ) act_opentab->set_sensitive( true );
+    if( act_search ) act_search->set_enabled( false );
+    if( act_import ) act_import->set_enabled( false );
+    if( act_board ) act_board->set_enabled( false );
+    if( act_article ) act_article->set_enabled( false );
+    if( act_image ) act_image->set_enabled( false );
+    if( act_opencache ) act_opencache->set_enabled( false );
+    if( act_opentab ) act_opentab->set_enabled( true );
 
     int type = path2type( m_path_selected );
     switch( type ){
 
         case TYPE_BOARD:
         case TYPE_BOARD_UPDATE:
-            if( act_search ) act_search->set_sensitive( true );
-            if( act_import ) act_import->set_sensitive( true );
-            if( act_board ) act_board->set_sensitive( true );
+            if( act_search ) act_search->set_enabled( true );
+            if( act_import ) act_import->set_enabled( true );
+            if( act_board ) act_board->set_enabled( true );
             break;
 
         case TYPE_THREAD:
         case TYPE_THREAD_UPDATE:
         case TYPE_THREAD_OLD:
-            if( act_article ) act_article->set_sensitive( true );
+            if( act_article ) act_article->set_enabled( true );
             break;
 
         case TYPE_IMAGE:
-            if( act_image && ! DBIMG::get_abone( url ) ) act_image->set_sensitive( true );
-            if( act_opencache && DBIMG::is_cached( url ) ) act_opencache->set_sensitive( true );
+            if( act_image && ! DBIMG::get_abone( url ) ) act_image->set_enabled( true );
+            if( act_opencache && DBIMG::is_cached( url ) ) act_opencache->set_enabled( true );
             break;
 
         case TYPE_DIR:
             break;
 
         case TYPE_LINK:
-            if( act_opentab ) act_opentab->set_sensitive( false );
+            if( act_opentab ) act_opentab->set_enabled( false );
             break;
     }
 }
@@ -941,7 +987,17 @@ void BBSListViewBase::activate_act_before_popupmenu( const std::string& url )
 // idからポップアップメニュー取得
 Gtk::Menu* BBSListViewBase::id2popupmenu( const std::string& id )
 {
-    return dynamic_cast< Gtk::Menu* >( ui_manager()->get_widget( id ) );
+    auto it = m_map_popupmenu.find( id );
+    if( it == m_map_popupmenu.end() ) {
+        // アクセラレーターキーやマウスジェスチャーの追加は行わない
+        // CONTROL::set_menu_motion() はGTK4で廃止されるGtk::MenuのAPIを使っている
+        m_builder->add_from_string( get_menu_ui( id ) );
+        auto menumodel = Glib::RefPtr<Gio::MenuModel>::cast_dynamic( m_builder->get_object( id ) );
+        auto pair = m_map_popupmenu.emplace( id, menumodel );
+        pair.first->second.attach_to_widget( *this );
+        return std::addressof( pair.first->second );
+    }
+    return std::addressof( it->second );
 }
 
 

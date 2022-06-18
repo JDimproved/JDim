@@ -66,10 +66,10 @@ Gtk::Menu* HistoryViewBase::get_popupmenu( const std::string& url )
 
             const int type = path2type( *( get_treeview().get_selection()->get_selected_rows().begin() ) );
 
-            if( type == TYPE_VBOARD ) popupmenu = id2popupmenu( "/popup_menu_history_vboard" );
-            else popupmenu = id2popupmenu( "/popup_menu_history" );
+            if( type == TYPE_VBOARD ) popupmenu = id2popupmenu( "popup_menu_history_vboard" );
+            else popupmenu = id2popupmenu( "popup_menu_history" );
         }
-        else popupmenu = id2popupmenu(  "/popup_menu_history_mul" );
+        else popupmenu = id2popupmenu(  "popup_menu_history_mul" );
     }
 
     return popupmenu;
