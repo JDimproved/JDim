@@ -215,12 +215,12 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
 #endif
 
         if( type == TYPE_DIR ){
-            if( is_etcdir( path ) ) popupmenu = id2popupmenu(  "/popup_menu_etcdir" );
-            else popupmenu = id2popupmenu(  "/popup_menu_dir" );
+            if( is_etcdir( path ) ) popupmenu = id2popupmenu(  "popup_menu_etcdir" );
+            else popupmenu = id2popupmenu(  "popup_menu_dir" );
         }
         else if( type == TYPE_BOARD || type == TYPE_BOARD_UPDATE ){
-            if( is_etcboard( path ) ) popupmenu = id2popupmenu(  "/popup_menu_etc" );
-            else popupmenu = id2popupmenu(  "/popup_menu" );
+            if( is_etcboard( path ) ) popupmenu = id2popupmenu(  "popup_menu_etc" );
+            else popupmenu = id2popupmenu(  "popup_menu" );
         }
     }
     else{
@@ -228,8 +228,8 @@ Gtk::Menu* BBSListViewMain::get_popupmenu( const std::string& url )
         const bool have_etc = std::all_of( list_it.cbegin(), list_it.cend(),
                                            [this]( const Gtk::TreeIter& iter ) { return is_etcboard( iter ); } );
 
-        if( have_etc ) popupmenu = id2popupmenu(  "/popup_menu_mul_etc" );
-        else popupmenu = id2popupmenu(  "/popup_menu_mul" );
+        if( have_etc ) popupmenu = id2popupmenu(  "popup_menu_mul_etc" );
+        else popupmenu = id2popupmenu(  "popup_menu_mul" );
     }
 
     return popupmenu;
