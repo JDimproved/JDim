@@ -131,6 +131,11 @@ WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
 
   <dt>--disable-compat-cache-dir</dt>
   <dd>JDのキャッシュディレクトリ <code>~/.jd</code> を読み込む互換機能を無効化する。</dd>
+  <dt>-Dpackager=PACKAGER</dt>
+  <dd>
+    Meson限定: 動作環境にパッケージや作成者の情報を追加する。<small>(v0.7.0+から追加)</small>
+    <code>PACKAGER</code> に改行やHTML文字参照を <em>含めない</em> ことを推奨する。
+  </dd>
 </dl>
 
 

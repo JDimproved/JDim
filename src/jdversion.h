@@ -54,4 +54,11 @@
     "で請求してください(宛先は the Free Software Foundation, Inc., 51 " \
     "Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA)。\n"
 
+/// パッケージ作成者の情報
+#ifdef PACKAGE_PACKAGER
+#define JDIM_PACKAGER PACKAGE_PACKAGER
+#else
+#define JDIM_PACKAGER "バイナリ/ソース( <配布元> )"
+#endif
+
 #endif
