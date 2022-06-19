@@ -21,16 +21,12 @@
 #include "global.h"
 
 
-// 枠を描く
-// TODO: GTKのcssで設定する
-#define DRAW_FRAME( color ) m_event_frame->override_background_color( Gdk::RGBA( color ), Gtk::STATE_FLAG_NORMAL )
-
-
 using namespace IMAGE;
 
 
 ImageViewIcon::ImageViewIcon( const std::string& url )
     : ImageViewBase( url )
+    , m_provider{ Gtk::CssProvider::create() }
 {
 #ifdef _DEBUG    
     std::cout << "ImageViewIcon::ImageViewIcon : " << get_url() << std::endl;
@@ -39,12 +35,19 @@ ImageViewIcon::ImageViewIcon( const std::string& url )
     // コントロールモード設定
     get_control().add_mode( CONTROL::MODE_IMAGEICON );
 
-    //枠を描くためにm_eventの外にもう一つEventBoxを作る ( Gtk::HBox は modify_fg() 無効なので )
-    m_event_frame = Gtk::manage( new Gtk::EventBox() );
-    pack_start( *m_event_frame );
-    m_event_frame->add( get_event() );
+    // $XDG_CONFIG_HOME/gtk-3.0/gtk.css から設定できるようにCSSセレクタを追加する (テスト用)
+    set_name( "jdim-imageview-icon" );
+
+    // 選択されてる画像アイコンの背景色を赤にするための設定
+    pack_start( get_event() );
     get_event().set_border_width( 1 );
-    DRAW_FRAME( "white" );
+    try {
+        m_provider->load_from_data( ".selected { background-color: red; }" );
+    }
+    catch( Gtk::CssProviderError& ) {
+        std::terminate();
+    }
+    get_style_context()->add_provider( m_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
 
     setup_common();
 
@@ -105,7 +108,7 @@ void ImageViewIcon::clock_in()
 //
 void ImageViewIcon::focus_view()
 {
-    DRAW_FRAME( "red" );
+    get_style_context()->add_class( "selected" );
     get_event().grab_focus();
 }
 
@@ -116,7 +119,7 @@ void ImageViewIcon::focus_view()
 void ImageViewIcon::focus_out()
 {
     SKELETON::View::focus_out();
-    DRAW_FRAME( "white" );
+    get_style_context()->remove_class( "selected" );
 }
 
 
@@ -159,7 +162,7 @@ void ImageViewIcon::show_view()
 //
 void ImageViewIcon::switch_icon()
 {
-    DRAW_FRAME( "red" );
+    get_style_context()->add_class( "selected" );
 }
 
 
