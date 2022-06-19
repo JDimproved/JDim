@@ -16,8 +16,7 @@ namespace IMAGE
 {
     class ImageViewPopup : public ImageViewBase
     {
-        Gtk::EventBox m_event_frame;
-        Gtk::EventBox m_event_margin;
+        Glib::RefPtr<Gtk::CssProvider> m_provider;
         std::unique_ptr<Gtk::Label> m_label;
         size_t m_length_prev{};
 

@@ -19,6 +19,7 @@ using namespace IMAGE;
 
 ImageViewPopup::ImageViewPopup( const std::string& url )
     : ImageViewBase( url )
+    , m_provider{ Gtk::CssProvider::create() }
 {
 #ifdef _DEBUG
     std::cout << "ImageViewPopup::ImageViewPopup url = " << get_url() << std::endl;
@@ -28,38 +29,46 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     get_control().add_mode( CONTROL::MODE_IMAGEVIEW );
     get_control().add_mode( CONTROL::MODE_IMAGEICON );
 
-    // TODO: JDimのスタイルシート機能からGTKのcssに切り替えるか？
+    // $XDG_CONFIG_HOME/gtk-3.0/gtk.css から設定できるようにCSSセレクタを追加する (テスト用)
+    set_name( "jdim-imageview-popup" );
+
+    // ポップアップの文字色、背景色を設定する
     int border_width = 1;
     int margin = 0;
-    std::string border_color = "black";
-    std::string bg_color = CONFIG::get_color( COLOR_BACK );
-    const int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
+    Gdk::RGBA border_color{ "black" };
+    Gdk::RGBA bg_color{ CONFIG::get_color( COLOR_BACK ) };
+    Gdk::RGBA text_color{ CONFIG::get_color( COLOR_CHAR ) };
+    auto manager = CORE::get_css_manager();
+    const int classid = manager->get_classid( "imgpopup" );
     if( classid >= 0 ){
-        CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
+        // jd.cssの設定を読み込む
+        CORE::CSS_PROPERTY css = manager->get_property( classid );
         border_width = css.border_left_width_px;
         margin = css.mrg_left_px;
-        if( css.border_left_color >= 0 ) border_color = CORE::get_css_manager()->get_color( css.border_left_color );
-        if( css.bg_color > 0 ) bg_color = CORE::get_css_manager()->get_color( css.bg_color );
+        if( css.border_left_color >= 0 ) border_color.set( manager->get_color( css.border_left_color ) );
+        if( css.bg_color > 0 ) bg_color.set( manager->get_color( css.bg_color ) );
+        if( css.color >= 0 ) text_color.set( manager->get_color( css.color ) );
     }
 
-    //枠を描くためにm_eventの外にもう一つEventBoxを作る ( Gtk::HBox は modify_fg() 無効なので )
-    pack_start( m_event_frame );
-    m_event_frame.add( m_event_margin );
-    m_event_margin.add( get_event() );
+    pack_start( get_event() );
 
-    // 枠の幅
-    m_event_margin.set_border_width( border_width );
-
-    // マージン
-    get_event().set_border_width( margin );
-
-    // 枠色
-    m_event_frame.override_background_color( Gdk::RGBA( border_color ), Gtk::STATE_FLAG_NORMAL );
-
-    // 背景色
-    const Gdk::RGBA color_bg( bg_color );
-    m_event_margin.override_background_color( color_bg, Gtk::STATE_FLAG_NORMAL );
-    get_event().override_background_color( color_bg, Gtk::STATE_FLAG_NORMAL );
+    try {
+        // XXX: 修正前の動作を維持するためmaginの値はpaddingとして反映している
+        m_provider->load_from_data( Glib::ustring::compose(
+            R"( box {
+                padding: %1px;
+                border: %2px solid %3;
+                background-color: %4;
+            }
+            label {
+                color: %5;
+            } )",
+            margin, border_width, border_color.to_string(), bg_color.to_string(), text_color.to_string() ) );
+    }
+    catch( Gtk::CssProviderError& ) {
+        std::terminate();
+    }
+    get_style_context()->add_provider( m_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
 
     // 全ての領域を表示できないならカーソルの上に表示
     set_popup_upside( true );
@@ -109,14 +118,9 @@ void ImageViewPopup::set_label( const std::string& status )
         m_label = std::make_unique<Gtk::Label>( status );
         get_event().add( *m_label );
 
-        std::string text_color = CONFIG::get_color( COLOR_CHAR );
-        const int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
-        if( classid >= 0 ){
-            CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
-            if( css.color >= 0 ) text_color = CORE::get_css_manager()->get_color( css.color );
-        }
-        const Gdk::RGBA color_text( text_color );
-        m_label->override_color( color_text, Gtk::STATE_FLAG_NORMAL );
+        // $XDG_CONFIG_HOME/gtk-3.0/gtk.css から設定できるようにCSSセレクタを追加する (テスト用)
+        m_label->set_name( "jdim-imageview-popup" );
+        m_label->get_style_context()->add_provider( m_provider, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION );
 
         m_label->show();
     }
