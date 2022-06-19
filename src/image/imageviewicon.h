@@ -13,7 +13,8 @@ namespace IMAGE
 {
     class ImageViewIcon : public ImageViewBase
     {
-        Gtk::EventBox* m_event_frame;
+        /// 選択されてる画像アイコンの背景色を赤に設定するプロバイダ
+        Glib::RefPtr<Gtk::CssProvider> m_provider;
 
       public:
         explicit ImageViewIcon( const std::string& url );
