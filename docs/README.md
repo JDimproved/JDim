@@ -1,7 +1,5 @@
 # オンラインマニュアルのメンテナンスについて
 
-**※この項目は草案の段階です。**
-
 - [概要](#概要)
 - [ポリシー](#ポリシー)
 - [内容の更新について](#内容の更新について)
@@ -53,8 +51,8 @@ HTMLのタグによるマークアップはなるべく使わないようにし�
 # マージされた最新100件のPRから変更履歴を作る
 generate_changelogs () {
   API='https://api.github.com/repos/JDimproved/JDim/pulls?state=closed&base=master&per_page=100'
-  QUERY='.[] | select(.merged_at != null) | .title, .html_url'
-  curl "$API" | jq -r "$QUERY" | sed -e '1~2s/^ */- /' -e '2~2s%^.\+/\(.\+\)$%  ([#\1](&))%'
+  QUERY='.[] | select(.merged_at != null) | .html_url, .title'
+  curl "$API" | jq -r "$QUERY" | sed -e '1~2s%^.\+/\(.\+\)$%- ([#\1](&))%' -e '2~2s/^ */  /'
 }
 generate_changelogs
 ```
@@ -62,7 +60,7 @@ generate_changelogs
 # 特定のPRから変更履歴を作る
 generate_changelog () {
   API="https://api.github.com/repos/JDimproved/JDim/pulls/$1"
-  curl "$API" | jq -r '.title, .html_url' | sed -e '1~2s/^ */- /' -e '2~2s%^.\+/\(.\+\)$%  ([#\1](&))%'
+  curl "$API" | jq -r '.html_url, .title' | sed -e '1~2s%^.\+/\(.\+\)$%- ([#\1](&))%' -e '2~2s/^ */  /'
 }
 generate_changelog 1
 ```
