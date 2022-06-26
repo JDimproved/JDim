@@ -49,7 +49,11 @@ Ubuntu 18.04(2018年)より前にリリースされたディストリビュー�
 
 メンテナンスの都合によりWindows(MinGW)版のサポートは[終了][#445]しました。
 
+Snap i386(32bit)版は2023年1月のリリースをもって[更新を終了][#890]する予定です。
+i386版ディストロを利用されている場合は更新をお願いいたします。
+
 [#445]: https://github.com/JDimproved/JDim/issues/445
+[#890]: https://github.com/JDimproved/JDim/issues/890
 
 
 ## 導入方法

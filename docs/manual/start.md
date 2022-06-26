@@ -187,8 +187,12 @@ Snapパッケージ版はアクセス制限が導入されているため通常�
   環境変数 (`GTK_THEME`) やGTKの設定ファイル (`$XDG_CONFIG_HOME/gtk-3.0/settings.ini`)
   を調整することで改善できるかもしれない
 
+#### サポートの最新情報
+Snap i386(32bit)版は2023年1月のリリースをもって[更新を終了][#890]する。
+更新終了後も最後のバージョンは利用可能だがStoreからパッケージが削除される可能性がある。
 
 [pr-merged]: https://github.com/JDimproved/JDim/pulls?q=is%3Apr+is%3Amerged
 [snapcraft]: https://snapcraft.io/jdim
+[#890]: https://github.com/JDimproved/JDim/issues/890
 
 [操作方法について]: {{ site.baseurl }}/operation/#threadview_touch "操作方法について \| JDim"
