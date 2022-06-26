@@ -400,7 +400,6 @@ const char* get_menu_ui( const std::string& id )
 {
     const char* menu_ui;
     if( id == "popup_menu" ) menu_ui = popup_menu;
-    else if( id == "popup_menu" ) menu_ui = popup_menu;
     else if( id == "popup_menu_etc" ) menu_ui = popup_menu_etc;
     else if( id == "popup_menu_mul" ) menu_ui = popup_menu_mul;
     else if( id == "popup_menu_mul_etc" ) menu_ui = popup_menu_mul_etc;
