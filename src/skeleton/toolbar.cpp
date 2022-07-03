@@ -643,7 +643,6 @@ Gtk::ToolButton* ToolBar::get_button_write()
         set_tooltip( *m_button_write, CONTROL::get_label_motions( CONTROL::WriteMessage ) );
 
         m_button_write->signal_clicked().connect( sigc::mem_fun(*this, &ToolBar::slot_clicked_write ) );
-        m_button_write->get_child()->signal_focus_out_event().connect( sigc::mem_fun(*this, &ToolBar::slot_focusout_write_button ) );
     }
 
     return m_button_write;
@@ -667,16 +666,6 @@ void ToolBar::slot_clicked_write()
 void ToolBar::focus_button_write()
 {
     get_button_write()->get_child()->grab_focus();
-}
-
-
-bool ToolBar::slot_focusout_write_button( GdkEventFocus* )
-{
-#ifdef _DEBUG
-    std::cout << "ToolBar::slot_focusout_write_button\n";
-#endif
-
-    return true;
 }
 
 
