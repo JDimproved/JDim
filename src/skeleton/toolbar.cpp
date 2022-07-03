@@ -201,15 +201,13 @@ void ToolBar::set_relief()
         for( Gtk::Widget* btn_widget : lists ) {
 
             Gtk::Button* button = nullptr;
-            Gtk::ToolButton* toolbutton = dynamic_cast<Gtk::ToolButton*>( btn_widget );
-            if( toolbutton ) button = dynamic_cast< Gtk::Button* >( toolbutton->get_child() );
-            if( ! button ){
-                Gtk::ToolItem* toolitem = dynamic_cast<Gtk::ToolItem*>( btn_widget );
-                if( toolitem ) button = dynamic_cast< Gtk::Button* >( toolitem->get_child() );
+            if( auto toolitem = dynamic_cast<Gtk::ToolItem*>( btn_widget ); toolitem ) {
+                button = dynamic_cast<Gtk::Button*>( toolitem->get_child() );
             }
             if( button ){
-                if( CONFIG::get_flat_button() ) button->set_relief( Gtk:: RELIEF_NONE );
-                else button->set_relief( Gtk:: RELIEF_NORMAL );
+                auto context = button->get_style_context();
+                if( CONFIG::get_flat_button() ) context->add_class( GTK_STYLE_CLASS_FLAT );
+                else context->remove_class( GTK_STYLE_CLASS_FLAT );
             }
         }
     }
