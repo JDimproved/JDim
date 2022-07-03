@@ -304,6 +304,7 @@ std::string MISC::concat_with_suffix( const std::list<std::string>& list_in, cha
 
 /** @brief str前後の半角スペース(U+0020)と全角スペース(U+3000)を削除
  *
+ * 半角スペースが含まれてないときはトリミングせずstrをそのまま返す。
  * @param[in] str トリミングする文字列
  * @return トリミングした結果
  */
@@ -315,6 +316,7 @@ std::string MISC::utf8_trim( const std::string& str )
     size_t lng = str.length();
     
     if( lng == 0 ) return str;
+    // TODO: 半角スペースがなくてもトリミングしたほうがよいか検証する
     if( str.find( ' ' ) == std::string::npos ) return str;
 
     // 前
