@@ -171,9 +171,6 @@ namespace SKELETON
         void set_label( const std::string& label );
         void set_color( const std::string& color );
 
-        // 書き込みボタン関係
-        bool slot_focusout_write_button( GdkEventFocus* event );
-
         // 検索関係
         void slot_toggle_searchbar();
         void slot_changed_search();
