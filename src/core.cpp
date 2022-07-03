@@ -3212,7 +3212,7 @@ void Core::exec_command()
     else if( command.command  == "open_url" ){
 
         // プロトコルが指定されていない場合
-        command.url = MISC::remove_space( command.url );
+        command.url = MISC::utf8_trim( command.url );
         if( command.url.rfind( "http://", 0 ) != 0
             && command.url.rfind( "https://", 0 ) != 0
             && command.url.rfind( "file://", 0 ) != 0

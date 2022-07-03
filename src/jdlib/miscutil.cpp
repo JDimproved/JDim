@@ -54,7 +54,7 @@ std::list< std::string > MISC::get_elisp_lists( const std::string& str )
 #endif 
    
     std::list< std::string > lists;
-    std::string str2 = remove_space( str );
+    std::string str2 = utf8_trim( str );
     const char* data = str2.c_str();
     if( data[ 0 ] != '(' ) return lists;
 
@@ -202,7 +202,7 @@ std::list< std::string > MISC::remove_nullline_from_list( const std::list< std::
 {
     std::list< std::string > list_ret;
     for( const std::string& s : list_in ) {
-        std::string tmp_str = MISC::remove_space( s );
+        std::string tmp_str = MISC::utf8_trim( s );
         if( ! tmp_str.empty() ) list_ret.push_back( s );
     }
 
@@ -217,7 +217,7 @@ std::list< std::string > MISC::remove_space_from_list( const std::list< std::str
 {
     std::list< std::string > list_ret;
     for( const std::string& s : list_in ) {
-        std::string tmp_str = MISC::remove_space( s );
+        std::string tmp_str = MISC::utf8_trim( s );
         list_ret.push_back( std::move( tmp_str ) );
     }
 
@@ -234,7 +234,7 @@ std::list< std::string > MISC::remove_commentline_from_list( const std::list< st
 
     std::list< std::string > list_ret;
     for( const std::string& s : list_in ) {
-        std::string tmp_str = MISC::remove_space( s );
+        std::string tmp_str = MISC::utf8_trim( s );
         if( tmp_str[0] != commentchr ) list_ret.push_back( s );
     }
 
@@ -302,10 +302,12 @@ std::string MISC::concat_with_suffix( const std::list<std::string>& list_in, cha
 
 
 
-//
-// strの前後の空白削除
-//
-std::string MISC::remove_space( const std::string& str )
+/** @brief str前後の半角スペース(U+0020)と全角スペース(U+3000)を削除
+ *
+ * @param[in] str トリミングする文字列
+ * @return トリミングした結果
+ */
+std::string MISC::utf8_trim( const std::string& str )
 {
     constexpr const char* str_space = u8"\u3000"; // "\xE3\x80\x80" 全角スペース
     constexpr size_t lng_space = 3;
@@ -1833,16 +1835,16 @@ std::vector<MISC::FormDatum> MISC::parse_html_form_data( const std::string& html
         if( regex.match( pat, html, offset ) ) {
             const std::string name_value = MISC::tolower_str( regex.str( 3 ) );
             if( name_value.rfind( "name=", 0 ) == 0 ) {
-                name = MISC::remove_space( regex.str( 4 ) );
-                value = MISC::remove_space( regex.str( 5 ) );
+                name = MISC::utf8_trim( regex.str( 4 ) );
+                value = MISC::utf8_trim( regex.str( 5 ) );
             }
             else if( name_value.rfind( "value=", 0 ) == 0 ) {
-                name = MISC::remove_space( regex.str( 7 ) );
-                value = MISC::remove_space( regex.str( 6 ) );
+                name = MISC::utf8_trim( regex.str( 7 ) );
+                value = MISC::utf8_trim( regex.str( 6 ) );
             }
             else {
-                name = MISC::remove_space( regex.str( 8 ) );
-                value = MISC::remove_space( regex.str( 9 ) );
+                name = MISC::utf8_trim( regex.str( 8 ) );
+                value = MISC::utf8_trim( regex.str( 9 ) );
             }
         }
 

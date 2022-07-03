@@ -1475,11 +1475,11 @@ void BBSListViewBase::add_newetcboard( const bool move, // true なら編集モ�
 
         diag.hide();
 
-        std::string url_org = MISC::remove_space( diag.get_url() );
-        name = MISC::remove_space( diag.get_name() );
+        std::string url_org = MISC::utf8_trim( diag.get_url() );
+        name = MISC::utf8_trim( diag.get_name() );
         url = url_org;
-        id = MISC::remove_space( diag.get_id() );
-        passwd = MISC::remove_space( diag.get_passwd() );
+        id = MISC::utf8_trim( diag.get_id() );
+        passwd = MISC::utf8_trim( diag.get_passwd() );
         if( ! id.empty() && ! passwd.empty() ) basicauth = id + ":" + passwd;
 
         if( name.empty() || url.empty() ){
@@ -2587,7 +2587,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 
     const std::string urldat = DBTREE::url_dat( url );
     const std::string urlcgi = DBTREE::url_readcgi( url, 0, 0 );
-    const std::string name_old = MISC::remove_space( DBTREE::article_subject( urldat ) );
+    const std::string name_old = MISC::utf8_trim( DBTREE::article_subject( urldat ) );
 
     int type = TYPE_THREAD;
     const int status = DBTREE::article_status( urldat_new );
@@ -2661,7 +2661,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 #ifdef _DEBUG
                         std::cout << "name_row = " << ustr_name << std::endl;
 #endif
-                        if( MISC::remove_space( ustr_name ) == name_old ){
+                        if( MISC::utf8_trim( ustr_name ) == name_old ){
 #ifdef _DEBUG
                             std::cout << "replace name\n";
 #endif

@@ -166,7 +166,7 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
     std::list< std::string > lines = MISC::get_lines( rawlines );
     for( std::string& line : lines ) {
 
-        line = MISC::remove_space( line );
+        line = MISC::utf8_trim( line );
 
         if( m_tmp_buffer.empty() ){
 
@@ -252,7 +252,7 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
     std::list< std::string > lines = MISC::get_lines( str_lines );
     for( std::string& line : lines ) {
 
-        line = MISC::remove_space( line );
+        line = MISC::utf8_trim( line );
         if( line.empty() ) continue;
 
         int num = 0;

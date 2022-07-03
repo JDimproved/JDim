@@ -4446,7 +4446,7 @@ std::string DrawAreaBase::get_selection_as_url( const CARET_POSITION& caret_pos 
     if( is_caret_on_selection( caret_pos ) ){
 
         size_t n,dig;
-        std::string select_str = MISC::remove_space( m_selection.str );
+        std::string select_str = MISC::utf8_trim( m_selection.str );
         select_str = MISC::remove_str( select_str, "\n" );
         int num = MISC::str_to_uint( select_str.c_str(), dig, n );
 
