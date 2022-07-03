@@ -309,7 +309,7 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
     // キー設定をスペース毎に区切って行を作成
     std::list< std::string > list_motions = MISC::StringTokenizer( str_motions, ' ' );
     if( list_motions.size() ){
-        for( const std::string& motion : list_motions ) append_row( MISC::remove_space( motion ) );
+        for( const std::string& motion : list_motions ) append_row( MISC::utf8_trim( motion ) );
 
         // 先頭にカーソルセット
         Gtk::TreeModel::Children children = m_liststore->children();
@@ -470,7 +470,7 @@ void MouseKeyDiag::slot_reset()
     std::list< std::string > list_defaults;
     for( const std::string& raw_motion : list_motions ) {
 
-        std::string motion = MISC::remove_space( raw_motion );
+        std::string motion = MISC::utf8_trim( raw_motion );
 
         bool conflict = false;
         const std::vector< int > vec_ids = check_conflict( m_controlmode, motion );

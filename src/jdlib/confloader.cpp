@@ -40,8 +40,8 @@ ConfLoader::ConfLoader( const std::string& file, std::string str_conf )
             const size_t i = line.find( '=' );
             if( i != std::string::npos ){
 
-                m_data.push_back({ MISC::remove_space( line.substr( 0, i ) ),
-                                   MISC::remove_space( line.substr( i + 1 ) ) });
+                m_data.push_back({ MISC::utf8_trim( line.substr( 0, i ) ),
+                                   MISC::utf8_trim( line.substr( i + 1 ) ) });
 #ifdef _DEBUG
                 const ConfData& data = m_data.back();
                 std::cout << data.name << " = " << data.value << std::endl;

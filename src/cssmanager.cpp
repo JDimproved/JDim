@@ -741,7 +741,7 @@ bool Css_Manager::read_html()
             block = block.substr( pos );
         }
 
-        block = MISC::remove_space( MISC::tolower_str( block.substr( 1 ) ) );
+        block = MISC::utf8_trim( MISC::tolower_str( block.substr( 1 ) ) );
 
 #ifdef _DEBUG
         std::cout << "tag = " << block << std::endl;

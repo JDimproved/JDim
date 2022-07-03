@@ -302,10 +302,10 @@ void BoardJBBS::parse_subject( const char* str_subject_txt )
         ARTICLE_INFO artinfo;
 
         artinfo.id.assign( str_id_dat, lng_id_dat );
-        artinfo.id = MISC::remove_space( artinfo.id );
+        artinfo.id = MISC::utf8_trim( artinfo.id );
 
         artinfo.subject.assign( str_subject, lng_subject );
-        artinfo.subject = MISC::remove_space( artinfo.subject );
+        artinfo.subject = MISC::utf8_trim( artinfo.subject );
         artinfo.subject = MISC::replace_str( artinfo.subject, "&lt;", "<" );
         artinfo.subject = MISC::replace_str( artinfo.subject, "&gt;", ">" );
 

@@ -499,7 +499,7 @@ void Preferences::slot_ok_clicked()
     if( m_proxy_frame.rd_disable.get_active() ) mode = DBTREE::PROXY_DISABLE;
     else if( m_proxy_frame.rd_local.get_active() ) mode = DBTREE::PROXY_LOCAL;
     DBTREE::board_set_mode_local_proxy( get_url(), mode );
-    DBTREE::board_set_local_proxy( get_url(), MISC::remove_space( m_proxy_frame.entry_host.get_text() ) );
+    DBTREE::board_set_local_proxy( get_url(), MISC::utf8_trim( m_proxy_frame.entry_host.get_text() ) );
     DBTREE::board_set_local_proxy_port( get_url(), atoi( m_proxy_frame.entry_port.get_text().c_str() ) );
 
     mode = DBTREE::PROXY_GLOBAL;
@@ -507,7 +507,7 @@ void Preferences::slot_ok_clicked()
     else if( m_proxy_frame_w.rd_local.get_active() ) mode = DBTREE::PROXY_LOCAL;
 
     DBTREE::board_set_mode_local_proxy_w( get_url(), mode );
-    DBTREE::board_set_local_proxy_w( get_url(), MISC::remove_space( m_proxy_frame_w.entry_host.get_text() ) );
+    DBTREE::board_set_local_proxy_w( get_url(), MISC::utf8_trim( m_proxy_frame_w.entry_host.get_text() ) );
     DBTREE::board_set_local_proxy_port_w( get_url(), atoi( m_proxy_frame_w.entry_port.get_text().c_str() ) );
 
     // 書き込み設定

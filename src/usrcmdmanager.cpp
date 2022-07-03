@@ -112,7 +112,7 @@ void Usrcmd_Manager::analyze_xml()
 
 void Usrcmd_Manager::set_cmd( const std::string& cmd )
 {
-    std::string cmd2 = MISC::remove_space( cmd );
+    std::string cmd2 = MISC::utf8_trim( cmd );
     m_list_cmd.push_back( cmd2 );
 
 #ifdef _DEBUG
@@ -192,14 +192,14 @@ void Usrcmd_Manager::exec( const std::string& command, // コマンド
     if( cmd.rfind( "$VIEW", 0 ) == 0 ){
         use_browser = true;
         cmd = cmd.substr( 5 );
-        cmd = MISC::remove_space( cmd );
+        cmd = MISC::utf8_trim( cmd );
     }
 
     bool show_dialog = false;
     if( cmd.rfind( "$DIALOG", 0 ) == 0 ){
         show_dialog = true;
         cmd = cmd.substr( 7 );
-        cmd = MISC::remove_space( cmd );
+        cmd = MISC::utf8_trim( cmd );
     }
 
     cmd = replace_cmd( cmd, url, link, selection, number );

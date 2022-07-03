@@ -311,7 +311,7 @@ void BoardBase::set_list_cookies( const std::list< std::string >& list_cookies )
     const std::string hostname = MISC::get_hostname( get_root(), false );
 
     for( const std::string& input : list_cookies ) {
-        cookie_manager->feed( hostname, MISC::remove_space( input ) );
+        cookie_manager->feed( hostname, MISC::utf8_trim( input ) );
     }
 
     update_hap();
@@ -1541,7 +1541,7 @@ bool BoardBase::is_abone_thread( ArticleBase* article )
     // スレあぼーん
     if( check_thread ){
         for( const std::string& subject : m_list_abone_thread ) {
-            if( MISC::remove_space( article->get_subject() ) == MISC::remove_space( subject ) ){
+            if( MISC::utf8_trim( article->get_subject() ) == MISC::utf8_trim( subject ) ){
 
                 // 対象スレがDat落ちした場合はあぼーんしなかったスレ名をリストから消去する
                 // remove_old_abone_thread() も参照

@@ -97,7 +97,7 @@ bool ConfigItems::load( const bool restore )
     ref_prefix = cf.get_option_str( "ref_prefix", CONF_REF_PREFIX, 16 );
 
     // 参照文字( ref_prefix ) の後のスペースの数
-    // JDLIB::ConfLoader の中で MISC::remove_space() が呼ばれて空白が消えるので別設定とした
+    // JDLIB::ConfLoader の中で MISC::utf8_trim() が呼ばれて空白が消えるので別設定とした
     ref_prefix_space = cf.get_option_int( "ref_prefix_space", CONF_REF_PREFIX_SPACE, 0, 16 );
     for( int i = 0; i < ref_prefix_space; ++i ) ref_prefix_space_str += " ";
 

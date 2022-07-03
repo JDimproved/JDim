@@ -280,13 +280,13 @@ void Post::receive_finish()
     icase = true;
     newline = false; // . に改行をマッチさせる
     regex.exec( ".*<title>([^<]*)</title>.*", m_return_html, offset, icase, newline, usemigemo, wchar );
-    title = MISC::remove_space( regex.str( 1 ) );
+    title = MISC::utf8_trim( regex.str( 1 ) );
 
     // 2chタグ
     icase = false;
     newline = false; // . に改行をマッチさせる
     regex.exec( ".*2ch_X:([^\\-]*)\\-\\->.*", m_return_html, offset, icase, newline, usemigemo, wchar );
-    tag_2ch = MISC::remove_space( regex.str( 1 ) );
+    tag_2ch = MISC::utf8_trim( regex.str( 1 ) );
 
     // エラー内容を取得
 
@@ -353,7 +353,7 @@ void Post::receive_finish()
     icase = false;
     newline = true;
     regex.exec( ".*<font size=\\+1 color=#FF0000>([^<]*)</font>.*", m_return_html, offset, icase, newline, usemigemo, wchar );
-    conf = MISC::remove_space( regex.str( 1 ) );
+    conf = MISC::utf8_trim( regex.str( 1 ) );
 
     // メッセージ本文
 
@@ -365,7 +365,7 @@ void Post::receive_finish()
         regex.exec( ".*</ul>.*<b>(.*)</b>.*<input.*", m_return_html, offset, icase, newline, usemigemo, wchar );
     }
 
-    msg = MISC::remove_space( regex.str( 1 ) );
+    msg = MISC::utf8_trim( regex.str( 1 ) );
     const::std::list< std::string > list_cookies = SKELETON::Loadable::cookies();
 
 #ifdef _DEBUG

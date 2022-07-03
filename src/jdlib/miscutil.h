@@ -73,8 +73,8 @@ namespace MISC
     // (例) {"aa", "", "bb", "cc"}, '!' -> "aa!bb!cc!"
     std::string concat_with_suffix( const std::list<std::string>& list_in, char suffix );
 
-    // strの前後の空白削除
-    std::string remove_space( const std::string& str );
+    /// str前後の半角スペース(U+0020)と全角スペース(U+3000)を削除
+    std::string utf8_trim( const std::string& str );
 
     /// str前後の改行(\r, \\n)、タブ(\t)、スペース(U+0020)を削除
     std::string ascii_trim( const std::string& str );

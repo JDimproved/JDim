@@ -76,36 +76,46 @@ TEST_F(ConcatWithSuffixTest, ignore_empty_string)
 }
 
 
-class RemoveSpaceTest : public ::testing::Test {};
+class Utf8TrimTest : public ::testing::Test {};
 
-TEST_F(RemoveSpaceTest, remove_empty)
+TEST_F(Utf8TrimTest, remove_empty)
 {
     std::string expect = {};
-    EXPECT_EQ( expect, MISC::remove_space( u8"" ) );
+    EXPECT_EQ( expect, MISC::utf8_trim( "" ) );
 }
 
-TEST_F(RemoveSpaceTest, remove_U_0020)
+TEST_F(Utf8TrimTest, remove_U_0020)
 {
     std::string expect = {};
-    EXPECT_EQ( expect, MISC::remove_space( u8"    " ) );
+    EXPECT_EQ( expect, MISC::utf8_trim( "    " ) );
 
-    expect.assign( u8"the quick  brown   fox" );
-    EXPECT_EQ( expect, MISC::remove_space( u8" the quick  brown   fox  " ) );
+    expect.assign( "the quick  brown   fox" );
+    EXPECT_EQ( expect, MISC::utf8_trim( " the quick  brown   fox  " ) );
 }
 
-TEST_F(RemoveSpaceTest, remove_U_3000)
+TEST_F(Utf8TrimTest, remove_mixed_U_2000_U_3000)
 {
     std::string expect = {};
-    EXPECT_EQ( expect, MISC::remove_space( u8"\u3000 \u3000 " ) );
+    EXPECT_EQ( expect, MISC::utf8_trim( "\u3000 \u3000 " ) );
 
-    expect.assign( u8"the quick\u3000brown\u3000 fox" );
-    EXPECT_EQ( expect, MISC::remove_space( u8"\u3000the quick\u3000brown\u3000 fox\u3000 " ) );
+    expect.assign( "the quick\u3000brown\u3000 fox" );
+    EXPECT_EQ( expect, MISC::utf8_trim( "\u3000the quick\u3000brown\u3000 fox\u3000 " ) );
 }
 
-TEST_F(RemoveSpaceTest, remove_doublequote)
+TEST_F(Utf8TrimTest, not_remove_U_3000_only)
 {
-    std::string expect = u8"\"\"";
-    EXPECT_EQ( expect, MISC::remove_space( u8"\u3000 \"\"\u3000 " ) );
+    // 半角スペースが含まれてないときはU+3000が先頭末尾にあってもトリミングしない
+    std::string expect = "\u3000\u3000";
+    EXPECT_EQ( expect, MISC::utf8_trim( "\u3000\u3000" ) );
+
+    expect.assign( "\u3000the\u3000quick\u3000brown\u3000fox\u3000" );
+    EXPECT_EQ( expect, MISC::utf8_trim( expect ) );
+}
+
+TEST_F(Utf8TrimTest, remove_doublequote)
+{
+    std::string expect = "\"\"";
+    EXPECT_EQ( expect, MISC::utf8_trim( "\u3000 \"\"\u3000 " ) );
 }
 
 
