@@ -1627,9 +1627,11 @@ std::string MISC::get_dir( const std::string& path )
 //
 std::string MISC::getenv_limited( const char *name, const size_t size )
 {
-    if( ! name || ! getenv( name ) ) return std::string();
+    if( ! name ) return {};
+    char* p = getenv( name );
+    if( ! p ) return {};
 
-    std::string env = getenv( name );
+    std::string env{ p };
     if( env.size() > size ) env.resize( size );
     return env;
 }
