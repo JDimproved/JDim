@@ -3636,27 +3636,43 @@ void NodeTreeBase::check_fontid( const int number )
 //static member
 bool NodeTreeBase::remove_imenu( char* str_link )
 {
-    char *p = str_link;
+    assert( str_link );
 
-    if ( memcmp( p, "http", strlen( "http" ) ) != 0 ) return false;
-    p += strlen( "http" );
-    if ( *p == 's' ) p++;
-    if ( memcmp( p, "://", strlen( "://" ) ) != 0 ) return false;
-    p += strlen( "://" );
+    std::size_t host_start;
+    if( std::strncmp( str_link, "https://", 8 ) == 0 ) host_start = 8;
+    else if( std::strncmp( str_link, "http://", 7 ) == 0 ) host_start = 7;
+    else return false;
 
-    const char *cut_sites[] = { "ime.nu/", "ime.st/", "nun.nu/", "pinktower.com/", nullptr };
-    const char **q = cut_sites;
-    while ( *q ) {
-        size_t cs_len = strlen( *q );
-        if ( memcmp( p, *q, cs_len ) == 0 ) {
-            // "http://ime.nu/"等、URLがそれだけだった場合は削除しない
-            if ( p[cs_len] == '\0' ) return false;
-            memmove( p, p + cs_len, strlen( p + cs_len ) + 1 );
-            return true;
-        }
-        q ++;
+    std::size_t cut_end;
+    if( std::strncmp( str_link + host_start, "jump.5ch.net/?", 14 ) == 0
+            || std::strncmp( str_link + host_start, "pinktower.com/", 14 ) == 0
+            || std::strncmp( str_link + host_start, "jump.2ch.net/?", 14 ) == 0 ) {
+        cut_end = host_start + 14;
     }
-    return false;
+    else if( std::strncmp( str_link + host_start, "ime.nu/", 7 ) == 0
+            || std::strncmp( str_link + host_start, "ime.st/", 7 ) == 0
+            || std::strncmp( str_link + host_start, "nun.nu/", 7 ) == 0 ) {
+        cut_end = host_start + 7;
+    }
+    else {
+        return false;
+    }
+
+    const std::size_t length = std::strlen( str_link );
+    // "http://ime.nu/"等、URLがそれだけだった場合は削除しない
+    if( length == cut_end ) return false;
+
+    // "httpbin.org"のようなホストがあるのでスラッシュまでチェック
+    if( std::strncmp( str_link + cut_end, "https://", 8 ) == 0
+            || std::strncmp( str_link + cut_end, "http://", 7 ) == 0 ) {
+        // プロトコルが続く場合は頭から削る
+        host_start = 0;
+    }
+
+    std::memmove( str_link + host_start, str_link + cut_end, length - cut_end );
+    str_link[length - cut_end + host_start] = '\0';
+
+    return true;
 }
 
 
