@@ -1,5 +1,6 @@
 # Add test code source files to following list.
 sources = [
+  'gtest_dbtree_nodetreebase.cpp',
   'gtest_jdlib_cookiemanager.cpp',
   'gtest_jdlib_jdiconv.cpp',
   'gtest_jdlib_jdregex.cpp',

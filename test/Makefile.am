@@ -108,6 +108,7 @@ gtest_jdim_LDADD = \
 # テストコードのファイルを追加したらここにリストします
 # 行末のバックスラッシュに注意
 gtest_jdim_SOURCES = \
+	gtest_dbtree_nodetreebase.cpp \
 	gtest_jdlib_cookiemanager.cpp \
 	gtest_jdlib_jdiconv.cpp \
 	gtest_jdlib_jdregex.cpp \
