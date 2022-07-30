@@ -398,6 +398,7 @@ namespace DBTREE
         // http://ime.nu/ などをリンクから削除
         static bool remove_imenu( char* str_link );
 
+      public:
         // 文字列中の"&amp;"を"&"に変換する
         static int convert_amp( char* text, const int n );
     };
