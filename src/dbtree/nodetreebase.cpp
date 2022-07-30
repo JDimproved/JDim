@@ -3665,21 +3665,9 @@ bool NodeTreeBase::remove_imenu( char* str_link )
 int NodeTreeBase::convert_amp( char* text, const int n )
 {
     int m = n;
-
-    int i;
-    for( i = 0; i < m; i++ ){
-
-        if( text[ i ] == '&' &&
-            m > (i + 4) &&
-            text[i + 1] == 'a' &&
-            text[i + 2] == 'm' &&
-            text[i + 3] == 'p' &&
-            text[i + 4] == ';' ){
-
-            // &の次, &amp;の次, &amp;の次からの長さ
-            memmove( text + i + 1, text + i + 5, n - i - 5 );
-
-            // "amp;"の分減らす
+    for( int i = 0; i < m; ++i ) {
+        if( std::strncmp( text + i, "&amp;", 5 ) == 0 ) {
+            std::memmove( text + i + 1, text + i + 5, n - i - 5 );
             m -= 4;
         }
     }
