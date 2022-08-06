@@ -274,6 +274,18 @@ std::string Board2ch::url_subbbscgi_new() const
 }
 
 
+/** @brief SETTING.TXT の項目 BBS_UNICODE の値を返す
+ *
+ * @remarks 2022-04-30 以降、5chでは BBS_UNICODE が無効になったため
+ * 設定値に関係なく空文字列を返すように変更する
+ */
+std::string Board2ch::get_unicode() const
+{
+    // XXX: "pass" のほうが適切な値か？
+    return {};
+}
+
+
 
 //
 // 新しくArticleBaseクラスを追加してそのポインタを返す

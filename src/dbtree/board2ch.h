@@ -69,6 +69,9 @@ namespace DBTREE
         // datの最大サイズ(Kバイト)
         int get_max_dat_lng() const override { return DEFAULT_MAX_DAT_LNG; }
 
+        // SETTING.TXT
+        std::string get_unicode() const override;
+
       protected:
 
         // クッキー
