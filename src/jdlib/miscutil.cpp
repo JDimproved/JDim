@@ -837,12 +837,13 @@ std::string MISC::regex_unescape( const std::string& str )
 }
 
 
-//
-// HTMLエスケープ
-//
-// include_url : URL中でもエスケープする( デフォルト = true )
-//
-std::string MISC::html_escape( const std::string& str, const bool include_url )
+/** @brief HTMLで特別な意味を持つ記号(& " < >)を文字実体参照へエスケープする
+ *
+ * @param[in] str        エスケープする入力
+ * @param[in] completely URL中でもエスケープする( デフォルト = true )
+ * @return エスケープした結果
+ */
+std::string MISC::html_escape( const std::string& str, const bool completely )
 {
     if( str.empty() ) return str;
 
@@ -856,7 +857,7 @@ std::string MISC::html_escape( const std::string& str, const bool include_url )
         char tmpchar = str.c_str()[ pos ];
 
         // URL中はエスケープしない場合
-        if( ! include_url )
+        if( ! completely )
         {
             // URLとして扱うかどうか
             // エスケープには影響がないので loose_url としておく
@@ -875,17 +876,9 @@ std::string MISC::html_escape( const std::string& str, const bool include_url )
             }
         }
 
-        // include_url = false でURL中ならエスケープしない
+        // completely = false でURL中ならエスケープしない
         if( is_url ) str_out += tmpchar;
-        else if( tmpchar == '&' )
-        {
-            const int bufsize = 64;
-            char out_char[ bufsize ];
-            int n_in, n_out;
-            const int type = DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out, false );
-            if( type == DBTREE::NODE_NONE ) str_out += "&amp;";
-            else str_out += tmpchar;
-        }
+        else if( tmpchar == '&' ) str_out += "&amp;";
         else if( tmpchar == '\"' ) str_out += "&quot;";
         else if( tmpchar == '<' ) str_out += "&lt;";
         else if( tmpchar == '>' ) str_out += "&gt;";

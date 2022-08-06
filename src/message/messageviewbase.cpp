@@ -880,8 +880,14 @@ void MessageViewBase::slot_switch_page( Gtk::Widget*, guint page )
         // URLを除外してエスケープ
         const bool include_url = false;
         std::string msg;
-        if( m_text_message ) msg = MISC::html_escape( m_text_message->get_text(), include_url );
-        msg = MISC::replace_str( msg, "\n", " <br> " );
+        if( m_text_message ) {
+            msg = m_text_message->get_text();
+
+            constexpr bool completely = true;
+            msg = MISC::chref_decode( msg, completely );
+            msg = MISC::html_escape( msg, include_url );
+            msg = MISC::replace_str( msg, "\n", " <br> " );
+        }
 
         std::stringstream ss;
 
