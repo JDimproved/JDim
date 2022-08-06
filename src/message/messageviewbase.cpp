@@ -877,18 +877,6 @@ void MessageViewBase::slot_switch_page( Gtk::Widget*, guint page )
         std::string new_subject = MESSAGE::get_admin()->get_new_subject();
         if( ! new_subject.empty() ) set_label( new_subject );
 
-        // URLを除外してエスケープ
-        const bool include_url = false;
-        std::string msg;
-        if( m_text_message ) {
-            msg = m_text_message->get_text();
-
-            constexpr bool completely = true;
-            msg = MISC::chref_decode( msg, completely );
-            msg = MISC::html_escape( msg, include_url );
-            msg = MISC::replace_str( msg, "\n", " <br> " );
-        }
-
         std::stringstream ss;
 
         // 名前 + トリップ
@@ -916,9 +904,32 @@ void MessageViewBase::slot_switch_page( Gtk::Widget*, guint page )
         ss << "<>" << mail  << "<>";
 
         const std::time_t current = std::time( nullptr );
-        ss << MISC::timettostr( current, MISC::TIME_WEEK );
+        ss << MISC::timettostr( current, MISC::TIME_WEEK ) << " ID:\?\?\?<>";
 
-        ss << " ID:???" << "<>" << msg << "<>\n";
+        if( m_text_message ){
+            std::string msg = m_text_message->get_text();
+
+            // BBS_UNICODE=change のときは文字エンコーディングが
+            // 対応していないUnicode文字を文字参照の形式(&#nnnn;)で表示する
+            if( DBTREE::get_unicode( get_url() ) == "change" ){
+                // MS932等に無い文字を数値文字参照にするために文字コードを変換する
+                int byte_out;
+                const std::string str_enc = m_iconv->convert( msg.data(), msg.size(), byte_out );
+                msg = MISC::Iconv( str_enc, "UTF-8", DBTREE::board_charset( get_url() ) );
+            }
+            else{
+                constexpr bool completely = true;
+                msg = MISC::chref_decode( msg, completely );
+            }
+
+            // URLを除外してエスケープ
+            constexpr bool include_url = false;
+            msg = MISC::html_escape( msg, include_url );
+
+            ss << MISC::replace_str( msg, "\n", " <br> " );
+        }
+
+        ss << "<>\n";
 
 #ifdef _DEBUG
         std::cout << ss.str() << std::endl;
