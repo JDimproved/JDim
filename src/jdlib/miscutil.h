@@ -138,9 +138,9 @@ namespace MISC
     // 正規表現のメタ文字をアンエスケープ
     std::string regex_unescape( const std::string& str );
 
-    // HTMLエスケープ
-    // include_url : URL中でもエスケープする( デフォルト = true )
-    std::string html_escape( const std::string& str, const bool include_url = true );
+    // HTMLで特別な意味を持つ記号(& " < >)を文字実体参照へエスケープする
+    // completely : URL中でもエスケープする( デフォルト = true )
+    std::string html_escape( const std::string& str, const bool completely = true );
 
     // HTMLアンエスケープ
     std::string html_unescape( const std::string& str );
