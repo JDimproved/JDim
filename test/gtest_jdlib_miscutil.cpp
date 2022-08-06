@@ -329,6 +329,53 @@ TEST_F(ReplaceNewlinesToStrTest, replace_crlf)
 }
 
 
+class HtmlEscapeTest : public ::testing::Test {};
+
+TEST_F(HtmlEscapeTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::html_escape( "", false ) );
+    EXPECT_EQ( "", MISC::html_escape( "", true ) );
+}
+
+TEST_F(HtmlEscapeTest, not_escape)
+{
+    EXPECT_EQ( "hello world", MISC::html_escape( "hello world", false ) );
+    EXPECT_EQ( "hello world", MISC::html_escape( "hello world", true ) );
+}
+
+TEST_F(HtmlEscapeTest, escape_amp)
+{
+    EXPECT_EQ( "hello&amp;world", MISC::html_escape( "hello&world", false ) );
+    EXPECT_EQ( "hello&amp;world", MISC::html_escape( "hello&world", true ) );
+}
+
+TEST_F(HtmlEscapeTest, escape_quot)
+{
+    EXPECT_EQ( "hello&quot;world", MISC::html_escape( "hello\"world", false ) );
+    EXPECT_EQ( "hello&quot;world", MISC::html_escape( "hello\"world", true ) );
+}
+
+TEST_F(HtmlEscapeTest, escape_lt)
+{
+    EXPECT_EQ( "hello&lt;world", MISC::html_escape( "hello<world", false ) );
+    EXPECT_EQ( "hello&lt;world", MISC::html_escape( "hello<world", true ) );
+}
+
+TEST_F(HtmlEscapeTest, escape_gt)
+{
+    EXPECT_EQ( "hello&gt;world", MISC::html_escape( "hello>world", false ) );
+    EXPECT_EQ( "hello&gt;world", MISC::html_escape( "hello>world", true ) );
+}
+
+TEST_F(HtmlEscapeTest, completely)
+{
+    // URLを含むテキスト
+    const std::string input = "& https://foobar.test/?a=b&c=d& &";
+    EXPECT_EQ( "&amp; https://foobar.test/?a=b&amp;c=d&amp; &amp;", MISC::html_escape( input, true ) );
+    EXPECT_EQ( "&amp; https://foobar.test/?a=b&c=d& &amp;", MISC::html_escape( input, false ) );
+}
+
+
 class IsUrlSchemeTest : public ::testing::Test {};
 
 TEST_F(IsUrlSchemeTest, url_none)
