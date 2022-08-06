@@ -1618,7 +1618,7 @@ void ArticleViewBase::show_res( const std::string& num, const bool show_title )
 
         std::string html;
         std::string tmpstr = DBTREE::board_name( m_url_article );
-        if( ! tmpstr.empty() ) html += "[ " + tmpstr + " ] ";
+        if( ! tmpstr.empty() ) html += "[ " + MISC::html_escape( tmpstr ) + " ] ";
 
         tmpstr = DBTREE::article_subject( m_url_article );
         if( ! tmpstr.empty() ) html += tmpstr;

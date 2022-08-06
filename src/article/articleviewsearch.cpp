@@ -257,7 +257,7 @@ void ArticleViewSearch::relayout()
     if( m_searchmode == CORE::SEARCHMODE_ALLLOG ) comment <<  "検索対象：キャッシュ内の全ログ<br>";
     else if( m_searchmode == CORE::SEARCHMODE_TITLE ) comment << "検索サイト : "
                                                 + MISC::get_hostname( CONFIG::get_url_search_title() ) + "<br>";
-    else comment <<  "検索対象：" << DBTREE::board_name( m_url_board ) << "<br>";
+    else comment <<  "検索対象：" << MISC::html_escape( DBTREE::board_name( m_url_board ) ) << "<br>";
 
     if( get_bm() ) comment << "検索条件：しおり<br>";
 
@@ -284,11 +284,11 @@ void ArticleViewSearch::relayout()
 
                 // 板名表示
                 if( m_searchmode == CORE::SEARCHMODE_ALLLOG || m_searchmode == CORE::SEARCHMODE_TITLE  ) {
-                    comment << "[ <a href=\"" << DBTREE::url_boardbase( data.url_readcgi ) << "\">" << data.boardname
-                            << "</a> ] ";
+                    comment << "[ <a href=\"" << DBTREE::url_boardbase( data.url_readcgi ) << "\">"
+                            << MISC::html_escape( data.boardname ) << "</a> ] ";
                 }
 
-                comment << "<a href=\"" << data.url_readcgi << "\">" << MISC::html_escape( data.subject ) << "</a>";
+                comment << "<a href=\"" << data.url_readcgi << "\">" << data.subject << "</a>";
 
                 if( data.num ) comment << " ( " << data.num << " )";
 
