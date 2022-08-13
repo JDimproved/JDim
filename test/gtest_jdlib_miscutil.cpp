@@ -376,6 +376,53 @@ TEST_F(HtmlEscapeTest, completely)
 }
 
 
+class HtmlUnescapeTest : public ::testing::Test {};
+
+TEST_F(HtmlUnescapeTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::html_unescape( "" ) );
+    EXPECT_EQ( "", MISC::html_unescape( "" ) );
+}
+
+TEST_F(HtmlUnescapeTest, not_escape)
+{
+    EXPECT_EQ( "quick brown fox", MISC::html_unescape( "quick brown fox" ) );
+    EXPECT_EQ( "quick brown fox", MISC::html_unescape( "quick brown fox" ) );
+}
+
+TEST_F(HtmlUnescapeTest, escape_amp)
+{
+    EXPECT_EQ( "quick&brown&fox", MISC::html_unescape( "quick&amp;brown&amp;fox" ) );
+}
+
+TEST_F(HtmlUnescapeTest, escape_quot)
+{
+    EXPECT_EQ( "quick\"brown\"fox", MISC::html_unescape( "quick&quot;brown&quot;fox" ) );
+}
+
+TEST_F(HtmlUnescapeTest, escape_lt)
+{
+    EXPECT_EQ( "quick<brown<fox", MISC::html_unescape( "quick&lt;brown&lt;fox" ) );
+}
+
+TEST_F(HtmlUnescapeTest, escape_gt)
+{
+    EXPECT_EQ( "quick>brown>fox", MISC::html_unescape( "quick&gt;brown&gt;fox" ) );
+}
+
+TEST_F(HtmlUnescapeTest, DISABLED_numeric_char_reference)
+{
+    EXPECT_EQ( "quick&#123;brown&#234;fox", MISC::html_unescape( "quick&#123;brown&#234;fox" ) );
+    EXPECT_EQ( "quick&#xabcd;brown&#xEF01;fox", MISC::html_unescape( "quick&#xabcd;brown&#xEF01;fox" ) );
+}
+
+TEST_F(HtmlUnescapeTest, DISABLED_named_char_reference)
+{
+    EXPECT_EQ( "quick&auml;brown&Uuml;fox", MISC::html_unescape( "quick&auml;brown&Uuml;fox" ) );
+    EXPECT_EQ( "quick&Rarr;brown&dArr;fox", MISC::html_unescape( "quick&Rarr;brown&dArr;fox" ) );
+}
+
+
 class IsUrlSchemeTest : public ::testing::Test {};
 
 TEST_F(IsUrlSchemeTest, url_none)
