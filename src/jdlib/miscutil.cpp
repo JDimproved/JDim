@@ -896,29 +896,33 @@ std::string MISC::html_escape( const std::string& str, const bool completely )
 }
 
 
-//
-// HTMLアンエスケープ
-//
+/** @brief HTMLで特別な意味を持つ記号の文字実体参照(\&quot; \&amp; \&lt; \&gt;)をアンエスケープする
+ *
+ * @param[in] str アンエスケープする入力
+ * @return アンエスケープした結果
+ */
 std::string MISC::html_unescape( const std::string& str )
 {
     if( str.empty() ) return str;
     if( str.find( '&' ) == std::string::npos ) return str;
 
     std::string str_out;
-    const size_t str_length = str.length();
+    str_out.reserve( str.size() );
+    const char* pos = str.c_str();
+    const char* pos_end = pos + str.size();
 
-    for( size_t pos = 0; pos < str_length; ++pos ){
+    while( pos < pos_end ){
 
-        const int bufsize = 64;
-        char out_char[ bufsize ];
-        int n_in, n_out;
-        DBTREE::decode_char( str.c_str() + pos, n_in, out_char, n_out, false );
+        // '&' までコピーする
+        while( *pos != '&' && *pos != '\0' ) str_out.push_back( *pos++ );
+        if( pos >= pos_end ) break;
 
-        if( n_out ){
-            str_out += out_char;
-            pos += n_in -1;
-        }
-        else str_out += str.c_str()[ pos ];
+        // エスケープ用の文字参照をデコード
+        if( std::strncmp( pos, "&quot;", 6 ) == 0 ){ str_out.push_back( '"' ); pos += 6; }
+        else if( std::strncmp( pos, "&amp;", 5 ) == 0 ){ str_out.push_back( '&' ); pos += 5; }
+        else if( std::strncmp( pos, "&lt;", 4 ) == 0 ){ str_out.push_back( '<' ); pos += 4; }
+        else if( std::strncmp( pos, "&gt;", 4 ) == 0 ){ str_out.push_back( '>' ); pos += 4; }
+        else str_out.push_back( *pos++ );
     }
 
 #ifdef _DEBUG

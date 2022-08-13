@@ -410,13 +410,13 @@ TEST_F(HtmlUnescapeTest, escape_gt)
     EXPECT_EQ( "quick>brown>fox", MISC::html_unescape( "quick&gt;brown&gt;fox" ) );
 }
 
-TEST_F(HtmlUnescapeTest, DISABLED_numeric_char_reference)
+TEST_F(HtmlUnescapeTest, numeric_char_reference)
 {
     EXPECT_EQ( "quick&#123;brown&#234;fox", MISC::html_unescape( "quick&#123;brown&#234;fox" ) );
     EXPECT_EQ( "quick&#xabcd;brown&#xEF01;fox", MISC::html_unescape( "quick&#xabcd;brown&#xEF01;fox" ) );
 }
 
-TEST_F(HtmlUnescapeTest, DISABLED_named_char_reference)
+TEST_F(HtmlUnescapeTest, named_char_reference)
 {
     EXPECT_EQ( "quick&auml;brown&Uuml;fox", MISC::html_unescape( "quick&auml;brown&Uuml;fox" ) );
     EXPECT_EQ( "quick&Rarr;brown&dArr;fox", MISC::html_unescape( "quick&Rarr;brown&dArr;fox" ) );
