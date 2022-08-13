@@ -142,7 +142,7 @@ namespace MISC
     // completely : URL中でもエスケープする( デフォルト = true )
     std::string html_escape( const std::string& str, const bool completely = true );
 
-    // HTMLアンエスケープ
+    // HTMLで特別な意味を持つ記号の文字実体参照(&quot; &amp; &lt; &gt;)をアンエスケープする
     std::string html_unescape( const std::string& str );
 
     // HTML文字参照をデコード( completely=trueの場合は '&' '<' '>' '"' を含める )
