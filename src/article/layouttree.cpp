@@ -438,7 +438,8 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
                 break;
 
             case DBTREE::NODE_HTAB: // 水平タブ
-                tmplayout = create_layout_hspace( tmpnode->type );
+                if( m_show_multispace ) tmplayout = create_layout_hspace( tmpnode->type );
+                else tmplayout = create_layout_text( " ", &tmpnode->color_text, tmpnode->bold );
                 break;
         }
 
