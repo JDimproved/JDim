@@ -2575,17 +2575,13 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         hide_popup();
 
-        std::stringstream ssurl;
-        ssurl << "http://be.2ch.net/test/p.php?i="
-              << url.substr( strlen( PROTO_BE ) )
-              << "&u=d:"
-              << DBTREE::url_readcgi( m_url_article, res_number, 0 );
+        const std::string openurl = "http://be.5ch.net/user/" + url.substr( std::strlen( PROTO_BE ) );
 #ifdef _DEBUG
-        std::cout << "open  " << ssurl.str() << std::endl;
+        std::cout << "open  " << openurl << std::endl;
 #endif
-        if( control.button_alloted( event, CONTROL::OpenBeButton ) ) CORE::core_set_command( "open_url_browser", ssurl.str() );
+        if( control.button_alloted( event, CONTROL::OpenBeButton ) ) CORE::core_set_command( "open_url_browser", openurl );
         else if( control.button_alloted( event, CONTROL::PopupmenuBeButton ) ){
-            show_popupmenu( ssurl.str(), false );
+            show_popupmenu( openurl, false );
         }
     }
 
