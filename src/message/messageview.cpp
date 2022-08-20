@@ -33,11 +33,13 @@ MessageViewMain::MessageViewMain( const std::string& url, const std::string& msg
     // ツールバーのスレタイトルを編集不可にする
     MESSAGE::get_admin()->show_entry_new_subject( false );
 
+    const std::string& subject = DBTREE::article_modified_subject( get_url() );
+
     // メインウィンドウのタイトルに表示する文字
-    set_title( "[ 書き込み ] " + DBTREE::article_subject( get_url() ) );
+    set_title( "[ 書き込み ] " + subject );
 
     // ツールバーにスレ名を表示
-    set_label( DBTREE::article_subject( get_url() ) );
+    set_label( subject );
 }
 
 
@@ -156,7 +158,7 @@ void MessageViewMain::reload()
     MESSAGE::get_admin()->show_entry_new_subject( true );
 
     // メインウィンドウのタイトルに表示する文字
-    set_title( "[ 新スレ作成 ] " + DBTREE::article_subject( get_url() ) );
+    set_title( "[ 新スレ作成 ] " + DBTREE::article_modified_subject( get_url() ) );
 
     // 板のフロントページをダウンロードしてスレ立てに使うキーワードを更新する
     DBTREE::board_download_front( get_url() );

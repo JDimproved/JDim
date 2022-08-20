@@ -80,7 +80,7 @@ ArticleViewMain::~ArticleViewMain()
     // 閉じたタブ履歴更新
     HISTORY::append_history( URL_HISTCLOSEVIEW,
                              DBTREE::url_dat( get_url() ),
-                             DBTREE::article_subject( get_url() ), TYPE_THREAD );
+                             DBTREE::article_modified_subject( get_url() ), TYPE_THREAD );
 
     CORE::core_set_command( "close_message" ,url_article() );
 
@@ -471,20 +471,19 @@ void ArticleViewMain::update_finish()
     else if( is_old() ) str_tablabel = "[ DAT落ち ]  ";
     else if( is_overflow() ) str_tablabel = "[ レス数が最大表示可能数以上です ]  ";
 
-    if( get_label().empty() || ! str_tablabel.empty() ) set_label( str_tablabel + DBTREE::article_subject( url_article() ) );
+    const std::string& subject = DBTREE::article_modified_subject( url_article() );
+    set_label( str_tablabel + subject );
     ARTICLE::get_admin()->set_command( "redraw_toolbar" );
 
     // タブのラベルセット
-    std::string str_label = DBTREE::article_subject( url_article() );
-    if( str_label.empty() ) str_label = "???";
-    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), str_label ); 
+    ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), subject.empty() ? "???" : subject );
 
     // タブのアイコン状態を更新
     ARTICLE::get_admin()->set_command( "toggle_icon", get_url() );
 
 #ifdef _DEBUG
     const int code = DBTREE::article_code( url_article() );
-    std::cout << "ArticleViewMain::update_finish " << str_label << " code = " << code << std::endl;;
+    std::cout << "ArticleViewMain::update_finish " << str_tablabel << " code = " << code << std::endl;;
 #endif
 
     // 新着セパレータを消す
@@ -500,7 +499,7 @@ void ArticleViewMain::update_finish()
     ARTICLE::get_admin()->set_command( "set_status_color", get_url(), get_color(), force );
 
     // タイトルセット
-    set_title( DBTREE::article_subject( url_article() ) );
+    set_title( subject );
     ARTICLE::get_admin()->set_command( "set_title", get_url(), get_title() );
 
     drawarea()->set_enable_draw( true );
@@ -588,7 +587,7 @@ void ArticleViewMain::update_finish()
     // 履歴に登録
     if( m_set_history ) HISTORY::append_history( URL_HISTTHREADVIEW,
                                                  DBTREE::url_dat( get_url() ),
-                                                 DBTREE::article_subject( get_url() ), TYPE_THREAD );
+                                                 subject, TYPE_THREAD );
 
     if( m_show_instdialog ) show_instruct_diag();
 

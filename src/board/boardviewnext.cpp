@@ -181,7 +181,7 @@ void BoardViewNext::slot_abone_thread()
 //
 void BoardViewNext::update_boardname()
 {
-    const std::string title = "[ 次スレ検索 ] - " + DBTREE::article_subject( m_url_pre_article );
+    const std::string title = "[ 次スレ検索 ] - " + DBTREE::article_modified_subject( m_url_pre_article );
 
     // ウィンドウタイトル表示
     set_title( title );
