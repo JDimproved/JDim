@@ -63,7 +63,7 @@ bool JDSSL::connect( const int soc, const char *host )
 
     int ret;
 
-    ret = gnutls_init( &m_session, GNUTLS_CLIENT );
+    ret = gnutls_init( &m_session, GNUTLS_CLIENT | GNUTLS_NO_SIGNAL );
     if( ret != 0 ){
         m_errmsg = "gnutls_init failed";
         return false;
