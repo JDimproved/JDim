@@ -239,6 +239,7 @@ namespace BOARD
         // 列の幅の保存
         virtual void save_column_width();
 
+        void slot_cell_data_markup( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
 
         // 全ての行の表示内容更新
