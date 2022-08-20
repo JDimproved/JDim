@@ -19,11 +19,12 @@
 
 #include "config/globalconf.h"
 
-#include "httpcode.h"
-#include "command.h"
 #include "cache.h"
+#include "command.h"
 #include "global.h"
+#include "httpcode.h"
 #include "login2ch.h"
+#include "replacestrmanager.h"
 #include "session.h"
 #include "updatemanager.h"
 
@@ -420,6 +421,29 @@ void ArticleBase::reset_status()
 #endif
 
     m_status = STATUS_UNKNOWN;
+}
+
+
+/** @brief 置換文字列を適用したスレタイトルを返す
+ *
+ * @details
+ * 置換したスレタイトルはキャッシュされて再び呼び出されたときに返す。
+ * @param[in] renew true のときキャッシュの有無に関係なく置換文字列を適用して更新する
+ */
+const std::string& ArticleBase::get_modified_subject( const bool renew )
+{
+    if( renew || m_modified_subject.empty() ){
+        const CORE::ReplaceStr_Manager* const mgr = CORE::get_replacestr_manager();
+
+        // タイトル文字列置換
+        if( mgr->list_get_active( CORE::REPLACETARGET_SUBJECT ) ){
+            m_modified_subject = mgr->replace( m_subject, CORE::REPLACETARGET_SUBJECT );
+        }
+        else m_modified_subject = m_subject;
+
+    }
+
+    return m_modified_subject;
 }
 
 
