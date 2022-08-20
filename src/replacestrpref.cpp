@@ -188,9 +188,9 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
     m_hbox.pack_start( m_scrollwin, Gtk::PACK_EXPAND_WIDGET );
     m_hbox.pack_start( m_vbuttonbox, Gtk::PACK_SHRINK );
 
-    // スレタイトルは未実装のため省略する
-    std::for_each( kReplStrTargetLabels.begin() + kReplStrTargetReserved_0, kReplStrTargetLabels.end(),
-                   [this]( const char* target ) { m_menu_target.append( target ); } );
+    for( const char* target : kReplStrTargetLabels ) {
+        m_menu_target.append( target );
+    }
     m_menu_target.signal_changed().connect( sigc::mem_fun( *this, &ReplaceStrPref::slot_target_changed ) );
     m_menu_target.set_active_text( kReplStrTargetLabels.back() );
     m_label_target.set_mnemonic_widget( m_menu_target );
@@ -233,8 +233,7 @@ void ReplaceStrPref::append_rows()
         }
     }
 
-    // 省略したスレタイトルの分インデックスをずらしてデリファレンスする
-    const int id = m_menu_target.get_active_row_number() + kReplStrTargetReserved_0;
+    const int id = m_menu_target.get_active_row_number();
     m_check_chref.set_active( m_chref[id] );
     select_row( get_top_row() );
 }
@@ -516,8 +515,7 @@ void ReplaceStrPref::slot_add()
 //
 void ReplaceStrPref::slot_target_changed()
 {
-    // 省略したスレタイトルの分インデックスをずらしてデリファレンスする
-    const int id = m_menu_target.get_active_row_number() + kReplStrTargetReserved_0;
+    const int id = m_menu_target.get_active_row_number();
 #ifdef _DEBUG
     std::cout << "ReplaceStrPref::slot_target_changed target=" << id << std::endl;
 #endif
