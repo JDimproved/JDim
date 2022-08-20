@@ -1620,8 +1620,7 @@ void ArticleViewBase::show_res( const std::string& num, const bool show_title )
         std::string tmpstr = DBTREE::board_name( m_url_article );
         if( ! tmpstr.empty() ) html += "[ " + MISC::html_escape( tmpstr ) + " ] ";
 
-        tmpstr = DBTREE::article_subject( m_url_article );
-        if( ! tmpstr.empty() ) html += tmpstr;
+        html += DBTREE::article_modified_subject( m_url_article );
 
         if( ! html.empty() ) append_html( html );
     }
@@ -3725,7 +3724,7 @@ void ArticleViewBase::set_favorite()
     info.type = TYPE_THREAD;
     info.parent = ARTICLE::get_admin()->get_win();
     info.url = m_url_article;;
-    info.name = DBTREE::article_subject( m_url_article );
+    info.name = DBTREE::article_modified_subject( m_url_article );
     info.path = Gtk::TreePath( "0" ).to_string();
 
     CORE::DATA_INFO_LIST list_info;

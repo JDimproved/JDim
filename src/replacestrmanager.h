@@ -21,8 +21,6 @@ namespace XML
 
 namespace CORE
 {
-    // NOTE: スレタイトル(subject)は未実装の項目(予約済)
-    constexpr int kReplStrTargetReserved_0 = 1;
     enum
     {
         REPLACETARGET_SUBJECT = 0,

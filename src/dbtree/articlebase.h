@@ -52,6 +52,7 @@ namespace DBTREE
         std::string m_org_host;
 
         std::string m_subject;           // サブジェクト
+        std::string m_modified_subject;  // 置換で変更されたサブジェクト
         int m_number{};                  // サーバ上にあるレスの数
         int m_number_diff{};             // レス増分( subject.txt をロードした時の m_number の増分 )
         int m_number_new{};              // 新着数( ロードした時の差分読み込み数)
@@ -143,6 +144,7 @@ namespace DBTREE
         const std::string& get_id() const { return m_id; }
         const std::string& get_key() const { return m_key; }
         const std::string& get_subject() const { return m_subject; }
+        const std::string& get_modified_subject( const bool renew = false );
         int get_number() const noexcept { return m_number; }
         int get_number_diff() const noexcept { return m_number_diff; }
         int get_number_new() const noexcept { return m_number_new; }

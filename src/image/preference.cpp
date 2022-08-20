@@ -33,7 +33,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     const std::string daturl = DBTREE::url_dat( refurl, num_from, num_to, num_str );
     const std::string readcgi = DBTREE::url_readcgi( daturl, num_from, 0 );
 
-    m_label_ref.set_text( DBTREE::article_subject( daturl ) );
+    m_label_ref.set_text( DBTREE::article_modified_subject( daturl ) );
     m_label_url_ref.set_text( readcgi );
 
     m_open_ref.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_open_ref ) );

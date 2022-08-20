@@ -1541,7 +1541,7 @@ bool BoardBase::is_abone_thread( ArticleBase* article )
     // スレあぼーん
     if( check_thread ){
         for( const std::string& subject : m_list_abone_thread ) {
-            if( MISC::utf8_trim( article->get_subject() ) == MISC::utf8_trim( subject ) ){
+            if( article->get_subject() == subject ){
 
                 // 対象スレがDat落ちした場合はあぼーんしなかったスレ名をリストから消去する
                 // remove_old_abone_thread() も参照

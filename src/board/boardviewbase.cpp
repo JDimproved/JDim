@@ -1902,7 +1902,7 @@ void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
     const int res = art->get_number();
 
     // タイトル、レス数、抽出
-    row[ m_columns.m_col_subject ] = art->get_subject();
+    row[ m_columns.m_col_subject ] = art->get_modified_subject( true );
     row[ m_columns.m_col_res ] = res;
 
     // 読み込み数

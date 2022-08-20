@@ -227,7 +227,8 @@ namespace DBTREE
     int article_code( const std::string& url );
     std::string article_str_code( const std::string& url );
     std::string article_ext_err( const std::string& url );
-    std::string article_subject( const std::string& url );
+    const std::string& article_subject( const std::string& url );
+    const std::string& article_modified_subject( const std::string& url, const bool renew = false );
     int article_number( const std::string& url );
     int article_number_load( const std::string& url );
     int article_number_seen( const std::string& url );
