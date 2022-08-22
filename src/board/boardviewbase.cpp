@@ -711,11 +711,7 @@ void BoardViewBase::update_columns()
         Gtk::CellRenderer *cell = column->get_first_cell();
 
         // 実際の描画の際に cellrendere のプロパティをセットするスロット関数
-        if( cell ) {
-            auto slot_func{ id == COL_SUBJECT ? &BoardViewBase::slot_cell_data_markup
-                                              : &BoardViewBase::slot_cell_data };
-            column->set_cell_data_func( *cell, sigc::mem_fun( *this, slot_func ) );
-        }
+        if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &BoardViewBase::slot_cell_data ) );
 
         Gtk::CellRendererText* rentext = dynamic_cast< Gtk::CellRendererText* >( cell );
         if( rentext ){
@@ -863,28 +859,6 @@ void BoardViewBase::save_column_width()
             break;
         }
     }
-}
-
-
-
-//
-// Subjectの実際の描画の際に cellrenderer のプロパティをセットするスロット関数
-//
-void BoardViewBase::slot_cell_data_markup( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
-{
-    Gtk::TreeModel::Row row = *it;
-
-    // ハイライト色 ( 抽出状態 )
-    if( row[ m_columns.m_col_drawbg ] ){
-        cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
-        cell->property_cell_background_set() = true;
-    }
-
-    else m_treeview.slot_cell_data( cell, it );
-
-    Gtk::CellRendererText* rentext = dynamic_cast<Gtk::CellRendererText*>( cell );
-    rentext->property_text() = "";
-    rentext->property_markup() = row[ m_columns.m_col_subject ];
 }
 
 
