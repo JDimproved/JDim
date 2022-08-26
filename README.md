@@ -44,14 +44,16 @@ JDim は GPLv2 の下で公開されている [JD][jd-project] からforkした�
 LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
 
 ##### サポートの最新情報
-gccのバージョンが7未満のプラットフォームはサポートを終了しました。
-Ubuntu 18.04(2018年)より前にリリースされたディストリビューションを利用されている場合は更新をお願いいたします。
+Ubuntu 18.04のテスト環境が[使えなくなる][#1035]ため前倒しで18.04のサポートを放棄しました。
+次のリリースまで動作環境の変更は行いませんが18.04では問題が起こるかもしれません。
+Debian buster(2019年)より前にリリースされたディストリビューションを利用されている場合は更新をお願いいたします。
 
 メンテナンスの都合によりWindows(MinGW)版のサポートは[終了][#445]しました。
 
 Snap i386(32bit)版は2023年1月のリリースをもって[更新を終了][#890]する予定です。
 i386版ディストロを利用されている場合は更新をお願いいたします。
 
+[#1035]: https://github.com/JDimproved/JDim/issues/1035
 [#445]: https://github.com/JDimproved/JDim/issues/445
 [#890]: https://github.com/JDimproved/JDim/issues/890
 
