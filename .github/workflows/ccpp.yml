@@ -54,8 +54,8 @@ jobs:
       - name: ninja -C builddir
         run: ninja -C builddir
         # Since Meson 0.57, `test` subcommand will only rebuild test program.
-      - name: meson test -C builddir
-        run: meson test -C builddir
+      - name: meson test -v -C builddir
+        run: meson test -v -C builddir
       - name: ./builddir/src/jdim -V
         run: ./builddir/src/jdim -V
 
@@ -95,8 +95,8 @@ jobs:
         run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
       - name: ninja -C builddir
         run: ninja -C builddir
-      - name: meson test -C builddir
-        run: meson test -C builddir
+      - name: meson test -v -C builddir
+        run: meson test -v -C builddir
       - name: ./builddir/src/jdim -V
         run: ./builddir/src/jdim -V
 
@@ -194,8 +194,8 @@ jobs:
         run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
       - name: ninja -C builddir
         run: ninja -C builddir
-      - name: meson test -C builddir
-        run: meson test -C builddir
+      - name: meson test -v -C builddir
+        run: meson test -v -C builddir
       - name: ./builddir/src/jdim -V
         run: ./builddir/src/jdim -V
 
