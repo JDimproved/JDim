@@ -223,16 +223,12 @@ jobs:
       - name: ./builddir/src/jdim -V
         run: ./builddir/src/jdim -V
 
-  manual:
+  manual-build:
 
-    runs-on: ubuntu-20.04
-    env:
-      NOKOGIRI_USE_SYSTEM_LIBRARIES: true
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: dependencies installation
-        run: |
-          sudo apt update
-          sudo apt install ruby-dev ruby-bundler libcurl4-openssl-dev libxslt1-dev
-      - name: make -j$(nproc) -C docs build
-        run: make -j$(nproc) -C docs build
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs
+          destination: ./docs/_site
