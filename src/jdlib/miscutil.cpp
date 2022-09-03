@@ -943,7 +943,7 @@ std::string MISC::html_unescape( const std::string& str )
 // strは'&'で始まる文字列を指定すること
 // completely = true の時は'"' '&' '<' '>'も含めて変換する
 //
-static std::string chref_decode_one( const char* str, int& n_in, const bool completely )
+static std::string chref_decode_one( const char* str, int& n_in, const char pre_char, const bool completely )
 {
     std::string out_char( 15u, '\0' );
     int n_out;
@@ -951,7 +951,7 @@ static std::string chref_decode_one( const char* str, int& n_in, const bool comp
     out_char.resize( n_out );
 
     // 改行、タブ、スペースの処理
-    if( type != DBTREE::NODE_NONE && ( out_char[0] == ' ' || out_char[0] == '\n' ) ) {
+    if( type != DBTREE::NODE_NONE && ( out_char[0] == ' ' || out_char[0] == '\n' ) && pre_char != ' ' ) {
         out_char.assign( 1u, ' ' );
     }
     // 変換できない文字
@@ -983,6 +983,47 @@ static std::string chref_decode_one( const char* str, int& n_in, const bool comp
 }
 
 
+/** @brief HTMLをプレーンテキストに変換する
+ *
+ * @details HTMLタグを取り除き文字参照をデコードして返す。
+ * @param[in] html プレーンテキストに変換する入力
+ * @return 変換した結果
+ */
+std::string MISC::to_plain( const std::string& html )
+{
+    if( html.empty() ) return html;
+    if( html.find_first_of( "<&" ) == std::string::npos ) return html;
+
+    std::string str_out;
+    const char* pos = html.c_str();
+    const char* pos_end = pos + html.size();
+
+    while( pos < pos_end ){
+
+        // '<' か '&' までコピーする
+        while( *pos != '<' && *pos != '&' && *pos != '\0' ) str_out.push_back( *pos++ );
+        if( pos >= pos_end ) break;
+
+        // タグを取り除く
+        if( *pos == '<' ){
+            while( *pos != '>' && *pos != '\0' ) pos++;
+            if( *pos == '>' ) ++pos;
+            continue;
+        }
+
+        // 文字参照を処理する
+        if( *pos == '&' ){
+            int n_in;
+            const char pre = str_out.empty() ? '\0' : str_out.back();
+            str_out += chref_decode_one( pos, n_in, pre, true );
+            pos += n_in;
+        }
+    }
+
+    return str_out;
+}
+
+
 //
 // HTMLの文字参照をデコード
 //
@@ -1009,7 +1050,7 @@ std::string MISC::chref_decode( std::string_view str, const bool completely )
 
         // 文字参照のデコード
         int n_in;
-        str_out.append( chref_decode_one( pos, n_in, completely ) );
+        str_out.append( chref_decode_one( pos, n_in, '\0', completely ) );
         pos += n_in;
     }
 

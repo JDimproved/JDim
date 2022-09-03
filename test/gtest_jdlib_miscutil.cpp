@@ -1122,6 +1122,58 @@ TEST_F(MISC_ParseHtmlFormActionTest, https_url)
 }
 
 
+class ToPlainTest : public ::testing::Test {};
+
+TEST_F(ToPlainTest, empty)
+{
+    const std::string result = MISC::to_plain( std::string{} );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(ToPlainTest, no_conversion)
+{
+    const std::string result = MISC::to_plain( "hello 世界" );
+    EXPECT_EQ( result, "hello 世界" );
+}
+
+TEST_F(ToPlainTest, decimal_hello)
+{
+    const std::string result = MISC::to_plain( "&#104;&#101;&#108;&#108;&#111;" );
+    EXPECT_EQ( result, "hello" );
+}
+
+TEST_F(ToPlainTest, hexadecimal_hello)
+{
+    const std::string result = MISC::to_plain( "&#x68;&#x65;&#X6c;&#x6C;&#x6f;" );
+    EXPECT_EQ( result, "hello" );
+}
+
+TEST_F(ToPlainTest, escape_html_char_completely)
+{
+    const std::string input = "&#60;&#62;&#38;&#34; &#x3c;&#x3e;&#x26;&#x22; &lt;&gt;&amp;&quot;";
+    const std::string result = MISC::to_plain( input );
+    EXPECT_EQ( result, R"(<>&" <>&" <>&")" );
+}
+
+TEST_F(ToPlainTest, flatten_tags)
+{
+    const std::string input = "Hello<foo>世界<bar>Quick</bar></foo>Brown Fox";
+    const std::string result = MISC::to_plain( input );
+    EXPECT_EQ( result, "Hello世界QuickBrown Fox" );
+}
+
+TEST_F(ToPlainTest, broken_tags)
+{
+    std::string input = "Hello<fo<o>世界</f>oo>Quick Brown Fox";
+    std::string result = MISC::to_plain( input );
+    EXPECT_EQ( result, "Hello世界oo>Quick Brown Fox" );
+
+    input = "Hello<foo>世界>Quick</foo<Brown Fox";
+    result = MISC::to_plain( input );
+    EXPECT_EQ( result, "Hello世界>Quick" );
+}
+
+
 class ChrefDecodeTest : public ::testing::Test {};
 
 TEST_F(ChrefDecodeTest, empty)

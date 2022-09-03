@@ -36,10 +36,10 @@ MessageViewMain::MessageViewMain( const std::string& url, const std::string& msg
     const std::string& subject = DBTREE::article_modified_subject( get_url() );
 
     // メインウィンドウのタイトルに表示する文字
-    set_title( "[ 書き込み ] " + subject );
+    set_title( "[ 書き込み ] " + MISC::to_plain( subject ) );
 
     // ツールバーにスレ名を表示
-    set_label( subject );
+    set_label( MISC::to_plain( subject ) );
 }
 
 
@@ -158,7 +158,7 @@ void MessageViewMain::reload()
     MESSAGE::get_admin()->show_entry_new_subject( true );
 
     // メインウィンドウのタイトルに表示する文字
-    set_title( "[ 新スレ作成 ] " + DBTREE::article_modified_subject( get_url() ) );
+    set_title( "[ 新スレ作成 ] " + MISC::to_plain( DBTREE::article_modified_subject( get_url() ) ) );
 
     // 板のフロントページをダウンロードしてスレ立てに使うキーワードを更新する
     DBTREE::board_download_front( get_url() );

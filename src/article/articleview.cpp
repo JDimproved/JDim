@@ -472,7 +472,7 @@ void ArticleViewMain::update_finish()
     else if( is_overflow() ) str_tablabel = "[ レス数が最大表示可能数以上です ]  ";
 
     const std::string& subject = DBTREE::article_modified_subject( url_article() );
-    set_label( str_tablabel + subject );
+    set_label( str_tablabel + MISC::to_plain( subject ) );
     ARTICLE::get_admin()->set_command( "redraw_toolbar" );
 
     // タブのラベルセット
@@ -499,7 +499,7 @@ void ArticleViewMain::update_finish()
     ARTICLE::get_admin()->set_command( "set_status_color", get_url(), get_color(), force );
 
     // タイトルセット
-    set_title( subject );
+    set_title( MISC::to_plain( subject ) );
     ARTICLE::get_admin()->set_command( "set_title", get_url(), get_title() );
 
     drawarea()->set_enable_draw( true );

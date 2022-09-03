@@ -9,6 +9,7 @@
 #include "viewhistoryitem.h"
 
 #include "dbtree/interface.h"
+#include "jdlib/miscutil.h"
 
 #include "xml/document.h"
 #include "xml/tools.h"
@@ -137,7 +138,7 @@ void History_Manager::append_history( const std::string& url_history, const std:
     if( url_history == URL_HISTTHREADVIEW || url_history == URL_HISTCLOSEVIEW ){
 
         info.url = DBTREE::url_dat( url );
-        info.name = DBTREE::article_subject( info.url );
+        info.name = MISC::to_plain( name );
     }
     if( url_history == URL_HISTBOARDVIEW || url_history == URL_HISTCLOSEBOARDVIEW ){
 

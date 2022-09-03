@@ -1829,11 +1829,12 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label )
     SKELETON::View* view = get_view( url );
     if( view ){
 
-        m_notebook->set_tab_fulltext( str_label, m_notebook->page_num( *view ) );
+        const std::string label = MISC::to_plain( str_label );
+        m_notebook->set_tab_fulltext( label, m_notebook->page_num( *view ) );
 
         // View履歴のタイトルも更新
         if( m_use_viewhistory ){
-            HISTORY::get_history_manager()->replace_current_title_viewhistory( view->get_url(), str_label );
+            HISTORY::get_history_manager()->replace_current_title_viewhistory( view->get_url(), label );
         }
     }
 }
