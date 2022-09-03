@@ -983,6 +983,47 @@ static std::string chref_decode_one( const char* str, int& n_in, const char pre_
 }
 
 
+/** @brief HTMLをプレーンテキストに変換する
+ *
+ * @details HTMLタグを取り除き文字参照をデコードして返す。
+ * @param[in] html プレーンテキストに変換する入力
+ * @return 変換した結果
+ */
+std::string MISC::to_plain( const std::string& html )
+{
+    if( html.empty() ) return html;
+    if( html.find_first_of( "<&" ) == std::string::npos ) return html;
+
+    std::string str_out;
+    const char* pos = html.c_str();
+    const char* pos_end = pos + html.size();
+
+    while( pos < pos_end ){
+
+        // '<' か '&' までコピーする
+        while( *pos != '<' && *pos != '&' && *pos != '\0' ) str_out.push_back( *pos++ );
+        if( pos >= pos_end ) break;
+
+        // タグを取り除く
+        if( *pos == '<' ){
+            while( *pos != '>' && *pos != '\0' ) pos++;
+            if( *pos == '>' ) ++pos;
+            continue;
+        }
+
+        // 文字参照を処理する
+        if( *pos == '&' ){
+            int n_in;
+            const char pre = str_out.empty() ? '\0' : str_out.back();
+            str_out += chref_decode_one( pos, n_in, pre, true );
+            pos += n_in;
+        }
+    }
+
+    return str_out;
+}
+
+
 //
 // HTMLの文字参照をデコード
 //
