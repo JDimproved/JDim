@@ -1177,6 +1177,9 @@ void ArticleBase::download_dat( const bool check_update )
         return;
     }
 
+    // 全レス既読ならロードしない
+    if( is_finished() ) return;
+
 #ifdef _DEBUG
     std::cout << "start\n";
 #endif       
