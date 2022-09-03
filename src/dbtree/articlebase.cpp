@@ -1622,7 +1622,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
         if( m_bookmarked_thread ){
 
-            const std::string msg = "「" + get_modified_subject() +
+            const std::string msg = "「" + MISC::to_plain( get_modified_subject() ) +
             "」にはしおりが付けられています。\n\nスレを削除しますか？\n\nしおりを解除するにはスレの上で右クリックしてしおり解除を選択してください。";
 
             SKELETON::MsgDiag mdiag( nullptr, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
@@ -1632,7 +1632,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
         if( CONFIG::get_show_del_written_thread_diag() && m_write_time ){
 
-            const std::string msg = "「" + get_modified_subject() + "」には書き込み履歴が残っています。\n\nスレを削除しますか？";
+            const std::string msg = "「" + MISC::to_plain( get_modified_subject() ) + "」には書き込み履歴が残っています。\n\nスレを削除しますか？";
 
             SKELETON::MsgCheckDiag mdiag( nullptr, msg,
                                           "今後表示しない(常に削除)(_D)",
@@ -1654,7 +1654,7 @@ void ArticleBase::delete_cache( const bool cache_only )
 
                 if( CONFIG::get_delete_img_in_thread() == 0 ){
 
-                    const std::string msg = "「" + get_modified_subject() + "」には画像が貼られています。\n\n画像のキャッシュも削除しますか？";
+                    const std::string msg = "「" + MISC::to_plain( get_modified_subject() ) + "」には画像が貼られています。\n\n画像のキャッシュも削除しますか？";
 
                     SKELETON::MsgCheckDiag mdiag( nullptr, msg,
                                                   "今後表示しない(常に削除しない)(_D)",

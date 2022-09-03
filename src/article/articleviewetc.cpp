@@ -11,6 +11,7 @@
 #include "dbtree/articlebase.h"
 
 #include "control/controlid.h"
+#include "jdlib/miscutil.h"
 
 #include "global.h"
 
@@ -37,7 +38,7 @@ ArticleViewRes::ArticleViewRes( const std::string& url )
     setup_view();
 
     // ラベル更新
-    set_label( " [ RES:" + m_str_num + " ] - " + DBTREE::article_modified_subject( url_article() ) );
+    set_label( " [ RES:" + m_str_num + " ] - " + MISC::to_plain( DBTREE::article_modified_subject( url_article() ) ) );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
@@ -120,7 +121,7 @@ ArticleViewName::ArticleViewName( const std::string& url )
     setup_view();
 
     // ラベル更新
-    set_label( " [ 名前：" + m_str_name + " ] - " + DBTREE::article_modified_subject( url_article() ) );
+    set_label( " [ 名前：" + m_str_name + " ] - " + MISC::to_plain( DBTREE::article_modified_subject( url_article() ) ) );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
@@ -200,7 +201,7 @@ ArticleViewID::ArticleViewID( const std::string& url )
     setup_view();
 
     // ラベル更新
-    set_label( " [ " + m_str_id.substr( strlen( PROTO_ID ) ) + " ] - " + DBTREE::article_modified_subject( url_article() ) );
+    set_label( " [ " + m_str_id.substr( strlen( PROTO_ID ) ) + " ] - " + MISC::to_plain( DBTREE::article_modified_subject( url_article() ) ) );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
@@ -278,7 +279,7 @@ ArticleViewBM::ArticleViewBM( const std::string& url )
     setup_view();
 
     // ラベル更新
-    set_label( " [ しおり ] - " + DBTREE::article_modified_subject( url_article() ) );
+    set_label( " [ しおり ] - " + MISC::to_plain( DBTREE::article_modified_subject( url_article() ) ) );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
@@ -357,7 +358,7 @@ ArticleViewPost::ArticleViewPost( const std::string& url )
 
 
     // ラベル更新
-    set_label( " [ 書き込み ] - " + DBTREE::article_modified_subject( url_article() ) );
+    set_label( " [ 書き込み ] - " + MISC::to_plain( DBTREE::article_modified_subject( url_article() ) ) );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
@@ -512,7 +513,7 @@ ArticleViewURL::ArticleViewURL( const std::string& url )
     setup_view();
 
     // ラベル更新
-    set_label( " [ URL ] - " + DBTREE::article_modified_subject( url_article() ) );
+    set_label( " [ URL ] - " + MISC::to_plain( DBTREE::article_modified_subject( url_article() ) ) );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
@@ -593,7 +594,7 @@ ArticleViewRefer::ArticleViewRefer( const std::string& url )
     setup_view();
 
     // ラベル更新
-    set_label( " [ Re:" + m_str_num + " ] - " + DBTREE::article_modified_subject( url_article() ) );
+    set_label( " [ Re:" + m_str_num + " ] - " + MISC::to_plain( DBTREE::article_modified_subject( url_article() ) ) );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );
@@ -682,7 +683,7 @@ ArticleViewDrawout::ArticleViewDrawout( const std::string& url )
     std::string str_label;
     if( m_mode_or ) str_label = "[ OR 抽出 ] - ";
     else str_label = "[ AND 抽出 ] - ";
-    set_label( str_label + DBTREE::article_modified_subject( url_article() ) );
+    set_label( str_label + MISC::to_plain( DBTREE::article_modified_subject( url_article() ) ) );
 
     // タブ更新
     ARTICLE::get_admin()->set_command( "set_tablabel", get_url(), get_label() );

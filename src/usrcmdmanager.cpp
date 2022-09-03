@@ -280,7 +280,7 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     cmd_out = MISC::replace_str( cmd_out, "$DATNAMEL", DBTREE::article_key( link ) );
     cmd_out = MISC::replace_str( cmd_out, "$DATNAME", DBTREE::article_key( url ) );
 
-    cmd_out = MISC::replace_str( cmd_out, "$TITLE", DBTREE::article_subject( url ) );
+    cmd_out = MISC::replace_str( cmd_out, "$TITLE", MISC::to_plain( DBTREE::article_subject( url ) ) );
     cmd_out = MISC::replace_str( cmd_out, "$BOARDNAME", DBTREE::board_name( url ) );
 
     // 範囲選択した文字列
