@@ -39,7 +39,7 @@ MessageViewMain::MessageViewMain( const std::string& url, const std::string& msg
     set_title( "[ 書き込み ] " + MISC::to_plain( subject ) );
 
     // ツールバーにスレ名を表示
-    set_label( MISC::to_plain( subject ) );
+    set_label( MISC::to_markup( subject ), true );
 }
 
 
