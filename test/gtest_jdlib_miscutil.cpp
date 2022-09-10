@@ -1174,6 +1174,81 @@ TEST_F(ToPlainTest, broken_tags)
 }
 
 
+class ToMarkupTest : public ::testing::Test {};
+
+TEST_F(ToMarkupTest, empty)
+{
+    const std::string result = MISC::to_markup( std::string{} );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(ToMarkupTest, no_conversion)
+{
+    const std::string result = MISC::to_markup( "hello 世界" );
+    EXPECT_EQ( result, "hello 世界" );
+}
+
+TEST_F(ToMarkupTest, decimal_hello)
+{
+    const std::string result = MISC::to_markup( "&#104;&#101;&#108;&#108;&#111;" );
+    EXPECT_EQ( result, "hello" );
+}
+
+TEST_F(ToMarkupTest, hexadecimal_hello)
+{
+    const std::string result = MISC::to_markup( "&#x68;&#x65;&#X6c;&#x6C;&#x6f;" );
+    EXPECT_EQ( result, "hello" );
+}
+
+TEST_F(ToMarkupTest, escape_html_char_completely)
+{
+    // 動作の根拠がはっきりしていないが &quot; は " に変換される
+    const std::string input = "&#60;&#62;&#38;&#34; &#x3c;&#x3e;&#x26;&#x22; &lt;&gt;&amp;&quot;";
+    const std::string result = MISC::to_markup( input );
+    EXPECT_EQ( result, R"(&lt;&gt;&amp;&quot; &lt;&gt;&amp;&quot; &lt;&gt;&amp;")" );
+}
+
+TEST_F(ToMarkupTest, flatten_tags)
+{
+    const std::string input = "Hello<foo>世界<bar>Quick</bar></foo>Brown Fox";
+    const std::string result = MISC::to_markup( input );
+    EXPECT_EQ( result, "Hello世界QuickBrown Fox" );
+}
+
+TEST_F(ToMarkupTest, broken_tags)
+{
+    std::string input = "Hello<fo<o>世界</f>oo>Quick Brown Fox";
+    std::string result = MISC::to_markup( input );
+    EXPECT_EQ( result, "Hello世界oo>Quick Brown Fox" );
+
+    input = "Hello<foo>世界>Quick</foo<Brown Fox";
+    result = MISC::to_markup( input );
+    EXPECT_EQ( result, "Hello世界>Quick" );
+}
+
+TEST_F(ToMarkupTest, span_tags)
+{
+    std::string input = "Hello<span>世界</span>Quick Brown Fox";
+    std::string result = MISC::to_markup( input );
+    EXPECT_EQ( result, "Hello<span>世界</span>Quick Brown Fox" );
+
+    input = R"(Hello 世界<span class="mark">Quick</span>Brown Fox)";
+    result = MISC::to_markup( input );
+    EXPECT_EQ( result, R"(Hello 世界<span color="#000000000000" background="#ffffffff0000">Quick</span>Brown Fox)" );
+}
+
+TEST_F(ToMarkupTest, mark_tags)
+{
+    std::string input = "Hello<mark>世界</mark>Quick Brown Fox";
+    std::string result = MISC::to_markup( input );
+    EXPECT_EQ( result, R"(Hello<span color="#000000000000" background="#ffffffff0000">世界</span>Quick Brown Fox)" );
+
+    input = R"(Hello<mark class="jdim-unused-css-class">世界</mark>Quick Brown Fox)";
+    result = MISC::to_markup( input );
+    EXPECT_EQ( result, "Hello<span>世界</span>Quick Brown Fox" );
+}
+
+
 class ChrefDecodeTest : public ::testing::Test {};
 
 TEST_F(ChrefDecodeTest, empty)
