@@ -471,8 +471,9 @@ void ArticleViewMain::update_finish()
     else if( is_old() ) str_tablabel = "[ DAT落ち ]  ";
     else if( is_overflow() ) str_tablabel = "[ レス数が最大表示可能数以上です ]  ";
 
+    set_tooltip_label( str_tablabel + MISC::to_markup( DBTREE::article_subject( url_article() ) ) );
     const std::string& subject = DBTREE::article_modified_subject( url_article() );
-    set_label( str_tablabel + MISC::to_plain( subject ) );
+    set_label( str_tablabel + MISC::to_markup( subject ), true );
     ARTICLE::get_admin()->set_command( "redraw_toolbar" );
 
     // タブのラベルセット

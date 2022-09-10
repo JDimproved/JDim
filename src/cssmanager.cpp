@@ -201,6 +201,16 @@ void Css_Manager::set_default_css()
     css.border_bottom_width_px = 1;
 
     set_property( "imgpopup", css );
+
+
+    /////////////////
+    // mark
+    std::map< std::string, std::string > props{
+        { "color", "black" },
+        { "background-color", "yellow" },
+    };
+
+    set_property( "mark", create_property( props ) );
 }
 
 

@@ -44,6 +44,12 @@ namespace SKELETON
         // ツールバーに表示する文字列
         std::string m_label;
 
+        /// ツールバーのツールチップに表示する文字列
+        std::string m_tooltip_label;
+
+        /// ツールバーに表示する文字列にmarkupを使用するか
+        bool m_label_use_markup{};
+
         // メインウィンドウのタイトルに表示する文字
         std::string m_title;
 
@@ -99,8 +105,15 @@ namespace SKELETON
         // コントローラ
         CONTROL::Control& get_control(){ return m_control; }
 
-        // ツールバーに表示するラベル
-        void set_label( const std::string& label ){ m_label = label; }
+        /// ツールバーに表示するラベルをセット
+        void set_label( const std::string& label, const bool use_markup = false )
+        {
+            m_label = label;
+            m_label_use_markup = use_markup;
+        }
+
+        /// ツールバーに表示するラベルのツールチップをセット
+        void set_tooltip_label( const std::string& label ) { m_tooltip_label = label; }
 
         // メインウィンドウのタイトルに表示する文字列
         void set_title( const std::string& title ){ m_title = title; }
@@ -214,6 +227,12 @@ namespace SKELETON
 
         // ツールバーのラベルに表示する文字列
         const std::string& get_label() const { return m_label; }
+
+        /// ツールバーのラベルのツールチップに表示する文字列
+        const std::string& get_tooltip_label() const { return m_tooltip_label; }
+
+        /// ツールバーのラベルに表示する文字列にmarkupを使用するか
+        bool get_label_use_markup() const { return m_label_use_markup; }
 
         // メインウィンドウのタイトルバーに表示する文字列
         virtual const std::string& get_title() const { return m_title; }
