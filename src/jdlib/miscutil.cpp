@@ -13,6 +13,8 @@
 #include "dbtree/spchar_decoder.h"
 #include "dbtree/node.h"
 
+#include "cssmanager.h"
+
 #include <glib.h>
 
 #include <sstream>
@@ -1021,6 +1023,96 @@ std::string MISC::to_plain( const std::string& html )
     }
 
     return str_out;
+}
+
+
+/** @brief HTMLをPango markupテキストに変換する
+ *
+ * @details <mark>と<span>タグの色を設定して文字参照をデコードして返す。
+ * @param[in] html Pango markupテキストに変換する入力
+ * @return 変換した結果
+ */
+std::string MISC::to_markup( const std::string& html )
+{
+    if( html.empty() ) return html;
+    if( html.find_first_of( "<&" ) == std::string::npos ) return html;
+
+    std::string markuptxt;
+    const char* pos = html.c_str();
+    const char* pos_end = pos + html.size();
+
+    while( pos < pos_end ){
+
+        // '<' か '&' までコピーする
+        while( *pos != '<' && *pos != '&' && *pos != '\0' ) markuptxt.push_back( *pos++ );
+        if( pos >= pos_end ) break;
+
+        // タグを処理する
+        if( *pos == '<' ) {
+            ++pos;
+
+            // <mark>と<span>タグは色を変える
+            if( std::strncmp( pos, "mark", 4 ) == 0 || std::strncmp( pos, "span", 4 ) == 0 ) {
+                std::string classname = ( ( *pos ) == 'm' ) ? "mark" : "";
+                pos += 4;
+                if( std::strncmp( pos, " class=\"", 8 ) == 0 ) {
+                    pos += 8;
+                    const char* pos_name = pos;
+                    while( *pos != '"' && *pos != '\0' ) ++pos;
+                    classname.assign( pos_name, pos - pos_name );
+                    if( *pos != '\0' ) ++pos;
+                }
+
+                markuptxt += "<span";
+
+                if( classname.size() ) {
+                    CORE::Css_Manager* mgr = CORE::get_css_manager();
+                    const int classid = mgr->get_classid( classname );
+                    if( classid != -1 ) {
+                        CORE::CSS_PROPERTY css = mgr->get_property( classid );
+                        if( css.color != -1 ) markuptxt += " color=\"" + mgr->get_color( css.color ) + "\"";
+                        if( css.bg_color != -1 ) markuptxt += " background=\"" + mgr->get_color( css.bg_color ) + "\"";
+                    }
+                }
+
+                while( *pos != '>' && *pos != '\0' ) markuptxt.push_back( *pos++ );
+                markuptxt.push_back( '>' );
+                if( *pos != '\0' ) ++pos;
+                continue;
+            }
+
+            // </mark> は </span> に置換する
+            if( std::strncmp( pos, "/mark>", 6 ) == 0 || std::strncmp( pos, "/span>", 6 ) == 0 ) {
+                pos += 6;
+                markuptxt += "</span>";
+                continue;
+            }
+
+            // XXX: その他のタグは取り除く
+            while( *pos != '>' && *pos != '\0' ) ++pos;
+            if( *pos == '>' ) ++pos;
+            continue;
+        }
+
+        // 文字参照を処理する
+        if( *pos == '&' ) {
+            if( std::strncmp( pos + 1, "quot;", 5 ) == 0 ) {
+                markuptxt.push_back( '"' );
+                pos += 6;
+            }
+            else {
+                int n_in;
+                const char pre{ markuptxt.empty() ? '\0' : markuptxt.back() };
+                markuptxt += chref_decode_one( pos, n_in, pre, false );
+                if( n_in == 1 && markuptxt.back() == '&' ){
+                    markuptxt += "amp;";
+                }
+                pos += n_in;
+            }
+        }
+    }
+
+    return markuptxt;
 }
 
 
