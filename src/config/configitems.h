@@ -507,6 +507,9 @@ namespace CONFIG
         // 状態変更時にメインステータスバーの色を変える
         bool change_stastatus_color{};
 
+        // 状態変更時にスレビュータイトルの色を変える
+        bool change_statitle_color{};
+
         // Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )
         int use_header_bar{};
 

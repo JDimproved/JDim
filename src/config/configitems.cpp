@@ -562,6 +562,9 @@ bool ConfigItems::load( const bool restore )
     // 状態変更時にメインステータスバーの色を変える
     change_stastatus_color = cf.get_option_bool( "change_stastatus_color", CONF_CHANGE_STASTATUS_COLOR );
 
+    // 状態変更時にスレビュータイトルの色を変える
+    change_statitle_color = cf.get_option_bool( "change_statitle_color", CONF_CHANGE_STATITLE_COLOR );
+
     // Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )
     use_header_bar = cf.get_option_int( "use_header_bar", CONF_USE_HEADER_BAR, 0, 2 );
 
@@ -917,6 +920,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "disable_close", disable_close );
     cf.update( "show_hide_menubar_diag", show_hide_menubar_diag );
     cf.update( "change_stastatus_color", change_stastatus_color );
+    cf.update( "change_statitle_color", change_statitle_color );
     cf.update( "use_header_bar", use_header_bar );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );

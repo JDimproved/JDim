@@ -586,6 +586,9 @@ void CONFIG::set_show_hide_menubar_diag( const bool set ){ get_confitem()->show_
 // 状態変更時にメインステータスバーの色を変える
 bool CONFIG::get_change_stastatus_color(){ return get_confitem()->change_stastatus_color; }
 
+// 状態変更時にスレビュータイトルの色を変える
+bool CONFIG::get_change_statitle_color(){ return get_confitem()->change_statitle_color; }
+
 // Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )
 int CONFIG::get_use_header_bar() { return get_confitem()->use_header_bar; }
 
