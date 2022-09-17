@@ -281,6 +281,47 @@ TEST_F(ReplaceStrTest, multi_match)
 }
 
 
+class ReplaceCaseStrTest : public ::testing::Test {};
+
+TEST_F(ReplaceCaseStrTest, empty_data)
+{
+    EXPECT_EQ( "", MISC::replace_casestr( "", "", "" ) );
+    EXPECT_EQ( "", MISC::replace_casestr( "", "AA", "" ) );
+    EXPECT_EQ( "", MISC::replace_casestr( "", "AA", "BB" ) );
+    EXPECT_EQ( "", MISC::replace_casestr( "", "", "BB" ) );
+}
+
+TEST_F(ReplaceCaseStrTest, empty_match)
+{
+    EXPECT_EQ( "Quick Brown Fox", MISC::replace_casestr( "Quick Brown Fox", "", "Red" ) );
+}
+
+TEST_F(ReplaceCaseStrTest, replace_with_empty)
+{
+    EXPECT_EQ( "Quick//Fox", MISC::replace_casestr( "Quick/Brown/Fox", "Brown", "" ) );
+}
+
+TEST_F(ReplaceCaseStrTest, replace_with_empty_ignore_case)
+{
+    EXPECT_EQ( "Quick//Fox", MISC::replace_casestr( "Quick/BrOwN/Fox", "bRoWn", "" ) );
+}
+
+TEST_F(ReplaceCaseStrTest, not_match)
+{
+    EXPECT_EQ( "Quick Brown Fox", MISC::replace_casestr( "Quick Brown Fox", "Red", "Blue" ) );
+}
+
+TEST_F(ReplaceCaseStrTest, multi_match)
+{
+    EXPECT_EQ( "Quick Red Red Fox", MISC::replace_casestr( "Quick Brown Brown Fox", "Brown", "Red" ) );
+}
+
+TEST_F(ReplaceCaseStrTest, multi_match_ignore_case)
+{
+    EXPECT_EQ( "Quick Red Red Fox", MISC::replace_casestr( "Quick BrOwN bRoWn Fox", "BRowN", "Red" ) );
+}
+
+
 class ReplaceStrListTest : public ::testing::Test {};
 
 TEST_F(ReplaceStrListTest, empty_data)
