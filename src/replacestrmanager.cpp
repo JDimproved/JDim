@@ -290,6 +290,7 @@ std::string ReplaceStr_Manager::replace( std::string_view str, const int id ) co
         }
 
         // 正規表現を使わない置換処理
+        else if( condition.icase ) buffer = MISC::replace_casestr( buffer, item.pattern, item.replace );
         else buffer = MISC::replace_str( buffer, item.pattern, item.replace );
     }
 

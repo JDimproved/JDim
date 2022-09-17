@@ -38,7 +38,6 @@ ReplaceStrDiag::ReplaceStrDiag( Gtk::Window* parent, ReplaceStrCondition conditi
 
     m_check_active.set_active( condition.active );
     m_check_icase.set_active( condition.icase );
-    m_check_icase.set_sensitive( condition.regex );
     m_check_regex.set_active( condition.regex );
 
     m_check_active.set_tooltip_text( "この条件の置換を有効にする" );
@@ -107,7 +106,6 @@ void ReplaceStrDiag::slot_copy()
 //
 void ReplaceStrDiag::slot_sens()
 {
-    m_check_icase.set_sensitive( get_regex() );
 }
 
 
