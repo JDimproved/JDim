@@ -79,7 +79,9 @@ void ToolBar::set_view( SKELETON::View* view )
                      tooltip.empty() ? view->get_label() : tooltip,
                      view->get_label_use_markup() );
     }
-    if( view->is_broken() || view->is_old() || view->is_overflow() ) set_color( view->get_color() );
+    if( CONFIG::get_change_statitle_color() && ( view->is_broken() || view->is_old() || view->is_overflow() ) ) {
+        set_color( view->get_color() );
+    }
 
     // 閉じるボタンの表示更新
     if( m_button_close ){

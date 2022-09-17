@@ -155,6 +155,7 @@ namespace CONFIG
         CONF_DISABLE_CLOSE = 0, // Ctrl+qでウィンドウを閉じない
         CONF_SHOW_HIDE_MENUBAR_DIAG = 1, // メニューバーを非表示にした時にダイアログを表示
         CONF_CHANGE_STASTATUS_COLOR = 1, // 状態変更時にメインステータスバーの色を変える
+        CONF_CHANGE_STATITLE_COLOR = 1, // 状態変更時にスレビュータイトルの色を変える
         CONF_USE_HEADER_BAR = 2, // Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )
         CONF_USE_MACHI_OFFLAW = 0, // まちBBSの取得に offlaw.cgi を使用する
         CONF_SHOW_DEL_WRITTEN_THREAD_DIAG = 1, // 書き込み履歴のあるスレを削除する時にダイアログを表示
