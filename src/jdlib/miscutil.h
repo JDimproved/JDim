@@ -94,6 +94,9 @@ namespace MISC
     /// pattern を replacement に置き換える
     std::string replace_str( std::string_view str, std::string_view pattern, std::string_view replacement );
 
+    /// 文字列をコピーし部分文字列 old を new_ に置換して返す (ASCIIだけignore case)
+    std::string replace_casestr( const std::string& str, const std::string& old, const std::string& new_ );
+
     /// list_inから pattern を replacement に置き換えてリストを返す
     std::list<std::string> replace_str_list( const std::list<std::string>& list_in,
                                              std::string_view pattern, std::string_view replacement );

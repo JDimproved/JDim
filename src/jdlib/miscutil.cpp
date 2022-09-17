@@ -479,6 +479,44 @@ std::string MISC::replace_str( std::string_view str, std::string_view pattern, s
 }
 
 
+/** @brief 文字列をコピーし部分文字列 old を new_ に置換して返す (ASCIIだけignore case)
+ *
+ * @param[in] str コピーする文字列
+ * @param[in] old 置き換え対象 (ASCIIだけ大文字小文字を無視)
+ * @param[in] new_ 置き換える内容
+ * @return 置換処理した結果
+ * - old が空文字列のときは str を返す
+ * - old が見つからなかったときは str を返す
+ */
+std::string MISC::replace_casestr( const std::string& str, const std::string& old, const std::string& new_ )
+{
+    if( old.empty() ) return str;
+
+    std::string str_out;
+
+    const char head[3] = { g_ascii_toupper( old[0] ), g_ascii_tolower( old[0] ) };
+    std::size_t p0 = 0;
+    std::size_t p1 = 0;
+    while( true ) {
+        const std::size_t p2 = str.find_first_of( head, p1 );
+        if( p2 == std::string::npos ) break;
+        // ヌル終端文字列が要件なので注意
+        if( g_ascii_strncasecmp( str.c_str() + p2, old.data(), old.size() ) == 0 ) {
+            str_out.append( str, p0, p2 - p0 );
+            str_out.append( new_ );
+            p0 = p1 = p2 + old.size();
+            continue;
+        }
+        p1 = p2 + 1;
+    }
+    if( p0 == 0 ) return str;
+
+    str_out.append( str, p0 );
+
+    return str_out;
+}
+
+
 /** @brief list_inから pattern を replacement に置き換えてリストを返す
  *
  * @param[in] list_in 置き換えを実行する文字列のリスト
