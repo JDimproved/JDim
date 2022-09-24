@@ -370,6 +370,82 @@ TEST_F(ReplaceNewlinesToStrTest, replace_crlf)
 }
 
 
+class ChrToBinTest : public ::testing::Test {};
+
+TEST_F(ChrToBinTest, null_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( nullptr, output ) );
+}
+
+TEST_F(ChrToBinTest, empty_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( "", output ) );
+}
+
+TEST_F(ChrToBinTest, fullwidth_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( "ＡＢ", output ) );
+    EXPECT_EQ( 0, MISC::chrtobin( "１２", output ) );
+}
+
+TEST_F(ChrToBinTest, non_ascii_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( "あい", output ) );
+    EXPECT_EQ( 0, MISC::chrtobin( "アイ", output ) );
+}
+
+TEST_F(ChrToBinTest, non_hexadecimal_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( "GH", output ) );
+    EXPECT_EQ( 0, MISC::chrtobin( "gh", output ) );
+    EXPECT_EQ( 0, MISC::chrtobin( " !", output ) );
+}
+
+TEST_F(ChrToBinTest, hexadecimal_input)
+{
+    char output[16];
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 10, MISC::chrtobin( "0123456789", output ) );
+    EXPECT_STREQ( "\x01\x23\x45\x67\x89", output );
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 6, MISC::chrtobin( "ABCDEF", output ) );
+    EXPECT_STREQ( "\xAB\xCD\xEF", output );
+}
+
+TEST_F(ChrToBinTest, hexadecimal_incomplete_input)
+{
+    char output[16];
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 3, MISC::chrtobin( "123", output ) );
+    EXPECT_STREQ( "\x12\x03", output );
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 3, MISC::chrtobin( "ABC", output ) );
+    EXPECT_STREQ( "\xAB\x0C", output );
+}
+
+TEST_F(ChrToBinTest, break_at_non_hexadecimal)
+{
+    char output[16];
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 4, MISC::chrtobin( "1234あFFFF", output ) );
+    EXPECT_STREQ( "\x12\x34", output );
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 3, MISC::chrtobin( "ABC FFFF", output ) );
+    EXPECT_STREQ( "\xAB\xC0", output );
+}
+
+
 class HtmlEscapeTest : public ::testing::Test {};
 
 TEST_F(HtmlEscapeTest, empty_data)
