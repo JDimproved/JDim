@@ -370,6 +370,76 @@ TEST_F(ReplaceNewlinesToStrTest, replace_crlf)
 }
 
 
+class ChrToBinTest : public ::testing::Test {};
+
+TEST_F(ChrToBinTest, empty_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( "", output ) );
+}
+
+TEST_F(ChrToBinTest, fullwidth_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( "ＡＢ", output ) );
+    EXPECT_EQ( 0, MISC::chrtobin( "１２", output ) );
+}
+
+TEST_F(ChrToBinTest, non_ascii_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( "あい", output ) );
+    EXPECT_EQ( 0, MISC::chrtobin( "アイ", output ) );
+}
+
+TEST_F(ChrToBinTest, non_hexadecimal_input)
+{
+    char output[4]{};
+    EXPECT_EQ( 0, MISC::chrtobin( "GH", output ) );
+    EXPECT_EQ( 0, MISC::chrtobin( "gh", output ) );
+    EXPECT_EQ( 0, MISC::chrtobin( " !", output ) );
+}
+
+TEST_F(ChrToBinTest, hexadecimal_input)
+{
+    char output[16];
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 10, MISC::chrtobin( "0123456789", output ) );
+    EXPECT_STREQ( "\x01\x23\x45\x67\x89", output );
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 6, MISC::chrtobin( "ABCDEF", output ) );
+    EXPECT_STREQ( "\xAB\xCD\xEF", output );
+}
+
+TEST_F(ChrToBinTest, hexadecimal_incomplete_input)
+{
+    char output[16];
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 3, MISC::chrtobin( "123", output ) );
+    EXPECT_STREQ( "\x12\x03", output );
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 3, MISC::chrtobin( "ABC", output ) );
+    EXPECT_STREQ( "\xAB\x0C", output );
+}
+
+TEST_F(ChrToBinTest, break_at_non_hexadecimal)
+{
+    char output[16];
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 4, MISC::chrtobin( "1234あFFFF", output ) );
+    EXPECT_STREQ( "\x12\x34", output );
+
+    std::memset( output, '\0', 16 );
+    EXPECT_EQ( 3, MISC::chrtobin( "ABC FFFF", output ) );
+    EXPECT_STREQ( "\xAB\xC0", output );
+}
+
+
 class HtmlEscapeTest : public ::testing::Test {};
 
 TEST_F(HtmlEscapeTest, empty_data)
@@ -1322,6 +1392,37 @@ TEST_F(ChrefDecodeTest, escape_html_char_keeping)
     const std::string input = "&#60;&#62;&#38;&#34; &#x3c;&#x3e;&#x26;&#x22; &lt;&gt;&amp;&quot;";
     const std::string result = MISC::chref_decode( input, false );
     EXPECT_EQ( result, "&lt;&gt;&amp;&quot; &lt;&gt;&amp;&quot; &lt;&gt;&amp;&quot;" );
+}
+
+
+class UrlDecodeTest : public ::testing::Test {};
+
+TEST_F(UrlDecodeTest, empty)
+{
+    EXPECT_EQ( "", MISC::url_decode( "" ) );
+}
+
+TEST_F(UrlDecodeTest, not_decode)
+{
+    EXPECT_EQ( "http://foobar.test?a=1&b=c", MISC::url_decode( "http://foobar.test?a=1&b=c" ) );
+}
+
+TEST_F(UrlDecodeTest, decode_hiragana)
+{
+    constexpr const char* url = "http://hira.test/%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A";
+    EXPECT_EQ( "http://hira.test/あいうえお", MISC::url_decode( url ) );
+}
+
+TEST_F(UrlDecodeTest, decode_plus_sign)
+{
+    constexpr const char* url = "http://plus.test/Quick+Brown+Fox";
+    EXPECT_EQ( "http://plus.test/Quick Brown Fox", MISC::url_decode( url ) );
+}
+
+TEST_F(UrlDecodeTest, out_of_range_segments)
+{
+    constexpr const char* url = "http://out.test/%41%4G%61%G1%%a";
+    EXPECT_EQ( "http://out.test/A%4Ga%G1%%a", MISC::url_decode( url ) );
 }
 
 

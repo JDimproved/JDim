@@ -676,38 +676,39 @@ std::string MISC::intlisttostr( const std::list< int >& list_num )
 
 
 
-//
-// 16進数表記文字をバイナリに変換する( 例 "E38182" -> 0xE38182 )
-//
-// 出力 : char_out 
-// 戻り値: 変換に成功した chr_in のバイト数
-//
-size_t MISC::chrtobin( const char* chr_in, char* chr_out )
+/** @brief 16進数表記文字列をバイト列に変換する( 例 "E38182" -> "\xE3\x81\x82" )
+ *
+ * @param[in]  chr_in 入力
+ * @param[out] chr_out 出力 (not null)
+ * @return 変換に成功した chr_in のバイト数
+ */
+std::size_t MISC::chrtobin( std::string_view chr_in, char* chr_out )
 {
-    if( ! chr_in ) return 0;
+    assert( chr_out );
+    if( chr_in.empty() ) return 0;
 
-    const size_t chr_in_length = strlen( chr_in );
+    const std::size_t chr_in_length = chr_in.length();
 
-    size_t a, b;
-    for( a = 0, b = a; a < chr_in_length; ++a )
+    std::size_t n = 0;
+    for( ; n < chr_in_length; ++n )
     {
-        unsigned char chr = chr_in[a];
+        const unsigned int chr = static_cast<unsigned char>( chr_in[n] );
 
-        chr_out[b] <<= 4;
+        *chr_out <<= 4;
 
         // 0(0x30)〜9(0x39)
-        if( (unsigned char)( chr - 0x30 ) < 10 ) chr_out[b] |= chr - 0x30;
+        if( ( chr - 0x30 ) < 10 ) *chr_out |= chr - 0x30;
         // A(0x41)〜F(0x46)
-        else if( (unsigned char)( chr - 0x41 ) < 6 ) chr_out[b] |= chr - 0x37;
+        else if( ( chr - 0x41 ) < 6 ) *chr_out |= chr - 0x37;
         // a(0x61)〜f(0x66)
-        else if( (unsigned char)( chr - 0x61 ) < 6 ) chr_out[b] |= chr - 0x57;
+        else if( ( chr - 0x61 ) < 6 ) *chr_out |= chr - 0x57;
         // その他
         else break;
 
-        if( a % 2 != 0 ) ++b;
+        if( n % 2 != 0 ) ++chr_out;
     }
 
-    return a;
+    return n;
 }
 
 
@@ -1296,48 +1297,52 @@ bool MISC::is_url_char( const char* str_in, const bool loose_url )
 
 
 
-//
-// URLデコード
-//
-std::string MISC::url_decode( const std::string& url )
+/** @brief URLに含まれるパーセントエンコーディングをバイト列にデコードする
+ *
+ * @param[in] url デコードするURL
+ * @return デコードした結果
+ */
+std::string MISC::url_decode( std::string_view url )
 {
-    if( url.empty() ) return std::string();
+    std::string decoded;
+    if( url.empty() ) return decoded;
 
-    const size_t url_length = url.length();
-
-    std::vector< char > decoded( url_length + 1, '\0' );
-
-    unsigned int a, b;
-    for( a = 0, b = a; a < url_length; ++a, ++b )
+    const std::size_t size = url.size();
+    for( std::size_t n = 0; n < size; ++n )
     {
-        if( url[a] == '%' && ( a + 2 < url_length ) )
+        if( url[n] == '%' && ( n + 2 ) < size )
         {
-            char src[3] = { url[ a + 1 ], url[ a + 2 ], '\0' };
+            char src[3] = { url[ n + 1 ], url[ n + 2 ], '\0' };
             char tmp[3] = { '\0', '\0', '\0' };
 
             if( chrtobin( src, tmp ) == 2 )
             {
+                // 改行はLFにする
+                if( *tmp == '\n' && ! decoded.empty() && decoded.back() == '\r' )
+                {
+                    decoded.pop_back();
+                }
                 // '%4A' など、2文字が変換できていること
-                decoded[b] = *tmp;
-                a += 2;
+                decoded.push_back( *tmp );
+                n += 2;
             }
             else
             {
                 // 変換失敗は、単なる '%' 文字として扱う
-                decoded[b] = url[a];
+                decoded.push_back( url[n] );
             }
         }
-        else if( url[a] == '+' )
+        else if( url[n] == '+' )
         {
-            decoded[b] = ' ';
+            decoded.push_back( ' ' );
         }
         else
         {
-            decoded[b] = url[a];
+            decoded.push_back( url[n] );
         }
     }
 
-    return decoded.data();
+    return decoded;
 }
 
 

@@ -125,7 +125,7 @@ namespace MISC
     // 16進数表記文字をバイナリに変換する( 例 "E38182" -> 0xE38182 )
     // 出力 : char_out 
     // 戻り値: 変換に成功した chr_in のバイト数
-    size_t chrtobin( const char* chr_in, char* chr_out );
+    std::size_t chrtobin( std::string_view chr_in, char* chr_out );
 
     // strが半角でmaxsize文字を超えたらカットして後ろに...を付ける
     std::string cut_str( const std::string& str, const unsigned int maxsize );
@@ -171,8 +171,8 @@ namespace MISC
     // "RFC 2396" : http://www.ietf.org/rfc/rfc2396.txt
     bool is_url_char( const char* str_in, const bool loose_url );
 
-    // URLデコード
-    std::string url_decode( const std::string& url );
+    /// URLに含まれるパーセントエンコーディングをバイト列にデコードする
+    std::string url_decode( std::string_view url );
 
     // urlエンコード
     std::string url_encode( const char* str, const size_t n );
