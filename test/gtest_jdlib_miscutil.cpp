@@ -372,12 +372,6 @@ TEST_F(ReplaceNewlinesToStrTest, replace_crlf)
 
 class ChrToBinTest : public ::testing::Test {};
 
-TEST_F(ChrToBinTest, null_input)
-{
-    char output[4]{};
-    EXPECT_EQ( 0, MISC::chrtobin( nullptr, output ) );
-}
-
 TEST_F(ChrToBinTest, empty_input)
 {
     char output[4]{};

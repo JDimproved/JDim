@@ -117,7 +117,7 @@ std::string create_trip_newtype( const std::string& key )
             char key_binary[17] = { 0 };
 
             // 16進数文字列を全てバイナリに変換出来た [0-9A-Za-z]{16}
-            if( MISC::chrtobin( hex_part.c_str(), key_binary ) == 16 )
+            if( MISC::chrtobin( hex_part, key_binary ) == 16 )
             {
                 std::string salt;
 
