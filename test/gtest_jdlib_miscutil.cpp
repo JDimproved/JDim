@@ -1401,6 +1401,37 @@ TEST_F(ChrefDecodeTest, escape_html_char_keeping)
 }
 
 
+class UrlDecodeTest : public ::testing::Test {};
+
+TEST_F(UrlDecodeTest, empty)
+{
+    EXPECT_EQ( "", MISC::url_decode( "" ) );
+}
+
+TEST_F(UrlDecodeTest, not_decode)
+{
+    EXPECT_EQ( "http://foobar.test?a=1&b=c", MISC::url_decode( "http://foobar.test?a=1&b=c" ) );
+}
+
+TEST_F(UrlDecodeTest, decode_hiragana)
+{
+    constexpr const char* url = "http://hira.test/%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8A";
+    EXPECT_EQ( "http://hira.test/あいうえお", MISC::url_decode( url ) );
+}
+
+TEST_F(UrlDecodeTest, decode_plus_sign)
+{
+    constexpr const char* url = "http://plus.test/Quick+Brown+Fox";
+    EXPECT_EQ( "http://plus.test/Quick Brown Fox", MISC::url_decode( url ) );
+}
+
+TEST_F(UrlDecodeTest, out_of_range_segments)
+{
+    constexpr const char* url = "http://out.test/%41%4G%61%G1%%a";
+    EXPECT_EQ( "http://out.test/A%4Ga%G1%%a", MISC::url_decode( url ) );
+}
+
+
 class AsciiIgnoreCaseFindTest : public ::testing::Test {};
 
 TEST_F(AsciiIgnoreCaseFindTest, empty)
