@@ -171,8 +171,8 @@ namespace MISC
     // "RFC 2396" : http://www.ietf.org/rfc/rfc2396.txt
     bool is_url_char( const char* str_in, const bool loose_url );
 
-    // URLデコード
-    std::string url_decode( const std::string& url );
+    /// URLに含まれるパーセントエンコーディングをバイト列にデコードする
+    std::string url_decode( std::string_view url );
 
     // urlエンコード
     std::string url_encode( const char* str, const size_t n );

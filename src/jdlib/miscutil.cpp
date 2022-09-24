@@ -1296,48 +1296,52 @@ bool MISC::is_url_char( const char* str_in, const bool loose_url )
 
 
 
-//
-// URLデコード
-//
-std::string MISC::url_decode( const std::string& url )
+/** @brief URLに含まれるパーセントエンコーディングをバイト列にデコードする
+ *
+ * @param[in] url デコードするURL
+ * @return デコードした結果
+ */
+std::string MISC::url_decode( std::string_view url )
 {
-    if( url.empty() ) return std::string();
+    std::string decoded;
+    if( url.empty() ) return decoded;
 
-    const size_t url_length = url.length();
-
-    std::vector< char > decoded( url_length + 1, '\0' );
-
-    unsigned int a, b;
-    for( a = 0, b = a; a < url_length; ++a, ++b )
+    const std::size_t size = url.size();
+    for( std::size_t n = 0; n < size; ++n )
     {
-        if( url[a] == '%' && ( a + 2 < url_length ) )
+        if( url[n] == '%' && ( n + 2 ) < size )
         {
-            char src[3] = { url[ a + 1 ], url[ a + 2 ], '\0' };
+            char src[3] = { url[ n + 1 ], url[ n + 2 ], '\0' };
             char tmp[3] = { '\0', '\0', '\0' };
 
             if( chrtobin( src, tmp ) == 2 )
             {
+                // 改行はLFにする
+                if( *tmp == '\n' && ! decoded.empty() && decoded.back() == '\r' )
+                {
+                    decoded.pop_back();
+                }
                 // '%4A' など、2文字が変換できていること
-                decoded[b] = *tmp;
-                a += 2;
+                decoded.push_back( *tmp );
+                n += 2;
             }
             else
             {
                 // 変換失敗は、単なる '%' 文字として扱う
-                decoded[b] = url[a];
+                decoded.push_back( url[n] );
             }
         }
-        else if( url[a] == '+' )
+        else if( url[n] == '+' )
         {
-            decoded[b] = ' ';
+            decoded.push_back( ' ' );
         }
         else
         {
-            decoded[b] = url[a];
+            decoded.push_back( url[n] );
         }
     }
 
-    return decoded.data();
+    return decoded;
 }
 
 
