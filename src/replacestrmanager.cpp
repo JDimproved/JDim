@@ -122,7 +122,8 @@ void ReplaceStr_Manager::list_append( const int id, ReplaceStrCondition conditio
         constexpr bool newline = true;
         constexpr bool migemo = false;
 
-        if( ! creg.set( pattern, condition.icase, newline, migemo ) ) {
+        if( ! creg.set( pattern, condition.icase, newline, migemo,
+                        condition.wchar ) ) {
             std::string msg = "invlid replacestr pattern: ";
             msg.append( creg.errstr() + ": " + pattern );
             MISC::ERRMSG( msg );

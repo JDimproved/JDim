@@ -43,7 +43,7 @@ namespace CORE
         unsigned char active : 1; // 0
         unsigned char icase  : 1; // 1
         unsigned char regex  : 1; // 2
-        unsigned char wchar  : 1; // 3 reserved
+        unsigned char wchar  : 1; // 3
         unsigned char norm   : 1; // 4 reserved
 
         static ReplaceStrCondition from_ulong( unsigned long condition ) noexcept;
