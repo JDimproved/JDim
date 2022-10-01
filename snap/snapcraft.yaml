@@ -43,6 +43,9 @@ parts:
       - CPPFLAGS: "$(dpkg-buildflags --get CPPFLAGS) -isystem /snap/gnome-3-38-2004-sdk/current/usr/include"
       - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
       - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
+    build-packages:
+      - libgnutls28-dev
+      - libsigc++-2.0-dev
     override-build: |
       set -eu
       snapcraftctl build
