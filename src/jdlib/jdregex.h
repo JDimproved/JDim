@@ -28,12 +28,13 @@ namespace JDLIB
         bool m_compiled{};
         bool m_newline{};
         bool m_wchar{};
+        bool m_norm{};
         GError *m_error{};
 
     public:
         RegexPattern() noexcept = default;
         RegexPattern( const std::string& reg, const bool icase, const bool newline,
-                      const bool usemigemo = false, const bool wchar = false );
+                      const bool usemigemo = false, const bool wchar = false, const bool norm = false );
         ~RegexPattern() noexcept;
 
         // regex_tを複製する方法がないためcopy禁止にする
@@ -44,7 +45,7 @@ namespace JDLIB
         RegexPattern& operator=( RegexPattern&& ) noexcept;
 
         bool set( const std::string& reg, const bool icase, const bool newline,
-                  const bool usemigemo = false, const bool wchar = false );
+                  const bool usemigemo = false, const bool wchar = false, const bool norm = false );
         void clear();
         bool compiled() const noexcept { return m_compiled; }
         std::string errstr() const;
@@ -81,10 +82,11 @@ namespace JDLIB
         // newline :  . に改行をマッチさせない
         // usemigemo : migemo使用 (コンパイルオプションで指定する必要あり)
         // wchar : 全角半角の区別をしない
+        // norm : Unicode互換文字の区別をしない
         bool exec( const std::string& reg, const std::string& target, const std::size_t offset,
                    const bool icase, const bool newline, const bool usemigemo = false,
-                   const bool wchar = false ) {
-            RegexPattern pattern( reg, icase, newline, usemigemo, wchar );
+                   const bool wchar = false, const bool norm = false ) {
+            RegexPattern pattern( reg, icase, newline, usemigemo, wchar, norm );
             return match( pattern, target, offset );
         }
 

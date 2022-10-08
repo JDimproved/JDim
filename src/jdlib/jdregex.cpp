@@ -17,9 +17,9 @@ constexpr std::size_t MAX_TARGET_SIZE = 64 * 1024;  // 全角半角変換のバ�
 using namespace JDLIB;
 
 RegexPattern::RegexPattern( const std::string& reg, const bool icase, const bool newline,
-                            const bool usemigemo, const bool wchar )
+                            const bool usemigemo, const bool wchar, const bool norm )
 {
-    set( reg, icase, newline, usemigemo, wchar );
+    set( reg, icase, newline, usemigemo, wchar, norm );
 }
 
 
@@ -34,6 +34,7 @@ RegexPattern::RegexPattern( RegexPattern&& other ) noexcept
     , m_compiled{ other.m_compiled }
     , m_newline{ other.m_newline }
     , m_wchar{ other.m_wchar }
+    , m_norm{ other.m_norm }
     , m_error{ other.m_error }
 {
     other.m_compiled = false;
@@ -50,6 +51,7 @@ RegexPattern& RegexPattern::operator=( RegexPattern&& other ) noexcept
         m_compiled = other.m_compiled;
         m_newline = other.m_newline;
         m_wchar = other.m_wchar;
+        m_norm = other.m_norm;
         m_error = other.m_error;
 
         other.m_compiled = false;
@@ -69,12 +71,21 @@ void RegexPattern::clear()
     g_clear_error( &m_error );
 }
 
-// icase : 大文字小文字区別しない
-// newline :  . に改行をマッチさせない
-// usemigemo : migemo使用 (コンパイルオプションで指定する必要あり)
-// wchar : 全角半角の区別をしない
+
+/** @brief 正規表現パターンを設定する
+ *
+ * @details 空文字列のパターンは作成しない。
+ * @param[in] reg       正規表現パターン
+ * @param[in] icase     大文字小文字の区別をしない
+ * @param[in] newline   `.`(任意の1文字)に改行をマッチさせない
+ * @param[in] usemigemo migemo使用 (コンパイルオプションで指定する必要あり)
+ * @param[in] wchar     全角半角の区別をしない
+ * @param[in] norm      Unicode互換文字の区別をしない
+ * @return 有効な正規表現パターンはtrue、無効なパターンはfalse
+ * @n reg が空文字列のときはfalse
+ */
 bool RegexPattern::set( const std::string& reg, const bool icase, const bool newline,
-                        const bool usemigemo, const bool wchar )
+                        const bool usemigemo, const bool wchar, const bool norm )
 {
 #ifdef _DEBUG
     if( wchar ){
@@ -93,12 +104,20 @@ bool RegexPattern::set( const std::string& reg, const bool icase, const bool new
 
     m_newline = newline;
     m_wchar = wchar;
+    m_norm = norm;
 
     const char* asc_reg = reg.c_str();
     std::string target_asc;
 
+    // Unicode正規化
+    if( m_norm ) {
+        target_asc.reserve( reg.size() * 2 );
+        MISC::norm( asc_reg, target_asc );
+        asc_reg = target_asc.c_str();
+    }
+
     // 全角英数字 → 半角英数字、半角カナ → 全角カナ
-    if( m_wchar && MISC::has_widechar( asc_reg ) ){
+    else if( m_wchar && MISC::has_widechar( asc_reg ) ) {
 
         target_asc.reserve( MAX_TARGET_SIZE );
         std::vector<int> temp;
@@ -161,8 +180,18 @@ bool Regex::match( const RegexPattern& creg, const std::string& target,
 
     const char* asc_target = target.c_str() + offset;
 
+    // Unicode正規化
+    if( creg.m_norm ) {
+        if( m_target_asc.capacity() < target.size() * 2 ) {
+            m_target_asc.reserve( target.size() * 2 );
+            m_table_pos.reserve( target.size() * 2 );
+        }
+        MISC::norm( asc_target, m_target_asc, &m_table_pos );
+        asc_target = m_target_asc.c_str();
+    }
+
     // 全角英数字 → 半角英数字、半角カナ → 全角カナ
-    if( creg.m_wchar && MISC::has_widechar( asc_target ) ) {
+    else if( creg.m_wchar && MISC::has_widechar( asc_target ) ) {
 
 #ifdef _DEBUG
         std::cout << "Regex::match offset = " << offset << std::endl;
