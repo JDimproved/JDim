@@ -27,6 +27,7 @@ namespace CORE
         Gtk::CheckButton m_check_icase;
         Gtk::CheckButton m_check_regex;
         Gtk::CheckButton m_check_wchar;
+        Gtk::CheckButton m_check_norm;
 
         Gtk::Grid m_grid_entry;
         Gtk::Label m_label_pattern;
@@ -44,6 +45,7 @@ namespace CORE
         bool get_icase() const { return m_check_icase.get_active(); }
         bool get_regex() const { return m_check_regex.get_active(); }
         bool get_wchar() const { return m_check_wchar.get_active(); }
+        bool get_norm() const { return m_check_norm.get_active(); }
         ReplaceStrCondition get_condition() const;
         Glib::ustring get_pattern() const { return m_entry_pattern.get_text(); }
         Glib::ustring get_replace() const { return m_entry_replace.get_text(); }
@@ -61,6 +63,7 @@ namespace CORE
         Gtk::TreeModelColumn<bool> m_col_icase;
         Gtk::TreeModelColumn<bool> m_col_regex;
         Gtk::TreeModelColumn<bool> m_col_wchar;
+        Gtk::TreeModelColumn<bool> m_col_norm;
         Gtk::TreeModelColumn<Glib::ustring> m_col_pattern;
         Gtk::TreeModelColumn<Glib::ustring> m_col_replace;
 
@@ -70,6 +73,7 @@ namespace CORE
             add( m_col_icase );
             add( m_col_regex );
             add( m_col_wchar );
+            add( m_col_norm );
             add( m_col_pattern );
             add( m_col_replace );
         }

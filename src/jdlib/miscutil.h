@@ -252,6 +252,10 @@ namespace MISC
     // table_pos : 置き換えた文字列の位置
     void asc( const char* str1, std::string& str2, std::vector< int >& table_pos );
 
+    // UTF-8文字列(str1) -> 正規化文字列(str2)
+    // table_pos : 置き換えた文字列の位置
+    void norm( const char* str1, std::string& str2, std::vector<int>* table_pos = nullptr );
+
 
     // URL中のスキームを判別する
     inline int is_url_scheme( const char* str_in, int* length )

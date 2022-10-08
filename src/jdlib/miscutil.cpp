@@ -1972,6 +1972,57 @@ void MISC::asc( const char* str1, std::string& str2, std::vector< int >& table_p
 }
 
 
+/** @brief UTF-8文字列の正規化(NFKD)
+ *
+ * @param[in] str1 変換する文字列(ヌル終端)
+ * @param[out] str2 出力先
+ * @param[out] table_pos 置き換えた文字列の位置(オプション)
+ */
+void MISC::norm( const char* str1, std::string& str2, std::vector<int>* table_pos )
+{
+    std::size_t pos = 0;
+    char ustr[16];
+
+    while( str1[ pos ] != '\0' ) {
+
+        std::ptrdiff_t bytes = MISC::utf8bytes( str1 + pos );
+        if( bytes <= 1 ) {
+            str2.push_back( str1[pos] );
+            if( table_pos ) table_pos->push_back( pos );
+            pos++;
+            continue;
+        }
+        std::strncpy( ustr, str1 + pos, bytes );
+
+        // 異字体は纏める
+        constexpr gssize nul_terminated = -1;
+        const char32_t next = g_utf8_get_char_validated( str1 + pos + bytes, nul_terminated );
+        if( ( 0x180B <= next && next <= 0x180D ) ||
+            ( 0xFE00 <= next && next <= 0xFE0F ) ||
+            ( 0xE0100 <= next && next <= 0xE01EF ) ) {
+            bytes += MISC::utf32toutf8( next, ustr + bytes );
+        }
+
+        const std::size_t lng_before = str2.size();
+        // 新たに割り当てられた文字列を返すためメモリの開放が必要
+        gchar* normalized = g_utf8_normalize( ustr, bytes, G_NORMALIZE_NFKD );
+        str2.append( normalized );
+        g_free( normalized );
+        if( table_pos ) {
+            std::size_t n = pos;
+            std::generate_n( std::back_inserter( *table_pos ), str2.size() - lng_before, [&n] { return n++; } );
+        }
+
+        pos += bytes;
+    }
+    // 文字列の終端（ヌル文字）の位置を追加する。
+    // ヌル文字の位置がないと検索対象の末尾にマッチングしたとき範囲外アクセスが発生する。
+    if( table_pos ) {
+        table_pos->push_back( pos );
+    }
+}
+
+
 //
 // selfの先頭部分がstartsと等しいか（ヌル終端文字列バージョン）
 // Unicode正規化は行わなずバイト列として比較する
