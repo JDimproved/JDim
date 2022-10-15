@@ -155,7 +155,7 @@ namespace MISC
     std::string to_markup( const std::string& html );
 
     // HTML文字参照をデコード( completely=trueの場合は '&' '<' '>' '"' を含める )
-    std::string chref_decode( std::string_view str, const bool completely );
+    std::string chref_decode( std::string_view str, const bool completely = true );
 
     // URL中のスキームを判別する
     // 戻り値 : スキームタイプ

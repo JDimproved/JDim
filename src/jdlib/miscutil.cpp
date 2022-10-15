@@ -1155,11 +1155,12 @@ std::string MISC::to_markup( const std::string& html )
 }
 
 
-//
-// HTMLの文字参照をデコード
-//
-// completely = true の時は'"' '&' '<' '>'もデコードする
-//
+/** @brief 文字列をコピーしてHTML文字参照をデコードする
+ *
+ * @param[in] str        デコード処理する文字列
+ * @param[in] completely `true` の時は`"` `&` `<` `>` もデコードする
+ * @return デコード処理した結果
+ */
 std::string MISC::chref_decode( std::string_view str, const bool completely )
 {
     std::string str_out;
