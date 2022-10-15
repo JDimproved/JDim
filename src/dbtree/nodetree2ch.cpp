@@ -89,6 +89,39 @@ char* NodeTree2ch::process_raw_lines( char* rawlines )
 }
 
 
+/** @brief 5chスレッドの拡張属性を取り出す
+ *
+ * @param[in] str スレのレス番号1(`>>1`)の本文テキストデータ
+ */
+void NodeTree2ch::parse_extattr( std::string_view str )
+{
+    std::size_t pos = str.rfind( "<hr>VIPQ2_EXTDAT: " );
+    if( pos == std::string_view::npos ) return;
+    pos += 18;
+    if( pos >= str.size() ) return;
+
+    JDLIB::Regex regex;
+    constexpr std::size_t offset = 0;
+    constexpr bool icase = false; // 大文字小文字区別しない
+    constexpr bool newline = true; // . に改行をマッチさせない
+    constexpr bool usemigemo = false; // migemo使用
+    constexpr bool wchar = false; // 全角半角の区別をしない
+
+    str.remove_prefix( pos );
+    const std::string extattr{ str };
+    if( regex.exec( "[^:]+:[^:]+:([^:]+):[^ ]+ EXT was configured",
+                    extattr, offset, icase, newline, usemigemo, wchar ) ) {
+
+        // 最大レス数を取得
+        const std::string num_str = regex.str( 1 );
+        if( num_str == "V" ) m_res_number_max = 0;
+        else if( num_str[0] >= '0' && num_str[0] <= '9' ) {
+            m_res_number_max = std::atoi( num_str.c_str() );
+        }
+    }
+}
+
+
 //
 // ロード用データ作成
 //

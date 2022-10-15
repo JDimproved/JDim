@@ -33,6 +33,8 @@ namespace DBTREE
 
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;
 
+        void parse_extattr( std::string_view str ) override;
+
       private:
 
         void receive_finish() override;

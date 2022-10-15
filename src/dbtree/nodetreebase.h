@@ -293,6 +293,9 @@ namespace DBTREE
         void receive_data( const char* data, size_t size ) override;
         void receive_finish() override;
 
+        // 拡張属性を取り出す
+        virtual void parse_extattr( std::string_view str ) {};
+
       private:
 
         NODE* create_node();
