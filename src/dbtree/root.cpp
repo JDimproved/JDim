@@ -875,19 +875,26 @@ bool Root::exec_move_board( BoardBase* board,
         // キャッシュがある場合はダイアログに表示
         m_move_info += ss.str() + "\n";
 
-        // 移動先に同名のファイルかフォルダ何かあったらリネームしてバックアップをとっておく
-        if( CACHE::file_exists( new_path ) != CACHE::EXIST_ERROR ){
+        if( new_path != old_path ) {
 
-            std::string path_tmp = new_path.substr( 0, new_path.length() - 1 ) + "_bk/";
-            if( rename( new_path.c_str(), path_tmp.c_str() ) == 0 ) MISC::MSG( "rename : " +  new_path + " -> " + path_tmp );
-            else MISC::ERRMSG( "can't rename " + new_path + " to " + path_tmp );
-        }
+            // 移動先に同名のファイルかフォルダ何かあったらリネームしてバックアップをとっておく
+            if( CACHE::file_exists( new_path ) != CACHE::EXIST_ERROR ) {
 
-        // キャッシュ移動
-        if( CACHE::mkdir_parent_of_board( new_url ) ){
+                std::string path_bk = new_path.substr( 0, new_path.length() - 1 ) + "_bk/";
+                if( rename( new_path.c_str(), path_bk.c_str() ) == 0 ) {
+                    MISC::MSG( "rename : " +  new_path + " -> " + path_bk );
+                }
+                else MISC::ERRMSG( "can't rename " + new_path + " to " + path_bk );
+            }
 
-            if( rename( old_path.c_str(), new_path.c_str() ) == 0 ) MISC::MSG( "cache was moved : " +  old_path + " -> " + new_path );
-            else MISC::ERRMSG( "can't move cache from " + old_path + " to " + new_path );
+            // キャッシュ移動
+            if( CACHE::mkdir_parent_of_board( new_url ) ) {
+
+                if( rename( old_path.c_str(), new_path.c_str() ) == 0 ) {
+                    MISC::MSG( "cache was moved : " +  old_path + " -> " + new_path );
+                }
+                else MISC::ERRMSG( "can't move cache from " + old_path + " to " + new_path );
+            }
         }
 
 #ifdef _DEBUG
