@@ -1986,7 +1986,7 @@ void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
         icon = ICON::OLD;
     }
 
-    // キャッシュはあるが規定のレス数を越えていて全てのレスが既読
+    // キャッシュが新着がない状態で存在し、さらに規定の最大レス数を越えている
     else if( art->is_finished() ){
         mark_val = COL_MARKVAL_FINISHED;
 

@@ -507,6 +507,15 @@ void ArticleBase::set_number_seen( const int number_seen )
 }
 
 
+void ArticleBase::set_number_max( const int number_max )
+{
+    if( number_max != m_number_max ){
+        m_number_max = number_max;
+        m_save_info = true;
+    }
+}
+
+
 // 最終書き込み時間( string型 )
 const std::string& ArticleBase::get_write_date()
 {
@@ -570,18 +579,21 @@ bool ArticleBase::enable_load() const
 }
 
 
-//
-// キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
-//
+/**
+ * @brief キャッシュが新着がない状態で存在し、さらに規定の最大レス数を越えているか
+ */
 bool ArticleBase::is_finished() const
 {
-    if( is_cached() && ! enable_load() &&  m_number_max && get_number_seen() >= m_number_max ){
+    if( is_cached() && ! enable_load() ){
+        const int number_max{ m_number_max ? m_number_max : DBTREE::board_get_number_max_res( m_url ) };
+        if( number_max && m_number_load >= number_max ){
 
 #ifdef _DEBUG
-        std::cout << "ArticleBase::is_finished :  seen = " << get_number_seen() << " max = " << m_number_max << " : " << get_subject() << std::endl;
+            std::cout << "ArticleBase::is_finished :  load = " << m_number_load << " max = " << number_max
+                      << " : " << m_subject << std::endl;
 #endif
-
-        return true;
+            return true;
+        }
     }
 
     return false;
@@ -1177,7 +1189,7 @@ void ArticleBase::download_dat( const bool check_update )
         return;
     }
 
-    // 全レス既読ならロードしない
+    // キャッシュが新着がない状態で存在し、さらに規定の最大レス数を越えているならロードしない
     if( is_finished() ) return;
 
 #ifdef _DEBUG
@@ -1282,6 +1294,13 @@ void ArticleBase::slot_node_updated()
 
         // スレの読み込み数更新
         m_number_load = m_nodetree->get_res_number();
+
+        // スレの最大レス数更新
+        if( m_number_max == 0 ) {
+            const int res_max = m_nodetree->get_res_number_max();
+            if( res_max > 0 ) m_number_max = res_max;
+            else if( res_max == 0 ) m_number_max = CONFIG::get_max_resnumber();
+        }
 
         // 対応するarticleビューを更新
         CORE::core_set_command( "update_article", m_url );
@@ -1836,6 +1855,11 @@ void ArticleBase::read_info()
         GET_INFOVALUE( str_tmp, "seen = " );
         if( ! str_tmp.empty() ) m_number_seen = std::stoi( str_tmp );
 
+        // 最大レス数
+        m_number_max = 0;
+        GET_INFOVALUE( str_tmp, "max = " );
+        if( ! str_tmp.empty() ) m_number_max = std::atoi( str_tmp.c_str() );
+
         // 更新時間 (time)
         GET_INFOVALUE( m_date_modified, "modified = " );
 
@@ -2048,6 +2072,7 @@ void ArticleBase::read_info()
               << "org_host = " << m_org_host << std::endl
               << "load = " << m_number_load << std::endl
               << "seen = " << m_number_seen << std::endl
+              << "max = " << m_number_max << std::endl
               << "modified = " << m_date_modified << std::endl
               << "writetime = " << m_write_time_date << std::endl
               << "writename = " << m_write_name << std::endl
@@ -2173,6 +2198,7 @@ void ArticleBase::save_info( const bool force )
          << "org_host = " << m_org_host << std::endl
          << "load = " << m_number_load << std::endl
          << "seen = " << m_number_seen << std::endl
+         << "max = " << m_number_max << std::endl
          << "modified = " << m_date_modified << std::endl
          << "access = " << get_access_time_str() << std::endl
          << "writetime = " << ss_write.str() << std::endl

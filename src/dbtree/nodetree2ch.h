@@ -17,12 +17,15 @@ namespace DBTREE
         std::string m_org_url;  // 移転前のオリジナルURL
         time_t m_since_time; // スレが立った時刻
         int m_mode; // 読み込みモード
+        int m_res_number_max; // 最大レス数
         
       public:
 
         NodeTree2ch( const std::string& url, const std::string& org_url,
                      const std::string& date_modified, time_t since_time );
         ~NodeTree2ch();
+
+        int get_res_number_max() const noexcept override { return m_res_number_max; }
 
       protected:
 

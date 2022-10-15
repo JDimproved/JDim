@@ -150,8 +150,7 @@ namespace DBTREE
         int get_number_new() const noexcept { return m_number_new; }
         int get_number_load() const noexcept { return m_number_load; }
         int get_number_seen() const noexcept {  return m_number_seen; }
-
-        void set_number_max( const int number ){ m_number_max = number; }
+        int get_number_max() const noexcept { return m_number_max; }
 
         // スレ速度
         int get_speed() const;
@@ -294,6 +293,7 @@ namespace DBTREE
         void set_number( const int number, const bool is_online );
         void set_number_load( const int number_load );
         void set_number_seen( const int number_seen );
+        void set_number_max( const int number_max );
         void update_writetime();
 
         // キャッシュ削除
@@ -313,7 +313,7 @@ namespace DBTREE
         // キャッシュがあって、かつ新着の読み込みが可能
         bool enable_load() const;
 
-        // キャッシュはあるが規定のレス数を越えていて、かつ全てのレスが既読
+        // キャッシュが新着がない状態で存在し、さらに規定の最大レス数を越えているか
         bool is_finished() const;
 
         // あぼーん情報
