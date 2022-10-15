@@ -243,6 +243,7 @@ namespace DBTREE
     void article_copy_article_info( const std::string& url, const std::string& url_src );
     void article_stop_load( const std::string& url );
     int article_get_speed( const std::string& url );
+    std::size_t article_get_dat_volume_max( const std::string& url );
 
     // 書き込み履歴のリセット
     void article_clear_post_history( const std::string& url );

@@ -18,7 +18,8 @@ namespace DBTREE
         time_t m_since_time; // スレが立った時刻
         int m_mode; // 読み込みモード
         int m_res_number_max; // 最大レス数
-        
+        std::size_t m_dat_volume_max{}; // 最大DATサイズ(KB)
+
       public:
 
         NodeTree2ch( const std::string& url, const std::string& org_url,
@@ -26,12 +27,15 @@ namespace DBTREE
         ~NodeTree2ch();
 
         int get_res_number_max() const noexcept override { return m_res_number_max; }
+        std::size_t get_dat_volume_max() const noexcept override { return m_dat_volume_max; }
 
       protected:
 
         char* process_raw_lines( char* rawlines ) override;
 
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;
+
+        void parse_extattr( std::string_view str ) override;
 
       private:
 

@@ -1010,6 +1010,12 @@ int DBTREE::article_get_speed( const std::string& url )
 }
 
 
+std::size_t DBTREE::article_get_dat_volume_max( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_dat_volume_max();
+}
+
+
 // 書き込み履歴のリセット
 void DBTREE::article_clear_post_history( const std::string& url )
 {

@@ -2780,8 +2780,15 @@ void Core::set_command( const COMMAND_ARGS& command )
             mdiag.run();
         }
         else{
+            std::size_t max_lng = DBTREE::article_get_dat_volume_max( command.url );
+#ifdef _DEBUG
+            std::cout << "Core::set_command : open_message subject = "
+                      << DBTREE::article_modified_subject( command.url )
+                      << ", max lng = " << max_lng << std::endl;;
+#endif
 
-            const size_t max_lng = DBTREE::board_get_max_dat_lng( command.url );
+            if( max_lng == 0 ) max_lng = DBTREE::board_get_max_dat_lng( command.url );
+
             if( max_lng > 0 && DBTREE::article_lng_dat( command.url ) > max_lng * 1000 ){
 
                 SKELETON::MsgDiag mdiag( nullptr, "スレのサイズが" + std::to_string( max_lng )
