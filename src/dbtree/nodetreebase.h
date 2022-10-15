@@ -163,6 +163,8 @@ namespace DBTREE
         const std::string& get_ext_err() const { return m_ext_err; }
         bool is_checking_update() const { return m_check_update; }
 
+        virtual int get_res_number_max() const noexcept { return -1; }
+
         // number番のレスのヘッダノードのポインタを返す
         const NODE* res_header( int number ) const;
         NODE* res_header( int number )

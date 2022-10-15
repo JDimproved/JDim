@@ -234,6 +234,8 @@ namespace DBTREE
     int article_number_seen( const std::string& url );
     void article_set_number_seen( const std::string& url, int seen );
     int article_number_new( const std::string& url );
+    int article_number_max( const std::string& url );
+    void article_set_number_max( const std::string& url, int max );
     bool article_is_loading( const std::string& url );
     bool article_is_checking_update( const std::string& url );
     void article_download_dat( const std::string& url, const bool check_update );

@@ -963,6 +963,16 @@ int DBTREE::article_number_new( const std::string& url )
     return DBTREE::get_article( url )->get_number_new();
 }
 
+int DBTREE::article_number_max( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_number_max();
+}
+
+void DBTREE::article_set_number_max( const std::string& url, int max )
+{
+    DBTREE::get_article( url )->set_number_max( max );
+}
+
 bool DBTREE::article_is_loading( const std::string& url )
 {
     return DBTREE::get_article( url )->is_loading();

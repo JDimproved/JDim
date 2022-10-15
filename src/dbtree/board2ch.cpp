@@ -297,12 +297,8 @@ ArticleBase* Board2ch::append_article( const std::string& datbase, const std::st
     if( empty() ) return get_article_null();
 
     ArticleBase* article = insert( std::make_unique<DBTREE::Article2ch>( datbase, id, cached ) );
-    if( article ){
-        // 最大レス数セット
-        article->set_number_max( get_number_max_res() );
-    }
-    else return get_article_null();
 
+    if( ! article ) return get_article_null();
     return article;
 }
 

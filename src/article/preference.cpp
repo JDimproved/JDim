@@ -22,25 +22,27 @@ using namespace ARTICLE;
 
 Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string& command )
     : SKELETON::PrefDiag( parent, url )
-    ,m_label_name( false, "スレタイトル : ", MISC::to_plain( DBTREE::article_subject( get_url() ) ) )
-    ,m_label_url( false, "スレのURL : ", DBTREE:: url_readcgi( get_url(),0,0 ) )
-    ,m_label_url_dat( false, "DATファイルのURL : ", DBTREE:: url_dat( get_url() ) )
-    ,m_label_cache( false, "ローカルキャッシュパス : ", std::string() )
-    ,m_label_size( false, "サイズ( byte / Kbyte ) : ", std::string() )
-    ,m_check_transpabone( "透明あぼ〜ん" )
-    ,m_check_chainabone( "連鎖あぼ〜ん" )
-    ,m_check_ageabone( "sage以外をあぼ〜ん" )
-    ,m_check_defnameabone( "デフォルト名無しをあぼ〜ん" )
-    ,m_check_noidabone( "ID無しをあぼ〜ん" )
-    ,m_check_boardabone( "板レベルでのあぼ〜んを有効にする" )
-    ,m_check_globalabone( "全体レベルでのあぼ〜んを有効にする" )
-    ,m_label_since( false, "スレ立て日時 : ", std::string() )
-    ,m_label_modified( false, "最終更新日時 : ", std::string() )
-    ,m_button_clearmodified( "日時クリア" )
-    ,m_label_write( false, "最終書き込み日時 : ", std::string() )
-    ,m_bt_clear_post_history( "書き込み履歴クリア" )
-    ,m_label_write_name( false, "名前 : ", std::string() )
-    ,m_label_write_mail( false, "メール : ", std::string() )
+    , m_label_name( false, "スレタイトル : ", MISC::to_plain( DBTREE::article_subject( get_url() ) ) )
+    , m_label_url( false, "スレのURL : ", DBTREE::url_readcgi( get_url(), 0, 0 ) )
+    , m_label_url_dat( false, "DATファイルのURL : ", DBTREE::url_dat( get_url() ) )
+    , m_label_cache( false, "ローカルキャッシュパス : ", std::string() )
+    , m_label_size( false, "サイズ( byte / Kbyte ) : ", std::string() )
+    , m_hbox_size{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_label_maxres{ "最大レス数 (0 : 未設定)：" }
+    , m_check_transpabone( "透明あぼ〜ん" )
+    , m_check_chainabone( "連鎖あぼ〜ん" )
+    , m_check_ageabone( "sage以外をあぼ〜ん" )
+    , m_check_defnameabone( "デフォルト名無しをあぼ〜ん" )
+    , m_check_noidabone( "ID無しをあぼ〜ん" )
+    , m_check_boardabone( "板レベルでのあぼ〜んを有効にする" )
+    , m_check_globalabone( "全体レベルでのあぼ〜んを有効にする" )
+    , m_label_since( false, "スレ立て日時 : ", std::string() )
+    , m_label_modified( false, "最終更新日時 : ", std::string() )
+    , m_button_clearmodified( "日時クリア" )
+    , m_label_write( false, "最終書き込み日時 : ", std::string() )
+    , m_bt_clear_post_history( "書き込み履歴クリア" )
+    , m_label_write_name( false, "名前 : ", std::string() )
+    , m_label_write_mail( false, "メール : ", std::string() )
 {
     // 一般
     if( DBTREE::article_is_cached( get_url() ) ){
@@ -75,13 +77,23 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_write.pack_start( m_label_write );
     m_hbox_write.pack_start( m_bt_clear_post_history, Gtk::PACK_SHRINK );    
 
+    // 最大レス数
+    const int max_res = DBTREE::article_number_max( get_url() );
+    m_spin_maxres.set_range( 0, CONFIG::get_max_resnumber() );
+    m_spin_maxres.set_increments( 1, 1 );
+    m_spin_maxres.set_value( max_res );
+
+    m_hbox_size.pack_start( m_label_size );
+    m_hbox_size.pack_start( m_label_maxres, Gtk::PACK_SHRINK );
+    m_hbox_size.pack_start( m_spin_maxres, Gtk::PACK_SHRINK );
+
     m_vbox_info.set_border_width( 16 );
     m_vbox_info.set_spacing( 8 );
     m_vbox_info.pack_start( m_label_name, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_url, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_url_dat, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_label_cache, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_label_size, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_hbox_size, Gtk::PACK_SHRINK );
 
     m_vbox_info.pack_start( m_label_since, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
@@ -246,6 +258,9 @@ void Preferences::slot_ok_clicked()
                          , m_check_transpabone.get_active(), m_check_chainabone.get_active(), m_check_ageabone.get_active(),
                          m_check_defnameabone.get_active(), m_check_noidabone.get_active(),
                          m_check_boardabone.get_active(), m_check_globalabone.get_active() );
+
+    // 最大レス数
+    DBTREE::article_set_number_max( get_url(), m_spin_maxres.get_value_as_int() );
 
     // viewの再レイアウト
     CORE::core_set_command( "relayout_article", get_url() );

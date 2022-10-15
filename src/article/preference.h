@@ -21,6 +21,12 @@ namespace ARTICLE
         SKELETON::LabelEntry m_label_cache;
         SKELETON::LabelEntry m_label_size;
 
+        Gtk::Box m_hbox_size;
+
+        // 最大レス数
+        Gtk::Label m_label_maxres;
+        Gtk::SpinButton m_spin_maxres;
+
         // あぼーん
         Gtk::VBox m_vbox_abone;
         Gtk::Notebook m_notebook_abone;

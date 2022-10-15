@@ -37,6 +37,7 @@ NodeTree2ch::NodeTree2ch( const std::string& url, const std::string& org_url,
     , m_org_url( org_url )
     , m_since_time( since_time )
     , m_mode( MODE_NORMAL )
+    , m_res_number_max( -1 )
 {
 #ifdef _DEBUG
     std::cout << "NodeTree2ch::NodeTree2ch url = " << url << std::endl
