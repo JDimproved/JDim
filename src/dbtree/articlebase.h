@@ -158,6 +158,9 @@ namespace DBTREE
         // キャッシュにあるdatファイルのサイズ
         size_t get_lng_dat();
 
+        // スレの最大DATサイズ(KB)
+        std::size_t get_dat_volume_max() const;
+
         // nodetree の number 番のレスのヘッダノードのポインタを返す
         NODE* res_header( int number );
 

@@ -109,14 +109,19 @@ void NodeTree2ch::parse_extattr( std::string_view str )
 
     str.remove_prefix( pos );
     const std::string extattr{ str };
-    if( regex.exec( "[^:]+:[^:]+:([^:]+):[^ ]+ EXT was configured",
+    if( regex.exec( "[^:]+:[^:]+:([^:]+):(?:([^:]+):)?[^ ]+ EXT was configured",
                     extattr, offset, icase, newline, usemigemo, wchar ) ) {
 
         // 最大レス数を取得
-        const std::string num_str = regex.str( 1 );
+        std::string num_str = regex.str( 1 );
         if( num_str == "V" ) m_res_number_max = 0;
         else if( num_str[0] >= '0' && num_str[0] <= '9' ) {
             m_res_number_max = std::atoi( num_str.c_str() );
+        }
+        // 最大DATサイズ(KB)を取得
+        num_str = regex.str( 2 );
+        if( num_str[0] >= '0' && num_str[0] <= '9' ) {
+            m_dat_volume_max = std::atoi( num_str.c_str() );
         }
     }
 }

@@ -141,6 +141,16 @@ size_t ArticleBase::get_lng_dat()
 }
 
 
+/**
+ * @brief スレの最大DATサイズ(KB)
+ */
+std::size_t ArticleBase::get_dat_volume_max() const
+{
+    if( ! m_nodetree ) return 0;
+    return m_nodetree->get_dat_volume_max();
+}
+
+
 
 //
 // nodetree の number 番のレスのヘッダノードのポインタを返す

@@ -164,6 +164,8 @@ namespace DBTREE
         bool is_checking_update() const { return m_check_update; }
 
         virtual int get_res_number_max() const noexcept { return -1; }
+        // スレの最大DATサイズ(KB)
+        virtual std::size_t get_dat_volume_max() const noexcept { return 0; }
 
         // number番のレスのヘッダノードのポインタを返す
         const NODE* res_header( int number ) const;
