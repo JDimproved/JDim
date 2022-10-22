@@ -730,7 +730,10 @@ std::string MISC::cut_str( const std::string& str, const unsigned int maxsize )
     }
 
     // カットしたら"..."をつける
-    if( pos != outstr_length ) outstr = outstr.substr( 0, pos ) + "...";
+    if( pos != outstr_length ) {
+        outstr.resize( pos );
+        outstr.append( "..." );
+    }
 
     return outstr;
 }

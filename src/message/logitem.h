@@ -42,7 +42,9 @@ namespace MESSAGE
             , msg( _msg )
             , time_write{ std::time( nullptr ) }
         {
-            if( newthread && url.find( ID_OF_NEWTHREAD ) != std::string::npos ) url = url.substr( 0, url.find( ID_OF_NEWTHREAD ) );
+            if( newthread && url.find( ID_OF_NEWTHREAD ) != std::string::npos ) {
+                url.resize( url.find( ID_OF_NEWTHREAD ) );
+            }
 
             // WAVE DASH 問題
             msg = MISC::utf8_fix_wavedash( msg, MISC::WaveDashFix::UnixToWin );
