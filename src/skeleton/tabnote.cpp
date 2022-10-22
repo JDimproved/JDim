@@ -191,7 +191,7 @@ int TabNotebook::get_page_under_mouse()
                 ret = -1;
                 break;
             }
-            if( x >= tab_x && x <= tab_x + tab_w ){
+            else if( x <= tab_x + tab_w ){
                 ret = i;
                 break;
             }
