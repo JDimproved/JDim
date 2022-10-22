@@ -1222,7 +1222,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
     }
 
     // サイズ系メニュー、お気に入り、保存
-    std::string sizemenus[] =
+    constexpr const char* sizemenus[] =
     {
         "Size_Menu",
         "OrgSizeImage",
@@ -1232,7 +1232,7 @@ void ImageViewBase::activate_act_before_popupmenu( const std::string& url )
         "AppendFavorite",
         "Save"
     };
-    for( const std::string& menu : sizemenus ) {
+    for( const char* menu : sizemenus ) {
         act = action_group()->get_action( menu );
         if( act ){
             if( m_img->is_cached() ) act->set_sensitive( true );

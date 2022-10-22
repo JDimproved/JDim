@@ -109,7 +109,7 @@ void ViewHistory::replace_url( const std::string& url_old, const std::string& ur
               << "end = " << m_history_end << std::endl;
 #endif
 
-    for( auto& item : m_items ) {
+    for( const auto& item : m_items ) {
         if( item->url == url_old ) {
             item->url = url_new;
 #ifdef _DEBUG
