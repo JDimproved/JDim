@@ -1427,7 +1427,7 @@ void BoardViewBase::close_view()
 void BoardViewBase::slot_delete_logs()
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    for( Gtk::TreeModel::iterator& iter : list_it ) {
+    for( const Gtk::TreeModel::iterator& iter : list_it ) {
 
         Gtk::TreeModel::Row row = *iter;
         DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
@@ -1787,7 +1787,7 @@ void BoardViewBase::activate_act_before_popupmenu( const std::string& url )
         std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
         if( list_it.size() ){
 
-            for( Gtk::TreeModel::iterator& iter : list_it ) {
+            for( const Gtk::TreeModel::iterator& iter : list_it ) {
 
                 Gtk::TreeModel::Row row = *iter;
                 DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
@@ -2373,7 +2373,7 @@ void BoardViewBase::slot_dropped_url_list( const std::list< std::string >& url_l
 void BoardViewBase::slot_bookmark( const int bookmark )
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
-    for( Gtk::TreeModel::iterator& iter : list_it ) {
+    for( const Gtk::TreeModel::iterator& iter : list_it ) {
         Gtk::TreeModel::Row row = *iter;
         DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
         if( art ){
@@ -2578,7 +2578,7 @@ void BoardViewBase::open_selected_rows( const bool reget )
             return;
         }
 
-        for( Gtk::TreeModel::iterator& iter : list_it ) {
+        for( const Gtk::TreeModel::iterator& iter : list_it ) {
 
             Gtk::TreeModel::Row row = *iter;
             DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
@@ -2599,7 +2599,7 @@ void BoardViewBase::open_selected_rows( const bool reget )
         mode = "reget";
     }
 
-    for( Gtk::TreeModel::iterator& iter : list_it ) {
+    for( const Gtk::TreeModel::iterator& iter : list_it ) {
 
         if( !list_url.empty() ) list_url += " ";
 
@@ -2925,7 +2925,7 @@ void BoardViewBase::slot_save_dat()
 
     SESSION::set_dir_dat( path_dir );
 
-    for( Gtk::TreeModel::iterator& iter : list_it ) {
+    for( const Gtk::TreeModel::iterator& iter : list_it ) {
 
         Gtk::TreeModel::Row row = *iter;
         DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
@@ -3027,7 +3027,7 @@ void BoardViewBase::slot_abone_thread()
 
     std::list< std::string > threads = DBTREE::get_abone_list_thread( get_url_board() );
 
-    for( Gtk::TreeModel::iterator& iter : list_it ) {
+    for( const Gtk::TreeModel::iterator& iter : list_it ) {
         Gtk::TreeModel::Row row = *iter;
         Glib::ustring subject = row[ m_columns.m_col_subject ];
         threads.push_back( subject );
@@ -3072,7 +3072,7 @@ void BoardViewBase::set_article_to_buffer()
 
         CORE::DATA_INFO_LIST list_info;
         Gtk::TreePath path( "0" );
-        for( Gtk::TreeModel::iterator& iter : list_it ) {
+        for( const Gtk::TreeModel::iterator& iter : list_it ) {
 
             Gtk::TreeModel::Row row = *iter;
             DBTREE::ArticleBase *art = row[ m_columns.m_col_article ];
