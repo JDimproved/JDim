@@ -2004,7 +2004,7 @@ void BBSListViewBase::open_selected_rows()
     std::string list_url_board;
     std::string list_url_article;
 
-    for( Gtk::TreeIter& iter : m_treeview.get_selected_iterators() ) {
+    for( const Gtk::TreeIter& iter : m_treeview.get_selected_iterators() ) {
 
         Gtk::TreeModel::Row row = *iter;
         const int type = row2type( row );
@@ -2044,7 +2044,7 @@ void BBSListViewBase::open_selected_rows()
 //
 void BBSListViewBase::checkupdate_selected_rows( const bool open )
 {
-    for( Gtk::TreeIter& iter : m_treeview.get_selected_iterators() ) {
+    for( const Gtk::TreeIter& iter : m_treeview.get_selected_iterators() ) {
 
         Gtk::TreeModel::Row row = *iter;
         const int type = row2type( row );
