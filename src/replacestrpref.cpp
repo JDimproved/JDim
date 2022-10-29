@@ -354,7 +354,7 @@ void ReplaceStrPref::slot_ok_clicked()
 
     //DBTREE::update_abone_thread();
     CORE::core_set_command( "relayout_all_board" );
-    CORE::core_set_command( "relayout_all_article" );
+    CORE::core_set_command( "relayout_all_article", "", "completely" );
 }
 
 
