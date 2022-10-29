@@ -9,24 +9,28 @@
 
 #include "heap.h"
 
+#include <cstring>
+
+
 using namespace JDLIB;
 
 HEAP::HEAP( std::size_t blocksize ) noexcept
     : m_blocksize{ blocksize }
+    , m_block_iter{ m_heap_list.end() }
 {}
 
 
-HEAP::~HEAP()
-{
-    clear();
-}
+HEAP::~HEAP() noexcept = default;
 
 
+/**
+ * @brief ブロックを確保したまま利用状況を初期化する
+ */
 void HEAP::clear()
 {
-    m_heap_list.clear();
     m_space_avail = 0;
     m_ptr_head = nullptr;
+    m_block_iter = m_heap_list.begin();
 }
 
 
@@ -37,9 +41,19 @@ void* HEAP::heap_alloc( std::size_t size_bytes, std::size_t alignment )
 
     while(1) {
         if( !m_ptr_head || m_space_avail < size_bytes || m_space_avail >= m_blocksize ) {
-            // 確保したメモリブロックはゼロ初期化する
-            m_heap_list.emplace_back( new unsigned char[m_blocksize]{} );
-            m_ptr_head = &m_heap_list.back()[0];
+            if( m_block_iter != m_heap_list.end() ) {
+                // メモリブロックは使う前にzero-fillする
+                m_ptr_head = &(*m_block_iter)[0];
+                std::memset( m_ptr_head, 0, sizeof(unsigned char) * m_blocksize );
+                ++m_block_iter;
+            }
+            else {
+                // std::listは要素追加でイテレーターが無効にならない
+                // イテレーターがendを指しているときはブロックを追加
+                // 確保したメモリブロックはゼロ初期化する
+                m_heap_list.emplace_back( new unsigned char[m_blocksize]{} );
+                m_ptr_head = &m_heap_list.back()[0];
+            }
             m_space_avail = m_blocksize - 1;
         }
 
