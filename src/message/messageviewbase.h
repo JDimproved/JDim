@@ -108,7 +108,7 @@ namespace MESSAGE
         void clock_in() override;
         void write() override;
         void reload() override {}
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
         void close_view() override;
         void redraw_view() override;
         void focus_view() override;

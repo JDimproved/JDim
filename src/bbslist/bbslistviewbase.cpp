@@ -671,7 +671,7 @@ void BBSListViewBase::redraw_view()
 //
 // 色やフォントなどの変更
 //
-void BBSListViewBase::relayout()
+void BBSListViewBase::relayout( const bool completely )
 {
     m_treeview.init_color( COLOR_CHAR_BBS, COLOR_BACK_BBS, COLOR_BACK_BBS_EVEN );
     m_treeview.init_font( CONFIG::get_fontname( FONT_BBS ) );

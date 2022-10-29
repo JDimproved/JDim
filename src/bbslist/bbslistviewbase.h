@@ -214,7 +214,7 @@ namespace BBSLIST
 
         void stop() override;
         void redraw_view() override;
-        void relayout() override;  // 色やフォントなどの変更
+        void relayout( const bool completely = false ) override;  // 色やフォントなどの変更
         void focus_view() override;
         void focus_out() override;
         void close_view() override;
