@@ -242,7 +242,7 @@ void ArticleViewSearch::show_view()
 //
 // 画面を消してレイアウトやりなおし & 再描画
 //
-void ArticleViewSearch::relayout()
+void ArticleViewSearch::relayout( const bool completely )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewSearch::relayout\n";

@@ -222,7 +222,7 @@ namespace SKELETON
         virtual void restore_focus();
         virtual void focus_out();
         virtual void set_tablabel( const std::string& url, const std::string& str_label );
-        virtual void relayout_all();
+        virtual void relayout_all( const bool completely = false );
         virtual void open_window(){}
         virtual void close_window(){}
         virtual void toggle_tab();

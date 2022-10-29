@@ -417,6 +417,9 @@ namespace DBTREE
         // スレッド924か
         bool is_924() const noexcept { return m_924; }
 
+        // NodeTree削除
+        void unlock_impl() override;
+
       private:
 
         // 更新チェック可能
@@ -432,7 +435,6 @@ namespace DBTREE
 
         void slot_node_updated();
         void slot_load_finished();
-        void unlock_impl() override;
 
         // お気に入りのアイコンとスレビューのタブのアイコンに更新マークを表示
         // update == true の時に表示。falseなら戻す

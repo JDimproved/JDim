@@ -730,7 +730,7 @@ bool MessageViewBase::slot_button_press( GdkEventButton* event )
 //
 // フォントの更新
 //
-void MessageViewBase::relayout()
+void MessageViewBase::relayout( const bool completely )
 {
     init_font( CONFIG::get_fontname( FONT_MESSAGE ) );
     init_color();

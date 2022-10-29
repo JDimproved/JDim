@@ -1023,6 +1023,13 @@ void DBTREE::article_clear_post_history( const std::string& url )
 }
 
 
+// NodeTree削除
+void DBTREE::article_clear_nodetree( const std::string& url )
+{
+    DBTREE::get_article( url )->unlock_impl();
+}
+
+
 // ユーザーエージェント
 // ダウンロード用
 const std::string& DBTREE::get_agent( const std::string& url )

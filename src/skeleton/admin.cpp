@@ -650,7 +650,10 @@ void Admin::exec_command()
     }
 
     // 全てのビューを再描画
-    else if( command.command == "relayout_all" ) relayout_all();
+    else if( command.command == "relayout_all" ){
+        const bool completely = ( command.arg1 == "completely" );
+        relayout_all( completely );
+    }
 
     // タイトル表示
     // アクティブなviewから依頼が来たらコアに渡す
@@ -1844,11 +1847,11 @@ void Admin::set_tablabel( const std::string& url, const std::string& str_label )
 //
 // 再レイアウト実行
 //
-void Admin::relayout_all()
+void Admin::relayout_all( const bool completely )
 {
     std::list< SKELETON::View* > list_view = get_list_view();
     for( SKELETON::View* view : list_view ) {
-        if( view ) view->relayout();
+        if( view ) view->relayout( completely );
     }
 }
 

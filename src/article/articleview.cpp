@@ -661,7 +661,7 @@ void ArticleViewMain::show_instruct_diag()
 //
 // 画面を消してレイアウトやりなおし & 再描画
 //
-void ArticleViewMain::relayout()
+void ArticleViewMain::relayout( const bool completely )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewMain::relayout " << DBTREE::article_subject( url_article() ) << std::endl;;
@@ -672,6 +672,8 @@ void ArticleViewMain::relayout()
     int seen = drawarea()->get_seen_current();
     int num_reserve = drawarea()->get_goto_num_reserve();
     int separator_new = drawarea()->get_separator_new();
+
+    if( completely ) DBTREE::article_clear_nodetree( url_article() );
 
     drawarea()->clear_screen();
     drawarea()->set_separator_new( separator_new );

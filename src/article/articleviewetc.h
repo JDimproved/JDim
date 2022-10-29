@@ -22,7 +22,7 @@ namespace ARTICLE
         ~ArticleViewRes();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -46,7 +46,7 @@ namespace ARTICLE
         ~ArticleViewName();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -70,7 +70,7 @@ namespace ARTICLE
         ~ArticleViewID();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -94,7 +94,7 @@ namespace ARTICLE
         ~ArticleViewBM();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -119,7 +119,7 @@ namespace ARTICLE
         ~ArticleViewPost();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -144,7 +144,7 @@ namespace ARTICLE
         ~ArticleViewHighRefRes();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -167,7 +167,7 @@ namespace ARTICLE
         ~ArticleViewURL();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -191,7 +191,7 @@ namespace ARTICLE
         ~ArticleViewRefer();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -217,7 +217,7 @@ namespace ARTICLE
         ~ArticleViewDrawout();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
         void show_view() override;
         void reload() override;
@@ -240,7 +240,7 @@ namespace ARTICLE
         ~ArticleViewPostlog();
 
         // SKELETON::View の関数のオーバロード
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
         void stop() override {} // キャンセル
 
         // 検索

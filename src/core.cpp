@@ -2311,7 +2311,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 
     // 全articleviewの再レイアウト
     else if( command.command == "relayout_all_article" ){
-        ARTICLE::get_admin()->set_command( "relayout_all" );
+        ARTICLE::get_admin()->set_command( "relayout_all", command.url, command.arg1 );
     }
 
     // 全articleviewのフォントの初期化

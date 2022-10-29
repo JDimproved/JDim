@@ -261,6 +261,9 @@ namespace DBTREE
     void article_update_writetime( const std::string& url );
     size_t article_lng_dat( const std::string& url );
 
+    // NodeTree削除
+    void article_clear_nodetree( const std::string& url );
+
     // ユーザーエージェント
     const std::string& get_agent( const std::string& url );   // ダウンロード用
     const std::string& get_agent_w( const std::string& url ); // 書き込み用

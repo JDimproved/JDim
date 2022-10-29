@@ -55,7 +55,7 @@ namespace ARTICLE
         void show_view() override;
         void update_view() override;
         void update_finish() override;
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
 
       protected:
 

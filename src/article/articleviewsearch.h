@@ -44,7 +44,7 @@ namespace ARTICLE
 
         void focus_view() override;
         void show_view() override;
-        void relayout() override;
+        void relayout( const bool completely = false ) override;
         void reload() override;
         void stop() override;
 
