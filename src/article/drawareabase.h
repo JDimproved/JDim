@@ -253,6 +253,7 @@ namespace ARTICLE
         SIG_KEY_RELEASE sig_key_release(){ return m_sig_key_release; }
         SIG_ON_URL sig_on_url(){ return m_sig_on_url; }
         SIG_LEAVE_URL sig_leave_url(){ return m_sig_leave_url; }
+        auto sig_view_map() { return m_view.signal_map(); }
 
         explicit DrawAreaBase( const std::string& url );
         ~DrawAreaBase();

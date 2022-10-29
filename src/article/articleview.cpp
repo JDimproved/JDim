@@ -65,6 +65,7 @@ ArticleViewMain::ArticleViewMain( const std::string& url )
     SESSION::remove_delete_list( url_article() );
 
     setup_view();
+    drawarea()->sig_view_map().connect( sigc::mem_fun( *this, &ArticleViewMain::slot_view_map ) );
 }
 
 
@@ -658,9 +659,11 @@ void ArticleViewMain::show_instruct_diag()
 
 
 
-//
-// 画面を消してレイアウトやりなおし & 再描画
-//
+/** @brief 画面を消してレイアウトやりなおし & 再描画
+ *
+ * @details スレビューのレイアウト処理は重たいためmapされてないときは再レイアウトを予約する。
+ * @param[in] completely `true` ならNodeTreeを再構築する
+ */
 void ArticleViewMain::relayout( const bool completely )
 {
 #ifdef _DEBUG
@@ -668,6 +671,26 @@ void ArticleViewMain::relayout( const bool completely )
 #endif
 
     hide_popup( true );
+
+    if( drawarea()->get_mapped() ) {
+        m_reserve_relayout = std::nullopt;
+        do_relayout( completely );
+    }
+    else {
+        m_reserve_relayout = completely;
+    }
+}
+
+
+/** @brief 画面を消してレイアウトやりなおし & 再描画 を実行する
+ *
+ * @param[in] completely `true` ならNodeTreeを再構築する
+ */
+void ArticleViewMain::do_relayout( const bool completely )
+{
+#ifdef _DEBUG
+    std::cout << "ArticleViewMain::do_relayout " << url_article() << std::endl;;
+#endif
 
     int seen = drawarea()->get_seen_current();
     int num_reserve = drawarea()->get_goto_num_reserve();
@@ -738,4 +761,16 @@ void ArticleViewMain::live_stop()
 
     set_status( "実況停止" );
     ARTICLE::get_admin()->set_command( "set_status", get_url(), get_status(), "force" );
+}
+
+
+/**
+ * @brief 再レイアウトが予約されているなら実行する
+ */
+void ArticleViewMain::slot_view_map()
+{
+    if( m_reserve_relayout.has_value() ) {
+        do_relayout( *m_reserve_relayout );
+        m_reserve_relayout = std::nullopt;
+    }
 }

@@ -9,6 +9,9 @@
 
 #include "articleviewbase.h"
 
+#include <optional>
+
+
 namespace ARTICLE
 {
     class ArticleViewMain : public ArticleViewBase
@@ -31,6 +34,9 @@ namespace ARTICLE
 
         // 連続リロード防止用
         int m_cancel_reload_counter{};
+
+        /// true または false なら再レイアウトが予約されている
+        std::optional<bool> m_reserve_relayout;
 
       public:
         explicit ArticleViewMain( const std::string& url );
@@ -71,6 +77,9 @@ namespace ARTICLE
         void create_status_message();
 
         void show_instruct_diag();
+
+        void do_relayout( bool completely );
+        void slot_view_map();
     };
 }
 
