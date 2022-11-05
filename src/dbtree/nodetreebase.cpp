@@ -3102,12 +3102,12 @@ bool NodeTreeBase::check_abone_name( const int number )
         }
     }
 
-    const std::string name_str( head->headinfo->name );
+    const std::string_view name_str( head->headinfo->name );
 
     // ローカル name
     if( check_name ){
         for( const std::string& name : m_list_abone_name ) {
-            if( name_str.find( name ) != std::string::npos ) {
+            if( name_str.find( name ) != std::string_view::npos ) {
                 head->headinfo->abone = true;
                 return true;
             }
@@ -3117,7 +3117,7 @@ bool NodeTreeBase::check_abone_name( const int number )
     // 板レベル name
     if( check_name_board ){
         for( const std::string& name : m_list_abone_name_board ) {
-            if( name_str.find( name ) != std::string::npos ) {
+            if( name_str.find( name ) != std::string_view::npos ) {
                 head->headinfo->abone = true;
                 return true;
             }
@@ -3127,7 +3127,7 @@ bool NodeTreeBase::check_abone_name( const int number )
     // 全体 name
     if( check_name_global ){
         for( const std::string& name : CONFIG::get_list_abone_name() ) {
-            if( name_str.find( name ) != std::string::npos ) {
+            if( name_str.find( name ) != std::string_view::npos ) {
                 head->headinfo->abone = true;
                 return true;
             }
