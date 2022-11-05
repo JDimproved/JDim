@@ -61,7 +61,7 @@ layout: default
 OSやディストリビューション別の解説は [#592][dis592] を参照。
 
 configure のかわりに [meson] を使ってビルドする方法は [#556][dis556] を参照。
-<small>(v0.4.0+から暫定サポート)</small>
+<small>(v0.4.0+からサポート)</small>
 
 WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
 <small>(v0.5.0+からサポート)</small>
@@ -69,6 +69,8 @@ WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
 
 <a name="make-configure"></a>
 ### ビルド方法( configure + make の場合 )
+**Autotoolsのサポートは2023年7月のリリースをもって廃止されます。
+かわりに[meson]を利用してください。([RFC 0012][rfc0012])**
 
 1. `autoreconf -i` ( 又は `./autogen.sh` )
 2. `./configure`
@@ -153,3 +155,4 @@ WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
 [dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"
 [dis592]: https://github.com/JDimproved/JDim/discussions/592 "OS/ディストリビューション別インストール方法 - Discussions #592"
 [dis737]: https://github.com/JDimproved/JDim/discussions/737 "[v0.5.0+] WebPやAVIF形式の画像を表示する方法 - Discussions #737"
+[rfc0012]: https://github.com/JDimproved/rfcs/blob/master/docs/0012-end-of-autotools-support.md

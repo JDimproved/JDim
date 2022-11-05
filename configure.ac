@@ -1,6 +1,8 @@
 dnl
 dnl JDim用 configure.ac
 dnl
+dnl Autotoolsのサポートは2023年7月のリリースをもって廃止されます。かわりにMesonを利用してください。
+dnl
 AC_PREREQ([2.69])
 AC_INIT([jdim],[1.0])
 AM_INIT_AUTOMAKE
