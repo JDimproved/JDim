@@ -19,13 +19,13 @@ layout: default
 ### 動作環境
 
 #### 必須環境
-- gtkmm 3.22.0 以上
-- glibmm 2.56.0 以上
+- gtkmm 3.22.0 以上 ( 3.24.0 未満のサポートは将来のリリースで廃止される )
+- glibmm 2.56.0 以上 ( 2.58.0 未満のサポートは将来のリリースで廃止される )
 - zlib 1.2 以上
-- gnutls 3.5.18 以上
+- gnutls 3.5.18 以上 ( 3.6.7 未満のサポートは将来のリリースで廃止される )
 
 #### 推奨環境
-- Linux Kernel 4.4.0 以上
+- Linux kernel 4.4.0 以上 ( 4.19.0 未満は将来のリリースで推奨環境から外れる )
 - gtkmm 3.24.0 以上
 - UTF-8環境 ( EUC環境では `LANG="ja_JP.UTF-8"` を指定する必要がある )
 
@@ -39,7 +39,7 @@ layout: default
 - autoconf
 - autoconf-archive
 - automake
-- g++ 7 以上、または clang++ 6.0 以上
+- g++ 7 以上、または clang++ 6.0 以上 ( 将来のリリースで g++ 8 以上、または clang++ 7 以上になる )
 - gnutls
 - gtkmm
 - libtool
@@ -47,9 +47,9 @@ layout: default
 - zlib
 
 #### オプション
-- meson 0.49.0 以上
+- meson 0.49.0 以上 ( 0.53 未満のサポートは将来のリリースで廃止される )
 - alsa-lib (`--with-alsa`)
-- openssl 1.1.0 以上 (`--with-tls=openssl`)
+- openssl 1.1.0 以上 (`--with-tls=openssl`, バージョン 1.1.1 未満のサポートは将来のリリースで廃止される )
 - migemo (`--with-migemo`)
 - googletest ([test/RADME.md][testreadme]を参照)
 
