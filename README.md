@@ -63,11 +63,13 @@ i386版ディストロを利用されている場合は更新をお願いいた�
 ソースコードからJDimをビルドします。**GTK3版がビルド**されますのでご注意ください。
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
-ビルドツール [meson][mesonbuild] を暫定的にサポートしています。
+**Autotoolsのサポートは2023年7月のリリースをもって廃止されます。
+かわりに[meson][mesonbuild]を利用してください。([RFC 0012][rfc0012])**
 configure のかわりに meson を使ってビルドする方法は [Discussions][dis556] を参照してください。
 
 [mesonbuild]: https://mesonbuild.com
 [dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"
+[rfc0012]: https://github.com/JDimproved/rfcs/blob/master/docs/0012-end-of-autotools-support.md
 
 
 ### 事前準備

@@ -49,12 +49,14 @@
   OSやディストリビューション別の解説は https://github.com/JDimproved/JDim/discussions/592 を参照。
 
   configure のかわりに meson を使ってビルドする方法は https://github.com/JDimproved/JDim/discussions/556 を参照。
-  (v0.4.0+から暫定サポート)
+  (v0.4.0+からサポート)
 
   GTKがデフォルトでサポートしていないWebPやAVIF形式の画像を表示する方法は
   https://github.com/JDimproved/JDim/discussions/737 を参照。(v0.5.0+からサポート)
 
 * ビルド方法( configure + make の場合 )
+    Autotoolsのサポートは2023年7月のリリースをもって廃止されます。かわりにMesonを利用してください。
+    詳しくは https://github.com/JDimproved/rfcs/blob/master/docs/0012-end-of-autotools-support.md を参照。
 
     1. autoreconf -i ( 又は ./autogen.sh )
     2. ./configure
