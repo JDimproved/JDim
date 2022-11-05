@@ -2176,9 +2176,9 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
 
                 ) br = true;
 
-            // <li>は・にする
-            else if( ( *( pos + 1 ) == 'l' || *( pos + 2 ) == 'L' )
-                     && ( *( pos + 2 ) == 'i' || *( pos + 3 ) == 'I' )
+            // <li>はBULLET (•)にする
+            else if( ( *( pos + 1 ) == 'l' || *( pos + 1 ) == 'L' )
+                     && ( *( pos + 2 ) == 'i' || *( pos + 2 ) == 'I' )
                 ){
 
                 pos += 4;
