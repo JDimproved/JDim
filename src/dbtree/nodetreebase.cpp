@@ -735,10 +735,17 @@ std::string NodeTreeBase::get_time_str( int number ) const
 std::string NodeTreeBase::get_id_name( int number ) const
 {
     const NODE* head = res_header( number );
-    if( ! head ) return std::string();
-    if( ! head->headinfo->block[ BLOCK_ID_NAME ] ) return std::string();
+    if( ! head || ! head->headinfo->block[ BLOCK_ID_NAME ] ) return std::string();
 
-    return head->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link;
+    const NODE* idnode = head->headinfo->block[ BLOCK_ID_NAME ]->next_node;
+    while( idnode && ( ! idnode->linkinfo || ! idnode->linkinfo->link
+                        || idnode->linkinfo->link[ 0 ] != 'I' ) ){
+        idnode = idnode->next_node;
+    }
+
+    if( idnode ) return idnode->linkinfo->link;
+
+    return std::string();
 }
 
 
@@ -3049,8 +3056,10 @@ bool NodeTreeBase::check_abone_id( const int number )
         return false;
     }
 
-    const int ln_protoid = strlen( PROTO_ID );
-    const char* const link_id = head->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link + ln_protoid;
+    NODE* idnode = head->headinfo->block[ BLOCK_ID_NAME ]->next_node;
+    if( ! idnode || ! idnode->linkinfo ) return false;
+
+    const char* const link_id = idnode->linkinfo->link + std::strlen( PROTO_ID );
     const auto equal_id = [link_id]( const std::string& id ) { return id == link_id; };
 
     // ローカルID
@@ -3562,13 +3571,15 @@ void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 //
 void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name )
 {
-    if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) return;
+    if( ! header->headinfo->block[ BLOCK_ID_NAME ] ||
+        ! header->headinfo->block[ BLOCK_ID_NAME ]->next_node ) return;
 
     header->headinfo->num_id_name = num_id_name;        
 
-    if( num_id_name >= m_num_id[ LINK_HIGH ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_ID_HIGH;
-    else if( num_id_name >= m_num_id[ LINK_LOW ] ) header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR_LINK_ID_LOW;
-    else header->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR;
+    NODE* idnode = header->headinfo->block[ BLOCK_ID_NAME ]->next_node;
+    if( num_id_name >= m_num_id[ LINK_HIGH ] ) idnode->color_text = COLOR_CHAR_LINK_ID_HIGH;
+    else if( num_id_name >= m_num_id[ LINK_LOW ] ) idnode->color_text = COLOR_CHAR_LINK_ID_LOW;
+    else idnode->color_text = COLOR_CHAR;
 }
 
 
