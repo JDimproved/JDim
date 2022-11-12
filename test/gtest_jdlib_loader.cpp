@@ -215,4 +215,100 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, call_again_after_completed)
     }
 }
 
+
+class JDLIB_GzipDecoderTest : public ::testing::Test {};
+
+TEST_F(JDLIB_GzipDecoderTest, default_construction)
+{
+    JDLIB::GzipDecoder decoder;
+    EXPECT_FALSE( decoder.is_decoding() );
+}
+
+TEST_F(JDLIB_GzipDecoderTest, call_once_clear)
+{
+    JDLIB::GzipDecoder decoder;
+    decoder.clear();
+    EXPECT_FALSE( decoder.is_decoding() );
+}
+
+TEST_F(JDLIB_GzipDecoderTest, setup_with_nullptr)
+{
+    JDLIB::GzipDecoder decoder;
+    EXPECT_TRUE( decoder.setup( 0, nullptr ) );
+    EXPECT_TRUE( decoder.is_decoding() );
+
+    decoder.clear();
+    EXPECT_FALSE( decoder.is_decoding() );
+}
+
+TEST_F(JDLIB_GzipDecoderTest, setup_with_noop_lambda)
+{
+    JDLIB::GzipDecoder decoder;
+    EXPECT_TRUE( decoder.setup( 0, []( const char*, std::size_t ) {} ) );
+    EXPECT_TRUE( decoder.is_decoding() );
+
+    decoder.clear();
+    EXPECT_FALSE( decoder.is_decoding() );
+}
+
+TEST_F(JDLIB_GzipDecoderTest, feed_empty_data)
+{
+    JDLIB::GzipDecoder decoder;
+    EXPECT_TRUE( decoder.setup( 16, nullptr ) );
+    EXPECT_TRUE( decoder.is_decoding() );
+
+    auto size = decoder.feed( "", 0 );
+    EXPECT_TRUE( size.has_value() );
+    EXPECT_EQ( *size, 0 );
+
+    decoder.clear();
+    EXPECT_FALSE( decoder.is_decoding() );
+}
+
+TEST_F(JDLIB_GzipDecoderTest, feed_hello_world)
+{
+    constexpr char encoded_data[] = "\x1f\x8b\x08\x00{\x00\x00\x00\x00\x03\x01\x0c\x00\xf3\xff"
+                                    "Hello World!\xa3\x1c)\x1c\x0c\x00\x00\x00";
+    char output[128]{};
+    auto callback = [p = output]( const char* buf, std::size_t buf_size )
+    {
+        std::strncpy( p, buf, buf_size );
+    };
+
+    JDLIB::GzipDecoder decoder;
+    EXPECT_TRUE( decoder.setup( sizeof(encoded_data), callback ) );
+    EXPECT_TRUE( decoder.is_decoding() );
+
+    auto size = decoder.feed( encoded_data, sizeof(encoded_data) );
+    EXPECT_TRUE( size.has_value() );
+    EXPECT_EQ( *size, 12 );
+    EXPECT_STREQ( output, "Hello World!" );
+
+    decoder.clear();
+    EXPECT_FALSE( decoder.is_decoding() );
+}
+
+TEST_F(JDLIB_GzipDecoderTest, feed_buffer_size_is_short)
+{
+    constexpr char encoded_data[] = "\x1f\x8b\x08\x00{\x00\x00\x00\x00\x03\x01\x0c\x00\xf3\xff"
+                                    "Hello World!\xa3\x1c)\x1c\x0c\x00\x00\x00";
+    char output[128]{};
+    auto callback = [p = output]( const char* buf, std::size_t buf_size )
+    {
+        std::strncpy( p, buf, buf_size );
+    };
+
+    constexpr std::size_t too_short = 1;
+    JDLIB::GzipDecoder decoder;
+    EXPECT_TRUE( decoder.setup( too_short, callback ) );
+    EXPECT_TRUE( decoder.is_decoding() );
+
+    auto size = decoder.feed( encoded_data, sizeof(encoded_data) );
+    EXPECT_FALSE( size.has_value() );
+    EXPECT_STREQ( output, "" );
+
+    decoder.clear();
+    EXPECT_FALSE( decoder.is_decoding() );
+}
+
 } // namespace

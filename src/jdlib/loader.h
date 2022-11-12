@@ -15,7 +15,9 @@
 #include <netdb.h>
 #include <zlib.h>
 
+#include <functional>
 #include <list>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -61,13 +63,59 @@ namespace JDLIB
         bool decode( char* buf, std::size_t& read_size );
     };
 
+
+    /**
+     * @brief gzip圧縮で送られてきたデータを展開する
+     *
+     * @details 展開した内容はコールバックに渡して処理する
+     */
+    class GzipDecoder
+    {
+    public:
+        /** @brief 展開したデータを処理するコールバック関数のラッパー
+         *
+         * @param[in] expan      展開したデータへのポインター
+         * @param[in] expan_size データのバイトサイズ
+         */
+        using CallbackWrapper = std::function<void(const char* expan, std::size_t expan_size)>;
+
+    private:
+        static constexpr std::size_t kMargin = 64;
+
+        z_stream m_zstream;
+        // zlib 用のバッファ
+        std::vector<Bytef> m_buf_gzip_in;
+        std::vector<Bytef> m_buf_gzip_out;
+        std::size_t m_lng_gzip_in{};
+        std::size_t m_lng_gzip_out{};
+
+        CallbackWrapper m_callback;
+
+        bool m_use_gzip{};
+
+    public:
+        GzipDecoder() = default;
+        ~GzipDecoder() noexcept { clear(); }
+
+        /// デコーダーが使われているか
+        bool is_decoding() const noexcept { return m_use_gzip; }
+
+        /// デコーダーの状態を開放する
+        void clear();
+        /// zlib 初期化
+        bool setup( std::size_t lng_buf, CallbackWrapper callback );
+        /// gzip圧縮されたデータを展開してcallbackに渡す
+        std::optional<std::size_t> feed( const char* gzip, const std::size_t gzip_size );
+    };
+
+
     class Loader
     {
         LOADERDATA m_data;
-        struct addrinfo* m_addrinfo;
+        struct addrinfo* m_addrinfo{};
 
-        bool m_stop; // = true にするとスレッド停止
-        bool m_loading;
+        bool m_stop{}; // = true にするとスレッド停止
+        bool m_loading{};
         JDLIB::Thread m_thread;
         SKELETON::Loadable* m_loadable;
 
@@ -78,19 +126,12 @@ namespace JDLIB
         unsigned long m_lng_buf; 
         std::vector<char> m_buf;
 
-        // zlib 用のバッファ
-        unsigned long m_lng_buf_zlib_in;
-        unsigned long m_lng_buf_zlib_out;
-        std::vector<Bytef> m_buf_zlib_in;
-        std::vector<Bytef> m_buf_zlib_out;
-
         // chunk 用変数
         bool m_use_chunk;
         ChunkedDecoder m_chunk_decoder;
 
-        // zlib 用変数
-        bool m_use_zlib;
-        z_stream m_zstream;
+        // gzip 用変数
+        GzipDecoder m_gzip_decoder;
 
     public:
 
@@ -128,10 +169,6 @@ namespace JDLIB
         bool analyze_header();
         std::string analyze_header_option( std::string_view option ) const;
         std::list< std::string > analyze_header_option_list( std::string_view option ) const;
-
-        // unzip 用
-        bool init_unzip();
-        bool unzip( char* buf, std::size_t read_size );
     };
 
     // ローダの起動待ちキューにあるスレッドを実行しない
