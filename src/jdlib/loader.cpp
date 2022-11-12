@@ -365,6 +365,116 @@ bool ChunkedDecoder::decode( char* buf, std::size_t& read_size )
 }
 
 
+/**
+ * @brief デコーダーの状態を開放する
+ */
+void GzipDecoder::clear()
+{
+    m_buf_gzip_in.clear();
+    m_buf_gzip_out.clear();
+    m_lng_gzip_in = 0;
+    m_lng_gzip_out = 0;
+
+    if( m_use_gzip ) inflateEnd( &m_zstream );
+    m_use_gzip = false;
+
+    m_callback = nullptr;
+}
+
+
+/** @brief zlib 初期化
+ *
+ * @details `lng_buf` を基に入出力のバッファサイズを設定する
+ * @param[in] lng_buf   受信のバッファサイズ
+ * @param[in] callback  展開したデータを処理する関数ラッパー
+ * @return `true`なら初期化に成功した
+ */
+bool GzipDecoder::setup( std::size_t lng_buf, CallbackWrapper callback )
+{
+#ifdef _DEBUG
+    std::cout << "GzipDecoder::setup\n";
+#endif
+
+    m_use_gzip = true;
+    m_lng_gzip_in = lng_buf * 2;
+    m_lng_gzip_out = lng_buf * 10; // 小さいとパフォーマンスが落ちるので少し多めに10倍位
+    m_callback = std::move( callback );
+
+    // zlib 初期化
+    m_zstream.zalloc = Z_NULL;
+    m_zstream.zfree = Z_NULL;
+    m_zstream.opaque = Z_NULL;
+    m_zstream.next_in = Z_NULL;
+    m_zstream.avail_in = 0;
+
+    if( inflateInit2( &m_zstream, 15 + 32 ) != Z_OK ) // デフォルトの15に+32する( windowBits = 47 )と自動でヘッダ認識
+    {
+        MISC::ERRMSG( "GzipDecoder: inflateInit2 failed." );
+        return false;
+    }
+
+    // オーバーフロー対策としてマージンを追加してメモリを確保する
+    m_buf_gzip_in.resize( m_lng_gzip_in + kMargin );
+    m_buf_gzip_out.resize( m_lng_gzip_out + kMargin );
+
+    return true;
+}
+
+
+/** @brief gzip圧縮されたデータを展開してcallbackに渡す
+ *
+ * @param[in] gzip      gzip圧縮されたデータ
+ * @param[in] gzip_size 圧縮データのバイトサイズ
+ * @return 展開したデータのサイズ、または入力用バッファが不足したとき `std::nullopt` を返す
+ */
+std::optional<std::size_t> GzipDecoder::feed( const char* gzip, const std::size_t gzip_size )
+{
+    // オーバーフローのチェック
+    if( ( m_zstream.avail_in + gzip_size ) > m_lng_gzip_in ) {
+        MISC::ERRMSG( "GzipDecoder: Failed to decompress data due to short allocated buffer." );
+        return std::nullopt;
+    }
+    // zlibの入力バッファに値セット
+    std::memcpy( m_buf_gzip_in.data() + m_zstream.avail_in, gzip, gzip_size );
+    m_zstream.avail_in += gzip_size;
+    m_zstream.next_in = m_buf_gzip_in.data();
+
+    std::size_t total_out = 0;
+    std::size_t byte_out = 0;
+    do {
+        // 出力バッファセット
+        m_zstream.next_out = m_buf_gzip_out.data();
+        m_zstream.avail_out = m_lng_gzip_out;
+
+        // 展開
+        const int ret = inflate( &m_zstream, Z_NO_FLUSH );
+        if( ret == Z_OK || ret == Z_STREAM_END ) {
+
+            byte_out = m_lng_gzip_out - m_zstream.avail_out;
+            total_out += byte_out;
+
+#ifdef _DEBUG
+            std::cout << "inflate ok byte = " << byte_out << std::endl;
+#endif
+
+            // コールバック呼び出し
+            if( byte_out && m_callback ) {
+                m_callback( reinterpret_cast<char*>( m_buf_gzip_out.data() ), byte_out );
+            }
+        }
+        else return total_out;
+
+    } while ( byte_out );
+
+    // 入力バッファに使ってないデータが残っていたら前に移動
+    if( const auto avail_in = m_zstream.avail_in; avail_in ) {
+        std::memmove( m_buf_gzip_in.data(), m_buf_gzip_in.data() + ( gzip_size - avail_in ), avail_in );
+    }
+
+    return total_out;
+}
+
+
 
 //
 // low_priority = true の時はスレッド起動待ち状態になった時に、起動順のプライオリティを下げる

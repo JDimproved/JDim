@@ -15,7 +15,9 @@
 #include <netdb.h>
 #include <zlib.h>
 
+#include <functional>
 #include <list>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -60,6 +62,52 @@ namespace JDLIB
         /// chunked なデータを切りつめる
         bool decode( char* buf, std::size_t& read_size );
     };
+
+
+    /**
+     * @brief gzip圧縮で送られてきたデータを展開する
+     *
+     * @details 展開した内容はコールバックに渡して処理する
+     */
+    class GzipDecoder
+    {
+    public:
+        /** @brief 展開したデータを処理するコールバック関数のラッパー
+         *
+         * @param[in] expan      展開したデータへのポインター
+         * @param[in] expan_size データのバイトサイズ
+         */
+        using CallbackWrapper = std::function<void(const char* expan, std::size_t expan_size)>;
+
+    private:
+        static constexpr std::size_t kMargin = 64;
+
+        z_stream m_zstream;
+        // zlib 用のバッファ
+        std::vector<Bytef> m_buf_gzip_in;
+        std::vector<Bytef> m_buf_gzip_out;
+        std::size_t m_lng_gzip_in{};
+        std::size_t m_lng_gzip_out{};
+
+        CallbackWrapper m_callback;
+
+        bool m_use_gzip{};
+
+    public:
+        GzipDecoder() = default;
+        ~GzipDecoder() noexcept { clear(); }
+
+        /// デコーダーが使われているか
+        bool is_decoding() const noexcept { return m_use_gzip; }
+
+        /// デコーダーの状態を開放する
+        void clear();
+        /// zlib 初期化
+        bool setup( std::size_t lng_buf, CallbackWrapper callback );
+        /// gzip圧縮されたデータを展開してcallbackに渡す
+        std::optional<std::size_t> feed( const char* gzip, const std::size_t gzip_size );
+    };
+
 
     class Loader
     {
