@@ -480,11 +480,7 @@ std::optional<std::size_t> GzipDecoder::feed( const char* gzip, const std::size_
 // low_priority = true の時はスレッド起動待ち状態になった時に、起動順のプライオリティを下げる
 //
 Loader::Loader( const bool low_priority )
-    : m_addrinfo( nullptr ),
-      m_stop( false ),
-      m_loading( false ),
-      m_low_priority( low_priority ),
-      m_use_zlib ( 0 )
+    : m_low_priority( low_priority )
 {
 #ifdef _DEBUG
     std::cout << "Loader::Loader : loader was created.\n";
@@ -522,11 +518,7 @@ void Loader::clear()
 
     m_buf.clear();
 
-    m_buf_zlib_in.clear();
-    m_buf_zlib_out.clear();
-    
-    if( m_use_zlib ) inflateEnd( &m_zstream );
-    m_use_zlib = false;
+    m_gzip_decoder.clear();
 }
 
 
@@ -599,8 +591,6 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     // バッファサイズ設定
     m_data.size_buf = data_in.size_buf;
     m_lng_buf = MAX( LNG_BUF_MIN, m_data.size_buf * 1024 );
-    m_lng_buf_zlib_in = m_lng_buf * 2;
-    m_lng_buf_zlib_out = m_lng_buf * 10; // 小さいとパフォーマンスが落ちるので少し多めに10倍位
     
     // protocol と host と path 取得
     m_data.url = data_in.url;
@@ -840,6 +830,7 @@ bool Loader::send_connect( const int soc, std::string& errmsg )
     }
     return false;
 }
+
 
 //
 // 実際の処理部
@@ -1145,17 +1136,22 @@ void Loader::run_main()
         }
 
         // 圧縮されていない時はそのままコールバック呼び出し
-        if( !m_use_zlib ) {
+        if( ! m_gzip_decoder.is_decoding() ) {
 
             m_data.size_data += read_size;
 
             // コールバック呼び出し
             if( m_loadable ) m_loadable->receive( m_buf.data(), read_size );
         }
-        
+
         // 圧縮されているときは unzip してからコールバック呼び出し
-        else if( !unzip( m_buf.data(), read_size ) ){
-            
+        else if( auto expan_size = m_gzip_decoder.feed( m_buf.data(), read_size );
+                 expan_size.has_value() ) {
+
+            m_data.size_data += *expan_size;
+        }
+
+        else {
             m_data.code = HTTP_ERR;
             errmsg = "unzip() failed : " + m_data.url;
             goto EXIT_LOADING;
@@ -1460,10 +1456,14 @@ bool Loader::analyze_header()
     }
 
     // gzip か
-    m_use_zlib = false;
+    m_gzip_decoder.clear();
     str_tmp = analyze_header_option( "Content-Encoding: " );
     if( str_tmp.find( "gzip" ) != std::string::npos ){
-        if( !init_unzip() ) return false;
+        std::function callback = [p = m_loadable]( const char* buf, std::size_t size )
+        {
+            p->receive( buf, size );
+        };
+        if( ! m_gzip_decoder.setup( m_lng_buf, std::move( callback ) ) ) return false;
     }
 
 #ifdef _DEBUG
@@ -1477,7 +1477,7 @@ bool Loader::analyze_header()
     std::cout << "location = " << m_data.location << std::endl;
     std::cout << "contenttype = " << m_data.contenttype<< std::endl;            
     if( m_use_chunk ) std::cout << "m_use_chunk = true\n";
-    if( m_use_zlib )  std::cout << "m_use_zlib = true\n";
+    if( m_gzip_decoder.is_decoding() )  std::cout << "m_use_gzip = true\n";
 
     std::cout << "authenticate = " << analyze_header_option( "WWW-Authenticate: " ) << std::endl;
 
@@ -1529,91 +1529,6 @@ std::list< std::string > Loader::analyze_header_option_list( std::string_view op
     }
 
     return str_list;
-}
-
-
-
-//
-// zlib 初期化
-//
-bool Loader::init_unzip()
-{
-#ifdef _DEBUG
-    std::cout << "Loader::init_unzip\n";
-#endif
-
-    m_use_zlib = true;
-        
-    // zlib 初期化
-    m_zstream.zalloc = Z_NULL;
-    m_zstream.zfree = Z_NULL;
-    m_zstream.opaque = Z_NULL;
-    m_zstream.next_in = Z_NULL;
-    m_zstream.avail_in = 0;
-
-    if ( inflateInit2( &m_zstream, 15 + 32 ) != Z_OK ) // デフォルトの15に+32する( windowBits = 47 )と自動でヘッダ認識
-    {
-        MISC::ERRMSG( "inflateInit2 failed." );
-        return false;
-    }
-
-    assert( m_buf_zlib_in.empty() );
-    assert( m_buf_zlib_out.empty() );
-    m_buf_zlib_in.resize( m_lng_buf_zlib_in + 64 );
-    m_buf_zlib_out.resize( m_lng_buf_zlib_out + 64 );
-
-    return true;
-}
-
-
-
-//
-// unzipしてコールバック呼び出し
-//
-bool Loader::unzip( char* buf, std::size_t read_size )
-{
-    // zlibの入力バッファに値セット
-    if( m_zstream.avail_in + read_size > m_lng_buf_zlib_in ){ // オーバーフローのチェック
-
-        MISC::ERRMSG( "buffer over flow at zstream_in : " + m_data.url );
-        return false;
-    }
-    std::memcpy( m_buf_zlib_in.data() + m_zstream.avail_in, buf, read_size );
-    m_zstream.avail_in += read_size;
-    m_zstream.next_in = m_buf_zlib_in.data();
-            
-    size_t byte_out = 0;
-    do{
-
-        // 出力バッファセット
-        m_zstream.next_out = m_buf_zlib_out.data();
-        m_zstream.avail_out = m_lng_buf_zlib_out;
-
-        // 解凍
-        int ret = inflate( &m_zstream, Z_NO_FLUSH );
-        if( ret == Z_OK || ret == Z_STREAM_END ){
-            
-            byte_out = m_lng_buf_zlib_out - m_zstream.avail_out;
-            m_buf_zlib_out[ byte_out ] = '\0';
-            m_data.size_data += byte_out;
-            
-#ifdef _DEBUG
-            std::cout << "inflate ok byte = " << byte_out << std::endl;
-#endif
-            
-            // コールバック呼び出し
-            if( byte_out && m_loadable ) m_loadable->receive( reinterpret_cast<char*>( m_buf_zlib_out.data() ), byte_out );
-        }
-        else return true;
-                
-    } while ( byte_out );
-
-    // 入力バッファに使ってないデータが残っていたら前に移動
-    if( m_zstream.avail_in ) {
-        std::memmove( m_buf_zlib_in.data(), m_buf_zlib_in.data() + ( read_size - m_zstream.avail_in ),  m_zstream.avail_in );
-    }
-
-    return true;
 }
 
 

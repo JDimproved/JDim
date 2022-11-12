@@ -112,10 +112,10 @@ namespace JDLIB
     class Loader
     {
         LOADERDATA m_data;
-        struct addrinfo* m_addrinfo;
+        struct addrinfo* m_addrinfo{};
 
-        bool m_stop; // = true にするとスレッド停止
-        bool m_loading;
+        bool m_stop{}; // = true にするとスレッド停止
+        bool m_loading{};
         JDLIB::Thread m_thread;
         SKELETON::Loadable* m_loadable;
 
@@ -126,19 +126,12 @@ namespace JDLIB
         unsigned long m_lng_buf; 
         std::vector<char> m_buf;
 
-        // zlib 用のバッファ
-        unsigned long m_lng_buf_zlib_in;
-        unsigned long m_lng_buf_zlib_out;
-        std::vector<Bytef> m_buf_zlib_in;
-        std::vector<Bytef> m_buf_zlib_out;
-
         // chunk 用変数
         bool m_use_chunk;
         ChunkedDecoder m_chunk_decoder;
 
-        // zlib 用変数
-        bool m_use_zlib;
-        z_stream m_zstream;
+        // gzip 用変数
+        GzipDecoder m_gzip_decoder;
 
     public:
 
@@ -176,10 +169,6 @@ namespace JDLIB
         bool analyze_header();
         std::string analyze_header_option( std::string_view option ) const;
         std::list< std::string > analyze_header_option_list( std::string_view option ) const;
-
-        // unzip 用
-        bool init_unzip();
-        bool unzip( char* buf, std::size_t read_size );
     };
 
     // ローダの起動待ちキューにあるスレッドを実行しない
