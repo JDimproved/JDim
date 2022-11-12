@@ -1436,6 +1436,14 @@ void DrawAreaBase::layout_one_text_node( LAYOUT* layout, int& x, int& y, int& br
 
         pos_start = pos_to;
     }
+
+    // 次のノードが改行でなければ wrap するか確認する
+    if( layout->next_layout && layout->next_layout->type != DBTREE::NODE_BR
+            && is_wrapped( x, border, " " ) ){
+        x = div ? div->rect->x + div->css->padding_left : 0;
+        y += br_size;
+        br_size = m_font->br_size; // 次の行の改行位置をリセット
+    }
 }
 
 
