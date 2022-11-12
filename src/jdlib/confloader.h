@@ -10,8 +10,6 @@
 #include <string>
 #include <list>
 
-#include "config/defaultconf.h"
-
 namespace JDLIB
 {
     struct ConfData
