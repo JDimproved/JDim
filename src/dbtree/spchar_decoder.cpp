@@ -34,11 +34,10 @@ bool check_spchar( const char* n_in, const char* spchar )
 // n_in : 入力で使用した文字数が返る
 // out_char : 出力文字列
 // n_out : 出力した文字数が返る
-// only_check : チェックのみ実施 ( out_char は nullptr でも可 )
 //
 // 戻り値 : node.h で定義したノード番号
 //
-int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
+int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_out )
 {
     int ret = DBTREE::NODE_TEXT;
     n_in = n_out = 0;
@@ -46,8 +45,6 @@ int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_
     int offset;
     const int lng = MISC::spchar_number_ln( in_char, offset );
     if( lng == -1 ) return DBTREE::NODE_NONE;
-
-    if( only_check ) return ret;
 
     const int num = MISC::decode_spchar_number( in_char, offset, lng );
 
@@ -89,11 +86,10 @@ int decode_char_number( const char* in_char, int& n_in,  char* out_char, int& n_
 // n_in : 入力で使用した文字数が返る
 // out_char : 出力文字列
 // n_out : 出力した文字数が返る
-// only_check : チェックのみ実施 ( out_char は nullptr でも可 )
 //
 // 戻り値 : node.h で定義したノード番号
 //
-int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out, const bool only_check )
+int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out )
 {
     // 1文字目が&以外の場合は出力しない
     if( in_char[ 0 ] != '&' ){
@@ -104,7 +100,7 @@ int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n
     }
 
     // 数字参照 &#数字;
-    if( in_char[ 1 ] == '#' ) return decode_char_number( in_char, n_in, out_char, n_out, only_check );
+    if( in_char[ 1 ] == '#' ) return decode_char_number( in_char, n_in, out_char, n_out );
 
     // 文字参照 -> ユニコード変換
     int ret = DBTREE::NODE_TEXT;
@@ -117,8 +113,6 @@ int DBTREE::decode_char( const char* in_char, int& n_in,  char* out_char, int& n
 
         if( in_char[1] == t.str[0]
                 && check_spchar( in_char + 1, t.str ) ) {
-
-            if( only_check ) return ret;
 
             n_in = std::strlen( t.str ) + 1;
 

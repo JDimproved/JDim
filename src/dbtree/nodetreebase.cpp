@@ -2102,7 +2102,7 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
                             int n_in = 0;
                             int n_out = 0;
                             char out_char[kMaxBytesOfUTF8Char]{}; // FIXME: std::stringを受け付けるdecode_char()を作る
-                            const int ret_decode = DBTREE::decode_char( pos_str_start + pos_tmp, n_in, out_char, n_out, false );
+                            const int ret_decode = DBTREE::decode_char( pos_str_start + pos_tmp, n_in, out_char, n_out );
                             if( ret_decode != NODE_NONE ){
                                 m_parsed_text.append( out_char, n_out );
                                 pos_tmp += n_in;
@@ -2395,7 +2395,7 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
 
             int n_out = 0;
             char out_char[kMaxBytesOfUTF8Char]{};
-            const int ret_decode = DBTREE::decode_char( pos, n_in, out_char, n_out, false );
+            const int ret_decode = DBTREE::decode_char( pos, n_in, out_char, n_out );
 
             if( ret_decode != NODE_NONE ){
 
@@ -2788,7 +2788,7 @@ int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, c
 
         // HTML特殊文字( &〜; )
         if ( *( str_in + n_in ) == '&' &&
-             DBTREE::decode_char( str_in + n_in, n_in_tmp, buf, n_out_tmp, false ) != DBTREE::NODE_NONE ){
+             DBTREE::decode_char( str_in + n_in, n_in_tmp, buf, n_out_tmp ) != DBTREE::NODE_NONE ){
 
              // デコード結果が"&(&amp;)"でないもの
              if( n_out_tmp != 1 || buf[0] != '&' ) break;
