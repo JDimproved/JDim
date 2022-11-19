@@ -109,6 +109,7 @@ gtest_jdim_LDADD = \
 # 行末のバックスラッシュに注意
 gtest_jdim_SOURCES = \
 	gtest_dbtree_nodetreebase.cpp \
+	gtest_dbtree_spchar_decoder.cpp \
 	gtest_jdlib_cookiemanager.cpp \
 	gtest_jdlib_jdiconv.cpp \
 	gtest_jdlib_jdregex.cpp \
