@@ -7,6 +7,9 @@
 #ifndef _SPCHAR_DECODER_H
 #define _SPCHAR_DECODER_H
 
+#include "jdlib/span.h"
+
+
 namespace DBTREE
 {
     // 文字参照のデコード
@@ -18,7 +21,7 @@ namespace DBTREE
     //
     // 戻り値 : node.h で定義したノード番号
     //
-    int decode_char( const char* in_char, int& n_in,  char* out_char, int& n_out );
+    int decode_char( const char* in_char, int& n_in, JDLIB::span<char> out_char, int& n_out );
 }
 
 #endif
