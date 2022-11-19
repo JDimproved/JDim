@@ -991,7 +991,7 @@ static std::string chref_decode_one( const char* str, int& n_in, const char pre_
 {
     std::string out_char( 15u, '\0' );
     int n_out;
-    const int type = DBTREE::decode_char( str, n_in, &*out_char.begin(), n_out, false );
+    const int type = DBTREE::decode_char( str, n_in, out_char, n_out );
     out_char.resize( n_out );
 
     // 改行、タブ、スペースの処理
