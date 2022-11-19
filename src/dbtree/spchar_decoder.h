@@ -17,7 +17,7 @@ namespace DBTREE
      *
      * @param[in]  in_char  入力文字列, in_char[0] = '&' となっていること (not null)
      * @param[out] n_in     入力で使用した文字数が返る
-     * @param[out] out_char 出力文字列 (長さ5以上)
+     * @param[out] out_char 出力文字列 (長さ7以上)
      * @param[out] n_out    出力した文字数が返る
      * @return デコードした文字の種類( node.h で定義したノード番号 )
      */
