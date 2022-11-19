@@ -3095,7 +3095,7 @@ void DrawAreaBase::exec_scroll()
             std::cout << "DrawAreaBase::exec_scroll : goto " << m_scrollinfo.res << std::endl;
 #endif
             const LAYOUT* layout = m_layout_tree->get_header_of_res_const( m_scrollinfo.res );
-            if( layout ) y = layout->rect->y;
+            if( layout && layout->rect ) y = layout->rect->y;
             m_scrollinfo.reset();
         }
         break;
