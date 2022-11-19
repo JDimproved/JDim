@@ -83,13 +83,13 @@ int decode_char_number( const char* in_char, int& n_in, JDLIB::span<char> out_ch
  *
  * @param[in]  in_char  入力文字列, in_char[0] = '&' となっていること (not null)
  * @param[out] n_in     入力で使用した文字数が返る
- * @param[out] out_char 出力文字列 (長さ5以上)
+ * @param[out] out_char 出力文字列 (長さ7以上)
  * @param[out] n_out    出力した文字数が返る
  * @return デコードした文字の種類( node.h で定義したノード番号 )
  */
 int DBTREE::decode_char( const char* in_char, int& n_in, JDLIB::span<char> out_char, int& n_out )
 {
-    assert( out_char.size() >= 5 );
+    assert( out_char.size() >= 7 );
 
     // 1文字目が&以外の場合は出力しない
     if( in_char[ 0 ] != '&' ){
@@ -106,22 +106,34 @@ int DBTREE::decode_char( const char* in_char, int& n_in, JDLIB::span<char> out_c
     int ret = DBTREE::NODE_TEXT;
     n_in = n_out = 0;
 
-    for( const UCSTBL& t : ucstbl ) {
+    const char ch = in_char[ 1 ];
+    JDLIB::span<const UCSTBL> tbl;
 
-        const int ucs = t.ucs;
-        if( ! ucs ) break;
+    if( ch >= 'a' && ch <= 'z' ) tbl = ucstbl_lower[ ch - 'a' ];
+    else if( ch >= 'A' && ch <= 'Z' ) tbl = ucstbl_upper[ ch - 'A' ];
+    else return DBTREE::NODE_NONE;
 
-        if( in_char[1] == t.str[0]
-                && check_spchar( in_char + 1, t.str ) ) {
+    for( const auto& [entity, utf8] : tbl ) {
+        const int order = std::strncmp( in_char + 1, entity.data(), entity.size() );
+        if( order == 0 ) {
 
-            n_in = std::strlen( t.str ) + 1;
+            n_in = static_cast<int>( entity.size() ) + 1; // 先頭の '&' の分を+1する
 
-            // zwnj, zwj, lrm, rlm は今のところ無視する(zwspにする)
-            if( ucs >= UCS_ZWSP && ucs <= UCS_RLM ) ret = DBTREE::NODE_ZWSP;
-            else n_out = MISC::utf32toutf8( ucs, out_char.data() );
+            // U+200B, U+200C(zwnj), U+200D(zwj), U+200E(lrm), U+200F(rlm)
+            // は今のところ空文字列にする(zwsp扱いにする)
+            if( utf8[0] == '\xE2' && utf8[1] == '\x80' && '\x8B' <= utf8[2] && utf8[2] <= '\x8F' ) {
+                ret = DBTREE::NODE_ZWSP;
+            }
+            else {
+                n_out = static_cast<int>( utf8.size() );
+                utf8.copy( out_char.data(), utf8.size() );
+            }
 
             break;
         }
+        // NOTE: UCSTBL の配列は entity の辞書順になっている
+        // in_char+1 が entity より小さくなったら検索を終了していい
+        else if( order < 0 ) break;
     }
 
     if( !n_in ) ret = DBTREE::NODE_NONE;
