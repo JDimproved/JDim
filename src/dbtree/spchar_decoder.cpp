@@ -45,9 +45,9 @@ int decode_char_number( const char* in_char, int& n_in, JDLIB::span<char> out_ch
     const int lng = MISC::spchar_number_ln( in_char, offset );
     if( lng == -1 ) return DBTREE::NODE_NONE;
 
-    const int num = MISC::decode_spchar_number( in_char, offset, lng );
+    const char32_t uch = MISC::decode_spchar_number( in_char, offset, lng );
 
-    switch( num ){
+    switch( uch ){
 
         //zwnj,zwj,lrm,rlm は今のところ無視(zwspにする)
         case UCS_ZWSP:
@@ -65,7 +65,7 @@ int decode_char_number( const char* in_char, int& n_in, JDLIB::span<char> out_ch
             break;
 
         default:
-            n_out = MISC::utf32toutf8( num, out_char.data() );
+            n_out = MISC::utf32toutf8( uch, out_char.data() );
             if( ! n_out ) return DBTREE::NODE_NONE;
     }
 

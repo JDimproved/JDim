@@ -2570,9 +2570,9 @@ void NodeTreeBase::parse_write( std::string_view str, const std::size_t max_lng_
         // 数字参照
         else if( *pos == '&' && *( pos + 1 ) == '#' && ( lng_num = MISC::spchar_number_ln( pos, offset_num ) ) != -1 ){
 
-            const int num = MISC::decode_spchar_number( pos, offset_num, lng_num );
+            const char32_t uch = MISC::decode_spchar_number( pos, offset_num, lng_num );
             char utf8[kMaxBytesOfUTF8Char]{};
-            const int n_out = MISC::utf32toutf8( num, utf8 );
+            const int n_out = MISC::utf32toutf8( uch, utf8 );
             m_buffer_write.append( utf8, n_out );
             pos += offset_num + lng_num;
 
