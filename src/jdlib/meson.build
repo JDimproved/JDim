@@ -22,6 +22,7 @@ sources = [
 ]
 
 deps = [
+  config_h_dep,
   gtkmm_dep,
   socket_dep,
   tls_dep,
@@ -30,7 +31,7 @@ deps = [
 
 
 jdlib_lib = static_library(
-  'jdlib', [sources, config_h],
+  'jdlib', sources,
   dependencies : deps,
   include_directories : include_directories('..'),
 )

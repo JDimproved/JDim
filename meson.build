@@ -49,7 +49,6 @@ project('jdim', 'cpp',
         default_options : ['warning_level=3', 'cpp_std=c++17'])
 
 # 追加コンパイルオプション
-add_project_arguments('-DHAVE_CONFIG_H=1', language : 'cpp')
 add_project_arguments('-DGTK_DOMAIN="gtk30"', language : 'cpp')
 # -Wextraで有効になる-Wunused-parameterは修正方法の検討が必要なので暫定的に無効
 add_project_arguments('-Wno-unused-parameter', language : 'cpp')
