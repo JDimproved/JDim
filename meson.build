@@ -49,7 +49,6 @@ project('jdim', 'cpp',
         default_options : ['warning_level=3', 'cpp_std=c++17'])
 
 # 追加コンパイルオプション
-add_project_arguments('-DGTK_DOMAIN="gtk30"', language : 'cpp')
 # -Wextraで有効になる-Wunused-parameterは修正方法の検討が必要なので暫定的に無効
 add_project_arguments('-Wno-unused-parameter', language : 'cpp')
 
@@ -73,6 +72,8 @@ endif
 # 必須パッケージのチェック
 #
 gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.22.0')
+gtkmm_dep = declare_dependency(compile_args : '-DGTK_DOMAIN="gtk30"',
+                               dependencies : gtkmm_dep)
 threads_dep = dependency('threads')
 x11_dep = dependency('x11')
 zlib_dep = dependency('zlib', version : '>= 1.2.0')
