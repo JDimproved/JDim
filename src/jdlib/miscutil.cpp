@@ -1554,7 +1554,7 @@ int MISC::spchar_number_ln( const char* in_char, int& offset )
 
 
 // 特定の変換が必要なコードポイントをチェックする
-static int transform_7f_9f( int raw_point )
+static char32_t transform_7f_9f( char32_t raw_point )
 {
     switch( raw_point ) {
         case 0x80: return 0x20AC; // EURO SIGN (€)
@@ -1596,7 +1596,7 @@ static int transform_7f_9f( int raw_point )
 // 参考文献 : Numeric character reference end state (HTML 5.3)
 //            https://www.w3.org/TR/html53/syntax.html#numeric-character-reference-end-state
 //
-static int sanitize_numeric_character_reference( int raw_point )
+static char32_t sanitize_numeric_character_reference( char32_t raw_point )
 {
     // NOTE: 記号や絵文字を速やかに処理できるよう順番が組まれている
 
@@ -1646,7 +1646,7 @@ static int sanitize_numeric_character_reference( int raw_point )
 //
 // 戻り値 : 「&#数字;」の中の数字(int型)
 //
-int MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
+char32_t MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
 {
     char str_num[ 16 ];
 
@@ -1657,11 +1657,9 @@ int MISC::decode_spchar_number( const char* in_char, const int offset, const int
     std::cout << "MISC::decode_spchar_number offset = " << offset << " lng = " << lng << " str = " << str_num << std::endl;
 #endif
 
-    int num = 0;
-    if( offset == 2 ) num = atoi( str_num );
-    else num = strtol( str_num, nullptr, 16 );
-
-    return sanitize_numeric_character_reference( num );
+    const int base{ offset == 2 ? 10 : 16 };
+    const char32_t uch = static_cast<char32_t>( std::strtoul( str_num, nullptr, base ) );
+    return sanitize_numeric_character_reference( uch );
 }
 
 
@@ -1684,10 +1682,10 @@ std::string MISC::decode_spchar_number( const std::string& str )
                 continue;
             }
 
-            const int num = MISC::decode_spchar_number( str.c_str()+i, offset, lng );
+            const char32_t uch = MISC::decode_spchar_number( str.c_str()+i, offset, lng );
 
             char out_char[8];
-            const int n_out = MISC::utf32toutf8( num, out_char );
+            const int n_out = MISC::utf32toutf8( uch, out_char );
             if( ! n_out ){
                 str_out += str[ i ];
                 continue;
