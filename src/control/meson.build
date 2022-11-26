@@ -13,7 +13,7 @@ sources = [
 
 
 control_lib = static_library(
-  'control', [sources, config_h],
-  dependencies : gtkmm_dep,
+  'control', sources,
+  dependencies : [config_h_dep, gtkmm_dep],
   include_directories : include_directories('..'),
 )

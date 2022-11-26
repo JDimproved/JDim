@@ -15,6 +15,7 @@ sources = [
 ]
 
 deps = [
+  config_h_dep,
   gtest_main_dep,
   jdim_deps,
 ]

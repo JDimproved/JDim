@@ -1,5 +1,8 @@
 config_h = configure_file(output : 'config.h',
                           configuration : conf)
+config_h_dep = declare_dependency(compile_args : '-DHAVE_CONFIG_H=1',
+                                  include_directories : include_directories('.'),
+                                  sources: config_h)
 
 # 作業ディレクトリの状態を反映するためにビルド毎に更新する
 buildinfo_h = custom_target('buildinfo.h',
@@ -112,8 +115,8 @@ jdim_libs = [
 
 
 jdim_exe = executable(
-  'jdim', [core_sources, sources, buildinfo_h, config_h],
-  dependencies : jdim_deps,
+  'jdim', [core_sources, sources, buildinfo_h],
+  dependencies : [config_h_dep, jdim_deps],
   include_directories : jdim_incs,
   link_with : jdim_libs,
   install : true,

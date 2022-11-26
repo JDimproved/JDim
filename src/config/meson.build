@@ -7,7 +7,7 @@ sources = [
 
 
 config_lib = static_library(
-  'config', [sources, config_h],
-  dependencies : gtkmm_dep,
+  'config', sources,
+  dependencies : [config_h_dep, gtkmm_dep],
   include_directories : include_directories('..'),
 )
