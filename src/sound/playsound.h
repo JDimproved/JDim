@@ -12,9 +12,9 @@
 #ifdef USE_ALSA
 
 #include "skeleton/dispatchable.h"
-#include "jdlib/jdthread.h"
 
 #include <cstdint>
+#include <thread>
 
 
 namespace SOUND
@@ -49,7 +49,7 @@ namespace SOUND
 
     class Play_Sound : public SKELETON::Dispatchable
     {
-        JDLIB::Thread m_thread;
+        std::thread m_thread;
         std::string m_wavfile;
         bool m_stop{};
         bool m_playing{};
@@ -67,7 +67,6 @@ namespace SOUND
       private:
 
         void wait();
-        static void* launcher( void* );
         void play_wavfile();
         void callback_dispatch() override;
 

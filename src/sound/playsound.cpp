@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <string>
+#include <system_error>
 #include <vector>
 
 
@@ -56,6 +57,7 @@ Play_Sound::~Play_Sound()
     set_dispatchable( false );
 
     stop();
+    // m_thread.joinable() == true のときスレッドを破棄すると強制終了するため待機処理を入れる
     wait();
 }
 
@@ -75,7 +77,7 @@ void Play_Sound::stop()
 
 void Play_Sound::wait()
 {
-    m_thread.join();
+    if( m_thread.joinable() ) m_thread.join();
 }
 
 
@@ -85,7 +87,7 @@ void Play_Sound::wait()
 void Play_Sound::play( const std::string& wavfile )
 {
     if( wavfile.empty() ) return;
-    if( m_thread.is_running() ){
+    if( m_thread.joinable() ){
         MISC::ERRMSG( "Play_Sound::play : thread has been running" );
         return;
     }
@@ -93,23 +95,13 @@ void Play_Sound::play( const std::string& wavfile )
     m_wavfile = wavfile;
     m_stop = false;
 
-    if( ! m_thread.create( ( STARTFUNC ) launcher, ( void * ) this, JDLIB::NODETACH ) ){
-        MISC::ERRMSG( "Play_Sound::play : could not start thread" );
-    }
-    else{
+    try {
+        m_thread = std::thread( &Play_Sound::play_wavfile, this );
         m_playing = true;
     }
-}
-
-
-//
-// スレッドのランチャ (static)
-//
-void* Play_Sound::launcher( void* dat )
-{
-    Play_Sound* ps = ( Play_Sound * ) dat;
-    ps->play_wavfile();
-    return nullptr;
+    catch( std::system_error& ) {
+        MISC::ERRMSG( "Play_Sound::play : could not start thread" );
+    }
 }
 
 
