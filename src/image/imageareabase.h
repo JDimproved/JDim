@@ -11,8 +11,10 @@
 
 #include "skeleton/dispatchable.h"
 
-#include "jdlib/jdthread.h"
 #include "jdlib/imgloader.h"
+
+#include <thread>
+
 
 namespace DBIMG
 {
@@ -36,7 +38,7 @@ namespace IMAGE
         int m_height{};
 
         // スレッド用変数
-        JDLIB::Thread m_thread;
+        std::thread m_thread;
 
     protected:
         Glib::RefPtr< JDLIB::ImgLoader > m_imgloader;
@@ -57,7 +59,7 @@ namespace IMAGE
         const std::string& get_errmsg() const{ return m_errmsg;}        
 
         bool is_ready() const { return m_ready; }
-        bool is_loading() const { return m_thread.is_running(); }
+        bool is_loading() const noexcept { return m_thread.joinable(); }
 
         int get_width() const { return m_width; }
         int get_height() const { return m_height; }
