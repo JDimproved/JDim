@@ -15,6 +15,9 @@
 
 #include "config/globalconf.h"
 
+#include <system_error>
+
+
 CORE::Search_Manager* instance_search_manager = nullptr;
 
 CORE::Search_Manager* CORE::get_search_manager()
@@ -45,6 +48,7 @@ Search_Manager::~Search_Manager()
     set_dispatchable( false );
 
     stop( std::string() );
+    // m_thread.joinable() == true のときスレッドを破棄すると強制終了するため待機処理を入れる
     wait();
 }
 
@@ -70,7 +74,7 @@ bool Search_Manager::search( const std::string& id, const int searchmode, const 
 #endif
 
     if( m_searching ) return false;
-    if( m_thread.is_running() ) return false;
+    if( m_thread.joinable() ) return false;
 
     m_searchmode = searchmode;
 
@@ -88,24 +92,16 @@ bool Search_Manager::search( const std::string& id, const int searchmode, const 
     // 読み込んでおかないと大量の warning が出る
     if( m_searchmode == SEARCHMODE_ALLLOG ) DBTREE::read_boardinfo_all();
 
-    if( ! m_thread.create( ( STARTFUNC ) launcher, ( void * ) this, JDLIB::NODETACH ) ){
+    try {
+        m_thread = std::thread( &Search_Manager::thread_search, this );
+    }
+    catch( std::system_error& ) {
         MISC::ERRMSG( "Search_Manager::search : could not start thread" );
-        return FALSE;
+        return false;
     }
 
     m_searching = true;
     return true;
-}
-
-
-//
-// スレッドのランチャ (static)
-//
-void* Search_Manager::launcher( void* dat )
-{
-    Search_Manager* sm = ( Search_Manager * ) dat;
-    sm->thread_search();
-    return nullptr;
 }
 
 
@@ -195,7 +191,7 @@ void Search_Manager::stop( const std::string& id )
 
 void Search_Manager::wait()
 {
-    m_thread.join();
+    if( m_thread.joinable() ) m_thread.join();
 }
 
 
