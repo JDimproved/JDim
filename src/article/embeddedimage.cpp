@@ -17,6 +17,8 @@
 #include "message/messageadmin.h"
 
 #include <mutex>
+#include <system_error>
+
 
 //
 // スレッドのランチャ
@@ -24,7 +26,7 @@
 static std::mutex eimg_launcher_mutex;
 int redraw_counter = 0; // 0 になったとき再描画する
 
-void* eimg_launcher( void* dat )
+static void eimg_launcher( ARTICLE::EmbeddedImage* eimg )
 {
     ++redraw_counter;
 
@@ -36,7 +38,6 @@ void* eimg_launcher( void* dat )
     std::cout << "start eimg_launcher" << std::endl;
 #endif
 
-    ARTICLE::EmbeddedImage* eimg = (ARTICLE::EmbeddedImage* )( dat );
     eimg->resize_thread();
 
     // 再描画
@@ -49,8 +50,6 @@ void* eimg_launcher( void* dat )
 #ifdef _DEBUG
     std::cout << "end" << std::endl;
 #endif
-
-    return nullptr;
 }
 
 
@@ -78,6 +77,7 @@ EmbeddedImage::~EmbeddedImage()
     set_dispatchable( false );
 
     stop();
+    // m_thread.joinable() == true のときスレッドを破棄すると強制終了するため待機処理を入れる
     wait();
 }
 
@@ -98,7 +98,7 @@ void EmbeddedImage::wait()
 #ifdef _DEBUG    
     std::cout << "EmbeddedImage::wait" << std::endl;
 #endif 
-    m_thread.join();
+    if( m_thread.joinable() ) m_thread.join();
 }
 
 
@@ -108,7 +108,7 @@ void EmbeddedImage::show()
     std::cout << "EmbeddedImage::show url = " << m_url << std::endl;
 #endif
 
-    if( m_thread.is_running() ) return;
+    if( m_thread.joinable() ) return;
 
     // 画像読み込み
     if( ! m_img->is_cached() ) return;
@@ -119,7 +119,10 @@ void EmbeddedImage::show()
     if( ! width || ! height ) return;
 
     // スレッド起動して縮小
-    if( ! m_thread.create( eimg_launcher, ( void* )this, JDLIB::NODETACH ) ){
+    try {
+        m_thread = std::thread( eimg_launcher, this );
+    }
+    catch( std::system_error& ) {
         MISC::ERRMSG( "EmbeddedImage::show : could not start thread" );
     }
 }
