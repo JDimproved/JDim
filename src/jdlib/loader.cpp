@@ -29,6 +29,7 @@
 #include <cstring>
 #include <mutex>
 #include <sstream>
+#include <system_error>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -496,6 +497,7 @@ Loader::~Loader()
     std::cout << "Loader::~Loader : url = " << m_data.url << std::endl;
 #endif
 
+    // m_thread.joinable() == true のときスレッドを破棄すると強制終了するため待機処理を入れる
     clear();
 
 //    assert( ! m_loading );
@@ -524,7 +526,7 @@ void Loader::clear()
 
 void Loader::wait()
 {
-    m_thread.join();
+    if( m_thread.joinable() ) m_thread.join();
 }
 
 
@@ -735,26 +737,20 @@ void Loader::create_thread()
 #ifdef _DEBUG
     std::cout << "Loader::create_thread :  url = " << m_data.url << std::endl;
 #endif
+    if( m_thread.joinable() ) {
+        MISC::ERRMSG( "Loader::create_thread : thread is already running" );
+        return;
+    }
 
-    if( ! m_thread.create( ( STARTFUNC ) launcher, ( void * ) this, JDLIB::NODETACH ) ){
-
+    try {
+        m_thread = std::thread( &Loader::run_main, this );
+    }
+    catch( std::system_error& ) {
         m_data.code = HTTP_ERR;
         m_data.str_code = "Loader::run : could not start thread";
         MISC::ERRMSG( m_data.str_code );
         finish_loading();
-        return;
     }
-}
-
-
-//
-// スレッドのランチャ (static)
-//
-void* Loader::launcher( void* dat )
-{
-    Loader* tt = ( Loader * ) dat;
-    tt->run_main();
-    return nullptr;
 }
 
 
