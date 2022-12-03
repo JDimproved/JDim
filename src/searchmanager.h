@@ -9,13 +9,12 @@
 
 #include "skeleton/dispatchable.h"
 
-#include "jdlib/jdthread.h"
-
 #include <gtkmm.h>
 
 #include <list>
 #include <memory>
 #include <string>
+#include <thread>
 
 
 namespace DBTREE
@@ -52,7 +51,7 @@ namespace CORE
 
         SIG_SEARCH_FIN m_sig_search_fin;
 
-        JDLIB::Thread m_thread;
+        std::thread m_thread;
 
         int m_searchmode{};
         std::string m_id;
@@ -109,7 +108,6 @@ namespace CORE
 
       private:
 
-        static void* launcher( void* );
         void wait();
         void thread_search();
         void callback_dispatch() override;

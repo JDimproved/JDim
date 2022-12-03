@@ -7,12 +7,12 @@
 #ifndef _DELIMGCACHEDIAG_H
 #define _DELIMGCACHEDIAG_H
 
-#include "jdlib/jdthread.h"
-
 #include "skeleton/dispatchable.h"
 
 #include <gtkmm.h>
 #include <ctime>
+#include <thread>
+
 
 namespace DBIMG
 {
@@ -21,7 +21,7 @@ namespace DBIMG
         Gtk::Label m_label;
 
         bool m_stop; // = true にするとスレッド停止
-        JDLIB::Thread m_thread;
+        std::thread m_thread;
 
       public:
 
@@ -30,8 +30,6 @@ namespace DBIMG
 
         // 画像キャッシュ削除スレッド
         void main_thread();
-
-        static void* launcher( void* dat );
 
       protected:
 

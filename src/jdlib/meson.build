@@ -6,7 +6,6 @@ sources = [
   'jdiconv.cpp',
   'jdmigemo.cpp',
   'jdregex.cpp',
-  'jdthread.cpp',
   'loader.cpp',
   'loaderdata.cpp',
   'misccharcode.cpp',

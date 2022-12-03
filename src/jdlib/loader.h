@@ -10,7 +10,6 @@
 #define _LOADER_H
 
 #include "loaderdata.h"
-#include "jdthread.h"
 
 #include <netdb.h>
 #include <zlib.h>
@@ -20,6 +19,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <thread>
 #include <vector>
 
 
@@ -116,7 +116,7 @@ namespace JDLIB
 
         bool m_stop{}; // = true にするとスレッド停止
         bool m_loading{};
-        JDLIB::Thread m_thread;
+        std::thread m_thread;
         SKELETON::Loadable* m_loadable;
 
         // スレッド起動待ち状態になった時に、起動順のプライオリティを下げる
@@ -151,8 +151,6 @@ namespace JDLIB
         void create_thread();
 
     private:
-
-        static void* launcher( void* );
 
         void clear();
         void run_main();

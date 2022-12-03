@@ -13,13 +13,15 @@
 #include "config/globalconf.h"
 
 #include <mutex>
+#include <system_error>
+
 
 //
 // スレッドのランチャ
 //
 static std::mutex imgarea_launcher_mutex;
 
-void* imgarea_launcher( void* dat )
+static void imgarea_launcher( IMAGE::ImageAreaBase* area )
 {
     std::lock_guard< std::mutex > lock( imgarea_launcher_mutex );
 
@@ -27,14 +29,11 @@ void* imgarea_launcher( void* dat )
     std::cout << "start imgarea_launcher" << std::endl;
 #endif
 
-    IMAGE::ImageAreaBase* area = ( IMAGE::ImageAreaBase* )( dat );
     area->load_image_thread();
 
 #ifdef _DEBUG
     std::cout << "end" << std::endl;
 #endif
-
-    return nullptr;
 }
 
 
@@ -78,6 +77,7 @@ ImageAreaBase::~ImageAreaBase()
     set_dispatchable( false );
 
     stop();
+    // m_thread.joinable() == true のときスレッドを破棄すると強制終了するため待機処理を入れる
     wait();
 }
 
@@ -98,7 +98,7 @@ void ImageAreaBase::wait()
     std::cout << "ImageAreaBase::wait" << std::endl;
 #endif 
 
-    m_thread.join();
+    if( m_thread.joinable() ) m_thread.join();
 
 #ifdef _DEBUG    
     std::cout << "ImageAreaBase::wait ok" << std::endl;
@@ -131,10 +131,17 @@ void ImageAreaBase::load_image()
 #ifdef _DEBUG
     std::cout << "ImageAreaBase::load_image" << std::endl;
 #endif
+    if( m_thread.joinable() ) {
+        MISC::ERRMSG( "ImageAreaBase::load_image : thread is already running" );
+        return;
+    }
 
-    // 大きい画像を表示しようとするとJDが固まるときがあるのでスレッドを使用する
-    // ランチャ経由で load_image_thread() を動かす
-    if( ! m_thread.create( imgarea_launcher, ( void* ) this, JDLIB::NODETACH ) ) {
+    try {
+        // 大きい画像を表示しようとするとJDが固まるときがあるのでスレッドを使用する
+        // ランチャ経由で load_image_thread() を動かす
+        m_thread = std::thread( imgarea_launcher, this );
+    }
+    catch( std::system_error& ) {
         MISC::ERRMSG( "ImageAreaBase::load_image : could not start thread" );
     }
 }

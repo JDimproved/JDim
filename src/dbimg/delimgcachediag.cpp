@@ -19,6 +19,7 @@
 #include <glib/gi18n.h>
 
 #include <ctime>
+#include <system_error>
 
 
 using namespace DBIMG;
@@ -47,6 +48,7 @@ DelImgCacheDiag::~DelImgCacheDiag()
     std::cout << "DelImgCacheDiag::~DelImgCacheDiag\n";
 #endif
 
+    // m_thread.joinable() == true のときスレッドを破棄すると強制終了するため待機処理を入れる
     slot_cancel_clicked();
 }
 
@@ -65,22 +67,15 @@ bool DelImgCacheDiag::on_draw( const Cairo::RefPtr< Cairo::Context >& cr )
 void DelImgCacheDiag::launch_thread()
 {
     // スレッドを起動してキャッシュ削除
-    if( !m_thread.is_running() ) {
+    if( ! m_thread.joinable() ) {
         m_stop = false;
-        if( !m_thread.create( static_cast< STARTFUNC >( launcher ),
-                              static_cast< void* >( this ),
-                              JDLIB::NODETACH ) ) {
+        try {
+            m_thread = std::thread( &DelImgCacheDiag::main_thread, this );
+        }
+        catch( std::system_error& ) {
             MISC::ERRMSG( "DelImgCacheDiag::launch_thread : could not start thread" );
         }
     }
-}
-
-
-void* DelImgCacheDiag::launcher( void* dat )
-{
-    DelImgCacheDiag* tt = ( DelImgCacheDiag * ) dat;
-    tt->main_thread();
-    return nullptr;
 }
 
 
@@ -194,7 +189,7 @@ void DelImgCacheDiag::wait()
 #ifdef _DEBUG
     std::cout << "DelImgCacheDiag::wait\n";
 #endif
-    m_thread.join();
+    if( m_thread.joinable() ) m_thread.join();
 }
 
 
