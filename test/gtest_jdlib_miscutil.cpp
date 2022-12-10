@@ -1821,6 +1821,122 @@ TEST_F(UrlDecodeTest, out_of_range_segments)
 }
 
 
+class MISC_SanitizeNumericCharrefTest : public ::testing::Test {};
+
+TEST_F(MISC_SanitizeNumericCharrefTest, null_character)
+{
+    char32_t out = 0;
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0, &out ) );
+    EXPECT_EQ( 0, out );
+}
+
+TEST_F(MISC_SanitizeNumericCharrefTest, carriage_return)
+{
+    char32_t out = 0;
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0x000D, &out ) );
+    EXPECT_EQ( 0, out );
+}
+
+TEST_F(MISC_SanitizeNumericCharrefTest, ascii_whitespace)
+{
+    char32_t out = 0;
+    EXPECT_EQ( 0x0009, MISC::sanitize_numeric_charref( 0x0009, &out ) );
+    EXPECT_EQ( 0, out );
+
+    out = 0;
+    EXPECT_EQ( 0x000A, MISC::sanitize_numeric_charref( 0x000A, &out ) );
+    EXPECT_EQ( 0, out );
+
+    out = 0;
+    EXPECT_EQ( 0x000C, MISC::sanitize_numeric_charref( 0x000C, &out ) );
+    EXPECT_EQ( 0, out );
+
+    out = 0;
+    EXPECT_EQ( 0x0020, MISC::sanitize_numeric_charref( 0x0020, &out ) );
+    EXPECT_EQ( 0, out );
+}
+
+TEST_F(MISC_SanitizeNumericCharrefTest, out_of_range)
+{
+    char32_t out = 0;
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0x110000, &out ) );
+    EXPECT_EQ( 0, out );
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0x1000000, nullptr ) );
+}
+
+TEST_F(MISC_SanitizeNumericCharrefTest, high_surrogate)
+{
+    // 数が多いため網羅していない
+    char32_t out = 0;
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0xD800, &out ) );
+    EXPECT_EQ( 0xD800, out );
+
+    out = 0;
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0xDBFF, &out ) );
+    EXPECT_EQ( 0xDBFF, out );
+}
+
+TEST_F(MISC_SanitizeNumericCharrefTest, low_surrogate)
+{
+    // 数が多いため網羅していない
+    char32_t out = 0;
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0xDC00, &out ) );
+    EXPECT_EQ( 0, out );
+
+    out = 0;
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0xDFFF, &out ) );
+    EXPECT_EQ( 0, out );
+}
+
+TEST_F(MISC_SanitizeNumericCharrefTest, noncharacter)
+{
+    // 数が多いため網羅していない
+    constexpr char32_t nonchars[] = { 0xFDD0, 0xFDEF, 0xFFFE, 0xFFFF,
+                                      0x1FFFE, 0x1FFFF, 0x10FFFE, 0x10FFFF };
+    for( const char32_t uch : nonchars ) {
+        char32_t out = 0;
+        EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( uch, &out ) );
+        EXPECT_EQ( 0, out );
+    }
+}
+
+TEST_F(MISC_SanitizeNumericCharrefTest, between_u007F_and_u009F)
+{
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0x007F, nullptr ) );
+    EXPECT_EQ( 0x20AC, MISC::sanitize_numeric_charref( 0x0080, nullptr ) );
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0x0081, nullptr ) );
+    EXPECT_EQ( 0x201A, MISC::sanitize_numeric_charref( 0x0082, nullptr ) );
+    EXPECT_EQ( 0x0192, MISC::sanitize_numeric_charref( 0x0083, nullptr ) );
+    EXPECT_EQ( 0x201E, MISC::sanitize_numeric_charref( 0x0084, nullptr ) );
+    EXPECT_EQ( 0x2026, MISC::sanitize_numeric_charref( 0x0085, nullptr ) );
+    EXPECT_EQ( 0x2020, MISC::sanitize_numeric_charref( 0x0086, nullptr ) );
+    EXPECT_EQ( 0x2021, MISC::sanitize_numeric_charref( 0x0087, nullptr ) );
+    EXPECT_EQ( 0x02C6, MISC::sanitize_numeric_charref( 0x0088, nullptr ) );
+    EXPECT_EQ( 0x2030, MISC::sanitize_numeric_charref( 0x0089, nullptr ) );
+    EXPECT_EQ( 0x0160, MISC::sanitize_numeric_charref( 0x008A, nullptr ) );
+    EXPECT_EQ( 0x2039, MISC::sanitize_numeric_charref( 0x008B, nullptr ) );
+    EXPECT_EQ( 0x0152, MISC::sanitize_numeric_charref( 0x008C, nullptr ) );
+    EXPECT_EQ( 0x017D, MISC::sanitize_numeric_charref( 0x008E, nullptr ) );
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0x008F, nullptr ) );
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0x0090, nullptr ) );
+    EXPECT_EQ( 0x2018, MISC::sanitize_numeric_charref( 0x0091, nullptr ) );
+    EXPECT_EQ( 0x2019, MISC::sanitize_numeric_charref( 0x0092, nullptr ) );
+    EXPECT_EQ( 0x201C, MISC::sanitize_numeric_charref( 0x0093, nullptr ) );
+    EXPECT_EQ( 0x201D, MISC::sanitize_numeric_charref( 0x0094, nullptr ) );
+    EXPECT_EQ( 0x2022, MISC::sanitize_numeric_charref( 0x0095, nullptr ) );
+    EXPECT_EQ( 0x2013, MISC::sanitize_numeric_charref( 0x0096, nullptr ) );
+    EXPECT_EQ( 0x2014, MISC::sanitize_numeric_charref( 0x0097, nullptr ) );
+    EXPECT_EQ( 0x02DC, MISC::sanitize_numeric_charref( 0x0098, nullptr ) );
+    EXPECT_EQ( 0x2122, MISC::sanitize_numeric_charref( 0x0099, nullptr ) );
+    EXPECT_EQ( 0x0161, MISC::sanitize_numeric_charref( 0x009A, nullptr ) );
+    EXPECT_EQ( 0x203A, MISC::sanitize_numeric_charref( 0x009B, nullptr ) );
+    EXPECT_EQ( 0x0153, MISC::sanitize_numeric_charref( 0x009C, nullptr ) );
+    EXPECT_EQ( 0xFFFD, MISC::sanitize_numeric_charref( 0x009D, nullptr ) );
+    EXPECT_EQ( 0x017E, MISC::sanitize_numeric_charref( 0x009E, nullptr ) );
+    EXPECT_EQ( 0x0178, MISC::sanitize_numeric_charref( 0x009F, nullptr ) );
+}
+
+
 class AsciiIgnoreCaseFindTest : public ::testing::Test {};
 
 TEST_F(AsciiIgnoreCaseFindTest, empty)
