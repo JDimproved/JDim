@@ -1659,7 +1659,56 @@ char32_t MISC::decode_spchar_number( const char* in_char, const int offset, cons
 
     const int base{ offset == 2 ? 10 : 16 };
     const char32_t uch = static_cast<char32_t>( std::strtoul( str_num, nullptr, base ) );
-    return sanitize_numeric_character_reference( uch );
+    return MISC::sanitize_numeric_charref( uch );
+}
+
+
+/** @brief コードポイントが数値文字参照の無効・解析エラーなら規定の値へ変換する
+ *
+ * @details WHATWG の仕様と異なり
+ * C0/C1 controls のうち変換表にリストされていないものは U+FFFD へ変換する
+ * @param[in]  uch            数値文字参照を解析して得た値
+ * @param[out] high_surrogate `uch` が上位サロゲート(U+D800 - U+DBFF)のときは代入して返す (nullable)
+ * @return 変換した結果
+ *
+ * @remarks 参考文献 : Numeric character reference end state (WHATWG) @n
+ * https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
+ */
+char32_t MISC::sanitize_numeric_charref( const char32_t uch, char32_t* high_surrogate )
+{
+    constexpr char32_t replace = 0xFFFD; // REPLACEMENT CHARACTER
+    if( uch >= 0xD800 ) {
+        // 特定のbitパターンの非文字をチェック
+        if( ( uch & 0xFFFE ) == 0xFFFE ) return replace;
+        // 上位サロゲート (U+D800 - U+DBFF)
+        else if( uch < 0xDC00 ) {
+            if( high_surrogate ) *high_surrogate = uch;
+            return replace;
+        }
+        // 下位サロゲート (U+DC00 - U+DFFF)
+        else if( uch < 0xE000 ) return replace;
+        else if( uch < 0xFDD0 ) return uch;
+        // 非文字 (noncharacters, U+FDD0 - U+FDEF)
+        else if( uch < 0xFDF0 ) return replace;
+        else if( uch < 0x110000 ) return uch;
+        // Unicodeの範囲外
+        return replace;
+    }
+    else if( uch < 0x00A0 ) {
+        // C1 Controls
+        if( 0x007F <= uch ) return transform_7f_9f( uch );
+        // ASCII printable characters
+        else if( 0x0020 <= uch ) return uch;
+        else if( 0x000D <= uch ) return replace;
+        // FORM FEED (FF)
+        else if( 0x000C == uch ) return uch;
+        // LINE TABULATION (VT)
+        else if( 0x000B == uch ) return replace;
+        // CHARACTER TABULATION (HT) and LINE FEED (LF)
+        else if( 0x0009 <= uch ) return uch;
+        return replace;
+    }
+    return uch;
 }
 
 

@@ -216,6 +216,9 @@ namespace MISC
     //
     char32_t decode_spchar_number( const char* in_char, const int offset, const int lng );
 
+    // コードポイントが数値文字参照の無効・解析エラーなら規定の値へ変換する
+    char32_t sanitize_numeric_charref( const char32_t uch, char32_t* high_surrogate = nullptr );
+
     // str に含まれる「&#数字;」形式の数字参照文字列を全てユニーコード文字に変換する
     std::string decode_spchar_number( const std::string& str );
 
