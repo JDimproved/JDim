@@ -1589,51 +1589,6 @@ static char32_t transform_7f_9f( char32_t raw_point )
     }
 }
 
-//
-// コードポイントが数値文字参照としてはエラーなら規定の値へ変換する
-// 例えばサロゲートペアは'REPLACEMENT CHARACTER' (U+FFFD)を返す
-//
-// 参考文献 : Numeric character reference end state (HTML 5.3)
-//            https://www.w3.org/TR/html53/syntax.html#numeric-character-reference-end-state
-//
-static char32_t sanitize_numeric_character_reference( char32_t raw_point )
-{
-    // NOTE: 記号や絵文字を速やかに処理できるよう順番が組まれている
-
-    bool parse_error = false;
-
-    // 基本多言語面(BMP)をおおまかにチェック
-    if( 0x009F < raw_point && raw_point < 0xD800 ) return raw_point;
-    // 特定のbitパターンの非文字と符号空間の範囲をチェック
-    else if( ( raw_point & 0xFFFE ) == 0xFFFE || raw_point > 0x10FFFF ) parse_error = true;
-    // bitパターンを除いたらBMPの一部と追加多言語面(SMP)以降をチェック
-    else if( 0xFDEF < raw_point ) return raw_point;
-    // サロゲートペアはエラー
-    else if( 0xD800 <= raw_point && raw_point <= 0xDFFF ) parse_error = true;
-
-    // 基本ラテン文字をチェック
-    else if( 0x001F < raw_point && raw_point < 0x007F ) return raw_point;
-    // 特定の変換が必要なコードポイントをチェック
-    else if( 0x007F <= raw_point && raw_point <= 0x009F ) return transform_7f_9f( raw_point );
-    // 最後に制御文字と非文字をチェック
-    // サロゲートペアは他の値より入力される可能性が高いので処理を優先している
-    else if( raw_point <= 0x0008 // Control character
-            || raw_point == 0x000B // Control character (Vertical tab)
-            || ( 0x000D <= raw_point && raw_point <= 0x001F ) // Control character
-            || ( 0xFDD0 <= raw_point // && raw_point <= 0xFDEF の境界は上でチェックしているので不要
-                ) // Noncharacters
-            ) {
-        parse_error = true;
-    }
-
-    if( parse_error ) {
-#ifdef _DEBUG
-        std::cout << "Parse error for numeric character reference... " << raw_point << std::endl;
-#endif
-        return 0xFFFD; // REPLACEMENT CHARACTER
-    }
-    return raw_point;
-}
 
 //
 // 「&#数字;」形式の数字参照文字列を数字(int)に変換する
@@ -1659,7 +1614,56 @@ char32_t MISC::decode_spchar_number( const char* in_char, const int offset, cons
 
     const int base{ offset == 2 ? 10 : 16 };
     const char32_t uch = static_cast<char32_t>( std::strtoul( str_num, nullptr, base ) );
-    return sanitize_numeric_character_reference( uch );
+    return MISC::sanitize_numeric_charref( uch );
+}
+
+
+/** @brief コードポイントが数値文字参照の無効・解析エラーなら規定の値へ変換する
+ *
+ * @details WHATWG の仕様と異なり
+ * C0/C1 controls のうち変換表にリストされていないものは U+FFFD へ変換する
+ * @param[in]  uch            数値文字参照を解析して得た値
+ * @param[out] high_surrogate `uch` が上位サロゲート(U+D800 - U+DBFF)のときは代入して返す (nullable)
+ * @return 変換した結果
+ *
+ * @remarks 参考文献 : Numeric character reference end state (WHATWG) @n
+ * https://html.spec.whatwg.org/multipage/parsing.html#numeric-character-reference-end-state
+ */
+char32_t MISC::sanitize_numeric_charref( const char32_t uch, char32_t* high_surrogate )
+{
+    constexpr char32_t replace = 0xFFFD; // REPLACEMENT CHARACTER
+    if( uch >= 0xD800 ) {
+        // 特定のbitパターンの非文字をチェック
+        if( ( uch & 0xFFFE ) == 0xFFFE ) return replace;
+        // 上位サロゲート (U+D800 - U+DBFF)
+        else if( uch < 0xDC00 ) {
+            if( high_surrogate ) *high_surrogate = uch;
+            return replace;
+        }
+        // 下位サロゲート (U+DC00 - U+DFFF)
+        else if( uch < 0xE000 ) return replace;
+        else if( uch < 0xFDD0 ) return uch;
+        // 非文字 (noncharacters, U+FDD0 - U+FDEF)
+        else if( uch < 0xFDF0 ) return replace;
+        else if( uch < 0x110000 ) return uch;
+        // Unicodeの範囲外
+        return replace;
+    }
+    else if( uch < 0x00A0 ) {
+        // C1 Controls
+        if( 0x007F <= uch ) return transform_7f_9f( uch );
+        // ASCII printable characters
+        else if( 0x0020 <= uch ) return uch;
+        else if( 0x000D <= uch ) return replace;
+        // FORM FEED (FF)
+        else if( 0x000C == uch ) return uch;
+        // LINE TABULATION (VT)
+        else if( 0x000B == uch ) return replace;
+        // CHARACTER TABULATION (HT) and LINE FEED (LF)
+        else if( 0x0009 <= uch ) return uch;
+        return replace;
+    }
+    return uch;
 }
 
 
