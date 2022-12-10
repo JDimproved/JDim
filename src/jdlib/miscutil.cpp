@@ -1590,30 +1590,45 @@ static char32_t transform_7f_9f( char32_t raw_point )
 }
 
 
-//
-// 「&#数字;」形式の数字参照文字列を数字(int)に変換する
-//
-// 最初に MISC::spchar_number_ln() を呼び出して offset と lng を取得すること
-//
-// in_char: 入力文字列、in_char[0] == "&" && in_char[1] == "#" であること
-// offset : spchar_number_ln() の戻り値
-// lng : spchar_number_ln() の戻り値
-//
-// 戻り値 : 「&#数字;」の中の数字(int型)
-//
-char32_t MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
+/** @brief 「&#数字;」形式の数値文字参照をコードポイント(char32_t)に変換する
+ *
+ * @details 数値文字参照の解析エラーとなる値もそのまま返す
+ * (Unicodeの範囲外、サロゲート、非文字など)
+ * @param[in] in_char 入力文字列、 `in_char[0] == "&" && in_char[1] == "#"` であること (not null)
+ * @param[in] offset  spchar_number_ln() の戻り値
+ * @param[in] lng     spchar_number_ln() の戻り値
+ * @return 「&#数字;」の中の数字(char32_t型)
+ * @remarks 最初に MISC::spchar_number_ln() を呼び出して `offset` と `lng` を取得すること
+ */
+char32_t MISC::decode_spchar_number_raw( const char* in_char, const int offset, const int lng )
 {
     char str_num[ 16 ];
 
-    memcpy( str_num, in_char + offset, lng );
+    std::memcpy( str_num, in_char + offset, lng );
     str_num[ lng ] = '\0';
 
 #ifdef _DEBUG
-    std::cout << "MISC::decode_spchar_number offset = " << offset << " lng = " << lng << " str = " << str_num << std::endl;
+    std::cout << "MISC::decode_spchar_number_raw offset = " << offset << " lng = " << lng
+              << " str = " << str_num << std::endl;
 #endif
 
     const int base{ offset == 2 ? 10 : 16 };
-    const char32_t uch = static_cast<char32_t>( std::strtoul( str_num, nullptr, base ) );
+    return static_cast<char32_t>( std::strtoul( str_num, nullptr, base ) );
+}
+
+
+/** @brief 「&#数字;」形式の数値文字参照をコードポイント(char32_t)に変換する
+ *
+ * @details 数値文字参照の解析エラーとなる値は規定の値に変換して返す
+ * @param[in] in_char 入力文字列、 `in_char[0] == "&" && in_char[1] == "#"` であること (not null)
+ * @param[in] offset  spchar_number_ln() の戻り値
+ * @param[in] lng     spchar_number_ln() の戻り値
+ * @return 「&#数字;」の中の数字(char32_t型)
+ * @remarks 最初に MISC::spchar_number_ln() を呼び出して `offset` と `lng` を取得すること
+ */
+char32_t MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
+{
+    const char32_t uch = MISC::decode_spchar_number_raw( in_char, offset, lng );
     return MISC::sanitize_numeric_charref( uch );
 }
 
