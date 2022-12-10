@@ -1589,51 +1589,6 @@ static char32_t transform_7f_9f( char32_t raw_point )
     }
 }
 
-//
-// コードポイントが数値文字参照としてはエラーなら規定の値へ変換する
-// 例えばサロゲートペアは'REPLACEMENT CHARACTER' (U+FFFD)を返す
-//
-// 参考文献 : Numeric character reference end state (HTML 5.3)
-//            https://www.w3.org/TR/html53/syntax.html#numeric-character-reference-end-state
-//
-static char32_t sanitize_numeric_character_reference( char32_t raw_point )
-{
-    // NOTE: 記号や絵文字を速やかに処理できるよう順番が組まれている
-
-    bool parse_error = false;
-
-    // 基本多言語面(BMP)をおおまかにチェック
-    if( 0x009F < raw_point && raw_point < 0xD800 ) return raw_point;
-    // 特定のbitパターンの非文字と符号空間の範囲をチェック
-    else if( ( raw_point & 0xFFFE ) == 0xFFFE || raw_point > 0x10FFFF ) parse_error = true;
-    // bitパターンを除いたらBMPの一部と追加多言語面(SMP)以降をチェック
-    else if( 0xFDEF < raw_point ) return raw_point;
-    // サロゲートペアはエラー
-    else if( 0xD800 <= raw_point && raw_point <= 0xDFFF ) parse_error = true;
-
-    // 基本ラテン文字をチェック
-    else if( 0x001F < raw_point && raw_point < 0x007F ) return raw_point;
-    // 特定の変換が必要なコードポイントをチェック
-    else if( 0x007F <= raw_point && raw_point <= 0x009F ) return transform_7f_9f( raw_point );
-    // 最後に制御文字と非文字をチェック
-    // サロゲートペアは他の値より入力される可能性が高いので処理を優先している
-    else if( raw_point <= 0x0008 // Control character
-            || raw_point == 0x000B // Control character (Vertical tab)
-            || ( 0x000D <= raw_point && raw_point <= 0x001F ) // Control character
-            || ( 0xFDD0 <= raw_point // && raw_point <= 0xFDEF の境界は上でチェックしているので不要
-                ) // Noncharacters
-            ) {
-        parse_error = true;
-    }
-
-    if( parse_error ) {
-#ifdef _DEBUG
-        std::cout << "Parse error for numeric character reference... " << raw_point << std::endl;
-#endif
-        return 0xFFFD; // REPLACEMENT CHARACTER
-    }
-    return raw_point;
-}
 
 //
 // 「&#数字;」形式の数字参照文字列を数字(int)に変換する
