@@ -2000,76 +2000,76 @@ class MISC_DecodeSpcharNumberTest : public ::testing::Test {};
 
 TEST_F(MISC_DecodeSpcharNumberTest, result_ok)
 {
-    EXPECT_EQ( 0xC, MISC::decode_spchar_number( "&#xC;", 3, 4 ) );
-    EXPECT_EQ( 32, MISC::decode_spchar_number( "&#32;", 2, 4 ) );
-    EXPECT_EQ( 0x20, MISC::decode_spchar_number( "&#x20;", 3, 5 ) );
-    EXPECT_EQ( 0xA0, MISC::decode_spchar_number( "&#xA0;", 3, 5 ) );
-    EXPECT_EQ( 1234, MISC::decode_spchar_number( "&#1234;", 2, 6 ) );
-    EXPECT_EQ( 0x1234, MISC::decode_spchar_number( "&#x1234;", 3, 7 ) );
+    EXPECT_EQ( 0xC, MISC::decode_spchar_number( "&#xC;", 3, 1 ) );
+    EXPECT_EQ( 32, MISC::decode_spchar_number( "&#32;", 2, 2 ) );
+    EXPECT_EQ( 0x20, MISC::decode_spchar_number( "&#x20;", 3, 2 ) );
+    EXPECT_EQ( 0xA0, MISC::decode_spchar_number( "&#xA0;", 3, 2 ) );
+    EXPECT_EQ( 1234, MISC::decode_spchar_number( "&#1234;", 2, 4 ) );
+    EXPECT_EQ( 0x1234, MISC::decode_spchar_number( "&#x1234;", 3, 4 ) );
 
-    EXPECT_EQ( 0xD7FF, MISC::decode_spchar_number( "&#xD7FF;", 3, 7 ) );
-    EXPECT_EQ( 0xE000, MISC::decode_spchar_number( "&#xE000;", 3, 7 ) );
-    EXPECT_EQ( 0xFDCF, MISC::decode_spchar_number( "&#xFDCF;", 3, 7 ) );
-    EXPECT_EQ( 0xFDF0, MISC::decode_spchar_number( "&#xFDF0;", 3, 7 ) );
+    EXPECT_EQ( 0xD7FF, MISC::decode_spchar_number( "&#xD7FF;", 3, 4 ) );
+    EXPECT_EQ( 0xE000, MISC::decode_spchar_number( "&#xE000;", 3, 4 ) );
+    EXPECT_EQ( 0xFDCF, MISC::decode_spchar_number( "&#xFDCF;", 3, 4 ) );
+    EXPECT_EQ( 0xFDF0, MISC::decode_spchar_number( "&#xFDF0;", 3, 4 ) );
 
-    EXPECT_EQ( 1114109, MISC::decode_spchar_number( "&#1114109;", 2, 9 ) );
-    EXPECT_EQ( 0x10FFFD, MISC::decode_spchar_number( "&#x10FFFD;", 3, 9 ) );
-    EXPECT_EQ( 0x0abcde, MISC::decode_spchar_number( "&#xabcde;", 3, 8 ) );
+    EXPECT_EQ( 1114109, MISC::decode_spchar_number( "&#1114109;", 2, 7 ) );
+    EXPECT_EQ( 0x10FFFD, MISC::decode_spchar_number( "&#x10FFFD;", 3, 6 ) );
+    EXPECT_EQ( 0x0abcde, MISC::decode_spchar_number( "&#xabcde;", 3, 5 ) );
 }
 
 TEST_F(MISC_DecodeSpcharNumberTest, result_error)
 {
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#0;", 2, 3 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#8;", 2, 3 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xB;", 3, 4 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xD;", 3, 4 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#31;", 2, 4 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#0;", 2, 1 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#8;", 2, 1 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xB;", 3, 1 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xD;", 3, 1 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#31;", 2, 2 ) );
 
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xD800;", 3, 7 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xDFFF;", 3, 7 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xFDD0;", 3, 7 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xFDEF;", 3, 7 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xD800;", 3, 4 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xDFFF;", 3, 4 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xFDD0;", 3, 4 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#xFDEF;", 3, 4 ) );
 
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x110000;", 3, 9 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#1114112;", 2, 9 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x110000;", 3, 6 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#1114112;", 2, 7 ) );
 }
 
 TEST_F(MISC_DecodeSpcharNumberTest, result_transform)
 {
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x7F;", 3, 5 ) );
-    EXPECT_EQ( 0x20AC, MISC::decode_spchar_number( "&#x80;", 3, 5 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x81;", 3, 5 ) );
-    EXPECT_EQ( 0x201A, MISC::decode_spchar_number( "&#x82;", 3, 5 ) );
-    EXPECT_EQ( 0x0192, MISC::decode_spchar_number( "&#x83;", 3, 5 ) );
-    EXPECT_EQ( 0x201E, MISC::decode_spchar_number( "&#x84;", 3, 5 ) );
-    EXPECT_EQ( 0x2026, MISC::decode_spchar_number( "&#x85;", 3, 5 ) );
-    EXPECT_EQ( 0x2020, MISC::decode_spchar_number( "&#x86;", 3, 5 ) );
-    EXPECT_EQ( 0x2021, MISC::decode_spchar_number( "&#x87;", 3, 5 ) );
-    EXPECT_EQ( 0x02C6, MISC::decode_spchar_number( "&#x88;", 3, 5 ) );
-    EXPECT_EQ( 0x2030, MISC::decode_spchar_number( "&#x89;", 3, 5 ) );
-    EXPECT_EQ( 0x0160, MISC::decode_spchar_number( "&#x8A;", 3, 5 ) );
-    EXPECT_EQ( 0x2039, MISC::decode_spchar_number( "&#x8B;", 3, 5 ) );
-    EXPECT_EQ( 0x0152, MISC::decode_spchar_number( "&#x8C;", 3, 5 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x8D;", 3, 5 ) );
-    EXPECT_EQ( 0x017D, MISC::decode_spchar_number( "&#x8E;", 3, 5 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x8F;", 3, 5 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x7F;", 3, 2 ) );
+    EXPECT_EQ( 0x20AC, MISC::decode_spchar_number( "&#x80;", 3, 2 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x81;", 3, 2 ) );
+    EXPECT_EQ( 0x201A, MISC::decode_spchar_number( "&#x82;", 3, 2 ) );
+    EXPECT_EQ( 0x0192, MISC::decode_spchar_number( "&#x83;", 3, 2 ) );
+    EXPECT_EQ( 0x201E, MISC::decode_spchar_number( "&#x84;", 3, 2 ) );
+    EXPECT_EQ( 0x2026, MISC::decode_spchar_number( "&#x85;", 3, 2 ) );
+    EXPECT_EQ( 0x2020, MISC::decode_spchar_number( "&#x86;", 3, 2 ) );
+    EXPECT_EQ( 0x2021, MISC::decode_spchar_number( "&#x87;", 3, 2 ) );
+    EXPECT_EQ( 0x02C6, MISC::decode_spchar_number( "&#x88;", 3, 2 ) );
+    EXPECT_EQ( 0x2030, MISC::decode_spchar_number( "&#x89;", 3, 2 ) );
+    EXPECT_EQ( 0x0160, MISC::decode_spchar_number( "&#x8A;", 3, 2 ) );
+    EXPECT_EQ( 0x2039, MISC::decode_spchar_number( "&#x8B;", 3, 2 ) );
+    EXPECT_EQ( 0x0152, MISC::decode_spchar_number( "&#x8C;", 3, 2 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x8D;", 3, 2 ) );
+    EXPECT_EQ( 0x017D, MISC::decode_spchar_number( "&#x8E;", 3, 2 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x8F;", 3, 2 ) );
 
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x90;", 3, 5 ) );
-    EXPECT_EQ( 0x2018, MISC::decode_spchar_number( "&#x91;", 3, 5 ) );
-    EXPECT_EQ( 0x2019, MISC::decode_spchar_number( "&#x92;", 3, 5 ) );
-    EXPECT_EQ( 0x201C, MISC::decode_spchar_number( "&#x93;", 3, 5 ) );
-    EXPECT_EQ( 0x201D, MISC::decode_spchar_number( "&#x94;", 3, 5 ) );
-    EXPECT_EQ( 0x2022, MISC::decode_spchar_number( "&#x95;", 3, 5 ) );
-    EXPECT_EQ( 0x2013, MISC::decode_spchar_number( "&#x96;", 3, 5 ) );
-    EXPECT_EQ( 0x2014, MISC::decode_spchar_number( "&#x97;", 3, 5 ) );
-    EXPECT_EQ( 0x02DC, MISC::decode_spchar_number( "&#x98;", 3, 5 ) );
-    EXPECT_EQ( 0x2122, MISC::decode_spchar_number( "&#x99;", 3, 5 ) );
-    EXPECT_EQ( 0x0161, MISC::decode_spchar_number( "&#x9A;", 3, 5 ) );
-    EXPECT_EQ( 0x203A, MISC::decode_spchar_number( "&#x9B;", 3, 5 ) );
-    EXPECT_EQ( 0x0153, MISC::decode_spchar_number( "&#x9C;", 3, 5 ) );
-    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x9D;", 3, 5 ) );
-    EXPECT_EQ( 0x017E, MISC::decode_spchar_number( "&#x9E;", 3, 5 ) );
-    EXPECT_EQ( 0x0178, MISC::decode_spchar_number( "&#x9F;", 3, 5 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x90;", 3, 2 ) );
+    EXPECT_EQ( 0x2018, MISC::decode_spchar_number( "&#x91;", 3, 2 ) );
+    EXPECT_EQ( 0x2019, MISC::decode_spchar_number( "&#x92;", 3, 2 ) );
+    EXPECT_EQ( 0x201C, MISC::decode_spchar_number( "&#x93;", 3, 2 ) );
+    EXPECT_EQ( 0x201D, MISC::decode_spchar_number( "&#x94;", 3, 2 ) );
+    EXPECT_EQ( 0x2022, MISC::decode_spchar_number( "&#x95;", 3, 2 ) );
+    EXPECT_EQ( 0x2013, MISC::decode_spchar_number( "&#x96;", 3, 2 ) );
+    EXPECT_EQ( 0x2014, MISC::decode_spchar_number( "&#x97;", 3, 2 ) );
+    EXPECT_EQ( 0x02DC, MISC::decode_spchar_number( "&#x98;", 3, 2 ) );
+    EXPECT_EQ( 0x2122, MISC::decode_spchar_number( "&#x99;", 3, 2 ) );
+    EXPECT_EQ( 0x0161, MISC::decode_spchar_number( "&#x9A;", 3, 2 ) );
+    EXPECT_EQ( 0x203A, MISC::decode_spchar_number( "&#x9B;", 3, 2 ) );
+    EXPECT_EQ( 0x0153, MISC::decode_spchar_number( "&#x9C;", 3, 2 ) );
+    EXPECT_EQ( 0xFFFD, MISC::decode_spchar_number( "&#x9D;", 3, 2 ) );
+    EXPECT_EQ( 0x017E, MISC::decode_spchar_number( "&#x9E;", 3, 2 ) );
+    EXPECT_EQ( 0x0178, MISC::decode_spchar_number( "&#x9F;", 3, 2 ) );
 }
 
 
