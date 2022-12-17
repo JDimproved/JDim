@@ -591,6 +591,9 @@ bool ConfigItems::load( const bool restore )
     migemodict_path = cf.get_option_str( "migemodict_path", CONF_MIGEMO_PATH );
 #endif
 
+    // 不正な数値文字参照(サロゲートペア)をデコードする
+    correct_character_reference = cf.get_option_bool( "correct_character_reference", CONF_CORRECT_CHAR_REFERENCE );
+
     m_loaded = true;
 
     // 設定値に壊れている物がある
@@ -932,6 +935,8 @@ void ConfigItems::save_impl( const std::string& path )
 #ifdef HAVE_MIGEMO_H
     cf.update( "migemodict_path", migemodict_path );
 #endif
+
+    cf.update( "correct_character_reference", correct_character_reference );
 
     cf.save();
 }

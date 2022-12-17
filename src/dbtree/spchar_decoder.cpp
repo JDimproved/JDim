@@ -7,6 +7,7 @@
 #include "spchar_tbl.h"
 #include "node.h"
 
+#include "config/globalconf.h"
 #include "jdlib/misccharcode.h"
 #include "jdlib/miscutil.h"
 
@@ -123,7 +124,7 @@ int DBTREE::decode_char( const char* in_char, int& n_in, JDLIB::span<char> out_c
     // 数字文字参照 &#数字;
     if( in_char[ 1 ] == '#' ) {
         return DBTREE::decode_char_number( in_char, n_in, out_char, n_out,
-                                           false );
+                                           CONFIG::get_correct_character_reference() );
     }
 
     // 文字実体参照 &名前;
