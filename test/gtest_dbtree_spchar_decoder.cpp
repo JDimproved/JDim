@@ -7,6 +7,227 @@
 
 namespace {
 
+class DBTREE_DecodeCharNumberTest : public ::testing::Test {};
+
+TEST_F(DBTREE_DecodeCharNumberTest, non_charref)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+    EXPECT_EQ( DBTREE::NODE_NONE, DBTREE::decode_char_number( "hello world", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 0, n_in );
+    EXPECT_STREQ( "", out_char );
+    EXPECT_EQ( 0, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, prefix_only)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+    // 数値文字参照の3文字目をチェックするのでヌル終端を除いて長さ2未満の文字列は未定義動作になる
+    EXPECT_EQ( DBTREE::NODE_NONE, DBTREE::decode_char_number( "&#", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 0, n_in );
+    EXPECT_STREQ( "", out_char );
+    EXPECT_EQ( 0, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, decimal_hiragana_a)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#12354;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "\xE3\x81\x82", out_char );
+    EXPECT_EQ( 3, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, hexadecimal_hiragana_a)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#x3042;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "\xE3\x81\x82", out_char );
+    EXPECT_EQ( 3, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, non_digits)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+    EXPECT_EQ( DBTREE::NODE_NONE, DBTREE::decode_char_number( "&#qux;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 0, n_in );
+    EXPECT_STREQ( "", out_char );
+    EXPECT_EQ( 0, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, invalid_sequence)
+{
+    // '#' の後に続く数字のみ考慮する
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#12354hoge7;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 7, n_in );
+    EXPECT_STREQ( "\xE3\x81\x82", out_char );
+    EXPECT_EQ( 3, n_out );
+
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#x3042hoge9;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 7, n_in );
+    EXPECT_STREQ( "\xE3\x81\x82", out_char );
+    EXPECT_EQ( 3, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, without_semicoron)
+{
+    // '#' の後に続く数字のみ考慮する
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#123", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 5, n_in );
+    EXPECT_STREQ( "{", out_char );
+    EXPECT_EQ( 1, n_out );
+
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#x7b", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 5, n_in );
+    EXPECT_STREQ( "{", out_char );
+    EXPECT_EQ( 1, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, padding_zeros)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#0097;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 7, n_in );
+    EXPECT_STREQ( "a", out_char );
+    EXPECT_EQ( 1, n_out );
+
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#x0041;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "A", out_char );
+    EXPECT_EQ( 1, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, zwsp_u200B)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+
+    // zwsp(U+200B) は今のところ空文字列にする
+    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#X200B;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "", out_char );
+    EXPECT_EQ( 0, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, zwnj_zwj_lrm_rlm)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+
+    // zwnj(U+200C), zwj(U+200D), lrm(U+200E), rlm(U+200F) は今のところ空文字列にする(zwspにする)
+    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#X200C;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "", out_char );
+    EXPECT_EQ( 0, n_out );
+
+    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#x200d;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "", out_char );
+    EXPECT_EQ( 0, n_out );
+
+    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#x200E;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "", out_char );
+    EXPECT_EQ( 0, n_out );
+
+    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#X200f;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "", out_char );
+    EXPECT_EQ( 0, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, line_separator_u2028)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+
+    // U+2028 LINE SEPARATOR を描画処理に渡すと改行が乱れるため空白に置き換える (webブラウザと同じ挙動)
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#x2028;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( " ", out_char );
+    EXPECT_EQ( 1, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, do_not_correct_surrogate_pair)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+
+    // U+1F600 GRINNING FACE
+    constexpr const char* emoji = "&#55357;&#56832;";
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( emoji, n_in, out_char, n_out, false ) );
+    EXPECT_EQ( 8, n_in );
+    // サロゲートペアをデコードしないときは1つ目の数値文字参照だけ U+FFFD REPLACEMENT CHARACTER に変換する
+    EXPECT_STREQ( "\xEF\xBF\xBD", out_char );
+    EXPECT_EQ( 3, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, correct_surrogate_pair)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+
+    constexpr bool correct_surroagete = true;
+    // U+1F600 GRINNING FACE
+    constexpr const char* emoji = "&#55357;&#56832;";
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( emoji, n_in, out_char, n_out, correct_surroagete ) );
+    EXPECT_EQ( 16, n_in );
+    EXPECT_STREQ( "\xf0\x9f\x98\x80", out_char );
+    EXPECT_EQ( 4, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, only_high_surrogate)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+
+    constexpr bool correct_surroagete = true;
+    constexpr const char* chrefs = "&#55357;";
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( chrefs, n_in, out_char, n_out, correct_surroagete ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "\xEF\xBF\xBD", out_char );
+    EXPECT_EQ( 3, n_out );
+}
+
+TEST_F(DBTREE_DecodeCharNumberTest, following_no_low_surrogate)
+{
+    char out_char[16]{};
+    int n_in;
+    int n_out;
+
+    constexpr bool correct_surroagete = true;
+    constexpr const char* chrefs = "&#55357;&#12354;";
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( chrefs, n_in, out_char, n_out, correct_surroagete ) );
+    EXPECT_EQ( 8, n_in );
+    EXPECT_STREQ( "\xEF\xBF\xBD", out_char );
+    EXPECT_EQ( 3, n_out );
+}
+
+
 class DBTREE_DecodeCharNameTest : public ::testing::Test {};
 
 TEST_F(DBTREE_DecodeCharNameTest, ampersand_only)
