@@ -619,3 +619,10 @@ int CONFIG::get_save_session(){ return get_confitem()->save_session; }
 #ifdef HAVE_MIGEMO_H
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }
 #endif
+
+// 不正な数値文字参照(サロゲートペア)をデコードする
+bool CONFIG::get_correct_character_reference(){
+    auto item = get_confitem();
+    return item ? item->correct_character_reference : false;
+}
+void CONFIG::set_correct_character_reference( const bool set ){ get_confitem()->correct_character_reference = set; }

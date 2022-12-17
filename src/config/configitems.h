@@ -536,6 +536,9 @@ namespace CONFIG
         std::string migemodict_path;
 #endif
 
+        /// 不正な数値文字参照(サロゲートペア)をデコードする
+        bool correct_character_reference{};
+
         /////////////////////////
 
 

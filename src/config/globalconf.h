@@ -616,6 +616,10 @@ namespace CONFIG
     // migemo-dictの場所
     const std::string& get_migemodict_path();
 #endif
+
+    // 不正な数値文字参照(サロゲートペア)をデコードする
+    bool get_correct_character_reference();
+    void set_correct_character_reference( const bool set );
 }
 
 
