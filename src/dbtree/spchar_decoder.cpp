@@ -30,13 +30,16 @@ bool check_spchar( const char* n_in, const char* spchar )
 /**
  * @brief HTMLの数値文字参照 `&#数字;` をUTF-8文字列にデコードする
  *
+ * @details `&#` の後ろに続く数字列のみチェックするため `;` セミコロンは無くても解析される
  * @param[in]  in_char  入力文字列、in_char[1] == '#' であること (not null)
  * @param[out] n_in     入力で使用した文字数が返る
  * @param[out] out_char 出力文字列 (長さ5以上)
  * @param[out] n_out    出力した文字数が返る
+ * @param[in]  correct_surrogate サロゲートペアの数値文字参照をデコードする
  * @return デコードした文字の種類( node.h で定義したノード番号 )
  */
-int decode_char_number( const char* in_char, int& n_in, JDLIB::span<char> out_char, int& n_out )
+int DBTREE::decode_char_number( const char* in_char, int& n_in, JDLIB::span<char> out_char, int& n_out,
+                                bool correct_surrogate )
 {
     int ret = DBTREE::NODE_TEXT;
     n_in = n_out = 0;
@@ -45,7 +48,25 @@ int decode_char_number( const char* in_char, int& n_in, JDLIB::span<char> out_ch
     const int lng = MISC::spchar_number_ln( in_char, offset );
     if( lng == -1 ) return DBTREE::NODE_NONE;
 
-    const char32_t uch = MISC::decode_spchar_number( in_char, offset, lng );
+    char32_t uch = MISC::decode_spchar_number_raw( in_char, offset, lng );
+
+    char32_t high_sg = 0;
+    uch = MISC::sanitize_numeric_charref( uch, correct_surrogate ? &high_sg : nullptr );
+    if( high_sg != 0 ) {
+        const char* char_low = in_char + offset + lng + 1;
+        if( char_low[0] != '&' || char_low[1] != '#' ) goto break_composition;
+
+        int offset_low;
+        const int lng_low = MISC::spchar_number_ln( char_low, offset_low );
+        if( lng_low == -1 ) goto break_composition;
+
+        const char32_t low_sg = MISC::decode_spchar_number_raw( char_low, offset_low, lng_low );
+        if( low_sg >= 0xDC00 && low_sg < 0xE000 ) {
+            uch = 0x10000 + ( high_sg - 0xD800 ) * 0x400 + ( low_sg - 0xDC00 );
+            offset += 1 + offset_low + lng_low;
+        }
+    }
+break_composition:
 
     switch( uch ){
 
@@ -99,8 +120,11 @@ int DBTREE::decode_char( const char* in_char, int& n_in, JDLIB::span<char> out_c
         return DBTREE::NODE_NONE;
     }
 
-    // 数字参照 &#数字;
-    if( in_char[ 1 ] == '#' ) return decode_char_number( in_char, n_in, out_char, n_out );
+    // 数字文字参照 &#数字;
+    if( in_char[ 1 ] == '#' ) {
+        return DBTREE::decode_char_number( in_char, n_in, out_char, n_out,
+                                           false );
+    }
 
     // 文字実体参照 &名前;
     return DBTREE::decode_char_name( in_char, n_in, out_char, n_out );
