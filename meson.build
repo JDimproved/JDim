@@ -43,7 +43,7 @@
 #   - 生成された実行ファイルの場所は builddir/src/jdim
 
 project('jdim', 'cpp',
-        version : '0.8.0',
+        version : '0.9.0-beta',
         license : 'GPL2',
         meson_version : '>= 0.49.0',
         default_options : ['warning_level=3', 'cpp_std=c++17'])
