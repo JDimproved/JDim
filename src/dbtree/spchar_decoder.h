@@ -22,6 +22,9 @@ namespace DBTREE
      * @return デコードした文字の種類( node.h で定義したノード番号 )
      */
     int decode_char( const char* in_char, int& n_in, JDLIB::span<char> out_char, int& n_out );
+
+    // HTML 文字実体参照をUTF-8文字列にデコードする
+    int decode_char_name( const char* in_char, int& n_in, JDLIB::span<char> out_char, int& n_out );
 }
 
 #endif
