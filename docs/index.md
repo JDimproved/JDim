@@ -39,7 +39,7 @@ layout: default
 - [JDim 0.1.0-20190122](./link-20190122)
 - [JD 2.8.9-150226][jd-289] (jd4linux)
 
-© 2019-2022 JDimproved project
+© 2019-2023 JDimproved project
 
 [dis592]: https://github.com/JDimproved/JDim/discussions/592
 [wiki-faq]: https://ja.osdn.net/projects/jd4linux/wiki/FAQ
