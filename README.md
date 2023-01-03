@@ -347,7 +347,7 @@ JDimで追加された不具合や機能の修正については[Pull requests][
 ## 著作権
 
 © 2017-2019 yama-natuki [https://github.com/yama-natuki/JD]  
-© 2019-2022 JDimproved project [https://github.com/JDimproved/JDim]
+© 2019-2023 JDimproved project [https://github.com/JDimproved/JDim]
 
 パッチやファイルを取り込んだ場合、それらのコピーライトは「JDimproved project」に統一します。
 
