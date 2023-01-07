@@ -53,6 +53,12 @@
   </provides>
 
   <releases>
+    <release version="0.9.0" date="2023-01-07">
+      <description>
+        <p>Implement ReplaceStr for thread subjects</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.9.0</url>
+    </release>
     <release version="0.8.0" date="2022-07-16">
       <description>
         <p>Fix toolbar icons to support GNOME 42</p>
