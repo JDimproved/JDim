@@ -132,14 +132,6 @@ AS_IF(
 
 
 dnl
-dnl 正規表現ライブラリのオプションは廃止された
-dnl
-AC_ARG_WITH(regex,
-AS_HELP_STRING([--with-regex], [NO LONGER AVAILABLE]),
-[AC_MSG_ERROR([regex library options have been removed. see https://github.com/JDimproved/JDim/issues/697])])
-
-
-dnl
 dnl TLS
 dnl
 AC_MSG_CHECKING(for --with-tls)

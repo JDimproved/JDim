@@ -124,12 +124,6 @@ elif sessionlib_opt == 'no'
   configure_args += '\'--with-sessionlib=no\''
 endif
 
-# 正規表現ライブラリのオプションは廃止された
-regex_opt = get_option('regex')
-if regex_opt != ''
-  error('regex library options have been removed. see https://github.com/JDimproved/JDim/issues/697')
-endif
-
 # TLS
 tls_opt = get_option('tls')
 if tls_opt == 'gnutls'
