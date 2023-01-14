@@ -12,19 +12,10 @@
 #   dnf install gnutls-devel gtkmm30-devel libSM-devel
 #   ```
 #
-# Debian Buster, Ubuntu 20.04
+# Debian Buster(backports), Ubuntu 20.04
 #   ディストロのパッケージをインストールする
 #   ```
 #   sudo apt install build-essential git libtool meson
-#   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
-#   ```
-#
-# Ubuntu 18.04
-#   ディストロのmesonパッケージはバージョンが古いためpypiからインストールする
-#   $HOME/.local/bin にパスを通す
-#   ```
-#   sudo apt install build-essential git libtool ninja-build python3 python3-pip
-#   pip3 install --user meson
 #   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
 #   ```
 
@@ -45,7 +36,7 @@
 project('jdim', 'cpp',
         version : '0.9.0',
         license : 'GPL2',
-        meson_version : '>= 0.49.0',
+        meson_version : '>= 0.53.0',
         default_options : ['warning_level=3', 'cpp_std=c++17'])
 
 # 追加コンパイルオプション
@@ -71,7 +62,7 @@ endif
 #
 # 必須パッケージのチェック
 #
-gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.22.0')
+gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.24.0')
 gtkmm_dep = declare_dependency(compile_args : '-DGTK_DOMAIN="gtk30"',
                                dependencies : gtkmm_dep)
 threads_dep = dependency('threads')
@@ -127,10 +118,10 @@ endif
 # TLS
 tls_opt = get_option('tls')
 if tls_opt == 'gnutls'
-  tls_dep = dependency('gnutls', version : '>= 3.5.18')
+  tls_dep = dependency('gnutls', version : '>= 3.6.7')
   conf.set('USE_GNUTLS', 1)
 elif tls_opt == 'openssl'
-  tls_dep = dependency('openssl', version : '>= 1.1.0')
+  tls_dep = dependency('openssl', version : '>= 1.1.1')
   conf.set('USE_OPENSSL', 1)
   configure_args += '\'--with-tls=openssl\''
 endif

@@ -44,13 +44,12 @@ JDim は GPLv2 の下で公開されている [JD][jd-project] からforkした�
 LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
 
 ##### サポートの最新情報
-Ubuntu 18.04のテスト環境が[使えなくなる][#1035]ため前倒しで18.04のサポートを放棄しました。
-次のリリースまで動作環境の変更は行いませんが18.04では問題が起こるかもしれません。
+gccのバージョンが8未満のプラットフォームはサポートを終了しました。
 Debian buster(2019年)より前にリリースされたディストリビューションを利用されている場合は更新をお願いいたします。
 
 メンテナンスの都合によりWindows(MinGW)版のサポートは[終了][#445]しました。
 
-Snap i386(32bit)版は2023年1月のリリースをもって[更新を終了][#890]する予定です。
+Snap i386(32bit)版は2023年1月のリリースをもって[更新を終了][#890]しました。
 i386版ディストロを利用されている場合は更新をお願いいたします。
 
 [#1035]: https://github.com/JDimproved/JDim/issues/1035
@@ -90,7 +89,7 @@ sudo apt update
 sudo apt build-dep jdim
 ```
 
-#### Ubuntu (18.04以降)
+#### Ubuntu (20.04以降)
 開発環境が入っていない場合は、
 
 ```sh
@@ -128,7 +127,9 @@ yay -S jdim-git
 
 ### 参考
 
-詳しいインストールの方法は [本家のwiki](https://ja.osdn.net/projects/jd4linux/wiki/OS%2f%E3%83%87%E3%82%A3%E3%82%B9%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E5%88%A5%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95) を参照してください。
+OSやディストリビューション別の解説は [GitHub Discussions][dis592] を参照してください。
+
+[dis592]: https://github.com/JDimproved/JDim/discussions/592 "OS/ディストリビューション別インストール方法 - Discussions #592"
 
 
 ### Tips
