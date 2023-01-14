@@ -23,14 +23,14 @@
 #   ```
 #   git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 #   cd jdim
-#   meson builddir
+#   meson setup builddir
 #   cd builddir
 #   ninja
 #   ```
 # Tips
 #   - JDimのビルドオプションは `meson configure` を実行してProject optionsの段落を確認する
 #     または meson_options.txt を見る
-#   - ビルドオプションは `meson builddir -Dpangolayout=enabled` のように指定する
+#   - ビルドオプションは `meson setup builddir -Dpangolayout=enabled` のように指定する
 #   - 生成された実行ファイルの場所は builddir/src/jdim
 
 project('jdim', 'cpp',

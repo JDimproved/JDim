@@ -31,7 +31,7 @@ meson wrap install gtest
 mesonの **test** サブコマンドでテストプログラムのビルドと実行を行います。
 結果表示など詳細はMesonの[リファレンス][meson-reference]を参照してください。
 ```sh
-meson builddir
+meson setup builddir
 meson test -C builddir
 ```
 

@@ -62,13 +62,13 @@ OSやディストリビューション別の解説は [#592][dis592] を参照�
 <a name="build-meson"></a>
 ### ビルド方法( meson )
 
-1. `meson builddir`
+1. `meson setup builddir`
 2. `ninja -C builddir` ( または `meson compile -C builddir` )
 3. 起動は `./builddir/src/jdim`
 4. (お好みで) `strip ./builddir/src/jdim`
 
 #### mesonのビルドオプション
-- `meson builddir -Dpangolayout=enabled` のように指定する。
+- `meson setup builddir -Dpangolayout=enabled` のように指定する。
 - オプションの一覧は `meson configure` を実行してProject optionsの段落を参照する。
 
 

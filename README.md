@@ -107,7 +107,7 @@ sudo apt install libgtkmm-3.0-dev libltdl-dev libgnutls28-dev
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 cd jdim
-meson builddir
+meson setup builddir
 ninja -C builddir
 ```
 
@@ -142,7 +142,7 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
   `meson`を実行するときにCPUの種類(`-march=ARCH`や`-mcpu=CPU`)を`-Dcpp_args`に設定します。
   ###### 例 (第2世代Coreプロセッサー)
   ```sh
-  meson builddir -Dcpp_args="-march=sandybridge" -Doptimization=2
+  meson setup builddir -Dcpp_args="-march=sandybridge" -Doptimization=2
   ```
 
   マシンのCPUは下のコマンドで調べることができます。([GCCの最適化][gentoo-gcc] - Gentoo Wikiより)
@@ -164,13 +164,13 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
   * 事前に環境変数 LDFLAGS を設定してビルドする
     ```
     export LDFLAGS="$LDFLAGS -Wl,--push-state,--no-as-needed -lcrypt -Wl,--pop-state"
-    meson asan -Db_sanitize=address
+    meson setup asan -Db_sanitize=address
     ninja -C asan
     ```
 
   * または、mesonのコマンドラインオプション`-Db_asneeded`でフラグを変更する
     ```
-    meson asan -Db_sanitize=address -Db_asneeded=false
+    meson setup asan -Db_sanitize=address -Db_asneeded=false
     ninja -C asan
     ```
 
