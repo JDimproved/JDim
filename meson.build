@@ -8,14 +8,14 @@
 # Fedora
 #   ディストロのパッケージをインストールする
 #   ```
-#   dnf install git libtool meson
+#   dnf install git meson
 #   dnf install gnutls-devel gtkmm30-devel libSM-devel
 #   ```
 #
 # Debian Buster(backports), Ubuntu 20.04
 #   ディストロのパッケージをインストールする
 #   ```
-#   sudo apt install build-essential git libtool meson
+#   sudo apt install build-essential git meson
 #   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
 #   ```
 
@@ -23,14 +23,14 @@
 #   ```
 #   git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 #   cd jdim
-#   meson builddir
+#   meson setup builddir
 #   cd builddir
 #   ninja
 #   ```
 # Tips
 #   - JDimのビルドオプションは `meson configure` を実行してProject optionsの段落を確認する
 #     または meson_options.txt を見る
-#   - ビルドオプションは `meson builddir -Dpangolayout=enabled` のように指定する
+#   - ビルドオプションは `meson setup builddir -Dpangolayout=enabled` のように指定する
 #   - 生成された実行ファイルの場所は builddir/src/jdim
 
 project('jdim', 'cpp',
@@ -234,20 +234,18 @@ if build_tests
   subdir('test', if_found : gtest_main_dep)
 endif
 
-# TODO: meson 0.53 から summary() が使用できる
-message('*** Configuration ***')
-message('alsa = @0@'.format(alsa_dep.found()))
-message('build_tests = @0@'.format(build_tests))
-message('compat_cache_dir = @0@'.format(compat_cache_dir))
-message('gprof = @0@'.format(gprof))
-message('migemo = @0@'.format(migemo_dep.found()))
-message('migemodict = @0@'.format(migemodict))
-message('native = @0@'.format(native))
-message('packager: \'@0@\''.format(packager_opt))
-message('pangolayout = @0@'.format(pangolayout))
-message('sessionlib = @0@'.format(sessionlib_opt))
-message('tls = @0@'.format(tls_opt))
-message('*********************')
+summary({'alsa' : alsa_dep.found(),
+         'build_tests' :  build_tests,
+         'compat_cache_dir' : compat_cache_dir,
+         'gprof' : gprof,
+         'migemo' : migemo_dep.found(),
+         'migemodict' : migemodict,
+         'native' : native,
+         'packager' : packager_opt,
+         'pangolayout' : pangolayout,
+         'sessionlib' : sessionlib_opt,
+         'tls' : tls_opt,
+         }, section : 'Configuration', bool_yn : true)
 
 
 #

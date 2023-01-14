@@ -289,3 +289,5 @@ AC_ARG_VAR(GTEST_SRCDIR, [path for googletest framework source directory])
 
 AC_CONFIG_FILES([Makefile src/Makefile src/skeleton/Makefile src/jdlib/Makefile src/dbtree/Makefile src/dbimg/Makefile  src/bbslist/Makefile src/board/Makefile src/article/Makefile src/image/Makefile src/message/Makefile src/history/Makefile src/config/Makefile src/icons/Makefile src/sound/Makefile src/xml/Makefile src/control/Makefile test/Makefile])
 AC_OUTPUT
+AC_MSG_WARN([JDim will drop ./configure support in the future release.])
+AC_MSG_WARN([See https://github.com/JDimproved/JDim/issues/897 for details.])

@@ -62,9 +62,8 @@ i386版ディストロを利用されている場合は更新をお願いいた�
 ソースコードからJDimをビルドします。**GTK3版がビルド**されますのでご注意ください。
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
-**Autotoolsのサポートは2023年7月のリリースをもって廃止されます。
+**Autotools(./configure)のサポートは2023年7月のリリースをもって廃止されます。
 かわりに[meson][mesonbuild]を利用してください。([RFC 0012][rfc0012])**
-configure のかわりに meson を使ってビルドする方法は [Discussions][dis556] を参照してください。
 
 [mesonbuild]: https://mesonbuild.com
 [dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"
@@ -77,12 +76,12 @@ configure のかわりに meson を使ってビルドする方法は [Discussion
 
 #### Redhat系
 ```sh
-dnf install gtkmm30-devel gnutls-devel libSM-devel libtool automake autoconf-archive git
+dnf install gtkmm30-devel gnutls-devel libSM-devel meson git
 ```
 
 #### Debian (buster以降)
 ```sh
-sudo apt install libc6-dev make gcc g++ git
+sudo apt install libc6-dev meson gcc g++ git
 sudo vi /etc/apt/sources.list
 # ↑エディタは何でも良い。deb-src行でbuster以降を有効にする
 sudo apt update
@@ -93,13 +92,13 @@ sudo apt build-dep jdim
 開発環境が入っていない場合は、
 
 ```sh
-sudo apt install build-essential automake autoconf-archive git libtool
+sudo apt install build-essential git meson
 ```
 
 必要なライブラリを入れます。(抜けがあるかも)
 
 ```sh
-sudo apt install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasound2-dev libgnutls28-dev
+sudo apt install libgtkmm-3.0-dev libltdl-dev libgnutls28-dev
 ```
 
 
@@ -108,12 +107,11 @@ sudo apt install libgtkmm-3.0-dev libmigemo1 libasound2-data libltdl-dev libasou
 ```sh
 git clone -b master --depth 1 https://github.com/JDimproved/JDim.git jdim
 cd jdim
-autoreconf -i
-./configure
-make
+meson setup builddir
+ninja -C builddir
 ```
 
-実行するには直接 src/jdim を起動するか手動で /usr/bin あたりに src/jdim を cp します。
+実行するには直接 builddir/src/jdim を起動するか手動で /usr/bin あたりに builddir/src/jdim を cp します。
 
 #### Arch Linux
 ビルドファイルはAURで公開されています。(Thanks to @naniwaKun.)  
@@ -136,34 +134,21 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
 
 * **buildの高速化**
 
-  make するときに `-j job数`(並列処理の数) を指定すれば高速にコンパイルできます。
-  使用するCPUのコア数と相談して決めてください。
+  Mesonは並列コンパイル(job数)を自動で設定します。メモリー不足などでビルドが中断するときは
+  `ninja`(または`meson compile`)するときに `-j job数` を指定して実行数を調整してください。
 
 * **CPUに合わせた最適化**
 
-  `./configure`を実行するときにCPUの種類(`-march=ARCH`や`-mcpu=CPU`)と最適化レベル(`-O`)を`CXXFLAGS`に設定します。
+  `meson`を実行するときにCPUの種類(`-march=ARCH`や`-mcpu=CPU`)を`-Dcpp_args`に設定します。
   ###### 例 (第2世代Coreプロセッサー)
   ```sh
-  ./configure CXXFLAGS="-march=sandybridge -O2"
+  meson setup builddir -Dcpp_args="-march=sandybridge" -Doptimization=2
   ```
 
   マシンのCPUは下のコマンドで調べることができます。([GCCの最適化][gentoo-gcc] - Gentoo Wikiより)
   ```sh
   gcc -Q -c -march=native --help=target -o /dev/null | grep "march\|mtune\|mcpu"
   ```
-
-* **configureチェック中に `AX_CXX_COMPILE_STDCXX(17, noext, mandatory)` に関連したエラーがでた場合**
-
-  ubuntuでは `autoconf-archive` をインストールして `autoreconf -i` からやり直してみてください。
-  パッケージが見つからないまたはエラーが消えない場合は以下の手順を試してみてください。
-  または`./configure`のかわりにMesonを利用してビルドする方法があります。([GitHub][dis556]を参照)
-
-  1. `configure.ac` の `AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])` の行を削除する。
-  2. `autoreconf -i` で `configure` を作りconfigureチェックをやり直す。
-  3. `make CXXFLAGS+="-std=c++17"` でビルドする。
-
-  もしこれで駄目な場合はgccのversionが古すぎるので、
-  gccのバージョンアップをするか、ディストリをバージョンアップしてください。
 
 [gentoo-gcc]: https://wiki.gentoo.org/wiki/GCC_optimization/ja#-march
 
@@ -179,13 +164,13 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
   * 事前に環境変数 LDFLAGS を設定してビルドする
     ```
     export LDFLAGS="$LDFLAGS -Wl,--push-state,--no-as-needed -lcrypt -Wl,--pop-state"
-    meson asan -Db_sanitize=address
+    meson setup asan -Db_sanitize=address
     ninja -C asan
     ```
 
   * または、mesonのコマンドラインオプション`-Db_asneeded`でフラグを変更する
     ```
-    meson asan -Db_sanitize=address -Db_asneeded=false
+    meson setup asan -Db_sanitize=address -Db_asneeded=false
     ninja -C asan
     ```
 
@@ -273,7 +258,7 @@ NOTE:
 -s, --skip-setup | 初回起動時の設定ダイアログを表示しない
 -l, --logfile | エラーなどのメッセージをファイル(キャッシュディレクトリのlog/msglog)に出力する
 -g, --geometry WxH-X+Y | 幅(W)高さ(H)横位置(X)縦位置(Y)の指定。WxHは省略可能(例: -g 100x40-10+30, -g -20+100 )
--V, --version | バージョン及びconfigureオプションを全て表示
+-V, --version | バージョン及びビルドオプションを全て表示
 
 
 ## 多重起動について

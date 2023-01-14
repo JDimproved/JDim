@@ -24,8 +24,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-11
-      - name: meson builddir -Db_sanitize=address,undefined -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dcpp_link_args="${AVOID_CRASH}"
-        run: meson builddir -Db_sanitize=address,undefined -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dcpp_link_args="${AVOID_CRASH}"
+      - name: meson setup builddir -Db_sanitize=address,undefined -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dcpp_link_args="${AVOID_CRASH}"
+        run: meson setup builddir -Db_sanitize=address,undefined -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dcpp_link_args="${AVOID_CRASH}"
         # `compile` subcommand requires Meson 0.54 or later.
       - name: ninja -C builddir
         run: ninja -C builddir
@@ -70,8 +70,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
-      - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
-        run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+      - name: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+        run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
       - name: ninja -C builddir
         run: ninja -C builddir
       - name: meson test -v -C builddir
@@ -107,8 +107,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
-      - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
-        run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+      - name: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+        run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
       - name: ninja -C builddir
         run: ninja -C builddir
       - name: meson test -v -C builddir
@@ -201,8 +201,8 @@ jobs:
         run: |
           sudo apt update
           sudo apt install meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-11
-      - name: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
-        run: meson builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+      - name: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+        run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
       - name: ninja -C builddir
         run: ninja -C builddir
       - name: meson test -v -C builddir

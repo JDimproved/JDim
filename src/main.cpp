@@ -286,7 +286,7 @@ App::App()
 int App::slot_handle_local_options( const Glib::RefPtr<Glib::VariantDict>& options )
 {
     if( options->contains( "version" ) ) {
-        // バージョンと完全なconfigureオプションを表示
+        // バージョンと完全なビルドオプションを表示
         std::cout << ENVIRONMENT::get_progname() << " " << ENVIRONMENT::get_jdversion() << "\n" <<
         ENVIRONMENT::get_jdcopyright() << "\n"
         "configure: " << ENVIRONMENT::get_configure_args( ENVIRONMENT::CONFIGURE_FULL ) << std::endl;

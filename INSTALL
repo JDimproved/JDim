@@ -21,22 +21,17 @@
 
   必須
 
-  ・autoconf
-  ・autoconf-archive
-  ・automake
+  ・meson 0.53.0 以上
   ・g++ 8 以上、または clang++ 7 以上
   ・gnutls
   ・gtkmm
-  ・libtool
-  ・make
   ・zlib
 
   オプション
 
-  ・meson 0.53.0 以上
-  ・alsa-lib (--with-alsa)
-  ・openssl 1.1.1 以上 (--with-tls=openssl)
-  ・migemo (--with-migemo)
+  ・alsa-lib (-Dalsa=enabled)
+  ・openssl 1.1.1 以上 (-Dtls=openssl)
+  ・migemo (-Dmigemo=enabled)
   ・googletest (`test/RADME.md`を参照)
 
   WebPやAVIF画像の表示に必要なパッケージ
@@ -45,78 +40,71 @@
   ・libwebp, webp-pixbuf-loader (WebP)
   ・libavif (AVIF)
 
-  OSやディストリビューション別の解説は https://github.com/JDimproved/JDim/discussions/592 を参照。
-
-  configure のかわりに meson を使ってビルドする方法は https://github.com/JDimproved/JDim/discussions/556 を参照。
-  (v0.4.0+からサポート)
-
   GTKがデフォルトでサポートしていないWebPやAVIF形式の画像を表示する方法は
   https://github.com/JDimproved/JDim/discussions/737 を参照。(v0.5.0+からサポート)
 
-* ビルド方法( configure + make の場合 )
-    Autotoolsのサポートは2023年7月のリリースをもって廃止されます。かわりにMesonを利用してください。
-    詳しくは https://github.com/JDimproved/rfcs/blob/master/docs/0012-end-of-autotools-support.md を参照。
+  OSやディストリビューション別の解説は https://github.com/JDimproved/JDim/discussions/592 を参照。
 
-    1. autoreconf -i ( 又は ./autogen.sh )
-    2. ./configure
-    3. make
-    4. (お好みで) strip src/jdim
 
-* ビルド方法( meson の場合 )
+* ビルド方法( meson )
 
-    1. meson builddir
-    2. meson compile -C builddir ( 又は ninja -C builddir )
+    1. meson setup builddir
+    2. ninja -C builddir ( または meson compile -C builddir )
     3. 起動は ./builddir/src/jdim
 
     mesonのビルドオプション
-    - meson builddir -Dpangolayout=enabled のように指定する。
+    - meson setup builddir -Dpangolayout=enabled のように指定する。
     - オプションの一覧は meson configure を実行してProject optionsの段落を参照する。
 
-* configureオプション
+Autotools(./configure)のサポートは2023年7月のリリースをもって廃止されます。
+詳しくは https://github.com/JDimproved/rfcs/blob/master/docs/0012-end-of-autotools-support.md を参照。
 
-    --with-sessionlib=xsmp|no
+
+* ビルドオプション
+
+    -Dsessionlib=[xsmp|no]
 
        XSMP を使ってセッション管理をするには「xsmp」を、セッション管理を無効にするには「no」を選択する。
        デフォルトでは XSMP を使用する。
 
-    --with-pangolayout
+    -Dpangolayout=enabled
 
        描画にPangoLayoutを使う。デフォルトでは PangoGlyphString を使用する。
        スレビューのテキスト表示に問題があるときはこのオプションを試してみてください。
 
-    --with-migemo
+    -Dmigemo=enabled
 
        migemoによる検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
        有効にすると正規表現のメタ文字が期待通りに動作しない場合があるので注意すること。
 
-    --with-migemodict=PATH
+    -Dmigemodict=PATH
 
-       (--with-migemo 限定) migemo の辞書ファイルの場所を設定する。
+       (-Dmigemo 限定) migemo の辞書ファイルの場所を設定する。
        about:config で変更が可能、空欄にした場合は migemo が無効になる。(変更後は要再起動)
 
-    --with-native
+    -Dnative=enabled
 
        CPUに合わせた最適化
-       CPUを指定する場合は ./configure CXXFLAGS="-march=ARCH" を利用してください。
+       手動でCPUの種類を指定する場合は meson -Dcpp_args="-march=ARCH" を利用してください。
 
-    --with-tls=[gnutls|openssl]
+    -Dtls=[gnutls|openssl]
 
        使用するSSL/TLSライブラリを設定する。デフォルトでは GnuTLS を使用する。
 
-    --with-tls=openssl
+    -Dtls=openssl
 
        GnuTLS のかわりに OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。
 
-    --with-alsa
+    -Dalsa=enabled
 
        ALSAによる効果音再生機能を有効にする。詳しくは"https://jdimproved.github.io/JDim/"の項を参照すること。
 
-    --enable-gprof
+    -Dgprof=enabled
 
        gprofによるプロファイリングを行う。コンパイルオプションに -pg が付き、JDimを実行すると
-       gmon.out が出来るのでgprof./jdgmon.out で解析できる。CPUの最適化は効かなくなるので注意する。
+       gmon.out が出来るので gprof ./gmon.out で解析できる。CPUの最適化は効かなくなるので注意する。
 
-    --disable-compat-cache-dir
+    -Dcompat_cache_dir=disabled
 
        JDのキャッシュディレクトリ ~/.jd を読み込む互換機能を無効化する。
 
@@ -127,8 +115,6 @@
 
 * メモ
 
-  最近のディストリビューションの場合は autogen.sh よりも autoreconf -i の方を推奨。
+  実行するには直接 builddir/src/jdim を起動するか手動で /usr/bin あたりに builddir/src/jdim を cp する。
 
-  実行するには直接 src/jdim を起動するか手動で /usr/bin あたりに src/jdim を cp する。
-
-  以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。
+  以上の操作で ninja が通らなかったり動作が変な時は meson のビルドオプションを変更する。
