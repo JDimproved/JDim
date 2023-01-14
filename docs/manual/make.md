@@ -9,9 +9,8 @@ layout: default
 
 - [動作環境](#environment)
 - [makeに必要なツール、ライブラリ](#requirement)
-- [ビルド方法( configure + make の場合 )](#make-configure)
-- [ビルド方法( meson の場合 )](#build-meson)
-- [configureオプション](#configure-option)
+- [ビルド方法( meson )](#build-meson)
+- [ビルドオプション](#build-option)
 - [メモ](#memo)
 
 
@@ -35,21 +34,16 @@ layout: default
 ### makeに必要なツール、ライブラリ
 
 #### 必須
-- autoconf
-- autoconf-archive
-- automake
+- meson 0.53.0 以上
 - g++ 8 以上、または clang++ 7 以上
 - gnutls
 - gtkmm
-- libtool
-- make
 - zlib
 
 #### オプション
-- meson 0.53.0 以上
-- alsa-lib (`--with-alsa`)
-- openssl 1.1.1 以上 (`--with-tls=openssl`)
-- migemo (`--with-migemo`)
+- alsa-lib (`-Dalsa=enabled`)
+- openssl 1.1.1 以上 (`-Dtls=openssl`)
+- migemo (`-Dmigemo=enabled`)
 - googletest ([test/RADME.md][testreadme]を参照)
 
 #### WebPやAVIF画像の表示に必要なパッケージ
@@ -57,80 +51,69 @@ layout: default
 - libwebp, webp-pixbuf-loader (WebP)
 - libavif (AVIF)
 
-OSやディストリビューション別の解説は [#592][dis592] を参照。
-
-configure のかわりに [meson] を使ってビルドする方法は [#556][dis556] を参照。
-<small>(v0.4.0+からサポート)</small>
-
 WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
 <small>(v0.5.0+からサポート)</small>
 
+OSやディストリビューション別の解説は [#592][dis592] を参照。
 
-<a name="make-configure"></a>
-### ビルド方法( configure + make の場合 )
-**Autotoolsのサポートは2023年7月のリリースをもって廃止されます。
-かわりに[meson]を利用してください。([RFC 0012][rfc0012])**
-
-1. `autoreconf -i` ( 又は `./autogen.sh` )
-2. `./configure`
-3. `make`
-4. (お好みで) `strip src/jdim`
+**Autotools(./configure)のサポートは2023年7月のリリースをもって廃止されます。([RFC 0012][rfc0012])**
 
 
 <a name="build-meson"></a>
-### ビルド方法( meson の場合 )
+### ビルド方法( meson )
 
 1. `meson builddir`
-2. `meson compile -C builddir` ( 又は `ninja -C builddir` )
+2. `ninja -C builddir` ( または `meson compile -C builddir` )
 3. 起動は `./builddir/src/jdim`
+4. (お好みで) `strip ./builddir/src/jdim`
 
 #### mesonのビルドオプション
 - `meson builddir -Dpangolayout=enabled` のように指定する。
 - オプションの一覧は `meson configure` を実行してProject optionsの段落を参照する。
 
 
-<a name="configure-option"></a>
-### configureオプション
+<a name="build-option"></a>
+### ビルドオプション
 <dl>
-  <dt>--with-sessionlib=xsmp|no</dt>
+  <dt>-Dsessionlib=[xsmp|no]</dt>
   <dd>
     XSMP を使ってセッション管理をするには <code>xsmp</code> を、
     セッション管理を無効にするには <code>no</code> を選択する。デフォルトでは XSMP を使用する。
   </dd>
-  <dt>--with-pangolayout</dt>
+  <dt>-Dpangolayout=enabled</dt>
   <dd>
     描画に PangoLayout を使う。デフォルトでは PangoGlyphString を使用する。
     スレビューのテキスト表示に問題があるときはこのオプションを試してみてください。
   </dd>
-  <dt>--with-migemo</dt>
+  <dt>-Dmigemo=enabled</dt>
   <dd>
     migemo による検索が有効になる。migemoがUTF-8の辞書でインストールされている必要がある。
     有効にすると正規表現のメタ文字が期待通りに動作しない場合があるので注意すること。
   </dd>
-  <dt>--with-migemodict=PATH</dt>
+  <dt>-Dmigemodict=PATH</dt>
   <dd>
-    (<code>--with-migemo</code> 限定) migemo の辞書ファイルの場所を設定する。
+    (<code>-Dmigemo=enabled</code> 限定) migemo の辞書ファイルの場所を設定する。
     about:config で変更が可能、空欄にした場合は migemo が無効になる。(変更後は要再起動)
   </dd>
-  <dt>--with-native</dt>
-  <dd>CPUに合わせた最適化。CPUを指定する場合は <code>./configure CXXFLAGS="-march=ARCH"</code> を利用する。</dd>
+  <dt>-Dnative=enabled</dt>
+  <dd>CPUに合わせた最適化。手動でCPUの種類を指定する場合は <code>meson -Dcpp_args="-march=ARCH"</code> を利用する。</dd>
 
-  <dt>--with-tls=[gnutls|openssl]</dt>
+  <dt>-Dtls=[gnutls|openssl]</dt>
   <dd>使用するSSL/TLSライブラリを設定する。デフォルトでは GnuTLS を使用する。</dd>
-  <dt>--with-tls=openssl</dt>
+  <dt>-Dtls=openssl</dt>
   <dd>GnuTLS のかわりに OpenSSL を使用する。ライセンス上バイナリ配布が出来なくなることに注意すること。</dd>
 
-  <dt>--with-alsa</dt>
+  <dt>-Dalsa=enabled</dt>
   <dd>ALSA による効果音再生機能を有効にする。
   詳しくは<a href="{{ site.baseurl }}/sound/">効果音の再生</a>の項を参照すること。</dd>
-  <dt>--enable-gprof</dt>
+  <dt>-Dgprof=enabled</dt>
   <dd>
     gprof によるプロファイリングを行う。
     コンパイルオプションに <code>-pg</code> が付き、JDimを実行すると <code>gmon.out</code> が出来るので
     <code>gprof  ./jdim  gmon.out</code> で解析できる。CPUの最適化は効かなくなるので注意する。
   </dd>
 
-  <dt>--disable-compat-cache-dir</dt>
+  <dt>-Dcompat_cache_dir=disabled</dt>
   <dd>JDのキャッシュディレクトリ <code>~/.jd</code> を読み込む互換機能を無効化する。</dd>
   <dt>-Dpackager=PACKAGER</dt>
   <dd>
@@ -142,16 +125,13 @@ WebPやAVIF形式の画像を表示する方法は [#737][dis737] を参照。
 
 <a name="memo"></a>
 ### メモ
-最近のディストリビューションの場合は `autogen.sh` よりも `autoreconf -i` の方を推奨。
+実行するには直接 `builddir/src/jdim` を起動するか手動で `/usr/bin` あたりに `builddir/src/jdim` を `cp` する。
 
-実行するには直接 `src/jdim` を起動するか手動で `/usr/bin` あたりに `src/jdim` を `cp` する。
-
-以上の操作でmakeが通らなかったり動作が変な時は configure のオプションを変更する。
+以上の操作で ninja が通らなかったり動作が変な時は meson のビルドオプションを変更する。
 
 
 [testreadme]: https://github.com/JDimproved/JDim/blob/master/test/README.md
 [meson]: https://mesonbuild.com
-[dis556]: https://github.com/JDimproved/JDim/discussions/556 "Mesonを使ってJDimをビルドする方法 - Discussions #556"
 [dis592]: https://github.com/JDimproved/JDim/discussions/592 "OS/ディストリビューション別インストール方法 - Discussions #592"
 [dis737]: https://github.com/JDimproved/JDim/discussions/737 "[v0.5.0+] WebPやAVIF形式の画像を表示する方法 - Discussions #737"
 [rfc0012]: https://github.com/JDimproved/rfcs/blob/master/docs/0012-end-of-autotools-support.md

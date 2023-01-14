@@ -70,7 +70,7 @@ NOTE:
   <dt>-g, --geometry WxH-X+Y</dt>
   <dd>幅(W)高さ(H)横位置(X)縦位置(Y)の指定。
   WxHは省略可能(例: <code>-g 100x40-10+30</code>, <code>-g -20+100</code> )</dd>
-  <dt>-V, --version</dt><dd>バージョン及びconfigureオプションを全て表示</dd>
+  <dt>-V, --version</dt><dd>バージョン及びビルドオプションを全て表示</dd>
 </dl>
 
 

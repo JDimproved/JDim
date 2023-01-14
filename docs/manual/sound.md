@@ -9,7 +9,7 @@ layout: default
 
 
 ### 使い方
-ALSAによる効果音再生機能を有効にするには「configure」実行時に「**\-\-with-alsa**」オプションを付けてから make する。
+ALSAによる効果音再生機能を有効にするには「meson」実行時に「**\-Dalsa=enabled**」オプションを付けてから ninja する。
 さらにキャッシュディレクトリ( `$XDG_CACHE_HOME/jdim` )に **sound/** ディレクトリを作り、以下のwavファイルをコピーする。
 
 | ファイル名 | 説明 |

@@ -8,14 +8,14 @@
 # Fedora
 #   ディストロのパッケージをインストールする
 #   ```
-#   dnf install git libtool meson
+#   dnf install git meson
 #   dnf install gnutls-devel gtkmm30-devel libSM-devel
 #   ```
 #
 # Debian Buster(backports), Ubuntu 20.04
 #   ディストロのパッケージをインストールする
 #   ```
-#   sudo apt install build-essential git libtool meson
+#   sudo apt install build-essential git meson
 #   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
 #   ```
 
