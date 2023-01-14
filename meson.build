@@ -234,20 +234,18 @@ if build_tests
   subdir('test', if_found : gtest_main_dep)
 endif
 
-# TODO: meson 0.53 から summary() が使用できる
-message('*** Configuration ***')
-message('alsa = @0@'.format(alsa_dep.found()))
-message('build_tests = @0@'.format(build_tests))
-message('compat_cache_dir = @0@'.format(compat_cache_dir))
-message('gprof = @0@'.format(gprof))
-message('migemo = @0@'.format(migemo_dep.found()))
-message('migemodict = @0@'.format(migemodict))
-message('native = @0@'.format(native))
-message('packager: \'@0@\''.format(packager_opt))
-message('pangolayout = @0@'.format(pangolayout))
-message('sessionlib = @0@'.format(sessionlib_opt))
-message('tls = @0@'.format(tls_opt))
-message('*********************')
+summary({'alsa' : alsa_dep.found(),
+         'build_tests' :  build_tests,
+         'compat_cache_dir' : compat_cache_dir,
+         'gprof' : gprof,
+         'migemo' : migemo_dep.found(),
+         'migemodict' : migemodict,
+         'native' : native,
+         'packager' : packager_opt,
+         'pangolayout' : pangolayout,
+         'sessionlib' : sessionlib_opt,
+         'tls' : tls_opt,
+         }, section : 'Configuration', bool_yn : true)
 
 
 #
