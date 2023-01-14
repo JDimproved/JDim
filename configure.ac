@@ -55,7 +55,7 @@ dnl
 dnl
 dnl gtkmm
 dnl
-PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.22.0])
+PKG_CHECK_MODULES(GTKMM, [gtkmm-3.0 >= 3.24.0])
 AC_SUBST(GTKMM_CFLAGS)
 AC_SUBST(GTKMM_LIBS)
 
@@ -142,13 +142,13 @@ AC_MSG_RESULT($with_tls)
 
 AS_IF(
   [test "x$with_tls" = xgnutls],
-  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 3.5.18])
+  [PKG_CHECK_MODULES(GNUTLS, [gnutls >= 3.6.7])
    AC_DEFINE(USE_GNUTLS, , [use gnutls])
    AC_SUBST(GNUTLS_CFLAGS)
    AC_SUBST(GNUTLS_LIBS)],
 
   [test "x$with_tls" = xopenssl],
-  [PKG_CHECK_MODULES(OPENSSL, [openssl >= 1.1.0])
+  [PKG_CHECK_MODULES(OPENSSL, [openssl >= 1.1.1])
    AC_DEFINE(USE_OPENSSL, , [use openssl])
    AC_SUBST(OPENSSL_CFLAGS)
    AC_SUBST(OPENSSL_LIBS)],

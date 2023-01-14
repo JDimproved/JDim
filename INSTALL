@@ -5,15 +5,14 @@
 
   必須環境
 
-  ・gtkmm 3.22.0 以上 ( 3.24.0 未満のサポートは将来のリリースで廃止される )
-  ・glibmm 2.56.0 以上 ( 2.58.0 未満のサポートは将来のリリースで廃止される )
+  ・gtkmm 3.24.0 以上
+  ・glibmm 2.58.0 以上
   ・zlib 1.2 以上
-  ・gnutls 3.5.18 以上 ( 3.6.7 未満のサポートは将来のリリースで廃止される )
+  ・gnutls 3.6.7 以上
 
   推奨環境
 
-  ・Linux Kernel 4.4.0 以上 ( 4.19.0 未満は将来のリリースで推奨環境から外れる )
-  ・gtkmm 3.24.0 以上
+  ・Linux Kernel 4.19.0 以上
   ・UTF-8環境 ( EUC環境では LANG="ja_JP.UTF-8" を指定する必要がある )
 
   ※ GTK2版はv0.4.0リリースをもって廃止 ( https://github.com/JDimproved/JDim/issues/229 を参照 )
@@ -25,7 +24,7 @@
   ・autoconf
   ・autoconf-archive
   ・automake
-  ・g++ 7 以上、または clang++ 6.0 以上 ( 将来のリリースで g++ 8 以上、または clang++ 7 以上になる )
+  ・g++ 8 以上、または clang++ 7 以上
   ・gnutls
   ・gtkmm
   ・libtool
@@ -34,13 +33,13 @@
 
   オプション
 
-  ・meson 0.49.0 以上 ( 0.53 未満のサポートは将来のリリースで廃止される )
+  ・meson 0.53.0 以上
   ・alsa-lib (--with-alsa)
-  ・openssl 1.1.0 以上 (--with-tls=openssl, バージョン 1.1.1 未満のサポートは将来のリリースで廃止される )
+  ・openssl 1.1.1 以上 (--with-tls=openssl)
   ・migemo (--with-migemo)
   ・googletest (`test/RADME.md`を参照)
 
-  画像表示に必要なパッケージ
+  WebPやAVIF画像の表示に必要なパッケージ
   インストールされていない環境では`.webp`や`.avif`で終わるURLは通常リンクになる。
 
   ・libwebp, webp-pixbuf-loader (WebP)
