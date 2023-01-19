@@ -6,6 +6,7 @@
 #include "misccharcode.h"
 
 #include <cstring>
+#include <cstdint>
 
 
 // チェックする最大バイト数
