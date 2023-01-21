@@ -22,6 +22,7 @@ using namespace JDLIB;
  */
 Iconv::Iconv( const std::string& coding_to, const std::string& coding_from )
     : m_coding_from( coding_from )
+    , m_coding_to_is_utf8{ coding_to == "UTF-8" }
 {
 #ifdef _DEBUG
     std::cout << "Iconv::Iconv coding = " << m_coding_from << " to " << coding_to << std::endl;
@@ -240,6 +241,15 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                 // BOFの確認
                 if( ( buf_out_end - buf_out_tmp ) <= 3 ) {
                     grow();
+                }
+
+                // UTF-8へ変換する場合は U+FFFD REPLACEMENT CHARACTER に置き換える
+                if( m_coding_to_is_utf8 ){
+                    ++buf_in_tmp;
+                    *(buf_out_tmp++) = static_cast<char>( 0xef );
+                    *(buf_out_tmp++) = static_cast<char>( 0xbf );
+                    *(buf_out_tmp++) = static_cast<char>( 0xbd );
+                    continue;
                 }
 
                 //その他、1文字を?にして続行
