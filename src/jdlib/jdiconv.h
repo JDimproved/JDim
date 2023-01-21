@@ -9,10 +9,6 @@
 #include <gmodule.h> // GIConv
 
 
-// iconv の内部で確保するバッファサイズ(バイト)
-constexpr int BUF_SIZE_ICONV_OUT = 512 * 1024;
-
-
 namespace JDLIB
 {
     /** @brief テキストの文字エンコーディングを変換するクラス */

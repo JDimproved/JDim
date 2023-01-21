@@ -10,7 +10,6 @@
 #include "jdlib/jdregex.h"
 #include "jdlib/loaderdata.h"
 #include "jdlib/miscutil.h"
-#include "jdlib/miscmsg.h"
 
 #include "config/globalconf.h"
 
@@ -215,11 +214,6 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
         }
     }
 
-    if( buffer.length() > BUF_SIZE_ICONV_OUT ){
-        MISC::ERRMSG( "buffer over flow in NodeTreeMachi::process_raw_lines" );
-        buffer = std::string();
-    }
-
     m_buffer = std::move( buffer );
 
     return &*m_buffer.begin();
@@ -320,11 +314,6 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
         else buffer += name + "<>" + mail + "<>" + date + "<> " + body + " <><>\n";
 
         ++next;
-    }
-
-    if( buffer.length() > BUF_SIZE_ICONV_OUT ){
-        MISC::ERRMSG( "buffer over flow in NodeTreeMachi::process_raw_lines" );
-        buffer = std::string();
     }
 
     m_decoded_lines = std::move( buffer );
