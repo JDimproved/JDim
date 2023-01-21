@@ -19,6 +19,7 @@ namespace JDLIB
         std::vector<char> m_buf; ///< 出力バッファ
 
         std::string m_coding_from; ///< 変換元の文字エンコーディング
+        bool m_coding_to_is_utf8; ///< 変換先の文字エンコーディングがUTF-8ならtrue
 
     public:
         
