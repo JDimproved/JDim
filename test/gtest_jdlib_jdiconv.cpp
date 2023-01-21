@@ -62,6 +62,25 @@ TEST_F(Iconv_ToAsciiFromUtf8, subdivision_flag)
     EXPECT_EQ( 63, size_out );
 }
 
+
+class Iconv_ToUtf8FromAscii : public ::testing::Test {};
+
+TEST_F(Iconv_ToUtf8FromAscii, replacement_character_to_utf8_is_uFFFD)
+{
+    // テストは網羅してない
+    char input[] = "\x80\x91\xA2\xB3\xC4\xD5\xE6\xF7";
+    int size_out;
+
+    JDLIB::Iconv icv( "UTF-8", "ASCII" );
+    const char* result = icv.convert( input, std::strlen(input), size_out );
+
+    // UTF-8へ変換するとき入力エンコーディングで無効なバイト列は U+FFFD に置き換える
+    EXPECT_STREQ( "\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD"
+                  "\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD\xEF\xBF\xBD", result );
+    EXPECT_EQ( 24, size_out );
+}
+
+
 class Iconv_ToUtf8FromMs932 : public ::testing::Test {};
 
 TEST_F(Iconv_ToUtf8FromMs932, empty)
@@ -153,6 +172,5 @@ TEST_F(Iconv_ToUtf8FromMs932, mapping_error)
     EXPECT_STREQ( "\u25A1\u25A1\u25A1\u25A1", result );
     EXPECT_EQ( 12, size_out );
 }
-
 
 } // namespace
