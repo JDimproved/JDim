@@ -16,9 +16,12 @@
 #include <sstream>
 
 
+namespace {
+constexpr std::size_t kBufSizeDecodedLines = 512 * 1024;
+}
+
 #define APPEND_SECTION( num ) do {\
 if( lng_sec[ num ] ){ \
-assert( m_decoded_lines.size() + lng_sec[ num ] < BUF_SIZE_ICONV_OUT ); \
 m_decoded_lines.append( lines + pos_sec[ num ], lng_sec[ num ] ); \
 } } while( 0 )
 
@@ -79,8 +82,9 @@ void NodeTreeJBBS::init_loading()
     std::string charset = DBTREE::board_charset( get_url() );
     if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( "UTF-8", charset );
 
-    if( m_decoded_lines.capacity() < BUF_SIZE_ICONV_OUT ) {
-        m_decoded_lines.reserve( BUF_SIZE_ICONV_OUT );
+    // 予め領域を確保する
+    if( m_decoded_lines.capacity() < kBufSizeDecodedLines ) {
+        m_decoded_lines.reserve( kBufSizeDecodedLines );
     }
 }
 
