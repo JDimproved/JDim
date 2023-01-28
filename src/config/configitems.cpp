@@ -591,6 +591,9 @@ bool ConfigItems::load( const bool restore )
     migemodict_path = cf.get_option_str( "migemodict_path", CONF_MIGEMO_PATH );
 #endif
 
+    // 不正なMS932文字列をUTF-8と見なす
+    broken_sjis_be_utf8 = cf.get_option_bool( "broken_sjis_be_utf8", CONF_BROKEN_SJIS_BE_UTF8 );
+
     // 不正な数値文字参照(サロゲートペア)をデコードする
     correct_character_reference = cf.get_option_bool( "correct_character_reference", CONF_CORRECT_CHAR_REFERENCE );
 
@@ -936,6 +939,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "migemodict_path", migemodict_path );
 #endif
 
+    cf.update( "broken_sjis_be_utf8", broken_sjis_be_utf8 );
     cf.update( "correct_character_reference", correct_character_reference );
 
     cf.save();

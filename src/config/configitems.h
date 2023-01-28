@@ -536,6 +536,9 @@ namespace CONFIG
         std::string migemodict_path;
 #endif
 
+        /// 不正なMS932文字列をUTF-8と見なす
+        bool broken_sjis_be_utf8{};
+
         /// 不正な数値文字参照(サロゲートペア)をデコードする
         bool correct_character_reference{};
 

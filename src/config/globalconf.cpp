@@ -620,6 +620,13 @@ int CONFIG::get_save_session(){ return get_confitem()->save_session; }
 const std::string& CONFIG::get_migemodict_path() { return get_confitem()->migemodict_path; }
 #endif
 
+// 不正なMS932文字列をUTF-8と見なす
+bool CONFIG::get_broken_sjis_be_utf8(){
+    auto item = get_confitem();
+    return item ? item->broken_sjis_be_utf8 : false;
+}
+void CONFIG::set_broken_sjis_be_utf8( const bool set ){ get_confitem()->broken_sjis_be_utf8 = set; }
+
 // 不正な数値文字参照(サロゲートペア)をデコードする
 bool CONFIG::get_correct_character_reference(){
     auto item = get_confitem();

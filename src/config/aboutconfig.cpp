@@ -297,6 +297,7 @@ void AboutConfig::append_rows()
 #endif
     append_row( "FIFOの作成などにエラーがあったらダイアログを表示する", get_confitem()->show_diag_fifo_error, CONF_SHOW_DIAG_FIFO_ERROR );
     append_row( "指定した分ごとにセッションを自動保存 (0: 保存しない)", get_confitem()->save_session, CONF_SAVE_SESSION );
+    append_row( "不正なMS932文字列をUTF-8と見なす", get_confitem()->broken_sjis_be_utf8, CONF_BROKEN_SJIS_BE_UTF8 );
     append_row( "不正な数値文字参照(サロゲートペア)をデコードする", get_confitem()->correct_character_reference, CONF_CORRECT_CHAR_REFERENCE );
 }
 

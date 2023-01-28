@@ -163,6 +163,7 @@ namespace CONFIG
         CONF_MAX_RESNUMBER = 65536, //最大表示可能レス数
         CONF_SHOW_DIAG_FIFO_ERROR = 1, // FIFOの作成などにエラーがあったらダイアログを表示する
         CONF_SAVE_SESSION = 0, // 指定した分ごとにセッションを自動保存 (0: 保存しない)
+        CONF_BROKEN_SJIS_BE_UTF8 = 0, ///< 不正なMS932文字列をUTF-8と見なす
         CONF_CORRECT_CHAR_REFERENCE = 0, ///< 不正な数値文字参照(サロゲートペア)をデコードする
     };
 
