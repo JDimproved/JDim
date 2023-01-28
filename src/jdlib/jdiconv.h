@@ -20,10 +20,12 @@ namespace JDLIB
 
         std::string m_coding_from; ///< 変換元の文字エンコーディング
         bool m_coding_to_is_utf8; ///< 変換先の文字エンコーディングがUTF-8ならtrue
+        bool m_broken_sjis_be_utf8; ///< trueなら不正なMS932文字列をUTF-8と見なす (MS932 -> UTF-8の変換限定)
 
     public:
-        
+
         Iconv( const std::string& coding_to, const std::string& coding_from );
+        Iconv( const std::string& coding_to, const std::string& coding_from, const bool broken_sjis_be_utf8 );
         ~Iconv();
 
         // テキストの文字エンコーディングを変換する

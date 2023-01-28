@@ -8,8 +8,12 @@
 #include "misccharcode.h"
 #include "miscmsg.h"
 
+#include "config/globalconf.h"
+
 #include <cstdio>
+#include <cstring>
 #include <errno.h>
+#include <string_view>
 
 
 using namespace JDLIB;
@@ -17,12 +21,26 @@ using namespace JDLIB;
 
 /** @brief コンストラクタ
  *
+ * @details broken_sjis_be_utf8 の値は about:config の設定を使う
  * @param[in] coding_to   変換先の文字エンコーディング
  * @param[in] coding_from 変換元の文字エンコーディング
  */
 Iconv::Iconv( const std::string& coding_to, const std::string& coding_from )
+    : Iconv( coding_to, coding_from, CONFIG::get_broken_sjis_be_utf8() )
+{
+}
+
+
+/** @brief コンストラクタ
+ *
+ * @param[in] coding_to   変換先の文字エンコーディング
+ * @param[in] coding_from 変換元の文字エンコーディング
+ * @param[in] broken_sjis_be_utf8 trueなら不正なMS932文字列をUTF-8と見なす (MS932 -> UTF-8の変換限定)
+ */
+Iconv::Iconv( const std::string& coding_to, const std::string& coding_from, const bool broken_sjis_be_utf8 )
     : m_coding_from( coding_from )
     , m_coding_to_is_utf8{ coding_to == "UTF-8" }
+    , m_broken_sjis_be_utf8{ broken_sjis_be_utf8 }
 {
 #ifdef _DEBUG
     std::cout << "Iconv::Iconv coding = " << m_coding_from << " to " << coding_to << std::endl;
@@ -93,6 +111,8 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
     char* buf_out_tmp = m_buf.data();
     char* buf_out_end = m_buf.data() + m_buf.size();
 
+    const char* pre_check = nullptr; // 前回チェックしたUTF-8の先頭
+
     const auto grow = [&] {
         const std::size_t used = buf_out_tmp - m_buf.data();
         m_buf.resize( m_buf.size() * 2 );
@@ -161,6 +181,56 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
                         MISC::MSG( str_tmp );
 #endif
                         continue;
+                    }
+                }
+
+                // MS932からUTF-8へエンコーディング変換失敗したとき
+                if( m_coding_from == "MS932" && m_coding_to_is_utf8
+                        && m_broken_sjis_be_utf8 ){
+
+                    // MS932の文字列の中にUTF-8の混在を許容するときの処理
+                    char* bpos = buf_in_tmp;
+                    const char* epos = buf_in_tmp;
+
+                    // マルチバイト文字列の先頭と終端を調べる
+                    while( bpos > str_in && *( bpos - 1 ) < 0 ) --bpos;
+                    while( epos < ( buf_in_tmp + byte_left_in ) && *epos < 0 ) ++epos;
+
+                    const std::size_t lng = epos - bpos;
+
+                    // 1byteは不正、また毎回同じ文字列を判定しない
+                    if( lng > 1 && bpos != pre_check ){
+
+                        // 一文字ずつUTF-8の文字か確認
+                        constexpr std::size_t byte = 0;
+                        pre_check = bpos;
+
+                        // マルチバイト文字列がUTF-8なら出力に追加する
+                        if( MISC::is_utf8( std::string_view{ bpos, lng }, byte ) ){
+#ifdef _DEBUG
+                            std::string message = "iconv to be utf-8: ";
+                            message.append( bpos, lng );
+                            MISC::MSG( message );
+#endif
+
+                            // MS932が壊れていたところをマークする
+                            constexpr std::string_view span_bgn = "<span class=\"BROKEN_SJIS\">";
+                            constexpr std::string_view span_end = "</span>";
+
+                            // 出力したマルチバイトUTF-8文字列の先頭を調べる
+                            while( buf_out_tmp > m_buf.data() && *( buf_out_tmp - 1 ) < 0 ) --buf_out_tmp;
+
+                            if( ( buf_out_tmp + lng + span_bgn.size() + span_end.size() ) >= buf_out_end ){
+                                grow();
+                            }
+                            buf_out_tmp += span_bgn.copy( buf_out_tmp, span_bgn.size() );
+                            std::memcpy( buf_out_tmp, bpos, lng );
+                            buf_out_tmp += lng;
+                            buf_out_tmp += span_end.copy( buf_out_tmp, span_end.size() );
+                            buf_in_tmp = bpos + lng;
+
+                            continue;
+                        }
                     }
                 }
 

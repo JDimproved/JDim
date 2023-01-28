@@ -617,6 +617,10 @@ namespace CONFIG
     const std::string& get_migemodict_path();
 #endif
 
+    // 不正なMS932文字列をUTF-8と見なす
+    bool get_broken_sjis_be_utf8();
+    void set_broken_sjis_be_utf8( const bool set );
+
     // 不正な数値文字参照(サロゲートペア)をデコードする
     bool get_correct_character_reference();
     void set_correct_character_reference( const bool set );
