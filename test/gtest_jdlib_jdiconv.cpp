@@ -185,4 +185,20 @@ TEST_F(Iconv_ToUtf8FromMs932, mapping_error)
     EXPECT_EQ( 12, size_out );
 }
 
+TEST_F(Iconv_ToUtf8FromMs932, broken_sjis_be_utf8)
+{
+    char input[] = "\x82\xa0\x82\xa2\x82\xa4 "
+                   "\xe5\x85\xa5\xe3\x82\x8c\xe6\x9b\xbf\xe3\x82\x8f"
+                   "\xe3\x81\xa3\xe3\x81\xa6\xe3\x82\x8b\xe3\x80\x9c?"
+                   " \x82\xa6\x82\xa8";
+    int size_out;
+    constexpr bool broken_sjis_be_utf8 = true;
+
+    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    const char* result = icv.convert( input, std::strlen(input), size_out );
+
+    EXPECT_STREQ( "あいう <span class=\"BROKEN_SJIS\">入れ替わってる〜</span>? えお", result );
+    EXPECT_EQ( 28 - 2 + 7 + 9 * 3 + 5 * 3, size_out );
+}
+
 } // namespace
