@@ -57,10 +57,10 @@ namespace CONTROL
 
       private:
 
-        virtual bool on_key_press_event (GdkEventKey* event);
-        virtual bool on_button_press_event( GdkEventButton* event );
-        virtual bool on_button_release_event( GdkEventButton* event );
-        virtual bool on_motion_notify_event( GdkEventMotion* event );
+        bool on_key_press_event (GdkEventKey* event) override;
+        bool on_button_press_event( GdkEventButton* event ) override;
+        bool on_button_release_event( GdkEventButton* event ) override;
+        bool on_motion_notify_event( GdkEventMotion* event ) override;
     };
 
 

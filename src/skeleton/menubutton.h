@@ -59,7 +59,7 @@ namespace SKELETON
       // false の時はボタンのどこを押してもメニューを表示する
       void set_enable_sig_clicked( const bool enable ){ m_enable_sig_clicked = enable; }
 
-      void on_clicked();
+      void on_clicked() override;
 
       protected:
 
