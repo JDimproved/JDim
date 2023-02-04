@@ -88,38 +88,52 @@ Iconv::~Iconv()
  * @details UTF-8から別のエンコーディングに変換するときは表現できない文字をHTML数値文字参照(10進数表記)に置き換える。
  * @param[in] str_in    変換するテキストへのポインター
  * @param[in] size_in   変換するテキストの長さ
- * @return 変換したテキストへの参照
+ * @return 変換したテキストへのconst参照
  * @note 返り値は Iconv オブジェクトを破棄、または convert() を再び呼び出すとdangling referenceになる。
  */
 const std::string& Iconv::convert( char* str_in, std::size_t size_in )
+{
+    return convert( str_in, size_in, m_buf );
+}
+
+
+/** @brief テキストの文字エンコーディングを変換する
+ *
+ * @details UTF-8から別のエンコーディングに変換するときは表現できない文字をHTML数値文字参照(10進数表記)に置き換える。
+ * @param[in] str_in    変換するテキストへのポインター
+ * @param[in] size_in   変換するテキストの長さ
+ * @param[out] out_buf  変換したテキストを格納するバッファ。渡される前に保持していた内容はクリアされる。
+ * @return 変換したテキストへの参照 (= `out_buf`)
+ */
+std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out_buf )
 {
 #ifdef _DEBUG
     std::cout << "Iconv::convert size_in = " << size_in << std::endl;
 #endif
 
     if( m_cd == ( GIConv ) -1 ) {
-        m_buf.clear();
-        return m_buf;
+        out_buf.clear();
+        return out_buf;
     }
 
     if( const std::size_t size_in_x2 = size_in * 2;
-            size_in_x2 >= m_buf.size() ) {
-        m_buf.resize( size_in > 0 ? size_in_x2 : 1 );
+            size_in_x2 >= out_buf.size() ) {
+        out_buf.resize( size_in > 0 ? size_in_x2 : 1 );
     }
 
     char* buf_in_tmp = str_in;
     const char* buf_in_end = str_in + size_in;
 
-    char* buf_out_tmp = m_buf.data();
-    char* buf_out_end = m_buf.data() + m_buf.size();
+    char* buf_out_tmp = out_buf.data();
+    char* buf_out_end = out_buf.data() + out_buf.size();
 
     const char* pre_check = nullptr; // 前回チェックしたUTF-8の先頭
 
     const auto grow = [&] {
-        const std::size_t used = buf_out_tmp - m_buf.data();
-        m_buf.resize( m_buf.size() * 2 );
-        buf_out_tmp = m_buf.data() + used;
-        buf_out_end = m_buf.data() + m_buf.size();
+        const std::size_t used = buf_out_tmp - out_buf.data();
+        out_buf.resize( out_buf.size() * 2 );
+        buf_out_tmp = out_buf.data() + used;
+        buf_out_end = out_buf.data() + out_buf.size();
     };
 
     // iconv 実行
@@ -220,7 +234,7 @@ const std::string& Iconv::convert( char* str_in, std::size_t size_in )
                             constexpr std::string_view span_end = "</span>";
 
                             // 出力したマルチバイトUTF-8文字列の先頭を調べる
-                            while( buf_out_tmp > m_buf.data() && *( buf_out_tmp - 1 ) < 0 ) --buf_out_tmp;
+                            while( buf_out_tmp > out_buf.data() && *( buf_out_tmp - 1 ) < 0 ) --buf_out_tmp;
 
                             if( ( buf_out_tmp + lng + span_bgn.size() + span_end.size() ) >= buf_out_end ){
                                 grow();
@@ -347,11 +361,11 @@ const std::string& Iconv::convert( char* str_in, std::size_t size_in )
 
     } while( buf_in_tmp < buf_in_end );
 
-    const std::size_t size_out = buf_out_tmp - m_buf.data();
-    m_buf.resize( size_out );
+    const std::size_t size_out = buf_out_tmp - out_buf.data();
+    out_buf.resize( size_out );
 
 #ifdef _DEBUG
     std::cout << "Iconv::convert size_out = " << size_out << std::endl;
 #endif
-    return m_buf;
+    return out_buf;
 }

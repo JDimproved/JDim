@@ -30,6 +30,7 @@ namespace JDLIB
 
         // テキストの文字エンコーディングを変換する
         const std::string& convert( char* str_in, std::size_t size_in );
+        std::string& convert( char* str_in, std::size_t size_in, std::string& out_buf );
     };
 }
 
