@@ -78,6 +78,7 @@ noinst_HEADERS = \
 	maintoolbar.h \
 	cache.h \
 	jddebug.h \
+	jdencoding.h \
 	global.h \
 	jdversion.h \
 	command.h \
