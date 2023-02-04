@@ -5,22 +5,15 @@
 #ifndef _MISCCHARCODE_H
 #define _MISCCHARCODE_H
 
+#include "jdencoding.h"
+
 #include <string>
 #include <string_view>
 
 
+
 namespace MISC
 {
-    enum CodeSet
-    {
-        CHARCODE_UNKNOWN = -1,
-        CHARCODE_ASCII = 0,
-        CHARCODE_EUC_JP,
-        CHARCODE_JIS,
-        CHARCODE_SJIS,
-        CHARCODE_UTF
-    };
-
     /// @brief get_unicodeblock() の戻り値
     enum class UnicodeBlock
     {
@@ -42,7 +35,7 @@ namespace MISC
     bool is_jis( std::string_view input, std::size_t& read_byte );
     bool is_sjis( std::string_view input, std::size_t read_byte );
     bool is_utf8( std::string_view input, std::size_t read_byte );
-    int judge_char_code( const std::string& str );
+    Encoding detect_encoding( std::string_view str );
 
     /// utf-8文字のbyte数を返す
     int utf8bytes( const char* utf8str );
