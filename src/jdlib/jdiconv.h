@@ -16,7 +16,7 @@ namespace JDLIB
     {
         GIConv m_cd; ///< iconv実装は環境で違いがあるためGlibのラッパーAPIを利用する
 
-        std::vector<char> m_buf; ///< 出力バッファ
+        std::string m_buf; ///< 出力バッファ
 
         std::string m_coding_from; ///< 変換元の文字エンコーディング
         bool m_coding_to_is_utf8; ///< 変換先の文字エンコーディングがUTF-8ならtrue
@@ -29,7 +29,7 @@ namespace JDLIB
         ~Iconv();
 
         // テキストの文字エンコーディングを変換する
-        const char* convert( char* str_in, int size_in, int& size_out );
+        const std::string& convert( char* str_in, std::size_t size_in );
     };
 }
 

@@ -13,6 +13,7 @@
 
 #include "global.h"
 
+#include <cstring>
 #include <sstream>
 
 
@@ -22,7 +23,7 @@ constexpr std::size_t kBufSizeDecodedLines = 512 * 1024;
 
 #define APPEND_SECTION( num ) do {\
 if( lng_sec[ num ] ){ \
-m_decoded_lines.append( lines + pos_sec[ num ], lng_sec[ num ] ); \
+m_decoded_lines.append( lines.data() + pos_sec[ num ], lng_sec[ num ] ); \
 } } while( 0 )
 
 
@@ -134,33 +135,32 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
 {
     assert( m_iconv != nullptr );
 
-    int byte_lines;
-    const char* lines = m_iconv->convert( rawlines, strlen( rawlines ), byte_lines );
+    const std::string& lines = m_iconv->convert( rawlines, std::strlen( rawlines ) );
 
     int number = id_header() + 1;
 
 #ifdef _DEBUG
-    std::cout << "NodeTreeJBBS::raw2dat : byte_lines = " << byte_lines << std::endl;
+    std::cout << "NodeTreeJBBS::raw2dat : byte_lines = " << lines.size() << std::endl;
 #endif
 
     // セクション分けして再合成する
     m_decoded_lines.clear();
     byte = 0;
-    int pos = 0;
+    std::size_t pos = 0;
     int section = 0;
-    int pos_sec[ MAX_SECTION ];
+    std::size_t pos_sec[ MAX_SECTION ];
     int lng_sec[ MAX_SECTION ];
     memset( lng_sec, 0, sizeof( int ) * MAX_SECTION );
 
-    while( pos < byte_lines ){
+    while( pos < lines.size() ){
 
         // セクション分け
         pos_sec[ section ] = pos;
-        while( !( lines[ pos ] == '<' && lines[ pos +1 ] == '>' ) && lines[ pos ] != '\n' && pos < byte_lines ) ++pos;
+        while( pos < lines.size() && lines.compare( pos, 2, "<>", 2 ) != 0 && lines[pos] != '\n' ) ++pos;
         lng_sec[ section ] = pos - pos_sec[ section ];
 
         // 最後の行で、かつ壊れている場合
-        if( pos >= byte_lines ){
+        if( pos >= lines.size() ){
             set_broken( true );
             break;
         }
@@ -174,7 +174,7 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
                 // 透明あぼーんの判定
                 char number_str[ 64 ];
                 memset( number_str, 0, 64 );
-                memcpy( number_str, lines + pos_sec[ 0 ], MIN( lng_sec[ 0 ], 64 -1 ) );
+                memcpy( number_str, lines.data() + pos_sec[ 0 ], MIN( lng_sec[ 0 ], 64 -1 ) );
                 int number_in = atoi( number_str );
 
                 while( number_in > number ){
@@ -203,7 +203,7 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
 
                     m_decoded_lines.append( " ID:" );
 
-                    m_decoded_lines.append( lines + pos_sec[ i ], lng_sec[ i ] );
+                    m_decoded_lines.append( lines.data() + pos_sec[ i ], lng_sec[ i ] );
                 }
                 m_decoded_lines.append( "<>" );
 
@@ -239,7 +239,7 @@ const char* NodeTreeJBBS::raw2dat( char* rawlines, int& byte )
                 set_broken( true );
 
                 // その行は飛ばす
-                while( pos < byte_lines && lines[ pos ] != '\n' ) ++pos;
+                while( pos < lines.size() && lines[ pos ] != '\n' ) ++pos;
                 ++pos;
                 section = 0;
                 memset( lng_sec, 0, sizeof( int ) * MAX_SECTION );

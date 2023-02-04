@@ -1489,9 +1489,7 @@ std::string MISC::Iconv( const std::string& str, const std::string& coding_to, c
     std::string str_bk = str;
 
     JDLIB::Iconv libiconv( coding_to, coding_from );
-    int byte_out;
-
-    std::string str_enc = libiconv.convert( &*str_bk.begin(), str_bk.size(), byte_out );
+    std::string str_enc = libiconv.convert( str_bk.data(), str_bk.size() );
 
     return str_enc;
 }

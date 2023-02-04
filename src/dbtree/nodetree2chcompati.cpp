@@ -12,6 +12,9 @@
 
 #include "config/globalconf.h"
 
+#include <cstring>
+
+
 using namespace DBTREE;
 
 
@@ -115,8 +118,7 @@ char* NodeTree2chCompati::skip_status_line( char* pos, int status )
 
     // エラー
     if( status != 1 ){
-        int byte;
-        std::string ext_err = std::string( m_iconv->convert( pos_msg, pos - pos_msg, byte ) );
+        const std::string& ext_err = m_iconv->convert( pos_msg, pos - pos_msg );
         set_ext_err( ext_err );
         MISC::ERRMSG( ext_err );
     }
@@ -137,7 +139,9 @@ const char* NodeTree2chCompati::raw2dat( char* rawlines, int& byte )
     assert( m_iconv != nullptr );
 
     // バッファ自体はiconvクラスの中で持っているのでポインタだけもらう
-    return  m_iconv->convert( rawlines, strlen( rawlines ), byte );
+    const std::string& result = m_iconv->convert( rawlines, std::strlen( rawlines ) );
+    byte = result.size();
+    return result.c_str();
 }
 
 

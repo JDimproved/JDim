@@ -913,8 +913,7 @@ void MessageViewBase::slot_switch_page( Gtk::Widget*, guint page )
             // 対応していないUnicode文字を文字参照の形式(&#nnnn;)で表示する
             if( DBTREE::get_unicode( get_url() ) == "change" ){
                 // MS932等に無い文字を数値文字参照にするために文字コードを変換する
-                int byte_out;
-                const std::string str_enc = m_iconv->convert( msg.data(), msg.size(), byte_out );
+                const std::string& str_enc = m_iconv->convert( msg.data(), msg.size() );
                 msg = MISC::Iconv( str_enc, "UTF-8", DBTREE::board_charset( get_url() ) );
             }
             else{
@@ -994,8 +993,7 @@ void MessageViewBase::show_status()
     }
     else if( m_text_changed )
     {
-        int byte_out;
-        std::string str_enc = m_iconv->convert( message.data(), message.size(), byte_out );
+        const std::string& str_enc = m_iconv->convert( message.data(), message.size() );
         m_lng_str_enc = str_enc.length();
 
         // 特殊文字の文字数を計算
