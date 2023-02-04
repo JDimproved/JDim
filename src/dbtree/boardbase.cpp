@@ -1079,17 +1079,16 @@ void BoardBase::receive_data( const char* data, size_t size )
     if( byte_in != std::string::npos ) {
         byte_in += 1; // 改行まで含める
 
-        int byte_out;
-        const char* rawdata_utf8 = m_iconv->convert( &*m_rawdata_left.begin(), byte_in, byte_out );
+        const std::string& rawdata_utf8 = m_iconv->convert( m_rawdata_left.data(), byte_in );
 
-        parse_subject( rawdata_utf8 );
+        parse_subject( rawdata_utf8.c_str() );
 
         // 残りを先頭に移動
         m_rawdata_left.erase( 0, byte_in );
 
 #ifdef _DEBUG
         std::cout << "BoardBase::receive_data rawdata.size = " << m_rawdata.size() << " size = " << size
-                  << " byte_in = " << byte_in << " byte_out = " << byte_out
+                  << " byte_in = " << byte_in << " byte_out = " << rawdata_utf8.size()
                   << " rawdata_left.size = " << m_rawdata_left.size() << std::endl;
 #endif
     }

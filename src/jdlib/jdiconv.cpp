@@ -88,17 +88,19 @@ Iconv::~Iconv()
  * @details UTF-8から別のエンコーディングに変換するときは表現できない文字をHTML数値文字参照(10進数表記)に置き換える。
  * @param[in] str_in    変換するテキストへのポインター
  * @param[in] size_in   変換するテキストの長さ
- * @param[out] size_out 変換した結果の長さ
- * @return 変換したテキストへのポインター。
- * @note 返り値は Iconv オブジェクトを破棄、または convert() を再び呼び出すとdangling pointerになる。
+ * @return 変換したテキストへの参照
+ * @note 返り値は Iconv オブジェクトを破棄、または convert() を再び呼び出すとdangling referenceになる。
  */
-const char* Iconv::convert( char* str_in, int size_in, int& size_out )
+const std::string& Iconv::convert( char* str_in, std::size_t size_in )
 {
 #ifdef _DEBUG
     std::cout << "Iconv::convert size_in = " << size_in << std::endl;
 #endif
 
-    if( m_cd == ( GIConv ) -1 ) return nullptr;
+    if( m_cd == ( GIConv ) -1 ) {
+        m_buf.clear();
+        return m_buf;
+    }
 
     if( const std::size_t size_in_x2 = size_in * 2;
             size_in_x2 >= m_buf.size() ) {
@@ -345,11 +347,11 @@ const char* Iconv::convert( char* str_in, int size_in, int& size_out )
 
     } while( buf_in_tmp < buf_in_end );
 
-    size_out = buf_out_tmp - m_buf.data();
-    *buf_out_tmp = '\0';
+    const std::size_t size_out = buf_out_tmp - m_buf.data();
+    m_buf.resize( size_out );
 
 #ifdef _DEBUG
     std::cout << "Iconv::convert size_out = " << size_out << std::endl;
 #endif
-    return m_buf.data();
+    return m_buf;
 }

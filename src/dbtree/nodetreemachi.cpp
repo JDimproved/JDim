@@ -240,8 +240,7 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
     std::string buffer;
 
     // 文字コード変換
-    int byte_lines;
-    const char* str_lines = m_iconv->convert( rawlines, strlen( rawlines ), byte_lines );
+    const std::string& str_lines = m_iconv->convert( rawlines, std::strlen( rawlines ) );
 
     std::list< std::string > lines = MISC::get_lines( str_lines );
     for( std::string& line : lines ) {
@@ -357,8 +356,7 @@ void NodeTreeMachi::receive_finish()
     if( m_buffer_for_200.size() >= 2 && m_buffer_for_200[ 0 ] == '<'
             && ( m_buffer_for_200[ 1 ] == 'E' || m_buffer_for_200[ 1 ] == 'h' ) ) {
 
-        int byte_lines;
-        std::string str_lines( m_iconv->convert( &*m_buffer_for_200.begin(), m_buffer_for_200.size(), byte_lines ) );
+        const std::string& str_lines = m_iconv->convert( m_buffer_for_200.data(), m_buffer_for_200.size() );
 
 #ifdef _DEBUG    
         std::cout << str_lines << std::endl;

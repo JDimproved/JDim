@@ -173,8 +173,7 @@ void TextLoader::receive_finish()
 
     // UTF-8に変換しておく
     JDLIB::Iconv libiconv( "UTF-8", get_charset() );
-    int byte_out;
-    m_data = libiconv.convert( &*m_rawdata.begin(), m_rawdata.size(),  byte_out );
+    m_data = libiconv.convert( m_rawdata.data(), m_rawdata.size() );
     clear();
 
     receive_cookies();
