@@ -532,9 +532,9 @@ std::string CACHE::path_reshtml()
 //
 bool CACHE::mkdir_root()
 {
-    std::string path_root = CACHE::path_root();
-    if( ! CACHE::jdmkdir( path_root ) ){
-        MISC::ERRMSG( "can't create " + path_root );
+    std::string pth_root = CACHE::path_root();
+    if( ! CACHE::jdmkdir( pth_root ) ){
+        MISC::ERRMSG( "can't create " + pth_root );
         return false;
     }
     
@@ -551,9 +551,9 @@ bool CACHE::mkdir_root()
 bool CACHE::mkdir_imgroot()
 {
     // root
-    std::string path_img_root = CACHE::path_img_root();
-    if( ! CACHE::jdmkdir( path_img_root ) ){
-        MISC::ERRMSG( "can't create " + path_img_root );
+    std::string pth_img_root = CACHE::path_img_root();
+    if( ! CACHE::jdmkdir( pth_img_root ) ){
+        MISC::ERRMSG( "can't create " + pth_img_root );
         return false;
     }
 
@@ -581,9 +581,9 @@ bool CACHE::mkdir_imgroot()
 bool CACHE::mkdir_imgroot_favorite()
 {
     // root
-    std::string path_img_root = CACHE::path_img_protect_root();
-    if( ! CACHE::jdmkdir( path_img_root ) ){
-        MISC::ERRMSG( "can't create " + path_img_root );
+    std::string pth_img_root = CACHE::path_img_protect_root();
+    if( ! CACHE::jdmkdir( pth_img_root ) ){
+        MISC::ERRMSG( "can't create " + pth_img_root );
         return false;
     }
 
@@ -630,9 +630,9 @@ bool CACHE::mkdir_parent_of_board( const std::string& url )
 bool CACHE::mkdir_boardroot( const std::string& url )
 {
     // root
-    std::string path_board_root = CACHE::path_board_root( url );
-    if( ! CACHE::jdmkdir( path_board_root ) ){
-        MISC::ERRMSG( "can't create " + path_board_root );
+    std::string pth_board_root = CACHE::path_board_root( url );
+    if( ! CACHE::jdmkdir( pth_board_root ) ){
+        MISC::ERRMSG( "can't create " + pth_board_root );
         return false;
     }
 
@@ -653,9 +653,9 @@ bool CACHE::mkdir_boardroot( const std::string& url )
 bool CACHE::mkdir_logroot()
 {
     // root
-    std::string path_logroot = CACHE::path_logroot();
-    if( ! CACHE::jdmkdir( path_logroot ) ){
-        MISC::ERRMSG( "can't create " + path_logroot );
+    std::string pth_logroot = CACHE::path_logroot();
+    if( ! CACHE::jdmkdir( pth_logroot ) ){
+        MISC::ERRMSG( "can't create " + pth_logroot );
         return false;
     }
 
