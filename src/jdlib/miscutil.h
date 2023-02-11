@@ -174,12 +174,11 @@ namespace MISC
     /// URLに含まれるパーセントエンコーディングをバイト列にデコードする
     std::string url_decode( std::string_view url );
 
-    // urlエンコード
-    std::string url_encode( std::string_view str );
+    /// 文字列(バイト列)をパーセント符号化して返す
+    std::string url_encode( std::string_view byte_str );
 
-    // 文字コードを変換して url エンコード
-    // str は UTF-8 であること
-    std::string charset_url_encode( const std::string& str, const std::string& charset );
+    /// UTF-8文字列をエンコーディング変換してからパーセント符号化して返す
+    std::string charset_url_encode( const std::string& utf8str, const std::string& charset );
 
     // 文字コード変換して url エンコード
     // ただし半角スペースのところを+に置き換えて区切る
