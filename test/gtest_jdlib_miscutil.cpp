@@ -1821,6 +1821,220 @@ TEST_F(UrlDecodeTest, out_of_range_segments)
 }
 
 
+class MISC_UrlEncodeTest : public ::testing::Test {};
+
+TEST_F(MISC_UrlEncodeTest, empty_string)
+{
+    std::string_view input = "";
+    EXPECT_EQ( "", MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, unencoded_ascii_characters)
+{
+    std::string_view input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._@";
+    EXPECT_EQ( input, MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, u0020)
+{
+    std::string_view input = " ";
+    EXPECT_EQ( "%20", MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, u000A)
+{
+    std::string_view input = "quick\nbrown\n\nfox";
+    EXPECT_EQ( "quick%0Abrown%0A%0Afox", MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, u000D)
+{
+    std::string_view input = "quick\rbrown\r\rfox";
+    EXPECT_EQ( "quick%0Dbrown%0D%0Dfox", MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, u000D_u000A)
+{
+    std::string_view input = "quick\r\nbrown\r\n\r\nfox";
+    EXPECT_EQ( "quick%0D%0Abrown%0D%0A%0D%0Afox", MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, encoded_ascii_characters)
+{
+    std::string_view input = "!\"#$%&\'()_+,_/_:;<=>?@_[\\]^_`_{|}~";
+    std::string_view result = "%21%22%23%24%25%26%27%28%29_%2B%2C_%2F_"
+                              "%3A%3B%3C%3D%3E%3F@_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
+    EXPECT_EQ( result, MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, encoded_utf8)
+{
+    std::string_view input = "\xE3\x81\x82"; // U+3042
+    std::string_view result = "%E3%81%82";
+    EXPECT_EQ( result, MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, encoded_shift_jis)
+{
+    std::string_view input = "\x82\xA0"; // HIRAGANA A
+    std::string_view result = "%82%A0";
+    EXPECT_EQ( result, MISC::url_encode( input.data(), input.size() ) );
+}
+
+TEST_F(MISC_UrlEncodeTest, url_utf8)
+{
+    std::string_view input = "https://jdim.test/い ろ/は?に=ほ&へ=と z";
+    std::string_view result = "https%3A%2F%2Fjdim.test%2F%E3%81%84%20%E3%82%8D%2F"
+                              "%E3%81%AF%3F%E3%81%AB%3D%E3%81%BB%26%E3%81%B8%3D%E3%81%A8%20z";
+    EXPECT_EQ( result, MISC::url_encode( input.data(), input.size() ) );
+}
+
+
+class MISC_CharsetUrlEncodeTest : public ::testing::Test {};
+
+TEST_F(MISC_CharsetUrlEncodeTest, empty_string)
+{
+    std::string input = "";
+    EXPECT_EQ( "", MISC::charset_url_encode( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, unencoded_ascii_characters)
+{
+    std::string input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._@";
+    EXPECT_EQ( input, MISC::charset_url_encode( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, u0020)
+{
+    std::string input = " ";
+    EXPECT_EQ( "%20", MISC::charset_url_encode( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, u000A)
+{
+    std::string input = "quick\nbrown\n\nfox";
+    EXPECT_EQ( "quick%0Abrown%0A%0Afox", MISC::charset_url_encode( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, u000D)
+{
+    std::string input = "quick\rbrown\r\rfox";
+    EXPECT_EQ( "quick%0Dbrown%0D%0Dfox", MISC::charset_url_encode( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, u000D_u000A)
+{
+    std::string input = "quick\r\nbrown\r\n\r\nfox";
+    EXPECT_EQ( "quick%0D%0Abrown%0D%0A%0D%0Afox", MISC::charset_url_encode( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, encoded_ascii_characters)
+{
+    std::string input = "!\"#$%&\'()_+,_/_:;<=>?@_[\\]^_`_{|}~";
+    std::string_view result = "%21%22%23%24%25%26%27%28%29_%2B%2C_%2F_"
+                              "%3A%3B%3C%3D%3E%3F@_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
+    EXPECT_EQ( result, MISC::charset_url_encode( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, encoded_to_ms932)
+{
+    std::string input = "\xE3\x81\x82"; // U+3042
+    std::string_view result = "%82%A0";
+    EXPECT_EQ( result, MISC::charset_url_encode( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, encoded_to_eucjp)
+{
+    std::string input = "\xE3\x81\x82"; // U+3042
+    std::string_view result = "%A4%A2";
+    EXPECT_EQ( result, MISC::charset_url_encode( input, "EUCJP-MS" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeTest, url_to_ms932)
+{
+    std::string input = "https://jdim.test/い ろ/は?に=ほ&へ=と z";
+    std::string_view result = "https%3A%2F%2Fjdim.test%2F%82%A2%20%82%EB%2F"
+                              "%82%CD%3F%82%C9%3D%82%D9%26%82%D6%3D%82%C6%20z";
+    EXPECT_EQ( result, MISC::charset_url_encode( input, "MS932" ) );
+}
+
+
+class MISC_CharsetUrlEncodeSplitTest : public ::testing::Test {};
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, empty_string)
+{
+    std::string input = "";
+    EXPECT_EQ( "", MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, unencoded_ascii_characters)
+{
+    std::string input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._@";
+    EXPECT_EQ( input, MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, single_u0020)
+{
+    std::string input = " ";
+    EXPECT_EQ( "", MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, u000A)
+{
+    std::string input = "quick\nbrown\n\nfox";
+    EXPECT_EQ( "quick%0Abrown%0A%0Afox", MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, u000D)
+{
+    std::string input = "quick\rbrown\r\rfox";
+    EXPECT_EQ( "quick%0Dbrown%0D%0Dfox", MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, u000D_u000A)
+{
+    std::string input = "quick\r\nbrown\r\n\r\nfox";
+    EXPECT_EQ( "quick%0D%0Abrown%0D%0A%0D%0Afox", MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, words_separated_by_spaces)
+{
+    std::string input = "Quick Brown　Fox い ろ　は"; // space U+0020 or U+3000
+    std::string_view result = "Quick+Brown+Fox+%82%A2+%82%EB+%82%CD";
+    EXPECT_EQ( result, MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, encoded_ascii_characters)
+{
+    std::string input = "!\"#$%&\'()_+,_/_:;<=>?@_[\\]^_`_{|}~";
+    std::string_view result = "%21%22%23%24%25%26%27%28%29_%2B%2C_%2F_"
+                              "%3A%3B%3C%3D%3E%3F@_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
+    EXPECT_EQ( result, MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, encoded_to_ms932)
+{
+    std::string input = "\xE3\x81\x82"; // U+3042
+    std::string_view result = "%82%A0";
+    EXPECT_EQ( result, MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, encoded_to_eucjp)
+{
+    std::string input = "\xE3\x81\x82"; // U+3042
+    std::string_view result = "%A4%A2";
+    EXPECT_EQ( result, MISC::charset_url_encode_split( input, "EUCJP-MS" ) );
+}
+
+TEST_F(MISC_CharsetUrlEncodeSplitTest, url_to_ms932)
+{
+    std::string input = "https://jdim.test/い ろ/は?に=ほ&へ=と z";
+    std::string_view result = "https%3A%2F%2Fjdim.test%2F%82%A2+%82%EB%2F"
+                              "%82%CD%3F%82%C9%3D%82%D9%26%82%D6%3D%82%C6+z";
+    EXPECT_EQ( result, MISC::charset_url_encode_split( input, "MS932" ) );
+}
+
+
 class MISC_DecodeSpcharNumberRawTest : public ::testing::Test {};
 
 TEST_F(MISC_DecodeSpcharNumberRawTest, empty_string)
