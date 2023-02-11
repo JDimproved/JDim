@@ -1831,7 +1831,7 @@ TEST_F(MISC_UrlEncodeTest, empty_string)
 
 TEST_F(MISC_UrlEncodeTest, unencoded_ascii_characters)
 {
-    std::string_view input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._@";
+    std::string_view input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._";
     EXPECT_EQ( input, MISC::url_encode( input ) );
 }
 
@@ -1863,7 +1863,7 @@ TEST_F(MISC_UrlEncodeTest, encoded_ascii_characters)
 {
     std::string_view input = "!\"#$%&\'()_+,_/_:;<=>?@_[\\]^_`_{|}~";
     std::string_view result = "%21%22%23%24%25%26%27%28%29_%2B%2C_%2F_"
-                              "%3A%3B%3C%3D%3E%3F@_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
+                              "%3A%3B%3C%3D%3E%3F%40_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
     EXPECT_EQ( result, MISC::url_encode( input ) );
 }
 
@@ -1900,7 +1900,7 @@ TEST_F(MISC_CharsetUrlEncodeTest, empty_string)
 
 TEST_F(MISC_CharsetUrlEncodeTest, unencoded_ascii_characters)
 {
-    std::string input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._@";
+    std::string input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._";
     EXPECT_EQ( input, MISC::charset_url_encode( input, "MS932" ) );
 }
 
@@ -1932,7 +1932,7 @@ TEST_F(MISC_CharsetUrlEncodeTest, encoded_ascii_characters)
 {
     std::string input = "!\"#$%&\'()_+,_/_:;<=>?@_[\\]^_`_{|}~";
     std::string_view result = "%21%22%23%24%25%26%27%28%29_%2B%2C_%2F_"
-                              "%3A%3B%3C%3D%3E%3F@_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
+                              "%3A%3B%3C%3D%3E%3F%40_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
     EXPECT_EQ( result, MISC::charset_url_encode( input, "MS932" ) );
 }
 
@@ -1969,7 +1969,7 @@ TEST_F(MISC_CharsetUrlEncodeSplitTest, empty_string)
 
 TEST_F(MISC_CharsetUrlEncodeSplitTest, unencoded_ascii_characters)
 {
-    std::string input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._@";
+    std::string input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._";
     EXPECT_EQ( input, MISC::charset_url_encode_split( input, "MS932" ) );
 }
 
@@ -2008,7 +2008,7 @@ TEST_F(MISC_CharsetUrlEncodeSplitTest, encoded_ascii_characters)
 {
     std::string input = "!\"#$%&\'()_+,_/_:;<=>?@_[\\]^_`_{|}~";
     std::string_view result = "%21%22%23%24%25%26%27%28%29_%2B%2C_%2F_"
-                              "%3A%3B%3C%3D%3E%3F@_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
+                              "%3A%3B%3C%3D%3E%3F%40_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
     EXPECT_EQ( result, MISC::charset_url_encode_split( input, "MS932" ) );
 }
 

@@ -1350,52 +1350,49 @@ std::string MISC::url_decode( std::string_view url )
 }
 
 
-//
-// url エンコード
-//
+/** @brief 文字列(バイト列)をパーセント符号化して返す
+ *
+ * @details URL Living Standard が定めるpercent-encode setを参考にバイトを符号化する。
+ * - 半角英数字(0-9 A-Z a-z)と一部記号(* - . _)は変換しない
+ * - それ以外はパーセント記号ではじまる16進表記 \%XX に変換 (A-Fは大文字)
+ *
+ * @param[in] str 入力文字列 (文字エンコーディングは任意)
+ * @return パーセント符号化された文字列
+ * @see MISC::charset_url_encode( const std::string& utf8str, const std::string& charset )
+*/
 std::string MISC::url_encode( std::string_view str )
 {
     std::string str_encoded;
+    constexpr std::size_t tmplng = 8;
+    char str_tmp[tmplng];
 
-    for( size_t i = 0; i < str.size(); i++ ){
-        
-        unsigned char c = str[ i ];
-        const int tmplng = 16;
-        char str_tmp[ tmplng ];
-        
-        if( ! ( 'a' <= c && c <= 'z' ) &&
-            ! ( 'A' <= c && c <= 'Z' ) &&
-            ! ( '0' <= c && c <= '9' ) &&            
-            ( c != '*' ) &&
-            ( c != '-' ) &&
-            ( c != '.' ) &&
-            ( c != '@' ) &&
-            ( c != '_' )){
-
-            std::snprintf( str_tmp, tmplng, "%%%02X", c );
+    for( const char c : str ) {
+        if( g_ascii_isalnum( c )  || c == '*' || c == '-' || c == '.' || c == '_' ) {
+            str_encoded.push_back( c );
         }
         else {
-            str_tmp[ 0 ] = c;
-            str_tmp[ 1 ] = '\0';
+            std::snprintf( str_tmp, tmplng, "%%%02X", static_cast<unsigned char>( c ) );
+            str_encoded.append( str_tmp );
         }
-
-        str_encoded += str_tmp;
     }
 
     return str_encoded;
 }
 
 
-//
-// 文字コード変換して url エンコード
-//
-// str は UTF-8 であること
-//
-std::string MISC::charset_url_encode( const std::string& str, const std::string& charset )
+/** @brief UTF-8文字列をエンコーディング変換してからパーセント符号化して返す
+ *
+ * @details `utf8str` を `charset` で指定した文字エンコーディングに変換してから符号化する。
+ * @param[in] utf8str 入力文字列 (文字エンコーディングはUTF-8)
+ * @param[in] charset 変換先の文字エンコーディング名
+ * @return パーセント符号化された文字列
+ * @see MISC::url_encode( std::string_view str )
+*/
+std::string MISC::charset_url_encode( const std::string& utf8str, const std::string& charset )
 {
-    if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( str );
+    if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( utf8str );
 
-    const std::string str_enc = MISC::Iconv( str, charset, "UTF-8" );
+    const std::string str_enc = MISC::Iconv( utf8str, charset, "UTF-8" );
     return  MISC::url_encode( str_enc );
 }
 
