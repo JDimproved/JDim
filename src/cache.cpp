@@ -402,7 +402,7 @@ std::string CACHE::filename_img( const std::string& url )
     file = MISC::replace_str( file, "http://", "" );
     file = MISC::replace_str( file, "https://", "" );
     file = MISC::replace_str( file, "/", "-" );
-    file = MISC::url_encode( file.c_str(), file.length() );
+    file = MISC::url_encode( file );
     file = MISC::replace_str( file, "%", "" );
     
     return file;

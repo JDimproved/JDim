@@ -175,8 +175,7 @@ namespace MISC
     std::string url_decode( std::string_view url );
 
     // urlエンコード
-    std::string url_encode( const char* str, const size_t n );
-    std::string url_encode( const std::string& str );
+    std::string url_encode( std::string_view str );
 
     // 文字コードを変換して url エンコード
     // str は UTF-8 であること

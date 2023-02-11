@@ -52,7 +52,7 @@ std::string Article2ch::create_write_message( const std::string& name, const std
     // ログイン中
     if( CORE::get_login2ch()->login_now() ){
                 std::string sid = CORE::get_login2ch()->get_sessionid();
-                ss_post << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
+                ss_post << "&sid=" << MISC::url_encode( sid );
     }
 
 #ifdef _DEBUG

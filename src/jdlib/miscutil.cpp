@@ -1353,16 +1353,11 @@ std::string MISC::url_decode( std::string_view url )
 //
 // url エンコード
 //
-std::string MISC::url_encode( const char* str, const size_t n )
+std::string MISC::url_encode( std::string_view str )
 {
-    if( str[ n ] != '\0' ){
-        ERRMSG( "url_encode : invalid input." );
-        return std::string();
-    }
-
     std::string str_encoded;
-    
-    for( size_t i = 0; i < n; i++ ){
+
+    for( size_t i = 0; i < str.size(); i++ ){
         
         unsigned char c = str[ i ];
         const int tmplng = 16;
@@ -1391,12 +1386,6 @@ std::string MISC::url_encode( const char* str, const size_t n )
 }
 
 
-std::string MISC::url_encode( const std::string& str )
-{
-    return url_encode( str.c_str(), str.length() );
-}
-
-
 //
 // 文字コード変換して url エンコード
 //
@@ -1404,10 +1393,10 @@ std::string MISC::url_encode( const std::string& str )
 //
 std::string MISC::charset_url_encode( const std::string& str, const std::string& charset )
 {
-    if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( str.c_str(), str.length() );
+    if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( str );
 
     const std::string str_enc = MISC::Iconv( str, charset, "UTF-8" );
-    return  MISC::url_encode( str_enc.c_str(), str_enc.length() );
+    return  MISC::url_encode( str_enc );
 }
 
 

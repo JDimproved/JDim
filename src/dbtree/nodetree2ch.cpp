@@ -158,7 +158,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
            << regex.str( 4 ) << regex.str( 5 );
 
         std::string sid = CORE::get_login2ch()->get_sessionid();
-        ss << "/?sid=" << MISC::url_encode( sid.c_str(), sid.length() );
+        ss << "/?sid=" << MISC::url_encode( sid );
 
         // レジューム設定
         // レジュームを有りにして、サーバが range を無視して送ってきた場合と同じ処理をする
