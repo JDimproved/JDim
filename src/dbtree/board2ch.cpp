@@ -236,7 +236,7 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
     // sidを送る
     if( CORE::get_login2ch()->login_now() ){
         std::string sid = CORE::get_login2ch()->get_sessionid();
-        ss_post << "&sid=" << MISC::url_encode( sid.c_str(), sid.length() );
+        ss_post << "&sid=" << MISC::url_encode( sid );
     }
 
 #ifdef _DEBUG
