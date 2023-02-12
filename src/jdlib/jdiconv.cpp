@@ -209,8 +209,8 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
                     const char* epos = buf_in_tmp;
 
                     // マルチバイト文字列の先頭と終端を調べる
-                    while( bpos > str_in && *( bpos - 1 ) < 0 ) --bpos;
-                    while( epos < ( buf_in_tmp + byte_left_in ) && *epos < 0 ) ++epos;
+                    while( bpos > str_in && static_cast<unsigned char>( *( bpos - 1 ) ) >= 128 ) --bpos;
+                    while( epos < ( buf_in_tmp + byte_left_in ) && static_cast<unsigned char>( *epos ) >= 128 ) ++epos;
 
                     const std::size_t lng = epos - bpos;
 
@@ -234,7 +234,8 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
                             constexpr std::string_view span_end = "</span>";
 
                             // 出力したマルチバイトUTF-8文字列の先頭を調べる
-                            while( buf_out_tmp > out_buf.data() && *( buf_out_tmp - 1 ) < 0 ) --buf_out_tmp;
+                            while( buf_out_tmp > out_buf.data() &&
+                                static_cast<unsigned char>( *( buf_out_tmp - 1 ) ) >= 128 ) --buf_out_tmp;
 
                             if( ( buf_out_tmp + lng + span_bgn.size() + span_end.size() ) >= buf_out_end ){
                                 grow();
