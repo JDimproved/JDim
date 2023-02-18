@@ -2045,19 +2045,19 @@ TEST_F(MISC_CharsetUrlEncodeSplitTest, unencoded_ascii_characters)
 TEST_F(MISC_CharsetUrlEncodeSplitTest, single_u0020)
 {
     std::string input = " ";
-    EXPECT_EQ( "", MISC::charset_url_encode_split( input, "MS932" ) );
+    EXPECT_EQ( "+", MISC::charset_url_encode_split( input, "MS932" ) );
 }
 
 TEST_F(MISC_CharsetUrlEncodeSplitTest, u000A)
 {
     std::string input = "quick\nbrown\n\nfox";
-    EXPECT_EQ( "quick%0Abrown%0A%0Afox", MISC::charset_url_encode_split( input, "MS932" ) );
+    EXPECT_EQ( "quick%0D%0Abrown%0D%0A%0D%0Afox", MISC::charset_url_encode_split( input, "MS932" ) );
 }
 
 TEST_F(MISC_CharsetUrlEncodeSplitTest, u000D)
 {
     std::string input = "quick\rbrown\r\rfox";
-    EXPECT_EQ( "quick%0Dbrown%0D%0Dfox", MISC::charset_url_encode_split( input, "MS932" ) );
+    EXPECT_EQ( "quickbrownfox", MISC::charset_url_encode_split( input, "MS932" ) );
 }
 
 TEST_F(MISC_CharsetUrlEncodeSplitTest, u000D_u000A)
@@ -2066,10 +2066,11 @@ TEST_F(MISC_CharsetUrlEncodeSplitTest, u000D_u000A)
     EXPECT_EQ( "quick%0D%0Abrown%0D%0A%0D%0Afox", MISC::charset_url_encode_split( input, "MS932" ) );
 }
 
-TEST_F(MISC_CharsetUrlEncodeSplitTest, words_separated_by_spaces)
+TEST_F(MISC_CharsetUrlEncodeSplitTest, words_separated_by_u0020)
 {
-    std::string input = "Quick Brown　Fox い ろ　は"; // space U+0020 or U+3000
-    std::string_view result = "Quick+Brown+Fox+%82%A2+%82%EB+%82%CD";
+    // U+3000 won't be converted to '+'
+    std::string input = "Quick Brown　Fox い ろ　は";
+    std::string_view result = "Quick+Brown%81%40Fox+%82%A2+%82%EB%81%40%82%CD";
     EXPECT_EQ( result, MISC::charset_url_encode_split( input, "MS932" ) );
 }
 
