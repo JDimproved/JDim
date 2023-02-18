@@ -180,6 +180,9 @@ namespace MISC
     /// UTF-8文字列をエンコーディング変換してからパーセント符号化して返す
     std::string charset_url_encode( const std::string& utf8str, const std::string& charset );
 
+    /// application/x-www-form-urlencoded の形式でパーセント符号化する
+    std::string url_encode_plus( std::string_view str );
+
     // 文字コード変換して url エンコード
     // ただし半角スペースのところを+に置き換えて区切る
     std::string charset_url_encode_split( const std::string& str, const std::string& charset );
