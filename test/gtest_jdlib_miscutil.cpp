@@ -1959,6 +1959,75 @@ TEST_F(MISC_CharsetUrlEncodeTest, url_to_ms932)
 }
 
 
+class MISC_UrlEncodePlusTest : public ::testing::Test {};
+
+TEST_F(MISC_UrlEncodePlusTest, empty_string)
+{
+    std::string_view input = "";
+    EXPECT_EQ( "", MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, unencoded_ascii_characters)
+{
+    std::string_view input = "0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz*-._";
+    EXPECT_EQ( input, MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, u0020)
+{
+    std::string_view input = " ";
+    EXPECT_EQ( "+", MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, u000A)
+{
+    std::string_view input = "quick\nbrown\n\nfox";
+    EXPECT_EQ( "quick%0D%0Abrown%0D%0A%0D%0Afox", MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, u000D)
+{
+    std::string_view input = "quick\rbrown\r\rfox";
+    EXPECT_EQ( "quickbrownfox", MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, u000D_u000A)
+{
+    std::string_view input = "quick\r\nbrown\r\n\r\nfox";
+    EXPECT_EQ( "quick%0D%0Abrown%0D%0A%0D%0Afox", MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, encoded_ascii_characters)
+{
+    std::string_view input = "!\"#$%&\'()_+,_/_:;<=>?@_[\\]^_`_{|}~";
+    std::string_view result = "%21%22%23%24%25%26%27%28%29_%2B%2C_%2F_"
+                              "%3A%3B%3C%3D%3E%3F%40_%5B%5C%5D%5E_%60_%7B%7C%7D%7E";
+    EXPECT_EQ( result, MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, encoded_utf8)
+{
+    std::string_view input = "\xE3\x81\x82"; // U+3042
+    std::string_view result = "%E3%81%82";
+    EXPECT_EQ( result, MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, encoded_shift_jis)
+{
+    std::string_view input = "\x82\xA0"; // HIRAGANA A
+    std::string_view result = "%82%A0";
+    EXPECT_EQ( result, MISC::url_encode_plus( input ) );
+}
+
+TEST_F(MISC_UrlEncodePlusTest, url_utf8)
+{
+    std::string_view input = "https://jdim.test/い ろ/は?に=ほ&へ=と z";
+    std::string_view result = "https%3A%2F%2Fjdim.test%2F%E3%81%84+%E3%82%8D%2F"
+                              "%E3%81%AF%3F%E3%81%AB%3D%E3%81%BB%26%E3%81%B8%3D%E3%81%A8+z";
+    EXPECT_EQ( result, MISC::url_encode_plus( input ) );
+}
+
+
 class MISC_CharsetUrlEncodeSplitTest : public ::testing::Test {};
 
 TEST_F(MISC_CharsetUrlEncodeSplitTest, empty_string)

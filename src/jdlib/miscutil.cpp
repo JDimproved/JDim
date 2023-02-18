@@ -1397,6 +1397,45 @@ std::string MISC::charset_url_encode( const std::string& utf8str, const std::str
 }
 
 
+/** @brief application/x-www-form-urlencoded の形式でパーセント符号化する
+ *
+ * webブラウザのform要素の挙動に合わせてURLの規格と異なる変換処理がある。
+ * - 半角英数字(0-9 A-Z a-z)と一部記号(* - . _)は変換しない
+ * - 改行LF(U+000A) は \%0D\%0A に変換する
+ * - 改行CR(U+000D) は読み飛ばして無視する
+ * - 半角空白(U+0020)は + プラス記号(U+002B)に置換する
+ * - それ以外はパーセント記号ではじまる16進表記 \%XX に変換 (A-Fは大文字)
+ *
+ * @param[in] str 入力文字列 (文字エンコーディングは任意)
+ * @return パーセント符号化された文字列
+ * @see MISC::charset_url_encode_split( const std::string& str, const std::string& charset )
+*/
+std::string MISC::url_encode_plus( std::string_view str )
+{
+    std::string str_encoded;
+    constexpr std::size_t tmplng = 8;
+    char str_tmp[tmplng];
+
+    for( const char c : str ) {
+        if( g_ascii_isalnum( c ) || c == '-' || c == '.' || c == '_' || c == '*' ) {
+            str_encoded.push_back( c );
+        }
+        else if( c == ' ' ) {
+            str_encoded.push_back( '+' );
+        }
+        else if( c == '\n' ) {
+            str_encoded.append( "%0D%0A" );
+        }
+        else if( c != '\r' ) {
+            std::snprintf( str_tmp, tmplng, "%%%02X", static_cast<unsigned char>( c ) );
+            str_encoded.append( str_tmp );
+        }
+    }
+
+    return str_encoded;
+}
+
+
 //
 // 文字コード変換して url エンコード
 //
