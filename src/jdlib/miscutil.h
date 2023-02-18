@@ -183,9 +183,8 @@ namespace MISC
     /// application/x-www-form-urlencoded の形式でパーセント符号化する
     std::string url_encode_plus( std::string_view str );
 
-    // 文字コード変換して url エンコード
-    // ただし半角スペースのところを+に置き換えて区切る
-    std::string charset_url_encode_split( const std::string& str, const std::string& charset );
+    /// UTF-8文字列をエンコーディング変換してから application/x-www-form-urlencoded の形式でパーセント符号化する
+    std::string charset_url_encode_split( const std::string& utf8str, const std::string& encoding );
 
     // BASE64
     std::string base64( const std::string& str );

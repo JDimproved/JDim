@@ -1408,7 +1408,7 @@ std::string MISC::charset_url_encode( const std::string& utf8str, const std::str
  *
  * @param[in] str 入力文字列 (文字エンコーディングは任意)
  * @return パーセント符号化された文字列
- * @see MISC::charset_url_encode_split( const std::string& str, const std::string& charset )
+ * @see MISC::charset_url_encode_split( const std::string& utf8str, const std::string& encoding )
 */
 std::string MISC::url_encode_plus( std::string_view str )
 {
@@ -1436,21 +1436,22 @@ std::string MISC::url_encode_plus( std::string_view str )
 }
 
 
-//
-// 文字コード変換して url エンコード
-//
-// ただし半角スペースのところを+に置き換えて区切る
-//
-std::string MISC::charset_url_encode_split( const std::string& str, const std::string& charset )
+/** @brief UTF-8文字列をエンコーディング変換してから application/x-www-form-urlencoded の形式でパーセント符号化する
+ *
+ * @details `utf8str` を `encoding` で指定した文字エンコーディングに変換してから符号化する。
+ * @param[in] utf8str 入力文字列 (文字エンコーディングはUTF-8)
+ * @param[in] encoding 変換先の文字エンコーディング名
+ * @return パーセント符号化された文字列
+ * @see MISC::url_encode_plus( std::string_view str )
+*/
+std::string MISC::charset_url_encode_split( const std::string& utf8str, const std::string& encoding )
 {
-    std::list< std::string > list_str = MISC::split_line( str );
-    std::string str_out;
-    for( const std::string& s : list_str ) {
-        if( ! str_out.empty() ) str_out.push_back( '+' );
-        str_out.append( MISC::charset_url_encode( s, charset ) );
+    if( encoding.empty() || encoding == "UTF-8" ) {
+        return MISC::url_encode_plus( utf8str );
     }
 
-    return str_out;
+    const std::string str_enc = MISC::Iconv( utf8str, encoding, "UTF-8" );
+    return  MISC::url_encode_plus( str_enc );
 }
 
 
