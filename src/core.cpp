@@ -605,8 +605,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
 
     m_action_group->add( Gtk::ToggleAction::create( "RestoreViews", "前回開いていた各ビューを起動時に復元する(_R)", std::string(),
                                                     ( CONFIG::get_restore_board()
-                                                      & CONFIG::get_restore_article()
-                                                      & CONFIG::get_restore_image() ) ),
+                                                      && CONFIG::get_restore_article()
+                                                      && CONFIG::get_restore_image() ) ),
                          sigc::mem_fun( *this, &Core::slot_toggle_restore_views ) );
 
     m_action_group->add( Gtk::ToggleAction::create( "ToggleFoldMessage", "非アクティブ時に書き込みビューを折りたたむ(_C)", std::string(),

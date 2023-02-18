@@ -589,7 +589,7 @@ void Core::slot_image_pref()
 //
 void Core::slot_toggle_restore_views()
 {
-    bool status = CONFIG::get_restore_board() & CONFIG::get_restore_article() & CONFIG::get_restore_image();
+    const bool status{ CONFIG::get_restore_board() && CONFIG::get_restore_article() && CONFIG::get_restore_image() };
 
     CONFIG::set_restore_board( ! status );
     CONFIG::set_restore_article( ! status );
@@ -957,7 +957,7 @@ void Core::slot_setup_abone_thread()
 //
 void Core::slot_toggle_abone_transp_chain()
 {
-    const bool status = CONFIG::get_abone_chain() & CONFIG::get_abone_transparent();
+    const bool status{ CONFIG::get_abone_chain() && CONFIG::get_abone_transparent() };
 
     CONFIG::set_abone_transparent( ! status );
     CONFIG::set_abone_chain( ! status );
@@ -973,7 +973,7 @@ void Core::slot_toggle_abone_transp_chain()
 //
 void Core::slot_toggle_abone_icase_wchar()
 {
-    const bool status = CONFIG::get_abone_icase() & CONFIG::get_abone_wchar();
+    const bool status{ CONFIG::get_abone_icase() && CONFIG::get_abone_wchar() };
 
     CONFIG::set_abone_icase( ! status );
     CONFIG::set_abone_wchar( ! status );
