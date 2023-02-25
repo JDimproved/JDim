@@ -288,15 +288,15 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
 
     if( cmd_out.find( "$TEXTIU" ) != std::string::npos ){
         if( ! show_replacetextdiag( texti, "$TEXTIU" ) ) return std::string();
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTIU", MISC::charset_url_encode_split( texti, "UTF-8" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTIU", MISC::url_encode_plus( texti, "UTF-8" ) );
     }
     if( cmd_out.find( "$TEXTIX" ) != std::string::npos ){
         if( ! show_replacetextdiag( texti, "$TEXTIX" ) ) return std::string();
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTIX", MISC::charset_url_encode_split( texti, "EUC-JP" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTIX", MISC::url_encode_plus( texti, "EUC-JP" ) );
     }
     if( cmd_out.find( "$TEXTIE" ) != std::string::npos ){
         if( ! show_replacetextdiag( texti, "$TEXTIE" ) ) return std::string();
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTIE", MISC::charset_url_encode_split( texti, "MS932" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTIE", MISC::url_encode_plus( texti, "MS932" ) );
     }
     if( cmd_out.find( "$TEXTI" ) != std::string::npos ){
         if( ! show_replacetextdiag( texti, "$TEXTI" ) ) return std::string();
@@ -304,13 +304,13 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
     }
 
     if( cmd_out.find( "$TEXTU" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTU", MISC::charset_url_encode_split( texti, "UTF-8" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTU", MISC::url_encode_plus( texti, "UTF-8" ) );
     }
     if( cmd_out.find( "$TEXTX" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTX", MISC::charset_url_encode_split( texti, "EUC-JP" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTX", MISC::url_encode_plus( texti, "EUC-JP" ) );
     }
     if( cmd_out.find( "$TEXTE" ) != std::string::npos ){
-        cmd_out = MISC::replace_str( cmd_out, "$TEXTE", MISC::charset_url_encode_split( texti, "MS932" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$TEXTE", MISC::url_encode_plus( texti, "MS932" ) );
     }
     if( cmd_out.find( "$TEXT" ) != std::string::npos ){
         cmd_out = MISC::replace_str( cmd_out, "$TEXT",  texti );
@@ -321,15 +321,15 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
 
     if( cmd_out.find( "$INPUTU" ) != std::string::npos ){
         if( ! show_replacetextdiag( input, "$INPUTU" ) ) return std::string();
-        cmd_out = MISC::replace_str( cmd_out, "$INPUTU", MISC::charset_url_encode_split( input, "UTF-8" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$INPUTU", MISC::url_encode_plus( input, "UTF-8" ) );
     }
     if( cmd_out.find( "$INPUTX" ) != std::string::npos ){
         if( ! show_replacetextdiag( input, "$INPUTX" ) ) return std::string();
-        cmd_out = MISC::replace_str( cmd_out, "$INPUTX", MISC::charset_url_encode_split( input, "EUC-JP" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$INPUTX", MISC::url_encode_plus( input, "EUC-JP" ) );
     }
     if( cmd_out.find( "$INPUTE" ) != std::string::npos ){
         if( ! show_replacetextdiag( input, "$INPUTE" ) ) return std::string();
-        cmd_out = MISC::replace_str( cmd_out, "$INPUTE", MISC::charset_url_encode_split( input, "MS932" ) );
+        cmd_out = MISC::replace_str( cmd_out, "$INPUTE", MISC::url_encode_plus( input, "MS932" ) );
     }
     if( cmd_out.find( "$INPUT" ) != std::string::npos ){
         if( ! show_replacetextdiag( input, "$INPUT" ) ) return std::string();

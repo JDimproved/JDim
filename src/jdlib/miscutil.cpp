@@ -1408,7 +1408,7 @@ std::string MISC::charset_url_encode( const std::string& utf8str, const std::str
  *
  * @param[in] str 入力文字列 (文字エンコーディングは任意)
  * @return パーセント符号化された文字列
- * @see MISC::charset_url_encode_split( const std::string& utf8str, const std::string& encoding )
+ * @see MISC::url_encode_plus( const std::string& utf8str, const std::string& encoding )
 */
 std::string MISC::url_encode_plus( std::string_view str )
 {
@@ -1444,7 +1444,7 @@ std::string MISC::url_encode_plus( std::string_view str )
  * @return パーセント符号化された文字列
  * @see MISC::url_encode_plus( std::string_view str )
 */
-std::string MISC::charset_url_encode_split( const std::string& utf8str, const std::string& encoding )
+std::string MISC::url_encode_plus( const std::string& utf8str, const std::string& encoding )
 {
     if( encoding.empty() || encoding == "UTF-8" ) {
         return MISC::url_encode_plus( utf8str );
