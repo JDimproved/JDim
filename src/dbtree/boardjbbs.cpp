@@ -111,11 +111,11 @@ std::string BoardJBBS::create_newarticle_message( const std::string& subject, co
 
     std::stringstream ss_post;
     ss_post.clear();
-    ss_post << "SUBJECT="  << MISC::charset_url_encode( subject, get_charset() )
-            << "&submit="  << MISC::charset_url_encode( "新規書き込み", get_charset() )
-            << "&NAME="    << MISC::charset_url_encode( name, get_charset() )
-            << "&MAIL="    << MISC::charset_url_encode( mail, get_charset() )
-            << "&MESSAGE=" << MISC::charset_url_encode( msg, get_charset() )
+    ss_post << "SUBJECT="  << MISC::url_encode( subject, get_charset() )
+            << "&submit="  << MISC::url_encode( "新規書き込み", get_charset() )
+            << "&NAME="    << MISC::url_encode( name, get_charset() )
+            << "&MAIL="    << MISC::url_encode( mail, get_charset() )
+            << "&MESSAGE=" << MISC::url_encode( msg, get_charset() )
             << "&DIR="     << dir
             << "&BBS="     << bbs
             << "&TIME="    << get_time_modified();

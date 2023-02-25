@@ -49,10 +49,10 @@ std::string Article2chCompati::create_write_message( const std::string& name, co
     ss_post << "bbs="      << DBTREE::board_id( get_url() )
             << "&key="     << get_key()
             << "&time="    << get_time_modified()
-            << "&submit="  << MISC::charset_url_encode( "書き込む", charset )
-            << "&FROM="    << MISC::charset_url_encode( name, charset )
-            << "&mail="    << MISC::charset_url_encode( mail, charset )
-            << "&MESSAGE=" << MISC::charset_url_encode( msg, charset );
+            << "&submit="  << MISC::url_encode( "書き込む", charset )
+            << "&FROM="    << MISC::url_encode( name, charset )
+            << "&mail="    << MISC::url_encode( mail, charset )
+            << "&MESSAGE=" << MISC::url_encode( msg, charset );
 
 #ifdef _DEBUG
     std::cout << "Article2chCompati::create_write_message " << ss_post.str() << std::endl;

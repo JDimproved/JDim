@@ -1358,7 +1358,7 @@ std::string MISC::url_decode( std::string_view url )
  *
  * @param[in] str 入力文字列 (文字エンコーディングは任意)
  * @return パーセント符号化された文字列
- * @see MISC::charset_url_encode( const std::string& utf8str, const std::string& charset )
+ * @see MISC::url_encode( const std::string& utf8str, const std::string& encoding )
 */
 std::string MISC::url_encode( std::string_view str )
 {
@@ -1382,17 +1382,17 @@ std::string MISC::url_encode( std::string_view str )
 
 /** @brief UTF-8文字列をエンコーディング変換してからパーセント符号化して返す
  *
- * @details `utf8str` を `charset` で指定した文字エンコーディングに変換してから符号化する。
+ * @details `utf8str` を `encoding` で指定した文字エンコーディングに変換してから符号化する。
  * @param[in] utf8str 入力文字列 (文字エンコーディングはUTF-8)
- * @param[in] charset 変換先の文字エンコーディング名
+ * @param[in] encoding 変換先の文字エンコーディング名
  * @return パーセント符号化された文字列
  * @see MISC::url_encode( std::string_view str )
 */
-std::string MISC::charset_url_encode( const std::string& utf8str, const std::string& charset )
+std::string MISC::url_encode( const std::string& utf8str, const std::string& encoding )
 {
-    if( charset.empty() || charset == "UTF-8" ) return MISC::url_encode( utf8str );
+    if( encoding.empty() || encoding == "UTF-8" ) return MISC::url_encode( utf8str );
 
-    const std::string str_enc = MISC::Iconv( utf8str, charset, "UTF-8" );
+    const std::string str_enc = MISC::Iconv( utf8str, encoding, "UTF-8" );
     return  MISC::url_encode( str_enc );
 }
 

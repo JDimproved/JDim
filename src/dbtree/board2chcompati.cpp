@@ -117,9 +117,9 @@ std::string Board2chCompati::analyze_keyword_impl( const std::string& html, bool
 
         // キーワード取得
         if( ! keyword.empty() ) keyword.push_back( '&' );
-        keyword.append( MISC::charset_url_encode( d.name, get_charset() ) );
+        keyword.append( MISC::url_encode( d.name, get_charset() ) );
         keyword.push_back( '=' );
-        keyword.append( MISC::charset_url_encode( d.value, get_charset() ) );
+        keyword.append( MISC::url_encode( d.value, get_charset() ) );
     }
 #ifdef _DEBUG
     std::cout << "Board2chCompati::analyze_keyword_impl form data = " << keyword << std::endl;
@@ -185,12 +185,12 @@ std::string Board2chCompati::create_newarticle_message( const std::string& subje
     std::stringstream ss_post;
     ss_post.clear();
     ss_post << "bbs="      << get_id()
-            << "&subject=" << MISC::charset_url_encode( subject, get_charset() )
+            << "&subject=" << MISC::url_encode( subject, get_charset() )
             << "&time="    << get_time_modified()
-            << "&submit="  << MISC::charset_url_encode( "新規スレッド作成", get_charset() )
-            << "&FROM="    << MISC::charset_url_encode( name, get_charset() )
-            << "&mail="    << MISC::charset_url_encode( mail, get_charset() )
-            << "&MESSAGE=" << MISC::charset_url_encode( msg, get_charset() );
+            << "&submit="  << MISC::url_encode( "新規スレッド作成", get_charset() )
+            << "&FROM="    << MISC::url_encode( name, get_charset() )
+            << "&mail="    << MISC::url_encode( mail, get_charset() )
+            << "&MESSAGE=" << MISC::url_encode( msg, get_charset() );
 
 #ifdef _DEBUG
     std::cout << "Board2chCompati::create_newarticle_message " << ss_post.str() << std::endl;

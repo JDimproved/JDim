@@ -175,10 +175,10 @@ namespace MISC
     std::string url_decode( std::string_view url );
 
     /// 文字列(バイト列)をパーセント符号化して返す
-    std::string url_encode( std::string_view byte_str );
+    std::string url_encode( std::string_view str );
 
     /// UTF-8文字列をエンコーディング変換してからパーセント符号化して返す
-    std::string charset_url_encode( const std::string& utf8str, const std::string& charset );
+    std::string url_encode( const std::string& utf8str, const std::string& encoding );
 
     /// application/x-www-form-urlencoded の形式でパーセント符号化する
     std::string url_encode_plus( std::string_view str );
