@@ -220,11 +220,11 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
     }
 
     std::stringstream ss_post;
-    ss_post << "submit="   << MISC::charset_url_encode( "新規スレッド作成", get_charset() )
-            << "&subject=" << MISC::charset_url_encode( subject, get_charset() )
-            << "&FROM="    << MISC::charset_url_encode( name, get_charset() )
-            << "&mail="    << MISC::charset_url_encode( mail, get_charset() )
-            << "&MESSAGE=" << MISC::charset_url_encode( msg, get_charset() )
+    ss_post << "submit="   << MISC::url_encode( "新規スレッド作成", get_charset() )
+            << "&subject=" << MISC::url_encode( subject, get_charset() )
+            << "&FROM="    << MISC::url_encode( name, get_charset() )
+            << "&mail="    << MISC::url_encode( mail, get_charset() )
+            << "&MESSAGE=" << MISC::url_encode( msg, get_charset() )
             << "&bbs="     << get_id()
             << "&time="    << m_frontloader->get_time_modified();
 

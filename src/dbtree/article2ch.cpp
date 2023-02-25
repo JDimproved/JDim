@@ -35,13 +35,13 @@ std::string Article2ch::create_write_message( const std::string& name, const std
     const std::string charset = DBTREE::board_charset( get_url() );
 
     std::stringstream ss_post;
-    ss_post << "FROM=" << MISC::charset_url_encode( name, charset )
-            << "&mail=" << MISC::charset_url_encode( mail, charset )
-            << "&MESSAGE=" << MISC::charset_url_encode( msg, charset )
+    ss_post << "FROM=" << MISC::url_encode( name, charset )
+            << "&mail=" << MISC::url_encode( mail, charset )
+            << "&MESSAGE=" << MISC::url_encode( msg, charset )
             << "&bbs=" << DBTREE::board_id( get_url() )
             << "&key=" << get_key()
             << "&time=" << get_time_modified()
-            << "&submit=" << MISC::charset_url_encode( "書き込む", charset )
+            << "&submit=" << MISC::url_encode( "書き込む", charset )
             // XXX: ブラウザの種類に関係なく含めて問題ないか？
             << "&oekaki_thread1=";
 

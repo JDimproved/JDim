@@ -44,10 +44,10 @@ std::string ArticleMachi::create_write_message( const std::string& name, const s
     ss_post << "BBS="      << DBTREE::board_id( get_url() )
             << "&KEY="     << get_key()
             << "&TIME="    << get_time_modified()
-            << "&submit="  << MISC::charset_url_encode( "書き込む", charset )
-            << "&NAME="    << MISC::charset_url_encode( name, charset )
-            << "&MAIL="    << MISC::charset_url_encode( mail, charset )
-            << "&MESSAGE=" << MISC::charset_url_encode( msg, charset );
+            << "&submit="  << MISC::url_encode( "書き込む", charset )
+            << "&NAME="    << MISC::url_encode( name, charset )
+            << "&MAIL="    << MISC::url_encode( mail, charset )
+            << "&MESSAGE=" << MISC::url_encode( msg, charset );
 
 #ifdef _DEBUG
     std::cout << "ArticleMachi::create_write_message " << ss_post.str() << std::endl;
