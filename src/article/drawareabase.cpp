@@ -3644,47 +3644,44 @@ int DrawAreaBase::search_move( const bool reverse )
     if( m_multi_selection.size() == 0 ) return 0;
     if( ! m_vscrbar ) return m_multi_selection.size();
 
-    std::list< SELECTION >::iterator it;
-    for( it = m_multi_selection.begin(); it != m_multi_selection.end(); ++it ){
+    auto it = std::find_if( m_multi_selection.begin(), m_multi_selection.end(),
+                            []( const SELECTION& s ) { return s.select; } );
+    if( it != m_multi_selection.end() ){
+        it->select = false;
 
-        if( ( *it ).select ){
+        // 前に移動
+        if( reverse ){
+            if( it == m_multi_selection.begin() ) it = m_multi_selection.end();
+            --it;
+        }
 
-            ( *it ).select = false;
+        // 次に移動
+        else{
+            if( ( ++it ) == m_multi_selection.end() ) it = m_multi_selection.begin();
+        }
 
-            // 前に移動
-            if( reverse ){
-                if( it == m_multi_selection.begin() ) it = m_multi_selection.end();
-                --it;
-            }
+        it->select = true;
 
-            // 次に移動
-            else{
-                if( ( ++it ) == m_multi_selection.end() ) it = m_multi_selection.begin();
-            }
+        // 移動先を範囲選択状態にする
+        m_caret_pos_dragstart = it->caret_from;
+        set_selection( it->caret_to );
 
-            ( *it ).select = true;
-
-            // 移動先を範囲選択状態にする
-            m_caret_pos_dragstart = ( *it ).caret_from;
-            set_selection( ( *it ).caret_to );
-
-            int y = MAX( 0, ( *it ).caret_from.layout->rect->y - 10 );
+        const int y = MAX( 0, it->caret_from.layout->rect->y - 10 );
 
 #ifdef _DEBUG
-            std::cout << "move to y = " << y << std::endl;
+        std::cout << "move to y = " << y << std::endl;
 #endif
 
-            auto adjust = m_vscrbar->get_adjustment();
-            if( ( int ) adjust->get_value() > y || ( int ) adjust->get_value() + ( int ) adjust->get_page_size() - m_font->br_size < y ){
+        auto adjust = m_vscrbar->get_adjustment();
+        const int value = static_cast<int>( adjust->get_value() );
+        if( value > y || value + static_cast<int>( adjust->get_page_size() ) - m_font->br_size < y ){
 
-                m_cancel_change_adjust = true;
-                adjust->set_value( y );
-                m_cancel_change_adjust = false;
-            }
-
-            redraw_view_force();
-            return m_multi_selection.size();
+            m_cancel_change_adjust = true;
+            adjust->set_value( y );
+            m_cancel_change_adjust = false;
         }
+
+        redraw_view_force();
     }
 
     return m_multi_selection.size();
