@@ -108,9 +108,9 @@ void LoginBe::start_login()
     data.url = CONFIG::get_url_loginbe();
 
     data.contenttype = "application/x-www-form-urlencoded";
-    data.str_post = "m=" + MISC::url_encode( get_username() );
-    data.str_post += "&p=" + MISC::url_encode( get_passwd() );
-    data.str_post += "&submit=" + MISC::url_encode( "登録", "EUC-JP" );
+    data.str_post = "m=" + MISC::url_encode_plus( get_username() );
+    data.str_post += "&p=" + MISC::url_encode_plus( get_passwd() );
+    data.str_post += "&submit=" + MISC::url_encode_plus( "登録", "EUC-JP" );
 
     logout();
     if( m_rawdata.capacity() < SIZE_OF_RAWDATA ) m_rawdata.reserve( SIZE_OF_RAWDATA );

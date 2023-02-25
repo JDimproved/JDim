@@ -220,11 +220,11 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
     }
 
     std::stringstream ss_post;
-    ss_post << "submit="   << MISC::url_encode( "新規スレッド作成", get_charset() )
-            << "&subject=" << MISC::url_encode( subject, get_charset() )
-            << "&FROM="    << MISC::url_encode( name, get_charset() )
-            << "&mail="    << MISC::url_encode( mail, get_charset() )
-            << "&MESSAGE=" << MISC::url_encode( msg, get_charset() )
+    ss_post << "submit="   << MISC::url_encode_plus( "新規スレッド作成", get_charset() )
+            << "&subject=" << MISC::url_encode_plus( subject, get_charset() )
+            << "&FROM="    << MISC::url_encode_plus( name, get_charset() )
+            << "&mail="    << MISC::url_encode_plus( mail, get_charset() )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_charset() )
             << "&bbs="     << get_id()
             << "&time="    << m_frontloader->get_time_modified();
 
@@ -236,7 +236,7 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
     // sidを送る
     if( CORE::get_login2ch()->login_now() ){
         std::string sid = CORE::get_login2ch()->get_sessionid();
-        ss_post << "&sid=" << MISC::url_encode( sid );
+        ss_post << "&sid=" << MISC::url_encode_plus( sid );
     }
 
 #ifdef _DEBUG

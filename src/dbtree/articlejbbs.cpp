@@ -48,10 +48,10 @@ std::string ArticleJBBS::create_write_message( const std::string& name, const st
             << "&KEY="     << get_key()
             << "&DIR="     << dir
             << "&TIME="    << get_time_modified()
-            << "&submit="  << MISC::url_encode( "書き込む", charset )
-            << "&NAME="    << MISC::url_encode( name, charset )
-            << "&MAIL="    << MISC::url_encode( mail, charset )
-            << "&MESSAGE=" << MISC::url_encode( msg, charset );
+            << "&submit="  << MISC::url_encode_plus( "書き込む", charset )
+            << "&NAME="    << MISC::url_encode_plus( name, charset )
+            << "&MAIL="    << MISC::url_encode_plus( mail, charset )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, charset );
 
 #ifdef _DEBUG
     std::cout << "Articlejbbs::create_write_message " << ss_post.str() << std::endl;
