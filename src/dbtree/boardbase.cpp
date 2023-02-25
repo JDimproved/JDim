@@ -1537,14 +1537,13 @@ bool BoardBase::is_abone_thread( ArticleBase* article )
     
     // スレあぼーん
     if( check_thread ){
-        for( const std::string& subject : m_list_abone_thread ) {
-            if( article->get_subject() == subject ){
-
-                // 対象スレがDat落ちした場合はあぼーんしなかったスレ名をリストから消去する
-                // remove_old_abone_thread() も参照
-                m_list_abone_thread_remove.push_back( subject );
-                return true;
-            }
+        auto it = std::find_if( m_list_abone_thread.cbegin(), m_list_abone_thread.cend(),
+                                [a = article](const std::string& subj) { return a->get_subject() == subj; } );
+        if( it != m_list_abone_thread.cend() ) {
+            // 対象スレがDat落ちした場合はあぼーんしなかったスレ名をリストから消去する
+            // remove_old_abone_thread() も参照
+            m_list_abone_thread_remove.push_back( *it );
+            return true;
         }
     }
 
