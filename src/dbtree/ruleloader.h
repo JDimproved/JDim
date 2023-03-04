@@ -20,20 +20,16 @@ namespace DBTREE
     class RuleLoader : public SKELETON::TextLoader
     {
         std::string m_url_boadbase;
-        // スレ本文とエンコーディングが異なる板があるため指定可能にする
-        // 文字列の寿命は呼び出し元が責任を持つこと
-        const char* m_override_charset;
 
       public:
 
-        explicit RuleLoader( const std::string& url_boardbase, const char* override_charset = nullptr );
+        explicit RuleLoader( const std::string& url_boardbase );
         ~RuleLoader();
 
       protected:
 
         std::string get_url() const override;
         std::string get_path() const override;
-        std::string get_charset() const override;
 
         // ロード用データ作成
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;

@@ -37,7 +37,7 @@ BoardJBBS::BoardJBBS( const std::string& root, const std::string& path_board, co
     set_subjecttxt( "subject.txt" );
     set_ext( "" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く  
-    set_charset( "EUCJP-WIN" );
+    set_encoding( Encoding::eucjp );
 }
 
 
@@ -75,7 +75,7 @@ ArticleBase* BoardJBBS::append_article( const std::string& datbase, const std::s
 {
     if( empty() ) return get_article_null();
 
-    ArticleBase* article = insert( std::make_unique<DBTREE::ArticleJBBS>( datbase, id, cached ) );
+    ArticleBase* article = insert( std::make_unique<DBTREE::ArticleJBBS>( datbase, id, cached, get_encoding() ) );
 
     if( ! article ) return get_article_null();
     return article;
@@ -111,11 +111,11 @@ std::string BoardJBBS::create_newarticle_message( const std::string& subject, co
 
     std::stringstream ss_post;
     ss_post.clear();
-    ss_post << "SUBJECT="  << MISC::url_encode_plus( subject, get_charset() )
-            << "&submit="  << MISC::url_encode_plus( "新規書き込み", get_charset() )
-            << "&NAME="    << MISC::url_encode_plus( name, get_charset() )
-            << "&MAIL="    << MISC::url_encode_plus( mail, get_charset() )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_charset() )
+    ss_post << "SUBJECT="  << MISC::url_encode_plus( subject, get_encoding() )
+            << "&submit="  << MISC::url_encode_plus( "新規書き込み", get_encoding() )
+            << "&NAME="    << MISC::url_encode_plus( name, get_encoding() )
+            << "&MAIL="    << MISC::url_encode_plus( mail, get_encoding() )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() )
             << "&DIR="     << dir
             << "&BBS="     << bbs
             << "&TIME="    << get_time_modified();
@@ -214,11 +214,11 @@ std::string BoardJBBS::url_settingtxt() const
 //
 void BoardJBBS::load_rule_setting()
 {
-    if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase(), "MS932" );
-    m_ruleloader->load_text();
+    if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase() );
+    m_ruleloader->load_text( Encoding::sjis );
 
     if( ! m_settingloader ) m_settingloader = std::make_unique<SettingLoader>( url_boardbase() );
-    m_settingloader->load_text();
+    m_settingloader->load_text( get_encoding() );
 }
 
 
@@ -230,11 +230,11 @@ void BoardJBBS::load_rule_setting()
 //
 void BoardJBBS::download_rule_setting()
 {
-    if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase(), "MS932" );
-    m_ruleloader->download_text();
+    if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase() );
+    m_ruleloader->download_text( Encoding::sjis );
 
     if( ! m_settingloader ) m_settingloader = std::make_unique<SettingLoader>( url_boardbase() );
-    m_settingloader->download_text();
+    m_settingloader->download_text( get_encoding() );
 }
 
 

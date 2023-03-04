@@ -5,6 +5,7 @@
 #ifndef _MISCUTIL_H
 #define _MISCUTIL_H
 
+#include "jdencoding.h"
 
 #include <glibmm.h>
 
@@ -178,20 +179,16 @@ namespace MISC
     std::string url_encode( std::string_view str );
 
     /// UTF-8文字列をエンコーディング変換してからパーセント符号化して返す
-    std::string url_encode( const std::string& utf8str, const std::string& encoding );
+    std::string url_encode( const std::string& utf8str, const Encoding encoding );
 
     /// application/x-www-form-urlencoded の形式でパーセント符号化する
     std::string url_encode_plus( std::string_view str );
 
     /// UTF-8文字列をエンコーディング変換してから application/x-www-form-urlencoded の形式でパーセント符号化する
-    std::string url_encode_plus( const std::string& utf8str, const std::string& encoding );
+    std::string url_encode_plus( const std::string& utf8str, const Encoding encoding );
 
     // BASE64
     std::string base64( const std::string& str );
-
-    // 文字コードを coding_from から coding_to に変換
-    // 遅いので連続的な処理が必要な時は使わないこと
-    std::string Iconv( const std::string& str, const std::string& coding_to, const std::string& coding_from );
 
     // 「&#数字;」形式の数字参照文字列の中の「数字」部分の文字列長
     //

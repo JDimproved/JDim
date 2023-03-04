@@ -9,9 +9,10 @@
 #include "settingloader.h"
 #include "ruleloader.h"
 
-#include "jdlib/miscutil.h"
-#include "jdlib/miscmsg.h"
 #include "jdlib/jdregex.h"
+#include "jdlib/misccharcode.h"
+#include "jdlib/miscmsg.h"
+#include "jdlib/miscutil.h"
 
 #include "config/globalconf.h"
 
@@ -47,7 +48,7 @@ Board2chCompati::Board2chCompati( const std::string& root, const std::string& pa
     set_subjecttxt( "subject.txt" );
     set_ext( ".dat" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く
-    set_charset( "MS932" );
+    set_encoding( Encoding::sjis );
 
     BoardBase::set_basicauth( basicauth );
 }
@@ -117,9 +118,9 @@ std::string Board2chCompati::analyze_keyword_impl( const std::string& html, bool
 
         // キーワード取得
         if( ! keyword.empty() ) keyword.push_back( '&' );
-        keyword.append( MISC::url_encode_plus( d.name, get_charset() ) );
+        keyword.append( MISC::url_encode_plus( d.name, get_encoding() ) );
         keyword.push_back( '=' );
-        keyword.append( MISC::url_encode_plus( d.value, get_charset() ) );
+        keyword.append( MISC::url_encode_plus( d.value, get_encoding() ) );
     }
 #ifdef _DEBUG
     std::cout << "Board2chCompati::analyze_keyword_impl form data = " << keyword << std::endl;
@@ -185,12 +186,12 @@ std::string Board2chCompati::create_newarticle_message( const std::string& subje
     std::stringstream ss_post;
     ss_post.clear();
     ss_post << "bbs="      << get_id()
-            << "&subject=" << MISC::url_encode_plus( subject, get_charset() )
+            << "&subject=" << MISC::url_encode_plus( subject, get_encoding() )
             << "&time="    << get_time_modified()
-            << "&submit="  << MISC::url_encode_plus( "新規スレッド作成", get_charset() )
-            << "&FROM="    << MISC::url_encode_plus( name, get_charset() )
-            << "&mail="    << MISC::url_encode_plus( mail, get_charset() )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_charset() );
+            << "&submit="  << MISC::url_encode_plus( "新規スレッド作成", get_encoding() )
+            << "&FROM="    << MISC::url_encode_plus( name, get_encoding() )
+            << "&mail="    << MISC::url_encode_plus( mail, get_encoding() )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() );
 
 #ifdef _DEBUG
     std::cout << "Board2chCompati::create_newarticle_message " << ss_post.str() << std::endl;
@@ -236,7 +237,7 @@ ArticleBase* Board2chCompati::append_article( const std::string& datbase, const 
 {
     if( empty() ) return get_article_null();
 
-    ArticleBase* article = insert( std::make_unique<DBTREE::Article2chCompati>( datbase, id, cached ) );
+    ArticleBase* article = insert( std::make_unique<DBTREE::Article2chCompati>( datbase, id, cached, get_encoding() ) );
 
     if( ! article ) return get_article_null();
     return article;
@@ -485,10 +486,10 @@ void Board2chCompati::load_rule_setting()
 #endif
 
     if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase() );
-    m_ruleloader->load_text();
+    m_ruleloader->load_text( get_encoding() );
 
     if( ! m_settingloader ) m_settingloader = std::make_unique<SettingLoader>( url_boardbase() );
-    m_settingloader->load_text();
+    m_settingloader->load_text( get_encoding() );
 }
 
 
@@ -504,10 +505,10 @@ void Board2chCompati::download_rule_setting()
 #endif
 
     if( ! m_ruleloader ) m_ruleloader = std::make_unique<RuleLoader>( url_boardbase() );
-    m_ruleloader->download_text();
+    m_ruleloader->download_text( get_encoding() );
 
     if( ! m_settingloader ) m_settingloader = std::make_unique<SettingLoader>( url_boardbase() );
-    m_settingloader->download_text();
+    m_settingloader->download_text( get_encoding() );
 }
 
 

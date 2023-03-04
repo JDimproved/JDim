@@ -15,7 +15,7 @@ namespace DBTREE
     {
       public:
 
-        ArticleLocal( const std::string& datbase, const std::string& id );
+        ArticleLocal( const std::string& datbase, const std::string& id, const Encoding enc );
         ~ArticleLocal();
 
         // ID がこのスレのものかどうか

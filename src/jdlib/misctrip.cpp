@@ -7,6 +7,8 @@
 #endif
 
 #include "misctrip.h"
+
+#include "misccharcode.h"
 #include "miscutil.h"
 
 #include <sstream>
@@ -244,19 +246,18 @@ std::string create_trip_conventional( const std::string& key )
 }
 
 
-/*--------------------------------------------------------------------*/
-// トリップを取得
-//
-// param1: 元となる文字列(最初の"#"を含まない。UTF-8 であること)
-// param2: 書き込む掲示板の文字コード
-// return: トリップ文字列
-/*--------------------------------------------------------------------*/
-std::string MISC::get_trip( const std::string& str, const std::string& charset )
+/** @brief トリップを取得 (SHA1等の新方式対応)
+ *
+ * @param[in] utf8str  元となる文字列(最初の"#"を含まない。UTF-8 であること)
+ * @param[in] encoding 書き込む掲示板の文字コード
+ * @return トリップ文字列
+ */
+std::string MISC::get_trip( const std::string& utf8str, const Encoding encoding )
 {
-    if( str.empty() ) return std::string();
+    if( utf8str.empty() ) return std::string();
 
-    // str の文字コードを UTF-8 から charset に変更して key に代入する
-    std::string key = MISC::Iconv( str, charset, "UTF-8" );
+    // utf8str の文字コードを UTF-8 から変更して key に代入する
+    std::string key = MISC::Iconv( utf8str, encoding, Encoding::utf8 );
 
     std::string trip;
 
@@ -272,7 +273,7 @@ std::string MISC::get_trip( const std::string& str, const std::string& charset )
     }
 
 #ifdef _DEBUG
-    std::cout << "MISC::get_trip : " << str << " -> " << trip << std::endl;
+    std::cout << "MISC::get_trip : " << utf8str << " -> " << trip << std::endl;
 #endif
 
     return trip;

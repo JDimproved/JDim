@@ -293,9 +293,15 @@ std::string DBTREE::board_subjecttxt( const std::string& url )
 }
 
 
-std::string DBTREE::board_charset( const std::string& url )
+Encoding DBTREE::board_encoding( const std::string& url )
 {
-    return DBTREE::get_board( url )->get_charset();
+    return DBTREE::get_board( url )->get_encoding();
+}
+
+
+void DBTREE::board_set_encoding( const std::string& url, const Encoding enc )
+{
+    return DBTREE::get_board( url )->set_encoding( enc );
 }
 
 
@@ -888,7 +894,19 @@ void DBTREE::article_set_date_modified( const std::string& url, const std::strin
     DBTREE::get_article( url )->set_date_modified( date );
 }
 
-int  DBTREE::article_hour( const std::string& url )
+// スレの文字コード
+Encoding DBTREE::article_encoding( const std::string& url )
+{
+    return DBTREE::get_article( url )->get_encoding();
+}
+
+// スレの文字コードをセット
+void DBTREE::article_set_encoding( const std::string& url, const Encoding enc )
+{
+    DBTREE::get_article( url )->set_encoding( enc );
+}
+
+int DBTREE::article_hour( const std::string& url )
 {
     return DBTREE::get_article( url )->get_hour();
 }

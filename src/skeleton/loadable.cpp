@@ -7,12 +7,16 @@
 
 #include "jdlib/loader.h"
 #include "jdlib/misctime.h"
+#ifdef _DEBUG
+#include "jdlib/misccharcode.h"
+#endif
 
 #include "httpcode.h"
 
 using namespace SKELETON;
 
 Loadable::Loadable()
+    : m_encoding( Encoding::unknown )
 {
     clear_load_data();
 }
@@ -180,6 +184,7 @@ void Loadable::callback_dispatch()
     std::cout << "location = " << m_location << std::endl;
     std::cout << "total_length = " << m_total_length << std::endl;
     std::cout << "current length = " << m_current_length << std::endl;
+    std::cout << "charset = " << MISC::encoding_to_cstr( get_encoding() ) << std::endl;
 #endif
 
     receive_finish();

@@ -58,6 +58,10 @@ namespace MISC
 
     /// WAVE DASH(U+301C)などのWindows系UTF-8文字をUnix系文字と相互変換
     std::string utf8_fix_wavedash( const std::string& str, const WaveDashFix mode );
+
+    // 入力の文字エンコーディングを from から to に変換
+    // 遅いので連続的な処理が必要な時は使わないこと
+    std::string Iconv( const std::string& str, const Encoding to, const Encoding from );
 }
 
 #endif

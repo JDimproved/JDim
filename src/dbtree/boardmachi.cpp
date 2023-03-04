@@ -34,7 +34,7 @@ BoardMachi::BoardMachi( const std::string& root, const std::string& path_board, 
     set_subjecttxt( "subject.txt" );
     set_ext( "" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く  
-    set_charset( "MS932" );
+    set_encoding( Encoding::sjis );
 }
 
 
@@ -78,7 +78,7 @@ ArticleBase* BoardMachi::append_article( const std::string& datbase, const std::
 {
     if( empty() ) return get_article_null();
 
-    ArticleBase* article = insert( std::make_unique<DBTREE::ArticleMachi>( datbase, id, cached ) );
+    ArticleBase* article = insert( std::make_unique<DBTREE::ArticleMachi>( datbase, id, cached, get_encoding() ) );
 
     if( ! article ) return get_article_null();
     return article;

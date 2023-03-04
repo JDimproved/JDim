@@ -17,8 +17,8 @@
 using namespace DBTREE;
 
 
-ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, bool cached )
-    : ArticleBase( datbase, _id, cached )
+ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, bool cached, const Encoding enc )
+    : ArticleBase( datbase, _id, cached, enc )
 {
     assert( !get_id().empty() );
 
@@ -37,17 +37,15 @@ std::string ArticleMachi::create_write_message( const std::string& name, const s
 {
     if( msg.empty() ) return std::string();
 
-    std::string charset = DBTREE::board_charset( get_url() );
-
     std::stringstream ss_post;
     ss_post.clear();
     ss_post << "BBS="      << DBTREE::board_id( get_url() )
             << "&KEY="     << get_key()
             << "&TIME="    << get_time_modified()
-            << "&submit="  << MISC::url_encode_plus( "書き込む", charset )
-            << "&NAME="    << MISC::url_encode_plus( name, charset )
-            << "&MAIL="    << MISC::url_encode_plus( mail, charset )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, charset );
+            << "&submit="  << MISC::url_encode_plus( "書き込む", get_encoding() )
+            << "&NAME="    << MISC::url_encode_plus( name, get_encoding() )
+            << "&MAIL="    << MISC::url_encode_plus( mail, get_encoding() )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() );
 
 #ifdef _DEBUG
     std::cout << "ArticleMachi::create_write_message " << ss_post.str() << std::endl;

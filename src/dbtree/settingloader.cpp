@@ -48,12 +48,6 @@ std::string SettingLoader::get_path() const
 }
 
 
-std::string SettingLoader::get_charset() const
-{
-    return DBTREE::board_charset( m_url_boadbase );
-}
-
-
 // ロード用データ作成
 void SettingLoader::create_loaderdata( JDLIB::LOADERDATA& data )
 {

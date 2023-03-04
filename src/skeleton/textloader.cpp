@@ -65,23 +65,29 @@ void TextLoader::reset()
 }
 
 
-//
-// キャッシュからロード
-//
-void TextLoader::load_text()
+/** @brief キャッシュからロード
+ *
+ * @details 読み込んだキャッシュはUTF-8に変換する。
+ * @param[in] encoding キャッシュの文字エンコーディング
+ */
+void TextLoader::load_text( const Encoding encoding )
 {
     if( get_path().empty() ) return;
 
     init();
     set_code( HTTP_INIT );
+    set_encoding( encoding );
     receive_finish();
 }
 
 
-//
-// ダウンロード開始
-//
-void TextLoader::download_text()
+/** @brief ダウンロードを開始する
+ *
+ * @details ダウンロードしたテキストはUTF-8に変換する。
+ * HTTP 304 Not Modified の時はキャッシュから読み込む。
+ * @param[in] encoding ダウンロードしたテキストの文字エンコーディング
+ */
+void TextLoader::download_text( const Encoding encoding )
 {
 #ifdef _DEBUG
     std::cout << "TextLoader::download_text url = " << get_url() << std::endl;
@@ -90,7 +96,7 @@ void TextLoader::download_text()
     if( is_loading() ) return;
     if( m_loaded ) return; // 読み込み済み
     if( ! SESSION::is_online() ){
-        load_text();
+        load_text( encoding );
         return;
     }
 
@@ -101,6 +107,7 @@ void TextLoader::download_text()
     JDLIB::LOADERDATA data;
 
     init();
+    set_encoding( encoding );
     create_loaderdata( data );
     if( data.url.empty() ) return;
     if( ! start_load( data ) ) clear();
@@ -172,7 +179,7 @@ void TextLoader::receive_finish()
     set_str_code( std::string() );
 
     // UTF-8に変換しておく
-    JDLIB::Iconv libiconv( "UTF-8", get_charset() );
+    JDLIB::Iconv libiconv( Encoding::utf8, get_encoding() );
     libiconv.convert( m_rawdata.data(), m_rawdata.size(), m_data );
     clear();
 

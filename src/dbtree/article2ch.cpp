@@ -7,8 +7,9 @@
 #include "nodetree2ch.h"
 #include "interface.h"
 
-#include "jdlib/miscutil.h"
+#include "jdlib/misccharcode.h"
 #include "jdlib/misctime.h"
+#include "jdlib/miscutil.h"
 
 #include "config/globalconf.h"
 
@@ -19,8 +20,8 @@
 using namespace DBTREE;
 
 
-Article2ch::Article2ch( const std::string& datbase, const std::string& id, bool cached )
-    : Article2chCompati( datbase, id, cached )
+Article2ch::Article2ch( const std::string& datbase, const std::string& id, bool cached, const Encoding enc )
+    : Article2chCompati( datbase, id, cached, enc )
 {}
 
 
@@ -32,16 +33,14 @@ std::string Article2ch::create_write_message( const std::string& name, const std
 {
     if( msg.empty() ) return std::string();
 
-    const std::string charset = DBTREE::board_charset( get_url() );
-
     std::stringstream ss_post;
-    ss_post << "FROM=" << MISC::url_encode_plus( name, charset )
-            << "&mail=" << MISC::url_encode_plus( mail, charset )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, charset )
+    ss_post << "FROM=" << MISC::url_encode_plus( name, get_encoding() )
+            << "&mail=" << MISC::url_encode_plus( mail, get_encoding() )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() )
             << "&bbs=" << DBTREE::board_id( get_url() )
             << "&key=" << get_key()
             << "&time=" << get_time_modified()
-            << "&submit=" << MISC::url_encode_plus( "書き込む", charset )
+            << "&submit=" << MISC::url_encode_plus( "書き込む", get_encoding() )
             // XXX: ブラウザの種類に関係なく含めて問題ないか？
             << "&oekaki_thread1=";
 
@@ -51,8 +50,8 @@ std::string Article2ch::create_write_message( const std::string& name, const std
 
     // ログイン中
     if( CORE::get_login2ch()->login_now() ){
-                std::string sid = CORE::get_login2ch()->get_sessionid();
-                ss_post << "&sid=" << MISC::url_encode_plus( sid );
+        const std::string sid = CORE::get_login2ch()->get_sessionid();
+        ss_post << "&sid=" << MISC::url_encode_plus( sid );
     }
 
 #ifdef _DEBUG

@@ -9,6 +9,8 @@
 #ifndef _ARTICLEBASE_H
 #define _ARTICLEBASE_H
 
+#include "jdencoding.h"
+
 #include "skeleton/lockable.h"
 
 #include <ctime>
@@ -46,6 +48,8 @@ namespace DBTREE
         std::string m_str_code;      // HTTPコード(文字列)
         std::string m_ext_err;       // HTTPコード以外のエラーメッセージ
         int m_status;                // 状態 ( global.h で定義 )
+
+        Encoding m_encoding;         // 文字エンコーディング
 
         // 移転する前にこのスレがあった旧ホスト名( 移転していないなら m_url に含まれているホスト名と同じ )
         // 詳しくはコンストラクタの説明を参照せよ
@@ -121,7 +125,7 @@ namespace DBTREE
 
       public:
 
-        ArticleBase( const std::string& datbase, const std::string& id, bool cached );
+        ArticleBase( const std::string& datbase, const std::string& id, bool cached, const Encoding enc );
         ~ArticleBase();
 
         bool empty() const noexcept { return m_url.empty(); }
@@ -151,6 +155,10 @@ namespace DBTREE
         int get_number_load() const noexcept { return m_number_load; }
         int get_number_seen() const noexcept {  return m_number_seen; }
         int get_number_max() const noexcept { return m_number_max; }
+
+        // 文字エンコーディング
+        Encoding get_encoding() const noexcept { return m_encoding; }
+        void set_encoding( const Encoding encoding ){ m_encoding = encoding; }
 
         // スレ速度
         int get_speed() const;
