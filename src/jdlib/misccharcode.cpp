@@ -12,6 +12,24 @@
 // チェックする最大バイト数
 #define CHECK_LIMIT 1024
 
+
+static constexpr const char* encoding_string[] = { "ISO-8859-1", "ASCII", "EUCJP-MS", "ISO-2022-JP", "MS932", "UTF-8" };
+
+
+/** @brief `Encoding` から文字エンコーディングを表すヌル終端文字列を取得する
+ *
+ * @param[in] encoding 文字エンコーディング
+ * @return encodingと一致する文字列。
+ * `Encoding::unknown` のとき、または不正な値のなら `"ISO-8859-1"` (Latin1) を返す。
+ */
+const char* MISC::encoding_to_cstr( const Encoding encoding )
+{
+    Encoding enc = encoding;
+    if( enc > Encoding::utf8 || enc < Encoding::unknown ) enc = Encoding::unknown;
+    return encoding_string[ static_cast<int>( enc ) ];
+}
+
+
 /*--- 制御文字とASCII -----------------------------------------------*/
 
 // [ 制御文字 ] 0x00〜0x1F 0x7F
