@@ -32,6 +32,7 @@ namespace MISC
     };
 
     const char* encoding_to_cstr( const Encoding encoding );
+    Encoding encoding_from_cstr( const char* encoding );
     bool is_eucjp( std::string_view input, std::size_t read_byte );
     bool is_jis( std::string_view input, std::size_t& read_byte );
     bool is_sjis( std::string_view input, std::size_t read_byte );
