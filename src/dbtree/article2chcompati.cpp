@@ -16,8 +16,9 @@
 
 using namespace DBTREE;
 
-Article2chCompati::Article2chCompati( const std::string& datbase, const std::string& _id, bool cached )
-    : ArticleBase( datbase, _id, cached )
+Article2chCompati::Article2chCompati( const std::string& datbase, const std::string& _id, bool cached,
+                                      const Encoding enc )
+    : ArticleBase( datbase, _id, cached, enc )
 {
     assert( ! get_id().empty() );
 
@@ -42,17 +43,15 @@ std::string Article2chCompati::create_write_message( const std::string& name, co
 {
     if( msg.empty() ) return std::string();
 
-    std::string charset = DBTREE::board_charset( get_url() );
-
     std::stringstream ss_post;
     ss_post.clear();
     ss_post << "bbs="      << DBTREE::board_id( get_url() )
             << "&key="     << get_key()
             << "&time="    << get_time_modified()
-            << "&submit="  << MISC::url_encode_plus( "書き込む", charset )
-            << "&FROM="    << MISC::url_encode_plus( name, charset )
-            << "&mail="    << MISC::url_encode_plus( mail, charset )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, charset );
+            << "&submit="  << MISC::url_encode_plus( "書き込む", get_encoding() )
+            << "&FROM="    << MISC::url_encode_plus( name, get_encoding() )
+            << "&mail="    << MISC::url_encode_plus( mail, get_encoding() )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() );
 
 #ifdef _DEBUG
     std::cout << "Article2chCompati::create_write_message " << ss_post.str() << std::endl;

@@ -44,6 +44,7 @@
 #ifndef _LOADABLE_H
 #define _LOADABLE_H
 
+#include "jdencoding.h"
 #include "dispatchable.h"
 
 #include <gtkmm.h>
@@ -68,6 +69,8 @@ namespace SKELETON
 
         bool m_low_priority{};
 
+        Encoding m_encoding;
+
         // ローダからコピーしたデータ
         int m_code;
         std::string m_str_code;
@@ -88,6 +91,9 @@ namespace SKELETON
 
         // ロード中かどうか
         bool is_loading() const;
+
+        Encoding get_encoding() const { return m_encoding; }
+        void set_encoding( const Encoding encoding ){ m_encoding = encoding; }
 
         int get_code() const { return m_code; }
         void set_code( int code ) { m_code = code; }

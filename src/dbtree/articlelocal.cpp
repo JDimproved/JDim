@@ -10,8 +10,8 @@
 using namespace DBTREE;
 
 
-ArticleLocal::ArticleLocal( const std::string& datbase, const std::string& id )
-    : Article2chCompati( datbase, id, true )
+ArticleLocal::ArticleLocal( const std::string& datbase, const std::string& id, const Encoding enc )
+    : Article2chCompati( datbase, id, true, enc )
 {
 #ifdef _DEBUG
     std::cout << "ArticleLocal::ArticleLocal datbase = " << datbase

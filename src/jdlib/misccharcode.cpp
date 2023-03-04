@@ -5,6 +5,8 @@
 
 #include "misccharcode.h"
 
+#include "jdiconv.h"
+
 #include <cstring>
 #include <cstdint>
 
@@ -533,4 +535,24 @@ std::string MISC::utf8_fix_wavedash( const std::string& str, const MISC::WaveDas
     }
 
     return result;
+}
+
+
+/** @brief 入力の文字エンコーディングを from から to に変換
+ *
+ * @details 遅いので連続的な処理が必要な時は使わないこと
+ * @param[in] str  変換するテキスト
+ * @param[in] to   変換先の文字エンコーディング
+ * @param[in] from str の文字エンコーディング
+ * @return 変換した結果
+ */
+std::string MISC::Iconv( const std::string& str, const Encoding to, const Encoding from )
+{
+    if( from == to ) return str;
+
+    JDLIB::Iconv icv( to, from );
+    std::string tmp_str{ str };
+    std::string encoded;
+    icv.convert( tmp_str.data(), tmp_str.size(), encoded );
+    return encoded;
 }

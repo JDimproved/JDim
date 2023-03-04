@@ -19,7 +19,6 @@ namespace CORE
 
         SIG_SEARCH_FIN m_sig_search_fin;
 
-        std::string m_charset;
         std::string m_query;
 
       public:
@@ -35,7 +34,6 @@ namespace CORE
 
         std::string get_url() const override;
         std::string get_path() const override { return {}; }
-        std::string get_charset() const override { return m_charset; }
 
         // ロード用データ作成
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;

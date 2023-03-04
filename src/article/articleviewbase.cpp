@@ -2375,19 +2375,11 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
 
             switch( enc )
             {
+                case Encoding::sjis:
                 case Encoding::eucjp:
-
-                    status_url = MISC::Iconv( tmp, "UTF-8", "EUC-JP" );
-                    break;
-
                 case Encoding::jis:
 
-                    status_url = MISC::Iconv( tmp, "UTF-8", "ISO-2022-JP" );
-                    break;
-
-                case Encoding::sjis:
-
-                    status_url = MISC::Iconv( tmp, "UTF-8", "MS932" );
+                    status_url = MISC::Iconv( tmp, Encoding::utf8, enc );
                     break;
 
                 case Encoding::ascii:

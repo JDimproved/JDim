@@ -3,12 +3,13 @@
 //#define _DEBUG
 #include "jddebug.h"
 
+#include "miscutil.h"
+
 #include "hkana.h"
 #include "jdiconv.h"
 #include "jdregex.h"
 #include "misccharcode.h"
 #include "miscmsg.h"
-#include "miscutil.h"
 
 #include "dbtree/spchar_decoder.h"
 #include "dbtree/node.h"
@@ -17,10 +18,11 @@
 
 #include <glib.h>
 
-#include <sstream>
-#include <cstring>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <sstream>
 
 
 //
@@ -1358,7 +1360,7 @@ std::string MISC::url_decode( std::string_view url )
  *
  * @param[in] str 入力文字列 (文字エンコーディングは任意)
  * @return パーセント符号化された文字列
- * @see MISC::url_encode( const std::string& utf8str, const std::string& encoding )
+ * @see MISC::url_encode( const std::string& utf8str, const Encoding encoding )
 */
 std::string MISC::url_encode( std::string_view str )
 {
@@ -1384,16 +1386,16 @@ std::string MISC::url_encode( std::string_view str )
  *
  * @details `utf8str` を `encoding` で指定した文字エンコーディングに変換してから符号化する。
  * @param[in] utf8str 入力文字列 (文字エンコーディングはUTF-8)
- * @param[in] encoding 変換先の文字エンコーディング名
+ * @param[in] encoding 変換先の文字エンコーディング
  * @return パーセント符号化された文字列
  * @see MISC::url_encode( std::string_view str )
 */
-std::string MISC::url_encode( const std::string& utf8str, const std::string& encoding )
+std::string MISC::url_encode( const std::string& utf8str, const Encoding encoding )
 {
-    if( encoding.empty() || encoding == "UTF-8" ) return MISC::url_encode( utf8str );
+    if( encoding == Encoding::utf8 ) return MISC::url_encode( utf8str );
 
-    const std::string str_enc = MISC::Iconv( utf8str, encoding, "UTF-8" );
-    return  MISC::url_encode( str_enc );
+    const std::string str_enc = MISC::Iconv( utf8str, encoding, Encoding::utf8 );
+    return MISC::url_encode( str_enc );
 }
 
 
@@ -1408,7 +1410,7 @@ std::string MISC::url_encode( const std::string& utf8str, const std::string& enc
  *
  * @param[in] str 入力文字列 (文字エンコーディングは任意)
  * @return パーセント符号化された文字列
- * @see MISC::url_encode_plus( const std::string& utf8str, const std::string& encoding )
+ * @see MISC::url_encode_plus( const std::string& utf8str, const Encoding encoding )
 */
 std::string MISC::url_encode_plus( std::string_view str )
 {
@@ -1444,14 +1446,14 @@ std::string MISC::url_encode_plus( std::string_view str )
  * @return パーセント符号化された文字列
  * @see MISC::url_encode_plus( std::string_view str )
 */
-std::string MISC::url_encode_plus( const std::string& utf8str, const std::string& encoding )
+std::string MISC::url_encode_plus( const std::string& utf8str, const Encoding encoding )
 {
-    if( encoding.empty() || encoding == "UTF-8" ) {
+    if( encoding == Encoding::utf8 ) {
         return MISC::url_encode_plus( utf8str );
     }
 
-    const std::string str_enc = MISC::Iconv( utf8str, encoding, "UTF-8" );
-    return  MISC::url_encode_plus( str_enc );
+    const std::string str_enc = MISC::Iconv( utf8str, encoding, Encoding::utf8 );
+    return MISC::url_encode_plus( str_enc );
 }
 
 
@@ -1500,26 +1502,6 @@ std::string MISC::base64( const std::string& str )
     return out;
 }
 
-
-
-
-//
-// 文字コードを coding_from から coding_to に変換
-//
-// 遅いので連続的な処理が必要な時は使わないこと
-//
-std::string MISC::Iconv( const std::string& str, const std::string& coding_to, const std::string& coding_from )
-{
-    if( coding_from == coding_to ) return str;
-
-    std::string str_bk = str;
-
-    JDLIB::Iconv libiconv( coding_to, coding_from );
-    std::string str_enc;
-    libiconv.convert( str_bk.data(), str_bk.size(), str_enc );
-
-    return str_enc;
-}
 
 
 //

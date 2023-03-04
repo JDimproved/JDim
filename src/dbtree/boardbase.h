@@ -107,7 +107,6 @@ namespace DBTREE
         // m_subjecttxt = "subject.txt"
         // m_ext = ".dat"
         // m_id = "hogeboard"
-        // m_charset = "MS932"
         //
         // 先頭に'/'を付けて最後に '/' は付けないことにフォーマットを統一
         //
@@ -120,7 +119,6 @@ namespace DBTREE
         std::string m_subjecttxt;
         std::string m_ext;
         std::string m_id;
-        std::string m_charset;
         std::string m_name; // 板名
 
         // dat型のurlに変換する時のquery ( url_dat()で使用する )
@@ -179,6 +177,7 @@ namespace DBTREE
         std::unique_ptr<JDLIB::Iconv> m_iconv;
         std::string m_rawdata;
         std::string m_rawdata_left;
+        Encoding m_encoding_bak;
 
         // 情報ファイルを読みこんだらtrueにして2度読みしないようにする
         bool m_read_info{};
@@ -232,7 +231,6 @@ namespace DBTREE
         void set_subjecttxt( const std::string& str ){ m_subjecttxt = str; }
         void set_ext( const std::string& str ){ m_ext = str; }
         void set_id( const std::string& str ){ m_id = str; }
-        void set_charset( const std::string& str ){ m_charset = str; }
 
         // articleがスレあぼーんされているか
         bool is_abone_thread( ArticleBase* article );
@@ -300,7 +298,6 @@ namespace DBTREE
         const std::string& get_path_board() const { return m_path_board; }
         const std::string& get_ext() const { return m_ext; }
         const std::string& get_id() const { return m_id; }
-        const std::string& get_charset() const { return m_charset; }
         const std::string& get_name() const { return m_name; }
         void update_name( const std::string& name );
         const std::string& get_subjecttxt() const { return m_subjecttxt; }

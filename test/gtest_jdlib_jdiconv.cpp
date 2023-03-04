@@ -1,5 +1,6 @@
 // License: GPL2
 
+#include "jdencoding.h"
 #include "jdlib/jdiconv.h"
 
 #include "gtest/gtest.h"
@@ -19,7 +20,7 @@ TEST_F(Iconv_ToAsciiFromUtf8, empty)
     char input[] = "";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "ASCII", "UTF-8", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::ascii, Encoding::utf8, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "", result );
@@ -31,7 +32,7 @@ TEST_F(Iconv_ToAsciiFromUtf8, helloworld)
     char input[] = "hello world!\n";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "ASCII", "UTF-8", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::ascii, Encoding::utf8, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "hello world!\n", result );
@@ -43,7 +44,7 @@ TEST_F(Iconv_ToAsciiFromUtf8, hiragana)
     char input[] = "あいうえお";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "ASCII", "UTF-8", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::ascii, Encoding::utf8, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "&#12354;&#12356;&#12358;&#12360;&#12362;", result );
@@ -56,8 +57,9 @@ TEST_F(Iconv_ToAsciiFromUtf8, subdivision_flag)
     char input[] = "\U0001F3F4\U000E0067\U000E0062\U000E0065\U000E006E\U000E0067\U000E007F";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "ASCII", "UTF-8", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::ascii, Encoding::utf8, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
+
     EXPECT_EQ( "&#127988;&#917607;&#917602;&#917605;&#917614;&#917607;&#917631;", result );
     EXPECT_EQ( 63, result.size() );
 }
@@ -71,7 +73,7 @@ TEST_F(Iconv_ToUtf8FromAscii, replacement_character_to_utf8_is_uFFFD)
     char input[] = "\x80\x91\xA2\xB3\xC4\xD5\xE6\xF7";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "UTF-8", "ASCII", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::ascii, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     // UTF-8へ変換するとき入力エンコーディングで無効なバイト列は U+FFFD に置き換える
@@ -88,7 +90,7 @@ TEST_F(Iconv_ToUtf8FromMs932, empty)
     char input[] = "";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::sjis, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "", result );
@@ -100,7 +102,7 @@ TEST_F(Iconv_ToUtf8FromMs932, helloworld)
     char input[] = "hello world!\n";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::sjis, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "hello world!\n", result );
@@ -112,7 +114,7 @@ TEST_F(Iconv_ToUtf8FromMs932, hiragana)
     char input[] = "\x82\xA0\x82\xA2\x82\xA4\x82\xA6\x82\xA8";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::sjis, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "あいうえお", result );
@@ -124,7 +126,7 @@ TEST_F(Iconv_ToUtf8FromMs932, hex_a0)
     char input[] = "hello\xa0world!\n";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::sjis, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "hello world!\n", result );
@@ -138,7 +140,7 @@ TEST_F(Iconv_ToUtf8FromMs932, mojibake_fix_inequality_sign_pattern1)
     char input[] = "<>test テスト<>";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::sjis, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "<>test \xE7\xB9\x9D\xE2\x96\xA1\xE3\x81\x9B\xE7\xB9\x9D?<>", result );
@@ -152,7 +154,7 @@ TEST_F(Iconv_ToUtf8FromMs932, mojibake_fix_inequality_sign_pattern2)
     char input[] = "<> test テスト <>";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::sjis, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "<> test \xE7\xB9\x9D\xE2\x96\xA1\xE3\x81\x9B\xE7\xB9\x9D\xE2\x96\xA1<>", result );
@@ -166,7 +168,7 @@ TEST_F(Iconv_ToUtf8FromMs932, mapping_error)
     char input[] = "\x81\xAD\x82\x40\x88\x90\x98\x90";
     constexpr bool broken_sjis_be_utf8 = false;
 
-    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::sjis, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "\u25A1\u25A1\u25A1\u25A1", result );
@@ -181,7 +183,7 @@ TEST_F(Iconv_ToUtf8FromMs932, broken_sjis_be_utf8)
                    " \x82\xa6\x82\xa8";
     constexpr bool broken_sjis_be_utf8 = true;
 
-    JDLIB::Iconv icv( "UTF-8", "MS932", broken_sjis_be_utf8 );
+    JDLIB::Iconv icv( Encoding::utf8, Encoding::sjis, broken_sjis_be_utf8 );
     const std::string& result = icv.convert( input, std::strlen(input) );
 
     EXPECT_EQ( "あいう <span class=\"BROKEN_SJIS\">入れ替わってる〜</span>? えお", result );

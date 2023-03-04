@@ -15,7 +15,7 @@ namespace DBTREE
     {
       public:
 
-        Article2chCompati( const std::string& datbase, const std::string& id, bool cached );
+        Article2chCompati( const std::string& datbase, const std::string& id, bool cached, const Encoding enc );
         ~Article2chCompati() noexcept;
 
         // 書き込みメッセージ変換

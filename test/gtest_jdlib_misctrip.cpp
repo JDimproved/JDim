@@ -17,7 +17,7 @@ class GetTripTest : public ::testing::Test {};
 // ヘルパー関数
 inline static std::string get_trip_sjis( std::string u8key )
 {
-    return MISC::get_trip( u8key, "Shift_JIS" );
+    return MISC::get_trip( u8key, Encoding::sjis );
 }
 
 TEST_F(GetTripTest, trip8_sjis_empty)

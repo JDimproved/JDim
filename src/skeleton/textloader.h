@@ -9,6 +9,7 @@
 #ifndef _TEXTLODER_H
 #define _TEXTLODER_H
 
+#include "jdencoding.h"
 #include "loadable.h"
 
 #include <string>
@@ -38,17 +39,16 @@ namespace SKELETON
         void reset();
 
         // キャッシュからロード
-        void load_text();
+        void load_text( const Encoding encoding );
 
-        // ダウンロード開始
-        // not modifiedの時はキャッシュから読み込む
-        void download_text();
+        // ダウンロードを開始する
+        // HTTP 304 Not Modified の時はキャッシュから読み込む
+        void download_text( const Encoding encoding );
 
       protected:
 
         virtual std::string get_url() const = 0;
         virtual std::string get_path() const = 0;
-        virtual std::string get_charset() const = 0;
 
         // ロード用データ作成
         virtual void create_loaderdata( JDLIB::LOADERDATA& data ) = 0;

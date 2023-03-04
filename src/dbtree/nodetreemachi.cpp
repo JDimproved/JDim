@@ -9,6 +9,7 @@
 #include "jdlib/jdiconv.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/loaderdata.h"
+#include "jdlib/misccharcode.h"
 #include "jdlib/miscutil.h"
 
 #include "config/globalconf.h"
@@ -84,8 +85,7 @@ void NodeTreeMachi::init_loading()
     if( ! m_regex ) m_regex = std::make_unique<JDLIB::Regex>();
 
     // iconv 初期化
-    std::string charset = DBTREE::board_charset( get_url() );
-    if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( "UTF-8", charset );
+    if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( Encoding::utf8, DBTREE::article_encoding( get_url() ) );
 
     m_buffer_for_200.clear();
 
@@ -191,10 +191,9 @@ char* NodeTreeMachi::process_raw_lines( char* rawlines )
                 std::string reg_subject( "<title>([^<]*)</title>" );
                 if( m_regex->exec( reg_subject, line, offset, icase, newline, usemigemo, wchar ) ){
 
-                    const std::string charset = DBTREE::board_charset( get_url() );
-                    m_subject_machi = MISC::Iconv( m_regex->str( 1 ), "UTF-8", charset );
+                    m_subject_machi = MISC::Iconv( m_regex->str( 1 ), Encoding::utf8, get_encoding() );
 #ifdef _DEBUG
-                    std::cout << "NodeTreeMachi::process_raw_lines\n";
+                    std::cout << "NodeTreeMachi::process_raw_lines" << std::endl;
                     std::cout << "subject = " << m_subject_machi << std::endl;
 #endif
                 }

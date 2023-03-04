@@ -23,12 +23,6 @@ FrontLoader::FrontLoader( const std::string& url_boadbase )
 }
 
 
-std::string FrontLoader::get_charset() const
-{
-    return DBTREE::board_charset( m_url_boadbase );
-}
-
-
 // ロード用データ作成
 void FrontLoader::create_loaderdata( JDLIB::LOADERDATA& data )
 {
