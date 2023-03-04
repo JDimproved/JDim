@@ -26,8 +26,6 @@ namespace JDLIB
 
     public:
 
-        Iconv( const std::string& coding_to, const std::string& coding_from );
-        Iconv( const std::string& coding_to, const std::string& coding_from, const bool broken_sjis_be_utf8 );
         Iconv( const Encoding to, const Encoding from );
         Iconv( const Encoding to, const Encoding from, const bool broken_sjis_be_utf8 );
         ~Iconv();
