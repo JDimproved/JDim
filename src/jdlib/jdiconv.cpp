@@ -33,45 +33,88 @@ Iconv::Iconv( const std::string& coding_to, const std::string& coding_from )
 
 /** @brief コンストラクタ
  *
+ * @details `Encoding`にない文字エンコーディングも指定できる
  * @param[in] coding_to   変換先の文字エンコーディング
  * @param[in] coding_from 変換元の文字エンコーディング
  * @param[in] broken_sjis_be_utf8 trueなら不正なMS932文字列をUTF-8と見なす (MS932 -> UTF-8の変換限定)
  */
 Iconv::Iconv( const std::string& coding_to, const std::string& coding_from, const bool broken_sjis_be_utf8 )
-    : m_coding_from( coding_from )
-    , m_coding_to_is_utf8{ coding_to == "UTF-8" }
+    : m_cd{ g_iconv_open( coding_to.c_str(), coding_from.c_str() ) }
+    , m_enc_to{ MISC::encoding_from_cstr( coding_to.c_str() ) }
+    , m_enc_from{ MISC::encoding_from_cstr( coding_from.c_str() ) }
     , m_broken_sjis_be_utf8{ broken_sjis_be_utf8 }
 {
 #ifdef _DEBUG
-    std::cout << "Iconv::Iconv coding = " << m_coding_from << " to " << coding_to << std::endl;
+    std::cout << "Iconv::Iconv coding = " << coding_from << " to " << coding_to << std::endl;
 #endif
 
-    m_cd = g_iconv_open( coding_to.c_str(), m_coding_from.c_str() );
 
-    // MS932で失敗したらCP932で試してみる
-    if( m_cd == ( GIConv ) -1 ){
-        if( coding_to == "MS932" ) m_cd = g_iconv_open( "CP932", m_coding_from.c_str() );
-        else if( coding_from == "MS932" ) m_cd = g_iconv_open( coding_to.c_str(), "CP932" );
-    }
+    if( m_cd == ( GIConv ) -1 ) open_by_alternative_names( coding_to.c_str(), coding_from.c_str() );
+}
+
+
+/** @brief コンストラクタ
+ *
+ * @details broken_sjis_be_utf8 の値は about:config の設定を使う
+ * @param[in] to   変換先の文字エンコーディング
+ * @param[in] from 変換元の文字エンコーディング
+ */
+Iconv::Iconv( const Encoding to, const Encoding from )
+    : Iconv( to, from, CONFIG::get_broken_sjis_be_utf8() )
+{
+}
+
+
+/** @brief コンストラクタ
+ *
+ * @param[in] to   変換先の文字エンコーディング
+ * @param[in] from 変換元の文字エンコーディング
+ * @param[in] broken_sjis_be_utf8 trueなら不正なMS932文字列をUTF-8と見なす (MS932 -> UTF-8の変換限定)
+ */
+Iconv::Iconv( const Encoding to, const Encoding from, const bool broken_sjis_be_utf8 )
+    : m_enc_to( to )
+    , m_enc_from( from )
+    , m_broken_sjis_be_utf8{ broken_sjis_be_utf8 }
+{
+    const char* from_str = MISC::encoding_to_cstr( ( from == Encoding::unknown ) ? to : from );
+    const char* to_str = MISC::encoding_to_cstr( ( to == Encoding::unknown ) ? from : to );
+
+#ifdef _DEBUG
+    std::cout << "Iconv::Iconv coding = " << from_str << " to " << to_str << std::endl;
+#endif
+
+    m_cd = g_iconv_open( to_str, from_str );
+
+    if( m_cd == ( GIConv) -1 ) open_by_alternative_names( to_str, from_str );
+}
+
+
+void Iconv::open_by_alternative_names( const char* to_str, const char* from_str )
+{
+    // "MS932"で失敗したら"CP932"で試してみる
+    if( m_enc_to == Encoding::sjis ) m_cd = g_iconv_open( "CP932", from_str );
+    else if( m_enc_from == Encoding::sjis ) m_cd = g_iconv_open( to_str, "CP932" );
 
     // "EUCJP-*"で失敗したら"EUCJP"で試してみる
     if( m_cd == ( GIConv ) - 1 && ( errno & EINVAL ) != 0 )
     {
-        if( coding_to.rfind( "EUCJP-", 0 ) == 0 )
+        if( m_enc_to == Encoding::eucjp ) m_cd = g_iconv_open( "EUCJP//TRANSLIT", from_str );
+        else if( m_enc_from == Encoding::eucjp )
         {
-            m_cd = g_iconv_open( "EUCJP//TRANSLIT", coding_from.c_str() );
-        }
-        else if( coding_from.rfind( "EUCJP-", 0 ) == 0 )
-        {
-            const std::string coding_to_translit = coding_to + "//TRANSLIT";
+            const std::string coding_to_translit = std::string( to_str ) + "//TRANSLIT";
             m_cd = g_iconv_open( coding_to_translit.c_str(), "EUCJP" );
         }
     }
 
     if( m_cd == ( GIConv ) -1 ){
-        MISC::ERRMSG( "can't open iconv coding = " + m_coding_from + " to " + coding_to );
+        std::string msg = "can't open iconv coding = ";
+        msg += MISC::encoding_to_cstr( m_enc_from );
+        msg += " to ";
+        msg += MISC::encoding_to_cstr( m_enc_to );
+        MISC::ERRMSG( msg );
     }
 }
+
 
 Iconv::~Iconv()
 {
@@ -141,11 +184,6 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
         std::size_t byte_left_in = buf_in_end - buf_in_tmp;
         std::size_t byte_left_out = buf_out_end - buf_out_tmp;
 
-#ifdef _DEBUG
-        std::cout << "byte_left_in = " << byte_left_in << std::endl;
-        std::cout << "byte_left_out = " << byte_left_out << std::endl;
-#endif
-
         const int ret = g_iconv( m_cd, &buf_in_tmp, &byte_left_in, &buf_out_tmp, &byte_left_out );
 
 #ifdef _DEBUG
@@ -166,7 +204,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
                 const unsigned char code1 = buf_in_end > ( buf_in_tmp + 1 ) ? buf_in_tmp[1] : 0;
                 const unsigned char code2 = buf_in_end > ( buf_in_tmp + 2 ) ? buf_in_tmp[2] : 0;
 
-                if( m_coding_from == "MS932" )
+                if( m_enc_from == Encoding::sjis )
                 {
                     // 空白(0xa0)
                     if( code0 == 0xa0 ){
@@ -201,7 +239,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
                 }
 
                 // MS932からUTF-8へエンコーディング変換失敗したとき
-                if( m_coding_from == "MS932" && m_coding_to_is_utf8
+                if( m_enc_from == Encoding::sjis && m_enc_to == Encoding::utf8
                         && m_broken_sjis_be_utf8 ){
 
                     // MS932の文字列の中にUTF-8の混在を許容するときの処理
@@ -223,7 +261,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
 
                         // マルチバイト文字列がUTF-8なら出力に追加する
                         if( MISC::is_utf8( std::string_view{ bpos, lng }, byte ) ){
-#ifdef _DEBUG
+#ifdef _DEBUG_ICONV
                             std::string message = "iconv to be utf-8: ";
                             message.append( bpos, lng );
                             MISC::MSG( message );
@@ -253,7 +291,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
 
                 // unicode 文字からの変換失敗
                 // 数値文字参照(&#????;)形式にする
-                if( m_coding_from == "UTF-8" ){
+                if( m_enc_from == Encoding::utf8 ){
 
                     // https://github.com/JDimproved/JDim/issues/214 （emoji subdivision flagの処理）について
                     //
@@ -331,7 +369,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
                 }
 
                 // UTF-8へ変換する場合は U+FFFD REPLACEMENT CHARACTER に置き換える
-                if( m_coding_to_is_utf8 ){
+                if( m_enc_to == Encoding::utf8 ){
                     ++buf_in_tmp;
                     *(buf_out_tmp++) = static_cast<char>( 0xef );
                     *(buf_out_tmp++) = static_cast<char>( 0xbf );
