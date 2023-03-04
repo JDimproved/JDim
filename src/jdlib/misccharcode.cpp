@@ -30,6 +30,22 @@ const char* MISC::encoding_to_cstr( const Encoding encoding )
 }
 
 
+/** @brief 文字エンコーディングを表すヌル終端文字列から`Encoding`を取得する
+ *
+ * @param[in] encoding 文字エンコーディング名 (not null)
+ * @return 文字列と一致する列挙型。見つからなければ `Encoding::unknown` を返す。
+ */
+Encoding MISC::encoding_from_cstr( const char* encoding )
+{
+    assert( encoding );
+
+    for( std::size_t i = sizeof(encoding_string) / sizeof(char*) - 1; i > 0; --i ){
+        if( std::strcmp( encoding_string[i], encoding ) == 0 ) return static_cast<Encoding>( i );
+    }
+    return Encoding::unknown;
+}
+
+
 /*--- 制御文字とASCII -----------------------------------------------*/
 
 // [ 制御文字 ] 0x00〜0x1F 0x7F
