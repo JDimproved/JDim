@@ -22,40 +22,6 @@ using namespace JDLIB;
 /** @brief コンストラクタ
  *
  * @details broken_sjis_be_utf8 の値は about:config の設定を使う
- * @param[in] coding_to   変換先の文字エンコーディング
- * @param[in] coding_from 変換元の文字エンコーディング
- */
-Iconv::Iconv( const std::string& coding_to, const std::string& coding_from )
-    : Iconv( coding_to, coding_from, CONFIG::get_broken_sjis_be_utf8() )
-{
-}
-
-
-/** @brief コンストラクタ
- *
- * @details `Encoding`にない文字エンコーディングも指定できる
- * @param[in] coding_to   変換先の文字エンコーディング
- * @param[in] coding_from 変換元の文字エンコーディング
- * @param[in] broken_sjis_be_utf8 trueなら不正なMS932文字列をUTF-8と見なす (MS932 -> UTF-8の変換限定)
- */
-Iconv::Iconv( const std::string& coding_to, const std::string& coding_from, const bool broken_sjis_be_utf8 )
-    : m_cd{ g_iconv_open( coding_to.c_str(), coding_from.c_str() ) }
-    , m_enc_to{ MISC::encoding_from_cstr( coding_to.c_str() ) }
-    , m_enc_from{ MISC::encoding_from_cstr( coding_from.c_str() ) }
-    , m_broken_sjis_be_utf8{ broken_sjis_be_utf8 }
-{
-#ifdef _DEBUG
-    std::cout << "Iconv::Iconv coding = " << coding_from << " to " << coding_to << std::endl;
-#endif
-
-
-    if( m_cd == ( GIConv ) -1 ) open_by_alternative_names( coding_to.c_str(), coding_from.c_str() );
-}
-
-
-/** @brief コンストラクタ
- *
- * @details broken_sjis_be_utf8 の値は about:config の設定を使う
  * @param[in] to   変換先の文字エンコーディング
  * @param[in] from 変換元の文字エンコーディング
  */
