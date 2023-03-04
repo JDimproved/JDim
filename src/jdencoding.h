@@ -13,9 +13,9 @@
  */
 enum class Encoding
 {
-    unknown = 0, ///< 不明
+    unknown = 0, ///< 不明. エンコーディング名は LATIN1 (ISO-8859-1) として扱う
     ascii, ///< ASCII
-    eucjp, ///< EUC-JP
+    eucjp, ///< WindowsのShift_JISに合わせたEUC-JP (EUCJP-MS)
     jis,   ///< JISコード (ISO-2022-JP)
     sjis,  ///< WindowsのShift_JIS (MS932)
     utf8,  ///< UTF-8

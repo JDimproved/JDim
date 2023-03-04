@@ -7,6 +7,45 @@
 
 namespace {
 
+class MISC_EncodingToCstrTest : public ::testing::Test {};
+
+TEST_F(MISC_EncodingToCstrTest, unknown)
+{
+    EXPECT_STREQ( "ISO-8859-1", MISC::encoding_to_cstr( Encoding::unknown ) );
+}
+
+TEST_F(MISC_EncodingToCstrTest, ascii)
+{
+    EXPECT_STREQ( "ASCII", MISC::encoding_to_cstr( Encoding::ascii ) );
+}
+
+TEST_F(MISC_EncodingToCstrTest, eucjp)
+{
+    EXPECT_STREQ( "EUCJP-MS", MISC::encoding_to_cstr( Encoding::eucjp ) );
+}
+
+TEST_F(MISC_EncodingToCstrTest, jis)
+{
+    EXPECT_STREQ( "ISO-2022-JP", MISC::encoding_to_cstr( Encoding::jis ) );
+}
+
+TEST_F(MISC_EncodingToCstrTest, sjis)
+{
+    EXPECT_STREQ( "MS932", MISC::encoding_to_cstr( Encoding::sjis ) );
+}
+
+TEST_F(MISC_EncodingToCstrTest, utf8)
+{
+    EXPECT_STREQ( "UTF-8", MISC::encoding_to_cstr( Encoding::utf8 ) );
+}
+
+TEST_F(MISC_EncodingToCstrTest, invalid_enum)
+{
+    EXPECT_STREQ( "ISO-8859-1", MISC::encoding_to_cstr( static_cast<Encoding>( -200 ) ) );
+    EXPECT_STREQ( "ISO-8859-1", MISC::encoding_to_cstr( static_cast<Encoding>( 200 ) ) );
+}
+
+
 class IsEucjpTest : public ::testing::Test {};
 
 TEST_F(IsEucjpTest, null_data)
