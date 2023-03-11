@@ -155,9 +155,19 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_live.set_spacing( 4 );
     m_hbox_live.pack_start( m_label_live, Gtk::PACK_SHRINK );
     m_hbox_live.pack_start( m_spin_live, Gtk::PACK_SHRINK );
-    m_hbox_live.pack_start( m_check_live, Gtk::PACK_SHRINK );
+    m_hbox_live.pack_start( m_check_live );
 
     set_activate_entry( m_spin_live );
+
+    // テキストエンコーディング
+    m_label_charset.set_text( "テキストエンコーディング : " );
+    m_combo_charset.append( MISC::encoding_to_cstr( Encoding::utf8 ) );
+    m_combo_charset.append( MISC::encoding_to_cstr( Encoding::sjis ) );
+    m_combo_charset.append( MISC::encoding_to_cstr( Encoding::eucjp ) );
+    m_combo_charset.set_active_text( MISC::encoding_to_cstr( DBTREE::board_encoding( get_url() ) ) );
+
+    m_hbox_live.pack_start( m_label_charset, Gtk::PACK_SHRINK );
+    m_hbox_live.pack_start( m_combo_charset, Gtk::PACK_SHRINK );
 
     // 一般ページのパッキング
     m_label_max_line.set_text( std::to_string( DBTREE::line_number( get_url() ) * 2 ) );
@@ -523,6 +533,10 @@ void Preferences::slot_ok_clicked()
     if( tmpmail == CONFIG::get_write_mail() ) tmpmail = std::string();
     else if( tmpmail.empty() ) tmpmail = JD_MAIL_BLANK; // 空白の場合 JD_MAIL_BLANK をセットする
     DBTREE::board_set_write_mail( get_url(), tmpmail );
+
+    // charset
+    const std::string tmpcharset = m_combo_charset.get_active_text();
+    DBTREE::board_set_encoding( get_url(), MISC::encoding_from_sv( tmpcharset ) );
 
     // 実況間隔
     int live_sec = 0;
