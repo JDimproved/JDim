@@ -1928,7 +1928,12 @@ void ArticleBase::read_info()
 
         // charset
         GET_INFOVALUE( str_tmp, "charset = " );
-        if( ! str_tmp.empty() ) set_encoding( MISC::encoding_from_cstr( str_tmp.c_str() ) );
+        if( ! str_tmp.empty() ) {
+            if( const Encoding enc = MISC::encoding_from_cstr( str_tmp.c_str() );
+                    enc != Encoding::unknown ) {
+                set_encoding( enc );
+            }
+        }
 
         // あぼーん ID
         GET_INFOVALUE( str_tmp, "aboneid = " );
