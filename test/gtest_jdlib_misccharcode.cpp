@@ -21,7 +21,7 @@ TEST_F(MISC_EncodingToCstrTest, ascii)
 
 TEST_F(MISC_EncodingToCstrTest, eucjp)
 {
-    EXPECT_STREQ( "EUCJP-MS", MISC::encoding_to_cstr( Encoding::eucjp ) );
+    EXPECT_STREQ( "EUC-JP", MISC::encoding_to_cstr( Encoding::eucjp ) );
 }
 
 TEST_F(MISC_EncodingToCstrTest, jis)
@@ -31,7 +31,7 @@ TEST_F(MISC_EncodingToCstrTest, jis)
 
 TEST_F(MISC_EncodingToCstrTest, sjis)
 {
-    EXPECT_STREQ( "MS932", MISC::encoding_to_cstr( Encoding::sjis ) );
+    EXPECT_STREQ( "Shift_JIS", MISC::encoding_to_cstr( Encoding::sjis ) );
 }
 
 TEST_F(MISC_EncodingToCstrTest, utf8)
@@ -43,6 +43,45 @@ TEST_F(MISC_EncodingToCstrTest, invalid_enum)
 {
     EXPECT_STREQ( "ISO-8859-1", MISC::encoding_to_cstr( static_cast<Encoding>( -200 ) ) );
     EXPECT_STREQ( "ISO-8859-1", MISC::encoding_to_cstr( static_cast<Encoding>( 200 ) ) );
+}
+
+
+class MISC_EncodingToIconvCstrTest : public ::testing::Test {};
+
+TEST_F(MISC_EncodingToIconvCstrTest, unknown)
+{
+    EXPECT_STREQ( "ISO-8859-1", MISC::encoding_to_iconv_cstr( Encoding::unknown ) );
+}
+
+TEST_F(MISC_EncodingToIconvCstrTest, ascii)
+{
+    EXPECT_STREQ( "ASCII", MISC::encoding_to_iconv_cstr( Encoding::ascii ) );
+}
+
+TEST_F(MISC_EncodingToIconvCstrTest, eucjp)
+{
+    EXPECT_STREQ( "EUCJP-MS", MISC::encoding_to_iconv_cstr( Encoding::eucjp ) );
+}
+
+TEST_F(MISC_EncodingToIconvCstrTest, jis)
+{
+    EXPECT_STREQ( "ISO-2022-JP", MISC::encoding_to_iconv_cstr( Encoding::jis ) );
+}
+
+TEST_F(MISC_EncodingToIconvCstrTest, sjis)
+{
+    EXPECT_STREQ( "MS932", MISC::encoding_to_iconv_cstr( Encoding::sjis ) );
+}
+
+TEST_F(MISC_EncodingToIconvCstrTest, utf8)
+{
+    EXPECT_STREQ( "UTF-8", MISC::encoding_to_iconv_cstr( Encoding::utf8 ) );
+}
+
+TEST_F(MISC_EncodingToIconvCstrTest, invalid_enum)
+{
+    EXPECT_STREQ( "ISO-8859-1", MISC::encoding_to_iconv_cstr( static_cast<Encoding>( -200 ) ) );
+    EXPECT_STREQ( "ISO-8859-1", MISC::encoding_to_iconv_cstr( static_cast<Encoding>( 200 ) ) );
 }
 
 
@@ -61,6 +100,7 @@ TEST_F(MISC_EncodingFromSvTest, ascii)
 TEST_F(MISC_EncodingFromSvTest, eucjp_ms)
 {
     EXPECT_EQ( Encoding::eucjp, MISC::encoding_from_sv( "EUCJP-MS" ) );
+    EXPECT_EQ( Encoding::eucjp, MISC::encoding_from_sv( "EUC-JP" ) );
 }
 
 TEST_F(MISC_EncodingFromSvTest, iso_2022_jp)
@@ -71,6 +111,7 @@ TEST_F(MISC_EncodingFromSvTest, iso_2022_jp)
 TEST_F(MISC_EncodingFromSvTest, ms932)
 {
     EXPECT_EQ( Encoding::sjis, MISC::encoding_from_sv( "MS932" ) );
+    EXPECT_EQ( Encoding::sjis, MISC::encoding_from_sv( "Shift_JIS" ) );
 }
 
 TEST_F(MISC_EncodingFromSvTest, utf8)

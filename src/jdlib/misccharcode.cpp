@@ -8,26 +8,49 @@
 #include "jdiconv.h"
 
 #include <cstdint>
+#include <cstring>
+#include <iterator>
 
 
 // チェックする最大バイト数
 #define CHECK_LIMIT 1024
 
 
-static constexpr const char* encoding_string[] = { "ISO-8859-1", "ASCII", "EUCJP-MS", "ISO-2022-JP", "MS932", "UTF-8" };
+namespace MISC::charset {
+constexpr const char* iconv[] = { "ISO-8859-1", "ASCII", "EUCJP-MS", "ISO-2022-JP", "MS932", "UTF-8" };
+constexpr const char* names[] = { "ISO-8859-1", "ASCII", "EUC-JP", "ISO-2022-JP", "Shift_JIS", "UTF-8" };
+static_assert( std::size( iconv ) == std::size( names ) );
+
+template<typename T>
+const char* encoding_to_impl( Encoding enc, T&& strings )
+{
+    if( enc > Encoding::utf8 || enc < Encoding::unknown ) enc = Encoding::unknown;
+    return strings[ static_cast<int>( enc ) ];
+}
+} // namespace MISC::charset
 
 
-/** @brief `Encoding` から文字エンコーディングを表すヌル終端文字列を取得する
+/** @brief `Encoding` からUIに表示したり情報ファイルに保存するのに使う文字エンコーディング名を取得する
  *
  * @param[in] encoding 文字エンコーディング
- * @return encodingと一致する文字列。
- * `Encoding::unknown` のとき、または不正な値のなら `"ISO-8859-1"` (Latin1) を返す。
+ * @return encodingに対応するヌル終端文字列。
+ * `Encoding::unknown` のとき、または不正な値なら `"ISO-8859-1"` (Latin1) を返す。
  */
 const char* MISC::encoding_to_cstr( const Encoding encoding )
 {
-    Encoding enc = encoding;
-    if( enc > Encoding::utf8 || enc < Encoding::unknown ) enc = Encoding::unknown;
-    return encoding_string[ static_cast<int>( enc ) ];
+    return charset::encoding_to_impl( encoding, charset::names );
+}
+
+
+/** @brief `Encoding` から JDLIB::Iconv クラスに渡す文字エンコーディング名を取得する
+ *
+ * @param[in] encoding 文字エンコーディング
+ * @return encodingに対応するヌル終端文字列。
+ * `Encoding::unknown` のとき、または不正な値なら `"ISO-8859-1"` (Latin1) を返す。
+ */
+const char* MISC::encoding_to_iconv_cstr( const Encoding encoding )
+{
+    return charset::encoding_to_impl( encoding, charset::iconv );
 }
 
 
@@ -40,9 +63,12 @@ Encoding MISC::encoding_from_sv( std::string_view encoding )
 {
     assert( encoding.data() );
 
-    for( std::size_t i = sizeof(encoding_string) / sizeof(char*) - 1; i > 0; --i ){
-        if( encoding == encoding_string[i] ) return static_cast<Encoding>( i );
+    for( std::size_t i = std::size( charset::names ) - 1; i > 0; --i ){
+        if( encoding == charset::names[i] ) return static_cast<Encoding>( i );
     }
+    // 互換性のため JDLIB::Iconv クラスで使うエンコーディング名と一致するかチェックする
+    if( encoding == charset::iconv[ static_cast<int>( Encoding::sjis ) ] ) return Encoding::sjis;
+    if( encoding == charset::iconv[ static_cast<int>( Encoding::eucjp ) ] ) return Encoding::eucjp;
     return Encoding::unknown;
 }
 
