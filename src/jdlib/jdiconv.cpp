@@ -42,8 +42,8 @@ Iconv::Iconv( const Encoding to, const Encoding from, const bool broken_sjis_be_
     , m_enc_from( from )
     , m_broken_sjis_be_utf8{ broken_sjis_be_utf8 }
 {
-    const char* from_str = MISC::encoding_to_cstr( ( from == Encoding::unknown ) ? to : from );
-    const char* to_str = MISC::encoding_to_cstr( ( to == Encoding::unknown ) ? from : to );
+    const char* from_str = MISC::encoding_to_iconv_cstr( ( from == Encoding::unknown ) ? to : from );
+    const char* to_str = MISC::encoding_to_iconv_cstr( ( to == Encoding::unknown ) ? from : to );
 
 #ifdef _DEBUG
     std::cout << "Iconv::Iconv coding = " << from_str << " to " << to_str << std::endl;
@@ -74,9 +74,9 @@ void Iconv::open_by_alternative_names( const char* to_str, const char* from_str 
 
     if( m_cd == ( GIConv ) -1 ){
         std::string msg = "can't open iconv coding = ";
-        msg += MISC::encoding_to_cstr( m_enc_from );
+        msg += MISC::encoding_to_iconv_cstr( m_enc_from );
         msg += " to ";
-        msg += MISC::encoding_to_cstr( m_enc_to );
+        msg += MISC::encoding_to_iconv_cstr( m_enc_to );
         MISC::ERRMSG( msg );
     }
 }
