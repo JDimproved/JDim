@@ -7,7 +7,6 @@
 
 #include "jdiconv.h"
 
-#include <cstring>
 #include <cstdint>
 
 
@@ -32,17 +31,17 @@ const char* MISC::encoding_to_cstr( const Encoding encoding )
 }
 
 
-/** @brief 文字エンコーディングを表すヌル終端文字列から`Encoding`を取得する
+/** @brief 文字エンコーディングを表す文字列から`Encoding`を取得する
  *
  * @param[in] encoding 文字エンコーディング名 (not null)
- * @return 文字列と一致する列挙型。見つからなければ `Encoding::unknown` を返す。
+ * @return 文字列に対応する列挙型。見つからなければ `Encoding::unknown` を返す。
  */
-Encoding MISC::encoding_from_cstr( const char* encoding )
+Encoding MISC::encoding_from_sv( std::string_view encoding )
 {
-    assert( encoding );
+    assert( encoding.data() );
 
     for( std::size_t i = sizeof(encoding_string) / sizeof(char*) - 1; i > 0; --i ){
-        if( std::strcmp( encoding_string[i], encoding ) == 0 ) return static_cast<Encoding>( i );
+        if( encoding == encoding_string[i] ) return static_cast<Encoding>( i );
     }
     return Encoding::unknown;
 }

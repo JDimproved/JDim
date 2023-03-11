@@ -46,52 +46,52 @@ TEST_F(MISC_EncodingToCstrTest, invalid_enum)
 }
 
 
-class MISC_EncodingFromCstr : public ::testing::Test {};
+class MISC_EncodingFromSvTest : public ::testing::Test {};
 
-TEST_F(MISC_EncodingFromCstr, iso_8859_1)
+TEST_F(MISC_EncodingFromSvTest, iso_8859_1)
 {
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "ISO-8859-1" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "ISO-8859-1" ) );
 }
 
-TEST_F(MISC_EncodingFromCstr, ascii)
+TEST_F(MISC_EncodingFromSvTest, ascii)
 {
-    EXPECT_EQ( Encoding::ascii, MISC::encoding_from_cstr( "ASCII" ) );
+    EXPECT_EQ( Encoding::ascii, MISC::encoding_from_sv( "ASCII" ) );
 }
 
-TEST_F(MISC_EncodingFromCstr, eucjp_ms)
+TEST_F(MISC_EncodingFromSvTest, eucjp_ms)
 {
-    EXPECT_EQ( Encoding::eucjp, MISC::encoding_from_cstr( "EUCJP-MS" ) );
+    EXPECT_EQ( Encoding::eucjp, MISC::encoding_from_sv( "EUCJP-MS" ) );
 }
 
-TEST_F(MISC_EncodingFromCstr, iso_2022_jp)
+TEST_F(MISC_EncodingFromSvTest, iso_2022_jp)
 {
-    EXPECT_EQ( Encoding::jis, MISC::encoding_from_cstr( "ISO-2022-JP" ) );
+    EXPECT_EQ( Encoding::jis, MISC::encoding_from_sv( "ISO-2022-JP" ) );
 }
 
-TEST_F(MISC_EncodingFromCstr, ms932)
+TEST_F(MISC_EncodingFromSvTest, ms932)
 {
-    EXPECT_EQ( Encoding::sjis, MISC::encoding_from_cstr( "MS932" ) );
+    EXPECT_EQ( Encoding::sjis, MISC::encoding_from_sv( "MS932" ) );
 }
 
-TEST_F(MISC_EncodingFromCstr, utf8)
+TEST_F(MISC_EncodingFromSvTest, utf8)
 {
-    EXPECT_EQ( Encoding::utf8, MISC::encoding_from_cstr( "UTF-8" ) );
+    EXPECT_EQ( Encoding::utf8, MISC::encoding_from_sv( "UTF-8" ) );
 }
 
-TEST_F(MISC_EncodingFromCstr, invalid_encoding_name)
+TEST_F(MISC_EncodingFromSvTest, invalid_encoding_name)
 {
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "" ) );
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "INVALID-ENCODING-NAME" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "INVALID-ENCODING-NAME" ) );
 }
 
-TEST_F(MISC_EncodingFromCstr, small_case_is_invalid)
+TEST_F(MISC_EncodingFromSvTest, small_case_is_invalid)
 {
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "iso-8859-1" ) );
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "ascii" ) );
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "eucjp-ms" ) );
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "iso-2022-jp" ) );
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "ms932" ) );
-    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_cstr( "utf-8" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "iso-8859-1" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "ascii" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "eucjp-ms" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "iso-2022-jp" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "ms932" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_sv( "utf-8" ) );
 }
 
 

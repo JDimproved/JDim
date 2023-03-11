@@ -1929,7 +1929,7 @@ void ArticleBase::read_info()
         // charset
         GET_INFOVALUE( str_tmp, "charset = " );
         if( ! str_tmp.empty() ) {
-            if( const Encoding enc = MISC::encoding_from_cstr( str_tmp.c_str() );
+            if( const Encoding enc = MISC::encoding_from_sv( str_tmp );
                     enc != Encoding::unknown ) {
                 set_encoding( enc );
             }
