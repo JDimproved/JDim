@@ -27,6 +27,10 @@ namespace ARTICLE
         Gtk::Label m_label_maxres;
         Gtk::SpinButton m_spin_maxres;
 
+        // テキストエンコーディング
+        Gtk::Label m_label_charset;
+        Gtk::ComboBoxText m_combo_charset;
+
         // あぼーん
         Gtk::VBox m_vbox_abone;
         Gtk::Notebook m_notebook_abone;
@@ -57,6 +61,7 @@ namespace ARTICLE
         // 全体レベルでのあぼーん
         Gtk::CheckButton m_check_globalabone;
 
+        Gtk::Box m_hbox_since;
         SKELETON::LabelEntry m_label_since;
 
         // 最終更新日時

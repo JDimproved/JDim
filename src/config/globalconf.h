@@ -624,6 +624,9 @@ namespace CONFIG
     // 不正な数値文字参照(サロゲートペア)をデコードする
     bool get_correct_character_reference();
     void set_correct_character_reference( const bool set );
+
+    // スレ一覧とスレビューのプロパティにあるエンコーディング設定を有効にする (unsafe)
+    bool get_choose_character_encoding();
 }
 
 

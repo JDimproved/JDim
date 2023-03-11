@@ -80,6 +80,10 @@ namespace BOARD
         Gtk::CheckButton m_check_live;
         Gtk::SpinButton m_spin_live;
 
+        // テキストエンコーディング
+        Gtk::Label m_label_charset;
+        Gtk::ComboBoxText m_combo_charset;
+
         // ネットワーク設定
         Gtk::Box m_vbox_network;
 

@@ -597,6 +597,9 @@ bool ConfigItems::load( const bool restore )
     // 不正な数値文字参照(サロゲートペア)をデコードする
     correct_character_reference = cf.get_option_bool( "correct_character_reference", CONF_CORRECT_CHAR_REFERENCE );
 
+    // スレ一覧とスレビューのプロパティにあるエンコーディング設定を有効にする (unsafe)
+    choose_character_encoding = cf.get_option_bool( "choose_character_encoding", CONF_CHOOSE_CHAR_ENCODING );
+
     m_loaded = true;
 
     // 設定値に壊れている物がある
@@ -941,6 +944,7 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "broken_sjis_be_utf8", broken_sjis_be_utf8 );
     cf.update( "correct_character_reference", correct_character_reference );
+    cf.update( "choose_character_encoding", choose_character_encoding );
 
     cf.save();
 }

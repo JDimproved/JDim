@@ -165,6 +165,7 @@ namespace CONFIG
         CONF_SAVE_SESSION = 0, // 指定した分ごとにセッションを自動保存 (0: 保存しない)
         CONF_BROKEN_SJIS_BE_UTF8 = 0, ///< 不正なMS932文字列をUTF-8と見なす
         CONF_CORRECT_CHAR_REFERENCE = 0, ///< 不正な数値文字参照(サロゲートペア)をデコードする
+        CONF_CHOOSE_CHAR_ENCODING = 0, ///< スレ一覧とスレビューのプロパティにあるエンコーディング設定を有効にする (unsafe)
     };
 
 // browsers.cpp のデフォルトのラベル番号

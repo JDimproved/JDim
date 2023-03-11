@@ -4,8 +4,9 @@
 
 #include "dbtree/interface.h"
 
-#include "jdlib/miscutil.h"
+#include "jdlib/misccharcode.h"
 #include "jdlib/misctime.h"
+#include "jdlib/miscutil.h"
 
 #include "config/globalconf.h"
 
@@ -36,6 +37,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_check_noidabone( "ID無しをあぼ〜ん" )
     , m_check_boardabone( "板レベルでのあぼ〜んを有効にする" )
     , m_check_globalabone( "全体レベルでのあぼ〜んを有効にする" )
+    , m_hbox_since{ Gtk::ORIENTATION_HORIZONTAL, 0 }
     , m_label_since( false, "スレ立て日時 : ", std::string() )
     , m_label_modified( false, "最終更新日時 : ", std::string() )
     , m_button_clearmodified( "日時クリア" )
@@ -77,6 +79,27 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_write.pack_start( m_label_write );
     m_hbox_write.pack_start( m_bt_clear_post_history, Gtk::PACK_SHRINK );    
 
+    m_hbox_since.pack_start( m_label_since );
+
+    // テキストエンコーディング
+    const char* tmpcharset = MISC::encoding_to_cstr( DBTREE::article_encoding( get_url() ) );
+    if( CONFIG::get_choose_character_encoding() ) {
+        m_label_charset.set_text( "テキストエンコーディング : " );
+        m_combo_charset.append( MISC::encoding_to_cstr( Encoding::utf8 ) );
+        m_combo_charset.append( MISC::encoding_to_cstr( Encoding::sjis ) );
+        m_combo_charset.append( MISC::encoding_to_cstr( Encoding::eucjp ) );
+        m_combo_charset.set_active_text( tmpcharset );
+
+        m_hbox_since.pack_start( m_label_charset, Gtk::PACK_SHRINK );
+        m_hbox_since.pack_start( m_combo_charset, Gtk::PACK_SHRINK );
+    }
+    else {
+        // エンコーディング設定は安全でないので無効のときは設定欄(コンボボックス)を表示しない
+        m_label_charset.set_text( Glib::ustring::compose( "テキストエンコーディング :  %1", tmpcharset ) );
+
+        m_hbox_since.pack_start( m_label_charset, Gtk::PACK_SHRINK );
+    }
+
     // 最大レス数
     const int max_res = DBTREE::article_number_max( get_url() );
     m_spin_maxres.set_range( 0, CONFIG::get_max_resnumber() );
@@ -95,7 +118,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox_info.pack_start( m_label_cache, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_hbox_size, Gtk::PACK_SHRINK );
 
-    m_vbox_info.pack_start( m_label_since, Gtk::PACK_SHRINK );
+    m_vbox_info.pack_start( m_hbox_since, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox_info.pack_start( m_hbox_write, Gtk::PACK_SHRINK );
 
@@ -261,6 +284,18 @@ void Preferences::slot_ok_clicked()
 
     // 最大レス数
     DBTREE::article_set_number_max( get_url(), m_spin_maxres.get_value_as_int() );
+
+    // charset
+    if( m_combo_charset.get_mapped() ) {
+        const std::string tmpcharset = m_combo_charset.get_active_text();
+        const Encoding tmpencoding = MISC::encoding_from_sv( tmpcharset );
+        if( tmpencoding != DBTREE::article_encoding( get_url() ) ){
+            // Encodingを更新
+            DBTREE::article_set_encoding( get_url(), tmpencoding );
+            // Viewが開かれていない場合があるのでここでNodeTreeを削除する
+            DBTREE::article_clear_nodetree( get_url() );
+        }
+    }
 
     // viewの再レイアウト
     CORE::core_set_command( "relayout_article", get_url() );
