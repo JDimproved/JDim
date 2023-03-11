@@ -542,6 +542,9 @@ namespace CONFIG
         /// 不正な数値文字参照(サロゲートペア)をデコードする
         bool correct_character_reference{};
 
+        /// スレ一覧とスレビューのプロパティにあるエンコーディング設定を有効にする (unsafe)
+        bool choose_character_encoding{};
+
         /////////////////////////
 
 

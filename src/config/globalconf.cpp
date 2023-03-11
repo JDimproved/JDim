@@ -633,3 +633,9 @@ bool CONFIG::get_correct_character_reference(){
     return item ? item->correct_character_reference : false;
 }
 void CONFIG::set_correct_character_reference( const bool set ){ get_confitem()->correct_character_reference = set; }
+
+// スレ一覧とスレビューのプロパティにあるエンコーディング設定を有効にする (unsafe)
+bool CONFIG::get_choose_character_encoding(){
+    auto item = get_confitem();
+    return item ? item->choose_character_encoding : false;
+}
