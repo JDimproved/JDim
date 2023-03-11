@@ -1982,7 +1982,7 @@ void BoardBase::read_board_info()
     m_show_oldlog = cf.get_option_bool( "show_oldlog", false );
 
     std::string charset = cf.get_option_str( "charset", MISC::encoding_to_cstr( get_encoding() ) );
-    if( const Encoding enc = MISC::encoding_from_cstr( charset.c_str() );
+    if( const Encoding enc = MISC::encoding_from_sv( charset );
             enc != Encoding::unknown ) {
         set_encoding( enc );
     }
