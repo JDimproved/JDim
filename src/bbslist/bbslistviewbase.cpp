@@ -2672,7 +2672,7 @@ void BBSListViewBase::replace_thread( const std::string& url, const std::string&
 #ifdef _DEBUG
                         std::cout << "name_row = " << ustr_name << std::endl;
 #endif
-                        if( MISC::utf8_trim( ustr_name ) == name_old ){
+                        if( MISC::utf8_trim( ustr_name.raw() ) == name_old ){
 #ifdef _DEBUG
                             std::cout << "replace name\n";
 #endif

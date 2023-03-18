@@ -120,6 +120,15 @@ TEST_F(Utf8TrimTest, remove_doublequote)
     EXPECT_EQ( expect, MISC::utf8_trim( "\u3000 \"\"\u3000 " ) );
 }
 
+TEST_F(Utf8TrimTest, input_length_is_shorter_than_u3000)
+{
+    std::string expect = "a";
+    EXPECT_EQ( expect, MISC::utf8_trim( " a" ) );
+
+    expect = "b";
+    EXPECT_EQ( expect, MISC::utf8_trim( "b " ) );
+}
+
 
 class AsciiTrimTest : public ::testing::Test {};
 

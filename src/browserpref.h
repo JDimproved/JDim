@@ -28,7 +28,7 @@ namespace CORE
         void slot_ok_clicked() override
         {
             CONFIG::set_browsercombo_id( m_combo.get_active_row_number() );
-            CONFIG::set_command_openurl( MISC::utf8_trim( m_entry_browser.get_text() ) );
+            CONFIG::set_command_openurl( MISC::utf8_trim( m_entry_browser.get_text().raw() ) );
         }
 
         // コンボボックスが変わった
