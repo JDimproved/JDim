@@ -6,17 +6,26 @@
 #include "loadable.h"
 
 #include "jdlib/loader.h"
-#include "jdlib/misctime.h"
-#ifdef _DEBUG
 #include "jdlib/misccharcode.h"
-#endif
+#include "jdlib/misctime.h"
+#include "jdlib/miscutil.h"
 
 #include "httpcode.h"
 
 using namespace SKELETON;
 
+
+/** @brief HTTPやHTMLからテキストの文字エンコーディングを検出する処理の状態 */
+enum class Loadable::CharsetDetection
+{
+    parse_header, ///< HTTP header を解析する
+    finished,     ///< 検出を終えた
+};
+
+
 Loadable::Loadable()
-    : m_encoding( Encoding::unknown )
+    : m_charset_det{ CharsetDetection::parse_header }
+    , m_encoding{ Encoding::unknown }
 {
     clear_load_data();
 }
@@ -48,6 +57,7 @@ void Loadable::terminate_load()
 // 完全クリア
 void Loadable::clear_load_data()
 {
+    m_charset_det = CharsetDetection::parse_header;
     m_code = HTTP_INIT;
     m_str_code = std::string();
     m_date_modified = std::string();
@@ -100,6 +110,7 @@ bool Loadable::start_load( const JDLIB::LOADERDATA& data )
 
     // 情報初期化
     // m_date_modified, m_cookie は初期化しない
+    m_charset_det = CharsetDetection::parse_header;
     m_code = HTTP_INIT;
     m_str_code = std::string();
     m_location = std::string();
@@ -136,6 +147,12 @@ void Loadable::receive( const char* data, size_t size )
     if( ! m_total_length && m_code != HTTP_INIT ) m_total_length = get_loader_length();
     m_current_length += size;
 
+    if( m_charset_det == CharsetDetection::parse_header ) {
+        const Encoding enc = get_loader_content_charset();
+        if( enc != Encoding::unknown ) set_encoding( enc );
+        m_charset_det = CharsetDetection::finished;
+    }
+
     receive_data( data, size );
 }
 
@@ -169,6 +186,12 @@ void Loadable::callback_dispatch()
     if( ! get_loader_modified().empty() ) m_date_modified = get_loader_modified();
     if( ! get_loader_cookies().empty() ) m_cookies = get_loader_cookies();
     if( ! get_loader_location().empty() ) m_location = get_loader_location();
+
+    if( m_charset_det == CharsetDetection::parse_header ) {
+        const Encoding enc = get_loader_content_charset();
+        if( enc != Encoding::unknown ) set_encoding( enc );
+        m_charset_det = CharsetDetection::finished;
+    }
 
 #ifdef _DEBUG
     std::cout << "delete loader\n";
@@ -247,4 +270,23 @@ size_t Loadable::get_loader_length() const
     if( ! m_loader ) return 0;
 
     return m_loader->data().length;
+}
+
+
+/** @brief HTTP header Content-Type から文字エンコーディング情報を取得する
+ *
+ * @return 文字エンコーディングの列挙型
+ * @retval Encoding::unknown エンコーディング情報が見つからない、またはJDimでは処理しないエンコーディングだった
+ */
+Encoding Loadable::get_loader_content_charset() const
+{
+    if( m_loader ) {
+        const std::string& contenttype = m_loader->data().contenttype;
+        const std::size_t pos = contenttype.find( "charset=" );
+        if( pos != std::string::npos ){
+            const std::string raw_charset = MISC::utf8_trim( std::string_view{ contenttype }.substr( pos + 8 ) );
+            return MISC::encoding_from_web_charset( raw_charset );
+        }
+    }
+    return Encoding::unknown;
 }
