@@ -1637,6 +1637,72 @@ TEST_F(MISC_ParseHtmlFormActionTest, https_url)
 }
 
 
+class MISC_ParseCharsetFromHtmlMetaTest : public ::testing::Test {};
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, empty_html)
+{
+    std::string result = MISC::parse_charset_from_html_meta( std::string{} );
+    EXPECT_EQ( result, std::string{} );
+}
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, http_equiv)
+{
+    const std::string html = R"(<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>)";
+    std::string result = MISC::parse_charset_from_html_meta( html );
+    EXPECT_EQ( result, "UTF-8" );
+}
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, http_equiv_uppercase)
+{
+    const std::string html = R"(<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="TEXT/HTML; CHARSET=Shift_JIS"/>)";
+    std::string result = MISC::parse_charset_from_html_meta( html );
+    EXPECT_EQ( result, "Shift_JIS" );
+}
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, http_equiv_trim)
+{
+    const std::string html = R"(<meta http-equiv="content-type" content="text/html; charset= EUC-JP "/>)";
+    std::string result = MISC::parse_charset_from_html_meta( html );
+    EXPECT_EQ( result, "EUC-JP" );
+}
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, charset)
+{
+    const std::string html = R"(<meta charset="UTF-8">)";
+    std::string result = MISC::parse_charset_from_html_meta( html );
+    EXPECT_EQ( result, "UTF-8" );
+}
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, charset_uppercase)
+{
+    const std::string html = R"(<META CHARSET="Shift_JIS">)";
+    std::string result = MISC::parse_charset_from_html_meta( html );
+    EXPECT_EQ( result, "Shift_JIS" );
+}
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, charset_trim)
+{
+    const std::string html = R"(<meta charset=" EUC-JP ">)";
+    std::string result = MISC::parse_charset_from_html_meta( html );
+    EXPECT_EQ( result, "EUC-JP" );
+}
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, charset_no_quote)
+{
+    const std::string html = R"(<meta charset=latin1>)";
+    std::string result = MISC::parse_charset_from_html_meta( html );
+    EXPECT_EQ( result, "latin1" );
+}
+
+TEST_F(MISC_ParseCharsetFromHtmlMetaTest, choose_first_meta_tag)
+{
+    const std::string html = R"(<meta http-equiv="Content-Type" content="text/html; charset=utf8">)"
+                             R"(<meta charset="x-sjis">)";
+    std::string result = MISC::parse_charset_from_html_meta( html );
+    EXPECT_EQ( result, "utf8" );
+}
+
+
 class ToPlainTest : public ::testing::Test {};
 
 TEST_F(ToPlainTest, empty)

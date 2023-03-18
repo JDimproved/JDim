@@ -2146,6 +2146,30 @@ std::string MISC::parse_html_form_action( const std::string& html )
 }
 
 
+/** @brief HTMLのmeta要素からテキストのエンコーディング(charset)を取得する
+ *
+ * @param[in] html HTMLの文字列
+ * @return 文字エンコーディングを表す文字列、見つからないときは空文字列を返す
+ */
+std::string MISC::parse_charset_from_html_meta( const std::string& html )
+{
+    constexpr const char* pattern = R"(<meta\s+(?:http-equiv=["']content-type["']\s+content=["'][^"']*)"
+                                    R"(charset=\s*([^"'\s]+)|charset=["']?\s*([^"'>\s]+)))";
+    JDLIB::Regex regex;
+    constexpr std::size_t offset = 0;
+    constexpr bool icase = true;   // 大文字小文字区別しない
+    constexpr bool newline = true; // . に改行をマッチさせる
+    constexpr bool usemigemo = false;
+    constexpr bool wchar = false;
+
+    if( regex.exec( pattern, html, offset, icase, newline, usemigemo, wchar ) ) {
+        if( regex.length( 1 ) > 0 ) return regex.str( 1 );
+        if( regex.length( 2 ) > 0 ) return regex.str( 2 );
+    }
+    return {};
+}
+
+
 /** @brief haystack の pos 以降から最初に needle と一致する位置を返す (ASCIIだけignore case)
  *
  * @param[in] haystack 検索する文字列
