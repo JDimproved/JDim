@@ -19,7 +19,7 @@ using namespace SKELETON;
 enum class Loadable::CharsetDetection
 {
     parse_header, ///< HTTP header を解析する
-    parse_body,   ///< HTML body 要素を解析する
+    parse_meta,   ///< HTML meta 要素を解析する
     finished,     ///< 検出を終えた
 };
 
@@ -159,13 +159,13 @@ void Loadable::receive( const char* data, size_t size )
                  MISC::ascii_ignore_case_find( m_loader->data().contenttype, "html" ) != std::string::npos ) {
             // If the content MIME type is text/html or application/xhtml+xml,
             // find charset from <meta> elements.
-            m_charset_det = CharsetDetection::parse_body;
+            m_charset_det = CharsetDetection::parse_meta;
         }
         else {
             m_charset_det = CharsetDetection::finished;
         }
     }
-    if( m_charset_det == CharsetDetection::parse_body ) {
+    if( m_charset_det == CharsetDetection::parse_meta ) {
         std::string buf( data, size );
         const std::string charset = MISC::parse_charset_from_html_meta( buf );
         if( ! charset.empty() ) {
