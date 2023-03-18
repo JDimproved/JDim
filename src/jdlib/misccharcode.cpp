@@ -7,6 +7,8 @@
 
 #include "jdiconv.h"
 
+#include <glib.h>
+
 #include <cstdint>
 #include <cstring>
 #include <iterator>
@@ -69,6 +71,34 @@ Encoding MISC::encoding_from_sv( std::string_view encoding )
     // 互換性のため JDLIB::Iconv クラスで使うエンコーディング名と一致するかチェックする
     if( encoding == charset::iconv[ static_cast<int>( Encoding::sjis ) ] ) return Encoding::sjis;
     if( encoding == charset::iconv[ static_cast<int>( Encoding::eucjp ) ] ) return Encoding::eucjp;
+    return Encoding::unknown;
+}
+
+
+/** @brief Webで使われる文字エンコーディングのラベルから`Encoding`を取得する
+ *
+ * @details 入力文字列から繋ぎの記号(`-`, `_`)を取り除き大文字小文字を無視して比較する。
+ * @param[in] charset 文字エンコーディングのラベル
+ * @return 文字列に対応する列挙型。見つからなければ `Encoding::unknown` を返す。
+ */
+Encoding MISC::encoding_from_web_charset( std::string_view charset )
+{
+    std::string casefold;
+    casefold.reserve( charset.size() );
+
+    for( const char c : charset ) {
+        if( c == '_' || c == '-' ) continue;
+        casefold.push_back( g_ascii_toupper( c ) );
+    }
+
+    if( casefold == "UTF8" ) return Encoding::utf8;
+    if( casefold == "SHIFTJIS"
+        || casefold == "SJIS"
+        || casefold == "XSJIS"
+        || casefold == "WINDOWS31J" ) return Encoding::sjis;
+    if( casefold == "EUCJP"
+        || casefold == "XEUCJP" ) return Encoding::eucjp;
+    // その他は使わないため unknown を返す
     return Encoding::unknown;
 }
 
