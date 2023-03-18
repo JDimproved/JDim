@@ -19,6 +19,7 @@ using namespace SKELETON;
 enum class Loadable::CharsetDetection
 {
     parse_header, ///< HTTP header を解析する
+    parse_meta,   ///< HTML meta 要素を解析する
     finished,     ///< 検出を終えた
 };
 
@@ -149,8 +150,34 @@ void Loadable::receive( const char* data, size_t size )
 
     if( m_charset_det == CharsetDetection::parse_header ) {
         const Encoding enc = get_loader_content_charset();
-        if( enc != Encoding::unknown ) set_encoding( enc );
-        m_charset_det = CharsetDetection::finished;
+        if( enc != Encoding::unknown ) {
+            set_encoding( enc );
+            // The HTTP header has a higher precedence than the in-HTML <meta> elements.
+            m_charset_det = CharsetDetection::finished;
+        }
+        else if( m_loader &&
+                 MISC::ascii_ignore_case_find( m_loader->data().contenttype, "html" ) != std::string::npos ) {
+            // If the content MIME type is text/html or application/xhtml+xml,
+            // find charset from <meta> elements.
+            m_charset_det = CharsetDetection::parse_meta;
+        }
+        else {
+            m_charset_det = CharsetDetection::finished;
+        }
+    }
+    if( m_charset_det == CharsetDetection::parse_meta ) {
+        std::string buf( data, size );
+        const std::string charset = MISC::parse_charset_from_html_meta( buf );
+        if( ! charset.empty() ) {
+            const Encoding enc = MISC::encoding_from_web_charset( charset );
+            if( enc != Encoding::unknown ) set_encoding( enc );
+            m_charset_det = CharsetDetection::finished;
+        }
+        else if( m_current_length >= 1024 ) {
+            // <meta> elements which declare a character encoding must be located
+            // entirely within the first 1024 bytes of the document.
+            m_charset_det = CharsetDetection::finished;
+        }
     }
 
     receive_data( data, size );
