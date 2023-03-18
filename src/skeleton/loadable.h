@@ -65,10 +65,13 @@ namespace SKELETON
 {
     class Loadable : public Dispatchable
     {
+        enum class CharsetDetection;
+
         std::unique_ptr<JDLIB::Loader> m_loader;
 
         bool m_low_priority{};
 
+        CharsetDetection m_charset_det; ///< HTTPやHTMLからテキストの文字エンコーディングを検出する処理の状態
         Encoding m_encoding;
 
         // ローダからコピーしたデータ
@@ -156,6 +159,7 @@ namespace SKELETON
         std::list< std::string > get_loader_cookies() const;
         std::string get_loader_location() const;
         size_t get_loader_length() const;
+        Encoding get_loader_content_charset() const;
     };
 }
 
