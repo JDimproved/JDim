@@ -73,19 +73,19 @@ namespace CORE
             // 2ch
             CONFIG::set_use_proxy_for2ch( m_frame_2ch.ckbt.get_active() );
             CONFIG::set_send_cookie_to_proxy_for2ch( m_frame_2ch.send_cookie_check.get_active() );
-            CONFIG::set_proxy_for2ch( MISC::utf8_trim( m_frame_2ch.entry_host.get_text() ) );
+            CONFIG::set_proxy_for2ch( MISC::utf8_trim( m_frame_2ch.entry_host.get_text().raw() ) );
             CONFIG::set_proxy_port_for2ch( atoi( m_frame_2ch.entry_port.get_text().c_str() ) );
 
             // 2ch書き込み用
             CONFIG::set_use_proxy_for2ch_w( m_frame_2ch_w.ckbt.get_active() );
             CONFIG::set_send_cookie_to_proxy_for2ch_w( m_frame_2ch_w.send_cookie_check.get_active() );
-            CONFIG::set_proxy_for2ch_w( MISC::utf8_trim( m_frame_2ch_w.entry_host.get_text() ) );
+            CONFIG::set_proxy_for2ch_w( MISC::utf8_trim( m_frame_2ch_w.entry_host.get_text().raw() ) );
             CONFIG::set_proxy_port_for2ch_w( atoi( m_frame_2ch_w.entry_port.get_text().c_str() ) );
 
             // 一般
             CONFIG::set_use_proxy_for_data( m_frame_data.ckbt.get_active() );
             CONFIG::set_send_cookie_to_proxy_for_data( m_frame_data.send_cookie_check.get_active() );
-            CONFIG::set_proxy_for_data( MISC::utf8_trim( m_frame_data.entry_host.get_text() ) );
+            CONFIG::set_proxy_for_data( MISC::utf8_trim( m_frame_data.entry_host.get_text().raw() ) );
             CONFIG::set_proxy_port_for_data( atoi( m_frame_data.entry_port.get_text().c_str() ) );
         }
 

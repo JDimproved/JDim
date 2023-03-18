@@ -97,12 +97,12 @@ namespace CORE
         void slot_ok_clicked() override
         {
             // 2ch
-            CORE::get_login2ch()->set_username( MISC::utf8_trim( m_frame_2ch.entry_id.get_text() ) );
-            CORE::get_login2ch()->set_passwd( MISC::utf8_trim( m_frame_2ch.entry_passwd.get_text() ) );
+            CORE::get_login2ch()->set_username( MISC::utf8_trim( m_frame_2ch.entry_id.get_text().raw() ) );
+            CORE::get_login2ch()->set_passwd( MISC::utf8_trim( m_frame_2ch.entry_passwd.get_text().raw() ) );
 
             // BE
-            CORE::get_loginbe()->set_username( MISC::utf8_trim( m_frame_be.entry_id.get_text() ) );
-            CORE::get_loginbe()->set_passwd( MISC::utf8_trim( m_frame_be.entry_passwd.get_text() ) );
+            CORE::get_loginbe()->set_username( MISC::utf8_trim( m_frame_be.entry_id.get_text().raw() ) );
+            CORE::get_loginbe()->set_passwd( MISC::utf8_trim( m_frame_be.entry_passwd.get_text().raw() ) );
         }
 
       public:
