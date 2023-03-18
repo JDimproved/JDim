@@ -136,6 +136,50 @@ TEST_F(MISC_EncodingFromSvTest, small_case_is_invalid)
 }
 
 
+class MISC_EncodingFromWebCharsetTest : public ::testing::Test {};
+
+TEST_F(MISC_EncodingFromWebCharsetTest, iso_8859_1)
+{
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_web_charset( "ISO-8859-1" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_web_charset( "latin1" ) );
+}
+
+TEST_F(MISC_EncodingFromWebCharsetTest, us_ascii)
+{
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_web_charset( "ASCII" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_web_charset( "US-ASCII" ) );
+}
+
+TEST_F(MISC_EncodingFromWebCharsetTest, euc_jp)
+{
+    EXPECT_EQ( Encoding::eucjp, MISC::encoding_from_web_charset( "EUC-JP" ) );
+    EXPECT_EQ( Encoding::eucjp, MISC::encoding_from_web_charset( "x-euc-jp" ) );
+}
+
+TEST_F(MISC_EncodingFromWebCharsetTest, iso_2022_jp)
+{
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_web_charset( "ISO-2022-JP" ) );
+}
+
+TEST_F(MISC_EncodingFromWebCharsetTest, shift_jis)
+{
+    EXPECT_EQ( Encoding::sjis, MISC::encoding_from_web_charset( "Shift_JIS" ) );
+    EXPECT_EQ( Encoding::sjis, MISC::encoding_from_web_charset( "Shift-JIS" ) );
+    EXPECT_EQ( Encoding::sjis, MISC::encoding_from_web_charset( "Windows-31J" ) );
+    EXPECT_EQ( Encoding::sjis, MISC::encoding_from_web_charset( "sjis" ) );
+    EXPECT_EQ( Encoding::sjis, MISC::encoding_from_web_charset( "x-sjis" ) );
+
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_web_charset( "MS_Kanji" ) );
+    EXPECT_EQ( Encoding::unknown, MISC::encoding_from_web_charset( "MS932" ) );
+}
+
+TEST_F(MISC_EncodingFromWebCharsetTest, utf8)
+{
+    EXPECT_EQ( Encoding::utf8, MISC::encoding_from_web_charset( "UTF-8" ) );
+    EXPECT_EQ( Encoding::utf8, MISC::encoding_from_web_charset( "utf8" ) );
+}
+
+
 class IsEucjpTest : public ::testing::Test {};
 
 TEST_F(IsEucjpTest, null_data)
