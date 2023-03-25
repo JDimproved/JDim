@@ -65,7 +65,7 @@ std::string create_sha1( const std::string& key )
     std::array< unsigned char, digest_length > digest;
 
     // unsigned char *SHA1( const unsigned char *, size_t, unsigned char * );
-    SHA1( (const unsigned char *)key.c_str(), key.length(), digest.data() );
+    SHA1( static_cast<const unsigned char*>(static_cast<const void*>( key.c_str() )), key.size(), digest.data() );
 
 #else // defined USE_GNUTLS
 
