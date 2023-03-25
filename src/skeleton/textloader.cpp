@@ -15,10 +15,11 @@
 
 #include <cstring>
 
-enum
-{
-    SIZE_OF_RAWDATA = 1024 * 1024
-};
+
+namespace SKELETON::tl {
+constexpr std::size_t kSizeOfRawData = 256 * 1024;
+}
+
 
 using namespace SKELETON;
 
@@ -44,8 +45,8 @@ TextLoader::~TextLoader()
 void TextLoader::init()
 {
     clear();
-    if( m_rawdata.capacity() < SIZE_OF_RAWDATA ) {
-        m_rawdata.reserve( SIZE_OF_RAWDATA );
+    if( m_rawdata.capacity() < tl::kSizeOfRawData ) {
+        m_rawdata.reserve( tl::kSizeOfRawData );
     }
 }
 
@@ -119,7 +120,7 @@ void TextLoader::download_text( const Encoding encoding )
 //
 void TextLoader::receive_data( const char* data, size_t size )
 {
-    if( m_rawdata.size() + size < SIZE_OF_RAWDATA ){
+    if( m_rawdata.size() + size < tl::kSizeOfRawData ){
         m_rawdata.append( data, size );
     }
     else{
@@ -142,8 +143,8 @@ void TextLoader::receive_finish()
     // 初期化時やnot modifiedの時はキャッシュから読み込み
     if( ! get_path().empty() && ( get_code() == HTTP_INIT || get_code() == HTTP_NOT_MODIFIED ) ){
 
-        m_rawdata.resize( SIZE_OF_RAWDATA );
-        const std::size_t read_size = CACHE::load_rawdata( get_path(), &*m_rawdata.begin(), SIZE_OF_RAWDATA );
+        m_rawdata.resize( tl::kSizeOfRawData );
+        const std::size_t read_size = CACHE::load_rawdata( get_path(), m_rawdata.data(), tl::kSizeOfRawData );
         m_rawdata.resize( read_size );
 
 #ifdef _DEBUG
