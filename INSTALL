@@ -32,7 +32,7 @@
   ・alsa-lib (-Dalsa=enabled)
   ・openssl 1.1.1 以上 (-Dtls=openssl)
   ・migemo (-Dmigemo=enabled)
-  ・googletest (`test/RADME.md`を参照)
+  ・googletest 1.10.0 以上 (`test/RADME.md`を参照)
 
   WebPやAVIF画像の表示に必要なパッケージ
   インストールされていない環境では`.webp`や`.avif`で終わるURLは通常リンクになる。
