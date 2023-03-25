@@ -284,13 +284,9 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
         }
 
         // subject取得
-        bool exist_amp = false;
         ++pos;
         str_subject = pos;
-        while( *pos != '\0' && *pos != '\n' ){
-            if( *pos == '&' ) exist_amp = true;
-            ++pos;
-        }
+        while( *pos != '\0' && *pos != '\n' ) ++pos;
         --pos;
         while( *pos != '(' && *pos != '\n' && pos != str_subject ) --pos;
         
@@ -321,15 +317,7 @@ void Board2chCompati::parse_subject( const char* str_subject_txt )
 
         artinfo.id.assign( str_id_dat, lng_id_dat );
 
-        if( str_subject[ lng_subject-1 ] == ' ' ){
-            lng_subject--;  // 2chのsubject.txtは()の前に空白が一つ入る
-        }
         artinfo.subject.assign( str_subject, lng_subject );
-
-        if( exist_amp ){
-            artinfo.subject = MISC::replace_str( artinfo.subject, "&lt;", "<" );
-            artinfo.subject = MISC::replace_str( artinfo.subject, "&gt;", ">" );
-        }
 
         const auto num = std::atoi( str_num.c_str() );
         artinfo.number = ( num < CONFIG::get_max_resnumber() ) ? num : CONFIG::get_max_resnumber();
