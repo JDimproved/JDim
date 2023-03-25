@@ -151,9 +151,9 @@ endif
 build_tests_opt = get_option('build_tests')
 if not build_tests_opt.disabled()
   # ディストロのパッケージとmeson wrapに対応
-  gtest_main_dep = dependency('gtest',
-                              main : true,
+  gtest_main_dep = dependency('gtest_main',
                               fallback : ['gtest', 'gtest_main_dep'],
+                              version : '>= 1.10.0',
                               required : build_tests_opt)
   build_tests = gtest_main_dep.found()
 else
