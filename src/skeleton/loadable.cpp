@@ -180,7 +180,7 @@ void Loadable::receive( const char* data, size_t size )
         }
     }
 
-    receive_data( data, size );
+    receive_data( std::string_view{ data, size } );
 }
 
 

@@ -1063,7 +1063,7 @@ NODE* NodeTreeBase::append_dat( const std::string& dat )
     if( dat.empty() ) return nullptr;
 
     init_loading();
-    receive_data( dat.c_str(), dat.length() );
+    receive_data( dat );
     receive_finish();
 
     return res_header( m_id_header );
@@ -1094,7 +1094,7 @@ void NodeTreeBase::load_cache()
             const size_t str_length = str.length();
             while( size < str_length ){
                 size_t size_tmp = MIN( MAXSISE_OF_LINES - m_buffer_lines.size(), str_length - size );
-                receive_data( data + size, size_tmp );
+                receive_data( std::string_view{ data + size, size_tmp } );
                 size += size_tmp;
             }
             receive_finish();
@@ -1235,17 +1235,17 @@ void NodeTreeBase::download_dat( const bool check_update )
 //
 // ローダからデータ受け取り
 //
-void NodeTreeBase::receive_data( const char* data, size_t size )
+void NodeTreeBase::receive_data( std::string_view buf )
 {
     // BOF防止
-    size = MIN( MAXSISE_OF_LINES, size );
+    buf = buf.substr( 0, MAXSISE_OF_LINES );
 
     if( is_loading()
         && ( get_code() != HTTP_OK && get_code() != HTTP_PARTIAL_CONTENT ) ){
 
 #ifdef _DEBUG
         std::cout << "NodeTreeBase::receive_data : code = " << get_code() << std::endl;
-        std::cout << data << std::endl;
+        std::cout << buf << std::endl;
 #endif
         return;
     }
@@ -1260,10 +1260,9 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
 #endif
 
         // レジュームした時に先頭が '\n' ならレジューム成功
-        if( data[ 0 ] == '\n' ){
+        if( ! buf.empty() && buf[0] == '\n' ){
 
-            ++data;
-            --size;
+            buf.remove_prefix( 1 );
             m_resume = RESUME_NO;
         }
 
@@ -1286,19 +1285,16 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
 
     if( m_resume == RESUME_FAILED ) return;
 
-    if( !size ) return;
-    
-    // バッファが '\n' で終わるように調整
-    const char* pos = data + size;
-    if( *pos == '\n' && pos != data ) --pos;
-    if( *pos == '\0' ) --pos; // '\0' を除く
-    while( *pos != '\n' && pos != data ) --pos;
+    if( buf.empty() ) return;
 
-    // 前回の残りのデータに新しいデータを付け足して add_raw_lines()にデータを送る
-    size_t size_in = ( int )( pos - data );
+    // バッファが '\n' で終わるように調整
+    std::size_t size_in = buf.rfind( '\n' );
+    if( size_in == std::string_view::npos ) size_in = 0;
+
+    // 前回の残りのデータに新しいデータを付け足して add_raw_lines() にデータを送る
     if( size_in > 0 ){
         size_in ++; // '\n'を加える
-        m_buffer_lines.append( data, size_in );
+        m_buffer_lines.append( buf.substr( 0, size_in ) );
         add_raw_lines( &*m_buffer_lines.begin(), m_buffer_lines.size() );
         // 送ったバッファをクリア
         m_buffer_lines.clear();
@@ -1311,7 +1307,7 @@ void NodeTreeBase::receive_data( const char* data, size_t size )
     }
 
     // 残りのデータをバッファにコピーしておく
-    m_buffer_lines.assign( data + size_in, size - size_in );
+    m_buffer_lines.assign( buf.substr( size_in ) );
 }
 
 

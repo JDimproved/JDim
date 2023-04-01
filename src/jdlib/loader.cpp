@@ -298,7 +298,6 @@ bool ChunkedDecoder::decode( char* buf, std::size_t& read_size )
                     // 最後のチャンク(長さ0)に達したら終了してトレーラー部は無視する
                     if( m_lng_leftdata == 0 ) {
                         read_size = decoded_size;
-                        buf[read_size] = '\0';
                         m_state = State::completed;
                         return true;
                     }
@@ -357,7 +356,6 @@ bool ChunkedDecoder::decode( char* buf, std::size_t& read_size )
         // バッファ終わり
         if( pos_chunk == read_size || m_state == State::completed ) {
             read_size = decoded_size;
-            buf[read_size] = '\0';
             // 処理の途中または完了したので m_state は変更しない
             return true;
         }
@@ -1024,7 +1022,8 @@ void Loader::run_main()
     m_data.size_data = 0;    
     do{
         // 読み込み
-        size_t read_size = 0;
+        std::size_t read_size = 0; // m_buf に読み込んだデータの長さ
+        // m_buf に格納したデータの末尾に '\0' は追加されないため read_size を使う
         while( read_size < m_lng_buf - mrg && !m_stop ){
 
             ssize_t tmpsize;
@@ -1090,8 +1089,6 @@ void Loader::run_main()
             }
 
         }
-
-        m_buf[ read_size ] = '\0';
 
         // 停止指定
         if( m_stop ) break;
@@ -1359,8 +1356,7 @@ int Loader::receive_header( char* buf, size_t& read_size )
     std::cout << "Loader::receive_header : read_size = " << read_size << std::endl;
 #endif
 
-    buf[ read_size ] = '\0';
-    m_data.str_header = buf;
+    m_data.str_header.assign( buf, read_size );
     size_t lng_header = m_data.str_header.find( "\r\n\r\n" );
     if( lng_header != std::string::npos ) lng_header += 4;
     else{

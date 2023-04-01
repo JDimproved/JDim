@@ -343,9 +343,9 @@ void Root::download_bbsmenu()
 // bbsmenu 受信中
 //
 // virtual
-void Root::receive_data( const char* data, size_t size )
+void Root::receive_data( std::string_view buf )
 {
-    m_rawdata.append( data, size );
+    m_rawdata.append( buf );
 }
 
 

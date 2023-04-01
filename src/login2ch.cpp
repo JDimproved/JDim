@@ -119,13 +119,13 @@ void Login2ch::start_login()
 //
 // データ受信
 //
-void Login2ch::receive_data( const char* data, size_t size )
+void Login2ch::receive_data( std::string_view buf )
 {
 #ifdef _DEBUG
     std::cout << "Login2ch::receive_data\n";
 #endif
 
-    m_rawdata.append( data, size );
+    m_rawdata.append( buf );
 }
 
 

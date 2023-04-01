@@ -12,6 +12,7 @@
 #include "skeleton/login.h"
 
 #include <string>
+#include <string_view>
 
 
 namespace CORE
@@ -30,7 +31,7 @@ namespace CORE
 
       private:
 
-        void receive_data( const char* , size_t ) override;
+        void receive_data( std::string_view buf ) override;
         void receive_finish() override;
     };
 

@@ -218,11 +218,11 @@ void Post::post_msg()
 //
 // ローダからデータを受け取る
 //
-void Post::receive_data( const char* data, size_t size )
+void Post::receive_data( std::string_view buf )
 {
     if( get_code() != HTTP_OK ) return;
 
-    m_rawdata.append( data, size );
+    m_rawdata.append( buf );
 }
 
 

@@ -5,6 +5,7 @@
 #include "gtest/gtest.h"
 
 #include <cstring>
+#include <string_view>
 
 
 namespace {
@@ -25,7 +26,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, empty)
     char buf[] = "";
     std::size_t size = 0;
     EXPECT_TRUE( decoder.decode( buf, size ) );
-    EXPECT_STREQ( buf, "" );
+    EXPECT_EQ( std::string_view( buf, size ), "" );
     EXPECT_EQ( size, 0 );
     EXPECT_FALSE( decoder.is_completed() );
 }
@@ -36,7 +37,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, last_chunk_only)
     char buf[] = "0\r\n";
     std::size_t size = 3;
     EXPECT_TRUE( decoder.decode( buf, size ) );
-    EXPECT_STREQ( buf, "" );
+    EXPECT_EQ( std::string_view( buf, size ), "" );
     EXPECT_EQ( size, 0 );
     EXPECT_TRUE( decoder.is_completed() );
 }
@@ -47,7 +48,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, one_chunk)
     char buf[] = "a\r\nhelloworld\r\n0\r\n\r\n";
     std::size_t size = std::strlen( buf );
     EXPECT_TRUE( decoder.decode( buf, size ) );
-    EXPECT_STREQ( buf, "helloworld" );
+    EXPECT_EQ( std::string_view( buf, size ), "helloworld" );
     EXPECT_EQ( size, 10 );
     EXPECT_TRUE( decoder.is_completed() );
 }
@@ -58,7 +59,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, one_chunk_including_crlf)
     char buf[] = "C\r\nhello\r\nworld\r\n0\r\n\r\n";
     std::size_t size = std::strlen( buf );
     EXPECT_TRUE( decoder.decode( buf, size ) );
-    EXPECT_STREQ( buf, "hello\r\nworld" );
+    EXPECT_EQ( std::string_view( buf, size ), "hello\r\nworld" );
     EXPECT_EQ( size, 12 );
     EXPECT_TRUE( decoder.is_completed() );
 }
@@ -69,7 +70,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, multiple_chunks)
     char buf[] = "5\r\nhello\r\n5\r\nworld\r\n0\r\n\r\n";
     std::size_t size = std::strlen( buf );
     EXPECT_TRUE( decoder.decode( buf, size ) );
-    EXPECT_STREQ( buf, "helloworld" );
+    EXPECT_EQ( std::string_view( buf, size ), "helloworld" );
     EXPECT_EQ( size, 10 );
     EXPECT_TRUE( decoder.is_completed() );
 }
@@ -80,7 +81,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, chunk_ext)
     char buf[] = "5;foo=bar\r\nhello\r\n5;baz\r\nworld\r\n0\r\n\r\n";
     std::size_t size = std::strlen( buf );
     EXPECT_TRUE( decoder.decode( buf, size ) );
-    EXPECT_STREQ( buf, "helloworld" );
+    EXPECT_EQ( std::string_view( buf, size ), "helloworld" );
     EXPECT_EQ( size, 10 );
     EXPECT_TRUE( decoder.is_completed() );
 }
@@ -91,7 +92,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, traier_part)
     char buf[] = "5\r\nhello\r\n5\r\nworld\r\n0\r\nAdditional: Data\r\n\r\n";
     std::size_t size = std::strlen( buf );
     EXPECT_TRUE( decoder.decode( buf, size ) );
-    EXPECT_STREQ( buf, "helloworld" );
+    EXPECT_EQ( std::string_view( buf, size ), "helloworld" );
     EXPECT_EQ( size, 10 );
     EXPECT_TRUE( decoder.is_completed() );
 }
@@ -110,7 +111,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, multiple_time_feed_chunks)
         std::strcpy( buf, input );
         size = std::strlen( buf );
         EXPECT_TRUE( decoder.decode( buf, size ) );
-        EXPECT_STREQ( buf, output );
+        EXPECT_EQ( std::string_view( buf, size ), output );
         EXPECT_EQ( size, output_size );
         EXPECT_EQ( decoder.is_completed(), is_completed );
     }
@@ -131,7 +132,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, multiple_time_feed_crlf_fragmentation)
         std::strcpy( buf, input );
         size = std::strlen( buf );
         EXPECT_TRUE( decoder.decode( buf, size ) );
-        EXPECT_STREQ( buf, output );
+        EXPECT_EQ( std::string_view( buf, size ), output );
         EXPECT_EQ( size, output_size );
         EXPECT_EQ( decoder.is_completed(), is_completed );
     }
@@ -154,7 +155,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, multiple_time_feed_body_fragmentation)
         std::strcpy( buf, input );
         size = std::strlen( buf );
         EXPECT_TRUE( decoder.decode( buf, size ) );
-        EXPECT_STREQ( buf, output );
+        EXPECT_EQ( std::string_view( buf, size ), output );
         EXPECT_EQ( size, output_size );
         EXPECT_EQ( decoder.is_completed(), is_completed );
     }
@@ -209,7 +210,7 @@ TEST_F(JDLIB_ChunkedDecoder_Decode, call_again_after_completed)
         std::strcpy( buf, input );
         size = std::strlen( buf );
         EXPECT_TRUE( decoder.decode( buf, size ) );
-        EXPECT_STREQ( buf, output );
+        EXPECT_EQ( std::string_view( buf, size ), output );
         EXPECT_EQ( size, output_size );
         EXPECT_TRUE( decoder.is_completed() );
     }

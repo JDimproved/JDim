@@ -17,6 +17,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <string_view>
 
 
 namespace DBTREE
@@ -155,7 +156,7 @@ namespace DBTREE
 
         // bbsmenuのダウンロード用関数
         void clear();
-        void receive_data( const char* data, size_t size ) override;
+        void receive_data( std::string_view buf ) override;
         void receive_finish() override;
         void bbsmenu2xml( const std::string& menu );
 

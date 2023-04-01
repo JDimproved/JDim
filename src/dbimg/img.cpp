@@ -454,9 +454,9 @@ bool Img::is_fake() const
 //
 // データ受信
 //
-void Img::receive_data( const char* data, size_t size )
+void Img::receive_data( std::string_view buf )
 {
-    if( ! size ) return;
+    if( buf.empty() ) return;
 
 #ifdef _DEBUG
     std::cout << "Img::receive_data code = " << get_code() << std::endl
@@ -469,8 +469,8 @@ void Img::receive_data( const char* data, size_t size )
     // 先頭のシグネチャを見て画像かどうかをチェック
     if( m_type == T_UNKNOWN && get_code() == HTTP_OK ){
 
-        if( size >= kSignatureSizeRequirement ) {
-            m_type = DBIMG::get_image_type( reinterpret_cast<const unsigned char*>( data ) );
+        if( buf.size() >= kSignatureSizeRequirement ) {
+            m_type = DBIMG::get_image_type( reinterpret_cast<const unsigned char*>( buf.data() ) );
         }
 
         if( m_type == T_NOIMG ){
@@ -481,10 +481,17 @@ void Img::receive_data( const char* data, size_t size )
 
                 // std::stringにいきなりデータを入れるのはなんとなく恐いので strncasecmp() を使用
                 unsigned char notfound = 0;
-                for( unsigned int i = 0; i < size; ++i ){
-                    if( strncasecmp( data + i, "404", 3 ) == 0 ) notfound |= 1;
-                    if( strncasecmp( data + i, "not", 3 ) == 0 ) notfound |= 2;
-                    if( strncasecmp( data + i, "found", 5 ) == 0 ) notfound |= 4;
+                std::size_t i = buf.find( "404" );
+                if( i != std::string_view::npos ) {
+                    notfound |= 1;
+                    i = buf.find_first_of( "Nn", i + 3 );
+                }
+                if( i != std::string_view::npos ) {
+                    if( buf.compare( i + 1, 2, "OT" ) == 0 || buf.compare( i + 1, 2, "ot" ) == 0 ) notfound |= 2;
+                    i = buf.find_first_of( "Ff", i + 3 );
+                }
+                if( i != std::string_view::npos ) {
+                    if( buf.compare( i + 1, 4, "OUND" ) == 0 || buf.compare( i + 1, 4, "ound" ) == 0 ) notfound |= 4;
                 }
                 if( notfound == 7 )  m_type = T_NOT_FOUND;
             }
@@ -492,8 +499,8 @@ void Img::receive_data( const char* data, size_t size )
             stop_load();
 
 #ifdef _DEBUG
-            std::cout << "no image : size = " << size << std::endl;
-            std::cout << data << std::endl;
+            std::cout << "no image : size = " << buf.size() << std::endl;
+            std::cout << buf << std::endl;
 #endif
         }
         else if( m_type == T_NOT_SUPPORT ) {
@@ -504,7 +511,7 @@ void Img::receive_data( const char* data, size_t size )
 
     if( m_fout && m_type != T_NOIMG && m_type != T_NOT_FOUND && m_type != T_NOT_SUPPORT ) {
 
-        if( fwrite( data, 1, size, m_fout ) != size ){
+        if( fwrite( buf.data(), 1, buf.size(), m_fout ) != buf.size() ){
             m_type = T_WRITEFAILED; // 書き込み失敗
             stop_load();
         }

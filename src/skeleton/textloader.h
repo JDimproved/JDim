@@ -13,6 +13,8 @@
 #include "loadable.h"
 
 #include <string>
+#include <string_view>
+
 
 namespace JDLIB
 {
@@ -61,7 +63,7 @@ namespace SKELETON
         void init();
         void clear();
 
-        void receive_data( const char* data, size_t size ) override;
+        void receive_data( std::string_view buf ) override;
         void receive_finish() override;
 
         // HTTP応答ヘッダーのクッキーを取り扱う場合は派生クラスでoverrideする
