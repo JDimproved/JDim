@@ -129,10 +129,7 @@ void LoginBe::receive_data( std::string_view buf )
     std::cout << "LoginBe::receive_data\n";
 #endif
 
-    if( m_rawdata.size() + buf.size() < SIZE_OF_RAWDATA ){
-
-        m_rawdata.append( buf );
-    }
+    m_rawdata.append( buf );
 }
 
 

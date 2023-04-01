@@ -120,12 +120,7 @@ void TextLoader::download_text( const Encoding encoding )
 //
 void TextLoader::receive_data( std::string_view buf )
 {
-    if( m_rawdata.size() + buf.size() < tl::kSizeOfRawData ){
-        m_rawdata.append( buf );
-    }
-    else{
-        MISC::ERRMSG( "TextLoader : received failed ( BOF )\n" );
-    }
+    m_rawdata.append( buf );
 }
 
 
