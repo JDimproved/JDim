@@ -10,6 +10,7 @@
 #include "nodetreebase.h"
 
 #include <memory>
+#include <string_view>
 
 
 namespace JDLIB
@@ -46,7 +47,7 @@ namespace DBTREE
         char* process_raw_lines( char* rawlines ) override;
         const char* raw2dat( char* rawlines, int& byte ) override;
 
-        void receive_data( const char* data, size_t size ) override;
+        void receive_data( std::string_view buf ) override;
         void receive_finish() override;
     };
 }

@@ -325,7 +325,7 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
 //
 // ローダからデータ受け取り
 //
-void NodeTreeMachi::receive_data( const char* data, size_t size )
+void NodeTreeMachi::receive_data( std::string_view buf )
 {
     // dat落ち判定用処理。 receive_finish() も参照
     if( ! is_checking_update() && get_code() == HTTP_OK && m_buffer_for_200.empty() ) {
@@ -333,11 +333,10 @@ void NodeTreeMachi::receive_data( const char* data, size_t size )
         std::cout << "NodeTreeMachi::receive_data : save some bytes\n";
 #endif
 
-        const int lng = MIN( size, BUF_SIZE_200 );
-        m_buffer_for_200.append( data, lng );
+        m_buffer_for_200.append( buf.substr( 0, BUF_SIZE_200 ) );
     }
 
-    NodeTreeBase::receive_data( data, size );
+    NodeTreeBase::receive_data( buf );
 }
 
 

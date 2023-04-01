@@ -15,6 +15,7 @@
 #include <list>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 
@@ -595,7 +596,7 @@ namespace DBTREE
         virtual bool is_valid( const std::string& filename ) const { return false; }
 
         virtual void create_loaderdata( JDLIB::LOADERDATA& data );
-        void receive_data( const char* data, size_t size ) override;
+        void receive_data( std::string_view buf ) override;
         void receive_finish() override;
 
         // url_boardbase をロードして移転したかどうか解析開始

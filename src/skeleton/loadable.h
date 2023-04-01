@@ -52,6 +52,7 @@
 #include <ctime>
 #include <list>
 #include <memory>
+#include <string_view>
 
 
 namespace JDLIB
@@ -147,7 +148,7 @@ namespace SKELETON
         
       private:
 
-        virtual void receive_data( const char* , size_t ){};
+        virtual void receive_data( std::string_view ) {}
         virtual void receive_finish(){};
 
         void callback_dispatch() override;

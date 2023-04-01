@@ -118,10 +118,10 @@ void TextLoader::download_text( const Encoding encoding )
 //
 // ローダよりデータ受信
 //
-void TextLoader::receive_data( const char* data, size_t size )
+void TextLoader::receive_data( std::string_view buf )
 {
-    if( m_rawdata.size() + size < tl::kSizeOfRawData ){
-        m_rawdata.append( data, size );
+    if( m_rawdata.size() + buf.size() < tl::kSizeOfRawData ){
+        m_rawdata.append( buf );
     }
     else{
         MISC::ERRMSG( "TextLoader : received failed ( BOF )\n" );

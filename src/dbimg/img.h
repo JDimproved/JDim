@@ -8,6 +8,8 @@
 #include "skeleton/loadable.h"
 
 #include <string>
+#include <string_view>
+
 
 namespace Gtk
 {
@@ -123,7 +125,7 @@ namespace DBIMG
         
       private:
 
-        void receive_data( const char* data, size_t size ) override;
+        void receive_data( std::string_view buf ) override;
         void receive_finish() override;
 
         // ロード待ち状態セット/リセット

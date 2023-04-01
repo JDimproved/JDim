@@ -123,15 +123,15 @@ void LoginBe::start_login()
 //
 // データ受信
 //
-void LoginBe::receive_data( const char* data, size_t size )
+void LoginBe::receive_data( std::string_view buf )
 {
 #ifdef _DEBUG
     std::cout << "LoginBe::receive_data\n";
 #endif
 
-    if( m_rawdata.size() + size < SIZE_OF_RAWDATA ){
+    if( m_rawdata.size() + buf.size() < SIZE_OF_RAWDATA ){
 
-        m_rawdata.append( data, size );
+        m_rawdata.append( buf );
     }
 }
 

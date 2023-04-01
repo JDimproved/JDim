@@ -1056,14 +1056,14 @@ void BoardBase::create_loaderdata( JDLIB::LOADERDATA& data )
 //
 // ローダよりsubject.txt受信
 //
-void BoardBase::receive_data( const char* data, size_t size )
+void BoardBase::receive_data( std::string_view buf )
 {
-    if( ! size ) return;
+    if( buf.empty() ) return;
 
     if( m_rawdata.capacity() < bb::kSizeOfRawData ) {
         m_rawdata.reserve( bb::kSizeOfRawData );
     }
-    m_rawdata.append( data, size );
+    m_rawdata.append( buf );
 
     if( m_read_url_boardbase ) return; // url_boardbase をロードして移転が起きたかチェック中
 
@@ -1078,7 +1078,7 @@ void BoardBase::receive_data( const char* data, size_t size )
     if( get_code() != HTTP_OK ) set_encoding( m_encoding_bak );
     if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( Encoding::utf8, get_encoding() );
 
-    m_rawdata_left.append( data, size );
+    m_rawdata_left.append( buf );
 
     std::size_t byte_in = m_rawdata_left.rfind( '\n' );
     if( byte_in != std::string::npos ) {
@@ -1092,7 +1092,7 @@ void BoardBase::receive_data( const char* data, size_t size )
         m_rawdata_left.erase( 0, byte_in );
 
 #ifdef _DEBUG
-        std::cout << "BoardBase::receive_data rawdata.size = " << m_rawdata.size() << " size = " << size
+        std::cout << "BoardBase::receive_data rawdata.size = " << m_rawdata.size() << " size = " << buf.size()
                   << " byte_in = " << byte_in << " byte_out = " << rawdata_utf8.size()
                   << " rawdata_left.size = " << m_rawdata_left.size() << std::endl;
 #endif
@@ -1249,7 +1249,7 @@ void BoardBase::receive_finish()
 
         std::vector<char> rawdata( bb::kSizeOfRawData );
         const std::size_t lng = CACHE::load_rawdata( path_subject, rawdata.data(), bb::kSizeOfRawData );
-        receive_data( rawdata.data(), lng );
+        receive_data( std::string_view{ rawdata.data(), lng } );
     }
 
 #ifdef _DEBUG

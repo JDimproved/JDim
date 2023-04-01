@@ -292,7 +292,7 @@ namespace DBTREE
             return rawlines;
         }
 
-        void receive_data( const char* data, size_t size ) override;
+        void receive_data( std::string_view buf ) override;
         void receive_finish() override;
 
         // 拡張属性を取り出す
