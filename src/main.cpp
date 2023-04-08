@@ -16,7 +16,7 @@
 #include "iomonitor.h"
 
 #include "jdlib/miscmsg.h"
-#include "jdlib/ssl.h"
+#include "jdlib/jdsocket.h"
 #include "jdlib/jdregex.h"
 
 #include <cstring>
@@ -542,12 +542,12 @@ int main( int argc, char **argv )
     xsmp_session_init( &xsmpdata );
 #endif
 
-    JDLIB::init_ssl();
+    JDLIB::tlslib_init();
 
     App app;
     const int exit_status = app.run( argc, argv );
 
-    JDLIB::deinit_ssl();
+    JDLIB::tlslib_deinit();
 
 #ifdef USE_XSMP
     xsmp_session_end( &xsmpdata );

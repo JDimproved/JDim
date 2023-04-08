@@ -149,6 +149,12 @@ bool ConfigItems::load( const bool restore )
     // ipv6使用
     use_ipv6 = cf.get_option_bool( "use_ipv6", CONF_USE_IPV6 );
 
+    // TLSでノンブロッキングI/Oを使用する
+    tls_nonblocking = cf.get_option_bool( "tls_nonblocking", CONF_TLS_NONBLOCKING );
+
+    // TLSでサーバー証明書を検証する (unsafe to turn off)
+    verify_cert = cf.get_option_bool( "verify_cert", CONF_VERIFY_CERT );
+
     // 同一ホストに対する最大コネクション数( 1 または 2 )
     connection_num = cf.get_option_int( "connection_num", CONF_CONNECTION_NUM, 1, 2 );
 
@@ -716,6 +722,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "loader_timeout_checkupdate", loader_timeout_checkupdate );
 
     cf.update( "use_ipv6", use_ipv6 );
+    cf.update( "tls_nonblocking", tls_nonblocking );
+    cf.update( "verify_cert", verify_cert );
     cf.update( "connection_num", connection_num );
 
     cf.update( "use_cookie_hap", use_cookie_hap );
