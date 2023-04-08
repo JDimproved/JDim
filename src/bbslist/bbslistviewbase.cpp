@@ -2542,9 +2542,10 @@ void BBSListViewBase::select_item( const std::string& url )
     for( ; ! it.end(); ++it ){
 
         Gtk::TreeModel::Row row = *it;
-        Gtk::TreePath path = GET_PATH( row );
+        const Glib::ustring& ustr_url = row[ m_columns.m_url ];
 
-        if( url_item == row[ m_columns.m_url ] || url_item == path2url( path ) ){
+        if( url_item == ustr_url.raw() ){
+            Gtk::TreePath path = GET_PATH( row );
 
             // 最初に見つかったものにフォーカスする
             if( m_treeview.is_expand( path ) ){
