@@ -13,6 +13,7 @@ libjdlib_a_SOURCES = \
 	loader.cpp \
 	imgloader.cpp \
 	ssl.cpp \
+	jdsocket.cpp \
 	loaderdata.cpp \
 	cookiemanager.cpp \
 	confloader.cpp \
@@ -35,6 +36,9 @@ noinst_HEADERS = \
 	loader.h \
 	imgloader.h \
 	ssl.h \
+	jdsocket.h \
+	jdsocketgnutls.h \
+	jdsocketopenssl.h \
 	loaderdata.h \
 	cookiemanager.h \
 	confloader.h \
