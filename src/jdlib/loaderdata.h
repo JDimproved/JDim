@@ -26,15 +26,14 @@ namespace JDLIB
         std::string protocol;
         std::string host;
         std::string path;
-        long port;
+        int port;
         bool use_ssl; // https
-        bool async; // 非同期ソケット使用
-        bool use_ipv6; // ipv6使用
 
         std::string str_post;
-        
+
+        int protocol_proxy;
         std::string host_proxy;
-        long port_proxy;
+        int port_proxy;
         std::string basicauth_proxy; // proxy 認証
 
         std::string agent;
@@ -43,7 +42,7 @@ namespace JDLIB
         std::string accept;
         std::string ex_field;  // 送信時にヘッダに追加するフィールド
         std::string str_header;
-        long code;
+        int code;
         std::string str_code;
         std::string date;
         std::string modified;
@@ -54,8 +53,8 @@ namespace JDLIB
         std::string contenttype;
         std::string basicauth;
         size_t size_buf;
-        long timeout;
-        
+        int timeout;
+
         LOADERDATA();
 
         void init();

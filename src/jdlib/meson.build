@@ -6,6 +6,7 @@ sources = [
   'jdiconv.cpp',
   'jdmigemo.cpp',
   'jdregex.cpp',
+  'jdsocket.cpp',
   'loader.cpp',
   'loaderdata.cpp',
   'misccharcode.cpp',
@@ -15,7 +16,6 @@ sources = [
   'misctrip.cpp',
   'miscutil.cpp',
   'miscx.cpp',
-  'ssl.cpp',
   'tfidf.cpp',
   'timeout.cpp',
 ]

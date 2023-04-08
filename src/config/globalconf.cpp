@@ -229,6 +229,11 @@ int CONFIG::get_loader_timeout_checkupdate(){ return get_confitem()->loader_time
 bool CONFIG::get_use_ipv6(){ return get_confitem()->use_ipv6; }
 void CONFIG::set_use_ipv6( const bool set ){ get_confitem()->use_ipv6 = set; }
 
+// TLSでノンブロッキングI/Oを使用する
+bool CONFIG::get_tls_nonblocking(){ return get_confitem()->tls_nonblocking; }
+// TLSでサーバー証明書を検証する (unsafe to turn off)
+bool CONFIG::get_verify_cert(){ return get_confitem()->verify_cert; }
+
 // 同一ホストに対する最大コネクション数( 1 または 2 )
 int CONFIG::get_connection_num(){ return get_confitem()->connection_num; }
 

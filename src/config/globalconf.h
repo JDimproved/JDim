@@ -195,6 +195,12 @@ namespace CONFIG
     bool get_use_ipv6();
     void set_use_ipv6( const bool set );
 
+    /// TLSでノンブロッキングI/Oを使用する
+    bool get_tls_nonblocking();
+
+    /// TLSでサーバー証明書を検証する (unsafe to turn off)
+    bool get_verify_cert();
+
     // 同一ホストに対する最大コネクション数( 1 または 2 )
     int get_connection_num();
 

@@ -31,11 +31,10 @@ void LOADERDATA::init()
     path.clear();
     port = 0;
     use_ssl = false;
-    async = true;
-    use_ipv6 = CONFIG::get_use_ipv6();
             
     str_post.clear();
 
+    protocol_proxy = 0;
     host_proxy.clear();
     port_proxy = 0;
     basicauth_proxy.clear();

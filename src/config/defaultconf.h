@@ -34,6 +34,8 @@ namespace CONFIG
         CONF_LOADER_TIMEOUT_IMG = 30,  // 画像ローダのタイムアウト値
         CONF_LOADER_TIMEOUT_CHECKUPDATE = 10,  // 更新チェックのタイムアウト値
         CONF_USE_IPV6 = 1,          // ipv6使用
+        CONF_TLS_NONBLOCKING = 1,   ///< TLSでノンブロッキングI/Oを使用する
+        CONF_VERIFY_CERT = 1,       ///< TLSでサーバー証明書を検証する (unsafe to turn off)
         CONF_CONNECTION_NUM = 2,    // 同一ホストに対する最大コネクション数( 1 または 2 )
         CONF_USE_COOKIE_HAP = 0,    // 2chのクッキーを保存する (互換性のため設定名は旧名称を使う)
         CONF_REFPOPUP_BY_MO = 0,    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する

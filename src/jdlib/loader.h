@@ -11,9 +11,9 @@
 
 #include "loaderdata.h"
 
-#include <netdb.h>
 #include <zlib.h>
 
+#include <atomic>
 #include <functional>
 #include <list>
 #include <optional>
@@ -111,10 +111,17 @@ namespace JDLIB
 
     class Loader
     {
-        LOADERDATA m_data;
-        struct addrinfo* m_addrinfo{};
+        /// @brief HTTPヘッダー解析の結果を表す列挙型
+        enum class HeaderParse
+        {
+            not_finished, ///< 解析は終わってない
+            success, ///< 解析に成功した
+            failure, ///< 解析に失敗した
+        };
 
-        bool m_stop{}; // = true にするとスレッド停止
+        LOADERDATA m_data;
+
+        std::atomic<bool> m_stop{}; // = true にするとスレッド停止
         bool m_loading{};
         std::thread m_thread;
         SKELETON::Loadable* m_loadable;
@@ -154,16 +161,13 @@ namespace JDLIB
 
         void clear();
         void run_main();
-        struct addrinfo* get_addrinfo( const std::string& hostname, const int port );
         std::string create_msg_send() const;
-        bool wait_recv_send( const int fd, const bool recv );
-        bool send_connect( const int soc, std::string& errmsg );
 
         // ローディング終了処理
         void finish_loading();
 
         // ヘッダ用
-        int receive_header( char* buf, size_t& read_size );
+        HeaderParse receive_header( char* buf, size_t& read_size );
         bool analyze_header();
         std::string analyze_header_option( std::string_view option ) const;
         std::list< std::string > analyze_header_option_list( std::string_view option ) const;
