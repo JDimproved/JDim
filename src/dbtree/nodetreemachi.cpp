@@ -277,22 +277,25 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
         // read.cgi 形式
         else{
 
-            std::string reg( "<dt>([1-9][0-9]*) ?名前：(<a href=\"mailto:([^\"]*)\"><b>|<font[^>]*><b>) ?(<font[^>]*>)?([^<]*)(</font>)? ?</[bB]>.+ ?投稿日： ?([^<]*)( <font[^>]*>\\[ ?(.*) ?\\]</font>)?<br><dd> ?(.*) ?<br><br>$" );
+            constexpr const char* reg =
+                "<dt>([1-9][0-9]*) ?名前：(?:<a href=\"mailto:([^\"]*)\"><b>|<font[^>]*><b>) ?"
+                "(?:<font[^>]*>)?([^<]*)(?:</font>)? ?</[bB]>.+ ?投稿日： ?([^>]*)"
+                "(?: <font[^>]*>\\[ ?([!-~]*) ?\\]</font>)?<br><dd> ?(.*) ?<br><br>(<script[^>]*>)?$";
 
             if( ! m_regex->exec( reg, line, offset, icase, newline, usemigemo, wchar ) ){
 #ifdef _DEBUG
-                std::cout << "失敗\n";
+                std::cout << "NodeTreeMachi::raw2dat read.cgi regex 失敗\n";
                 std::cout << line << std::endl;
 #endif
                 continue;
             }
 
-            num = atoi( m_regex->str( 1 ).c_str() );
-            name = m_regex->str( 5 );
-            mail = m_regex->str( 3 );
-            date = m_regex->str( 7 );
-            if( !m_regex->str( 9 ).empty() ) date += " HOST:" + m_regex->str( 9 );
-            body = m_regex->str( 10 );
+            num = std::atoi( m_regex->str( 1 ).c_str() );
+            name = m_regex->str( 3 );
+            mail = m_regex->str( 2 );
+            date = m_regex->str( 4 );
+            if( std::string id = m_regex->str( 5 ); ! id.empty() ) date += " HOST:" + id;
+            body = m_regex->str( 6 );
         }
 
         while( next < num ){
