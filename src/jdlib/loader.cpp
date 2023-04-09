@@ -666,16 +666,9 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     }
     m_data.protocol_proxy = static_cast<int>( proxy );
 
-    // プロキシのポート番号
-    if( data_in.port_proxy != 0 ) m_data.port_proxy = data_in.port_proxy;
-
-    // ホスト名の後に指定されている
-    if( i = m_data.host_proxy.rfind( ':' ); i != std::string::npos ){
-        m_data.port_proxy = std::atoi( m_data.host_proxy.c_str() + ( i + 1 ) );
-        m_data.host_proxy = m_data.host_proxy.substr( 0, i );
-    }
-
     if( ! m_data.host_proxy.empty() ){
+        m_data.port_proxy = data_in.port_proxy;
+        if( m_data.port_proxy == 0 ) m_data.port_proxy = 8080;
         m_data.basicauth_proxy = data_in.basicauth_proxy;
     }
 
