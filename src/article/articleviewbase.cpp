@@ -2352,7 +2352,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
         // 板
         else if( ! boardbase.empty() ){
 
-            std::string tmpstr = DBTREE::board_name( url );
+            const std::string& tmpstr = DBTREE::board_name( url );
             args.arg1 = "[ " + tmpstr + " ] ";
 
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPHTML, m_url_article, args );
@@ -3687,7 +3687,7 @@ void ArticleViewBase::slot_copy_res( bool ref )
 
     std::string tmpstr = m_url_tmp + "\n";
     if( ref ) tmpstr += CONFIG::get_ref_prefix();
-    std::string board_name = DBTREE::board_name( m_url_article );
+    const std::string& board_name = DBTREE::board_name( m_url_article );
     if( ! board_name.empty() ) tmpstr += "[ " + board_name + " ] ";
     tmpstr += MISC::to_plain( DBTREE::article_subject( m_url_article ) ) + "\n\n";
     tmpstr += m_article->get_res_str( atoi( m_str_num.c_str() ), ref );

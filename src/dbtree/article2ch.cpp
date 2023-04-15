@@ -45,7 +45,7 @@ std::string Article2ch::create_write_message( const std::string& name, const std
             << "&oekaki_thread1=";
 
     // キーワード( hana=mogera や suka=pontan など )
-    const std::string keyword = DBTREE::board_keyword_for_write( get_url() );
+    const std::string& keyword = DBTREE::board_keyword_for_write( get_url() );
     if( ! keyword.empty() ) ss_post << "&" << keyword;
 
     // ログイン中
