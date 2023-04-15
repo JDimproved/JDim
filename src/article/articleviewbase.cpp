@@ -1689,10 +1689,51 @@ void ArticleViewBase::show_id( const std::string& id_name, const bool show_optio
     comment << "総参照数:" << m_article->get_res_reference( list_resnum ).size() << " 件";
 
     // 末尾判定
-    if( raw_id.length() == 9 ){
+    if( raw_id.size() >= 12 ) { // 特定の日時に表示される末尾があると12以上になる
+        // 新方式でのID末尾
+        const char c = raw_id[11];
+        switch( c ) {
 
-        char c = raw_id.c_str()[ 8 ];
-        switch( c ){
+            case '0': comment << "<br>末尾:" << c << " (固定回線)";  break;
+
+            case 'd': comment << "<br>末尾:" << c << " (docomo)";  break;
+            case 'D': comment << "<br>末尾:" << c << " (docomo mopera)";  break;
+            case 'a': comment << "<br>末尾:" << c << " (au)";  break;
+            case 'p': comment << "<br>末尾:" << c << " (SoftBank iPhone)";  break;
+            case 'r': comment << "<br>末尾:" << c << " (SoftBank Android)";  break;
+            case 'x': comment << "<br>末尾:" << c << " (SoftBank)";  break;
+            case 'e':
+            case 'E': comment << "<br>末尾:" << c << " (Y!mobile)";  break;
+
+            case 'F':
+            case 'A': comment << "<br>末尾:" << c << " (公衆Fi-Wi)";  break;
+            case 'S': comment << "<br>末尾:" << c << " (SafeComNet)";  break;
+            case 'M': comment << "<br>末尾:" << c << " (MVNO)";  break;
+            case 'W': comment << "<br>末尾:" << c << " (WiMAX1)";  break;
+            case 'X': comment << "<br>末尾:" << c << " (Android GoogleChrome プロクシー)";  break;
+
+            case 'K':
+            case 'Q': comment << "<br>末尾:" << c << " (ガラケー)";  break;
+
+            case '6': comment << "<br>末尾:" << c << " (大学)";  break;
+            case '7': comment << "<br>末尾:" << c << " (大学以外の学校)";  break;
+            case '8': comment << "<br>末尾:" << c << " (VPN)";  break;
+            case '9': comment << "<br>末尾:" << c << " (運営公認ボランティア)";  break;
+
+            case 'h': comment << "<br>末尾:" << c << " (逆引きできない)";  break;
+            case 'H': comment << "<br>末尾:" << c << " (逆引きが変)";  break;
+
+            case 'n': comment << "<br>末尾:" << c << " (ショッピングセンター)";  break;
+            case 'C': comment << "<br>末尾:" << c << " (会社内)";  break;
+            case 'G': comment << "<br>末尾:" << c << " (役所内)";  break;
+            case 'V': comment << "<br>末尾:" << c << " (外国の役所内)";  break;
+            case 'L': comment << "<br>末尾:" << c << " (米軍関係)";  break;
+        }
+    }
+    else if( raw_id.size() == 9 ) {
+        // 従来方式でのID末尾
+        const char c = raw_id[8];
+        switch( c ) {
 
             case 'O': comment << "<br>末尾:" << c << " 携帯";  break;
             case 'o': comment << "<br>末尾:" << c << " 携帯(WILLCOM)";  break;
