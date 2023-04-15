@@ -630,7 +630,9 @@ void ArticleViewMain::create_status_message()
     if( is_broken() ) str_stat += "[ 壊れています ] ";
     if( is_overflow() ) str_stat += "[ レス数が最大表示可能数以上です ] ";
 
-    if( ! DBTREE::article_ext_err( url_article() ).empty() ) str_stat += "[ " + DBTREE::article_ext_err( url_article() ) + " ] ";
+    if( const std::string& err = DBTREE::article_ext_err( url_article() ); ! err.empty() ) {
+        str_stat += "[ " + err + " ] ";
+    }
 
     ss_tmp << " / 速度 " << DBTREE::article_get_speed( url_article() )
            << " / " << DBTREE::article_lng_dat( url_article() )/1024 << " K ] "

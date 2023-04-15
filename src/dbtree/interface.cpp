@@ -218,7 +218,7 @@ void DBTREE::download_bbsmenu()
 
 
 // bbsmenuの更新時間( 文字列 )
-std::string DBTREE::get_date_modified()
+const std::string& DBTREE::get_date_modified()
 {
     return get_root()->get_date_modified();
 }
@@ -231,13 +231,13 @@ time_t DBTREE::get_time_modified()
 }
 
 
-std::string DBTREE::board_path( const std::string& url )
+const std::string& DBTREE::board_path( const std::string& url )
 {
     return DBTREE::get_board( url )->get_path_board();
 }
 
 
-std::string DBTREE::board_id( const std::string& url )
+const std::string& DBTREE::board_id( const std::string& url )
 {
     return DBTREE::get_board( url )->get_id();
 }
@@ -249,7 +249,7 @@ time_t DBTREE::board_time_modified( const std::string& url )
 }
 
 // 板の更新時間( 文字列 )
-std::string DBTREE::board_date_modified( const std::string& url )
+const std::string& DBTREE::board_date_modified( const std::string& url )
 {
     return DBTREE::get_board( url )->get_date_modified();
 }
@@ -281,13 +281,13 @@ void DBTREE::board_set_modified_setting( const std::string& url, const std::stri
 }
 
 
-std::string DBTREE::board_name( const std::string& url )
+const std::string& DBTREE::board_name( const std::string& url )
 {
     return DBTREE::get_board( url )->get_name();
 }
 
 
-std::string DBTREE::board_subjecttxt( const std::string& url )
+const std::string& DBTREE::board_subjecttxt( const std::string& url )
 {
     return DBTREE::get_board( url )->get_subjecttxt();
 }
@@ -333,7 +333,7 @@ void DBTREE::board_delete_cookies( const std::string& url )
     DBTREE::get_board( url )->delete_cookies();
 }
 
-std::string DBTREE::board_keyword_for_write( const std::string& url )
+const std::string& DBTREE::board_keyword_for_write( const std::string& url )
 {
     return DBTREE::get_board( url )->get_keyword_for_write();
 }
@@ -351,7 +351,7 @@ void DBTREE::board_analyze_keyword_for_write( const std::string& url, const std:
 }
 
 
-std::string DBTREE::board_keyword_for_newarticle( const std::string& url )
+const std::string& DBTREE::board_keyword_for_newarticle( const std::string& url )
 {
     return DBTREE::get_board( url )->get_keyword_for_newarticle();
 }
@@ -375,13 +375,13 @@ std::string DBTREE::board_parse_form_data( const std::string& url, const std::st
 }
 
 
-std::string DBTREE::board_basicauth( const std::string& url )
+const std::string& DBTREE::board_basicauth( const std::string& url )
 {
     return DBTREE::get_board( url )->get_basicauth();
 }
 
 
-std::string DBTREE::board_ext( const std::string& url )
+const std::string& DBTREE::board_ext( const std::string& url )
 {
     return DBTREE::get_board( url )->get_ext();
 }
@@ -399,7 +399,7 @@ int DBTREE::board_code( const std::string& url )
 }
 
 
-std::string DBTREE::board_str_code( const std::string& url )
+const std::string& DBTREE::board_str_code( const std::string& url )
 {
     return DBTREE::get_board( url )->get_str_code();
 }
@@ -843,21 +843,21 @@ bool DBTREE::article_is_cached( const std::string& url )
 
 
 // 拡張子付き
-std::string DBTREE::article_id( const std::string& url )
+const std::string& DBTREE::article_id( const std::string& url )
 {
     return DBTREE::get_article( url )->get_id();
 }
 
 
 // idから拡張子を取ったもの
-std::string DBTREE::article_key( const std::string& url )
+const std::string& DBTREE::article_key( const std::string& url )
 {
     return DBTREE::get_article( url )->get_key();
 }
 
 
 // 移転する前のオリジナルのURL
-std::string DBTREE::article_org_host( const std::string& url )
+const std::string& DBTREE::article_org_host( const std::string& url )
 {
     return DBTREE::get_article( url )->get_org_host();
 }
@@ -883,7 +883,7 @@ time_t DBTREE::article_time_modified( const std::string& url )
 
 
 // スレの更新時間( 文字列 )
-std::string DBTREE::article_date_modified( const std::string& url )
+const std::string& DBTREE::article_date_modified( const std::string& url )
 {
     return DBTREE::get_article( url )->get_date_modified();
 }
@@ -936,12 +936,12 @@ int DBTREE::article_code( const std::string& url )
     return DBTREE::get_article( url )->get_code();
 }
 
-std::string DBTREE::article_str_code( const std::string& url )
+const std::string& DBTREE::article_str_code( const std::string& url )
 {
     return DBTREE::get_article( url )->get_str_code();
 }
 
-std::string DBTREE::article_ext_err( const std::string& url )
+const std::string& DBTREE::article_ext_err( const std::string& url )
 {
     return DBTREE::get_article( url )->get_ext_err();
 }

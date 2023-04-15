@@ -243,8 +243,8 @@ std::string Usrcmd_Manager::replace_cmd( const std::string& cmd,
                                          const int number ) const
 {
     std::string cmd_out = cmd;
-    const std::string oldhostl = DBTREE::article_org_host( link );
-    const std::string oldhost = DBTREE::article_org_host( url );
+    const std::string& oldhostl = DBTREE::article_org_host( link );
+    const std::string& oldhost = DBTREE::article_org_host( url );
 
     cmd_out = MISC::replace_str( cmd_out, "$URL", DBTREE::url_readcgi( url, 0, 0 ) );
     cmd_out = MISC::replace_str( cmd_out, "$DATURL", DBTREE::url_dat( url ) );

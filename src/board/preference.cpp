@@ -117,11 +117,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         str_cookies = "クッキー:\n" + MISC::Iconv( temp_cookies, Encoding::utf8, DBTREE::board_encoding( get_url() ) ) + "\n";
     }
 
-    std::string keyword = DBTREE::board_keyword_for_write( get_url() );
-    if( ! keyword.empty() ) str_cookies.append( "\n書き込み用キーワード: " + keyword + "\n" );
+    const std::string& kw_write = DBTREE::board_keyword_for_write( get_url() );
+    if( ! kw_write.empty() ) str_cookies.append( "\n書き込み用キーワード: " + kw_write + "\n" );
 
-    keyword = DBTREE::board_keyword_for_newarticle( get_url() );
-    if( ! keyword.empty() ) str_cookies.append( "\nスレ立て用キーワード: " + keyword + "\n" );
+    const std::string& kw_new = DBTREE::board_keyword_for_newarticle( get_url() );
+    if( ! kw_new.empty() ) str_cookies.append( "\nスレ立て用キーワード: " + kw_new + "\n" );
 
     m_edit_cookies.set_hexpand( true );
     m_edit_cookies.set_propagate_natural_height( true );

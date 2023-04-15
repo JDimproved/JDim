@@ -35,10 +35,10 @@ std::string ArticleJBBS::create_write_message( const std::string& name, const st
     if( msg.empty() ) return std::string();
 
     // DIR と BBS を分離する( ID = DIR/BBS )
-    std::string boardid = DBTREE::board_id( get_url() );
-    int i = boardid.find( '/' );
-    std::string dir = boardid.substr( 0, i );
-    std::string bbs = boardid.substr( i + 1 );
+    const std::string& boardid = DBTREE::board_id( get_url() );
+    auto i = boardid.find( '/' );
+    std::string_view dir = std::string_view{ boardid }.substr( 0, i );
+    std::string_view bbs = std::string_view{ boardid }.substr( i + 1 );
 
     std::stringstream ss_post;
     ss_post.clear();
