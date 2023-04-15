@@ -207,6 +207,8 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         // 1byte前からレジュームして '\n' が返ってこなかったらあぼーんがあったってこと
         if( get_lng_dat() ) {
             data.byte_readfrom = get_lng_dat() -1;
+            // 更新チェックのときは未取得の範囲を指定する
+            if( is_checking_update() ) data.byte_readfrom += 1;
             set_resume( true );
         }
         else set_resume( false );
