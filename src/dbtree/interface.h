@@ -90,21 +90,21 @@ namespace DBTREE
     bool remove_etc( const std::string& url, const std::string& name );
     void save_etc();
     void download_bbsmenu();
-    std::string get_date_modified(); // bbsmenuの更新時間( 文字列 )
+    const std::string& get_date_modified(); // bbsmenuの更新時間( 文字列 )
     time_t get_time_modified(); // bbsmenuの更新時間( time_t )
 
     // board 系
-    std::string board_path( const std::string& url );
-    std::string board_id( const std::string& url );
+    const std::string& board_path( const std::string& url );
+    const std::string& board_id( const std::string& url );
     time_t board_time_modified( const std::string& url ); // 板の更新時間( time_t )
-    std::string board_date_modified( const std::string& url ); // 板の更新時間( 文字列 )
+    const std::string& board_date_modified( const std::string& url ); // 板の更新時間( 文字列 )
     void board_set_date_modified( const std::string& url, const std::string& date ); // 板の更新時間( 文字列 )をセット
     const std::string& board_get_modified_localrule( const std::string& url );
     void board_set_modified_localrule( const std::string& url, const std::string& modified );
     const std::string& board_get_modified_setting( const std::string& url );
     void board_set_modified_setting( const std::string& url, const std::string& modified );
-    std::string board_name( const std::string& url );
-    std::string board_subjecttxt( const std::string& url );
+    const std::string& board_name( const std::string& url );
+    const std::string& board_subjecttxt( const std::string& url );
     Encoding board_encoding( const std::string& url );
     void board_set_encoding( const std::string& url, const Encoding enc );
     std::string board_cookie_by_host( const std::string& url );
@@ -112,18 +112,18 @@ namespace DBTREE
     std::string board_cookie_for_post( const std::string& url );
     void board_set_list_cookies( const std::string& url, const std::list< std::string>& list_cookies );
     void board_delete_cookies( const std::string& url );
-    std::string board_keyword_for_write( const std::string& url );
+    const std::string& board_keyword_for_write( const std::string& url );
     void board_set_keyword_for_write( const std::string& url, const std::string& keyword );
     void board_analyze_keyword_for_write( const std::string& url, const std::string& html );
-    std::string board_keyword_for_newarticle( const std::string& url );
+    const std::string& board_keyword_for_newarticle( const std::string& url );
     void board_set_keyword_for_newarticle( const std::string& url, const std::string& keyword );
     void board_analyze_keyword_for_newarticle( const std::string& url, const std::string& html );
     std::string board_parse_form_data( const std::string& url, const std::string& html );
-    std::string board_basicauth( const std::string& url );
-    std::string board_ext( const std::string& url );
+    const std::string& board_basicauth( const std::string& url );
+    const std::string& board_ext( const std::string& url );
     int board_status( const std::string& url );
     int board_code( const std::string& url );
-    std::string board_str_code( const std::string& url );
+    const std::string& board_str_code( const std::string& url );
     void board_save_info( const std::string& url );
     void board_download_front( const std::string& url );
     void board_download_subject( const std::string& url, const std::string& url_update_view );
@@ -214,13 +214,13 @@ namespace DBTREE
 
     // article 系
     bool article_is_cached( const std::string& url ); // キャッシュにあるかどうか
-    std::string article_id( const std::string& url ); // 拡張子込み "12345.dat" みたいに
-    std::string article_key( const std::string& url ); // idから拡張子を取ったもの。書き込み用
-    std::string article_org_host( const std::string& url ); // 移転する前のオリジナルのURL
+    const std::string& article_id( const std::string& url ); // 拡張子込み "12345.dat" みたいに
+    const std::string& article_key( const std::string& url ); // idから拡張子を取ったもの。書き込み用
+    const std::string& article_org_host( const std::string& url ); // 移転する前のオリジナルのURL
     time_t article_since_time( const std::string& url );
     std::string article_since_date( const std::string& url );
     time_t article_time_modified( const std::string& url ); // スレの更新時間( time_t )
-    std::string article_date_modified( const std::string& url ); // スレの更新時間( 文字列 )
+    const std::string& article_date_modified( const std::string& url ); // スレの更新時間( 文字列 )
     void article_set_date_modified( const std::string& url, const std::string& date ); // スレの更新時間( 文字列 )をセット
     Encoding article_encoding( const std::string& url );
     void article_set_encoding( const std::string& url, const Encoding enc );
@@ -229,8 +229,8 @@ namespace DBTREE
     std::string article_write_date( const std::string& url );
     int article_status( const std::string& url );
     int article_code( const std::string& url );
-    std::string article_str_code( const std::string& url );
-    std::string article_ext_err( const std::string& url );
+    const std::string& article_str_code( const std::string& url );
+    const std::string& article_ext_err( const std::string& url );
     const std::string& article_subject( const std::string& url );
     const std::string& article_modified_subject( const std::string& url, const bool renew = false );
     int article_number( const std::string& url );
