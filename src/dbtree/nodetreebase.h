@@ -323,7 +323,7 @@ namespace DBTREE
                                      const int color_text, const bool bold, const char fontid = FONT_MAIN );
 
         // 以下、構文解析用関数
-        void add_raw_lines( char* rawines, size_t size );
+        void add_raw_lines( std::string& buffer_lines );
         const char* add_one_dat_line( const char* datline );
 
         void parse_name( NODE* header, std::string_view str, const int color_name );
