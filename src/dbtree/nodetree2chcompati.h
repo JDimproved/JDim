@@ -32,7 +32,7 @@ namespace DBTREE
 
         void clear() override;
         void init_loading() override;
-        char* process_raw_lines( char* rawlines ) override;
+        char* process_raw_lines( std::string& rawlines ) override;
         const char* raw2dat( char* rawlines, int& byte ) override;
 
         char* skip_status_line( char* pos, int status );
