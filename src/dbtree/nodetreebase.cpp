@@ -52,8 +52,8 @@ constexpr size_t MAX_ANCINFO = 64;
 constexpr int RANGE_REF = 20;
 constexpr size_t MAX_RES_DIGIT = std::numeric_limits< int >::digits10 + 1;  // レスアンカーや発言数で使われるレスの桁数
 
-constexpr size_t MAXSISE_OF_LINES = 512 * 1024;  // ロード時に１回の呼び出しで読み込まれる最大データサイズ
-constexpr size_t SIZE_OF_HEAP = MAXSISE_OF_LINES + 64;
+constexpr std::size_t MAXSISE_OF_LINES = 256 * 1024;  // ロード時に１回の呼び出しで読み込まれる最大データサイズ
+constexpr std::size_t SIZE_OF_HEAP = 512 * 1024;
 
 constexpr size_t INITIAL_RES_BUFSIZE = 128;  // レスの文字列を返すときの初期バッファサイズ
 
@@ -1084,23 +1084,17 @@ void NodeTreeBase::load_cache()
         std::string str;
         if( CACHE::load_rawdata( path_cache, str ) ){
 
-            const char* data = str.data();
-            size_t size = 0;
             m_check_update = false;
             m_check_write = false;
             m_loading_newthread = false;
             set_resume( false );
             init_loading();
-            const size_t str_length = str.length();
-            while( size < str_length ){
-                size_t size_tmp = MIN( MAXSISE_OF_LINES - m_buffer_lines.size(), str_length - size );
-                receive_data( std::string_view{ data + size, size_tmp } );
-                size += size_tmp;
-            }
+
+            receive_data( str );
             receive_finish();
 
             // レジューム時のチェックデータをキャッシュ
-            set_resume_data( data, str_length );
+            set_resume_data( str.c_str(), str.size() );
         }
     }
 }
@@ -1237,9 +1231,6 @@ void NodeTreeBase::download_dat( const bool check_update )
 //
 void NodeTreeBase::receive_data( std::string_view buf )
 {
-    // BOF防止
-    buf = buf.substr( 0, MAXSISE_OF_LINES );
-
     if( is_loading()
         && ( get_code() != HTTP_OK && get_code() != HTTP_PARTIAL_CONTENT ) ){
 
@@ -1287,27 +1278,33 @@ void NodeTreeBase::receive_data( std::string_view buf )
 
     if( buf.empty() ) return;
 
-    // バッファが '\n' で終わるように調整
-    std::size_t size_in = buf.rfind( '\n' );
-    if( size_in == std::string_view::npos ) size_in = 0;
+    while( ! buf.empty() ) {
+        // BOF防止
+        std::size_t size_in = (std::min)( MAXSISE_OF_LINES - m_buffer_lines.size() - 1, buf.size() );
 
-    // 前回の残りのデータに新しいデータを付け足して add_raw_lines() にデータを送る
-    if( size_in > 0 ){
-        size_in ++; // '\n'を加える
+        // バッファが '\n' で終わるように調整
+        size_in = buf.rfind( '\n', size_in );
+        if( size_in != std::string_view::npos ) ++size_in; // '\n' を加える
+
+        // '\n' が無かった場合バッファサイズの半分まではDATの処理を中断して改行が来るのを待ってみる
+        else if( ( m_buffer_lines.size() + buf.size() ) < ( MAXSISE_OF_LINES / 2 ) ) break;
+
+        // 前回の残りのデータに新しいデータを付け足して add_raw_lines() にデータを送る
         m_buffer_lines.append( buf.substr( 0, size_in ) );
         add_raw_lines( m_buffer_lines );
-        // 送ったバッファをクリア
         m_buffer_lines.clear();
-    }
 
-    // add_raw_lines() でレジュームに失敗したと判断したら、バッファをクリアする
-    if( m_resume == RESUME_FAILED ){
-        m_buffer_lines.clear();
-        return;
+        buf.remove_prefix( size_in );
+
+        // add_raw_lines() でレジュームに失敗したと判断したら、バッファをクリアする
+        if( m_resume == RESUME_FAILED ) {
+            m_buffer_lines.clear();
+            return;
+        }
     }
 
     // 残りのデータをバッファにコピーしておく
-    m_buffer_lines.assign( buf.substr( size_in ) );
+    if( ! buf.empty() ) m_buffer_lines.append( buf );
 }
 
 
