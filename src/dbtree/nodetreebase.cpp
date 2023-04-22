@@ -1308,6 +1308,20 @@ void NodeTreeBase::receive_data( std::string_view buf )
 }
 
 
+/**
+ * @brief 保留された受信データをDATに変換する
+ */
+void NodeTreeBase::sweep_buffer()
+{
+    // 特殊スレのdatには、最後の行に'\n'がない場合がある
+    if( ! m_buffer_lines.empty() ) {
+        // 正常に読込完了した場合で、バッファが残っていれば add_raw_lines()にデータを送る
+        add_raw_lines( m_buffer_lines );
+        // バッファをクリア
+        m_buffer_lines.clear();
+    }
+}
+
 
 //
 // ロード完了
@@ -1331,17 +1345,11 @@ void NodeTreeBase::receive_finish()
         MISC::ERRMSG( err.str() );
     }
 
+    // HTTP HEAD は本文を含まないが、あった場合は無視しないといけない
     if( ! m_check_update ){
 
-        if( ! is_error ){
-            // 特殊スレのdatには、最後の行に'\n'がない場合がある
-            if( !m_buffer_lines.empty() ) {
-                // 正常に読込完了した場合で、バッファが残っていれば add_raw_lines()にデータを送る
-                add_raw_lines( m_buffer_lines );
-                // バッファをクリア
-                m_buffer_lines.clear();
-            }
-        }
+        if( ! is_error ) sweep_buffer();
+        else m_buffer_lines.clear();
 
         // Requested Range Not Satisfiable
         if( get_code() == HTTP_RANGE_ERR ){

@@ -294,6 +294,7 @@ namespace DBTREE
 
         void receive_data( std::string_view buf ) override;
         void receive_finish() override;
+        void sweep_buffer();
 
         // 拡張属性を取り出す
         virtual void parse_extattr( std::string_view str ) {};
