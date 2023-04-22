@@ -1295,7 +1295,7 @@ void NodeTreeBase::receive_data( std::string_view buf )
     if( size_in > 0 ){
         size_in ++; // '\n'を加える
         m_buffer_lines.append( buf.substr( 0, size_in ) );
-        add_raw_lines( &*m_buffer_lines.begin(), m_buffer_lines.size() );
+        add_raw_lines( m_buffer_lines );
         // 送ったバッファをクリア
         m_buffer_lines.clear();
     }
@@ -1340,7 +1340,7 @@ void NodeTreeBase::receive_finish()
             // 特殊スレのdatには、最後の行に'\n'がない場合がある
             if( !m_buffer_lines.empty() ) {
                 // 正常に読込完了した場合で、バッファが残っていれば add_raw_lines()にデータを送る
-                add_raw_lines( &*m_buffer_lines.begin(), m_buffer_lines.size() );
+                add_raw_lines( m_buffer_lines );
                 // バッファをクリア
                 m_buffer_lines.clear();
             }
@@ -1403,21 +1403,17 @@ void NodeTreeBase::receive_finish()
 //
 // 鯖から生の(複数)行のデータを受け取ってdat形式に変換して add_one_dat_line() に出力
 //
-void NodeTreeBase::add_raw_lines( char* rawlines, size_t size )
+void NodeTreeBase::add_raw_lines( std::string& buffer_lines )
 {
     // 時々サーバ側のdatファイルが壊れていてデータ中に \0 が
     // 入っている時があるので取り除く
-    for( size_t i = 0; i < size; ++i ){
-        if( rawlines[ i ] == '\0' ){
-            const size_t beg = i;
-            while( i < size && rawlines[ i ] == '\0' ) ++i;
-            MISC::ERRMSG( std::to_string( i - beg ) + " EOF was inserted in the middle of the raw data" );
-            memset( rawlines + beg, ' ', i - beg );
-        } 
+    if( const auto i = buffer_lines.find( '\0' ); i != std::string::npos ) {
+        MISC::ERRMSG( std::to_string( i ) + " EOF was inserted in the middle of the raw data" );
+        std::replace( buffer_lines.begin() + i, buffer_lines.end(), '\0', ' ' );
     }
 
     // 保存前にrawデータを加工
-    rawlines = process_raw_lines( rawlines );
+    char* rawlines = process_raw_lines( buffer_lines.data() );
 
     size_t lng = strlen( rawlines );
     if( ! lng ) return;
