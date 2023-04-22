@@ -2455,7 +2455,26 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
             continue;
         }
 
-        m_parsed_text.push_back( *pos );
+        ///////////////////////
+        // その他のASCIIおよびマルチバイト文字
+        switch( MISC::utf8bytes( pos ) ) {
+            case 4: m_parsed_text.push_back( *pos++ );
+                    [[fallthrough]];
+            case 3: m_parsed_text.push_back( *pos++ );
+                    [[fallthrough]];
+            case 2: m_parsed_text.push_back( *pos++ );
+                    [[fallthrough]];
+            case 1: m_parsed_text.push_back( *pos );
+                    break;
+            default:
+                // Iconvでエンコード変換済みなので不正な文字が
+                // ここで検出されるのは何かがおかしい
+                MISC::ERRMSG( "invalid char = " + std::to_string( static_cast<unsigned char>( *pos ) ) );
+
+                // U+FFFD (REPLACEMENT CHARACTER) に置き換える
+                m_parsed_text.append( "\xEF\xBF\xBD" );
+                break;
+        }
     }
 
     create_node_text( m_parsed_text, color_text, bold, fontid );
