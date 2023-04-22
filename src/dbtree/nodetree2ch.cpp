@@ -61,9 +61,9 @@ NodeTree2ch::~NodeTree2ch()
 //
 // 先頭にrawモードのステータスが入っていたら取り除く
 //
-char* NodeTree2ch::process_raw_lines( char* rawlines )
+char* NodeTree2ch::process_raw_lines( std::string& rawlines )
 {
-    char* pos = rawlines;
+    char* pos = rawlines.data();
 
     if( m_mode == MODE_OFFLAW ){
         // rokka独自のステータスが入っている

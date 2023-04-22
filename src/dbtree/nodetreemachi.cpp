@@ -147,10 +147,10 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
 //
 // キャッシュに保存する前の前処理
 //
-char* NodeTreeMachi::process_raw_lines( char* rawlines )
+char* NodeTreeMachi::process_raw_lines( std::string& rawlines )
 {
     // オフラインか offlaw 形式を使用する場合はそのまま返す
-    if( ! is_loading() || CONFIG::get_use_machi_offlaw() ) return rawlines;
+    if( ! is_loading() || CONFIG::get_use_machi_offlaw() ) return rawlines.data();
 
     const size_t offset = 0;
     const bool icase = false;

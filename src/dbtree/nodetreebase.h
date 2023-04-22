@@ -283,7 +283,7 @@ namespace DBTREE
 
         // 保存前にrawデータを加工
         // デフォルトでは何もしない
-        virtual char* process_raw_lines( char* rawlines ){ return rawlines; }
+        virtual char* process_raw_lines( std::string& rawlines ){ return rawlines.data(); }
 
         // raw データを dat に変換
         // デフォルトでは何もしない

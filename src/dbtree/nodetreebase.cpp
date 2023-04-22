@@ -1413,7 +1413,7 @@ void NodeTreeBase::add_raw_lines( std::string& buffer_lines )
     }
 
     // 保存前にrawデータを加工
-    char* rawlines = process_raw_lines( buffer_lines.data() );
+    char* rawlines = process_raw_lines( buffer_lines );
 
     size_t lng = strlen( rawlines );
     if( ! lng ) return;

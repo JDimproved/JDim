@@ -79,9 +79,9 @@ void NodeTree2chCompati::init_loading()
 //
 // 先頭にrawモードのステータスが入っていたら取り除く
 //
-char* NodeTree2chCompati::process_raw_lines( char* rawlines )
+char* NodeTree2chCompati::process_raw_lines( std::string& rawlines )
 {
-    char* pos = rawlines;
+    char* pos = rawlines.data();
 
     if( *pos == '+' || *pos == '-' || *pos == 'E' ){
 

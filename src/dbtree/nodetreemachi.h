@@ -44,7 +44,7 @@ namespace DBTREE
         void clear() override;
         void init_loading() override;
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;
-        char* process_raw_lines( char* rawlines ) override;
+        char* process_raw_lines( std::string& rawlines ) override;
         const char* raw2dat( char* rawlines, int& byte ) override;
 
         void receive_data( std::string_view buf ) override;
