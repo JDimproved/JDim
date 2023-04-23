@@ -1283,11 +1283,13 @@ void NodeTreeBase::receive_data( std::string_view buf )
         std::size_t size_in = (std::min)( MAXSISE_OF_LINES - m_buffer_lines.size() - 1, buf.size() );
 
         // バッファが '\n' で終わるように調整
-        size_in = buf.rfind( '\n', size_in );
-        if( size_in != std::string_view::npos ) ++size_in; // '\n' を加える
+        const auto pos = buf.rfind( '\n', size_in );
+        if( pos != std::string_view::npos ) size_in = pos + 1; // '\n' を加える
 
         // '\n' が無かった場合バッファサイズの半分まではDATの処理を中断して改行が来るのを待ってみる
-        else if( ( m_buffer_lines.size() + buf.size() ) < ( MAXSISE_OF_LINES / 2 ) ) break;
+        else if( ( m_buffer_lines.size() + buf.size() ) < ( MAXSISE_OF_LINES / 2 ) ) size_in = 0;
+
+        if( size_in == 0 ) break;
 
         // 前回の残りのデータに新しいデータを付け足して add_raw_lines() にデータを送る
         m_buffer_lines.append( buf.substr( 0, size_in ) );
