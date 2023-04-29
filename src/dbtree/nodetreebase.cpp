@@ -2019,6 +2019,7 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
 {
     const char* pos = str.data();
     const char* pos_end = str.data() + str.size();
+    bool in_bold = bold;
     NODE *node;
 
     m_parsed_text.clear();
@@ -2045,7 +2046,7 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
         if( *pos == ' ' || *pos == 10 || *pos == 13 ) {
 
             // フラッシュしてから半角空白ノードを作る
-            create_node_text( m_parsed_text, color_text, bold, fontid );
+            create_node_text( m_parsed_text, color_text, in_bold, fontid );
             m_parsed_text.clear();
 
             ++pos;
@@ -2083,7 +2084,7 @@ create_multispace:
                      ( *( pos + 1 ) == 'a' || *( pos + 1 ) == 'A' ) && *( pos + 2 ) == ' ' ){
 
                 // フラッシュ
-                create_node_text( m_parsed_text, color_text, bold, fontid );
+                create_node_text( m_parsed_text, color_text, in_bold, fontid );
                 m_parsed_text.clear();
 
                 while( pos < pos_end && *pos != '=' ) ++pos;
@@ -2269,7 +2270,7 @@ create_multispace:
                      && ( *( pos + 2 ) == 'r' || *( pos + 2 ) == 'R' ) ){
 
                 // フラッシュ
-                create_node_text( m_parsed_text, color_text, bold, fontid );
+                create_node_text( m_parsed_text, color_text, in_bold, fontid );
                 m_parsed_text.clear();
 
                 // 水平線ノード作成
@@ -2279,11 +2280,31 @@ create_multispace:
                 pos += 4;
             }
 
+            // ボールド <B>
+            else if( ( pos[1] == 'b' || pos[1] == 'B' ) && pos[2] == '>' ) {
+
+                // フラッシュ
+                create_node_ntext( m_parsed_text.data(), m_parsed_text.size(), color_text, in_bold, fontid );
+                m_parsed_text.clear();
+                in_bold = true;
+                pos += 3;
+            }
+
+            // </B>
+            else if( pos[1] == '/' && ( pos[2] == 'b' || pos[2] == 'B' ) && pos[3] == '>' ) {
+
+                // フラッシュ
+                create_node_ntext( m_parsed_text.data(), m_parsed_text.size(), color_text, in_bold, fontid );
+                m_parsed_text.clear();
+                in_bold = bold;
+                pos += 4;
+            }
+
             // その他のタグは無視。タグを取り除いて中身だけを見る
             else {
 
                 // フラッシュ
-                create_node_text( m_parsed_text, color_text, bold, fontid );
+                create_node_text( m_parsed_text, color_text, in_bold, fontid );
                 m_parsed_text.clear();
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
@@ -2297,7 +2318,7 @@ create_multispace:
                 if( (pos > str) && *( pos - 1 ) == ' ' && ! m_parsed_text.empty() ) {
                     m_parsed_text.pop_back(); // 改行前の空白を取り除く
                 }
-                create_node_text( m_parsed_text, color_text, bold, fontid );
+                create_node_text( m_parsed_text, color_text, in_bold, fontid );
                 m_parsed_text.clear();
 
                 // 改行ノード作成
@@ -2344,7 +2365,7 @@ create_multispace:
         if( check_anchor( mode , pos, n_in, tmpstr + lng_str, tmplink + lng_link, LNG_LINK - lng_link, ancinfo + lng_anc ) ){
 
             // フラッシュしてからアンカーノードをつくる
-            create_node_text( m_parsed_text, color_text, bold, fontid );
+            create_node_text( m_parsed_text, color_text, in_bold, fontid );
             m_parsed_text.clear();
 
             memcpy( tmplink, PROTO_ANCHORE, strlen( PROTO_ANCHORE ) );
@@ -2414,7 +2435,7 @@ create_multispace:
         // リンクノードか再チェック
         if( linktype != MISC::SCHEME_NONE ){
             // フラッシュしてからリンクノードつくる
-            create_node_text( m_parsed_text, color_text, bold, fontid );
+            create_node_text( m_parsed_text, color_text, in_bold, fontid );
             m_parsed_text.clear();
 
             // リンクノードの表示テキスト
@@ -2467,7 +2488,7 @@ create_multispace:
 
                 // 文字以外の空白ノードならフラッシュして空白ノード追加
                 if( ret_decode != NODE_TEXT ){
-                    create_node_text( m_parsed_text, color_text, bold, fontid );
+                    create_node_text( m_parsed_text, color_text, in_bold, fontid );
                     m_parsed_text.clear();
                     node = create_node_space( ret_decode );
                     if ( fontid != FONT_MAIN ) node->fontid = fontid;
@@ -2491,7 +2512,7 @@ create_multispace:
         else if( *pos == '\t' ) {
 
             // フラッシュしてからタブノードをつくる
-            create_node_text( m_parsed_text, color_text, bold, fontid );
+            create_node_text( m_parsed_text, color_text, in_bold, fontid );
             m_parsed_text.clear();
             node = create_node_space( NODE_HTAB );
             if( fontid != FONT_MAIN ) node->fontid = fontid;
@@ -2505,7 +2526,7 @@ create_multispace:
         else if( *pos == '\f' ) {
 
             // フラッシュしてからZWSPノードをつくる
-            create_node_text( m_parsed_text, color_text, bold, fontid );
+            create_node_text( m_parsed_text, color_text, in_bold, fontid );
             m_parsed_text.clear();
             node = create_node_space( NODE_ZWSP );
             if( fontid != FONT_MAIN ) node->fontid = fontid;
@@ -2547,7 +2568,7 @@ create_multispace:
         }
     }
 
-    create_node_text( m_parsed_text, color_text, bold, fontid );
+    create_node_text( m_parsed_text, color_text, in_bold, fontid );
     m_parsed_text.clear();
 }
 
