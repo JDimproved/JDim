@@ -134,26 +134,25 @@ TEST_F(DBTREE_DecodeCharNumberTest, zwnj_zwj_lrm_rlm)
     int n_in;
     int n_out;
 
-    // zwnj(U+200C), zwj(U+200D), lrm(U+200E), rlm(U+200F) は今のところ空文字列にする(zwspにする)
-    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#X200C;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#X200C;", n_in, out_char, n_out, false ) );
     EXPECT_EQ( 8, n_in );
-    EXPECT_STREQ( "", out_char );
-    EXPECT_EQ( 0, n_out );
+    EXPECT_STREQ( "\xE2\x80\x8C", out_char );
+    EXPECT_EQ( 3, n_out );
 
-    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#x200d;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#x200d;", n_in, out_char, n_out, false ) );
     EXPECT_EQ( 8, n_in );
-    EXPECT_STREQ( "", out_char );
-    EXPECT_EQ( 0, n_out );
+    EXPECT_STREQ( "\xE2\x80\x8D", out_char );
+    EXPECT_EQ( 3, n_out );
 
-    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#x200E;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#x200E;", n_in, out_char, n_out, false ) );
     EXPECT_EQ( 8, n_in );
-    EXPECT_STREQ( "", out_char );
-    EXPECT_EQ( 0, n_out );
+    EXPECT_STREQ( "\xE2\x80\x8E", out_char );
+    EXPECT_EQ( 3, n_out );
 
-    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_number( "&#X200f;", n_in, out_char, n_out, false ) );
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_number( "&#X200f;", n_in, out_char, n_out, false ) );
     EXPECT_EQ( 8, n_in );
-    EXPECT_STREQ( "", out_char );
-    EXPECT_EQ( 0, n_out );
+    EXPECT_STREQ( "\xE2\x80\x8F", out_char );
+    EXPECT_EQ( 3, n_out );
 }
 
 TEST_F(DBTREE_DecodeCharNumberTest, line_separator_u2028)
@@ -487,26 +486,25 @@ TEST_F(DBTREE_DecodeCharNameTest, zwnj_zwj_lrm_rlm)
     int n_in;
     int n_out;
 
-    // zwnj(U+200C), zwj(U+200D), lrm(U+200E), rlm(U+200F) は今のところ空文字列にする(zwspにする)
-    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_name( "&zwnj;", n_in, out_char, n_out ) );
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_name( "&zwnj;", n_in, out_char, n_out ) );
     EXPECT_EQ( 6, n_in );
-    EXPECT_STREQ( "", out_char );
-    EXPECT_EQ( 0, n_out );
+    EXPECT_STREQ( "\xE2\x80\x8C", out_char );
+    EXPECT_EQ( 3, n_out );
 
-    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_name( "&zwj;", n_in, out_char, n_out ) );
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_name( "&zwj;", n_in, out_char, n_out ) );
     EXPECT_EQ( 5, n_in );
-    EXPECT_STREQ( "", out_char );
-    EXPECT_EQ( 0, n_out );
+    EXPECT_STREQ( "\xE2\x80\x8D", out_char );
+    EXPECT_EQ( 3, n_out );
 
-    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_name( "&lrm;", n_in, out_char, n_out ) );
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_name( "&lrm;", n_in, out_char, n_out ) );
     EXPECT_EQ( 5, n_in );
-    EXPECT_STREQ( "", out_char );
-    EXPECT_EQ( 0, n_out );
+    EXPECT_STREQ( "\xE2\x80\x8E", out_char );
+    EXPECT_EQ( 3, n_out );
 
-    EXPECT_EQ( DBTREE::NODE_ZWSP, DBTREE::decode_char_name( "&rlm;", n_in, out_char, n_out ) );
+    EXPECT_EQ( DBTREE::NODE_TEXT, DBTREE::decode_char_name( "&rlm;", n_in, out_char, n_out ) );
     EXPECT_EQ( 5, n_in );
-    EXPECT_STREQ( "", out_char );
-    EXPECT_EQ( 0, n_out );
+    EXPECT_STREQ( "\xE2\x80\x8F", out_char );
+    EXPECT_EQ( 3, n_out );
 }
 
 TEST_F(DBTREE_DecodeCharNameTest, u200A)
