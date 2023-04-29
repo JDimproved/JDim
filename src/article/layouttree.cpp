@@ -392,6 +392,10 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
                 tmplayout = create_layout_text( tmpnode->text, &tmpnode->color_text, tmpnode->bold );
                 break;
 
+            case DBTREE::NODE_SP: // 半角スペース
+                tmplayout = create_layout_text( " ", &tmpnode->color_text, tmpnode->bold );
+                break;
+
             case DBTREE::NODE_LINK:
                 tmplayout = create_layout_link( tmpnode->text, tmpnode->linkinfo->link,
                                                 &tmpnode->color_text, tmpnode->bold );

@@ -71,12 +71,19 @@ break_composition:
 
     switch( uch ){
 
-        //zwnj,zwj,lrm,rlm は今のところ無視(zwspにする)
+        case UCS_SP:
+        case UCS_LF: // LFはSPにする
+            ret = DBTREE::NODE_SP;
+            break;
+
+        case UCS_HT:
+            ret = DBTREE::NODE_HTAB;
+            break;
+
         case UCS_ZWSP:
-        case UCS_ZWNJ:
-        case UCS_ZWJ:
-        case UCS_LRM:
-        case UCS_RLM:
+        case UCS_CR: // CRを無視
+        case UCS_FF: // FFを無視
+        case UCS_PS: // PSを無視
             ret = DBTREE::NODE_ZWSP;
             break;
 
@@ -159,9 +166,8 @@ int DBTREE::decode_char_name( const char* in_char, int& n_in, JDLIB::span<char> 
 
             n_in = static_cast<int>( entity.size() ) + 1; // 先頭の '&' の分を+1する
 
-            // U+200B, U+200C(zwnj), U+200D(zwj), U+200E(lrm), U+200F(rlm)
-            // は今のところ空文字列にする(zwsp扱いにする)
-            if( utf8[0] == '\xE2' && utf8[1] == '\x80' && '\x8B' <= utf8[2] && utf8[2] <= '\x8F' ) {
+            // U+200B (zwsp)
+            if( utf8 == "\xE2\x80\x8B" ) {
                 ret = DBTREE::NODE_ZWSP;
             }
             else {

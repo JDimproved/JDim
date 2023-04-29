@@ -2338,12 +2338,18 @@ static constexpr std::array<JDLIB::span<const UCSTBL>, 26> const ucstbl_upper = 
 
 enum
 {
+    UCS_HT      = 9,
+    UCS_LF      = 10,
+    UCS_FF      = 12,
+    UCS_CR      = 13,
+    UCS_SP      = 32,
     UCS_ZWSP    = 0x200B,
     UCS_ZWNJ    = 0x200C,
     UCS_ZWJ     = 0x200D,
     UCS_LRM     = 0x200E,
     UCS_RLM     = 0x200F,
     CP_LINE_SEPARATOR = 8232,
+    UCS_PS      = 0x2029,
     UCS_REPLACE = 0xFFFD,
 };
 

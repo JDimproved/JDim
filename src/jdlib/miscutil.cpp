@@ -993,7 +993,7 @@ static std::string chref_decode_one( const char* str, int& n_in, const char pre_
     out_char.resize( n_out );
 
     // 改行、タブ、スペースの処理
-    if( type != DBTREE::NODE_NONE && ( out_char[0] == ' ' || out_char[0] == '\n' ) && pre_char != ' ' ) {
+    if( type == DBTREE::NODE_SP && pre_char != ' ' ) {
         out_char.assign( 1u, ' ' );
     }
     // 変換できない文字
