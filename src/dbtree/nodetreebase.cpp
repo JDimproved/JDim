@@ -1694,10 +1694,10 @@ void NodeTreeBase::parse_name( NODE* header, std::string_view str, const int col
     const bool ahref = false;
     NODE *node;
 
-    const bool defaultname{ m_default_noname.rfind( str, 0 ) == 0 };
-
     // 後ろの空白を除く
     while( str.size() > 0 && str.back() == ' ' ) str.remove_suffix( 1 );
+
+    const bool defaultname{ m_default_noname == str };
 
     // 文字列置換
     std::string str_name;
