@@ -18,14 +18,15 @@
 
 #include "config/globalconf.h"
 
+#include "cache.h"
+#include "colorid.h"
+#include "command.h"
+#include "cssmanager.h"
+#include "fontid.h"
 #include "global.h"
 #include "httpcode.h"
-#include "colorid.h"
-#include "fontid.h"
-#include "command.h"
-#include "cache.h"
-#include "session.h"
 #include "replacestrmanager.h"
+#include "session.h"
 #include "urlreplacemanager.h"
 
 #include <algorithm>
@@ -2375,6 +2376,56 @@ create_multispace:
                 // フラッシュ
                 create_node_ntext( m_parsed_text.data(), m_parsed_text.size(), fgcolor, bgcolor, in_bold, fontid );
                 m_parsed_text.clear();
+
+                // <span
+                if( ( pos[1] == 's' || pos[1] == 'S' )
+                    && ( pos[2] == 'p' || pos[2] == 'P' )
+                    && ( pos[3] == 'a' || pos[3] == 'A' )
+                    && ( pos[4] == 'n' || pos[4] == 'N' ) ) {
+
+                    pos += 5;
+
+                    // class属性を取り出す
+                    std::string classname;
+                    if( g_ascii_strncasecmp( pos, " class=\"", 8 ) == 0 ) {
+                        pos += 8;
+                        const char* pos_name = pos;
+                        while( pos < pos_end && *pos != '"' ) ++pos;
+                        classname = std::string( pos_name, pos - pos_name );
+                    }
+
+                    // 文字色を保存
+                    fgcolor_bak = fgcolor;
+                    bgcolor_bak = bgcolor;
+
+                    if( ! classname.empty() && classname != "name" ) {
+
+                        const CORE::Css_Manager* mgr = CORE::get_css_manager();
+                        const int classid = mgr->get_classid( classname );
+                        if( classid != -1 ) {
+                            const CORE::CSS_PROPERTY& css = mgr->get_property( classid );
+                            if( css.color != -1 ) fgcolor = css.color;
+                            if( css.bg_color != -1 ) bgcolor = css.bg_color;
+                        }
+                        else {
+                            fgcolor = COLOR_CHAR_NAME_B;
+                        }
+                    }
+                }
+
+                // <mark
+                else if( ( pos[1] == 'm' || pos[1] == 'M' )
+                         && ( pos[2] == 'a' || pos[2] == 'A' )
+                         && ( pos[3] == 'r' || pos[3] == 'R' )
+                         && ( pos[4] == 'k' || pos[4] == 'K' ) ) {
+
+                    const CORE::Css_Manager* mgr = CORE::get_css_manager();
+                    const CORE::CSS_PROPERTY& css = mgr->get_property( mgr->get_classid( "mark" ) );
+                    fgcolor_bak = fgcolor;
+                    bgcolor_bak = bgcolor;
+                    if( css.color != -1 ) fgcolor = css.color;
+                    if( css.bg_color != -1 ) bgcolor = css.bg_color;
+                }
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
                 ++pos;
