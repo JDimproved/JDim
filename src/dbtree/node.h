@@ -115,6 +115,7 @@ namespace DBTREE
         
         char* text;
         unsigned char color_text; // 色
+        unsigned char color_back; ///< 背景色
         bool bold;
         char fontid; // fontid.h
         
