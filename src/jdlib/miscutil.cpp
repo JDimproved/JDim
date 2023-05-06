@@ -1106,10 +1106,10 @@ std::string MISC::to_markup( const std::string& html )
                 markuptxt += "<span";
 
                 if( classname.size() ) {
-                    CORE::Css_Manager* mgr = CORE::get_css_manager();
+                    const CORE::Css_Manager* const mgr = CORE::get_css_manager();
                     const int classid = mgr->get_classid( classname );
                     if( classid != -1 ) {
-                        CORE::CSS_PROPERTY css = mgr->get_property( classid );
+                        const CORE::CSS_PROPERTY& css = mgr->get_property( classid );
                         if( css.color != -1 ) markuptxt += " color=\"" + mgr->get_color( css.color ) + "\"";
                         if( css.bg_color != -1 ) markuptxt += " background=\"" + mgr->get_color( css.bg_color ) + "\"";
                     }

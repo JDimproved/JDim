@@ -523,6 +523,19 @@ CSS_PROPERTY Css_Manager::get_property( const int id )
 }
 
 
+/** @brief CSS プロパティのconst参照を取得する
+ *
+ * @details CSS_PROPERTY の構造体はサイズが大きいため参照を返すことでコピーを回避できる。
+ * @param[in] id register_class() で登録したCSS classのID
+ * @return CSS プロパティのconst参照
+ * @throw std::out_of_range 存在しないIDを指定すると例外が発生する
+ */
+const CSS_PROPERTY& Css_Manager::get_property( const int id ) const
+{
+    return m_css.at( id );
+}
+
+
 //
 // プロパティをセット
 //
