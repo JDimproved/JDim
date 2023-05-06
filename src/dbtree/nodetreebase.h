@@ -45,6 +45,7 @@ namespace DBTREE
         SIG_UPDATED m_sig_finished;
 
         std::string m_url;
+        std::string m_url_readcgi;
         std::string m_default_noname;
 
         // コード変換前の生データのサイズ ( byte )
