@@ -44,6 +44,7 @@ namespace CONFIG
         CONF_USE_MESSAGE_GTKTHEME = 0, // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
         CONF_USE_TREE_GTKRC = 0,    // ツリービューでgtkrcの設定を使用するか
         CONF_USE_SELECT_GTKRC = 0,  // スレビューの選択色でgtkrcの設定を使用するか
+        CONF_USE_COLOR_HTML = 1,    ///< スレビューでHTMLタグ指定の色を使用するか
         CONF_TREE_YPAD = 1,         // ツリービューの行間スペース
         CONF_TREE_SHOW_EXPANDERS = 1, // ツリービューにエクスパンダを表示
         CONF_TREE_LEVEL_INDENT = 0, // ツリービューのレベルインデント調整量(ピクセル)

@@ -229,6 +229,9 @@ namespace CONFIG
         // スレビューの選択色でgtkrcの設定を使用するか
         bool use_select_gtkrc{};
 
+        /// スレビューでHTMLタグ指定の色を使用するか
+        bool use_color_html{};
+
         // ツリービューの行間スペース
         int tree_ypad{};
 

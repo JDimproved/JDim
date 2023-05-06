@@ -9,6 +9,7 @@
 
 #include "jdlib/loaderdata.h"
 #include "jdlib/misccharcode.h"
+#include "jdlib/miscgtk.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/miscutil.h"
 
@@ -2031,6 +2032,7 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
     int bgcolor = COLOR_NONE;
     int bgcolor_bak = COLOR_NONE;
     bool in_bold = bold;
+    std::vector<std::string>& colors = CORE::get_css_manager()->get_colors();
     char tmplink[ LNG_LINK +16 ]; // 編集したリンク文字列
     NODE *node;
 
@@ -2425,6 +2427,84 @@ create_multispace:
                     bgcolor_bak = bgcolor;
                     if( css.color != -1 ) fgcolor = css.color;
                     if( css.bg_color != -1 ) bgcolor = css.bg_color;
+                }
+
+                if( CONFIG::get_use_color_html() ) {
+                    // タグで指定された色を使う場合
+
+                    while( pos < pos_end && *pos != '>' ) {
+                        bool background = false;
+
+                        while( pos < pos_end && *pos != '>' && *pos != ' '
+                                && *pos != '"' && *pos != '\'' ) ++pos;
+
+                        if( *pos == '>' ) break;
+
+                        const bool pre_char{ *pos == ' ' || *pos == '"' || *pos == '\'' };
+                        ++pos;
+                        if( ! pre_char ) continue;
+
+                        std::string_view attr_str( pos, pos_end - pos );
+                        std::size_t attr_pos = 0;
+
+                        if( attr_str.rfind( "color", 0 ) == 0 ) {
+                            attr_pos += 5;
+                        }
+                        else if( attr_str.rfind( "fgcolor", 0 ) == 0 ) {
+                            attr_pos += 7;
+                        }
+                        else if( attr_str.rfind( "foreground", 0 ) == 0 ) {
+                            attr_pos += 10;
+                        }
+                        else if( attr_str.rfind( "bgcolor", 0 ) == 0 ) {
+                            attr_pos += 7;
+                            background = true;
+                        }
+                        else if( attr_str.rfind( "background-color", 0 ) == 0 ) {
+                            attr_pos += 16;
+                            background = true;
+                        }
+                        else if( attr_str.rfind( "background", 0 ) == 0 ) {
+                            attr_pos += 10;
+                            background = true;
+                        }
+                        else {
+                            continue;
+                        }
+
+                        if( pos[attr_pos] == '=' || pos[attr_pos] == ':' ) ++attr_pos;
+                        if( pos[attr_pos] == ' ' || pos[attr_pos] == '"' ) ++attr_pos;
+                        pos += attr_pos;
+
+                        const auto prop_end = attr_str.find_first_of( " \"';>", attr_pos );
+                        std::string col_html{ attr_str.substr( attr_pos, prop_end - attr_pos ) };
+                        if( col_html == "transparent" ) {
+                            // 透明の場合は基本の背景色（でよいか？）
+                            if( background ) bgcolor = COLOR_BACK;
+                            else fgcolor = COLOR_BACK;
+                            continue;
+                        }
+
+                        std::string col_str = MISC::htmlcolor_to_str( col_html ) ;
+                        if( col_str.empty() ) {
+                            MISC::ERRMSG( "unhandled color : " + col_html );
+                            continue;
+                        }
+
+                        int num_color;
+                        const auto it = std::find( colors.cbegin(), colors.cend(), col_str );
+                        if( it == colors.cend() ) {
+                            colors.push_back( std::move( col_str ) );
+                            num_color = colors.size() - 1;
+                        }
+                        else {
+                            num_color = it - colors.cbegin();
+                        }
+
+                        // 指定された文字色に変更する
+                        if( background ) bgcolor = num_color + USRCOLOR_BASE;
+                        else fgcolor = num_color + USRCOLOR_BASE;
+                    }
                 }
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
