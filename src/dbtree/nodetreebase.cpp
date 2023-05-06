@@ -96,6 +96,7 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
     m_vec_header.push_back( tmpnode );
 
     m_default_noname = DBTREE::default_noname( m_url );
+    m_url_readcgi = url_readcgi( m_url, 0, 0 );
 
     // 参照で色を変える回数
     m_num_reference[ LINK_HIGH ] = CONFIG::get_num_reference_high();
@@ -143,6 +144,7 @@ void NodeTreeBase::update_url( const std::string& url )
 #endif
 
     m_url = url;
+    m_url_readcgi = url_readcgi( m_url, 0, 0 );
 
 #ifdef _DEBUG
     if( ! old_url.empty() ) std::cout << "NodeTreeBase::update_url from "  << old_url
@@ -2020,6 +2022,7 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
     const char* pos = str.data();
     const char* pos_end = str.data() + str.size();
     bool in_bold = bold;
+    char tmplink[ LNG_LINK +16 ]; // 編集したリンク文字列
     NODE *node;
 
     m_parsed_text.clear();
@@ -2093,109 +2096,152 @@ create_multispace:
                 if( *pos == ' ' ) ++pos;
                 if( pos >= pos_end ) continue;
 
-                bool dbq = false;
-                if( *pos == '"' ){
-                    dbq = true;
+                char attr_separator = ' ';
+                if( *pos == '"' ) {
+                    attr_separator = '"';
                     ++pos;
                 }
 
-                const char* pos_link_start = pos;
-                int lng_link = 0;
+                std::string_view a_link = str.substr( pos - str.data() );
 
-                while( pos < pos_end && ( ( ( dbq && *pos != '"' ) || ( !dbq && *pos != ' ' ) ) && *pos != '>' ) ){ ++pos; ++lng_link; }
+                while( pos < pos_end && *pos != attr_separator && *pos != '>' ) { ++pos; }
                 if( pos >= pos_end ) continue;
+                a_link = a_link.substr( 0, pos - a_link.data() );
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
                 if( pos >= pos_end ) continue;
                 ++pos;
 
-                const char* pos_str_start = pos;
-                int lng_str = 0;
+                std::string_view a_str = str.substr( pos - str.data() );
 
-                bool exec_decode = false;
-                while( pos < pos_end && *pos != '<' ){
-                    if( *pos == '&' ) exec_decode = true;
+                while( pos < pos_end
+                        && ( *pos != '<' || pos[1] != '/' || ( pos[2] != 'a' && pos[2] != 'A' ) || pos[3] != '>' ) ) {
                     ++pos;
-                    ++lng_str;
                 }
                 if( pos >= pos_end ) continue;
+                a_str = a_str.substr( 0, pos - a_str.data() );
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
                 if( pos >= pos_end ) continue;
                 ++pos;
 
-                if( lng_link && lng_str ){
+                if( ! a_link.empty() && ! a_str.empty() ) {
 
-                    // 特殊文字デコード
-                    if( exec_decode ){
+                    // BE link
+                    if( a_link.rfind( "javascript:be(", 0 ) == 0 ) {
+                        constexpr std::string_view be{ PROTO_BE };
+                        be.copy( tmplink, be.size() );
+                        a_link.remove_prefix( 14 );
+                        a_link.remove_suffix( 2 );
+                        a_link.copy( tmplink + be.size(), a_link.size() );
+                        a_link = std::string_view( tmplink, be.size() + a_link.size() );
+                        create_node_link( a_str, a_link, COLOR_CHAR_LINK, in_bold, fontid );
+                    }
+                    else {
 
-                        for( int pos_tmp = 0; pos_tmp < lng_str; ) {
-                            const char ch = pos_str_start[ pos_tmp ];
+                        // Relative Reference
+                        if( a_link[0] == '/' || a_link.rfind( "../", 0 ) == 0 ) {
+                            const std::size_t link_offset = ( a_link[0] == '/' ) ? 0 : 2;
 
-                            if( ch == '\t' || ch == '\n' || ch == '\r' || ch == ' ' ) {
-                                // 空白の連続は削る
-                                if( ! m_parsed_text.empty() && m_parsed_text.back() != ' ' ) {
-                                    m_parsed_text.push_back( ' ' );
-                                }
-                                ++pos_tmp;
-                                continue;
+                            // アンカーの判定
+                            const std::size_t pos_root = m_url_readcgi.find( '/', 8 ); // httpsでも8文字目でOK
+                            if( pos_root == std::string::npos ||
+                                    m_url_readcgi.compare( pos_root, m_url_readcgi.size() - pos_root, a_link,
+                                                           link_offset, m_url_readcgi.size() - pos_root ) == 0 ) {
+                                // アンカーは後で処理するのでここは抜ける
+                                a_str = std::string_view{};
                             }
-                            else if( ch == '<' ) {
-                                // タグは取り除く
-                                while( pos_tmp < lng_str && pos_str_start[ pos_tmp ] != '>' ) ++pos_tmp;
-                                if( pos_str_start[ pos_tmp ] == '>' ) ++pos_tmp;
-                                continue;
+                            else if( pos_root + a_link.size() >= LNG_LINK ) {
+                                // XXX リンクが長すぎる
+                                a_str = std::string_view{};
                             }
-                            else if( ch != '&' ) {
-                                // 表示用文字列にコピー
-                                m_parsed_text.push_back( pos_str_start[ pos_tmp++ ] );
-                                continue;
-                            }
+                            else {
+                                // 相対リンクから絶対URLを作る
+                                m_url_readcgi.copy( tmplink, pos_root );
+                                a_link.remove_prefix( link_offset );
+                                a_link.copy( tmplink + pos_root, a_link.size() );
 
-                            // 特殊文字デコード
-                            int n_in = 0;
-                            int n_out = 0;
-                            char out_char[kMaxBytesOfUTF8Char]{}; // FIXME: std::stringを受け付けるdecode_char()を作る
-                            const int ret_decode = DBTREE::decode_char( pos_str_start + pos_tmp, n_in, out_char, n_out );
-                            switch( ret_decode ) {
-
-                            case NODE_HTAB:
-                            case NODE_SP:
-                                // 空白の連続は無視する
-                                if( m_parsed_text.empty() || m_parsed_text.back() != ' ' ) {
-                                    m_parsed_text.push_back( ' ' );
-                                }
-                                pos_tmp += n_in;
-                                break;
-
-                            case NODE_ZWSP:
-                            case NODE_TEXT:
-                                if( out_char[0] == '\xC2' && out_char[1] == '\xA0' ) {
-                                    // &nbsp; は空白に置き換える
-                                    m_parsed_text.push_back( ' ' );
-                                }
-                                else {
-                                    m_parsed_text.append( out_char, n_out );
-                                }
-                                pos_tmp += n_in;
-                                break;
-
-                            case NODE_NONE:
-                            default:
-                                m_parsed_text.push_back( pos_str_start[ pos_tmp++ ] );
+                                a_link = std::string_view( tmplink, a_link.size() + pos_root );
                             }
                         }
-#ifdef _DEBUG
-                        std::cout << m_parsed_text << std::endl;
-#endif
-                        pos_str_start = m_parsed_text.c_str();
-                        lng_str = m_parsed_text.size();
-                    }
+                        else {
+                            a_link.copy( tmplink, a_link.size() );
+                            tmplink[ a_link.size() ] = '\0';
 
-                    std::string_view view_str( pos_str_start, lng_str );
-                    std::string_view view_link( pos_link_start, lng_link );
-                    create_node_link( view_str, view_link, COLOR_CHAR_LINK, false, fontid );
-                    m_parsed_text.clear();
+                            while( remove_imenu( tmplink ) ); // ime.nuなどの除去
+                            a_link = std::string_view( tmplink );
+                        }
+
+                        if( ! a_str.empty() ) {
+
+                            for( std::size_t pos_tmp = 0, str_end = a_str.size(); pos_tmp < str_end; ) {
+                                const char ch = a_str[ pos_tmp ];
+
+                                if( ch == '\t' || ch == '\n' || ch == '\r' || ch == ' ' ) {
+                                    // 空白の連続は削る
+                                    if( ! m_parsed_text.empty() && m_parsed_text.back() != ' ' ) {
+                                        m_parsed_text.push_back( ' ' );
+                                    }
+                                    ++pos_tmp;
+                                    continue;
+                                }
+                                else if( ch == '<' ) {
+                                    // タグは取り除く
+                                    pos_tmp = a_str.find( '>', pos_tmp + 1 );
+                                    if( pos_tmp != std::string_view::npos ) ++pos_tmp;
+                                    continue;
+                                }
+                                else if( ch != '&' ) {
+                                    // 表示用文字列にコピー
+                                    m_parsed_text.push_back( a_str[ pos_tmp++ ] );
+                                    continue;
+                                }
+
+                                // 特殊文字デコード
+                                int n_in = 0;
+                                int n_out = 0;
+                                char out_char[kMaxBytesOfUTF8Char]{}; // FIXME: std::stringを受け付けるdecode_char()を作る
+                                const int ret_decode = DBTREE::decode_char( a_str.data() + pos_tmp, n_in, out_char, n_out );
+                                switch( ret_decode ) {
+
+                                case NODE_HTAB:
+                                case NODE_SP:
+                                    // 空白の連続は無視する
+                                    if( m_parsed_text.empty() || m_parsed_text.back() != ' ' ) {
+                                        m_parsed_text.push_back( ' ' );
+                                    }
+                                    pos_tmp += n_in;
+                                    break;
+
+                                case NODE_ZWSP:
+                                case NODE_TEXT:
+                                    if( out_char[0] == '\xC2' && out_char[1] == '\xA0' ) {
+                                        // &nbsp; は空白に置き換える
+                                        m_parsed_text.push_back( ' ' );
+                                    }
+                                    else {
+                                        m_parsed_text.append( out_char, n_out );
+                                    }
+                                    pos_tmp += n_in;
+                                    break;
+
+                                case NODE_NONE:
+                                default:
+                                    m_parsed_text.push_back( a_str[ pos_tmp++ ] );
+                                }
+                            }
+#ifdef _DEBUG
+                            std::cout << m_parsed_text << std::endl;
+#endif
+                            a_str = m_parsed_text;
+                        }
+
+                        // アンカーの時はa_strの長さが0でリンクを作らない
+                        if( ! a_str.empty() ) {
+                            create_node_link( a_str, a_link, COLOR_CHAR_LINK, in_bold, fontid );
+                            m_parsed_text.clear();
+                        }
+                    }
                 }
             }
 
@@ -2354,7 +2400,6 @@ create_multispace:
         // アンカーのチェック
         int n_in = 0;
         char tmpstr[ LNG_LINK +16 ]; // 画面に表示する文字列
-        char tmplink[ LNG_LINK +16 ]; // 編集したリンク文字列
         int lng_str = 0, lng_link = strlen( PROTO_ANCHORE );
         ANCINFO ancinfo[ MAX_ANCINFO ];
         int lng_anc = 0;
