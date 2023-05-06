@@ -38,11 +38,11 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
     Gdk::RGBA border_color{ "black" };
     Gdk::RGBA bg_color{ CONFIG::get_color( COLOR_BACK ) };
     Gdk::RGBA text_color{ CONFIG::get_color( COLOR_CHAR ) };
-    auto manager = CORE::get_css_manager();
+    const auto manager = CORE::get_css_manager();
     const int classid = manager->get_classid( "imgpopup" );
     if( classid >= 0 ){
         // jd.cssの設定を読み込む
-        CORE::CSS_PROPERTY css = manager->get_property( classid );
+        const CORE::CSS_PROPERTY& css = manager->get_property( classid );
         border_width = css.border_left_width_px;
         margin = css.mrg_left_px;
         if( css.border_left_color >= 0 ) border_color.set( manager->get_color( css.border_left_color ) );
@@ -269,10 +269,11 @@ void ImageViewPopup::show_view_impl()
     }
 
     // マージンやボーダーの分を幅と高さに加える
-    const int classid = CORE::get_css_manager()->get_classid( "imgpopup" );
+    const CORE::Css_Manager* const manager = CORE::get_css_manager();
+    const int classid = manager->get_classid( "imgpopup" );
     if( classid >= 0 ){
 
-        CORE::CSS_PROPERTY css = CORE::get_css_manager()->get_property( classid );
+        const CORE::CSS_PROPERTY& css = manager->get_property( classid );
         const int border_width = css.border_left_width_px;
         const int margin = css.mrg_left_px;
         set_width_client( width_client() + margin*2 + border_width*2 );

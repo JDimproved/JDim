@@ -160,6 +160,7 @@ namespace CORE
 
         // プロパティ取得
         CSS_PROPERTY get_property( const int id );
+        const CSS_PROPERTY& get_property( const int id ) const;
 
         // 文字の高さを与えてemをセット
         void set_size( CSS_PROPERTY* css, double height ) const;
