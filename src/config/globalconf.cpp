@@ -97,6 +97,9 @@ void CONFIG::set_use_tree_gtkrc( const bool use ){ get_confitem()->use_tree_gtkr
 bool CONFIG::get_use_select_gtkrc(){ return get_confitem()->use_select_gtkrc; }
 void CONFIG::set_use_select_gtkrc( const bool use ){ get_confitem()->use_select_gtkrc = use; }
 
+bool CONFIG::get_use_color_html(){ return get_confitem()->use_color_html; }
+void CONFIG::set_use_color_html( const bool use ){ get_confitem()->use_color_html = use; }
+
 // ツリービューの行間スペース
 int CONFIG::get_tree_ypad(){ return get_confitem()->tree_ypad; }
 

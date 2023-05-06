@@ -56,6 +56,10 @@ namespace CONFIG
     bool get_use_select_gtkrc();
     void set_use_select_gtkrc( const bool use );
 
+    // スレビューでHTMLタグ指定の色を使用するか
+    bool get_use_color_html();
+    void set_use_color_html( const bool use );
+
     // ツリービューの行間スペース
     int get_tree_ypad();
 

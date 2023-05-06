@@ -276,6 +276,9 @@ bool ConfigItems::load( const bool restore )
     // スレビューの選択色でgtkrcの設定を使用するか
     use_select_gtkrc = cf.get_option_bool( "use_select_gtkrc", CONF_USE_SELECT_GTKRC );
 
+    // スレビューでHTMLタグ指定の色を使用するか
+    use_color_html = cf.get_option_bool( "use_color_html", CONF_USE_COLOR_HTML );
+
     // ツリービューの行間スペース
     tree_ypad = cf.get_option_int( "tree_ypad", CONF_TREE_YPAD, 0, 64 );
 
@@ -799,6 +802,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "use_message_gtktheme", use_message_gtktheme );
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
     cf.update( "use_select_gtkrc", use_select_gtkrc );
+    cf.update( "use_color_html", use_color_html );
 
     cf.update( "tree_ypad", tree_ypad );
     cf.update( "tree_show_expanders", tree_show_expanders );
