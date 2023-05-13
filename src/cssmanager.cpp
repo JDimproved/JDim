@@ -94,7 +94,7 @@ std::string Css_Manager::get_color( int colorid ) const
 //
 // クラス名からID取得
 //
-int Css_Manager::get_classid( const std::string& classname ) const
+int Css_Manager::get_classid( std::string_view classname ) const
 {
     int id = 0;
 
