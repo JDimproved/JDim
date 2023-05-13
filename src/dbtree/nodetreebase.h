@@ -347,7 +347,8 @@ namespace DBTREE
         bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
                            ANCINFO* ancinfo ) const;
         /// リンクが現れたかチェックして文字列を取得する関数
-        int check_link( const char* str_in, const int lng_in, int& n_in, char* str_link, const int lng_link ) const;
+        int check_link( const char* str_in, int& lng_in, char* str_text, std::size_t& lng_text,
+                        char* str_link, std::size_t& lng_link ) const;
 
         // レジューム時のチェックデータをキャッシュ
         void set_resume_data( const char* data, size_t length );
@@ -406,9 +407,6 @@ namespace DBTREE
       public:
         // http://ime.nu/ などをリンクから削除
         static bool remove_imenu( char* str_link );
-
-        // 文字列中の"&amp;"を"&"に変換する
-        static int convert_amp( char* text, const int n );
     };
 }
 

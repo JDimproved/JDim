@@ -2554,34 +2554,34 @@ create_multispace:
         // アンカーのチェック
         int n_in = 0;
         char tmpstr[ LNG_LINK +16 ]; // 画面に表示する文字列
-        int lng_str = 0, lng_link = strlen( PROTO_ANCHORE );
+        std::size_t lng_str = 0, lng_link = std::strlen( PROTO_ANCHORE );
         ANCINFO ancinfo[ MAX_ANCINFO ];
-        int lng_anc = 0;
+        std::size_t lng_anc = 0;
 
         int mode = 0;
         if( digitlink ) mode = 2;
 
-        if( check_anchor( mode , pos, n_in, tmpstr + lng_str, tmplink + lng_link, LNG_LINK - lng_link, ancinfo + lng_anc ) ){
+        if( check_anchor( mode, pos, n_in, tmpstr, tmplink + lng_link, LNG_LINK - lng_link, ancinfo ) ) {
 
             // フラッシュしてからアンカーノードをつくる
             create_node_ntext( m_parsed_text.data(), m_parsed_text.size(), fgcolor, bgcolor, in_bold, fontid );
             m_parsed_text.clear();
 
             memcpy( tmplink, PROTO_ANCHORE, strlen( PROTO_ANCHORE ) );
-            lng_str += strlen( tmpstr ) - lng_str;
-            lng_link += strlen( tmplink ) - lng_link;
+            lng_str = std::strlen( tmpstr );
+            lng_link = std::strlen( tmplink );
             ++lng_anc;
             pos += n_in; 
 
             // , や = や +が続くとき
             // MAX_ANCINFOを超えた部分はリンクに含めない
             mode = 1;
-            while( lng_anc < static_cast<int>( MAX_ANCINFO ) &&
+            while( lng_anc < MAX_ANCINFO &&
                    check_anchor( mode, pos, n_in, tmpstr + lng_str, tmplink + lng_link ,
                                  LNG_LINK - lng_link, ancinfo + lng_anc ) ){
 
-                lng_str += strlen( tmpstr ) - lng_str;
-                lng_link += strlen( tmplink ) - lng_link;
+                lng_str = std::strlen( tmpstr );
+                lng_link = std::strlen( tmplink );
                 ++lng_anc;
                 pos += n_in; 
             }
@@ -2604,11 +2604,14 @@ create_multispace:
         ///////////////////////
         // リンク(http)のチェック
         std::string tmpreplace; // Urlreplaceで変換した後のリンク文字列
-        int linktype = check_link( pos, (int)( pos_end - pos ), n_in, tmplink, LNG_LINK );
+        n_in = pos_end - pos;
+        lng_str = lng_link = LNG_LINK;
+        const int linktype = check_link( pos, n_in, tmpstr, lng_str, tmplink, lng_link );
+
         if( linktype != MISC::SCHEME_NONE ){
             // リンクノードで実際にアクセスするURLの変換
             while( remove_imenu( tmplink ) ); // ime.nuなどの除去
-            lng_link = convert_amp( tmplink, strlen( tmplink ) ); // &amp; → &
+            lng_link = std::strlen( tmplink );
 
             // Urlreplaceによる正規表現変換
             tmpreplace.assign( tmplink, lng_link );
@@ -2620,27 +2623,19 @@ create_multispace:
 
                     // 変換後のURLが長すぎるので、元のURLのままにする
                     tmpreplace.assign( tmplink, lng_link );
-                } else {
-                    // 正常に変換された
-                    // 正規表現変換の結果、スキームだけの簡易チェックをする
-                    int delim_pos = 0;
-                    if( MISC::SCHEME_NONE == MISC::is_url_scheme( tmpreplace.c_str(), &delim_pos ) ){
-                        // スキーム http:// が消えていた
-                        linktype = MISC::SCHEME_NONE;
-                    }
+                }
+                // 正常に変換された結果、スキームだけの簡易チェックをする
+                else if( MISC::SCHEME_NONE == MISC::is_url_scheme( tmpreplace.c_str() ) ) {
+                    // プロトコルスキームが消えていた
+                    m_parsed_text.append( tmpstr, lng_str );
+                    pos += n_in;
+                    continue;
                 }
             }
-        }
-        // リンクノードか再チェック
-        if( linktype != MISC::SCHEME_NONE ){
+
             // フラッシュしてからリンクノードつくる
             create_node_ntext( m_parsed_text.data(), m_parsed_text.size(), fgcolor, bgcolor, in_bold, fontid );
             m_parsed_text.clear();
-
-            // リンクノードの表示テキスト
-            memcpy( tmpstr, pos, n_in );
-            tmpstr[ n_in ] = '\0';
-            lng_str = convert_amp( tmpstr, n_in ); // &amp; → &
 
             // ssspアイコン
             if( linktype == MISC::SCHEME_SSSP ){
@@ -2665,7 +2660,7 @@ create_multispace:
                     node = create_node_img( tmp_view, tmpreplace, COLOR_IMG_NOCACHE, bold );
                     if ( fontid != FONT_MAIN ) node->fontid = fontid;
                 }
-    
+
                 // 一般リンク
                 else create_node_link( tmp_view, tmpreplace, COLOR_CHAR_LINK, bgcolor, bold, fontid );
             }
@@ -3056,21 +3051,23 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 //
 // 入力
 // str_in : 入力文字列の先頭アドレス
-// lng_str : str_inのバッファサイズ
+// lng_in : str_inのバッファサイズ
+// lng_text : str_textのバッファサイズ
 // lng_link : str_linkのバッファサイズ
-// linktype : is_url_scheme()のリタンコード
-// delim_pos : is_url_scheme()で得たスキーム文字列の長さ
 //
 // 出力
-// n_in : str_in から何バイト読み取ったか
+// lng_in : str_in から何バイト読み取ったか
+// str_text : リンクの表示文字列
+// lng_text : str_textのサイズ
 // str_link : リンクの文字列
+// lng_link : str_linkのサイズ
 //
 // 戻り値 : リンクのタイプ(例えばSCHEME_HTTPなど)
 //
 // 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
 //
-int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, char* str_link,
-                              const int lng_link ) const
+int NodeTreeBase::check_link( const char* str_in, int& lng_in, char* str_text, std::size_t& lng_text,
+                              char* str_link, std::size_t& lng_link ) const
 {
     // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
     int delim_pos = 0;
@@ -3081,111 +3078,97 @@ int NodeTreeBase::check_link( const char* str_in, const int lng_in, int& n_in, c
     // CONFIG::get_loose_url() == true の時はRFCで規定されていない文字も含める
     const bool loose_url = CONFIG::get_loose_url();
 
-    // リンクの長さを取得
-    n_in = delim_pos;
-    int n_in_tmp, n_out_tmp;
-    char buf[16];
-
-    while( n_in < lng_in ){
-
-        // URLとして扱う文字かどうか
-        if ( MISC::is_url_char( str_in + n_in, loose_url ) == false ) break;
-
-        // HTML特殊文字( &〜; )
-        if ( *( str_in + n_in ) == '&' &&
-             DBTREE::decode_char( str_in + n_in, n_in_tmp, buf, n_out_tmp ) != DBTREE::NODE_NONE ){
-
-             // デコード結果が"&(&amp;)"でないもの
-             if( n_out_tmp != 1 || buf[0] != '&' ) break;
-        }
-
-        n_in++;
-    }
-
-    // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
-    if( n_in - delim_pos < 4 ) return MISC::SCHEME_NONE;
-
-    // URL出力バッファより長いときも除外する( 一般に256バイトを超えるとキャッシュをファイル名として扱えなくなる )
-    if( lng_link <= n_in ) return MISC::SCHEME_NONE;
-
-    char *pos = str_link;
+    const char* pos_in = str_in;
+    char* pos_text = str_text;
+    char* pos_link = str_link;
+    const char* const pos_in_end = str_in + lng_in;
+    const char* const pos_text_end = str_text + lng_text;
+    const char* const pos_link_end = str_link + lng_link;
 
     // URLスキームを修正
-    int str_pos = 0;
-    int n_out = n_in; // 実際に書き込む長さ
     switch( linktype ){
-
-        // ttp -> http
-        case MISC::SCHEME_TTP:
-
-            n_out += 1;
-            if( n_out >= lng_link ) return MISC::SCHEME_NONE;
-
-            *pos = 'h';
-            pos++;
-            break;
-
-        // tp -> http
-        case MISC::SCHEME_TP:
-
-            n_out += 2;
-            if( n_out >= lng_link ) return MISC::SCHEME_NONE;
-
-            *pos  = 'h';
-            *(++pos) = 't';
-            pos++;
-            break;
-
-        // sssp -> http
         case MISC::SCHEME_SSSP:
-
-            *pos = 'h';
-            *(++pos) = 't';
-            *(++pos) = 't';
-            pos++;
-            str_pos = 3;
-            break;
+        case MISC::SCHEME_HTTP: *pos_text++ = *pos_in++;
+                                [[fallthrough]];
+        case MISC::SCHEME_TTP:  *pos_text++ = *pos_in++;
+                                [[fallthrough]];
+        case MISC::SCHEME_TP:   *pos_text++ = *pos_in++;
     }
 
-    // srr_inの文字列をstr_linkにコピー
-    int i = str_pos;
-    for( ; i < n_in; i++, pos++ ){
+    // str_inの文字列をdelim_posまでコピー
+    *pos_link++ = 'h';
+    *pos_link++ = 't';
+    *pos_link++ = 't';
+    for( ; pos_in < str_in + delim_pos; ++pos_in ) {
+        *pos_text++ = *pos_in;
+        *pos_link++ = *pos_in;
+    }
 
-        *pos = str_in[ i ];
+    // str_inの残り文字列をstr_linkにコピー
+    while( pos_in < pos_in_end ) {
+        int n_in_tmp, n_out_tmp;
+        char ch = *pos_in;
+
+        // 文字参照を変換
+        JDLIB::span<char> out_char( pos_link, pos_link_end - pos_link );
+        if( ch == '&' && DBTREE::decode_char( pos_in, n_in_tmp, out_char, n_out_tmp ) != NODE_NONE ) {
+            // URLとして扱う文字かどうか
+            if( n_out_tmp == 1 && MISC::is_url_char( pos_link, loose_url ) ) {
+                ch = *pos_link++;
+                *pos_text++ = ch;
+                pos_in += n_in_tmp;
+            }
+            else {
+                break;
+            }
+        }
+
+        // URLとして扱う文字かどうか
+        else if( MISC::is_url_char( pos_in, loose_url ) ) {
+            *pos_link++ = ch;
+            *pos_text++ = ch;
+            ++pos_in;
+        }
+        else {
+            break;
+        }
+
+        if( pos_text >= pos_text_end || pos_link >= pos_link_end ) return MISC::SCHEME_NONE;
 
         // loose_urlで含める"^"と"|"をエンコードする
         // "[]"はダウンローダに渡す用途のためにエンコードしないでおく
-        if( loose_url == true ){
+        if( loose_url ) {
 
-            if( str_in[ i ] == '^' ){
+            if( ch == '^' ) {      // '^' → "%5E"(+2Byte)
+                if( pos_link + 2 >= pos_link_end ) return MISC::SCHEME_NONE;
 
-                // '^' → "%5E"(+2Byte)
-                n_out += 2;
-                if( n_out >= lng_link ) return MISC::SCHEME_NONE;
-
-                *pos = '%';
-                *(++pos) = '5';
-                *(++pos) = 'E';
+                *( pos_link - 1 ) = '%';
+                *pos_link++ = '5';
+                *pos_link++ = 'E';
             }
-            else if( str_in[ i ] == '|' ){
+            else if( ch == '|' ) { // '|' → "%7C"(+2Byte)
+                if( pos_link + 2 >= pos_link_end ) return MISC::SCHEME_NONE;
 
-                // '|' → "%7C"(+2Byte)
-                n_out += 2;
-                if( n_out >= lng_link ) return MISC::SCHEME_NONE;
-
-                *pos = '%';
-                *(++pos) = '7';
-                *(++pos) = 'C';
+                *( pos_link - 1 ) = '%';
+                *pos_link++ = '7';
+                *pos_link++ = 'C';
             }
         }
     }
 
     // str_linkの終端
-    *pos = '\0';
+    *pos_text = *pos_link = '\0';
+    lng_in = pos_in - str_in;
+    lng_text = pos_text - str_text;
+    lng_link = pos_link - str_link;
+
+    // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
+    if( lng_in - delim_pos < 4 ) return MISC::SCHEME_NONE;
+
 
 #ifdef _DEBUG
     std::cout << str_link << std::endl
-              << "len = " << strlen( str_link ) << " lng_link = " << lng_link << " n_in = " << n_in << std::endl;
+              << "lng_link = " << lng_link << " lng_in = " << lng_in << std::endl;
 #endif
 
     return linktype;
@@ -3991,23 +3974,6 @@ bool NodeTreeBase::remove_imenu( char* str_link )
     str_link[length - cut_end + host_start] = '\0';
 
     return true;
-}
-
-
-// 文字列中の"&amp;"を"&"に変換する
-//static member
-int NodeTreeBase::convert_amp( char* text, const int n )
-{
-    int m = n;
-    for( int i = 0; i < m; ++i ) {
-        if( std::strncmp( text + i, "&amp;", 5 ) == 0 ) {
-            std::memmove( text + i + 1, text + i + 5, n - i - 5 );
-            m -= 4;
-        }
-    }
-
-    text[m] = '\0';
-    return m;
 }
 
 
