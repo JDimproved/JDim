@@ -116,6 +116,8 @@ namespace DBTREE
         std::string m_buffer_lines;
         std::string m_parsed_text; // HTMLパーサに使うバッファ
         std::string m_buffer_write; // 書き込みチェック用バッファ
+        std::string m_buf_text; ///< 画面に表示するテキスト用バッファ, parse_html() で使う
+        std::string m_buf_link; ///< 編集したリンク用バッファ, parse_html() で使う
         bool m_check_update{}; // HEADによる更新チェックのみ
         bool m_check_write{}; // 自分の書き込みかチェックする
         bool m_loading_newthread{}; // 新スレ読み込み中
@@ -344,11 +346,10 @@ namespace DBTREE
         // m_buffer_write に作成した文字列をセットする
         void parse_write( std::string_view str, const std::size_t max_lng_write );
 
-        bool check_anchor( const int mode, const char* str_in, int& n, char* str_out, char* str_link, int lng_link,
+        bool check_anchor( const int mode, const char* str_in, int& n, std::string& str_out, std::string& str_link,
                            ANCINFO* ancinfo ) const;
         /// リンクが現れたかチェックして文字列を取得する関数
-        int check_link( const char* str_in, int& lng_in, char* str_text, std::size_t& lng_text,
-                        char* str_link, std::size_t& lng_link ) const;
+        int check_link( const char* str_in, int& lng_in, std::string& str_text, std::string& str_link ) const;
 
         // レジューム時のチェックデータをキャッシュ
         void set_resume_data( const char* data, size_t length );
@@ -406,7 +407,7 @@ namespace DBTREE
 
       public:
         // http://ime.nu/ などをリンクから削除
-        static bool remove_imenu( char* str_link );
+        static bool remove_imenu( std::string& str_link );
     };
 }
 

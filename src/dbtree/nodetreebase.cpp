@@ -173,6 +173,9 @@ void NodeTreeBase::clear()
     m_buffer_write.clear();
     m_buffer_write.shrink_to_fit();
 
+    m_buf_text.clear();
+    m_buf_link.clear();
+
     if( m_fout ) fclose( m_fout );
     m_fout = nullptr;
 
@@ -1141,6 +1144,12 @@ void NodeTreeBase::init_loading()
     if( m_parsed_text.capacity() < MAXSISE_OF_LINES ) {
         m_parsed_text.reserve( MAXSISE_OF_LINES );
     }
+    if( m_buf_text.capacity() < LNG_LINK ) {
+        m_buf_text.reserve( LNG_LINK +16 );
+    }
+    if( m_buf_link.capacity() < LNG_LINK ) {
+        m_buf_link.reserve( LNG_LINK +16 );
+    }
 }
 
 
@@ -2033,7 +2042,6 @@ void NodeTreeBase::parse_html( std::string_view str, const int color_text,
     int bgcolor_bak = COLOR_NONE;
     bool in_bold = bold;
     std::vector<std::string>& colors = CORE::get_css_manager()->get_colors();
-    char tmplink[ LNG_LINK +16 ]; // 編集したリンク文字列
     NODE *node;
 
     m_parsed_text.clear();
@@ -2140,13 +2148,11 @@ create_multispace:
 
                     // BE link
                     if( a_link.rfind( "javascript:be(", 0 ) == 0 ) {
-                        constexpr std::string_view be{ PROTO_BE };
-                        be.copy( tmplink, be.size() );
+                        m_buf_link.assign( PROTO_BE ); // 確保したメモリを再利用するため = は使わない
                         a_link.remove_prefix( 14 );
                         a_link.remove_suffix( 2 );
-                        a_link.copy( tmplink + be.size(), a_link.size() );
-                        a_link = std::string_view( tmplink, be.size() + a_link.size() );
-                        create_node_link( a_str, a_link, COLOR_CHAR_LINK, bgcolor, in_bold, fontid );
+                        m_buf_link.append( a_link );
+                        create_node_link( a_str, m_buf_link, COLOR_CHAR_LINK, bgcolor, in_bold, fontid );
                     }
                     else {
 
@@ -2168,19 +2174,19 @@ create_multispace:
                             }
                             else {
                                 // 相対リンクから絶対URLを作る
-                                m_url_readcgi.copy( tmplink, pos_root );
+                                m_buf_link.assign( m_url_readcgi, 0, pos_root );
                                 a_link.remove_prefix( link_offset );
-                                a_link.copy( tmplink + pos_root, a_link.size() );
+                                m_buf_link.append( a_link );
 
-                                a_link = std::string_view( tmplink, a_link.size() + pos_root );
+                                a_link = m_buf_link;
                             }
                         }
                         else {
-                            a_link.copy( tmplink, a_link.size() );
-                            tmplink[ a_link.size() ] = '\0';
+                            // 確保したメモリを再利用するため = は使わない
+                            m_buf_link.assign( a_link );
 
-                            while( remove_imenu( tmplink ) ); // ime.nuなどの除去
-                            a_link = std::string_view( tmplink );
+                            while( remove_imenu( m_buf_link ) ); // ime.nuなどの除去
+                            a_link = m_buf_link;
                         }
 
                         if( ! a_str.empty() ) {
@@ -2552,24 +2558,23 @@ create_multispace:
 
         ///////////////////////
         // アンカーのチェック
+        constexpr std::string_view kProtoAnchor{ PROTO_ANCHORE };
+        m_buf_text.clear(); // 画面に表示するリンク用バッファ
+        m_buf_link.resize( kProtoAnchor.size() ); // 編集したリンク用バッファ
         int n_in = 0;
-        char tmpstr[ LNG_LINK +16 ]; // 画面に表示する文字列
-        std::size_t lng_str = 0, lng_link = std::strlen( PROTO_ANCHORE );
         ANCINFO ancinfo[ MAX_ANCINFO ];
         std::size_t lng_anc = 0;
 
         int mode = 0;
         if( digitlink ) mode = 2;
 
-        if( check_anchor( mode, pos, n_in, tmpstr, tmplink + lng_link, LNG_LINK - lng_link, ancinfo ) ) {
+        if( check_anchor( mode, pos, n_in, m_buf_text, m_buf_link, ancinfo ) ) {
 
             // フラッシュしてからアンカーノードをつくる
             create_node_ntext( m_parsed_text.data(), m_parsed_text.size(), fgcolor, bgcolor, in_bold, fontid );
             m_parsed_text.clear();
 
-            memcpy( tmplink, PROTO_ANCHORE, strlen( PROTO_ANCHORE ) );
-            lng_str = std::strlen( tmpstr );
-            lng_link = std::strlen( tmplink );
+            std::copy( kProtoAnchor.cbegin(), kProtoAnchor.cend(), m_buf_link.begin() );
             ++lng_anc;
             pos += n_in; 
 
@@ -2577,18 +2582,13 @@ create_multispace:
             // MAX_ANCINFOを超えた部分はリンクに含めない
             mode = 1;
             while( lng_anc < MAX_ANCINFO &&
-                   check_anchor( mode, pos, n_in, tmpstr + lng_str, tmplink + lng_link ,
-                                 LNG_LINK - lng_link, ancinfo + lng_anc ) ){
+                   check_anchor( mode, pos, n_in, m_buf_text, m_buf_link, ancinfo + lng_anc ) ) {
 
-                lng_str = std::strlen( tmpstr );
-                lng_link = std::strlen( tmplink );
                 ++lng_anc;
                 pos += n_in; 
             }
 
-            std::string_view tmp_view( tmpstr, lng_str );
-            std::string_view view_tmplink( tmplink, lng_link );
-            create_node_anc( tmp_view, view_tmplink, COLOR_CHAR_LINK, bold, ancinfo, lng_anc, fontid );
+            create_node_anc( m_buf_text, m_buf_link, COLOR_CHAR_LINK, bold, ancinfo, lng_anc, fontid );
 
             continue;
         }
@@ -2603,31 +2603,30 @@ create_multispace:
 
         ///////////////////////
         // リンク(http)のチェック
+        m_buf_link.clear();
         std::string tmpreplace; // Urlreplaceで変換した後のリンク文字列
         n_in = pos_end - pos;
-        lng_str = lng_link = LNG_LINK;
-        const int linktype = check_link( pos, n_in, tmpstr, lng_str, tmplink, lng_link );
+        const int linktype = check_link( pos, n_in, m_buf_text, m_buf_link );
 
         if( linktype != MISC::SCHEME_NONE ){
             // リンクノードで実際にアクセスするURLの変換
-            while( remove_imenu( tmplink ) ); // ime.nuなどの除去
-            lng_link = std::strlen( tmplink );
+            while( remove_imenu( m_buf_link ) ); // ime.nuなどの除去
 
             // Urlreplaceによる正規表現変換
-            tmpreplace.assign( tmplink, lng_link );
+            tmpreplace.assign( m_buf_link );
             if( CORE::get_urlreplace_manager()->exec( tmpreplace ) ){
                 // 変換が行われた
 
                 if( tmpreplace.size() > LNG_LINK ){
-                    MISC::ERRMSG( std::string( "too long replaced url : " ) + tmplink );
+                    MISC::ERRMSG( "too long replaced url : " + m_buf_link );
 
                     // 変換後のURLが長すぎるので、元のURLのままにする
-                    tmpreplace.assign( tmplink, lng_link );
+                    tmpreplace.assign( m_buf_link );
                 }
                 // 正常に変換された結果、スキームだけの簡易チェックをする
                 else if( MISC::SCHEME_NONE == MISC::is_url_scheme( tmpreplace.c_str() ) ) {
                     // プロトコルスキームが消えていた
-                    m_parsed_text.append( tmpstr, lng_str );
+                    m_parsed_text.append( m_buf_text );
                     pos += n_in;
                     continue;
                 }
@@ -2644,25 +2643,22 @@ create_multispace:
             }
 
             else {
-                std::string_view tmp_view( tmpstr, lng_str );
-
                 // Urlreplaceによる画像コントロールを取得する
                 const int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( tmpreplace );
 
                 // youtubeなどのサムネイル画像リンク
                 if( imgctrl & CORE::IMGCTRL_THUMBNAIL ){
-                    std::string_view view_tmplink( tmplink, lng_link );
-                    create_node_thumbnail( tmp_view, view_tmplink, tmpreplace, COLOR_CHAR_LINK, bold, fontid );
+                    create_node_thumbnail( m_buf_text, m_buf_link, tmpreplace, COLOR_CHAR_LINK, bold, fontid );
                 }
 
                 // 画像リンク
                 else if( DBIMG::get_type_ext( tmpreplace ) != DBIMG::T_UNKNOWN ){
-                    node = create_node_img( tmp_view, tmpreplace, COLOR_IMG_NOCACHE, bold );
+                    node = create_node_img( m_buf_text, tmpreplace, COLOR_IMG_NOCACHE, bold );
                     if ( fontid != FONT_MAIN ) node->fontid = fontid;
                 }
 
                 // 一般リンク
-                else create_node_link( tmp_view, tmpreplace, COLOR_CHAR_LINK, bgcolor, bold, fontid );
+                else create_node_link( m_buf_text, tmpreplace, COLOR_CHAR_LINK, bgcolor, bold, fontid );
             }
 
             pos += n_in;
@@ -2902,7 +2898,7 @@ void NodeTreeBase::parse_write( std::string_view str, const std::size_t max_lng_
 // 戻り値 : アンカーが現れれば true
 //
 bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
-                                 int& n_in, char* str_out, char* str_link, int lng_link, ANCINFO* ancinfo ) const
+                                 int& n_in, std::string& str_out, std::string& str_link, ANCINFO* ancinfo ) const
 {
     char tmp_out[ 64 ];
     int lng_out = 0;
@@ -2938,9 +2934,7 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 
             tmp_out[ lng_out++ ] = *( pos );
 
-            str_link[ 0 ] = *( pos );
-            ++str_link;
-            --lng_link;
+            str_link.push_back( *pos );
 
             ++pos;
         }
@@ -2953,9 +2947,7 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
             tmp_out[ lng_out++ ] = static_cast< char >( 0x80 );
             tmp_out[ lng_out++ ] = static_cast< char >( 0x81 );
 
-            str_link[ 0 ] = ',';
-            ++str_link;
-            --lng_link;
+            str_link.push_back( ',' );
 
             pos += 3;
         }
@@ -2977,11 +2969,9 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
     // アンカーが現れたのでとりあえず作成する
 
     // 画面に表示する文字
-    memcpy( str_out, tmp_out, lng_out );
-    memcpy( str_out + lng_out, pos, n );
-    str_out[ lng_out + n ] = '\0';
+    str_out.append( tmp_out, lng_out );
+    str_out.append( pos, n );
     pos += n;
-    lng_out += n;    
 
     // </a>をキャンセル
     if( *( pos ) == '<' && *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ){
@@ -2997,17 +2987,15 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
             for( size_t i = 0; i < dig2; ++i ) num *= 10;
             num += num2;
 
-            memcpy( str_out + lng_out, pos, n2 );
-            str_out[ lng_out + n2 ] = '\0';
+            str_out.append( pos, n2 );
             pos += n2;
-            lng_out += n2;
         }
     }
 
     ancinfo->anc_from = ancinfo->anc_to = num;
 
     // アンカー文字
-    snprintf( str_link, lng_link, "%d", ancinfo->anc_from );
+    std::snprintf( tmp_out, 63, "%d", ancinfo->anc_from );
 
     // "-" でつながってる場合同じことをもう一回
     int offset = 0;
@@ -3026,15 +3014,16 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
         ancinfo->anc_to = MAX( ancinfo->anc_from, MISC::str_to_uint( pos + offset, dig, n ) );
         if( dig && dig <= MAX_RES_DIGIT && ancinfo->anc_to ){
 
-            // 画面に表示する文字            
-            memcpy( str_out + lng_out, pos, offset + n );
-            str_out[ lng_out + offset + n ] = '\0';
+            // 画面に表示する文字
+            str_out.append( pos, offset + n );
 
             // アンカー文字をもう一度作成
-            snprintf( str_link, lng_link, "%d-%d", ancinfo->anc_from, ancinfo->anc_to );
+            std::snprintf( tmp_out, 63, "%d-%d", ancinfo->anc_from, ancinfo->anc_to );
             pos += offset + n;
         }
     }
+
+    str_link.append( tmp_out );
 
     //"&gt;&gt;数字-数字</a>"のパターンの時に</a>をのぞく
     if( *( pos ) == '<' && *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ) pos += 4;
@@ -3052,22 +3041,17 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 // 入力
 // str_in : 入力文字列の先頭アドレス
 // lng_in : str_inのバッファサイズ
-// lng_text : str_textのバッファサイズ
-// lng_link : str_linkのバッファサイズ
 //
 // 出力
 // lng_in : str_in から何バイト読み取ったか
 // str_text : リンクの表示文字列
-// lng_text : str_textのサイズ
 // str_link : リンクの文字列
-// lng_link : str_linkのサイズ
 //
 // 戻り値 : リンクのタイプ(例えばSCHEME_HTTPなど)
 //
 // 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
 //
-int NodeTreeBase::check_link( const char* str_in, int& lng_in, char* str_text, std::size_t& lng_text,
-                              char* str_link, std::size_t& lng_link ) const
+int NodeTreeBase::check_link( const char* str_in, int& lng_in, std::string& str_text, std::string& str_link ) const
 {
     // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
     int delim_pos = 0;
@@ -3079,43 +3063,37 @@ int NodeTreeBase::check_link( const char* str_in, int& lng_in, char* str_text, s
     const bool loose_url = CONFIG::get_loose_url();
 
     const char* pos_in = str_in;
-    char* pos_text = str_text;
-    char* pos_link = str_link;
     const char* const pos_in_end = str_in + lng_in;
-    const char* const pos_text_end = str_text + lng_text;
-    const char* const pos_link_end = str_link + lng_link;
 
     // URLスキームを修正
     switch( linktype ){
         case MISC::SCHEME_SSSP:
-        case MISC::SCHEME_HTTP: *pos_text++ = *pos_in++;
+        case MISC::SCHEME_HTTP: str_text.push_back( *pos_in++ );
                                 [[fallthrough]];
-        case MISC::SCHEME_TTP:  *pos_text++ = *pos_in++;
+        case MISC::SCHEME_TTP:  str_text.push_back( *pos_in++ );
                                 [[fallthrough]];
-        case MISC::SCHEME_TP:   *pos_text++ = *pos_in++;
+        case MISC::SCHEME_TP:   str_text.push_back( *pos_in++ );
     }
 
     // str_inの文字列をdelim_posまでコピー
-    *pos_link++ = 'h';
-    *pos_link++ = 't';
-    *pos_link++ = 't';
+    str_link.append( "htt" );
     for( ; pos_in < str_in + delim_pos; ++pos_in ) {
-        *pos_text++ = *pos_in;
-        *pos_link++ = *pos_in;
+        str_text.push_back( *pos_in );
+        str_link.push_back( *pos_in );
     }
 
     // str_inの残り文字列をstr_linkにコピー
     while( pos_in < pos_in_end ) {
         int n_in_tmp, n_out_tmp;
-        char ch = *pos_in;
+        const char ch = *pos_in;
 
         // 文字参照を変換
-        JDLIB::span<char> out_char( pos_link, pos_link_end - pos_link );
+        char out_char[kMaxBytesOfUTF8Char]{};
         if( ch == '&' && DBTREE::decode_char( pos_in, n_in_tmp, out_char, n_out_tmp ) != NODE_NONE ) {
+            str_link.append( out_char, n_out_tmp );
             // URLとして扱う文字かどうか
-            if( n_out_tmp == 1 && MISC::is_url_char( pos_link, loose_url ) ) {
-                ch = *pos_link++;
-                *pos_text++ = ch;
+            if( n_out_tmp == 1 && MISC::is_url_char( str_link.c_str(), loose_url ) ) {
+                str_text.push_back( str_link.back() );
                 pos_in += n_in_tmp;
             }
             else {
@@ -3125,42 +3103,37 @@ int NodeTreeBase::check_link( const char* str_in, int& lng_in, char* str_text, s
 
         // URLとして扱う文字かどうか
         else if( MISC::is_url_char( pos_in, loose_url ) ) {
-            *pos_link++ = ch;
-            *pos_text++ = ch;
+            str_text.push_back( ch );
+            str_link.push_back( ch );
             ++pos_in;
         }
         else {
             break;
         }
 
-        if( pos_text >= pos_text_end || pos_link >= pos_link_end ) return MISC::SCHEME_NONE;
+        if( str_text.size() >= LNG_LINK || str_link.size() >= LNG_LINK ) return MISC::SCHEME_NONE;
 
         // loose_urlで含める"^"と"|"をエンコードする
         // "[]"はダウンローダに渡す用途のためにエンコードしないでおく
         if( loose_url ) {
 
             if( ch == '^' ) {      // '^' → "%5E"(+2Byte)
-                if( pos_link + 2 >= pos_link_end ) return MISC::SCHEME_NONE;
+                if( str_link.size() + 2 >= LNG_LINK ) return MISC::SCHEME_NONE;
 
-                *( pos_link - 1 ) = '%';
-                *pos_link++ = '5';
-                *pos_link++ = 'E';
+                str_link.back() = '%';
+                str_link.append( "5E" );
             }
             else if( ch == '|' ) { // '|' → "%7C"(+2Byte)
-                if( pos_link + 2 >= pos_link_end ) return MISC::SCHEME_NONE;
+                if( str_link.size() + 2 >= LNG_LINK ) return MISC::SCHEME_NONE;
 
-                *( pos_link - 1 ) = '%';
-                *pos_link++ = '7';
-                *pos_link++ = 'C';
+                str_link.back() = '%';
+                str_link.append( "7C" );
             }
         }
     }
 
-    // str_linkの終端
-    *pos_text = *pos_link = '\0';
+    // 入力から読み取ったバイト数
     lng_in = pos_in - str_in;
-    lng_text = pos_text - str_text;
-    lng_link = pos_link - str_link;
 
     // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
     if( lng_in - delim_pos < 4 ) return MISC::SCHEME_NONE;
@@ -3168,7 +3141,7 @@ int NodeTreeBase::check_link( const char* str_in, int& lng_in, char* str_text, s
 
 #ifdef _DEBUG
     std::cout << str_link << std::endl
-              << "lng_link = " << lng_link << " lng_in = " << lng_in << std::endl;
+              << "lng_link = " << str_link.size() << " lng_in = " << lng_in << std::endl;
 #endif
 
     return linktype;
@@ -3935,43 +3908,39 @@ void NodeTreeBase::check_fontid( const int number )
 // http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/24
 //
 //static member
-bool NodeTreeBase::remove_imenu( char* str_link )
+bool NodeTreeBase::remove_imenu( std::string& str_link )
 {
-    assert( str_link );
-
     std::size_t host_start;
-    if( std::strncmp( str_link, "https://", 8 ) == 0 ) host_start = 8;
-    else if( std::strncmp( str_link, "http://", 7 ) == 0 ) host_start = 7;
+    if( str_link.compare( 0, 8, "https://" ) == 0 ) host_start = 8;
+    else if( str_link.compare( 0, 7, "http://" ) == 0 ) host_start = 7;
     else return false;
 
     std::size_t cut_end;
-    if( std::strncmp( str_link + host_start, "jump.5ch.net/?", 14 ) == 0
-            || std::strncmp( str_link + host_start, "pinktower.com/", 14 ) == 0
-            || std::strncmp( str_link + host_start, "jump.2ch.net/?", 14 ) == 0 ) {
+    if( str_link.compare( host_start, 14, "jump.5ch.net/?" ) == 0
+            || str_link.compare( host_start, 14, "pinktower.com/" ) == 0
+            || str_link.compare( host_start, 14, "jump.2ch.net/?" ) == 0 ) {
         cut_end = host_start + 14;
     }
-    else if( std::strncmp( str_link + host_start, "ime.nu/", 7 ) == 0
-            || std::strncmp( str_link + host_start, "ime.st/", 7 ) == 0
-            || std::strncmp( str_link + host_start, "nun.nu/", 7 ) == 0 ) {
+    else if( str_link.compare( host_start, 7, "ime.nu/" ) == 0
+            || str_link.compare( host_start, 7, "ime.st/" ) == 0
+            || str_link.compare( host_start, 7, "nun.nu/" ) == 0 ) {
         cut_end = host_start + 7;
     }
     else {
         return false;
     }
 
-    const std::size_t length = std::strlen( str_link );
     // "http://ime.nu/"等、URLがそれだけだった場合は削除しない
-    if( length == cut_end ) return false;
+    if( str_link.size() == cut_end ) return false;
 
     // "httpbin.org"のようなホストがあるのでスラッシュまでチェック
-    if( std::strncmp( str_link + cut_end, "https://", 8 ) == 0
-            || std::strncmp( str_link + cut_end, "http://", 7 ) == 0 ) {
+    if( str_link.compare( cut_end, 8, "https://" ) == 0
+            || str_link.compare( cut_end, 7, "http://" ) == 0 ) {
         // プロトコルが続く場合は頭から削る
         host_start = 0;
     }
 
-    std::memmove( str_link + host_start, str_link + cut_end, length - cut_end );
-    str_link[length - cut_end + host_start] = '\0';
+    str_link.erase( host_start, cut_end - host_start );
 
     return true;
 }
