@@ -13,9 +13,9 @@ class NodeTreeBase_RemoveImenuTest : public ::testing::Test {};
 
 TEST_F(NodeTreeBase_RemoveImenuTest, empty_string)
 {
-    char inout[] = "";
+    std::string inout;
     EXPECT_FALSE( DBTREE::NodeTreeBase::remove_imenu( inout ) );
-    EXPECT_STREQ( "", inout );
+    EXPECT_EQ( "", inout );
 }
 
 TEST_F(NodeTreeBase_RemoveImenuTest, not_remove)
@@ -32,11 +32,11 @@ TEST_F(NodeTreeBase_RemoveImenuTest, not_remove)
         { "https://pinktower.com/", "https://pinktower.com/" },
     };
 
-    char buffer[128];
+    std::string buffer;
     for( auto [input, expect] : test_data ) {
-        std::strcpy( buffer, input );
+        buffer.assign( input );
         EXPECT_FALSE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
-        EXPECT_STREQ( expect, buffer );
+        EXPECT_EQ( expect, buffer );
     }
 }
 
@@ -48,11 +48,11 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_ime_nu)
         { "https://ime.nu/http://foobar.baz", "http://foobar.baz" },
     };
 
-    char buffer[128];
+    std::string buffer;
     for( auto [input, expect] : test_data ) {
-        std::strcpy( buffer, input );
+        buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
-        EXPECT_STREQ( expect, buffer );
+        EXPECT_EQ( expect, buffer );
     }
 }
 
@@ -64,11 +64,11 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_ime_st)
         { "http://ime.nu/https://foobar.baz", "https://foobar.baz" },
     };
 
-    char buffer[128];
+    std::string buffer;
     for( auto [input, expect] : test_data ) {
-        std::strcpy( buffer, input );
+        buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
-        EXPECT_STREQ( expect, buffer );
+        EXPECT_EQ( expect, buffer );
     }
 }
 
@@ -80,11 +80,11 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_nun_nu)
         { "https://nun.nu/http://foobar.baz", "http://foobar.baz" },
     };
 
-    char buffer[128];
+    std::string buffer;
     for( auto [input, expect] : test_data ) {
-        std::strcpy( buffer, input );
+        buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
-        EXPECT_STREQ( expect, buffer );
+        EXPECT_EQ( expect, buffer );
     }
 }
 
@@ -96,11 +96,11 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_pinktower_com)
         { "http://pinktower.com/https://foobar.baz", "https://foobar.baz" },
     };
 
-    char buffer[128];
+    std::string buffer;
     for( auto [input, expect] : test_data ) {
-        std::strcpy( buffer, input );
+        buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
-        EXPECT_STREQ( expect, buffer );
+        EXPECT_EQ( expect, buffer );
     }
 }
 
@@ -112,11 +112,11 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_jump_5ch_net)
         { "http://jump.5ch.net/?https://foobar.baz", "https://foobar.baz" },
     };
 
-    char buffer[128];
+    std::string buffer;
     for( auto [input, expect] : test_data ) {
-        std::strcpy( buffer, input );
+        buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
-        EXPECT_STREQ( expect, buffer );
+        EXPECT_EQ( expect, buffer );
     }
 }
 
@@ -128,71 +128,12 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_jump_2ch_net)
         { "http://jump.2ch.net/?https://foobar.baz", "https://foobar.baz" },
     };
 
-    char buffer[128];
+    std::string buffer;
     for( auto [input, expect] : test_data ) {
-        std::strcpy( buffer, input );
+        buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
-        EXPECT_STREQ( expect, buffer );
+        EXPECT_EQ( expect, buffer );
     }
-}
-
-
-class NodeTreeBase_ConvertAmpTest : public ::testing::Test {};
-
-TEST_F(NodeTreeBase_ConvertAmpTest, empty_string)
-{
-    char buffer[] = "";
-    EXPECT_EQ( 0, DBTREE::NodeTreeBase::convert_amp( buffer, std::strlen( buffer ) ) );
-    EXPECT_STREQ( "", buffer );
-}
-
-TEST_F(NodeTreeBase_ConvertAmpTest, no_amp)
-{
-    char buffer[] = "hello world!";
-    EXPECT_EQ( 12, DBTREE::NodeTreeBase::convert_amp( buffer, std::strlen( buffer ) ) );
-    EXPECT_STREQ( "hello world!", buffer );
-}
-
-TEST_F(NodeTreeBase_ConvertAmpTest, missing_ampersand)
-{
-    char buffer[] = "helloamp;world!";
-    EXPECT_EQ( 15, DBTREE::NodeTreeBase::convert_amp( buffer, std::strlen( buffer ) ) );
-    EXPECT_STREQ( "helloamp;world!", buffer );
-}
-
-TEST_F(NodeTreeBase_ConvertAmpTest, missing_semicolon)
-{
-    char buffer[] = "hello&ampworld!";
-    EXPECT_EQ( 15, DBTREE::NodeTreeBase::convert_amp( buffer, std::strlen( buffer ) ) );
-    EXPECT_STREQ( "hello&ampworld!", buffer );
-}
-
-TEST_F(NodeTreeBase_ConvertAmpTest, one_amp)
-{
-    char buffer[] = "hello&amp;world!";
-    EXPECT_EQ( 12, DBTREE::NodeTreeBase::convert_amp( buffer, std::strlen( buffer ) ) );
-    EXPECT_STREQ( "hello&world!", buffer );
-}
-
-TEST_F(NodeTreeBase_ConvertAmpTest, multi_amp)
-{
-    char buffer[] = "&amp;hello&amp;world&amp;";
-    EXPECT_EQ( 13, DBTREE::NodeTreeBase::convert_amp( buffer, std::strlen( buffer ) ) );
-    EXPECT_STREQ( "&hello&world&", buffer );
-}
-
-TEST_F(NodeTreeBase_ConvertAmpTest, amp_amp)
-{
-    char buffer[] = "&amp;amp; &amp;&amp;";
-    EXPECT_EQ( 8, DBTREE::NodeTreeBase::convert_amp( buffer, std::strlen( buffer ) ) );
-    EXPECT_STREQ( "&amp; &&", buffer );
-}
-
-TEST_F(NodeTreeBase_ConvertAmpTest, include_nul)
-{
-    char buffer[] = "hello&amp;\0&amp;world!";
-    EXPECT_EQ( 14, DBTREE::NodeTreeBase::convert_amp( buffer, 22 ) );
-    EXPECT_STREQ( "hello&\0&world!", buffer );
 }
 
 } // namespace
