@@ -2014,17 +2014,20 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
 }
 
 
-//
-// HTMLパーサ
-//
-// digitlink : true の時は先頭に数字が現れたらアンカーにする( parse_name() などで使う )
-//             false なら数字の前に >> がついてるときだけアンカーにする
-//
-// bold : ボールド表示
-//
-// ahref : <a href=～></a> からリンクノードを作成する
-// (例) parse_html( "<a href=\"hoge.com\">hoge</a>", 27, COLOR_CHAR, false, false );
-//
+/** @brief HTMLパーサー、HTMLやアンカーを解析してノードツリーを構築する
+ *
+ * @details この関数はメンバー変数に処理中のデータを格納するため再入不可能(not reentrant)であり
+ *          多重に呼び出したり、複数のスレッドから呼び出すと編集中のデータが壊れて正常に動作しない。
+ *          この関数を呼び出す関数は同じく再入不可能になるので注意。
+ * @param[in] str        DATやHTMLのデータ
+ * @param[in] color_text スレビューで使用する色のID (see colorid.h)
+ * @param[in] digitlink  true の時は先頭に数字が現れたらアンカーにする( parse_name() などで使う )<br>
+ *                       false なら数字の前に >> がついてるときだけアンカーにする
+ * @param[in] bold       ボールド表示
+ * @param[in] ahref      `<a href=～></a>` からリンクノードを作成する<br>
+ *                       (例) `parse_html( "<a href=\"hoge.com\">hoge</a>", 27, COLOR_CHAR, false, false );`
+ * @param[in] fontid     スレビューで使用するフォントのID (see fontid.h)
+ */
 // (パッチ)
 //
 // 行頭の空白は全て除くパッチ
@@ -2881,22 +2884,21 @@ void NodeTreeBase::parse_write( std::string_view str, const std::size_t max_lng_
 }
 
 
-//
-// アンカーが現れたかチェックして文字列を取得する関数
-//
-// 入力
-// mode : 0 なら >> が先頭に無ければアンカーにしない、1 なら,か+か=があればアンカーにする、2 なら数字が先頭に来たらアンカーにする
-// str_in : 入力文字列の先頭アドレス
-// lng_link : str_linkのバッファサイズ
-//
-// 出力
-// n_in : str_in から何バイト読み取ったか
-// str_out : (画面に表示される)文字列
-// str_link : リンクの文字列
-// ancinfo : ancinfo->anc_from 番から ancinfo->anc_to 番までのアンカーが現れた
-//
-// 戻り値 : アンカーが現れれば true
-//
+/** @brief アンカーが現れたかチェックして文字列を取得する関数
+ *
+ * @param[in] mode      アンカー記号をチェックするモード
+ *                      - 0 なら >> が先頭に無ければアンカーにしない
+ *                      - 1 なら,か+か=があればアンカーにする
+ *                      - 2 なら数字が先頭に来たらアンカーにする
+ * @param[in] str_in    入力文字列の先頭アドレス
+ *
+ * @param[out] n_in     str_in から何バイト読み取ったか
+ * @param[out] str_out  画面に表示される文字列
+ * @param[out] str_link リンクの文字列
+ * @param[out] ancinfo  ancinfo->anc_from 番から ancinfo->anc_to 番までのアンカーが現れた
+ *
+ * @return アンカーが現れれば true
+ */
 bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
                                  int& n_in, std::string& str_out, std::string& str_link, ANCINFO* ancinfo ) const
 {
@@ -3034,23 +3036,16 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 }
 
 
-
-//
-// リンクが現れたかチェックして文字列を取得する関数
-//
-// 入力
-// str_in : 入力文字列の先頭アドレス
-// lng_in : str_inのバッファサイズ
-//
-// 出力
-// lng_in : str_in から何バイト読み取ったか
-// str_text : リンクの表示文字列
-// str_link : リンクの文字列
-//
-// 戻り値 : リンクのタイプ(例えばSCHEME_HTTPなど)
-//
-// 注意 : MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
-//
+/** @brief リンクが現れたかチェックして文字列を取得する関数
+ *
+ * @param[in] str_in     入力文字列の先頭アドレス
+ * @param[in,out] lng_in (in) str_in のバッファサイズ <br> (out) str_in から何バイト読み取ったか
+ * @param[out] str_text  リンクの表示文字列
+ * @param[out] str_link  リンクの文字列
+ *
+ * @return リンクのタイプ(例えば MISC::SCHEME_HTTP など)
+ * @note MISC::is_url_scheme() と MISC::is_url_char() の仕様に合わせる事
+ */
 int NodeTreeBase::check_link( const char* str_in, int& lng_in, std::string& str_text, std::string& str_link ) const
 {
     // http://, https://, ftp://, ttp(s)://, tp(s):// のチェック
@@ -3897,12 +3892,11 @@ void NodeTreeBase::check_fontid( const int number )
 
 
 
-
-//
-// http://ime.nu/ などをリンクから削除
-//
-// 取り除いたらtrueを返す
-//
+/** @brief http://ime.nu/ などをリンクから削除
+ *
+ * @param[in,out] str_link リンクの文字列
+ * @return 取り除いたらtrueを返す
+ */
 // Thanks to 「パッチ投稿」スレの24氏
 //
 // http://jd4linux.sourceforge.jp/cgi-bin/bbs/test/read.cgi/support/1151836078/24
