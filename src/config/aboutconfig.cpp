@@ -207,6 +207,7 @@ void AboutConfig::append_rows()
     append_row( "レスを引用コピーするときに前に付ける引用文字", get_confitem()->ref_prefix, CONF_REF_PREFIX );
     append_row( "引用文字の後のスペース数", get_confitem()->ref_prefix_space, CONF_REF_PREFIX_SPACE );
     append_row( "RFC規定外の文字(^など)もURL判定に用いる", get_confitem()->loose_url, CONF_LOOSE_URL );
+    append_row( "URLのパーセントエンコーディングをデコードして表示する", get_confitem()->percent_decode, CONF_PERCENT_DECODE );
     append_row( "再読み込みボタンを押したときに全タブを更新する", get_confitem()->reload_allthreads, CONF_RELOAD_ALLTHREAD );
     append_row( "発言(同一ID)数をカウントする", get_confitem()->check_id, CONF_CHECK_ID );
     append_row( "レス参照数で色を変える回数(高)", get_confitem()->num_reference_high, CONF_NUM_REFERENCE_HIGH );

@@ -467,6 +467,9 @@ namespace CONFIG
     // datのパース時にURL判定を甘くする(^なども含める)
     bool get_loose_url();
 
+    /// URLのパーセントエンコーディングをデコードして表示する
+    bool get_percent_decode();
+
     // ユーザーコマンドで選択できない項目を非表示にする
     bool get_hide_usrcmd();
     void set_hide_usrcmd( const bool hide );
