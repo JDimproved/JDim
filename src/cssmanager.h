@@ -7,10 +7,11 @@
 #ifndef _CSSMANAGER_H
 #define _CSSMANAGER_H
 
-#include <map>
 #include <list>
-#include <vector>
+#include <map>
 #include <string>
+#include <string_view>
+#include <vector>
 
 #include "jdlib/heap.h"
 
@@ -156,7 +157,7 @@ namespace CORE
         std::vector< std::string >& get_colors() { return m_colors; }
 
         // クラス名からID取得
-        int get_classid( const std::string& classname ) const;
+        int get_classid( std::string_view classname ) const;
 
         // プロパティ取得
         CSS_PROPERTY get_property( const int id );
