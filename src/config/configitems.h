@@ -408,6 +408,9 @@ namespace CONFIG
         // datのパース時にURL判定を甘くする(^なども含める)
         bool loose_url{};
 
+        /// URLのパーセントエンコーディングをデコードして表示する
+        bool percent_decode{};
+
         // ユーザーコマンドで選択できない項目を非表示にする
         bool hide_usrcmd{};
 

@@ -443,6 +443,8 @@ int CONFIG::get_num_id_low(){ return get_confitem()->num_id_low; }
 
 bool CONFIG::get_loose_url(){ return get_confitem()->loose_url; }
 
+bool CONFIG::get_percent_decode(){ return get_confitem()->percent_decode; }
+
 bool CONFIG::get_hide_usrcmd(){ return get_confitem()->hide_usrcmd; }
 void CONFIG::set_hide_usrcmd( const bool hide ){ get_confitem()->hide_usrcmd = hide; }
 

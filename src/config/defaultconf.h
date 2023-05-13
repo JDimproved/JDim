@@ -102,6 +102,7 @@ namespace CONFIG
         CONF_NUM_ID_HIGH = 4,       // 発言数で色を変える回数 (高)
         CONF_NUM_ID_LOW = 2,        // 発言数で色を変える回数 (低)
         CONF_LOOSE_URL = 1,         // datのパース時にURL判定を甘くする(^なども含める)
+        CONF_PERCENT_DECODE = 0,    ///< URLのパーセントエンコーディングをデコードして表示する
         CONF_HIDE_USRCMD = 0, // ユーザーコマンドで選択できない項目を非表示にする
         CONF_RELOAD_ALLTHREAD = 0,  // スレビューで再読み込みボタンを押したときに全タブを更新する
         CONF_TAB_MIN_STR = 4, // タブに表示する文字列の最小値

@@ -3038,6 +3038,7 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
 
 /** @brief リンクが現れたかチェックして文字列を取得する関数
  *
+ * @details パーセントエンコーディングのオプションが有効のときはデコードして表示文字列に格納する。
  * @param[in] str_in     入力文字列の先頭アドレス
  * @param[in,out] lng_in (in) str_in のバッファサイズ <br> (out) str_in から何バイト読み取ったか
  * @param[out] str_text  リンクの表示文字列
@@ -3129,6 +3130,28 @@ int NodeTreeBase::check_link( const char* str_in, int& lng_in, std::string& str_
 
     // 入力から読み取ったバイト数
     lng_in = pos_in - str_in;
+
+    // パーセントエンコーディングの処理
+    if( CONFIG::get_percent_decode() && str_text.find( '%' ) != std::string::npos ) {
+
+        std::string tmp = MISC::url_decode( str_text );
+
+        const Encoding enc = MISC::detect_encoding( tmp );
+
+        if( enc == Encoding::sjis || enc == Encoding::eucjp || enc == Encoding::jis ) {
+            tmp = MISC::Iconv( tmp, Encoding::utf8, enc );
+        }
+
+        if( enc != Encoding::unknown ) {
+            // 改行はパーセントエンコード( 元に戻す )
+            tmp = MISC::replace_newlines_to_str( tmp, "%0A" );
+
+            if( tmp.size() <= str_text.capacity() ) {
+                // 確保したメモリを再利用するため = は使わない
+                str_text.assign( tmp );
+            }
+        }
+    }
 
     // URLとして短かすぎる場合は除外する( 最短ドメイン名の例 "1.cc" )
     if( lng_in - delim_pos < 4 ) return MISC::SCHEME_NONE;

@@ -455,6 +455,9 @@ bool ConfigItems::load( const bool restore )
     // datのパース時にURL判定を甘くする(^なども含める)
     loose_url = cf.get_option_bool( "loose_url", CONF_LOOSE_URL );
 
+    // URLのパーセントエンコーディングをデコードして表示する
+    percent_decode = cf.get_option_bool( "percent_decode", CONF_PERCENT_DECODE );
+
     // ユーザーコマンドで選択できない項目を非表示にする
     hide_usrcmd = cf.get_option_bool( "hide_usrcmd", CONF_HIDE_USRCMD );
 
@@ -876,6 +879,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "num_id_low", num_id_low );
 
     cf.update( "loose_url", loose_url );
+
+    cf.update( "percent_decode", percent_decode );
 
     cf.update( "hide_usrcmd", hide_usrcmd );
     cf.update( "reload_allthreads", reload_allthreads );
