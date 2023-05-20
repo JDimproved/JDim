@@ -1703,12 +1703,15 @@ const char* NodeTreeBase::add_one_dat_line( const char* datline )
 }
 
 
-//
-// 名前
-//
+/** @brief 名前欄のパーサー、DATやHTMLを解析してノードツリーを構築する
+ *
+ * @details この関数はメンバー変数に処理中のデータを格納するため再入不可能(not reentrant)である。
+ * @param[in,out] header ヘッダーノードに対してノードを追加する
+ * @param[in] str        DATやHTMLのデータ
+ * @param[in] color_name スレビューで使用する色のID (see colorid.h)
+ */
 void NodeTreeBase::parse_name( NODE* header, std::string_view str, const int color_name )
 {
-    const bool bold = true;
     const bool ahref = false;
     NODE *node;
 
@@ -1741,6 +1744,7 @@ void NodeTreeBase::parse_name( NODE* header, std::string_view str, const int col
     // デフォルト名無しと同じときはアンカーを作らない
     if( defaultname ){
         constexpr bool digitlink = false;
+        constexpr bool bold = true;
         parse_html( str, color_name, digitlink, bold, ahref, FONT_MAIL );
     }
     else{
@@ -1753,20 +1757,24 @@ void NodeTreeBase::parse_name( NODE* header, std::string_view str, const int col
             // トリップなど</b>〜<b>の中の文字列は色を変えて数字をリンクにしない
             for( i = pos; i < str.size(); ++i ) {
                 if( i + 4 <= str.size()
-                    && str[ i ] == '<'
-                    && str[ i+1 ] == '/'
-                    && ( str[ i+2 ] == 'b' || str[ i+2 ] == 'B' )
-                    && str[ i+3 ] == '>' ) break;
+                        && str[i] == '<'
+                        && str[i + 1] == '/'
+                        && ( str[i + 2] == 'b' || str[i + 2] == 'B' )
+                        && str[i + 3] == '>' ) {
+                    i += 4;
+                    break;
+                }
             }
 
             // </b>の前までパース
             if( i != pos ){
                 // デフォルト名無しと同じときはアンカーを作らない
                 const bool digitlink{ m_default_noname.rfind( str.substr( pos, i - pos ), 0 ) != 0 };
+                constexpr bool bold = true;
                 parse_html( str.substr( pos, i - pos ), color_name, digitlink, bold, ahref, FONT_MAIL );
             }
             if( i >= str.size() ) break;
-            pos = i + 4; // 4 = strlen( "</b>" );
+            pos = i;
 
             // <b>の位置を探す
             std::size_t pos_end = str.size();
@@ -1787,31 +1795,27 @@ void NodeTreeBase::parse_name( NODE* header, std::string_view str, const int col
 
             // </b><b>の中をパース
             constexpr bool digitlink = false; // 数字が入ってもリンクしない
+            // NOTE: webブラウザでは bold 表示ではないが互換性のため既存の挙動を維持する
+            constexpr bool bold = true;
             parse_html( str.substr( pos, pos_end - pos ), COLOR_CHAR_NAME_B, digitlink, bold, ahref, FONT_MAIL );
 
-            pos = pos_end + 3; // 3 = strlen( "<b>" );
+            pos = pos_end;
         }
     }
 
     // plainな名前取得
     // 名前あぼーんや名前抽出などで使用する
-    if( defaultname ){
-        header->headinfo->name = m_heap.heap_alloc<char>( str.size() +2 );
-        str.copy( header->headinfo->name, str.size() );
-        header->headinfo->name[ str.size() ] = '\0';
-    }
-    else{
-        std::string str_tmp;
+    m_buf_text.clear();
+    node = node->next_node;
+    while( node ) {
+        if( node->type == NODE_TEXT && node->text ) m_buf_text.append( node->text );
+        if( node->type == NODE_SP ) m_buf_text.push_back( ' ' );
         node = node->next_node;
-        while( node ){
-            if( node->type == NODE_TEXT && node->text ) str_tmp += node->text;
-            if( node->type == NODE_SP ) str_tmp.push_back( ' ' );
-            node = node->next_node;
-        }
-        header->headinfo->name = m_heap.heap_alloc<char>( str_tmp.size() +2 );
-        str_tmp.copy( header->headinfo->name, str_tmp.size() );
-        header->headinfo->name[ str_tmp.size() ] = '\0';
     }
+    header->headinfo->name = m_heap.heap_alloc<char>( m_buf_text.size() + 1 );
+    m_buf_text.copy( header->headinfo->name, m_buf_text.size() );
+    header->headinfo->name[ m_buf_text.size() ] = '\0';
+    m_buf_text.clear();
 }
 
 
