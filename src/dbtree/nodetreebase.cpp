@@ -1373,7 +1373,7 @@ void NodeTreeBase::receive_finish()
 
         // Requested Range Not Satisfiable
         if( get_code() == HTTP_RANGE_ERR ){
-            m_broken = true;
+            // ネットワーク設定の変更などで読み込みが再開できる可能性があるためスレッドが壊れたとマークしない
             MISC::ERRMSG( "Requested Range Not Satisfiable" );
         }
 
