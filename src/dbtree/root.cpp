@@ -560,7 +560,7 @@ void Root::analyze_board_xml()
 //
 // 板のタイプを判定
 //
-int Root::get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc ) const
+int Root::get_board_type( const std::string& url, std::string& root, std::string& path_board ) const
 {
     JDLIB::Regex regex;
     const size_t offset = 0;
@@ -572,7 +572,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
     int type = TYPE_BOARD_UNKNOWN;
 
     // 2ch
-    if( ! etc && is_2ch( url ) ){
+    if( is_2ch( url ) ){
 
         if( regex.exec( "(https?://[^/]*)(/[^/]*)/$" , url, offset, icase, newline, usemigemo, wchar ) ){
             root = regex.str( 1 );
@@ -644,12 +644,12 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
 //
 // 通常の get_board_type() で得た root を再判定するときに使用する ( 板移転処理用 )
 //
-int Root::get_board_type( const std::string& root, const bool etc ) const
+int Root::get_board_type( const std::string& root ) const
 {
     int type = TYPE_BOARD_UNKNOWN;
 
     // 2ch
-    if( ! etc && is_2ch( root ) )
+    if( is_2ch( root ) )
         type = TYPE_BOARD_2CH;
 
     // JBBS
@@ -676,9 +676,7 @@ int Root::get_board_type( const std::string& root, const bool etc ) const
 // 板のタイプに合わせて板情報をセット
 // ついでに移転の自動判定と移転処理もおこなう
 //
-// etc == true なら etc.txtに登録された外部板を意味する
-//
-bool Root::set_board( const std::string& url, const std::string& name, const std::string& basicauth, bool etc )
+bool Root::set_board( const std::string& url, const std::string& name, const std::string& basicauth )
 {
 #ifdef _SHOW_BOARD
     std::cout << "Root::set_board " << url << " " << name << std::endl;
@@ -697,12 +695,12 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
     real_url.append( url );
 
     // タイプ判定
-    const int type = get_board_type( real_url, root, path_board, etc );
+    const int type = get_board_type( real_url, root, path_board );
     if( type == TYPE_BOARD_UNKNOWN ) return false;
 
     // 移転チェック
     BoardBase* board = nullptr;
-    const int state = is_moved( root, path_board, name, &board, etc );
+    const int state = is_moved( root, path_board, name, &board );
 
 #ifdef _SHOW_BOARD
     std::cout << "root = " << root << " path_board = " << path_board
@@ -777,7 +775,7 @@ bool Root::set_board( const std::string& url, const std::string& name, const std
 //
 // (明示的に)板移転
 //
-bool Root::move_board( const std::string& url_old, const std::string& url_new, const bool etc )
+bool Root::move_board( const std::string& url_old, const std::string& url_new )
 {
     if( url_old == url_new ) return false;
 
@@ -794,7 +792,7 @@ bool Root::move_board( const std::string& url_old, const std::string& url_new, c
     if( ! board ) return false;
 
     // タイプ判定
-    int type = get_board_type( url_new, root, path_board, etc );
+    int type = get_board_type( url_new, root, path_board );
     if( type == TYPE_BOARD_UNKNOWN ) return false;
 
     if( ! exec_move_board( board,
@@ -1059,7 +1057,7 @@ bool Root::remove_board( const std::string& url )
 int Root::is_moved( const std::string& root,
                      const std::string& path_board,
                      const std::string& name,
-                     BoardBase** board_old, bool etc )
+                     BoardBase** board_old )
 {
     for( auto& board : m_list_board ) {
 
@@ -1070,7 +1068,7 @@ int Root::is_moved( const std::string& root,
 
             // 名前が同じで、サイトが同じなら移転
             if( board->get_name() == name
-                    && get_board_type( board->get_root() ) == get_board_type( root, etc ) ){
+                    && get_board_type( board->get_root() ) == get_board_type( root ) ){
                 *board_old = board.get();
                 return BOARD_MOVED;
             }
@@ -1138,7 +1136,7 @@ void Root::load_etc()
 #endif
 
             // DBに登録
-            if( set_board( info.url, info.name, info.basicauth, true ) )
+            if( set_board( info.url, info.name, info.basicauth ) )
             {
 #ifdef _DEBUG
                 std::cout << "added.";
@@ -1171,7 +1169,7 @@ bool Root::add_etc( const std::string& url, const std::string& name, const std::
     info.basicauth = basicauth;
     info.boardid = boardid;
 
-    if( set_board( info.url, info.name, info.basicauth, true ) )
+    if( set_board( info.url, info.name, info.basicauth ) )
     {
 
 #ifdef _DEBUG
@@ -1208,7 +1206,7 @@ bool Root::move_etc( const std::string& url_old, const std::string& url_new,
     // 移転処理
     if( url_old != url_new ){
         (*it).url = url_new;
-        move_board( url_old, url_new, true );
+        move_board( url_old, url_new );
     }
 
     // 名前変更

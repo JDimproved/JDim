@@ -86,7 +86,7 @@ namespace DBTREE
         const XML::Document& xml_document() const { return m_xml_document; }
 
         // 板移転
-        bool move_board( const std::string& url_old, const std::string& url_new, const bool etc );
+        bool move_board( const std::string& url_old, const std::string& url_new );
 
         // 外部板情報取得
         const std::list< DBTREE::ETCBOARDINFO >& get_etcboards() const { return m_etcboards; }
@@ -164,11 +164,11 @@ namespace DBTREE
         void analyze_board_xml();
 
         // 板のタイプを判定
-        int get_board_type( const std::string& url, std::string& root, std::string& path_board, const bool etc ) const;
-        int get_board_type( const std::string& root, const bool etc = false ) const;
+        int get_board_type( const std::string& url, std::string& root, std::string& path_board ) const;
+        int get_board_type( const std::string& root ) const;
 
         // 板のタイプに合わせて板情報をセット
-        bool set_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string(), bool etc = false );
+        bool set_board( const std::string& url, const std::string& name, const std::string& basicauth = std::string() );
 
         // 板移転処理
         bool exec_move_board( BoardBase* board,
@@ -189,7 +189,7 @@ namespace DBTREE
         int is_moved( const std::string& root,
                        const std::string& path_board,
                        const std::string& name,
-                       BoardBase** board_old, bool etc );
+                       BoardBase** board_old );
 
         void load_cache();
         void load_etc();
