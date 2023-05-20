@@ -1859,9 +1859,12 @@ void NodeTreeBase::parse_mail( NODE* header, std::string_view str )
 }
 
 
-//
-// 日付とID、及びBE、株、その他
-//
+/** @brief 日付とID、及びBE、株、その他のパーサー、DATやHTMLを解析してノードツリーを構築する
+ *
+ * @details この関数はメンバー変数に処理中のデータを格納するため再入不可能(not reentrant)である。
+ * @param[in,out] header ヘッダーノードに対してノードを追加する
+ * @param[in] str        DATやHTMLのデータ
+ */
 void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
 {
     std::string str_date;
@@ -1873,13 +1876,11 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
         str = str_date;
     }
 
-    std::size_t lng_text = 0;
-    int lng_link_tmp;
-    char tmplink[ LNG_LINK ];
-    NODE *node;
+    constexpr bool digitlink = false;
+    constexpr bool bold = false;
 
-    int lng_id_tmp;
-    char tmpid[ LNG_ID ];
+    std::size_t lng_text = 0;
+    NODE *node;
 
     node = header->headinfo->block[ BLOCK_DATE ] = create_node_block();
     node->fontid = FONT_MAIL;
@@ -1891,13 +1892,19 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
 
         // 空白ごとにブロック分けしてパースする
         const std::size_t start_block = lng_text;
-        std::size_t lng_block = 0; // ブロックの長さ
-        while( start_block + lng_block < str.size() && str[ start_block + lng_block ] != ' ' ) ++lng_block;
+        auto it = ( str.begin() + start_block );
+        while( it != str.end() && *it != ' ' ) {
+            if( *it == '<' ) it = std::find( it + 1, str.end(), '>' );
+            else ++it;
+        }
+        // ブロックの長さ
+        std::size_t lng_block = it - ( str.begin() + start_block );
+
         if( !lng_block ) break;
 
         if(
-            // ID ( ??? の時は除く )
-            ( str[ start_block ] == 'I' && str[ start_block + 1 ] == 'D' && str[ start_block + 3 ] != '?' )
+            // ID
+            ( str[ start_block ] == 'I' && str[ start_block + 1 ] == 'D' )
 
             // HOST
             || ( str.compare( start_block, 4, "HOST" ) == 0 )
@@ -1909,11 +1916,10 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
 
             // フラッシュ
             if( lng_text ){
-                if( str[ lng_text - 1 ] == ' ' ) --lng_text;
-                create_node_ntext( str.data(), lng_text, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
+                parse_html( str.substr( 0, lng_text ), COLOR_CHAR, digitlink, bold, false, FONT_MAIL );
             }
 
-            int offset = 0;
+            std::size_t offset = 0;
             if( str[ start_block ] == 'I' ) offset = 3;
             else if( str[ start_block ] == 'H' ){
                 offset = 5;
@@ -1921,30 +1927,26 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
                 // HOST: の場合は途中で空白が入るときがあるので最後までブロックを伸ばす
                 lng_block = str.size() - start_block;
             }
-            else if( str[ start_block ] == (char)0xe7 ) offset = 10;
+            else if( str[ start_block ] == static_cast<char>(0xe7) ) offset = 10;
 
             // id 取得
-            lng_id_tmp = MIN( lng_block, LNG_ID - 16 );
-            memcpy( tmpid, str.data() + start_block, lng_id_tmp );
-            tmpid[ lng_id_tmp ] = '\0';
-            
+            const std::size_t lng_id = (std::min)( lng_block, LNG_ID - sizeof(PROTO_ID) -1 );
+            auto id_tmp = str.substr( start_block, lng_id );
+
             // リンク文字作成
-            memcpy( tmplink, PROTO_ID, sizeof( PROTO_ID ) );
-            memcpy( tmplink + sizeof( PROTO_ID ) - 1, tmpid, lng_id_tmp + 1 );
-            lng_link_tmp = strlen( tmplink );
+            m_buf_link.assign( PROTO_ID );
+            m_buf_link.append( id_tmp );
 
             // 後ろに●が付いていたら取り除く
-            if( tmplink[ lng_link_tmp - 3 ] == (char)0xe2 && tmplink[ lng_link_tmp - 2 ] == (char)0x97 && tmplink[ lng_link_tmp - 1 ] == (char)0x8f ){
-                lng_link_tmp -= 3;
-                tmplink[ lng_link_tmp ] = '\0';
+            if( m_buf_link.compare( m_buf_link.size() - 3, 3, "\xE2\x97\x8F" ) == 0 ) {
+                m_buf_link.resize( m_buf_link.size() - 3 );
             }
 
             // リンク作成
             node = header->headinfo->block[ BLOCK_ID_NAME ] = create_node_block();
             node->fontid = FONT_MAIL;
-            std::string_view view_idhead( tmpid, offset );
-            create_node_link( view_idhead, std::string_view( tmplink, lng_link_tmp ), COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
-            create_node_ntext( tmpid +offset, lng_id_tmp -offset, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
+            create_node_link( id_tmp.substr( 0, offset ), m_buf_link, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
+            create_node_ntext( id_tmp.data() +offset, id_tmp.size() -offset, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
 
             // 発言回数ノード作成
             node = create_node_idnum();
@@ -1958,27 +1960,34 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
         // BE:
         else if( str[ start_block ] == 'B' && str[ start_block + 1 ] == 'E' ){
 
-            const int strlen_of_BE = 3; // = strlen( "BE:" );
+            const std::size_t strlen_of_BE = 3; // = strlen( "BE:" );
 
             // フラッシュ
-            if( lng_text ) create_node_ntext( str.data(), lng_text, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
+            if( lng_text ) {
+                parse_html( str.substr( 0, lng_text ), COLOR_CHAR, digitlink, bold, false, FONT_MAIL );
+            }
 
             // id 取得
             std::size_t lng_header = 0;
             while( str[ start_block + lng_header ] != '-' && lng_header < lng_block ) ++lng_header;
-            lng_id_tmp = lng_header - strlen_of_BE;
+            const std::size_t lng_id = lng_header - strlen_of_BE;
             if( str[ start_block + lng_header ] == '-' ) ++lng_header;
-            memcpy( tmpid, str.data() + start_block + strlen_of_BE, lng_id_tmp );
-            tmpid[ lng_id_tmp ] = '\0';
+
+            if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) {
+                node = header->headinfo->block[ BLOCK_ID_NAME ] = create_node_block();
+            }
+            else {
+                node = create_node_space( NODE_SP, COLOR_NONE );
+            }
+            node->fontid = FONT_MAIL;
 
             // リンク文字作成
-            memcpy( tmplink, PROTO_BE, sizeof( PROTO_BE ) );
-            memcpy( tmplink + sizeof( PROTO_BE ) -1, tmpid, lng_id_tmp + 1 );
+            m_buf_link.assign( PROTO_BE );
+            m_buf_link.append( str.substr( start_block + strlen_of_BE, lng_id ) );
 
             // リンク作成
-            create_node_link( "?", tmplink, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
             auto view_str = str.substr( start_block + lng_header, lng_block - lng_header );
-            create_node_ntext( view_str.data(), view_str.size(), COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
+            create_node_link( view_str, m_buf_link, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
 
             // 次のブロックへ移動
             str = str.substr( start_block + lng_block );
@@ -1991,7 +2000,9 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
                  && str[ start_block + 2 ] == ' ' ){
 
             // フラッシュ
-            if( lng_text ) create_node_ntext( str.data(), lng_text, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
+            if( lng_text ) {
+                parse_html( str.substr( 0, lng_text ), COLOR_CHAR, digitlink, bold, false, FONT_MAIL );
+            }
 
             // </a>までブロックの長さを伸ばす
             while( start_block + lng_block < str.size()
@@ -1999,8 +2010,14 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
                           && str[ start_block + lng_block ] == '>' ) ) ++lng_block;
             ++lng_block;
 
-            const bool digitlink = false;
-            const bool bold = false;
+            if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) {
+                node = header->headinfo->block[ BLOCK_ID_NAME ] = create_node_block();
+            }
+            else {
+                node = create_node_space( NODE_SP, COLOR_NONE );
+            }
+            node->fontid = FONT_MAIL;
+
             const bool ahref = true;
             parse_html( str.substr( start_block, lng_block ), COLOR_CHAR, digitlink, bold, ahref, FONT_MAIL );
 
@@ -2010,11 +2027,41 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
         }
 
         // テキスト(日付含む)
-        else lng_text += lng_block;
+        else {
+            bool no_date = true;
+            for( std::size_t i = start_block, end = start_block + lng_block; i < end; ++i ) {
+                if( ( str[ i ] >= '0' && str[ i ] <= '9' ) || str[ i ] == ':' ) {
+                    no_date = false;
+                    break;
+                }
+            }
+
+            // 日付や時刻を含まないまたは1文字(IDの末尾だけ)はIDノードにする
+            if( ( no_date || lng_block == 1 ) && ! header->headinfo->block[ BLOCK_ID_NAME ] ) {
+                if( lng_text ) {
+                    // フラッシュ
+                    parse_html( str.substr( 0, lng_text ), COLOR_CHAR, digitlink, bold, false, FONT_MAIL );
+                    lng_text = 0;
+                }
+
+                // IDノード作成
+                node = header->headinfo->block[ BLOCK_ID_NAME ] = create_node_block();
+                node->fontid = FONT_MAIL;
+
+                // 次のブロックへ移動
+                str = str.substr( start_block );
+            }
+
+            lng_text += lng_block;
+        }
     }
 
     // フラッシュ
-    if( lng_text ) create_node_ntext( str.data(), lng_text, COLOR_CHAR, COLOR_NONE, false, FONT_MAIL );
+    if( lng_text ) {
+        // 末端の空白を削ってフラッシュ
+        while( lng_text > 0 && str[ lng_text - 1 ] == ' ' ) --lng_text;
+        parse_html( str.substr( 0, lng_text ), COLOR_CHAR, digitlink, bold, false, FONT_MAIL );
+    }
 }
 
 
@@ -2534,9 +2581,6 @@ create_multispace:
             if( br ){
 
                 // フラッシュ
-                if( (pos > str) && *( pos - 1 ) == ' ' && ! m_parsed_text.empty() ) {
-                    m_parsed_text.pop_back(); // 改行前の空白を取り除く
-                }
                 create_node_ntext( m_parsed_text.data(), m_parsed_text.size(), fgcolor, bgcolor, in_bold, fontid );
                 m_parsed_text.clear();
 
@@ -3835,9 +3879,10 @@ void NodeTreeBase::update_id_name( const int from_number, const int to_number )
     for( int i = from_number ; i <= to_number; ++i ) {
         NODE* header = res_header( i );
         if( ! header ) continue;
-        if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) continue;
+        NODE* inode = header->headinfo->block[ BLOCK_ID_NAME ];
+        if( ! inode || ! inode->next_node || ! inode->next_node->linkinfo ) continue;
 
-        std::string str_id = header->headinfo->block[ BLOCK_ID_NAME ]->next_node->linkinfo->link;
+        std::string str_id = inode->next_node->linkinfo->link;
         m_map_id_name_resnumber[ str_id ].insert( i );
     }
 
