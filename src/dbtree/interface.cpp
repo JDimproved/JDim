@@ -158,7 +158,7 @@ std::string DBTREE::is_board_moved( const std::string& url,
 
 bool DBTREE::move_board( const std::string& url_old, const std::string& url_new )
 {
-    return get_root()->move_board( url_old, url_new, false );
+    return get_root()->move_board( url_old, url_new );
 }
 
 void DBTREE::set_enable_save_movetable( const bool set )
