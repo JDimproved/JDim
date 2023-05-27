@@ -75,60 +75,6 @@ void NodeTree2chCompati::init_loading()
 
 
 //
-// キャッシュに保存する前の前処理
-//
-// 先頭にrawモードのステータスが入っていたら取り除く
-//
-char* NodeTree2chCompati::process_raw_lines( std::string& rawlines )
-{
-    char* pos = rawlines.data();
-
-    if( *pos == '+' || *pos == '-' || *pos == 'E' ){
-
-        int status = 0;
-        if( pos[ 1 ] == 'O' && pos[ 2 ] == 'K' ) status = 1;
-        if( pos[ 1 ] == 'E' && pos[ 2 ] == 'R' && pos[ 3 ] == 'R' ) status = 2;        
-        if( pos[ 1 ] == 'I' && pos[ 2 ] == 'N' && pos[ 3 ] == 'C' && pos[ 4 ] == 'R' ) status = 3;
-        if( pos[ 0 ] == 'E' && pos[ 1 ] == 'R' && pos[ 2 ] == 'R' && pos[ 3 ] == 'O' && pos[ 4 ] == 'R' ) status = 4;
-
-#ifdef _DEBUG
-        std::cout << "NodeTree2chCompati::process_raw_lines : raw mode status = " << status << std::endl;
-#endif
-
-        if( status != 0 ){
-            pos = skip_status_line( pos, status );
-        }
-    }
-
-    return pos;
-}
-
-
-//
-// ステータス行のスキップ処理
-//   status == 1 : 正常ステータス
-//   status != 1 : 異常ステータス
-// 
-char* NodeTree2chCompati::skip_status_line( char* pos, int status )
-{
-    // この行を飛ばす
-    char* pos_msg = pos;
-    while( *pos != '\n' && *pos != '\0' ) ++pos;
-
-    // エラー
-    if( status != 1 ){
-        const std::string& ext_err = m_iconv->convert( pos_msg, pos - pos_msg );
-        set_ext_err( ext_err );
-        MISC::ERRMSG( ext_err );
-    }
-
-    if( *pos == '\n' ) ++pos;
-
-    return pos;
-}
-
-
-//
 // raw データを dat 形式に変換
 //
 // 2ch型サーバの場合は文字コードを変換するだけ
