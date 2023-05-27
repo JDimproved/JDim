@@ -30,9 +30,10 @@ namespace CORE
         SKELETON::LabelEntry entry_id;
         SKELETON::LabelEntry entry_passwd;
 
-      PasswdFrame2ch()
-      : m_label_sid_2ch( false, "SID： ", CORE::get_login2ch()->get_sessionid() ),
-        entry_id( true, "ユーザID(_I)： " ), entry_passwd( true, "パスワード(_P)： " )
+        PasswdFrame2ch()
+            : m_label_sid_2ch( false, "SID： ", "2chのログインは現在サポート中止しています。" )
+            , entry_id( true, "ユーザID(_I)： " )
+            , entry_passwd( true, "パスワード(_P)： " )
         {
             const int mrg = 8;
 
