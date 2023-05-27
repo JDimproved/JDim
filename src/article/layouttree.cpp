@@ -306,7 +306,9 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
     // 連結モード
     // 本文ブロックだけ追加
     if( joint ){
-        create_layout_br( m_last_dom_attr & CORE::DOMATTR_NOBR );
+        const bool nobr = static_cast<bool>( m_last_dom_attr & CORE::DOMATTR_NOBR );
+        if( ! nobr ) create_layout_br( nobr );
+        create_layout_br( nobr );
         append_block( headinfo->block[ DBTREE::BLOCK_MES ], res_number, nullptr, m_last_dom_attr );
     }
     else{
