@@ -24,7 +24,6 @@ using namespace DBTREE;
 enum
 {
     MODE_NORMAL = 0,
-    MODE_OFFLAW,
     MODE_KAKO_GZ,
     MODE_KAKO,
     MODE_OLDURL
@@ -63,29 +62,7 @@ NodeTree2ch::~NodeTree2ch()
 //
 char* NodeTree2ch::process_raw_lines( std::string& rawlines )
 {
-    char* pos = rawlines.data();
-
-    if( m_mode == MODE_OFFLAW ){
-        // rokka独自のステータスが入っている
-
-        int status = 0;
-        if( strncmp( pos, "Success", 7 ) == 0 ) status = 1;
-        if( strncmp( pos, "Error", 5 ) == 0 ) status = 2;
-
-#ifdef _DEBUG
-        std::cout << "NodeTree2ch::process_raw_lines : raw mode status = " << status << std::endl;
-#endif
-
-        if( status != 0 ){
-            pos = skip_status_line( pos, status );
-        }
-    }
-
-    else {
-        pos = NodeTree2chCompati::process_raw_lines( rawlines );
-    }
-
-    return pos;
+    return NodeTree2chCompati::process_raw_lines( rawlines );
 }
 
 
@@ -140,38 +117,9 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
     data.url = std::string();
     data.byte_readfrom = 0;
 
-    //rokka使用 (旧offlaw, offlaw2は廃止)
-    if( m_mode == MODE_OFFLAW ){
-
-        JDLIB::Regex regex;
-        const size_t offset = 0;
-        const bool icase = false;
-        const bool newline = true;
-        const bool usemigemo = false;
-        const bool wchar = false;
-
-        if( ! regex.exec( "(https?://)([^/\\.]+)(\\.[^/]+)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
-
-        // http://rokka(.2ch.net|.bbspink.com)/<SERVER NAME>/<BOARD NAME>/<DAT NUMBER>/<OPTIONS>?sid=<SID>
-        std::ostringstream ss;
-        ss << regex.str( 1 ) << "rokka" << regex.str( 3 ) << "/" << regex.str( 2 )
-           << regex.str( 4 ) << regex.str( 5 );
-
-        std::string sid = CORE::get_login2ch()->get_sessionid();
-        ss << "/?sid=" << MISC::url_encode_plus( sid );
-
-        // レジューム設定
-        // レジュームを有りにして、サーバが range を無視して送ってきた場合と同じ処理をする
-        if( get_lng_dat() ) {
-            set_resume( true );
-        }
-        else set_resume( false );
-
-        data.url = ss.str();
-    }
-
+    // ( rokka, 旧offlaw, offlaw2は廃止 )
     // 過去ログ倉庫使用
-    else if( m_mode == MODE_KAKO_GZ || m_mode == MODE_KAKO ){
+    if( m_mode == MODE_KAKO_GZ || m_mode == MODE_KAKO ){
 
         JDLIB::Regex regex;
         const size_t offset = 0;
@@ -249,12 +197,10 @@ void NodeTree2ch::receive_finish()
               << "mode = " << m_mode << " code = " << get_code() << std::endl;
 #endif
 
-    // 更新チェックではない、オンラインの場合は offlaw や 過去ログ倉庫から取得出来るか試みる
+    // 更新チェックではない、オンラインの場合は過去ログ倉庫から取得出来るか試みる
     if( ! is_checking_update()
         && SESSION::is_online()
-        && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM || get_code() == HTTP_NOT_FOUND
-             || ( m_mode == MODE_OFFLAW && ! get_ext_err().empty() ) // rokka 読み込み失敗
-            )
+        && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM || get_code() == HTTP_NOT_FOUND )
         ){
 
 /*
@@ -263,13 +209,11 @@ void NodeTree2ch::receive_finish()
 
   (例) http://HOGE.2ch.net/test/read.cgi/hoge/1234567890/ を取得
 
-  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。302で●がある場合(2-1)、旧URLがある場合(2-2)、無い場合は(2-3)へ(※)
+  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。旧URLがある場合(2-1)、無い場合は(2-2)へ(※)
 
-  (2-1) offlaw.cgiを使って取得
+  (2-1) 旧URLから取得
 
-  (2-2) 旧URLから取得
-
-  (2-3) http://HOGE.2ch.net/hoge/kako/1234/12345/1234567890.dat.gz から取得。302なら(3)へ
+  (2-2) http://HOGE.2ch.net/hoge/kako/1234/12345/1234567890.dat.gz から取得。302なら(3)へ
 
   (3) http://HOGE.2ch.net/hoge/kako/1234/12345/1234567890.dat から取得 
 
@@ -278,13 +222,11 @@ void NodeTree2ch::receive_finish()
 
   (例) http://HOGE.2ch.net/test/read.cgi/hoge/123456789/ を取得
 
-  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。302で●がある場合(2-1)、旧URLがある場合(2-2)、無い場合は(2-3)へ(※)
+  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。旧URLがある場合(2-1)、無い場合は(2-2)へ(※)
 
-  (2-1) offlaw.cgiを使って取得
+  (2-1) 旧URLから取得
 
-  (2-2) 旧URLから取得
-
-  (2-3) http://HOGE.2ch.net/hoge/kako/123/123456789.dat.gz から取得。302なら(3)へ
+  (2-2) http://HOGE.2ch.net/hoge/kako/123/123456789.dat.gz から取得。302なら(3)へ
 
   (3) http://HOGE.2ch.net/hoge/kako/123/123456789.dat から取得 
 
@@ -295,15 +237,12 @@ void NodeTree2ch::receive_finish()
 
 */
 
-        // ログインしている場合は rokka 経由で旧URLで再取得
-        if( m_mode == MODE_NORMAL && CORE::get_login2ch()->login_now() ) m_mode = MODE_OFFLAW;
-
         // 旧URLがある場合、そのURLで再取得
-        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OFFLAW ) && get_url() != m_org_url ) m_mode = MODE_OLDURL;
+        if( m_mode == MODE_NORMAL && get_url() != m_org_url ) m_mode = MODE_OLDURL;
 
         // 過去ログ倉庫(gz圧縮)
         // ただし 2008年1月1日以降に立てられたスレは除く
-        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OFFLAW || m_mode == MODE_OLDURL ) && m_since_time < 1199113200 ) m_mode = MODE_KAKO_GZ;
+        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OLDURL ) && m_since_time < 1199113200 ) m_mode = MODE_KAKO_GZ;
 
         // 過去ログ倉庫
         else if( m_mode == MODE_KAKO_GZ ) m_mode = MODE_KAKO;
@@ -320,7 +259,7 @@ void NodeTree2ch::receive_finish()
         }
     }
 
-    // offlaw や 過去ログから読み込んだ場合は DAT 落ちにする
+    // 過去ログから読み込んだ場合は DAT 落ちにする
     if( m_mode != MODE_NORMAL ){
         m_mode = MODE_NORMAL;
         set_code( HTTP_OLD );

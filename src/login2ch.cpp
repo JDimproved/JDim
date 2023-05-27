@@ -85,6 +85,8 @@ void Login2ch::start_login()
 
     set_str_code( "" );
 
+    finish();
+#if 0 // サイトの更新に対応していないためサポートを中止
     if( ! SESSION::is_online() ){
 
         // ディスパッチャ経由でreceive_finish()を呼ぶ
@@ -113,6 +115,7 @@ void Login2ch::start_login()
     m_rawdata.clear();
 
     start_load( data );
+#endif
 }
 
 
@@ -139,6 +142,7 @@ void Login2ch::receive_finish()
               << " rawdata size = " << m_rawdata.size() << std::endl;
 #endif
 
+#if 0 // サイトの更新に対応していないためサポートを中止
     bool show_err = true;
 
     if( ! m_rawdata.empty() && get_code() == HTTP_OK ){
@@ -196,6 +200,9 @@ void Login2ch::receive_finish()
         SKELETON::MsgDiag mdiag( nullptr, str_err );
         mdiag.run();  
     }
+#endif
+    SKELETON::MsgDiag mdiag( nullptr, "2chのログインは現在サポート中止しています。" );
+    mdiag.run();
 
     // コアに受信完了を知らせる
     CORE::core_set_command( "login2ch_finished", "" );
