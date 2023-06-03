@@ -30,14 +30,14 @@
 
 
 std::string ENVIRONMENT::get_progname() { return "JDim"; }
-std::string ENVIRONMENT::get_jdcomments(){ return std::string( JDCOMMENT ); }
-std::string ENVIRONMENT::get_jdcopyright(){ return std::string( JDCOPYRIGHT ); }
-std::string ENVIRONMENT::get_jdbbs(){ return std::string( JDBBS ); }
-std::string ENVIRONMENT::get_jd2chlog(){ return std::string( JD2CHLOG ); }
-std::string ENVIRONMENT::get_jdhelp(){ return std::string( JDHELP ); }
-std::string ENVIRONMENT::get_jdhelpcmd(){ return std::string( JDHELPCMD ); }
+std::string ENVIRONMENT::get_jdcomments(){ return JDCOMMENT; }
+std::string ENVIRONMENT::get_jdcopyright(){ return JDCOPYRIGHT; }
+std::string ENVIRONMENT::get_jdbbs(){ return JDBBS; }
+std::string ENVIRONMENT::get_jd2chlog(){ return JD2CHLOG; }
+std::string ENVIRONMENT::get_jdhelp(){ return JDHELP; }
+std::string ENVIRONMENT::get_jdhelpcmd(){ return JDHELPCMD; }
 std::string ENVIRONMENT::get_jdhelpreplstr() { return JDHELPREPLSTR; }
-std::string ENVIRONMENT::get_jdlicense(){ return std::string( JDLICENSE ); }
+std::string ENVIRONMENT::get_jdlicense(){ return JDLICENSE; }
 
 
 static ENVIRONMENT::DesktopType window_manager = ENVIRONMENT::DesktopType::unknown;

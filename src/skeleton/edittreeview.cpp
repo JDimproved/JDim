@@ -268,7 +268,7 @@ void EditTreeView::clock_in()
             std::cout << "scroll to " << m_jump_path.to_string() << std::endl;
 #endif
 
-            Gtk::TreeRow row = get_row( Gtk::TreePath( m_jump_path ) );
+            Gtk::TreeRow row = get_row( m_jump_path );
             if( row ) scroll_to_row( m_jump_path, 0.5 );
 
             m_pre_adjust_upper = 0;
