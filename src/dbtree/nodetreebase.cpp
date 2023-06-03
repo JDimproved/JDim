@@ -558,13 +558,13 @@ std::list< int > NodeTreeBase::get_res_query( const std::string& query, const bo
 
     std::list<JDLIB::RegexPattern> list_regex;
     JDLIB::Regex regex;
-    const auto make_pattern = []( const std::string& query ) {
+    const auto make_pattern = []( const std::string& qry ) {
         constexpr bool icase = true; // 大文字小文字区別しない
         constexpr bool newline = true; // . に改行をマッチさせない
         constexpr bool usemigemo = true; // migemo使用
         constexpr bool wchar = true; // 全角半角の区別をしない
 
-        return JDLIB::RegexPattern( query, icase, newline, usemigemo, wchar );
+        return JDLIB::RegexPattern( qry, icase, newline, usemigemo, wchar );
     };
 
     const std::list<std::string> list_query = MISC::split_line( query );
