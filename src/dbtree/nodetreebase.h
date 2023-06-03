@@ -338,7 +338,7 @@ namespace DBTREE
         // digitlink : true の時は先頭に数字が現れたらアンカーにする( parse_name() などで使う )
         //             false なら数字の前に >> がついてるときだけアンカーにする
         // bold : ボールド表示
-        void parse_html( std::string_view str, const int color_text,
+        void parse_html( const char* str, std::size_t lng_str, const int color_text,
                          bool digitlink, const bool bold, const char fontid = FONT_MAIN );
 
         // 書き込みログ比較用文字列作成
