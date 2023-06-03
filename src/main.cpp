@@ -19,6 +19,7 @@
 #include "jdlib/jdsocket.h"
 #include "jdlib/jdregex.h"
 
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <signal.h>
@@ -220,13 +221,15 @@ class App : public sigc::trackable
     int init_y = -1; ///< メインウィンドウを表示する位置(縦軸)
 
     bool init{}; ///< 初回起動か
+    std::FILE* m_redirect_stdout{};
+    std::FILE* m_redirect_stderr{};
     CORE::IOMonitor iomonitor;
 
     bool m_with_gui{};
 
 public:
     App();
-    ~App() noexcept = default;
+    ~App() noexcept;
 
     int run( int argc, char* argv[] ) { return m_app->run( argc, argv ); }
     void quit() { m_app->quit(); }
@@ -275,6 +278,13 @@ App::App()
     m_app->signal_startup().connect( sigc::mem_fun( *this, &App::slot_startup ) );
     m_app->signal_activate().connect( sigc::mem_fun( *this, &App::slot_activate ) );
     m_app->signal_open().connect( sigc::mem_fun( *this, &App::slot_open ) );
+}
+
+
+App::~App() noexcept
+{
+    if( m_redirect_stdout ) std::fclose( m_redirect_stdout );
+    if( m_redirect_stderr ) std::fclose( m_redirect_stderr );
 }
 
 
@@ -360,12 +370,11 @@ void App::slot_startup()
 
     // メッセージをログファイルに出力
     if( logfile_mode && CACHE::mkdir_logroot() ){
-        FILE* tmp; // warning 消し
         const std::string logfile = Glib::locale_from_utf8( CACHE::path_msglog() );
-        tmp = freopen( logfile.c_str(), "ab", stdout );
-        setbuf( tmp, nullptr );
-        tmp = freopen( logfile.c_str(), "ab", stderr );
-        setbuf( tmp, nullptr );
+        m_redirect_stdout = std::freopen( logfile.c_str(), "ab", stdout );
+        std::setbuf( m_redirect_stdout, nullptr );
+        m_redirect_stderr = std::freopen( logfile.c_str(), "ab", stderr );
+        std::setbuf( m_redirect_stderr, nullptr );
         // tmp のクローズはプロセス終了にまかせる
     }
 
