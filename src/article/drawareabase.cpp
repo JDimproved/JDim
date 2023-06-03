@@ -3186,7 +3186,7 @@ void DrawAreaBase::exec_scroll()
 
                     const int mode = CONFIG::get_live_mode();
                     if( mode == LIVE_SCRMODE_VARIABLE ) y = ( int ) ( current_y + m_scrollinfo.live_speed );
-                    else if( mode == LIVE_SCRMODE_STEADY ) y = ( int ) ( current_y + CONFIG::get_live_speed() );
+                    else if( mode == LIVE_SCRMODE_STEADY ) y = current_y + CONFIG::get_live_speed();
                 }
 
                 // 行単位スクロール
