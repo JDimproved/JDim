@@ -2177,14 +2177,14 @@ create_multispace:
                 if( pos >= pos_end ) continue;
                 ++pos;
 
-                std::string_view a_str = std::string_view( pos, pos_end - pos );
+                const char* const pos_str_start = pos;
 
                 while( pos < pos_end
                         && ( *pos != '<' || pos[1] != '/' || ( pos[2] != 'a' && pos[2] != 'A' ) || pos[3] != '>' ) ) {
                     ++pos;
                 }
                 if( pos >= pos_end ) continue;
-                a_str = a_str.substr( 0, pos - a_str.data() );
+                std::string_view a_str( pos_str_start, pos - pos_str_start );
 
                 while( pos < pos_end && *pos != '>' ) ++pos;
                 if( pos >= pos_end ) continue;
@@ -2212,10 +2212,12 @@ create_multispace:
                                     m_url_readcgi.compare( pos_root, m_url_readcgi.size() - pos_root, a_link,
                                                            link_offset, m_url_readcgi.size() - pos_root ) == 0 ) {
                                 // アンカーは後で処理するのでここは抜ける
+                                pos = pos_str_start;
                                 a_str = std::string_view{};
                             }
                             else if( pos_root + a_link.size() >= LNG_LINK ) {
                                 // XXX リンクが長すぎる
+                                pos = pos_str_start;
                                 a_str = std::string_view{};
                             }
                             else {
