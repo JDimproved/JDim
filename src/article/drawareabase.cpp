@@ -393,9 +393,9 @@ void DrawAreaBase::init_fontinfo( FONTINFO& fi, std::string& fontname )
     m_pango_layout->set_font_description( fi.pfd );
 
     // フォント情報取得
-    Pango::FontMetrics metrics = m_context->get_metrics( fi.pfd );
-    fi.ascent = PANGO_PIXELS( metrics.get_ascent() );
-    fi.descent = PANGO_PIXELS( metrics.get_descent() );
+    PangoFontMetrics* metrics = pango_context_get_metrics( m_context->gobj(), fi.pfd.gobj(), nullptr );
+    fi.ascent = PANGO_PIXELS( pango_font_metrics_get_ascent( metrics ) );
+    fi.descent = PANGO_PIXELS( pango_font_metrics_get_descent( metrics ) );
     fi.height = fi.ascent + fi.descent;
 
     // 改行高さ ( トップからの距離 )
@@ -405,8 +405,10 @@ void DrawAreaBase::init_fontinfo( FONTINFO& fi, std::string& fontname )
     m_pango_layout->set_text( wstr );
 
     // リンクの下線の位置 ( トップからの距離 )
-    fi.underline_pos = PANGO_PIXELS( ( metrics.get_ascent() - metrics.get_underline_position() )
-                                  * CONFIG::get_adjust_underline_pos() );
+    fi.underline_pos = PANGO_PIXELS( ( pango_font_metrics_get_ascent( metrics )
+                                       - pango_font_metrics_get_underline_position( metrics ) )
+                                     * CONFIG::get_adjust_underline_pos() );
+    pango_font_metrics_unref( metrics );
 
     // 左右padding取得
     // マージン幅は真面目にやると大変そうなので文字列 wstr の平均を取る
