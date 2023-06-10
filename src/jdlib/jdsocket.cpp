@@ -36,9 +36,12 @@ constexpr int kSocket_ERR = -1;
 
 inline bool is_ipaddress( const char* addr )
 {
-    unsigned char buf[ sizeof(struct in6_addr) ];
+    union {
+        ::in_addr addr;
+        ::in6_addr addr6;
+    } buf;
 
-    if( inet_aton( addr, reinterpret_cast<struct in_addr*>( &buf ) )
+    if( inet_aton( addr, &buf.addr )
             || inet_pton( AF_INET6, addr, &buf ) ) {
         return true;
     }
@@ -119,11 +122,17 @@ bool Socket::connect( const std::string& hostname, const std::string& port, cons
 #ifdef _DEBUG
     const auto family = ainf->ai_addr->sa_family;
     const void* src;
+    union {
+        ::sockaddr_in sin;
+        ::sockaddr_in6 sin6;
+    } storage;
     if( family == AF_INET ) {
-        src = &reinterpret_cast<sockaddr_in*>( ainf->ai_addr )->sin_addr;
+        std::memcpy( &storage, ainf->ai_addr, sizeof(::sockaddr_in) );
+        src = &storage.sin.sin_addr;
     }
     else {
-        src = &reinterpret_cast<sockaddr_in6*>( ainf->ai_addr )->sin6_addr;
+        std::memcpy( &storage, ainf->ai_addr, sizeof(::sockaddr_in6) );
+        src = &storage.sin6.sin6_addr;
     }
     char buf[ INET6_ADDRSTRLEN ]{};
     if( inet_ntop( family, src, buf, sizeof(buf) ) ) {
@@ -212,13 +221,14 @@ bool Socket::socks_handshake( const std::string& hostname, const std::string& po
         }
 
         if( ainf ) {
-            auto addr_in = reinterpret_cast<sockaddr_in*>( ainf->ai_addr );
+            ::sockaddr_in addr_in;
+            std::memcpy( &addr_in, ainf->ai_addr, sizeof(::sockaddr_in) );
 #ifdef _DEBUG
             std::cout << "Socket::socks_handshake: host=" << std::quoted( hostname )
-                      << ", ip=" << std::quoted( inet_ntoa( addr_in->sin_addr ) ) << std::endl;
+                      << ", ip=" << std::quoted( inet_ntoa( addr_in.sin_addr ) ) << std::endl;
 #endif
 
-            addr = *reinterpret_cast<std::uint32_t*>( &( addr_in->sin_addr ) );
+            addr = *reinterpret_cast<std::uint32_t*>( &( addr_in.sin_addr ) );
             freeaddrinfo( ainf );
         }
     }
