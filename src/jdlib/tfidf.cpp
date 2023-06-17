@@ -9,8 +9,9 @@
 
 #include "global.h"
 
+#include <cmath>
+#include <limits>
 #include <set>
-#include <math.h>
 
 
 //
@@ -95,7 +96,8 @@ void MISC::tfidf_calc_vec_tfifd( VEC_TFIDF& vec_tfidf, const Glib::ustring& docu
 
     for( int i = 0; i < n; ++i ){
 
-        if( total ){
+        // 誤差を考慮した total != 0
+        if( std::abs( total ) > std::numeric_limits<double>::epsilon() ) {
             vec_tfidf[ i ] /= total;
             vec_tfidf[ i ] *= vec_idf[ i ];
         }
@@ -127,8 +129,10 @@ double MISC::tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_TFIDF&
         lng2 += vec_tfidf2[ i ] * vec_tfidf2[ i ];
     }
 
-    if( lng1 == 0 ) return 0;
-    if( lng2 == 0 ) return 0;
+    // 誤差を考慮した lng1 == 0
+    if( std::abs( lng1 ) < std::numeric_limits<double>::epsilon() ) return 0;
+    // 誤差を考慮した lng2 == 0
+    if( std::abs( lng2 ) < std::numeric_limits<double>::epsilon() ) return 0;
 
     const double ret = product / sqrt( lng1 * lng2 );
 
