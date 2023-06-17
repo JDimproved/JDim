@@ -14,7 +14,7 @@
 namespace MISC
 {
     // int[3] -> 16進数表記の文字列
-    std::string color_to_str( const int* l_rgb );
+    std::string color_to_str( const unsigned int* l_rgb );
 
     // Gdk::RGBA -> 16進数表記の文字列
     std::string color_to_str( const Gdk::RGBA& rgba );
