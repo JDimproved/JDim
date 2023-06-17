@@ -269,7 +269,7 @@ void EditTreeView::clock_in()
 #endif
 
             Gtk::TreeRow row = get_row( m_jump_path );
-            if( row ) scroll_to_row( m_jump_path, 0.5 );
+            if( row ) scroll_to_row( m_jump_path, 0.5f );
 
             m_pre_adjust_upper = 0;
             m_jump_path = Gtk::TreePath();
@@ -1243,7 +1243,7 @@ void EditTreeView::undo()
         Gtk::TreeRow row = get_row( data[ i ].path_renamed );
         if( row ){
 
-            scroll_to_row( data[ i ].path_renamed, 0.5 );  // ツリー構造に変化は無いのですぐにスクロールする
+            scroll_to_row( data[ i ].path_renamed, 0.5f );  // ツリー構造に変化は無いのですぐにスクロールする
             set_cursor( data[ i ].path_renamed );
             if( ! data[ i ].name_before.empty() ) row[ m_columns.m_name ] = data[ i ].name_before;
         }
@@ -1290,7 +1290,7 @@ void EditTreeView::redo()
         Gtk::TreeRow row = get_row( item.path_renamed );
         if( row ){
 
-            scroll_to_row( item.path_renamed, 0.5 );  // ツリー構造に変化は無いのですぐにスクロールする
+            scroll_to_row( item.path_renamed, 0.5f );  // ツリー構造に変化は無いのですぐにスクロールする
             set_cursor( item.path_renamed );
             if( ! item.name_new.empty() ) row[ m_columns.m_name ] = item.name_new;
         }
