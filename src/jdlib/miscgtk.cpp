@@ -183,7 +183,7 @@ static bool color_map_less( const color_map& a, const color_map& b )
 
 
 // int[3] -> 16進数表記の文字列
-std::string MISC::color_to_str( const int* l_rgb )
+std::string MISC::color_to_str( const unsigned int* l_rgb )
 {
     // 16進数表記で各色の文字列を連結して格納
     char str_value[ CHAR_BUF ];
@@ -201,7 +201,7 @@ std::string MISC::color_to_str( const int* l_rgb )
 // Gdk::RGBA -> 16進数表記の文字列
 std::string MISC::color_to_str( const Gdk::RGBA& rgba )
 {
-    int l_rgb[ 3 ];
+    unsigned int l_rgb[ 3 ];
     l_rgb[ 0 ] = rgba.get_red_u();
     l_rgb[ 1 ] = rgba.get_green_u();
     l_rgb[ 2 ] = rgba.get_blue_u();
@@ -228,14 +228,14 @@ std::string MISC::htmlcolor_to_str( const std::string& _htmlcolor )
 
     const int digits = ( htmlcolor.size() == 4 ) ? 1 : 2;
     constexpr int len = 3;
-    int rgb[len];
+    unsigned int rgb[len];
 
     for( int i = 0; i < len; ++i ) {
         constexpr int offset = 1;
         std::string tmpstr = htmlcolor.substr( offset + ( i * digits ), digits );
         for( int j = 0; j < ( len - digits ); ++j ) tmpstr.append( tmpstr );
-        // 不正な値はstrtol()の挙動に従って変換される
-        rgb[i] = std::strtol( tmpstr.c_str(), nullptr, 16 );
+        // 不正な値はstrtoul()の挙動に従って変換される
+        rgb[i] = static_cast<unsigned int>( std::strtoul( tmpstr.c_str(), nullptr, 16 ) );
     }
 
 #ifdef _DEBUG
