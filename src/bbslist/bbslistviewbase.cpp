@@ -1896,7 +1896,7 @@ void BBSListViewBase::slot_row_exp( const Gtk::TreeModel::iterator&, const Gtk::
     }
 
     m_treeview.set_cursor( path );
-    if( CONFIG::get_scroll_tree() ) m_treeview.scroll_to_row( path, 0.1 );
+    if( CONFIG::get_scroll_tree() ) m_treeview.scroll_to_row( path, 0.1f );
     show_status();
 }
 
@@ -2798,7 +2798,7 @@ void BBSListViewBase::exec_search()
         // カーソル移動
         if( hit ){
             m_treeview.expand_parents( path );
-            m_treeview.scroll_to_row( path, 0.1 );
+            m_treeview.scroll_to_row( path, 0.1f );
             m_treeview.set_cursor( path );
             show_status();
             break;
