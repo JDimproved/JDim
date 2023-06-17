@@ -13,7 +13,9 @@
 #include "colorid.h"
 #include "cache.h"
 
+#include <cmath>
 #include <cstring>
+#include <limits>
 
 enum
 {
@@ -562,7 +564,8 @@ void Css_Manager::set_property( const std::string& classname, const CSS_PROPERTY
 void Css_Manager::set_size( CSS_PROPERTY* css, double height ) const
 {
     if( ! css ) return;
-    if( ! height ) return;
+    // 誤差を考慮した height == 0
+    if( std::abs( height ) < std::numeric_limits<double>::epsilon() ) return;
 
     css->padding_left = 0;
     css->padding_right = 0;

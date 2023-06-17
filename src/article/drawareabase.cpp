@@ -43,8 +43,9 @@
 #include "session.h"
 
 #include <cmath>
-#include <sstream>
 #include <cstring>
+#include <limits>
+#include <sstream>
 
 #ifndef USE_PANGOLAYOUT
 #include <pangomm/glyphstring.h>
@@ -2969,7 +2970,8 @@ bool DrawAreaBase::set_scroll( const int control )
                 break;
         }
 
-        if( dy ){
+        // 誤差を考慮した dy != 0
+        if( std::abs( dy ) > std::numeric_limits<double>::epsilon() ){
 
             m_scrollinfo.reset();
             m_scrollinfo.dy = ( int ) dy;
@@ -3014,7 +3016,8 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 
             const int current_y = ( int ) adjust->get_value();
             if( event->direction == GDK_SCROLL_UP && current_y == 0 ) return;
-            if( event->direction == GDK_SCROLL_DOWN && current_y == adjust->get_upper() - adjust->get_page_size() ) return;
+            if( event->direction == GDK_SCROLL_DOWN
+                    && current_y == static_cast<int>( adjust->get_upper() - adjust->get_page_size() ) ) return;
 
             m_scrollinfo.reset();
             m_scrollinfo.mode = SCROLL_NORMAL;

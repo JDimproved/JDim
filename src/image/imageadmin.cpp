@@ -24,6 +24,10 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 
+#include <cmath>
+#include <limits>
+
+
 IMAGE::ImageAdmin *instance_imageadmin = nullptr;
 
 IMAGE::ImageAdmin* IMAGE::get_admin()
@@ -968,7 +972,8 @@ void ImageAdmin::scroll_tab( int scroll )
         std::cout << "width = " << width << std::endl;
 #endif
 
-        if( upper == width ) return;
+        // 誤差を考慮した upper == width
+        if( std::abs( upper - width ) < std::numeric_limits<double>::epsilon() ) return;
 
         if( scroll == SCROLL_LEFT ) pos -= ICON_SIZE;
         else pos += ICON_SIZE;
