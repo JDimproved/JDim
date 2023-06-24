@@ -19,7 +19,7 @@ namespace SKELETON
     typedef sigc::signal< bool, GdkEventButton* > SIG_BUTTON_PRESS;
 
     // undo 用のバッファ
-    struct UNDO_DATA
+    struct UndoDatum
     {
         Glib::ustring str_diff;
         unsigned int pos;
@@ -39,7 +39,7 @@ namespace SKELETON
         CONTROL::Control m_control;
 
         // undo 用
-        std::vector< UNDO_DATA > m_undo_tree;
+        std::vector<UndoDatum> m_undo_tree;
         int m_undo_pos{};
         Glib::ustring m_pre_text;
         bool m_cancel_change{};
