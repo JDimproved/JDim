@@ -11,8 +11,11 @@
 #include "cache.h"
 #include "type.h"
 
-// ルート要素名( bookmark.xml )
-#define ROOT_NODE_NAME "favorite"
+namespace BBSLIST::fv {
+/// ルート要素名( bookmark.xml )
+constexpr const char* kRootNodeName = "favorite";
+}
+
 
 using namespace BBSLIST;
 
@@ -45,7 +48,7 @@ FavoriteListView::~FavoriteListView()
 void FavoriteListView::save_xml()
 {
     const std::string file = CACHE::path_xml_favorite();
-    save_xml_impl( file, ROOT_NODE_NAME, "" );
+    save_xml_impl( file, fv::kRootNodeName, "" );
 }
 
 
@@ -60,7 +63,7 @@ void FavoriteListView::show_view()
 
     CACHE::load_rawdata( file_in, xml );
 
-    xml2tree( std::string( ROOT_NODE_NAME ), xml );
+    xml2tree( std::string( fv::kRootNodeName ), xml );
 
     update_urls();
 }

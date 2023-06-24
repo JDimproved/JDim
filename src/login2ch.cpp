@@ -18,10 +18,11 @@
 
 #include <cstring>
 
-enum
-{
-    SIZE_OF_RAWDATA = 64 * 1024
-};
+
+namespace CORE::ch {
+constexpr std::size_t kSizeOfRawData = 64 * 1024;
+}
+
 
 CORE::Login2ch* instance_login2ch = nullptr;
 
@@ -111,7 +112,7 @@ void Login2ch::start_login()
     data.str_post += get_passwd();
 
     logout();
-    if( m_rawdata.capacity() < SIZE_OF_RAWDATA ) m_rawdata.reserve( SIZE_OF_RAWDATA );
+    if( m_rawdata.capacity() < ch::kSizeOfRawData ) m_rawdata.reserve( ch::kSizeOfRawData );
     m_rawdata.clear();
 
     start_load( data );

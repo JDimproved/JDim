@@ -221,7 +221,7 @@ void EditTextView::slot_buffer_changed()
 
     if( size ){
 
-        UNDO_DATA udata;
+        UndoDatum udata;
         udata.pos = 0;
         udata.append = false;
 
@@ -273,8 +273,8 @@ void EditTextView::undo()
         return;
     }
 
-    UNDO_DATA udata = m_undo_tree[ m_undo_pos-- ];
-    
+    UndoDatum udata = m_undo_tree[ m_undo_pos-- ];
+
 #ifdef _DEBUG
     std::cout << "EditTextView::undo pos = " << m_undo_pos << " size = " << m_undo_tree.size() << std::endl;
     std::cout << "offset = " << udata.pos << " cursor = " << udata.pos_cursor;

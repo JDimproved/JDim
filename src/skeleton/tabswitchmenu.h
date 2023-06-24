@@ -2,6 +2,8 @@
 //
 // タブの切り替えメニュー
 //
+#ifndef SKELETON_TABSWITCHMENU_H
+#define SKELETON_TABSWITCHMENU_H
 
 #include <gtkmm.h>
 
@@ -43,3 +45,5 @@ namespace SKELETON
         void alloc_items();
     };
 }
+
+#endif

@@ -13,10 +13,11 @@
 
 #include <sstream>
 
-enum
-{
-    SIZE_OF_RAWDATA = 2 * 1024 * 1024
-};
+
+namespace XML::dm {
+constexpr std::size_t kSizeOfRawData = 2 * 1024 * 1024;
+}
+
 
 using namespace XML;
 
@@ -84,7 +85,7 @@ void Dom::clear() noexcept
 //
 void Dom::parse( const std::string& str )
 {
-    if( str.empty() || str.size() > SIZE_OF_RAWDATA ) return;
+    if( str.empty() || str.size() > dm::kSizeOfRawData ) return;
 
     size_t current_pos = 0;
     const size_t str_length = str.length();

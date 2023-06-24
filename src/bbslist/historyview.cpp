@@ -12,8 +12,11 @@
 #include "type.h"
 #include "global.h"
 
-// ルート要素名
-#define ROOT_NODE_NAME "history"
+namespace BBSLIST::hv {
+/// ルート要素名
+constexpr const char* kRootNodeName = "history";
+}
+
 
 using namespace BBSLIST;
 
@@ -39,7 +42,7 @@ void HistoryViewBase::show_view()
 {
     std::string xml;
     CACHE::load_rawdata( m_file_xml, xml );
-    xml2tree( std::string( ROOT_NODE_NAME ), xml );
+    xml2tree( std::string( hv::kRootNodeName ), xml );
     update_urls();
 }
 
@@ -47,7 +50,7 @@ void HistoryViewBase::show_view()
 // xml保存
 void HistoryViewBase::save_xml()
 {
-    save_xml_impl( m_file_xml, ROOT_NODE_NAME, "" );
+    save_xml_impl( m_file_xml, hv::kRootNodeName, "" );
 }
 
 

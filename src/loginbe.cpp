@@ -17,10 +17,11 @@
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
 
-enum
-{
-    SIZE_OF_RAWDATA = 64 * 1024
-};
+
+namespace CORE::be {
+constexpr std::size_t kSizeOfRawData = 64 * 1024;
+}
+
 
 CORE::LoginBe* instance_loginbe = nullptr;
 
@@ -113,7 +114,7 @@ void LoginBe::start_login()
     data.str_post += "&submit=" + MISC::url_encode_plus( "登録", Encoding::eucjp );
 
     logout();
-    if( m_rawdata.capacity() < SIZE_OF_RAWDATA ) m_rawdata.reserve( SIZE_OF_RAWDATA );
+    if( m_rawdata.capacity() < be::kSizeOfRawData ) m_rawdata.reserve( be::kSizeOfRawData );
     m_rawdata.clear();
 
     start_load( data );
