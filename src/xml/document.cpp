@@ -6,10 +6,10 @@
 #include "document.h"
 #include "jdlib/miscutil.h"
 
-enum
-{
-    SIZE_OF_RAWDATA = 2 * 1024 * 1024
-};
+
+namespace XML::dc {
+constexpr std::size_t kSizeOfRawData = 2 * 1024 * 1024;
+}
 
 
 using namespace XML;
@@ -75,7 +75,7 @@ void Document::init( Glib::RefPtr< Gtk::TreeStore > treestore, SKELETON::EditCol
 //
 std::string Document::remove_comments( const std::string& str )
 {
-    if( str.size() > SIZE_OF_RAWDATA ) return std::string();
+    if( str.size() > dc::kSizeOfRawData ) return std::string();
 
     std::string out_str = str;
 
