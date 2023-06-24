@@ -1,6 +1,8 @@
 // ライセンス: GPL2
 
 // UNDO用バッファ
+#ifndef SKELETON_UNDOBUFFER_H
+#define SKELETON_UNDOBUFFER_H
 
 #include "sharedbuffer.h"
 
@@ -88,3 +90,5 @@ namespace SKELETON
     };
 
 }
+
+#endif
