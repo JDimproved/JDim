@@ -77,7 +77,7 @@ namespace MISC
     /// str前後の半角スペース(U+0020)と全角スペース(U+3000)を削除
     std::string utf8_trim( std::string_view str );
 
-    /// str前後の改行(\r, \\n)、タブ(\t)、スペース(U+0020)を削除
+    /// str前後の改行(\\r, \\n)、タブ(\\t)、スペース(U+0020)を削除
     std::string ascii_trim( const std::string& str );
 
     /// strからpatternで示された文字列を除く

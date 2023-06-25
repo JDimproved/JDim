@@ -342,7 +342,7 @@ bool App::slot_option_geometry( const Glib::ustring& option_name, const Glib::us
 
 
 /**
- * @brief {Gtk,Gio}::Application で排他制御を行わないためスタートアップは必ず実行される
+ * @brief Gtk::Application, Gio::Application の機能を使って排他制御を行わないためスタートアップは必ず実行される
  */
 void App::slot_startup()
 {

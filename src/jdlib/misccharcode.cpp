@@ -192,7 +192,7 @@ bool MISC::is_eucjp( std::string_view input, std::size_t read_byte )
 //
 /** @brief 文字列のエンコーディングがISO-2022-JPか簡易判定する
  *
- * エスケープシーケンス(ESC = \x1B)の有無と該当しないバイトが含まれるかチェックする。
+ * エスケープシーケンス(ESC = \\x1B)の有無と該当しないバイトが含まれるかチェックする。
  * 呼び出し元の処理のため空文字列に対する返り値は他の`is_*`関数と逆(false)になっている。
  * @param[in] input 入力
  * @param[in,out] byte チェックを開始する位置、チェックを打ち切った位置を返す
