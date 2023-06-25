@@ -46,3 +46,34 @@ jobs:
         run: meson test -v -C builddir
       - name: ./builddir/src/jdim -V
         run: ./builddir/src/jdim -V
+
+  muon-master:
+    runs-on: ubuntu-22.04
+    env:
+      CC: gcc-11
+      CXX: g++-11
+    steps:
+      - uses: actions/checkout@v3
+      - name: dependencies installation
+        run: |
+          sudo apt update
+          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-11
+      - name: git clone muon
+        run: |
+          git clone --depth 1 https://git.sr.ht/~lattis/muon muon-src
+        # Skip bootstrapping muon to do meson setup instead.
+      - name: build muon
+        run: |
+          meson setup -Ddocs=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled muon-build muon-src
+          ninja -C muon-build
+      - name: muon setup builddir
+        run: ./muon-build/muon setup -Dcompat_cache_dir=disabled jdim-build
+      - name: ninja -C jdim-build -k0
+        run: ninja -C jdim-build -k0
+      - name: muon test
+        run: |
+          cd jdim-build
+          ../muon-build/muon test -v
+          cd ..
+      - name: ./jdim-build/src/jdim -V
+        run: ./jdim-build/src/jdim -V
