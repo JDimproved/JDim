@@ -1084,10 +1084,8 @@ std::string Loader::create_msg_send() const
 
 /** @brief サーバから送られてきた生データからヘッダ取得
  *
- * @param[in] buf     生データ
- * @param[in] bufsize 生データサイズ
- * @param[out] buf     ヘッダーが取り除かれたデータ
- * @param[out] bufsize 出力データーサイズ
+ * @param[in,out] buf        (in) 生データ, (out) ヘッダーが取り除かれたデータ
+ * @param[in,out] read_size  (in) 生データサイズ, (out) 出力データーサイズ
  * @return ヘッダーの解析状況
  * @retval HeaderParse::success      成功
  * @retval HeaderParse::failure      失敗

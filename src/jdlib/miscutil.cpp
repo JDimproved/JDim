@@ -353,7 +353,7 @@ std::string MISC::utf8_trim( std::string_view str )
 }
 
 
-/** @brief str前後の改行(\r, \\n)、タブ(\t)、スペース(U+0020)を削除
+/** @brief str前後の改行(\\r, \\n)、タブ(\\t)、スペース(U+0020)を削除
  *
  * @param[in] str トリミングする文字列
  * @return トリミングした結果
@@ -534,7 +534,7 @@ std::list<std::string> MISC::replace_str_list( const std::list<std::string>& lis
 
 /** @brief str に含まれる改行文字(`\r\n`)を replace に置き換え
  *
- * @param[in] str_in 処理する文字列
+ * @param[in] str 処理する文字列
  * @param[in] replace マッチした改行文字と置き換える内容
  * @return 置き換えを実行した結果。str や replace が空文字列のときは str をそのまま返す。
  */
@@ -1068,7 +1068,7 @@ std::string MISC::to_plain( const std::string& html )
 
 /** @brief HTMLをPango markupテキストに変換する
  *
- * @details <mark>と<span>タグの色を設定して文字参照をデコードして返す。
+ * @details `<mark>`と`<span>`タグの色を設定して文字参照をデコードして返す。
  * @param[in] html Pango markupテキストに変換する入力
  * @return 変換した結果
  */
@@ -1593,14 +1593,14 @@ static char32_t transform_7f_9f( char32_t raw_point )
 }
 
 
-/** @brief 「&#数字;」形式の数値文字参照をコードポイント(char32_t)に変換する
+/** @brief 「`&#数字;`」形式の数値文字参照をコードポイント(char32_t)に変換する
  *
  * @details 数値文字参照の解析エラーとなる値もそのまま返す
  * (Unicodeの範囲外、サロゲート、非文字など)
  * @param[in] in_char 入力文字列、 `in_char[0] == "&" && in_char[1] == "#"` であること (not null)
  * @param[in] offset  spchar_number_ln() の戻り値
  * @param[in] lng     spchar_number_ln() の戻り値
- * @return 「&#数字;」の中の数字(char32_t型)
+ * @return 「`&#数字;`」の中の数字(char32_t型)
  * @remarks 最初に MISC::spchar_number_ln() を呼び出して `offset` と `lng` を取得すること
  */
 char32_t MISC::decode_spchar_number_raw( const char* in_char, const int offset, const int lng )
@@ -1620,13 +1620,13 @@ char32_t MISC::decode_spchar_number_raw( const char* in_char, const int offset, 
 }
 
 
-/** @brief 「&#数字;」形式の数値文字参照をコードポイント(char32_t)に変換する
+/** @brief 「`&#数字;`」形式の数値文字参照をコードポイント(char32_t)に変換する
  *
  * @details 数値文字参照の解析エラーとなる値は規定の値に変換して返す
  * @param[in] in_char 入力文字列、 `in_char[0] == "&" && in_char[1] == "#"` であること (not null)
  * @param[in] offset  spchar_number_ln() の戻り値
  * @param[in] lng     spchar_number_ln() の戻り値
- * @return 「&#数字;」の中の数字(char32_t型)
+ * @return 「`&#数字;`」の中の数字(char32_t型)
  * @remarks 最初に MISC::spchar_number_ln() を呼び出して `offset` と `lng` を取得すること
  */
 char32_t MISC::decode_spchar_number( const char* in_char, const int offset, const int lng )
