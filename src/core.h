@@ -105,8 +105,6 @@ namespace CORE
         std::string m_title;
 
         Gtk::MenuBar* m_menubar{};
-        Gtk::MenuItem* m_menuitem_prevview{};
-        Gtk::MenuItem* m_menuitem_nextview{};
 
         Glib::RefPtr< Gtk::ActionGroup > m_action_group;
         Glib::RefPtr< Gtk::UIManager > m_ui_manager;
