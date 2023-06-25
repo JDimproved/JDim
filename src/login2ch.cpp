@@ -19,9 +19,11 @@
 #include <cstring>
 
 
+#if 0 // サイトの更新に対応していないためサポートを中止
 namespace CORE::ch {
 constexpr std::size_t kSizeOfRawData = 64 * 1024;
 }
+#endif
 
 
 CORE::Login2ch* instance_login2ch = nullptr;
