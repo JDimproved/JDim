@@ -1,0 +1,79 @@
+name: Weekly CI
+
+on:
+  schedule:
+      # Each Monday, on 00:00 UTC
+      - cron: '0 0 * * 1'
+
+jobs:
+
+  Unity-build-gcc12-Werror:
+    runs-on: ubuntu-22.04
+    env:
+      CC: gcc-12
+      CXX: g++-12
+    steps:
+      - uses: actions/checkout@v3
+      - name: dependencies installation
+        run: |
+          sudo apt update
+          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-12
+      - name: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
+        run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
+      - name: ninja -C builddir -k0
+        run: ninja -C builddir -k0
+      - name: meson test -v -C builddir
+        run: meson test -v -C builddir
+      - name: ./builddir/src/jdim -V
+        run: ./builddir/src/jdim -V
+
+  Unity-build-clang15-Werror:
+    runs-on: ubuntu-22.04
+    env:
+      CC: clang-15
+      CXX: clang++-15
+    steps:
+      - uses: actions/checkout@v3
+      - name: dependencies installation
+        run: |
+          sudo apt update
+          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev clang-15
+      - name: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
+        run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
+      - name: ninja -C builddir -k0
+        run: ninja -C builddir -k0
+      - name: meson test -v -C builddir
+        run: meson test -v -C builddir
+      - name: ./builddir/src/jdim -V
+        run: ./builddir/src/jdim -V
+
+  muon-master:
+    runs-on: ubuntu-22.04
+    env:
+      CC: gcc-11
+      CXX: g++-11
+    steps:
+      - uses: actions/checkout@v3
+      - name: dependencies installation
+        run: |
+          sudo apt update
+          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-11
+      - name: git clone muon
+        run: |
+          git clone --depth 1 https://git.sr.ht/~lattis/muon muon-src
+        # Skip bootstrapping muon to do meson setup instead.
+      - name: build muon
+        run: |
+          meson setup -Ddocs=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled muon-build muon-src
+          ninja -C muon-build
+      - name: muon setup builddir
+        run: ./muon-build/muon setup -Dcompat_cache_dir=disabled jdim-build
+      - name: ninja -C jdim-build -k0
+        run: ninja -C jdim-build -k0
+      - name: muon test
+        run: |
+          cd jdim-build
+          ../muon-build/muon test -v
+          cd ..
+      - name: ./jdim-build/src/jdim -V
+        run: ./jdim-build/src/jdim -V
