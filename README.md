@@ -33,10 +33,11 @@ JDim (JD improved) は gtkmm/GTK+ を使用した"２ちゃんねる"型マル�
 JDim は GPLv2 の下で公開されている [JD][jd-project] からforkしたソフトウェアであり、
 ルック・アンド・フィールや環境設定は JD と互換性があります。
 
-**注意: JDim本体は5ch.netのAPIに対応しておりません。**
-ご不便をおかけして申し訳ありませんが、5ch.netにアクセスする場合はWebブラウザなどをご使用ください。
+**注意: 2023-07-11 からJDim本体で5chのスレ閲覧が可能になっています。**
+5ch.netのDATファイルへのアクセスが[開放][5ch-924]されていますが今後の動向に注意してください。
 
 [jd-project]: https://jd4linux.osdn.jp/
+[5ch-924]: https://agree.5ch.net/test/read.cgi/operate/9240230711/
 
 
 ## 動作プラットフォーム
