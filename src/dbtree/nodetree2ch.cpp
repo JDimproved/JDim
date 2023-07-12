@@ -16,7 +16,9 @@
 #include "session.h"
 #include "login2ch.h"
 
+#include <cstdlib>
 #include <sstream>
+
 
 using namespace DBTREE;
 
@@ -24,7 +26,6 @@ using namespace DBTREE;
 enum
 {
     MODE_NORMAL = 0,
-    MODE_KAKO_GZ,
     MODE_KAKO,
     MODE_OLDURL
 };
@@ -118,8 +119,9 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
     data.byte_readfrom = 0;
 
     // ( rokka, 旧offlaw, offlaw2は廃止 )
-    // 過去ログ倉庫使用
-    if( m_mode == MODE_KAKO_GZ || m_mode == MODE_KAKO ){
+    // DAT落ちした現役サーバに収容されているスレッド
+    // または過去ログサーバに収容されているスレッド
+    if( m_mode == MODE_KAKO ) {
 
         JDLIB::Regex regex;
         const size_t offset = 0;
@@ -129,18 +131,14 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         const bool wchar = false;
 
         if( ! regex.exec( "(https?://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
-        const int id = atoi( regex.str( 3 ).c_str() + 1 );
+        const int id = std::atoi( regex.str( 3 ).c_str() + 1 );
 
         std::ostringstream ss;
 
-        // スレIDが10桁の場合 → http://サーバ/板ID/kako/IDの上位4桁/IDの上位5桁/ID.dat.gz
-        if( id / 1000000000 ) ss << regex.str( 1 ) << regex.str( 2 ) << "/kako/" << ( id / 1000000 ) << "/" << ( id / 100000 ) << regex.str( 3 );
-
-        // スレIDが9桁の場合 → http://サーバ/板ID/kako/IDの上位3桁/ID.dat.gz
-        else ss << regex.str( 1 ) << regex.str( 2 ) << "/kako/" << ( id / 1000000 ) << regex.str( 3 );
-
-        if( m_mode == MODE_KAKO_GZ ) ss << ".dat.gz";
-        else ss << ".dat";
+        // 過去ログURLの構築
+        // スレIDが10桁の場合 -> https://サーバ/板ID/oyster/IDの上位4桁/ID.dat
+        // スレIDが 9桁の場合 -> https://サーバ/板ID/oyster/IDの上位3桁/ID.dat
+        ss << regex.str( 1 ) << regex.str( 2 ) << "/oyster/" << ( id / 1000000 ) << regex.str( 3 ) << ".dat";
 
         // レジュームは無し
         set_resume( false );
@@ -204,48 +202,34 @@ void NodeTree2ch::receive_finish()
         ){
 
 /*
+        DATファイルへのアクセス方法 ( 2023-07-11 からの仕様 )
+        参考文献: https://agree.5ch.net/test/read.cgi/operate/9240230711/3
 
-  ・スレIDが10桁の場合 → http://サーバ/板ID/kako/IDの上位4桁/IDの上位5桁/ID.dat.gz
+        ・スレIDが10桁の場合 -> https://サーバ/板ID/oyster/IDの上位4桁/ID.dat
 
-  (例) http://HOGE.2ch.net/test/read.cgi/hoge/1234567890/ を取得
+        (例) https://HOGE.5ch.net/test/read.cgi/hoge/1234567890/ を取得
+        (1) https://HOGE.5ch.net/hoge/dat/1234567890.dat から DAT を取得。
+        取得できなかったとき -> 旧URLがある場合(2-1)、無い場合は(2-2)へ
 
-  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。旧URLがある場合(2-1)、無い場合は(2-2)へ(※)
+        (2-1) 旧URLから取得
+        (2-2) https://HOGE.5ch.net/hoge/oyster/1234/1234567890.dat から取得。
 
-  (2-1) 旧URLから取得
+        ・スレIDが9桁の場合 -> https://サーバ/板ID/oyster/IDの上位3桁/ID.dat
 
-  (2-2) http://HOGE.2ch.net/hoge/kako/1234/12345/1234567890.dat.gz から取得。302なら(3)へ
+        (例) https://HOGE.5ch.net/test/read.cgi/hoge/123456789/ を取得
+        (1) https://HOGE.5ch.net/hoge/dat/123456789.dat から DAT を取得。
+        取得できなかったとき -> 旧URLがある場合(2-1)、無い場合は(2-2)へ
 
-  (3) http://HOGE.2ch.net/hoge/kako/1234/12345/1234567890.dat から取得 
-
-
-  ・スレIDが9桁の場合 → http://サーバ/板ID/kako/IDの上位3桁/ID.dat.gz
-
-  (例) http://HOGE.2ch.net/test/read.cgi/hoge/123456789/ を取得
-
-  (1) http://HOGE.2ch.net/hoge/dat/1234567890.dat から dat を取得。旧URLがある場合(2-1)、無い場合は(2-2)へ(※)
-
-  (2-1) 旧URLから取得
-
-  (2-2) http://HOGE.2ch.net/hoge/kako/123/123456789.dat.gz から取得。302なら(3)へ
-
-  (3) http://HOGE.2ch.net/hoge/kako/123/123456789.dat から取得 
-
-
-  (※)ただし 2008年1月1日以降に立てられたスレは除く
-
-  (注) 古すぎる(2000年頃)のdatは形式が違う(<>ではなくて,で区切られている)ので読み込みに失敗する
-
+        (2-1) 旧URLから取得
+        (2-2) https://HOGE.5ch.net/hoge/oyster/123/123456789.dat から取得。
 */
 
         // 旧URLがある場合、そのURLで再取得
         if( m_mode == MODE_NORMAL && get_url() != m_org_url ) m_mode = MODE_OLDURL;
 
-        // 過去ログ倉庫(gz圧縮)
-        // ただし 2008年1月1日以降に立てられたスレは除く
-        else if( ( m_mode == MODE_NORMAL || m_mode == MODE_OLDURL ) && m_since_time < 1199113200 ) m_mode = MODE_KAKO_GZ;
-
-        // 過去ログ倉庫
-        else if( m_mode == MODE_KAKO_GZ ) m_mode = MODE_KAKO;
+        // DAT落ちした現役サーバに収容されているスレッド
+        // または過去ログサーバに収容されているスレッド
+        else if( m_mode == MODE_NORMAL || m_mode == MODE_OLDURL ) m_mode = MODE_KAKO;
 
         // 失敗
         else m_mode = MODE_NORMAL;
