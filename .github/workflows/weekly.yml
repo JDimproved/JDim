@@ -62,10 +62,14 @@ jobs:
         run: |
           git clone --depth 1 https://git.sr.ht/~lattis/muon muon-src
         # Skip bootstrapping muon to do meson setup instead.
+      - name: git log -n1 muon
+        run: git -C muon-src log -n1
       - name: build muon
         run: |
           meson setup -Ddocs=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled muon-build muon-src
           ninja -C muon-build
+      - name: muon version
+        run: ./muon-build/muon version
       - name: muon setup builddir
         run: ./muon-build/muon setup -Dcompat_cache_dir=disabled jdim-build
       - name: ninja -C jdim-build -k0
