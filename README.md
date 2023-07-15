@@ -140,6 +140,11 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
   Mesonは並列コンパイル(job数)を自動で設定します。メモリー不足などでビルドが中断するときは
   `ninja`(または`meson compile`)するときに `-j job数` を指定して実行数を調整してください。
 
+  Mesonの機能 [Unity build] を有効に設定するとビルドが高速化できる可能性があります。
+  機能を有効にするにはsetupコマンドでビルドオプションを指定します。`meson setup -Dunity=on builddir`
+
+[Unity build]: https://mesonbuild.com/Unity-builds.html
+
 * **CPUに合わせた最適化**
 
   `meson`を実行するときにCPUの種類(`-march=ARCH`や`-mcpu=CPU`)を`-Dcpp_args`に設定します。
