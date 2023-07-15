@@ -2016,7 +2016,12 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
             parse_html( str.data() + start_block, lng_block, COLOR_CHAR, digitlink, bold, FONT_MAIL );
 
             // 次のブロックへ移動
-            str = str.substr( start_block + lng_block );
+            if( const auto lng = start_block + lng_block; lng < str.size() ) {
+                str = str.substr( lng );
+            }
+            else {
+                str = std::string_view{};
+            }
             lng_text = 0;
         }
 
