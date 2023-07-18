@@ -140,8 +140,9 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         // スレIDが 9桁の場合 -> https://サーバ/板ID/oyster/IDの上位3桁/ID.dat
         ss << regex.str( 1 ) << regex.str( 2 ) << "/oyster/" << ( id / 1000000 ) << regex.str( 3 ) << ".dat";
 
-        // レジュームは無し
-        set_resume( false );
+        // レジューム設定
+        // DATを読み込んでいた場合はレジュームを有りにして、DATの未取得部分を追加するように処理する
+        set_resume( get_lng_dat() > 0 );
 
         data.url = ss.str();
     }
