@@ -120,8 +120,8 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
 
     // ( rokka, 旧offlaw, offlaw2は廃止 )
     // DAT落ちした現役サーバに収容されているスレッド
-    // または過去ログサーバに収容されているスレッド
-    if( m_mode == MODE_KAKO ) {
+    // または旧URL(過去ログサーバ)に収容されているスレッド
+    if( m_mode == MODE_KAKO || m_mode == MODE_OLDURL ) {
 
         JDLIB::Regex regex;
         const size_t offset = 0;
@@ -130,7 +130,9 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         const bool usemigemo = false;
         const bool wchar = false;
 
-        if( ! regex.exec( "(https?://[^/]*)(/.*)/dat(/.*)\\.dat$", m_org_url, offset, icase, newline, usemigemo, wchar ) ) return;
+        const std::string& url = ( m_mode == MODE_OLDURL ) ? m_org_url : get_url();
+
+        if( ! regex.exec( "(https?://[^/]*)(/.*)/dat(/.*)\\.dat$", url, offset, icase, newline, usemigemo, wchar ) ) return;
         const int id = std::atoi( regex.str( 3 ).c_str() + 1 );
 
         std::ostringstream ss;
@@ -147,7 +149,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         data.url = ss.str();
     }
 
-    // 普通もしくは旧URLからの読み込み
+    // 普通の読み込み
     else{
 
         // レジューム設定
@@ -160,7 +162,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         }
         else set_resume( false );
 
-        data.url = ( m_mode == MODE_OLDURL ) ? m_org_url : get_url();
+        data.url = get_url();
     }
 
 #ifdef _DEBUG    
@@ -210,27 +212,22 @@ void NodeTree2ch::receive_finish()
 
         (例) https://HOGE.5ch.net/test/read.cgi/hoge/1234567890/ を取得
         (1) https://HOGE.5ch.net/hoge/dat/1234567890.dat から DAT を取得。
-        取得できなかったとき -> 旧URLがある場合(2-1)、無い場合は(2-2)へ
-
-        (2-1) 旧URLから取得
-        (2-2) https://HOGE.5ch.net/hoge/oyster/1234/1234567890.dat から取得。
+        (2) https://HOGE.5ch.net/hoge/oyster/1234/1234567890.dat から取得。
+        (3) 旧URL(過去ログサーバ)がある場合、そのURLで再取得
 
         ・スレIDが9桁の場合 -> https://サーバ/板ID/oyster/IDの上位3桁/ID.dat
 
         (例) https://HOGE.5ch.net/test/read.cgi/hoge/123456789/ を取得
         (1) https://HOGE.5ch.net/hoge/dat/123456789.dat から DAT を取得。
-        取得できなかったとき -> 旧URLがある場合(2-1)、無い場合は(2-2)へ
-
-        (2-1) 旧URLから取得
-        (2-2) https://HOGE.5ch.net/hoge/oyster/123/123456789.dat から取得。
+        (2) https://HOGE.5ch.net/hoge/oyster/123/123456789.dat から取得。
+        (3) 旧URL(過去ログサーバ)がある場合、そのURLで再取得
 */
 
-        // 旧URLがある場合、そのURLで再取得
-        if( m_mode == MODE_NORMAL && get_url() != m_org_url ) m_mode = MODE_OLDURL;
-
         // DAT落ちした現役サーバに収容されているスレッド
-        // または過去ログサーバに収容されているスレッド
-        else if( m_mode == MODE_NORMAL || m_mode == MODE_OLDURL ) m_mode = MODE_KAKO;
+        if( m_mode == MODE_NORMAL ) m_mode = MODE_KAKO;
+
+        // 旧URL(過去ログサーバ)に収容されているスレッド
+        else if( m_mode == MODE_KAKO && get_url() != m_org_url ) m_mode = MODE_OLDURL;
 
         // 失敗
         else m_mode = MODE_NORMAL;
