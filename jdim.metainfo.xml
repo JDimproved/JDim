@@ -53,6 +53,12 @@
   </provides>
 
   <releases>
+    <release version="0.10.1" date="2023-07-23">
+      <description>
+        <p>Implement reading past logs with access to 5ch.net DAT files</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.10.1</url>
+    </release>
     <release version="0.10.0" date="2023-07-08">
       <description>
         <p>Support Emoji ZWJ Sequences</p>
