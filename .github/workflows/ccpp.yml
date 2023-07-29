@@ -46,9 +46,6 @@ jobs:
           - cc: gcc-8
             cxx: g++-8
             package: g++-8
-          - cc: gcc-9
-            cxx: g++-9
-            package: g++-9
           - cc: gcc-10
             cxx: g++-10
             package: g++-10
@@ -87,20 +84,24 @@ jobs:
     strategy:
       matrix:
         sets:
-          - cc: gcc-11
-            cxx: g++-11
-            package: g++-11
-            # Omit gcc-12 due to jobs are too many.
+          - cc: gcc-12
+            cxx: g++-12
+            package: g++-12
           - cc: clang-11
             cxx: clang++-11
             package: clang-11
-            # Omit clang-12 due to jobs are too many.
+          - cc: clang-12
+            cxx: clang++-12
+            package: clang-12
           - cc: clang-13
             cxx: clang++-13
             package: clang-13
           - cc: clang-14
             cxx: clang++-14
             package: clang-14
+          - cc: clang-15
+            cxx: clang++-15
+            package: clang-15
     steps:
       - uses: actions/checkout@v3
       - name: dependencies installation
@@ -116,69 +117,35 @@ jobs:
       - name: ./builddir/src/jdim -V
         run: ./builddir/src/jdim -V
 
-  autotools:
-    runs-on: ${{ matrix.sets.os }}
-    env:
-      CC: ${{ matrix.sets.cc }}
-      CXX: ${{ matrix.sets.cxx }}
-      CXXFLAGS: -Og -pipe
-      GTEST_SRCDIR: /usr/src/googletest
-    strategy:
-      matrix:
-        sets:
-          - os: ubuntu-22.04
-            cc: gcc-11
-            cxx: g++-11
-            package: g++-11
-    steps:
-      - uses: actions/checkout@v3
-      - name: dependencies installation
-        run: |
-          sudo apt update
-          sudo apt install autoconf-archive libgnutls28-dev libgtest-dev libgtkmm-3.0-dev libltdl-dev libtool zlib1g-dev ${{ matrix.sets.package }}
-      - name: autoreconf -i
-        run: autoreconf -i
-      - name: ./configure
-        run: ./configure
-      - name: make -j$(nproc)
-        run: make -j$(nproc)
-      - name: make check -j$(nproc)
-        run: make check -j$(nproc)
-      - name: ./src/jdim -V
-        run: ./src/jdim -V
-
   library-20:
 
     runs-on: ubuntu-20.04
     env:
       CC: gcc-9
       CXX: g++-9
-      CXXFLAGS: -Og -pipe -D_DEBUG
     strategy:
       matrix:
         deps:
-          - config_args: --with-tls=gnutls --with-sessionlib=xsmp --with-migemo --with-alsa --with-pangolayout
+          - config_args: -Dtls=gnutls -Dsessionlib=xsmp -Dmigemo=enabled -Dalsa=enabled -Dpangolayout=enabled
             packages: libgnutls28-dev libmigemo-dev libasound2-dev
-          - config_args: --with-tls=openssl --with-sessionlib=no --with-migemo --disable-compat-cache-dir
+          - config_args: -Dtls=openssl -Dsessionlib=no -Dmigemo=enabled -Dcompat_cache_dir=disabled
             packages: libssl-dev libmigemo-dev
-          - config_args: --with-tls=openssl --with-sessionlib=xsmp --with-alsa --with-pangolayout
+          - config_args: -Dtls=openssl -Dsessionlib=xsmp -Dalsa=enabled -Dpangolayout=enabled
             packages: libssl-dev libasound2-dev
     steps:
       - uses: actions/checkout@v3
       - name: dependencies installation (${{ matrix.deps.packages }})
         run: |
           sudo apt update
-          sudo apt install autoconf-archive libgtest-dev libtool libltdl-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-9
-      - name: autoreconf -i
-        run: autoreconf -i
-      - name: ./configure ${{ matrix.deps.config_args }}
-        run: ./configure ${{ matrix.deps.config_args }}
-      - name: make -j$(nproc)
-        run: make -j$(nproc)
-      - name: make check -j$(nproc)
-        run: make check -j$(nproc)
-      - name: ./src/jdim -V
-        run: ./src/jdim -V
+          sudo apt install meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-9
+      - name: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+        run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+      - name: ninja -C builddir
+        run: ninja -C builddir
+      - name: meson test -v -C builddir
+        run: meson test -v -C builddir
+      - name: ./builddir/src/jdim -V
+        run: ./builddir/src/jdim -V
 
   library-22:
 
