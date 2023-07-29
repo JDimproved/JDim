@@ -19,6 +19,10 @@
 
 * makeに必要なツール、ライブラリ
 
+  Autotools(./configure)のサポートはv0.10.0(2023年7月)のリリースをもって廃止されました。
+  かわりにmesonを利用してください。
+  詳しくは https://github.com/JDimproved/rfcs/blob/master/docs/0012-end-of-autotools-support.md を参照。
+
   必須
 
   ・meson 0.53.0 以上
@@ -55,9 +59,6 @@
     mesonのビルドオプション
     - meson setup builddir -Dpangolayout=enabled のように指定する。
     - オプションの一覧は meson configure を実行してProject optionsの段落を参照する。
-
-Autotools(./configure)のサポートは2023年7月のリリースをもって廃止されます。
-詳しくは https://github.com/JDimproved/rfcs/blob/master/docs/0012-end-of-autotools-support.md を参照。
 
 
 * ビルドオプション
