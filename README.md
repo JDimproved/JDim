@@ -65,7 +65,7 @@ i386版ディストロを利用されている場合は更新をお願いいた�
 ソースコードからJDimをビルドします。**GTK3版がビルド**されますのでご注意ください。
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
-**Autotools(./configure)のサポートは2023年7月のリリースをもって廃止されます。
+**Autotools(./configure)のサポートは2023年7月のリリースをもって廃止されました。
 かわりに[meson][mesonbuild]を利用してください。([RFC 0012][rfc0012])**
 
 [mesonbuild]: https://mesonbuild.com
