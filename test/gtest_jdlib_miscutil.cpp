@@ -137,6 +137,11 @@ TEST_F(AsciiTrimTest, empty_data)
     EXPECT_EQ( "", MISC::ascii_trim( "" ) );
 }
 
+TEST_F(AsciiTrimTest, multiple_whitespace_only_data)
+{
+	EXPECT_EQ( "", MISC::ascii_trim("  ") );
+}
+
 TEST_F(AsciiTrimTest, no_space_chars_at_start_and_end)
 {
     EXPECT_EQ( "Hello \n \r \t World", MISC::ascii_trim( "Hello \n \r \t World" ) );
