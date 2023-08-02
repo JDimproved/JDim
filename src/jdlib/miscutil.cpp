@@ -364,7 +364,7 @@ std::string MISC::ascii_trim( const std::string& str )
 
     constexpr std::string_view space_chars = " \n\t\r";
     const auto start = str.find_first_not_of( space_chars );
-    if( start == std::string::npos ) return str;
+    if( start == std::string::npos ) return std::string();
 
     const auto end = str.find_last_not_of( space_chars ) + 1;
     return str.substr( start, end - start );
