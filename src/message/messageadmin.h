@@ -77,8 +77,8 @@ namespace MESSAGE
 
         void open_view( const COMMAND_ARGS& command ) override;
         void switch_admin() override;
-        void tab_left( const bool updated ) override;
-        void tab_right( const bool updated ) override;
+        void tab_left( const TabMove mode ) override;
+        void tab_right( const TabMove mode ) override;
         void close_view( const std::string& url ) override;
         void open_window() override;
         void close_window() override;

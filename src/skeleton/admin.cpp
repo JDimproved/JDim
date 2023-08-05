@@ -531,16 +531,22 @@ void Admin::exec_command()
         reload_view( command.url );
     }
     else if( command.command == "tab_left" ){
-        tab_left( false );
+        tab_left( TabMove::next );
     }
     else if( command.command == "tab_right" ){
-        tab_right( false );
+        tab_right( TabMove::next );
     }
     else if( command.command == "tab_left_updated" ){
-        tab_left( true );
+        tab_left( TabMove::updated );
     }
     else if( command.command == "tab_right_updated" ){
-        tab_right( true );
+        tab_right( TabMove::updated );
+    }
+    else if( command.command == "tab_left_updatable" ){
+        tab_left( TabMove::updatable );
+    }
+    else if( command.command == "tab_right_updatable" ){
+        tab_right( TabMove::updatable );
     }
     else if( command.command == "tab_num" ){
         tab_num( command.arg1 );
@@ -1274,12 +1280,11 @@ void Admin::reload_view( const std::string& url )
 }
 
 
-//
-// タブ左移動
-//
-// updated == true の時は更新されたタブに移動
-//
-void Admin::tab_left( const bool updated )
+/** @brief タブ左移動
+ *
+ * @param[in] mode タブ移動の種類
+ */
+void Admin::tab_left( const TabMove mode )
 {
     const int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
@@ -1288,20 +1293,24 @@ void Admin::tab_left( const bool updated )
     if( page == -1 ) return;
 
 #ifdef _DEBUG
-    std::cout << "Admin::tab_left updated << " << updated << " page = " << page;
+    std::cout << "Admin::tab_left mode << " << static_cast<int>( mode ) << " page = " << page;
 #endif
 
     for( int i = 0; i < pages ; ++i ){
 
         --page;
         if( page < 0 ) page = pages -1;
-        if( ! updated ) break;
+        if( mode == TabMove::next ) break;
 
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
         if( ! view ) return;
 
-        // updated アイコンが表示されているタブを見つける
-        if( get_notebook()->get_tabicon( page ) == view->get_icon( "updated" ) ) break;
+        // アイコンが表示されているタブを見つける
+        const char* icon_name = "";
+        if( mode == TabMove::updated ) icon_name = "updated";
+        else if( mode == TabMove::updatable ) icon_name = "update";
+
+        if( get_notebook()->get_tabicon( page ) == view->get_icon( icon_name ) ) break;
     }
 
 #ifdef _DEBUG
@@ -1313,12 +1322,11 @@ void Admin::tab_left( const bool updated )
 
 
 
-//
-// タブ右移動
-//
-// updated == true の時は更新されたタブに移動
-//
-void Admin::tab_right( const bool updated )
+/** @brief タブ右移動
+ *
+ * @param[in] mode タブ移動の種類
+ */
+void Admin::tab_right( const TabMove mode )
 {
     const int pages = m_notebook->get_n_pages();
     if( pages == 1 ) return;
@@ -1327,20 +1335,24 @@ void Admin::tab_right( const bool updated )
     if( page == -1 ) return;
 
 #ifdef _DEBUG
-    std::cout << "Admin::tab_right updated << " << updated << " page = " << page;
+    std::cout << "Admin::tab_right mode << " << static_cast<int>( mode ) << " page = " << page;
 #endif
 
     for( int i = 0; i < pages; ++i ){
 
         ++page;
         if( page >= pages ) page = 0;
-        if( ! updated ) break;
+        if( mode == TabMove::next ) break;
 
         SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
         if( ! view ) return;
 
-        // updated アイコンが表示されているタブを見つける
-        if( get_notebook()->get_tabicon( page ) == view->get_icon( "updated" ) ) break;
+        // アイコンが表示されているタブを見つける
+        const char* icon_name = "";
+        if( mode == TabMove::updated ) icon_name = "updated";
+        else if( mode == TabMove::updatable ) icon_name = "update";
+
+        if( get_notebook()->get_tabicon( page ) == view->get_icon( icon_name ) ) break;
     }
 
 #ifdef _DEBUG

@@ -43,6 +43,11 @@ layout: default
   <dt>Ctrl+Shift+H,&ensp;Ctrl+Shift+&#x1f870;,&ensp;Ctrl+Shift+PageUp,&ensp;[</dt>
   <dd>左の更新済みタブへ移動</dd>
 
+  <dt>(デフォルト無し)</dt>
+  <dd>右の更新可能なタブへ移動 <small>( v0.10.1-20230805 から追加 )</small></dd>
+  <dt>(デフォルト無し)</dt>
+  <dd>左の更新可能なタブへ移動 <small>( v0.10.1-20230805 から追加 )</small></dd>
+
   <dt>Alt+1 〜 Alt+9</dt>
   <dd>左からn番目(1〜9)のタブへ移動</dd>
   <dt>Alt+&#x1f870;</dt>

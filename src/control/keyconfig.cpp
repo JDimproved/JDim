@@ -44,6 +44,8 @@ void KeyConfig::load_conf()
     load_keymotions( cf, "TabLeft", KEYCONF_TabLeft );
     load_keymotions( cf, "TabRightUpdated", KEYCONF_TabRightUpdated );
     load_keymotions( cf, "TabLeftUpdated", KEYCONF_TabLeftUpdated );
+    load_keymotions( cf, "TabRightUpdatable", KEYCONF_TabRightUpdatable );
+    load_keymotions( cf, "TabLeftUpdatable", KEYCONF_TabLeftUpdatable );
 
     load_keymotions( cf, "TabNum1", KEYCONF_TabNum1 );
     load_keymotions( cf, "TabNum2", KEYCONF_TabNum2 );

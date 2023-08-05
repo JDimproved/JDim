@@ -50,6 +50,8 @@ namespace CONTROL
         TabLeft,
         TabRightUpdated,
         TabLeftUpdated,
+        TabRightUpdatable, ///< 右の更新可能なタブに移動
+        TabLeftUpdatable,  ///< 左の更新可能なタブに移動
 
         TabNum1,
         TabNum2,

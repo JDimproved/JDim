@@ -70,8 +70,8 @@ namespace IMAGE
 
         void switch_admin() override;
         void open_view( const COMMAND_ARGS& command ) override;
-        void tab_left( const bool updated ) override;
-        void tab_right( const bool updatd ) override;
+        void tab_left( const TabMove mode ) override;
+        void tab_right( const TabMove mode ) override;
         void tab_head() override;
         void tab_tail() override;
         void redraw_view( const std::string& url ) override;

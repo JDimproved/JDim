@@ -539,13 +539,15 @@ bool MessageViewBase::operate_view( const int control )
             MESSAGE::get_admin()->set_command( "toolbar_write", get_url() );
             break;
 
-       case CONTROL::TabLeft:
+        case CONTROL::TabLeft:
         case CONTROL::TabLeftUpdated:
+        case CONTROL::TabLeftUpdatable:
             MESSAGE::get_admin()->set_command( "tab_left" );
             break;
 
         case CONTROL::TabRight:
         case CONTROL::TabRightUpdated:
+        case CONTROL::TabRightUpdatable:
             MESSAGE::get_admin()->set_command( "tab_right" );
             break;
 
