@@ -189,11 +189,13 @@ bool CONFIG::get_send_cookie_to_proxy_for2ch() { return get_confitem()->send_coo
 const std::string& CONFIG::get_proxy_for2ch() { return get_confitem()->proxy_for2ch; }
 int CONFIG::get_proxy_port_for2ch() { return get_confitem()->proxy_port_for2ch; }
 const std::string& CONFIG::get_proxy_basicauth_for2ch() { return get_confitem()->proxy_basicauth_for2ch; }
+bool CONFIG::get_use_fallback_proxy_for2ch() { return get_confitem()->use_fallback_proxy_for2ch; }
 
 void CONFIG::set_use_proxy_for2ch( bool set ){ get_confitem()->use_proxy_for2ch = set; }
 void CONFIG::set_send_cookie_to_proxy_for2ch( bool set ){ get_confitem()->send_cookie_to_proxy_for2ch = set; }
 void CONFIG::set_proxy_for2ch( const std::string& proxy ){ get_confitem()->set_proxy_for2ch( proxy ); }
 void CONFIG::set_proxy_port_for2ch( int port ){ get_confitem()->proxy_port_for2ch = port; }
+void CONFIG::set_use_fallback_proxy_for2ch( bool set ) { get_confitem()->use_fallback_proxy_for2ch = set; }
 
 bool CONFIG::get_use_proxy_for2ch_w() { return get_confitem()->use_proxy_for2ch_w; }
 bool CONFIG::get_send_cookie_to_proxy_for2ch_w() { return get_confitem()->send_cookie_to_proxy_for2ch_w; }

@@ -53,6 +53,7 @@ namespace CONFIG
         std::string proxy_for2ch;
         int proxy_port_for2ch{};
         std::string proxy_basicauth_for2ch;
+        bool use_fallback_proxy_for2ch{};
 
         // 書き込み用プロクシとポート番号
         bool use_proxy_for2ch_w{};

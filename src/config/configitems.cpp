@@ -110,6 +110,7 @@ bool ConfigItems::load( const bool restore )
     str_tmp = cf.get_option_str( "proxy_for2ch", "" );
     set_proxy_for2ch( str_tmp );
     proxy_port_for2ch = cf.get_option_int( "proxy_port_for2ch", CONF_PROXY_PORT_FOR2CH, 1, 65535 );
+    use_fallback_proxy_for2ch = cf.get_option_bool( "use_fallback_proxy_for2ch", CONF_USE_FALLBACK_PROXY_FOR2CH );
 
     // 書き込み用プロクシとポート番号
     use_proxy_for2ch_w = cf.get_option_bool( "use_proxy_for2ch_w", CONF_USE_PROXY_FOR2CH_W );
@@ -700,6 +701,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "send_cookie_to_proxy_for2ch", send_cookie_to_proxy_for2ch );
     cf.update( "proxy_for2ch", tmp_proxy );
     cf.update( "proxy_port_for2ch", proxy_port_for2ch );
+    cf.update( "use_fallback_proxy_for2ch", use_fallback_proxy_for2ch );
 
     if( proxy_basicauth_for2ch_w.empty() ) tmp_proxy = proxy_for2ch_w;
     else tmp_proxy = proxy_basicauth_for2ch_w + "@" + proxy_for2ch_w;

@@ -21,6 +21,7 @@ namespace CONFIG
         CONF_USE_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシを使用するか
         CONF_SEND_COOKIE_TO_PROXY_FOR2CH = 0, // 2ch 読み込み用プロクシにクッキーを送信するか
         CONF_PROXY_PORT_FOR2CH = 8080, // 2ch 読み込み用プロクシポート番号
+        CONF_USE_FALLBACK_PROXY_FOR2CH = 0, ///< プロキシを使わない接続で過去ログが見つからなかったときは2ch読み込み用プロキシを使う
         CONF_USE_PROXY_FOR2CH_W = 0, // 2ch 書き込み用プロクシを使用するか
         CONF_SEND_COOKIE_TO_PROXY_FOR2CH_W = 0, // 2ch 書き込み用プロクシにクッキーを送信するか
         CONF_PROXY_PORT_FOR2CH_W = 8080, // 2ch 書き込み用プロクシポート番号
