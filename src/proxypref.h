@@ -16,6 +16,11 @@ namespace CORE
 {
     constexpr const char kSendCookieTooltip[] = "JDimからプロキシへサイトのクッキーを送信します。\n"
                                                 "プロキシのクッキー処理にあわせて設定してください。";
+    constexpr const char* kFallbackProxyNotice =
+        "スレッドの途中からプロキシ接続に代わるとdatファイルの整合性が取れなくなり"
+        "\"416 Requested Range Not Satisfiable\"の通信エラーが出ることがあります。"
+        "その場合はスレ情報を消さずに再取得を行ってください。"
+        "このオプションは実験的なサポートのため変更または廃止の可能性があります。";
 
     class ProxyFrame : public Gtk::Frame
     {
@@ -54,12 +59,86 @@ namespace CORE
         }
     };
 
+    class ProxyFrameFallbackOption : public Gtk::Frame
+    {
+        Gtk::Box m_vbox;
+        Gtk::Box m_hbox;
+
+        Gtk::Box m_vbox_exp_option;
+        Gtk::Box m_hbox_fallback_proxy;
+        Glib::RefPtr<Glib::Binding> m_binding_notice;
+        Gtk::ToggleButton m_toggle_notice;
+        Gtk::Revealer m_revealer_notice;
+
+      public:
+
+        Gtk::CheckButton ckbt;
+        Gtk::CheckButton send_cookie_check;
+
+        Gtk::CheckButton fallback_proxy_check;
+        Gtk::Label notice_label;
+
+        SKELETON::LabelEntry entry_host;
+        SKELETON::LabelEntry entry_port;
+
+        ProxyFrameFallbackOption( const std::string& title, const Glib::ustring& ckbt_label,
+                                  const Glib::ustring& send_label, const Glib::ustring& fallback_label,
+                                  const Glib::ustring& host_label, const Glib::ustring& port_label )
+            : m_vbox( Gtk::ORIENTATION_VERTICAL, 0 )
+            , m_hbox( Gtk::ORIENTATION_HORIZONTAL, 8 )
+            , m_vbox_exp_option( Gtk::ORIENTATION_VERTICAL, 0 )
+            , m_hbox_fallback_proxy( Gtk::ORIENTATION_HORIZONTAL, 0 )
+            , m_toggle_notice( "注意事項" )
+            , ckbt( ckbt_label, true )
+            , send_cookie_check( send_label, true )
+            , fallback_proxy_check( fallback_label, true )
+            , notice_label( kFallbackProxyNotice, false )
+            , entry_host( true, host_label)
+            , entry_port( true, port_label )
+        {
+            send_cookie_check.set_tooltip_text( kSendCookieTooltip );
+
+            fallback_proxy_check.set_halign( Gtk::ALIGN_START );
+            m_toggle_notice.set_halign( Gtk::ALIGN_END );
+
+            m_revealer_notice.add( notice_label );
+            m_revealer_notice.set_reveal_child( false );
+            notice_label.set_line_wrap( true );
+            notice_label.set_margin_end( 8 );
+            notice_label.set_margin_start( 8 );
+
+            m_binding_notice = Glib::Binding::bind_property( m_toggle_notice.property_active(),
+                                                             m_revealer_notice.property_reveal_child() );
+
+            m_hbox.pack_start( ckbt, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( send_cookie_check, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( entry_host );
+            m_hbox.pack_start( entry_port, Gtk::PACK_SHRINK );
+
+            m_hbox_fallback_proxy.set_hexpand( true );
+            m_hbox_fallback_proxy.set_margin_start( 8 );
+            m_hbox_fallback_proxy.set_margin_end( 8 );
+            m_hbox_fallback_proxy.pack_start( fallback_proxy_check, Gtk::PACK_SHRINK );
+            m_hbox_fallback_proxy.pack_end( m_toggle_notice, Gtk::PACK_SHRINK );
+            m_vbox_exp_option.pack_start( m_hbox_fallback_proxy, Gtk::PACK_SHRINK );
+            m_vbox_exp_option.pack_start( m_revealer_notice, Gtk::PACK_SHRINK );
+
+            m_hbox.set_border_width( 8 );
+            m_vbox.pack_start( m_hbox, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( m_vbox_exp_option, Gtk::PACK_SHRINK );
+
+            set_label( title );
+            set_border_width( 8 );
+            add( m_vbox );
+        }
+    };
+
     class ProxyPref : public SKELETON::PrefDiag
     {
         Gtk::Label m_label;
 
         // 2ch読み込み用
-        ProxyFrame m_frame_2ch;
+        ProxyFrameFallbackOption m_frame_2ch;
 
         // 2ch書き込み用
         ProxyFrame m_frame_2ch_w;
@@ -75,6 +154,7 @@ namespace CORE
             CONFIG::set_send_cookie_to_proxy_for2ch( m_frame_2ch.send_cookie_check.get_active() );
             CONFIG::set_proxy_for2ch( MISC::utf8_trim( m_frame_2ch.entry_host.get_text().raw() ) );
             CONFIG::set_proxy_port_for2ch( atoi( m_frame_2ch.entry_port.get_text().c_str() ) );
+            CONFIG::set_use_fallback_proxy_for2ch( m_frame_2ch.fallback_proxy_check.get_active() );
 
             // 2ch書き込み用
             CONFIG::set_use_proxy_for2ch_w( m_frame_2ch_w.ckbt.get_active() );
@@ -94,8 +174,10 @@ namespace CORE
         ProxyPref( Gtk::Window* parent, const std::string& url )
             : SKELETON::PrefDiag( parent, url )
             , m_label( "認証を行う場合はホスト名を「ユーザID:パスワード@ホスト名」としてください。" )
-            , m_frame_2ch( "2ch読み込み用", "使用する(_U)", "クッキーを送る(_I)",
-                           "ホスト名(_H)： ", "ポート番号(_P)： " )
+            , m_frame_2ch(
+                "2ch読み込み用", "使用する(_U)", "クッキーを送る(_I)",
+                "プロキシを使わない接続で過去ログが見つからなかったときは2ch読み込み用プロキシを使う(_B)",
+                "ホスト名(_H)： ", "ポート番号(_P)： " )
             , m_frame_2ch_w( "2ch書き込み用", "使用する(_S)", "クッキーを送る(_J)",
                              "ホスト名(_N)： ", "ポート番号(_R)： " )
             , m_frame_data( "その他のサーバ用(板一覧、外部板、画像など)", "使用する(_E)", "クッキーを送る(_K)",
@@ -110,6 +192,7 @@ namespace CORE
             else host = CONFIG::get_proxy_basicauth_for2ch() + "@" + CONFIG::get_proxy_for2ch();
             m_frame_2ch.entry_host.set_text( host );
             m_frame_2ch.entry_port.set_text( std::to_string( CONFIG::get_proxy_port_for2ch() ) );
+            m_frame_2ch.fallback_proxy_check.set_active( CONFIG::get_use_fallback_proxy_for2ch() );
 
             set_activate_entry( m_frame_2ch.entry_host );
             set_activate_entry( m_frame_2ch.entry_port );
@@ -143,6 +226,9 @@ namespace CORE
             get_content_area()->pack_start( m_frame_data );
 
             set_title( "プロキシ設定" );
+            // 2ch読み込み用設定にある label のテキストを wrap するためダイアログのサイズを設定しておく
+            // 実際はウィジェットの最小サイズを考慮した大きさになる
+            set_default_size( 100, 100 );
             show_all_children();
         }
 
