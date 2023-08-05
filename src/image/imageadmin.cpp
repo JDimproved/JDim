@@ -366,7 +366,7 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
 //
 // タブの切替え
 //
-void ImageAdmin::tab_left( const bool updated )
+void ImageAdmin::tab_left( const TabMove )
 {
     std::string url_to;
 
@@ -395,7 +395,7 @@ void ImageAdmin::tab_left( const bool updated )
 }
 
 
-void ImageAdmin::tab_right( const bool updated )
+void ImageAdmin::tab_right( const TabMove )
 {
     std::string url_to;
 

@@ -35,6 +35,8 @@ void MouseConfig::load_conf()
     load_motions( cf, "TabLeft", MOUSECONF_TabLeft );
     load_motions( cf, "TabRightUpdated", MOUSECONF_TabRightUpdated );
     load_motions( cf, "TabLeftUpdated", MOUSECONF_TabLeftUpdated );
+    load_motions( cf, "TabRightUpdatable", MOUSECONF_TabRightUpdatable );
+    load_motions( cf, "TabLeftUpdatable", MOUSECONF_TabLeftUpdatable );
     load_motions( cf, "CloseAllTabs", MOUSECONF_CloseAllTabs );
     load_motions( cf, "CloseOtherTabs", MOUSECONF_CloseOtherTabs );
     load_motions( cf, "RestoreLastTab", MOUSECONF_RestoreLastTab );

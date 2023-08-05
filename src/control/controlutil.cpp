@@ -595,6 +595,14 @@ bool CONTROL::operate_common( const int control, const std::string& url, SKELETO
             if( admin ) admin->set_command( "tab_right_updated" );
             break;
 
+        case CONTROL::TabLeftUpdatable:
+            if( admin ) admin->set_command( "tab_left_updatable" );
+            break;
+
+        case CONTROL::TabRightUpdatable:
+            if( admin ) admin->set_command( "tab_right_updatable" );
+            break;
+
         // タブ位置(1-9)で移動
         case CONTROL::TabNum1:
             if( admin ) admin->set_command( "tab_num", "", "1" );

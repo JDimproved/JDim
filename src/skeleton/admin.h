@@ -34,6 +34,14 @@ namespace SKELETON
     protected:
         std::unique_ptr<DragableNoteBook> m_notebook;
 
+        /// @brief タブ左右移動の種類
+        enum class TabMove
+        {
+            next,      ///< 隣のタブに移動
+            updated,   ///< 更新済みのタブに移動
+            updatable, ///< 更新可能なタブに移動
+        };
+
     private:
         bool m_focus{};
 
@@ -191,9 +199,8 @@ namespace SKELETON
         void reload_view( const std::string& url );
 
         // タブ左右移動
-        // updated == true の時は更新されたタブに移動
-        virtual void tab_left( const bool updated );
-        virtual void tab_right( const bool updated );
+        virtual void tab_left( const TabMove mode );
+        virtual void tab_right( const TabMove mode );
 
         virtual void tab_num( const std::string& str_num );
         virtual void tab_head();

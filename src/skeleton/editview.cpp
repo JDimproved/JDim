@@ -350,6 +350,8 @@ bool EditTextView::on_key_press_event( GdkEventKey* event )
         case CONTROL::TabRight:
         case CONTROL::TabLeftUpdated:
         case CONTROL::TabRightUpdated:
+        case CONTROL::TabLeftUpdatable:
+        case CONTROL::TabRightUpdatable:
         case CONTROL::ToggleSage:
         case CONTROL::HomeEdit:
         case CONTROL::EndEdit:

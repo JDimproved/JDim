@@ -212,7 +212,7 @@ void MessageAdmin::switch_admin()
 
 
 // virtual
-void MessageAdmin::tab_left( const bool updated )
+void MessageAdmin::tab_left( const TabMove )
 {
     SKELETON::View *view = get_current_view();
     if( view ) view->set_command( "tab_left" );
@@ -220,7 +220,7 @@ void MessageAdmin::tab_left( const bool updated )
 
 
 // virtual
-void MessageAdmin::tab_right( const bool updated )
+void MessageAdmin::tab_right( const TabMove )
 {
     SKELETON::View *view = get_current_view();
     if( view ) view->set_command( "tab_right" );
