@@ -24,6 +24,11 @@
 #include <iomanip>
 #endif
 
+// OpenBSD does not define the macro
+#ifndef AI_V4MAPPED
+#define AI_V4MAPPED 0
+#endif
+
 
 namespace {
 
