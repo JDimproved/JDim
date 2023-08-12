@@ -2197,8 +2197,14 @@ create_multispace:
 
                 if( ! a_link.empty() && ! a_str.empty() ) {
 
+                    // res anchor linked by <a> element
+                    if( a_str.size() > 8 && a_str.compare( 0, 8, "&gt;&gt;" ) == 0 && g_ascii_isdigit( a_str[8] ) ) {
+                        // アンカーは後で処理するのでここは抜ける
+                        pos = pos_str_start;
+                    }
+
                     // BE link
-                    if( a_link.rfind( "javascript:be(", 0 ) == 0 ) {
+                    else if( a_link.rfind( "javascript:be(", 0 ) == 0 ) {
                         m_buf_link.assign( PROTO_BE ); // 確保したメモリを再利用するため = は使わない
                         a_link.remove_prefix( 14 );
                         a_link.remove_suffix( 2 );
