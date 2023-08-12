@@ -184,6 +184,20 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
 
             bool flag = true;
             size_t i = 0, i2 = 0;
+
+            // 簡易チェックの場合、とにかく改行でも空白でもない所まで読み飛ばす
+            while (1) {
+                if ( item.head[ i ] == '\n' ) { ++i; continue; }
+                if ( item.head[ i ] == ' ' ) { ++i; continue; }
+                break;
+            }
+
+            while ( i2 < headsize ) {
+                if ( msg[ i2 ] == '\n' ) { ++i2; continue; }
+                if ( msg[ i2 ] == ' ' ) { ++i2; continue; }
+                break;
+            }
+
             while( item.head[ i ] != '\0' && i2 < headsize ){
 
                 // 空白は除く
