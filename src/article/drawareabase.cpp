@@ -1808,6 +1808,12 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
         header = m_layout_tree->get_header_of_res( pivot );
         if( ! header ) break;
 
+        if( ! header->rect ) {
+            top = pivot + 1;
+            header = nullptr;
+            continue;
+        }
+
 /*
         std::cout << "top = " << top << " back = " << back << " pivot = " << pivot
                   << " pos_y = " << pos_y << " y = " << header->rect->y
