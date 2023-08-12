@@ -117,7 +117,6 @@ struct LAYOUT_TABLE
 
 DrawAreaBase::DrawAreaBase( const std::string& url )
     : m_url( url )
-    , m_cr( nullptr, cairo_destroy )
     , m_backscreen( nullptr, cairo_surface_destroy )
     , m_enable_draw{ true }
     , m_back_frame_top( nullptr, cairo_surface_destroy )
@@ -1928,12 +1927,12 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
         m_ready_back_marker = false;
 
-        cairo_save( m_cr.get() );
-        cairo_rectangle( m_cr.get(), m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-        cairo_clip( m_cr.get() );
-        cairo_set_source_surface( m_cr.get(), m_back_marker.get(), m_clip_marker.x, m_clip_marker.y );
-        cairo_paint( m_cr.get() );
-        cairo_restore( m_cr.get() );
+        cairo_save( m_cr );
+        cairo_rectangle( m_cr, m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
+        cairo_clip( m_cr );
+        cairo_set_source_surface( m_cr, m_back_marker.get(), m_clip_marker.x, m_clip_marker.y );
+        cairo_paint( m_cr );
+        cairo_restore( m_cr );
     }
 
     // 前回描画したフレームを消す
@@ -1941,23 +1940,23 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
 
         m_ready_back_frame = false;
 
-        cairo_save( m_cr.get() );
-        cairo_rectangle( m_cr.get(), 0.0, 0.0, width_view, height_view );
-        cairo_clip( m_cr.get() );
-        cairo_set_source_surface( m_cr.get(), m_back_frame_top.get(), 0.0, 0.0 );
-        cairo_paint( m_cr.get() );
-        cairo_set_source_surface( m_cr.get(), m_back_frame_bottom.get(), 0.0, height_view - WIDTH_FRAME );
-        cairo_paint( m_cr.get() );
-        cairo_restore( m_cr.get() );
+        cairo_save( m_cr );
+        cairo_rectangle( m_cr, 0.0, 0.0, width_view, height_view );
+        cairo_clip( m_cr );
+        cairo_set_source_surface( m_cr, m_back_frame_top.get(), 0.0, 0.0 );
+        cairo_paint( m_cr );
+        cairo_set_source_surface( m_cr, m_back_frame_bottom.get(), 0.0, height_view - WIDTH_FRAME );
+        cairo_paint( m_cr );
+        cairo_restore( m_cr );
     }
 
     // バックスクリーンをウィンドウにコピー
-    cairo_save( m_cr.get() );
-    cairo_rectangle( m_cr.get(), 0.0, y_screen, width_view, height_screen );
-    cairo_clip( m_cr.get() );
-    cairo_set_source_surface( m_cr.get(), m_backscreen.get(), 0.0, 0.0 );
-    cairo_paint( m_cr.get() );
-    cairo_restore( m_cr.get() );
+    cairo_save( m_cr );
+    cairo_rectangle( m_cr, 0.0, y_screen, width_view, height_screen );
+    cairo_clip( m_cr );
+    cairo_set_source_surface( m_cr, m_backscreen.get(), 0.0, 0.0 );
+    cairo_paint( m_cr );
+    cairo_restore( m_cr );
 
     // オートスクロールマーカと枠の描画
     draw_marker();
@@ -2286,7 +2285,7 @@ void DrawAreaBase::draw_marker()
         cairo_t* const cr = cairo_create( m_back_marker.get() );
         cairo_rectangle( cr, 0.0, 0.0, m_clip_marker.width, m_clip_marker.height );
         cairo_clip( cr );
-        cairo_set_source_surface( cr, cairo_get_target( m_cr.get() ), -m_clip_marker.x, -m_clip_marker.y );
+        cairo_set_source_surface( cr, cairo_get_target( m_cr ), -m_clip_marker.x, -m_clip_marker.y );
         cairo_paint( cr );
         cairo_destroy( cr );
 
@@ -2294,13 +2293,13 @@ void DrawAreaBase::draw_marker()
     }
 
     constexpr const double r = AUTOSCR_CIRCLE / 2.0;
-    cairo_save( m_cr.get() );
-    cairo_rectangle( m_cr.get(), m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
-    cairo_clip( m_cr.get() );
-    gdk_cairo_set_source_rgba( m_cr.get(), m_color[ COLOR_MARKER ].gobj() );
-    cairo_arc( m_cr.get(), x_marker + r, y_marker + r, r - 1.0, 0.0, 2.0 * M_PI );
-    cairo_stroke( m_cr.get() );
-    cairo_restore( m_cr.get() );
+    cairo_save( m_cr );
+    cairo_rectangle( m_cr, m_clip_marker.x, m_clip_marker.y, m_clip_marker.width, m_clip_marker.height );
+    cairo_clip( m_cr );
+    gdk_cairo_set_source_rgba( m_cr, m_color[ COLOR_MARKER ].gobj() );
+    cairo_arc( m_cr, x_marker + r, y_marker + r, r - 1.0, 0.0, 2.0 * M_PI );
+    cairo_stroke( m_cr );
+    cairo_restore( m_cr );
 }
 
 
@@ -2314,7 +2313,7 @@ void DrawAreaBase::draw_frame()
     const int width_win = m_view.get_width();
     const int height_win = m_view.get_height();
 
-    cairo_surface_t* const borrowed_sf = cairo_get_target( m_cr.get() );
+    cairo_surface_t* const borrowed_sf = cairo_get_target( m_cr );
     cairo_t* cr = cairo_create( m_back_frame_top.get() );
     cairo_rectangle( cr, 0.0, 0.0, width_win, WIDTH_FRAME );
     cairo_clip( cr );
@@ -2331,12 +2330,12 @@ void DrawAreaBase::draw_frame()
 
     m_ready_back_frame = true;
 
-    cairo_save( m_cr.get() );
-    gdk_cairo_set_source_rgba( m_cr.get(), m_color[ COLOR_FRAME ].gobj() );
-    cairo_set_line_width( m_cr.get(), 2.0 );
-    cairo_rectangle( m_cr.get(), 0.0, 0.0, width_win, height_win );
-    cairo_stroke( m_cr.get() );
-    cairo_restore( m_cr.get() );
+    cairo_save( m_cr );
+    gdk_cairo_set_source_rgba( m_cr, m_color[ COLOR_FRAME ].gobj() );
+    cairo_set_line_width( m_cr, 2.0 );
+    cairo_rectangle( m_cr, 0.0, 0.0, width_win, height_win );
+    cairo_stroke( m_cr );
+    cairo_restore( m_cr );
 }
 
 
@@ -4675,9 +4674,8 @@ bool DrawAreaBase::slot_draw( const Cairo::RefPtr< Cairo::Context >& cr )
               << " url = " << m_url
               << std::endl;
 #endif
-    // drawイベントから抜ける前にm_cr.release()を呼び出して所有権を放棄する
-    // ローカル変数やスコープガードなどを使用して安全性を高めるべきか
-    m_cr.reset( cr->cobj() );
+    // cairommが管理するオブジェクトを借用する
+    m_cr = cr->cobj();
 
     // draw_screen からの呼び出し
     if( m_drawinfo.draw ) {
@@ -4693,12 +4691,12 @@ bool DrawAreaBase::slot_draw( const Cairo::RefPtr< Cairo::Context >& cr )
 #ifdef _DEBUG
         std::cout << "copy from backscreen\n";
 #endif
-        cairo_save( m_cr.get() );
-        cairo_rectangle( m_cr.get(), x1, y1, width, height );
-        cairo_clip( m_cr.get() );
-        cairo_set_source_surface( m_cr.get(), m_backscreen.get(), x1, y1 );
-        cairo_paint( m_cr.get() );
-        cairo_restore( m_cr.get() );
+        cairo_save( m_cr );
+        cairo_rectangle( m_cr, x1, y1, width, height );
+        cairo_clip( m_cr );
+        cairo_set_source_surface( m_cr, m_backscreen.get(), x1, y1 );
+        cairo_paint( m_cr );
+        cairo_restore( m_cr );
 
         // オートスクロールマーカと枠の描画
         draw_marker();
@@ -4710,13 +4708,13 @@ bool DrawAreaBase::slot_draw( const Cairo::RefPtr< Cairo::Context >& cr )
 #ifdef _DEBUG
         std::cout << "clear window\n";
 #endif
-        cairo_save( m_cr.get() );
-        gdk_cairo_set_source_rgba( m_cr.get(), m_color[ get_colorid_back() ].gobj() );
-        cairo_fill( m_cr.get() );
-        cairo_restore( m_cr.get() );
+        cairo_save( m_cr );
+        gdk_cairo_set_source_rgba( m_cr, m_color[ get_colorid_back() ].gobj() );
+        cairo_fill( m_cr );
+        cairo_restore( m_cr );
 
-        // シグナルハンドラの引数から借りただけなので所有権を放棄しておく
-        m_cr.release();
+        // シグナルハンドラの引数から借りただけなのでnullptrでリセットする
+        m_cr = nullptr;
         return false;
     }
     // 必要な所だけ再描画
@@ -4726,8 +4724,8 @@ bool DrawAreaBase::slot_draw( const Cairo::RefPtr< Cairo::Context >& cr )
 #endif
         exec_draw_screen( static_cast< int >( y1 ), static_cast< int >( height ) );
     }
-    // シグナルハンドラの引数から借りただけなので所有権を放棄しておく
-    m_cr.release();
+    // シグナルハンドラの引数から借りただけなのでnullptrでリセットする
+    m_cr = nullptr;
     return true;
 }
 
