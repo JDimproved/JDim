@@ -127,7 +127,7 @@ namespace ARTICLE
 
         // cairomm 1.12.0 がメモリリークを起こしたので
         // C API を使うことで問題を回避する
-        std::unique_ptr< cairo_t, void ( * )( cairo_t* ) > m_cr;
+        cairo_t* m_cr{};
         std::unique_ptr< cairo_surface_t, void ( * )( cairo_surface_t* ) > m_backscreen;
 
         Glib::RefPtr< Pango::Layout > m_pango_layout;
