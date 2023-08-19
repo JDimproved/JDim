@@ -600,8 +600,8 @@ void DrawAreaBase::append_res( const int from_num, const int to_num )
 
     if( scroll ){
 
-        CORE::CSS_PROPERTY* css = m_layout_tree->get_separator()->css;
-        RECTANGLE* rect = m_layout_tree->get_separator()->rect;
+        const CORE::CSS_PROPERTY* css = m_layout_tree->get_separator()->css;
+        const RECTANGLE* rect = m_layout_tree->get_separator()->rect;
 
         m_scrollinfo.reset();
         m_scrollinfo.dy = 0;
@@ -4293,8 +4293,8 @@ bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANGLE* re
         layout = layout_tmp;
     }
 
-    RECTANGLE* rect_from = layout->rect;
-    RECTANGLE* rect_to = layout_to->rect;
+    const RECTANGLE* rect_from = layout->rect;
+    const RECTANGLE* rect_to = layout_to->rect;
     if( ! rect_from || ! rect_to ) return false;
     while( rect_to->next_rect ) rect_to = rect_to->next_rect;
 
@@ -4439,7 +4439,7 @@ bool DrawAreaBase::set_selection_str()
 //
 bool DrawAreaBase::is_caret_on_selection( const CARET_POSITION& caret_pos ) const
 {
-    LAYOUT* layout = caret_pos.layout;
+    const LAYOUT* layout = caret_pos.layout;
 
     if( !layout || ! m_selection.select || m_selection.str.empty() ) return false;
     if( layout->id_header != m_selection.caret_from.layout->id_header ) return false;

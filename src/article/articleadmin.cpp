@@ -640,7 +640,7 @@ void ArticleAdmin::open_searchbar()
 {
     if( ! m_toolbar ) return;
 
-    SKELETON::View* view = get_current_view();
+    const SKELETON::View* view = get_current_view();
     if( ! view ) return;
 
     m_toolbar->open_searchbar();
