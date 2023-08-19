@@ -59,7 +59,7 @@ void ArticleToolBar::set_view( SKELETON::View * view )
     m_enable_slot = false;
 
     // ArticleViewBase固有の情報をコピー
-    ArticleViewBase* articleview = dynamic_cast< ArticleViewBase* >( view );
+    const ArticleViewBase* articleview = dynamic_cast<ArticleViewBase*>( view );
     if( articleview ){
 
         m_url_article = articleview->url_article();
