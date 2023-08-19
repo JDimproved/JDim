@@ -80,7 +80,7 @@ int DBIMG::get_type_ext( const char* url, int n )
 int DBIMG::get_type_real( const std::string& url )
 {
     int type = T_UNKNOWN;
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) type = img->get_type();
 
     return type;
@@ -96,7 +96,7 @@ DBIMG::Img* DBIMG::get_img( const std::string& url )
 
 std::string DBIMG::get_cache_path( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_cache_path();
 
     return std::string();
@@ -153,7 +153,7 @@ void DBIMG::delete_all_files()
 
 int DBIMG::get_width( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_width();
     return 0;
 }
@@ -161,7 +161,7 @@ int DBIMG::get_width( const std::string& url )
 
 int DBIMG::get_height( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_height();
     return 0;
 }
@@ -169,7 +169,7 @@ int DBIMG::get_height( const std::string& url )
 
 bool DBIMG::is_cached( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->is_cached();
     return false;
 }
@@ -177,7 +177,7 @@ bool DBIMG::is_cached( const std::string& url )
 
 bool DBIMG::get_abone( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_abone();
     return false;
 }
@@ -200,7 +200,7 @@ bool DBIMG::is_loading( const std::string& url )
 
 bool DBIMG::is_wait( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->is_wait();
 
     return false;
@@ -224,7 +224,7 @@ std::string DBIMG::get_str_code( const std::string& url )
 
 bool DBIMG::get_mosaic( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_mosaic();
     return true;
 }
@@ -246,7 +246,7 @@ void DBIMG::show_large_img( const std::string& url )
 
 bool DBIMG::is_zoom_to_fit( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->is_zoom_to_fit();
     return true;
 }
@@ -261,7 +261,7 @@ void DBIMG::set_zoom_to_fit( const std::string& url, bool fit )
 
 int DBIMG::get_size( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_size();
     return 100;
 }
@@ -276,7 +276,7 @@ void DBIMG::set_size( const std::string& url, int size )
 
 std::string DBIMG::get_refurl( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->get_refurl();
     return std::string();
 }
@@ -299,14 +299,14 @@ size_t DBIMG::get_filesize( const std::string& url )
 
 bool DBIMG::is_protected( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->is_protected();
     return true;
 }
 
 bool DBIMG::is_fake( const std::string& url )
 {
-    DBIMG::Img* img = DBIMG::get_img( url );
+    const DBIMG::Img* img = DBIMG::get_img( url );
     if( img ) return img->is_fake();
     return false;
 }
