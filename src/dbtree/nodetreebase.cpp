@@ -2213,8 +2213,14 @@ create_multispace:
                     }
                     else {
 
+                        // Schema-less URL (net_path)
+                        if( a_link.compare( 0, 2, "//" ) == 0 ) {
+                            m_buf_link.assign( m_url, 0, m_url.find( '/' ) );
+                            m_buf_link.append( a_link );
+                            a_link = m_buf_link;
+                        }
                         // Relative Reference
-                        if( a_link[0] == '/' || a_link.rfind( "../", 0 ) == 0 ) {
+                        else if( a_link[0] == '/' || a_link.rfind( "../", 0 ) == 0 ) {
                             const std::size_t link_offset = ( a_link[0] == '/' ) ? 0 : 2;
 
                             // アンカーの判定
