@@ -29,6 +29,7 @@ enum
     MODE_KAKO,
     MODE_OLDURL,
     MODE_KAKO_PROXY,
+    MODE_OLDURL_PROXY,
 };
 
 
@@ -163,7 +164,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
         }
         else set_resume( false );
 
-        data.url = get_url();
+        data.url = ( m_mode == MODE_OLDURL_PROXY ) ? m_org_url : get_url();
     }
 
 #ifdef _DEBUG    
@@ -177,7 +178,7 @@ void NodeTree2ch::create_loaderdata( JDLIB::LOADERDATA& data )
     std::cout << "agent = " << data.agent << std::endl;
 #endif
 
-    if( m_mode == MODE_KAKO_PROXY ) {
+    if( m_mode == MODE_KAKO_PROXY || m_mode == MODE_OLDURL_PROXY ) {
         data.host_proxy = CONFIG::get_proxy_for2ch();
         data.port_proxy = CONFIG::get_proxy_port_for2ch();
         data.basicauth_proxy = CONFIG::get_proxy_basicauth_for2ch();
@@ -221,20 +222,22 @@ void NodeTree2ch::receive_finish()
         (例) https://HOGE.5ch.net/test/read.cgi/hoge/1234567890/ を取得
         (1) https://HOGE.5ch.net/hoge/dat/1234567890.dat から DAT を取得。
         (2) https://HOGE.5ch.net/hoge/oyster/1234/1234567890.dat から取得。
-        (3) 旧URL(過去ログサーバ)がある場合、そのURLで再取得
+        (3) 旧URL(過去ログサーバ)がある場合、そのURLから取得
         取得できなかったとき -> 最初にプロキシを使わない接続で読み込めるか試す設定なら(4)へ
 
-        (4) プロキシに接続して取得
+        (4) プロキシに接続して現役サーバから取得
+        (5) 旧URL(過去ログサーバ)がある場合、プロキシに接続してそのURLから取得
 
         ・スレIDが9桁の場合 -> https://サーバ/板ID/oyster/IDの上位3桁/ID.dat
 
         (例) https://HOGE.5ch.net/test/read.cgi/hoge/123456789/ を取得
         (1) https://HOGE.5ch.net/hoge/dat/123456789.dat から DAT を取得。
         (2) https://HOGE.5ch.net/hoge/oyster/123/123456789.dat から取得。
-        (3) 旧URL(過去ログサーバ)がある場合、そのURLで再取得
+        (3) 旧URL(過去ログサーバ)がある場合、そのURLから取得
         取得できなかったとき -> 最初にプロキシを使わない接続で読み込めるか試す設定なら(4)へ
 
-        (4) プロキシに接続して取得
+        (4) プロキシに接続して現役サーバから取得
+        (5) 旧URL(過去ログサーバ)がある場合、プロキシに接続してそのURLから取得
 */
 
         // DAT落ちした現役サーバに収容されているスレッド
@@ -247,6 +250,9 @@ void NodeTree2ch::receive_finish()
         else if( ( m_mode == MODE_KAKO || m_mode == MODE_OLDURL )
                  && CONFIG::get_use_fallback_proxy_for2ch()
                  && ! CONFIG::get_proxy_for2ch().empty() ) m_mode = MODE_KAKO_PROXY;
+
+        // 現役サーバで見つからなかったときは旧URL(過去ログサーバ)に切り替えて試す
+        else if( m_mode == MODE_KAKO_PROXY && get_url() != m_org_url ) m_mode = MODE_OLDURL_PROXY;
 
         // 失敗
         else m_mode = MODE_NORMAL;
