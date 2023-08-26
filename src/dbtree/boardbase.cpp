@@ -702,7 +702,7 @@ std::string BoardBase::url_readcgi( const std::string& url, int num_from, int nu
     std::cout << "BoardBase::url_readcgi : " << url  << " from " << num_from << " to " << num_to << std::endl;
 #endif
 
-    ArticleBase* article = get_article_fromURL( url );
+    const ArticleBase* article = get_article_fromURL( url );
     if( !article ) return std::string();
     if( article->empty() ) return std::string();
 
@@ -2193,7 +2193,7 @@ void BoardBase::save_summary()
     std::ostringstream sstr_out;
     sstr_out << "(";
 
-    for( ArticleBase* art : m_list_subject ) {
+    for( const ArticleBase* art : m_list_subject ) {
 
         if( art->is_cached()
             && ( art->get_status() & STATUS_NORMAL ) ){
@@ -2344,7 +2344,7 @@ std::list< std::string > BoardBase::get_check_update_articles()
 
     std::list< int > list_speed;
 
-    for( ArticleBase* article : m_hash_article ) {
+    for( const ArticleBase* article : m_hash_article ) {
 
         if( article->is_cached()
             && article->get_number()
