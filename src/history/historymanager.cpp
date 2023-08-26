@@ -395,7 +395,7 @@ ViewHistory* History_Manager::get_viewhistory( const std::string& url )
 //
 void History_Manager::create_viewhistory( const std::string& url )
 {
-    ViewHistory* history = get_viewhistory( url );
+    const ViewHistory* history = get_viewhistory( url );
     if( history ) return;
 
 #ifdef _DEBUG
@@ -468,7 +468,7 @@ static std::vector<ViewHistoryItem*> s_nullitems;
 // item の取得
 std::vector< ViewHistoryItem* >& History_Manager::get_items_back_viewhistory( const std::string& url, const int count )
 {
-    ViewHistory* history = get_viewhistory( url );
+    const ViewHistory* history = get_viewhistory( url );
     if( !history ) return s_nullitems;
 
     return history->get_items_back( count );
@@ -477,7 +477,7 @@ std::vector< ViewHistoryItem* >& History_Manager::get_items_back_viewhistory( co
 
 std::vector< ViewHistoryItem* >& History_Manager::get_items_forward_viewhistory( const std::string& url, const int count )
 {
-    ViewHistory* history = get_viewhistory( url );
+    const ViewHistory* history = get_viewhistory( url );
     if( !history ) return s_nullitems;
 
     return history->get_items_forward( count );
@@ -508,7 +508,7 @@ bool History_Manager::append_viewhistory( const std::string& url_current, const 
 //
 bool History_Manager::can_back_viewhistory( const std::string& url, const int count )
 {
-    ViewHistory* history = get_viewhistory( url );
+    const ViewHistory* history = get_viewhistory( url );
     if( ! history ) return false;
 
     return history->can_back( count );
@@ -520,7 +520,7 @@ bool History_Manager::can_back_viewhistory( const std::string& url, const int co
 //
 bool History_Manager::can_forward_viewhistory( const std::string& url, const int count )
 {
-    ViewHistory* history = get_viewhistory( url );
+    const ViewHistory* history = get_viewhistory( url );
     if( ! history ) return false;
 
     return history->can_forward( count );
