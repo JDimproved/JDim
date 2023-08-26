@@ -334,7 +334,7 @@ void DragableNoteBook::update_toolbar_button()
 //
 int DragableNoteBook::get_tabicon( const int page )
 {
-    SKELETON::TabLabel* tablabel = m_notebook_tab.get_tablabel( page );
+    const SKELETON::TabLabel* tablabel = m_notebook_tab.get_tablabel( page );
     if( tablabel ) return tablabel->get_id_icon();
 
     return ICON::NONE;

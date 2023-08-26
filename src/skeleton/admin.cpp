@@ -351,7 +351,7 @@ std::list<std::string> Admin::get_URLs()
     if( pages ){
 
         for( int i = 0; i < pages; ++i ){
-            SKELETON::View* view = dynamic_cast< SKELETON::View* >( m_notebook->get_nth_page( i ) );
+            const SKELETON::View* view = dynamic_cast<SKELETON::View*>( m_notebook->get_nth_page( i ) );
             if( view ) urls.push_back( view->get_url() );
         }
     }
@@ -1302,7 +1302,7 @@ void Admin::tab_left( const TabMove mode )
         if( page < 0 ) page = pages -1;
         if( mode == TabMove::next ) break;
 
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( page ) );
         if( ! view ) return;
 
         // アイコンが表示されているタブを見つける
@@ -1344,7 +1344,7 @@ void Admin::tab_right( const TabMove mode )
         if( page >= pages ) page = 0;
         if( mode == TabMove::next ) break;
 
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( page ) );
         if( ! view ) return;
 
         // アイコンが表示されているタブを見つける
@@ -1525,7 +1525,7 @@ void Admin::close_view( SKELETON::View* view )
         // もし現在表示中のビューを消すときは予めひとつ右のビューにスイッチしておく
         // そうしないと左のビューを一度表示してしまうので遅くなる
         else{
-            SKELETON::View* newview = dynamic_cast< View* >( m_notebook->get_nth_page( page + 1 ) );
+            const SKELETON::View* newview = dynamic_cast<View*>( m_notebook->get_nth_page( page + 1 ) );
             if( newview ) switch_view( newview->get_url() );
         }
     }
@@ -1603,7 +1603,7 @@ void Admin::close_other_views( const std::string& url )
 {
     const int pages = m_notebook->get_n_pages();
     for( int i = 0; i < pages; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view && view->get_url() != url ) set_command( "close_view", view->get_url() );
     }
 }
@@ -1618,7 +1618,7 @@ void Admin::close_current_view()
     std::cout << "Admin::close_current_view : " << m_url << std::endl;
 #endif
 
-    SKELETON::View* view = get_current_view();
+    const SKELETON::View* view = get_current_view();
     if( view ) close_view( view->get_url() );
 }
 
@@ -1678,7 +1678,7 @@ void Admin::set_title( const std::string& url, const std::string& title, const b
     if( m_win ) m_win->set_title( "JDim - " + title );
     else{
 
-        SKELETON::View* view = get_current_view();
+        const SKELETON::View* view = get_current_view();
         if( view ){
 
             // アクティブなviewからコマンドが来たら表示する
@@ -1696,7 +1696,7 @@ void Admin::set_url( const std::string& url, const std::string& url_show, const 
     if( m_win ){}
     else{
 
-        SKELETON::View* view = get_current_view();
+        const SKELETON::View* view = get_current_view();
         if( view ){
 
             // アクティブなviewからコマンドが来たら表示する
@@ -1723,7 +1723,7 @@ void Admin::set_status( const std::string& url, const std::string& stat, const b
     if( m_win ) m_win->set_status( stat );
     else{
         
-        SKELETON::View* view = get_current_view();
+        const SKELETON::View* view = get_current_view();
         if( view ){
             
             // アクティブなviewからコマンドが来たら表示する
@@ -1744,7 +1744,7 @@ void Admin::set_status_color( const std::string& url, const std::string& color, 
     if( m_win ) m_win->set_status_color( color );
     else{
 
-        SKELETON::View* view = get_current_view();
+        const SKELETON::View* view = get_current_view();
         if( view ){
             
             // アクティブなviewからコマンドが来たら色を変える
@@ -2079,7 +2079,7 @@ int Admin::get_current_page()
 //
 std::string Admin::get_current_url()
 {
-    SKELETON::View* view = get_current_view();
+    const SKELETON::View* view = get_current_view();
     if( ! view ) return std::string();
     return view->get_url();
 }
@@ -2159,7 +2159,7 @@ void Admin::slot_tab_close( const int page )
 #endif
 
     // 閉じる
-    SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( page ) );
     if( view ) close_view( view->get_url() );
 }
 
@@ -2214,7 +2214,7 @@ void Admin::slot_tab_menu( int page, int x, int y )
         act->set_enabled( ! is_locked( page ) );
     }
 
-    SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( page ) );
 
     // 進む、戻る
     if( view ){
@@ -2352,7 +2352,7 @@ void Admin::slot_close_tab()
     std::cout << "Admin::slot_close_tab " << m_clicked_page << std::endl;
 #endif
 
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) close_view( view->get_url() );
 }
 
@@ -2381,7 +2381,7 @@ void Admin::slot_close_other_tabs()
     set_command( "set_tab_operating", "", "true" );
 
     std::string url;
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) url = view->get_url();
 
     close_other_views( url );
@@ -2403,7 +2403,7 @@ void Admin::slot_close_left_tabs()
     set_command( "set_tab_operating", "", "true" );
 
     for( int i = 0; i < m_clicked_page; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
 
@@ -2424,7 +2424,7 @@ void Admin::slot_close_right_tabs()
 
     const int pages = m_notebook->get_n_pages();
     for( int i = m_clicked_page +1; i < pages; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
 
@@ -2447,7 +2447,7 @@ void Admin::slot_close_all_tabs()
 
     const int pages = m_notebook->get_n_pages();
     for( int i = 0; i < pages; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view ) set_command( "close_view", view->get_url() );
     }
 
@@ -2473,7 +2473,7 @@ void Admin::slot_close_same_icon_tabs()
 
         if( get_notebook()->get_tabicon( i ) == id ){
 
-            SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+            const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
             if( view ) set_command( "close_view", view->get_url() );
         }
     }
@@ -2524,13 +2524,13 @@ void Admin::check_update_all_tabs( const int from_page, const bool open )
 
     // 開始タブから右側
     for( int i = from_page ; i < pages; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view && view->get_enable_autoreload() ) CORE::get_checkupdate_manager()->push_back( view->get_url(), open );
     }
 
     // 開始タブから左側
     for( int i = 0 ; i < from_page; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view && view->get_enable_autoreload() ) CORE::get_checkupdate_manager()->push_back( view->get_url(), open );
     }
 
@@ -2576,7 +2576,7 @@ void Admin::reload_all_tabs( const int from_page )
 
     // クリックしたタブから右側
     for( int i = from_page ; i < pages; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view ){
             if( set_autoreload_mode( view->get_url(), AUTORELOAD_ONCE, waittime ) ) waittime += AUTORELOAD_MINSEC;
         }
@@ -2584,7 +2584,7 @@ void Admin::reload_all_tabs( const int from_page )
 
     // クリックしたタブから左側
     for( int i = 0 ; i < from_page; ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view ){
             if( set_autoreload_mode( view->get_url(), AUTORELOAD_ONCE, waittime ) ) waittime += AUTORELOAD_MINSEC;
         }
@@ -2598,7 +2598,7 @@ void Admin::reload_all_tabs( const int from_page )
 void Admin::slot_cancel_reload_all_tabs()
 {
     for( int i = 0 ; i < m_notebook->get_n_pages(); ++i ){
-        SKELETON::View* view = dynamic_cast< View* >( m_notebook->get_nth_page( i ) );
+        const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( i ) );
         if( view ) set_autoreload_mode( view->get_url(), AUTORELOAD_NOT, 0 );
     }
 
@@ -2615,7 +2615,7 @@ void Admin::slot_open_by_browser()
     std::cout << "Admin::slot_open_by_browser " << m_clicked_page << std::endl;
 #endif
 
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) CORE::core_set_command( "open_url_browser", view->url_for_copy() );
 }
 
@@ -2625,7 +2625,7 @@ void Admin::slot_open_by_browser()
 //
 void Admin::slot_copy_url()
 {
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) MISC::CopyClipboard( view->url_for_copy() );
 }
 
@@ -2637,7 +2637,7 @@ void Admin::slot_copy_url()
 void Admin::slot_copy_title_url()
 {
     std::string str = m_notebook->get_tab_fulltext( m_clicked_page );
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( m_clicked_page ) );
     if( view ) str += "\n" + view->url_for_copy();
     
     MISC::CopyClipboard( str );
@@ -2675,7 +2675,7 @@ std::list< bool > Admin::get_locked()
 // タブのロック/アンロック
 bool Admin::is_lockable( const int page )
 {
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( page ) );
     if( view ) return view->is_lockable();
 
     return false;
@@ -2683,7 +2683,7 @@ bool Admin::is_lockable( const int page )
 
 bool Admin::is_locked( const int page )
 {
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( page ) );
     if( view ) return view->is_locked();
 
     return false;
@@ -2691,7 +2691,7 @@ bool Admin::is_locked( const int page )
 
 bool Admin::is_locked( const std::string& url )
 {
-    SKELETON::View* view = get_view( url );
+    const SKELETON::View* view = get_view( url );
     if( view ) return view->is_locked();
 
     return false;
@@ -2718,7 +2718,7 @@ void Admin::unlock( const int page )
 // urlで指定されるタブが存在するか
 bool Admin::exist_tab( const std::string& url )
 {
-    SKELETON::View* view = get_view( url );
+    const SKELETON::View* view = get_view( url );
     if( view ) return true;
 
     return false;
@@ -2744,7 +2744,7 @@ void Admin::back_clicked_viewhistory( const int count )
 {
     if( m_clicked_page < 0 ) return;
 
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( m_clicked_page ) );
     if( ! view ) return;
     
     set_current_page( m_clicked_page );
@@ -2765,7 +2765,7 @@ void Admin::forward_clicked_viewhistory( const int count )
 {
     if( m_clicked_page < 0 ) return;
 
-    SKELETON::View* view =  dynamic_cast< View* >( m_notebook->get_nth_page( m_clicked_page ) );
+    const SKELETON::View* view = dynamic_cast<View*>( m_notebook->get_nth_page( m_clicked_page ) );
     if( ! view ) return;
 
     set_current_page( m_clicked_page );
@@ -2785,7 +2785,7 @@ bool Admin::back_forward_viewhistory( const std::string& url, const bool back, c
               << "count = " << count << " tab = " << url << std::endl;
 #endif
 
-    SKELETON::View* view = get_view( url );
+    const SKELETON::View* view = get_view( url );
     if( view ){
 
         if( view->is_locked() ) return false;
@@ -2952,7 +2952,7 @@ std::string Admin::get_valid_switchhistory()
         const std::string url = m_list_switchhistory.back();
 
         // 表示されているビューであれば、そのURLを返す
-        SKELETON::View* view = get_view( url );
+        const SKELETON::View* view = get_view( url );
         if( view ) return url;
 
         // 表示されていないので、最後のURLを削除する
