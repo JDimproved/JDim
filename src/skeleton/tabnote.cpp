@@ -174,7 +174,7 @@ int TabNotebook::get_page_under_mouse()
     int ret = pages;
     for( int i = 0; i < pages; ++i ){
 
-        SKELETON::TabLabel* tab = get_tablabel( i );
+        const SKELETON::TabLabel* tab = get_tablabel( i );
         if( tab ){
 
             int tab_x = tab->get_tab_x();
@@ -211,7 +211,7 @@ int TabNotebook::get_page_under_mouse()
 //
 const std::string& TabNotebook::get_tab_fulltext( int page )
 {
-    SKELETON::TabLabel* tablabel = get_tablabel( page );
+    const SKELETON::TabLabel* tablabel = get_tablabel( page );
     if( ! tablabel ) return m_str_empty;
 
     return tablabel->get_fulltext();
@@ -541,7 +541,7 @@ bool TabNotebook::on_drag_motion( const Glib::RefPtr<Gdk::DragContext>& context,
 
         if( page >= get_n_pages() ) page = get_n_pages() -1;
 
-        SKELETON::TabLabel* tab = get_tablabel( page );
+        const SKELETON::TabLabel* tab = get_tablabel( page );
         if( tab ){
 
             tab_x = tab->get_tab_x();
