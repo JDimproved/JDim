@@ -2160,8 +2160,13 @@ create_multispace:
                 create_node_ntext( m_parsed_text.data(), m_parsed_text.size(), fgcolor, bgcolor, in_bold, fontid );
                 m_parsed_text.clear();
 
-                while( pos < pos_end && *pos != '=' ) ++pos;
-                ++pos;
+                for( bool found = false; ! found; ) {
+                    while( pos < pos_end && *pos != '=' ) ++pos;
+                    // NOTE: 速度を重視するためhrefの判定は最後のfだけチェック
+                    // `<a>`タグに含まれる'='、global属性、data属性で誤判定する可能性がある
+                    found = ( pos[-1] == 'f' || pos[-1] == 'F' || pos >= pos_end );
+                    ++pos;
+                }
 
                 if( *pos == ' ' ) ++pos;
                 if( pos >= pos_end ) continue;
