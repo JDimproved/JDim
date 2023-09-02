@@ -42,6 +42,7 @@
 #include "cssmanager.h"
 #include "session.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -2858,15 +2859,20 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
 
 
 
-// 整数 -> 文字変換してノードに発言数をセット
-// 最大5桁を想定
+/** @brief 整数 -> 文字列変換してレイアウトに何番目の投稿と発言数をセット
+ *
+ * @details 最大5桁を想定、5桁より大きい場合は99999にする
+ * @param[in] layout 発言数をセットするレイアウト
+ * @return セットした文字列の長さ
+ * @retval 0 発言数をカウントしてない、または文字列変換に失敗した
+ */
 int DrawAreaBase::set_num_id( LAYOUT* layout )
 {
     int pos = 0;
 
-    int num_id = layout->header->node->headinfo->num_id_name;
+    const int num_id = (std::min)( layout->header->node->headinfo->num_id_name, 99999 );
     if( num_id >= 2 ){
-        const int order = layout->header->node->headinfo->posting_order;
+        const int order = (std::min)( layout->header->node->headinfo->posting_order, 99999 );
 
         // + 1 はヌル文字の分
         constexpr std::size_t size = std::string::traits_type::length( DBTREE::kPlaceholderForNodeIdNum ) + 1;
