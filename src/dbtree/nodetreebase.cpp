@@ -3905,15 +3905,16 @@ void NodeTreeBase::update_id_name( const int from_number, const int to_number )
     }
 
     //集計したものを元に各ノードの情報を更新
-    for( const auto &a: m_map_id_name_resnumber ){ // ID = a.first, レス番号の一覧 = a.second
-        // a.second の型 std::set はソートされた連想コンテナなので
+    for( const auto& [id_unused, resnumber_set] : m_map_id_name_resnumber ){ // ID, レス番号の一覧
+        const int num_id_name = resnumber_set.size();
+        // resnumber_set の型 std::set はソートされた連想コンテナなので
         // レスの順番計算はインクリメントするだけでできる
         int posting_order = 0;
-        for( const auto &num: a.second ) {
+        for( const auto num : resnumber_set ) {
             NODE* header = res_header( num );
             if( ! header ) continue;
             if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) continue;
-            set_num_id_name( header, a.second.size(), ++posting_order );
+            set_num_id_name( *header->headinfo, num_id_name, ++posting_order );
         }
      }
 }
@@ -3922,19 +3923,18 @@ void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 /** @brief 発言数( num_id_name )と何番目の投稿( posting_order )を更新
  *
  * @details IDノードの色も変更する
- * @param[in] header        レスのヘッダー
+ * @param[in] headinfo      IDのヘッダ拡張情報
  * @param[in] num_id_name   発言数
  * @param[in] posting_order 何番目の投稿
  */
-void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name, const int posting_order )
+void NodeTreeBase::set_num_id_name( HEADERINFO& headinfo, const int num_id_name, const int posting_order )
 {
-    if( ! header->headinfo->block[ BLOCK_ID_NAME ] ||
-        ! header->headinfo->block[ BLOCK_ID_NAME ]->next_node ) return;
+    NODE* idnode = headinfo.block[ BLOCK_ID_NAME ]->next_node;
+    if( ! idnode ) return;
 
-    header->headinfo->posting_order = posting_order;
-    header->headinfo->num_id_name = num_id_name;
+    headinfo.posting_order = posting_order;
+    headinfo.num_id_name = num_id_name;
 
-    NODE* idnode = header->headinfo->block[ BLOCK_ID_NAME ]->next_node;
     if( num_id_name >= m_num_id[ LINK_HIGH ] ) idnode->color_text = COLOR_CHAR_LINK_ID_HIGH;
     else if( num_id_name >= m_num_id[ LINK_LOW ] ) idnode->color_text = COLOR_CHAR_LINK_ID_LOW;
     else idnode->color_text = COLOR_CHAR;
