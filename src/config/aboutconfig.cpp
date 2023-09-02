@@ -209,7 +209,7 @@ void AboutConfig::append_rows()
     append_row( "RFC規定外の文字(^など)もURL判定に用いる", get_confitem()->loose_url, CONF_LOOSE_URL );
     append_row( "URLのパーセントエンコーディングをデコードして表示する", get_confitem()->percent_decode, CONF_PERCENT_DECODE );
     append_row( "再読み込みボタンを押したときに全タブを更新する", get_confitem()->reload_allthreads, CONF_RELOAD_ALLTHREAD );
-    append_row( "発言(同一ID)数をカウントする", get_confitem()->check_id, CONF_CHECK_ID );
+    append_row( "発言(同一ID)数とレスの順番(何番目の投稿)をカウントする", get_confitem()->check_id, CONF_CHECK_ID );
     append_row( "レス参照数で色を変える回数(高)", get_confitem()->num_reference_high, CONF_NUM_REFERENCE_HIGH );
     append_row( "レス参照数で色を変える回数(低)", get_confitem()->num_reference_low, CONF_NUM_REFERENCE_LOW );
     append_row( "発言数で色を変える回数(高)", get_confitem()->num_id_high, CONF_NUM_ID_HIGH );

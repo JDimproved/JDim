@@ -814,14 +814,13 @@ NODE* NodeTreeBase::create_node_block()
 }
 
 
-//
-// 発言回数(IDの出現数)ノード
-//
+/**
+ * @brief 発言回数(IDの出現数と何番目の投稿)ノード
+ */
 NODE* NodeTreeBase::create_node_idnum()
 {
-    constexpr std::string_view dummy = " (10000)";
-
-    NODE* tmpnode = create_node_text( dummy, COLOR_CHAR );
+    // (何番目の投稿/発言数) の形式で表示するためメモリを確保する
+    NODE* tmpnode = create_node_text( DBTREE::kPlaceholderForNodeIdNum, COLOR_CHAR );
     tmpnode->type = NODE_IDNUM;
     tmpnode->text[ 0 ] = '\0'; // メモリだけ確保して文字を消す
     return tmpnode;
@@ -3868,12 +3867,15 @@ void NodeTreeBase::inc_reference( NODE* head, const int count )
 }
 
 
-// 発言数(( num_id_name ))とIDの色のクリア
+/**
+ * @brief 発言数( num_id_name )と何番目の投稿( posting_order )とIDの色のクリア
+ */
 void NodeTreeBase::clear_id_name()
 {
     for( int i = 1; i <= m_id_header; ++i ){
         NODE* tmphead = m_vec_header[ i ];
         if( tmphead && tmphead->headinfo && tmphead->headinfo->block[ BLOCK_ID_NAME ] ){
+            tmphead->headinfo->posting_order = 0;
             tmphead->headinfo->num_id_name = 0;
             tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR;
         }
@@ -3882,9 +3884,9 @@ void NodeTreeBase::clear_id_name()
 
 
 
-//
-// from_number番から to_number 番までの発言数の更新
-//
+/**
+ * @brief from_number 番から to_number 番までの発言数と何番目の投稿を更新
+ */
 void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 {
     if( ! CONFIG::get_check_id() ) return;
@@ -3904,27 +3906,33 @@ void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 
     //集計したものを元に各ノードの情報を更新
     for( const auto &a: m_map_id_name_resnumber ){ // ID = a.first, レス番号の一覧 = a.second
+        // a.second の型 std::set はソートされた連想コンテナなので
+        // レスの順番計算はインクリメントするだけでできる
+        int posting_order = 0;
         for( const auto &num: a.second ) {
             NODE* header = res_header( num );
             if( ! header ) continue;
             if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) continue;
-            set_num_id_name( header, a.second.size() );
+            set_num_id_name( header, a.second.size(), ++posting_order );
         }
      }
 }
 
 
-//
-// 発言数( num_id_name )の更新
-//
-// IDノードの色も変更する
-//
-void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name )
+/** @brief 発言数( num_id_name )と何番目の投稿( posting_order )を更新
+ *
+ * @details IDノードの色も変更する
+ * @param[in] header        レスのヘッダー
+ * @param[in] num_id_name   発言数
+ * @param[in] posting_order 何番目の投稿
+ */
+void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name, const int posting_order )
 {
     if( ! header->headinfo->block[ BLOCK_ID_NAME ] ||
         ! header->headinfo->block[ BLOCK_ID_NAME ]->next_node ) return;
 
-    header->headinfo->num_id_name = num_id_name;        
+    header->headinfo->posting_order = posting_order;
+    header->headinfo->num_id_name = num_id_name;
 
     NODE* idnode = header->headinfo->block[ BLOCK_ID_NAME ]->next_node;
     if( num_id_name >= m_num_id[ LINK_HIGH ] ) idnode->color_text = COLOR_CHAR_LINK_ID_HIGH;

@@ -455,7 +455,7 @@ namespace CONFIG
     bool get_strict_char_width();
     void set_strict_char_width( const bool strictwidth );
 
-    // スレビューで発言数(ID)をカウントする
+    /// スレビューで発言数(ID)とレスの順番(何番目の投稿)をカウントする
     bool get_check_id();
 
     // レス参照で色を変える回数
