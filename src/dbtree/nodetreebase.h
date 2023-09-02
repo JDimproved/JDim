@@ -400,7 +400,7 @@ namespace DBTREE
 
         // 発言数( num_id_name )と何番目の投稿( posting_order )を更新
         // IDノードの色も変更する
-        void set_num_id_name( NODE* header, const int num_id_name, const int posting_order );
+        void set_num_id_name( HEADERINFO& headinfo, const int num_id_name, const int posting_order );
 
 
         // from_number番から to_number 番までのレスのフォント判定を更新
