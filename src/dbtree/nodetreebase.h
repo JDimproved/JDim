@@ -136,8 +136,10 @@ namespace DBTREE
         // その他のエラーメッセージ
         std::string m_ext_err;
 
-        // 各IDと発言数、レス番号のマッピング
-        // レスの順番( = 何番目の投稿 )を記録するため std::set を使ってレス番号順にソートする
+        /** @brief 各IDと発言数、レス番号のマッピング
+         *
+         * @details レスの順番( = 何番目の投稿 )を記録するため std::set を使ってレス番号順にソートする
+         */
         std::unordered_map< std::string, std::set<int> > m_map_id_name_resnumber;
 
       protected:
@@ -387,16 +389,16 @@ namespace DBTREE
         void inc_reference( NODE* head, const int count );
 
 
-        // 発言数とIDの色のクリア
+        // 発言数と何番目の投稿とIDの色のクリア
         void clear_id_name();
 
-        // from_number番から to_number 番までの発言数の更新
+        // from_number 番から to_number 番までの発言数と何番目の投稿を更新
         void update_id_name( const int from_number, const int to_number );
 
         // number番のレスの発言数をチェック
         void check_id_name( const int number ) = delete;
 
-        // 発言数( num_id_name )の更新
+        // 発言数( num_id_name )と何番目の投稿( posting_order )を更新
         // IDノードの色も変更する
         void set_num_id_name( NODE* header, const int num_id_name, const int posting_order );
 

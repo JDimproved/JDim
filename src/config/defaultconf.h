@@ -97,7 +97,7 @@ namespace CONFIG
         CONF_ADJUST_LINE_SPACE = 1,    // 行間スペース
         CONF_DRAW_UNDERLINE = 1,     // リンク下線を表示
         CONF_STRICT_CHAR_WIDTH = 0,  // スレビューで文字幅の近似を厳密にする
-        CONF_CHECK_ID = 1,           // スレビューで発言数(ID)をカウントする
+        CONF_CHECK_ID = 1,           ///< スレビューで発言数(ID)とレスの順番(何番目の投稿)をカウントする
         CONF_NUM_REFERENCE_HIGH = 3,//レス参照で色を変える回数 (高) 
         CONF_NUM_REFERENCE_LOW = 1, //レス参照で色を変える回数 (低) 
         CONF_NUM_ID_HIGH = 4,       // 発言数で色を変える回数 (高)

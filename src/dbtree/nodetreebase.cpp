@@ -814,9 +814,9 @@ NODE* NodeTreeBase::create_node_block()
 }
 
 
-//
-// 発言回数(IDの出現数)ノード
-//
+/**
+ * @brief 発言回数(IDの出現数と何番目の投稿)ノード
+ */
 NODE* NodeTreeBase::create_node_idnum()
 {
     // (何番目の投稿/発言数) の形式で表示するためメモリを確保する
@@ -3867,7 +3867,9 @@ void NodeTreeBase::inc_reference( NODE* head, const int count )
 }
 
 
-// 発言数(( num_id_name ))とIDの色のクリア
+/**
+ * @brief 発言数( num_id_name )と何番目の投稿( posting_order )とIDの色のクリア
+ */
 void NodeTreeBase::clear_id_name()
 {
     for( int i = 1; i <= m_id_header; ++i ){
@@ -3882,9 +3884,9 @@ void NodeTreeBase::clear_id_name()
 
 
 
-//
-// from_number番から to_number 番までの発言数の更新
-//
+/**
+ * @brief from_number 番から to_number 番までの発言数と何番目の投稿を更新
+ */
 void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 {
     if( ! CONFIG::get_check_id() ) return;
@@ -3917,11 +3919,13 @@ void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 }
 
 
-//
-// 発言数( num_id_name )の更新
-//
-// IDノードの色も変更する
-//
+/** @brief 発言数( num_id_name )と何番目の投稿( posting_order )を更新
+ *
+ * @details IDノードの色も変更する
+ * @param[in] header        レスのヘッダー
+ * @param[in] num_id_name   発言数
+ * @param[in] posting_order 何番目の投稿
+ */
 void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name, const int posting_order )
 {
     if( ! header->headinfo->block[ BLOCK_ID_NAME ] ||
