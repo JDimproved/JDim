@@ -43,6 +43,7 @@
 #include "session.h"
 
 #include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <limits>
 #include <sstream>
@@ -2858,18 +2859,21 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
 
 
 // 整数 -> 文字変換してノードに発言数をセット
-// 最大4桁を想定
+// 最大5桁を想定
 int DrawAreaBase::set_num_id( LAYOUT* layout )
 {
     int pos = 0;
 
     int num_id = layout->header->node->headinfo->num_id_name;
     if( num_id >= 2 ){
+        const int order = layout->header->node->headinfo->posting_order;
 
-        const auto &tmp_str = std::string( " (" ) + std::to_string( num_id ) + ")" ;
-        std::memcpy( layout->node->text, tmp_str.c_str(), tmp_str.size() + 1 );
+        // + 1 はヌル文字の分
+        constexpr std::size_t size = std::string::traits_type::length( DBTREE::kPlaceholderForNodeIdNum ) + 1;
+        // (何番目の投稿/発言数) の形式で文字列に変換する
+        pos = std::snprintf( layout->node->text, size, " (%d/%d)", order, num_id );
+        if( pos < 0 ) pos = 0; // conversion error
 
-        pos = tmp_str.size();
         layout->lng_text = pos ;
     }
 

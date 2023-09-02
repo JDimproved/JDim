@@ -819,9 +819,8 @@ NODE* NodeTreeBase::create_node_block()
 //
 NODE* NodeTreeBase::create_node_idnum()
 {
-    constexpr std::string_view dummy = " (10000)";
-
-    NODE* tmpnode = create_node_text( dummy, COLOR_CHAR );
+    // (何番目の投稿/発言数) の形式で表示するためメモリを確保する
+    NODE* tmpnode = create_node_text( DBTREE::kPlaceholderForNodeIdNum, COLOR_CHAR );
     tmpnode->type = NODE_IDNUM;
     tmpnode->text[ 0 ] = '\0'; // メモリだけ確保して文字を消す
     return tmpnode;
@@ -3874,6 +3873,7 @@ void NodeTreeBase::clear_id_name()
     for( int i = 1; i <= m_id_header; ++i ){
         NODE* tmphead = m_vec_header[ i ];
         if( tmphead && tmphead->headinfo && tmphead->headinfo->block[ BLOCK_ID_NAME ] ){
+            tmphead->headinfo->posting_order = 0;
             tmphead->headinfo->num_id_name = 0;
             tmphead->headinfo->block[ BLOCK_ID_NAME ]->next_node->color_text = COLOR_CHAR;
         }
@@ -3904,11 +3904,14 @@ void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 
     //集計したものを元に各ノードの情報を更新
     for( const auto &a: m_map_id_name_resnumber ){ // ID = a.first, レス番号の一覧 = a.second
+        // a.second の型 std::set はソートされた連想コンテナなので
+        // レスの順番計算はインクリメントするだけでできる
+        int posting_order = 0;
         for( const auto &num: a.second ) {
             NODE* header = res_header( num );
             if( ! header ) continue;
             if( ! header->headinfo->block[ BLOCK_ID_NAME ] ) continue;
-            set_num_id_name( header, a.second.size() );
+            set_num_id_name( header, a.second.size(), ++posting_order );
         }
      }
 }
@@ -3919,12 +3922,13 @@ void NodeTreeBase::update_id_name( const int from_number, const int to_number )
 //
 // IDノードの色も変更する
 //
-void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name )
+void NodeTreeBase::set_num_id_name( NODE* header, const int num_id_name, const int posting_order )
 {
     if( ! header->headinfo->block[ BLOCK_ID_NAME ] ||
         ! header->headinfo->block[ BLOCK_ID_NAME ]->next_node ) return;
 
-    header->headinfo->num_id_name = num_id_name;        
+    header->headinfo->posting_order = posting_order;
+    header->headinfo->num_id_name = num_id_name;
 
     NODE* idnode = header->headinfo->block[ BLOCK_ID_NAME ]->next_node;
     if( num_id_name >= m_num_id[ LINK_HIGH ] ) idnode->color_text = COLOR_CHAR_LINK_ID_HIGH;

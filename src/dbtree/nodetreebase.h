@@ -16,9 +16,11 @@
 #include "jdlib/jdregex.h"
 
 #include <map>
+#include <set>
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
+
 
 namespace JDLIB
 {
@@ -135,7 +137,8 @@ namespace DBTREE
         std::string m_ext_err;
 
         // 各IDと発言数、レス番号のマッピング
-        std::unordered_map< std::string, std::unordered_set< int > > m_map_id_name_resnumber;
+        // レスの順番( = 何番目の投稿 )を記録するため std::set を使ってレス番号順にソートする
+        std::unordered_map< std::string, std::set<int> > m_map_id_name_resnumber;
 
       protected:
 
@@ -395,7 +398,7 @@ namespace DBTREE
 
         // 発言数( num_id_name )の更新
         // IDノードの色も変更する
-        void set_num_id_name( NODE* header, const int num_id_name );
+        void set_num_id_name( NODE* header, const int num_id_name, const int posting_order );
 
 
         // from_number番から to_number 番までのレスのフォント判定を更新

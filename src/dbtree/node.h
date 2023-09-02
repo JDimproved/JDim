@@ -16,6 +16,9 @@ namespace DBIMG
 
 namespace DBTREE
 {
+    /// (何番目の投稿/発言数) の形式で表示するためのプレースホルダー
+    constexpr const char* kPlaceholderForNodeIdNum = " (10000/10000)";
+
     // NODE::type
     enum
     {
@@ -76,6 +79,7 @@ namespace DBTREE
         char* name; // 名前
         bool sage; // メール欄がsageか
 
+        int posting_order; ///< 同じIDのレスの順番( = 何番目の投稿 )
         int num_id_name; // 同じIDのレスの個数( = 発言数 )
 
         NODE* block[ BLOCK_NUM ];
