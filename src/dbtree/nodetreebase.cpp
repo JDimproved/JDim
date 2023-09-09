@@ -4022,6 +4022,9 @@ bool NodeTreeBase::remove_imenu( std::string& str_link )
             || str_link.compare( host_start, 7, "nun.nu/" ) == 0 ) {
         cut_end = host_start + 7;
     }
+    else if( str_link.compare( host_start, 26, "machi.to/bbs/link.cgi?URL=" ) == 0 ) {
+        cut_end = host_start + 26;
+    }
     else {
         return false;
     }
