@@ -30,6 +30,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, not_remove)
         { "https://jump.5ch.net/?", "https://jump.5ch.net/?" },
         { "https://jump.2ch.net/?", "https://jump.2ch.net/?" },
         { "https://pinktower.com/", "https://pinktower.com/" },
+        { "http://machi.to/bbs/link.cgi?URL=", "http://machi.to/bbs/link.cgi?URL=" },
     };
 
     std::string buffer;
@@ -126,6 +127,22 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_jump_2ch_net)
         { "http://jump.2ch.net/?http://foobar.baz", "http://foobar.baz" },
         { "https://jump.2ch.net/?https://foobar.baz", "https://foobar.baz" },
         { "http://jump.2ch.net/?https://foobar.baz", "https://foobar.baz" },
+    };
+
+    std::string buffer;
+    for( auto [input, expect] : test_data ) {
+        buffer.assign( input );
+        EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
+        EXPECT_EQ( expect, buffer );
+    }
+}
+
+TEST_F(NodeTreeBase_RemoveImenuTest, single_machi_to_bbs_link_cgi)
+{
+    constexpr const char* test_data[][2] = {
+        { "http://machi.to/bbs/link.cgi?URL=https://foobar.baz", "https://foobar.baz" },
+        { "https://machi.to/bbs/link.cgi?URL=http://foobar.baz", "http://foobar.baz" },
+        { "http://machi.to/bbs/link.cgi?URL=foobar.baz", "http://foobar.baz" },
     };
 
     std::string buffer;
