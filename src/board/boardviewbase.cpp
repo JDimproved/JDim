@@ -1885,7 +1885,7 @@ void BoardViewBase::update_item_all()
     for( Gtk::TreeModel::Row row : child ) {
         if( ! row ) continue;
 
-        DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
+        const DBTREE::ArticleBase* art = row[ m_columns.m_col_article ];
         if( ! art ) continue;
 
         update_row_common( row );
