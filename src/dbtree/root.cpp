@@ -1562,11 +1562,13 @@ void Root::save_movetable()
 //
 bool Root::is_2ch( const std::string& url )
 {
-    const std::string hostname = MISC::get_hostname( url );
+    constexpr bool protocol = false;
+    const std::string hostname = MISC::get_hostname( url, protocol );
 
-    if( ( hostname.find( ".2ch.net" ) != std::string::npos && hostname.find( "info.2ch.net" ) == std::string::npos )
-        || ( hostname.find( ".5ch.net" ) != std::string::npos && hostname.find( "info.5ch.net" ) == std::string::npos )
-        || hostname.find( ".bbspink.com" ) != std::string::npos ) return true;
+    if( ( MISC::ends_with( hostname, ".2ch.net" ) && hostname != "info.2ch.net" )
+        // サブドメイン無しのURLに対応する
+        || ( MISC::ends_with( hostname, "5ch.net" ) && hostname != "info.5ch.net" )
+        || MISC::ends_with( hostname, ".bbspink.com" ) ) return true;
 
     return false;
 }
