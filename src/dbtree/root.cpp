@@ -1593,11 +1593,10 @@ bool Root::is_JBBS( const std::string& url )
 //
 bool Root::is_machi( const std::string& url )
 {
-    const std::string hostname = MISC::get_hostname( url );
+    constexpr bool protocol = false;
+    const std::string hostname = MISC::get_hostname( url, protocol );
 
-    if( hostname.find( ".machi.to" ) != std::string::npos ) return true;
-
-    return false;
+    return MISC::ends_with( hostname, "machi.to" );
 }
 
 
