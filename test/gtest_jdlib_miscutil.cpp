@@ -1404,6 +1404,39 @@ TEST_F(MISC_StartsWith, null_terminated_string)
 }
 
 
+class MISC_EndsWith : public ::testing::Test {};
+
+TEST_F(MISC_EndsWith, empty_haystack_and_needle)
+{
+    EXPECT_TRUE( MISC::ends_with( "", "" ) );
+}
+
+TEST_F(MISC_EndsWith, empty_haystack)
+{
+    EXPECT_FALSE( MISC::ends_with( "", "needle" ) );
+}
+
+TEST_F(MISC_EndsWith, empty_needle)
+{
+    EXPECT_TRUE( MISC::ends_with( "haystack", "" ) );
+}
+
+TEST_F(MISC_EndsWith, hello_world)
+{
+    EXPECT_TRUE( MISC::ends_with( "Hello World", "World" ) );
+}
+
+TEST_F(MISC_EndsWith, too_long_needle)
+{
+    EXPECT_FALSE( MISC::ends_with( "World", "Hello World" ) );
+}
+
+TEST_F(MISC_EndsWith, not_match)
+{
+    EXPECT_FALSE( MISC::ends_with( "quick brown fox", "dogs" ) );
+}
+
+
 class MISC_ParseHtmlFormData : public ::testing::Test {};
 
 TEST_F(MISC_ParseHtmlFormData, empty_html)

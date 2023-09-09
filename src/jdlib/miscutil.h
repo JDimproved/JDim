@@ -273,6 +273,19 @@ namespace MISC
     // Unicode正規化は行わなずバイト列として比較する
     bool starts_with( const char* self, const char* starts );
 
+    /** @brief haystackの末尾がneedleと一致するか
+     *
+     * @param[in] haystack 末尾をチェックする
+     * @param[in] needle   haystackの末尾と一致するか
+     * @retval true  末尾が一致した、またはneedleが空文字列の場合
+     * @retval false 末尾が不一致、またはhaystackがneedleより短い場合
+     */
+    constexpr bool ends_with( std::string_view haystack, std::string_view needle )
+    {
+        return haystack.size() >= needle.size()
+            && haystack.compare( haystack.size() - needle.size(), needle.size(), needle ) == 0;
+    }
+
     // HTMLからform要素を解析してinput,textarea要素の名前と値を返す
     std::vector<FormDatum> parse_html_form_data( const std::string& html );
 
