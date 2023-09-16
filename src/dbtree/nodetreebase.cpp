@@ -3463,31 +3463,31 @@ bool NodeTreeBase::check_abone_name( const int number )
 
     // ローカル name
     if( check_name ){
-        for( const std::string& name : m_list_abone_name ) {
-            if( name_str.find( name ) != std::string_view::npos ) {
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = m_list_abone_name;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& name )
+                         { return name_str.find( name ) != std::string_view::npos; } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
     // 板レベル name
     if( check_name_board ){
-        for( const std::string& name : m_list_abone_name_board ) {
-            if( name_str.find( name ) != std::string_view::npos ) {
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = m_list_abone_name_board;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& name )
+                         { return name_str.find( name ) != std::string_view::npos; } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
     // 全体 name
     if( check_name_global ){
-        for( const std::string& name : CONFIG::get_list_abone_name() ) {
-            if( name_str.find( name ) != std::string_view::npos ) {
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = CONFIG::get_list_abone_name();
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& name )
+                         { return name_str.find( name ) != std::string_view::npos; } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
@@ -3550,66 +3550,66 @@ bool NodeTreeBase::check_abone_word( const int number )
     // ローカル NG word
     if( check_word ){
 
-        for( const std::string& word : m_list_abone_word ) {
-            if( res_str.find( word ) != std::string::npos ) {
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = m_list_abone_word;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& word )
+                         { return res_str.find( word ) != std::string::npos; } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
     // ローカル NG regex
     if( check_regex ){
 
-        for( const JDLIB::RegexPattern& pattern : m_list_abone_regex ) {
-            if( regex.match( pattern, res_str, offset ) ){
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = m_list_abone_regex;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const JDLIB::RegexPattern& pattern )
+                         { return regex.match( pattern, res_str, offset ); } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
     // 板レベル NG word
     if( check_word_board ){
 
-        for( const std::string& word : m_list_abone_word_board ) {
-            if( res_str.find( word ) != std::string::npos ) {
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = m_list_abone_word_board;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& word )
+                         { return res_str.find( word ) != std::string::npos; } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
     // 板レベル NG regex
     if( check_regex_board ){
 
-        for( const JDLIB::RegexPattern& pattern : m_list_abone_regex_board ) {
-            if( regex.match( pattern, res_str, offset ) ){
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = m_list_abone_regex_board;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const JDLIB::RegexPattern& pattern )
+                         { return regex.match( pattern, res_str, offset ); } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
     // 全体 NG word
     if( check_word_global ){
 
-        for( const std::string& word : m_list_abone_word_global ) {
-            if( res_str.find( word ) != std::string::npos ) {
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = m_list_abone_word_global;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& word )
+                         { return res_str.find( word ) != std::string::npos; } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
     // 全体 NG regex
     if( check_regex_global ){
 
-        for( const JDLIB::RegexPattern& pattern : m_list_abone_regex_global ) {
-            if( regex.match( pattern, res_str, offset ) ){
-                head->headinfo->abone = true;
-                return true;
-            }
+        const auto& list = m_list_abone_regex_global;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const JDLIB::RegexPattern& pattern )
+                         { return regex.match( pattern, res_str, offset ); } ) ) {
+            head->headinfo->abone = true;
+            return true;
         }
     }
 
