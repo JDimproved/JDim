@@ -11,6 +11,7 @@
 
 #include <gtkmm.h>
 
+#include <atomic>
 #include <list>
 #include <memory>
 #include <string>
@@ -67,7 +68,7 @@ namespace CORE
         // 検索実行中
         bool m_searching{};
 
-        bool m_stop{};
+        std::atomic<bool> m_stop{}; ///< true にセットすると検索を停止する
 
         // スレタイ検索ローダ
         std::unique_ptr<SearchLoader> m_searchloader;

@@ -11,6 +11,7 @@
 #include "jdlib/jdregex.h"
 #include "skeleton/loadable.h"
 
+#include <atomic>
 #include <ctime>
 #include <list>
 #include <memory>
@@ -570,7 +571,7 @@ namespace DBTREE
                                    const std::string& query,
                                    const bool mode_or, // 今のところ無視
                                    const bool bm,
-                                   const bool stop // 呼出元のスレッドで true にセットすると検索を停止する
+                                   const std::atomic<bool>& stop // 呼出元のスレッドで true にセットすると検索を停止する
             );
 
         // datファイルのインポート

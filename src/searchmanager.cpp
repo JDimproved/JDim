@@ -114,7 +114,7 @@ void Search_Manager::thread_search()
     std::cout << "Search_Manager::thread_search\n";
 #endif
 
-    m_stop = false;
+    m_stop.store( false, std::memory_order_release );
 
     if( m_searchmode == SEARCHMODE_LOG ) DBTREE::search_cache( m_url, m_list_article, m_query, m_mode_or, m_bm,  m_stop );
     else if( m_searchmode == SEARCHMODE_ALLLOG ) DBTREE::search_cache_all( m_list_article, m_query, m_mode_or, m_bm, m_stop );
@@ -182,7 +182,7 @@ void Search_Manager::stop( const std::string& id )
     std::cout << "Search_Manager::stop\n";
 #endif
 
-    m_stop = true;
+    m_stop.store( true, std::memory_order_release );
 
     // スレタイ検索停止
     if( m_searchmode == SEARCHMODE_TITLE && m_searchloader ) m_searchloader->stop_load();
