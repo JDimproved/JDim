@@ -1554,30 +1554,34 @@ bool BoardBase::is_abone_thread( ArticleBase* article )
 
     // ローカル NG word
     if( check_word ){
-        for( const std::string& word : m_list_abone_word_thread ) {
-            if( article->get_subject().find( word ) != std::string::npos ) return true;
-        }
+        const auto& list = m_list_abone_word_thread;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& word ) {
+                return article->get_subject().find( word ) != std::string::npos;
+            } ) ) return true;
     }
 
     // ローカル NG regex
     if( check_regex ){
-        for( const std::string& pat : m_list_abone_regex_thread ) {
-            if( regex.exec( pat, article->get_subject(), offset, icase, newline, usemigemo, wchar ) ) return true;
-        }
+        const auto& list = m_list_abone_regex_thread;
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& pat ) {
+                return regex.exec( pat, article->get_subject(), offset, icase, newline, usemigemo, wchar );
+            } ) ) return true;
     }
 
     // 全体 NG word
     if( check_word_global ){
-        for( const std::string& word : CONFIG::get_list_abone_word_thread() ) {
-            if( article->get_subject().find( word ) != std::string::npos ) return true;
-        }
+        const auto& list = CONFIG::get_list_abone_word_thread();
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& word ) {
+                return article->get_subject().find( word ) != std::string::npos;
+            } ) ) return true;
     }
 
     // 全体 NG regex
     if( check_regex_global ){
-        for( const std::string& pat : CONFIG::get_list_abone_regex_thread() ) {
-            if( regex.exec( pat, article->get_subject(), offset, icase, newline, usemigemo, wchar ) ) return true;
-        }
+        const auto& list = CONFIG::get_list_abone_regex_thread();
+        if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& pat ) {
+                return regex.exec( pat, article->get_subject(), offset, icase, newline, usemigemo, wchar );
+            } ) ) return true;
     }
 
     return false;
