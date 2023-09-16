@@ -41,9 +41,10 @@ namespace CORE
         std::string url_readcgi;
         std::string boardname;
         std::string subject;
+        std::size_t since_time; ///< スレが立った時刻
         int num;  // 読み込み数
-        bool bookmarked;   // スレ全体にしおりがついているか
         int num_bookmarked;  // レスにつけられたしおりの数
+        bool bookmarked;   // スレ全体にしおりがついているか
     };
 
     class Search_Manager : public SKELETON::Dispatchable

@@ -125,11 +125,12 @@ void Search_Manager::thread_search()
 
             SEARCHDATA data;
             data.url_readcgi = DBTREE::url_readcgi( article->get_url(), 0, 0 );
-            data.subject = article->get_subject();
-            data.num = article->get_number_load();
-            data.bookmarked = article->is_bookmarked_thread();
-            data.num_bookmarked = article->get_num_bookmark();
             data.boardname = DBTREE::board_name( data.url_readcgi );
+            data.subject = article->get_subject();
+            data.since_time = article->get_since_time();
+            data.num = article->get_number_load();
+            data.num_bookmarked = article->get_num_bookmark();
+            data.bookmarked = article->is_bookmarked_thread();
 
 #ifdef _DEBUG
             std::cout << "url = " << data.url_readcgi << std::endl
@@ -139,6 +140,10 @@ void Search_Manager::thread_search()
 #endif
             m_list_data.push_back( data );
         }
+
+        // スレが立った時刻が早い順でソートする
+        m_list_data.sort( []( const SEARCHDATA& a, const SEARCHDATA& b )
+                          { return a.since_time < b.since_time; } );
 
     }
 
@@ -262,9 +267,10 @@ void Search_Manager::search_fin_title()
             // パターン中にグループ名が有れば名前付きキャプチャ、無ければグループ番号で取得する
             data.url_readcgi = DBTREE::url_readcgi( regex.named_or_num( named_caps[0], 1 ), 0, 0 );
             data.subject = MISC::html_unescape( regex.named_or_num( named_caps[1], 2 ) );
+            data.since_time = 0;
             data.num = std::atoi( regex.named_or_num( named_caps[2], 3 ).c_str() ); // マッチしていなければ 0 になる
-            data.bookmarked = false;
             data.num_bookmarked = 0;
+            data.bookmarked = false;
 
             if( ! data.url_readcgi.empty() ){
 
