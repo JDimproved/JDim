@@ -31,9 +31,9 @@ namespace DBTREE
         void read_info() override {}
         void save_info() override {}
 
-        // キャッシュサーチをキャンセル
+        /// @brief キャッシュサーチをキャンセル
         void search_cache( std::vector< ArticleBase* >&, const std::string&, const bool, const bool,
-                           const bool ) override {}
+                           const std::atomic<bool>& ) override {}
 
         // datファイルのインポート
         std::string import_dat( const std::string& filename ) override;

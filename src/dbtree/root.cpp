@@ -1508,11 +1508,11 @@ void Root::save_articleinfo_all()
 
 // 全ログ検索
 void Root::search_cache( std::vector< ArticleBase* >& list_article,
-                         const std::string& query, const bool mode_or, const bool bm, const bool stop )
+                         const std::string& query, const bool mode_or, const bool bm, const std::atomic<bool>& stop )
 {
     for( auto& b : m_list_board ) {
         b->search_cache( list_article, query, mode_or, bm, stop );
-        if( stop ) break;
+        if( stop.load( std::memory_order_acquire ) ) break;
     }
 }
 

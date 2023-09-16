@@ -1823,18 +1823,20 @@ void BoardBase::set_local_proxy_w( const std::string& proxy )
 }
 
 
-//
-// キャッシュ内のログ検索
-//
-// ArticleBase のアドレスをリスト(list_article)にセットして返す
-// query が空の時はキャッシュにあるログを全てヒットさせる
-// bm がtrueの時、しおりが付いている(スレ一覧でしおりを付けた or レスに一つでもしおりが付いている)スレのみを対象に検索する
-//
+/** @brief キャッシュ内のログ検索
+ *
+ * @param[out] list_article ArticleBase のアドレスをリスト(list_article)にセットして返す
+ * @param[in]  query        検索するテキスト, 空の時はキャッシュにあるログを全てヒットさせる
+ * @param[in]  mode_or      今のところ無視
+ * @param[in]  bm           trueの時、しおりが付いている(スレ一覧でしおりを付けた or レスに一つでもしおりが付いている)
+ *                          スレのみを対象に検索する
+ * @param[in]  stop         呼出元のスレッドで true にセットすると検索を停止する
+ */
 void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
                               const std::string& query,
                               const bool mode_or, // 今のところ無視
                               const bool bm,
-                              const bool stop // 呼出元のスレッドで true にセットすると検索を停止する
+                              const std::atomic<bool>& stop // 呼出元のスレッドで true にセットすると検索を停止する
     )
 {
 #ifdef _DEBUG
@@ -1855,7 +1857,7 @@ void BoardBase::search_cache( std::vector< DBTREE::ArticleBase* >& list_article,
 
     for( ArticleBase* article : m_hash_article ) {
 
-        if( stop ) break;
+        if( stop.load( std::memory_order_acquire ) ) break;
 
         if( ! article->is_cached() ) continue;
 
