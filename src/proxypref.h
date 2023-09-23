@@ -27,27 +27,39 @@ namespace CORE
         Gtk::VBox m_vbox;
         Gtk::HBox m_hbox;
 
+        Gtk::Box m_hbox_port; ///< "ポート番号"のラベルと入力欄を一つにまとめる
+        Gtk::Label m_label_port; ///< "ポート番号"のラベル
+
       public:
 
         Gtk::CheckButton ckbt;
         Gtk::CheckButton send_cookie_check;
         SKELETON::LabelEntry entry_host;
-        SKELETON::LabelEntry entry_port;
+        Gtk::Entry entry_port; ///< "ポート番号"の入力欄
 
         ProxyFrame( const std::string& title, const Glib::ustring& ckbt_label, const Glib::ustring& send_label,
                     const Glib::ustring& host_label, const Glib::ustring& port_label )
-            : ckbt( ckbt_label, true )
+            : m_hbox_port{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+            , m_label_port{ port_label, true }
+            , ckbt( ckbt_label, true )
             , send_cookie_check( send_label, true )
             , entry_host( true, host_label)
-            , entry_port( true, port_label )
         {
             send_cookie_check.set_tooltip_text( kSendCookieTooltip );
+            // ポート番号の最大値が収まる幅に調整する
+            entry_port.set_width_chars( 5 );
+            entry_port.set_max_length( 5 );
+            entry_port.set_hexpand( false );
+            m_label_port.set_mnemonic_widget( entry_port );
+
+            m_hbox_port.pack_start( m_label_port, 0, 0, false );
+            m_hbox_port.pack_start( entry_port, 0, 0, false );
 
             m_hbox.set_spacing( 8 );
             m_hbox.pack_start( ckbt, Gtk::PACK_SHRINK );
             m_hbox.pack_start( send_cookie_check, Gtk::PACK_SHRINK );
             m_hbox.pack_start( entry_host );
-            m_hbox.pack_start( entry_port, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( m_hbox_port, Gtk::PACK_SHRINK );
 
             m_hbox.set_border_width( 8 );
             m_vbox.set_spacing( 8 );
@@ -64,6 +76,9 @@ namespace CORE
         Gtk::Box m_vbox;
         Gtk::Box m_hbox;
 
+        Gtk::Box m_hbox_port; ///< "ポート番号"のラベルと入力欄を一つにまとめる
+        Gtk::Label m_label_port; ///< "ポート番号"のラベル
+
         Gtk::Box m_vbox_exp_option;
         Gtk::Box m_hbox_fallback_proxy;
         Glib::RefPtr<Glib::Binding> m_binding_notice;
@@ -79,13 +94,15 @@ namespace CORE
         Gtk::Label notice_label;
 
         SKELETON::LabelEntry entry_host;
-        SKELETON::LabelEntry entry_port;
+        Gtk::Entry entry_port; ///< "ポート番号"の入力欄
 
         ProxyFrameFallbackOption( const std::string& title, const Glib::ustring& ckbt_label,
                                   const Glib::ustring& send_label, const Glib::ustring& fallback_label,
                                   const Glib::ustring& host_label, const Glib::ustring& port_label )
             : m_vbox( Gtk::ORIENTATION_VERTICAL, 0 )
             , m_hbox( Gtk::ORIENTATION_HORIZONTAL, 8 )
+            , m_hbox_port{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+            , m_label_port{ port_label, true }
             , m_vbox_exp_option( Gtk::ORIENTATION_VERTICAL, 0 )
             , m_hbox_fallback_proxy( Gtk::ORIENTATION_HORIZONTAL, 0 )
             , m_toggle_notice( "注意事項" )
@@ -94,9 +111,16 @@ namespace CORE
             , fallback_proxy_check( fallback_label, true )
             , notice_label( kFallbackProxyNotice, false )
             , entry_host( true, host_label)
-            , entry_port( true, port_label )
         {
             send_cookie_check.set_tooltip_text( kSendCookieTooltip );
+            // ポート番号の最大値が収まる幅に調整する
+            entry_port.set_width_chars( 5 );
+            entry_port.set_max_length( 5 );
+            entry_port.set_hexpand( false );
+            m_label_port.set_mnemonic_widget( entry_port );
+
+            m_hbox_port.pack_start( m_label_port, 0, 0, false );
+            m_hbox_port.pack_start( entry_port, 0, 0, false );
 
             fallback_proxy_check.set_halign( Gtk::ALIGN_START );
             m_toggle_notice.set_halign( Gtk::ALIGN_END );
@@ -113,7 +137,7 @@ namespace CORE
             m_hbox.pack_start( ckbt, Gtk::PACK_SHRINK );
             m_hbox.pack_start( send_cookie_check, Gtk::PACK_SHRINK );
             m_hbox.pack_start( entry_host );
-            m_hbox.pack_start( entry_port, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( m_hbox_port, Gtk::PACK_SHRINK );
 
             m_hbox_fallback_proxy.set_hexpand( true );
             m_hbox_fallback_proxy.set_margin_start( 8 );
