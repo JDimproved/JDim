@@ -149,6 +149,7 @@ void Socket::tls_close()
 {
     int ret;
 
+    errno = 0;
     while( ( ret = SSL_shutdown( m_tls ) ) != 1 ) {
         WaitFor want_read = WaitFor::recv;
 

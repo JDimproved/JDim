@@ -163,6 +163,7 @@ bool Socket::connect( const std::string& hostname, const std::string& port, cons
     }
 
     // connect peer
+    errno = 0;
     err = ::connect( m_soc, ainf->ai_addr, ainf->ai_addrlen );
     if( err ) {
         // ノンブロックでまだ接続中
@@ -375,19 +376,24 @@ int Socket::write( const char* buf, const std::size_t bufsize )
                 return kSocket_ERR;
             }
 
+            int err;
 #ifdef MSG_NOSIGNAL
+            errno = 0;
             tmpsize = ::send( m_soc, buf + bufsize - send_size, send_size, MSG_NOSIGNAL );
+            err = errno;
 #else
             // SolarisにはMSG_NOSIGNALが無いのでSIGPIPEをIGNOREする (FreeBSD4.11Rにもなかった)
             signal( SIGPIPE, SIG_IGN ); /* シグナルを無視する */
+            errno = 0;
             tmpsize = ::send( m_soc, buf + bufsize - send_size, send_size, 0 );
+            err = errno;
             signal( SIGPIPE, SIG_DFL ); /* 念のため戻す */
 #endif // MSG_NOSIGNAL
 
             if( tmpsize == 0
-                || ( tmpsize < 0 && !( errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR ) ) )
+                || ( tmpsize < 0 && !( err == EAGAIN || err == EWOULDBLOCK || err == EINTR ) ) )
             {
-                m_errmsg = std::string{ "send failed: errno=" } + std::strerror( errno );
+                m_errmsg = std::string{ "send failed: errno=" } + std::strerror( err );
                 return kSocket_ERR;
             }
         }
@@ -432,6 +438,7 @@ int Socket::read( char* buf, const std::size_t bufsize )
                 return kSocket_ERR;
             }
 
+            errno = 0;
             ret = ::recv( m_soc, buf, bufsize, 0 );
             if( ret < 0 && !( errno == EAGAIN || errno == EWOULDBLOCK || errno == EINTR ) ) {
 

@@ -58,6 +58,7 @@ Iconv::Iconv( const Encoding to, const Encoding from, const bool broken_sjis_be_
 void Iconv::open_by_alternative_names( const char* to_str, const char* from_str )
 {
     // "MS932"で失敗したら"CP932"で試してみる
+    errno = 0;
     if( m_enc_to == Encoding::sjis ) m_cd = g_iconv_open( "CP932", from_str );
     else if( m_enc_from == Encoding::sjis ) m_cd = g_iconv_open( to_str, "CP932" );
 
@@ -150,6 +151,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
         std::size_t byte_left_in = buf_in_end - buf_in_tmp;
         std::size_t byte_left_out = buf_out_end - buf_out_tmp;
 
+        errno = 0;
         const int ret = g_iconv( m_cd, &buf_in_tmp, &byte_left_in, &buf_out_tmp, &byte_left_out );
 
 #ifdef _DEBUG

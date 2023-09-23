@@ -64,6 +64,7 @@ void IOMonitor::init_connection()
     int mkfifo_status = -1;
 
     do_makefifo:
+    errno = 0;
     mkfifo_status = mkfifo( m_fifo_file.c_str(), O_RDWR | S_IRUSR | S_IWUSR );
 
     // FIFO作成でエラーになった( 基本的に既にメインプロセスがある )
@@ -73,6 +74,7 @@ void IOMonitor::init_connection()
         if( errno == EEXIST )
         {
             // FIFOを書き込み専用モードでオープン( ノンブロック )
+            errno = 0;
             if( ( m_fifo_fd = open( m_fifo_file.c_str(), O_WRONLY | O_NONBLOCK ) ) == -1 )
             {
                 // 反対側が既にオープンされていない( 異常終了などでメインプロセスがない )
