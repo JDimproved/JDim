@@ -398,10 +398,17 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_edit_settingtxt.set_editable( false );
     m_edit_settingtxt.set_text( DBTREE::settingtxt( get_url() ) );
 
-    m_notebook.append_page( m_vbox, "一般" );
+    // ディスプレイ解像度が小さい環境で表示できるようにスクロール可能にする
+    m_scroll_vbox.add( m_vbox );
+    m_scroll_vbox.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC );
+    m_scroll_network.add( m_vbox_network );
+    m_scroll_network.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC );
+    m_notebook.set_scrollable( true );
+
+    m_notebook.append_page( m_scroll_vbox, "一般" );
     const int page_localrule = 1;
     m_notebook.append_page( *m_localrule, "ローカルルール" );
-    m_notebook.append_page( m_vbox_network, "ネットワーク設定" );
+    m_notebook.append_page( m_scroll_network, "ネットワーク設定" );
     const int page_abone_article = 3;
     m_notebook.append_page( m_notebook_abone, "あぼ〜ん設定(スレビュー)" );
     m_notebook.append_page( m_notebook_abone_thread, "あぼ〜ん設定(スレ一覧)" );
@@ -410,7 +417,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     get_content_area()->pack_start( m_notebook );
     set_title( "「" + DBTREE::board_name( get_url() ) + "」のプロパティ" );
-    resize( 600, 400 );
+    // ウインドウの自然なサイズを設定するがディスプレイに合わせて調整される
+    set_default_size( 850, 750 );
     show_all_children();
 
     if( command == "show_localrule" ) m_notebook.set_current_page( page_localrule );

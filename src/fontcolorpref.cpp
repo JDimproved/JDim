@@ -103,6 +103,8 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     m_fontbutton.set_tooltip_text( m_tooltips_font[ 0 ] );
 
     set_title( "フォントと色の詳細設定" );
+    // ウインドウの自然なサイズを設定するがディスプレイに合わせて調整される
+    set_default_size( 670, 590 );
     show_all_children();
 }
 
@@ -239,7 +241,11 @@ void FontColorPref::pack_widget()
     m_bt_reset_all_colors.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_all_colors ) );
     m_vbox_color.pack_end( m_bt_reset_all_colors, Gtk::PACK_SHRINK );
 
-    m_notebook.append_page( m_vbox_color, "色の設定" );    
+    // ディスプレイ解像度が小さい環境で表示できるようにスクロール可能にする
+    m_scroll_color.add( m_vbox_color );
+    m_scroll_color.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC );
+
+    m_notebook.append_page( m_scroll_color, "色の設定" );
 
     // 全体
     get_content_area()->pack_start( m_notebook );

@@ -63,6 +63,7 @@ namespace CORE
         // 色の設定
         Gtk::Label m_label_warning_color;
         Gtk::VBox m_vbox_color;
+        Gtk::ScrolledWindow m_scroll_color; ///< "色の設定"タブをスクロール可能にする
 
         Gtk::CheckButton m_chk_use_gtktheme_message;
         Gtk::CheckButton m_chk_use_gtkrc_tree;
