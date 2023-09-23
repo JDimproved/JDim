@@ -56,6 +56,8 @@ namespace BOARD
     {
         Gtk::Notebook m_notebook;
         Gtk::VBox m_vbox;
+        Gtk::ScrolledWindow m_scroll_vbox; ///< "一般"タブをスクロール可能にする
+        Gtk::ScrolledWindow m_scroll_network; ///< "ネットワーク設定"タブをスクロール可能にする
 
         // 書き込み時のデフォルト名とメール
         Gtk::Frame m_frame_write;
