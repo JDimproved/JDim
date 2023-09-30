@@ -42,6 +42,8 @@
 #include "cssmanager.h"
 #include "session.h"
 
+#include <pangomm/glyphstring.h>
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -49,9 +51,6 @@
 #include <limits>
 #include <sstream>
 
-#ifndef USE_PANGOLAYOUT
-#include <pangomm/glyphstring.h>
-#endif
 
 using namespace ARTICLE;
 
@@ -126,6 +125,8 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
     , m_pre_pos_y{ -1 }
     , m_back_marker( nullptr, cairo_surface_destroy )
     , m_cursor_type( cursor_names::kDefault )
+    , m_render_text{ CONFIG::get_text_rendering_method() == 0 ? &DrawAreaBase::render_text_glyphstring
+                                                              : &DrawAreaBase::render_text_pangolayout }
 {
 #ifdef _DEBUG
     std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;;
@@ -2530,7 +2531,9 @@ void DrawAreaBase::draw_one_text_node( LAYOUT* layout, const CLIPINFO& ci )
         if( byte_from ) draw_string( layout, ci, color_text, color_back, 0, byte_from );
 
         // 後
-        if( byte_to != strlen( layout->text ) ) draw_string( layout, ci, color_text, color_back, byte_to, strlen( layout->text ) );
+        if( const auto len = std::strlen( layout->text ); byte_to != len ) {
+            draw_string( layout, ci, color_text, color_back, byte_to, len );
+        }
     }
 
     // 検索結果のハイライト
@@ -2696,14 +2699,20 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
 
 
 
-//
-// 文字を描画する関数
-//
-// ノードの byte_from バイト目の文字から byte_to バイト目の「ひとつ前」の文字まで描画
-// byte_to が 0 なら最後まで描画
-//
-// たとえば node->text = "abcdefg" で byte_from = 1, byte_to = 3 なら "bc" を描画
-//
+/** @brief 文字を描画する関数
+ *
+ * @details ノードの byte_from バイト目の文字から byte_to バイト目の「ひとつ前」の文字まで描画<br>
+ * byte_to が 0 なら最後まで描画<br>
+ * <br>
+ * たとえば node->text = "abcdefg" で byte_from = 1, byte_to = 3 なら "bc" を描画
+ *
+ * @param[in] node       文字列を含むレイアウトのデータ
+ * @param[in] ci         描画領域のデータ
+ * @param[in] color      文字色のID
+ * @param[in] color_back 背景色のID
+ * @param[in] byte_from  描画をする文字列の始点(バイト目)
+ * @param[in] byte_to    描画をする文字列の終点(上記参照)
+ */
 void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
                                 const int color, const int color_back, const int byte_from, const int byte_to )
 {
@@ -2773,72 +2782,23 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
 
             const int xx = x;
 
-#ifdef USE_PANGOLAYOUT  // Pango::Layout を使って文字を描画
+            cairo_t* text_cr = cairo_create( m_backscreen.get() );
 
-            const Gdk::RGBA& fg = m_color[ color ];
-            const Gdk::RGBA& bg = m_color[ color_back ];
-            using PA = Pango::Attribute;
-            auto foreground = PA::create_attr_foreground( fg.get_red_u(), fg.get_green_u(), fg.get_blue_u() );
-            auto background = PA::create_attr_background( bg.get_red_u(), bg.get_green_u(), bg.get_blue_u() );
+            RenderTextArguments args = {
+                text_cr,
+                rect, // NOTE: rect->width の値は更新されることがある
+                node->text + pos_start,
+                n_ustr,
+                x,
+                y,
+                color,
+                color_back,
+                width_line,
+                byte_to,
+                node->bold,
+            };
 
-            m_pango_layout->set_text( Glib::ustring( node->text + pos_start, n_ustr ) );
-
-            cairo_t* const text_cr = cairo_create( m_backscreen.get() );
-
-            Pango::AttrList attr;
-            attr.insert( foreground );
-            attr.insert( background );
-            m_pango_layout->set_attributes( attr );
-            cairo_move_to( text_cr, x, y );
-            pango_cairo_show_layout( text_cr, m_pango_layout->gobj() );
-
-            // Pango::Weight属性を使うと文字幅が変わりレイアウトが乱れる
-            // そこで文字を重ねて描画することで太字を表示する
-            if( node->bold ) {
-                Pango::AttrList overlapping;
-                overlapping.insert( foreground );
-                m_pango_layout->set_attributes( overlapping );
-                cairo_move_to( text_cr, x + 1.0, y );
-                pango_cairo_show_layout( text_cr, m_pango_layout->gobj() );
-            }
-
-#else // Pango::GlyphString を使って文字を描画
-
-            assert( m_context );
-
-            fill_backscreen( color_back, x, y, width_line, m_font->height );
-
-            cairo_t* const text_cr = cairo_create( m_backscreen.get() );
-
-            gdk_cairo_set_source_rgba( text_cr, m_color[ color ].gobj() );
-
-            Pango::AttrList attr;
-            const auto text = Glib::ustring( node->text + pos_start, n_ustr );
-            const std::vector<Pango::Item> list_item = m_context->itemize( text, attr );
-
-            Glib::RefPtr< Pango::Font > font;
-            Pango::GlyphString grl;
-
-            for( const Pango::Item& item : list_item ) {
-
-                font = item.get_analysis().get_font();
-                grl = item.shape( item.get_segment( text ) );
-                const int width = PANGO_PIXELS( grl.get_width() );
-
-                cairo_move_to( text_cr, x, y + m_font->ascent );
-                pango_cairo_show_glyph_string( text_cr, font->gobj(), grl.gobj() );
-                if( node->bold ) {
-                    cairo_move_to( text_cr, x + 1.0, y + m_font->ascent );
-                    pango_cairo_show_glyph_string( text_cr, font->gobj(), grl.gobj() );
-                }
-
-                x += width;
-            }
-
-            // 実際のラインの長さ(x - rect->x)とlayout_one_text_node()で計算した
-            // 近似値(rect->width)を一致させる ( 応急処置 )
-            if( ! byte_to && abs( ( x - rect->x ) - rect->width ) > 2 ) rect->width = x - rect->x;
-#endif // USE_PANGOLAYOUT
+            (this->*m_render_text)( args );
 
             // リンクの時は下線を引く
             if( node->link && CONFIG::get_draw_underline() ){
@@ -2857,6 +2817,87 @@ void DrawAreaBase::draw_string( LAYOUT* node, const CLIPINFO& ci,
     }
 }
 
+
+/** @brief 文字を描画する関数 (Pango::GlyphString を使うバージョン)
+ *
+ * @param[in] args 文字の描写に使うデータ
+ */
+void DrawAreaBase::render_text_glyphstring( RenderTextArguments& args )
+{
+    assert( m_context );
+
+    // forループで繰り返し使われるものはローカル変数にコピーする
+    cairo_t* text_cr = args.text_cr;
+    int x = args.x;
+    const int y = args.y;
+    const bool bold = args.bold;
+
+    fill_backscreen( args.color_back, x, y, args.width_line, m_font->height );
+
+    gdk_cairo_set_source_rgba( text_cr, m_color[ args.color ].gobj() );
+
+    Pango::AttrList attr;
+    const auto text = Glib::ustring( args.text, args.n_ustr );
+    const std::vector<Pango::Item> list_item = m_context->itemize( text, attr );
+
+    Glib::RefPtr<Pango::Font> font;
+    Pango::GlyphString grl;
+
+    for( const Pango::Item& item : list_item ) {
+
+        font = item.get_analysis().get_font();
+        grl = item.shape( item.get_segment( text ) );
+        const int width = PANGO_PIXELS( grl.get_width() );
+
+        cairo_move_to( text_cr, x, y + m_font->ascent );
+        pango_cairo_show_glyph_string( text_cr, font->gobj(), grl.gobj() );
+        if( bold ) {
+            cairo_move_to( text_cr, x + 1.0, y + m_font->ascent );
+            pango_cairo_show_glyph_string( text_cr, font->gobj(), grl.gobj() );
+        }
+
+        x += width;
+    }
+
+    // 実際のラインの長さ(x - rect->x)とlayout_one_text_node()で計算した
+    // 近似値(rect->width)を一致させる ( 応急処置 )
+    if( ! args.byte_to && std::abs( ( x - args.rect->x ) - args.rect->width ) > 2 ) {
+        args.rect->width = x - args.rect->x;
+    }
+}
+
+
+/** @brief 文字を描画する関数 (Pango::Layout を使うバージョン)
+ *
+ * @param[in] args 文字の描写に使うデータ
+ */
+void DrawAreaBase::render_text_pangolayout( RenderTextArguments& args )
+{
+    const Gdk::RGBA& fg = m_color[ args.color ];
+    const Gdk::RGBA& bg = m_color[ args.color_back ];
+    using PA = Pango::Attribute;
+    auto foreground = PA::create_attr_foreground( fg.get_red_u(), fg.get_green_u(), fg.get_blue_u() );
+    auto background = PA::create_attr_background( bg.get_red_u(), bg.get_green_u(), bg.get_blue_u() );
+
+    m_pango_layout->set_text( Glib::ustring( args.text, args.n_ustr ) );
+
+    Pango::AttrList attr;
+    attr.insert( foreground );
+    attr.insert( background );
+    m_pango_layout->set_attributes( attr );
+    cairo_move_to( args.text_cr, args.x, args.y );
+    pango_cairo_show_layout( args.text_cr, m_pango_layout->gobj() );
+
+    // Pango::Weight属性を使うと文字幅が変わりレイアウトが乱れる
+    // そこで文字を重ねて描画することで太字を表示する
+    if( args.bold ) {
+        Pango::AttrList overlapping;
+        overlapping.insert( foreground );
+        m_pango_layout->set_attributes( overlapping );
+        cairo_move_to( args.text_cr, args.x + 1.0, args.y );
+        pango_cairo_show_layout( args.text_cr, m_pango_layout->gobj() );
+    }
+}
 
 
 /** @brief 整数 -> 文字列変換してレイアウトに何番目の投稿と発言数をセット

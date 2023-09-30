@@ -593,6 +593,9 @@ bool ConfigItems::load( const bool restore )
     //最大表示可能レス数
     max_resnumber = cf.get_option_int( "max_resnumber", CONF_MAX_RESNUMBER, 1, std::numeric_limits< int >::max() - 1 );
 
+    // スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )
+    text_rendering_method = cf.get_option_int( "text_rendering_method", CONF_TEXT_RENDERING_METHOD, 0, 1 );
+
     // FIFOの作成などにエラーがあったらダイアログを表示する
     show_diag_fifo_error = cf.get_option_bool( "show_diag_fifo_error", CONF_SHOW_DIAG_FIFO_ERROR );
 
@@ -954,6 +957,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );
     cf.update( "delete_img_in_thread", delete_img_in_thread );
     cf.update( "max_resnumber", max_resnumber );
+    cf.update( "text_rendering_method", text_rendering_method );
     cf.update( "show_diag_fifo_error", show_diag_fifo_error );
     cf.update( "save_session", save_session );
 

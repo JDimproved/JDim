@@ -538,6 +538,9 @@ namespace CONFIG
         //最大表示可能レス数
         int max_resnumber{};
 
+        /// @brief スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )
+        int text_rendering_method{};
+
         // FIFOの作成などにエラーがあったらダイアログを表示する
         bool show_diag_fifo_error{};
 

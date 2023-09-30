@@ -620,6 +620,9 @@ namespace CONFIG
     int get_max_resnumber();
     void set_max_resnumber( const int set );
 
+    // スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )
+    int get_text_rendering_method();
+
     // FIFOの作成などにエラーがあったらダイアログを表示する
     bool get_show_diag_fifo_error();
     void set_show_diag_fifo_error( const bool set );
