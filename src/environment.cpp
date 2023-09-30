@@ -251,17 +251,15 @@ std::string ENVIRONMENT::get_distname()
     else if( CACHE::load_rawdata( "/etc/release", text_data ) )
     {
         std::list< std::string > lines = MISC::get_lines( text_data );
-        for( std::string& line : lines )
-        {
-            // 名前が含まれている行を取得
-            if( line.find( "BeleniX" ) != std::string::npos
-                || line.find( "Nexenta" ) != std::string::npos
-                || line.find( "SchilliX" ) != std::string::npos
-                || line.find( "Solaris" ) != std::string::npos )
-            {
-                tmp = std::move( line );
-                break;
-            }
+        auto it = std::find_if( lines.begin(), lines.end(),
+                                // 名前が含まれている行を取得
+                                []( const std::string& line )
+                                { return line.find( "BeleniX" ) != std::string::npos
+                                      || line.find( "Nexenta" ) != std::string::npos
+                                      || line.find( "SchilliX" ) != std::string::npos
+                                      || line.find( "Solaris" ) != std::string::npos; } );
+        if( it != lines.end() ) {
+            tmp = std::move( *it );
         }
     }
     // ファイルの中身がそのままディストリ名として扱える物
