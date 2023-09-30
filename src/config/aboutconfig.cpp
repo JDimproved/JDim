@@ -221,6 +221,7 @@ void AboutConfig::append_rows()
     append_row( "書き込み履歴のあるスレを削除する時にダイアログを表示", get_confitem()->show_del_written_thread_diag, CONF_SHOW_DEL_WRITTEN_THREAD_DIAG );
     append_row( "スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )", get_confitem()->delete_img_in_thread, CONF_DELETE_IMG_IN_THREAD );
     append_row( "最大表示可能レス数", get_confitem()->max_resnumber, CONF_MAX_RESNUMBER );
+    append_row( "スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )", get_confitem()->text_rendering_method, CONF_TEXT_RENDERING_METHOD );
 
     // 書き込みウィンドウ
     append_row( "" );

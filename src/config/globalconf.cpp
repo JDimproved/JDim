@@ -620,6 +620,8 @@ void CONFIG::set_delete_img_in_thread( const int set ){ get_confitem()->delete_i
 int CONFIG::get_max_resnumber(){ return get_confitem()->max_resnumber; }
 void CONFIG::set_max_resnumber( const int set ){ get_confitem()->max_resnumber = set; }
 
+/// @brief スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )
+int CONFIG::get_text_rendering_method() { return get_confitem()->text_rendering_method; }
 
 // FIFOの作成などにエラーがあったらダイアログを表示する
 bool CONFIG::get_show_diag_fifo_error(){ return get_confitem()->show_diag_fifo_error; }

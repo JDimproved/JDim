@@ -85,7 +85,9 @@ OSやディストリビューション別の解説は [#592][dis592] を参照�
   <dt>-Dpangolayout=enabled</dt>
   <dd>
     描画に PangoLayout を使う。デフォルトでは PangoGlyphString を使用する。
-    スレビューのテキスト表示に問題があるときはこのオプションを試してみてください。
+    スレビューのテキスト表示に問題があるときはこのオプションを試してみてください。<br>
+    about:config 「スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )」で変更が可能。
+    変更後に開いたスレから適用される。 <small>(v0.10.1-20230930から追加)</small>
   </dd>
   <dt>-Dmigemo=enabled</dt>
   <dd>

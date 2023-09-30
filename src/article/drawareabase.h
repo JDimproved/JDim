@@ -87,6 +87,22 @@ namespace ARTICLE
         int lower; // 画面下、大きい値
     };
 
+    /// @brief 文字を描写する関数は変数が多いため構造体を使って参照を渡す
+    struct RenderTextArguments
+    {
+        cairo_t* text_cr;
+        struct RECTANGLE* rect; // NOTE: rect->width は更新されることがある
+        const char* text;
+        int n_ustr;
+        int x;
+        int y;
+        int color;
+        int color_back;
+        int width_line;
+        int byte_to;
+        bool bold;
+    };
+
     ///////////////////////////////////
 
 
@@ -241,6 +257,9 @@ namespace ARTICLE
             gint64 last_time; // 前回コールバックが呼び出された時間(frame)
             guint id; // コールバックのID
         } m_deceleration{};
+
+        /// @brief 文字を描画するメンバー関数の関数ポインター
+        void (DrawAreaBase::*m_render_text)( RenderTextArguments& args );
 
       public:
 
@@ -423,6 +442,8 @@ namespace ARTICLE
         void draw_one_text_node( LAYOUT* layout, const CLIPINFO& ci );
         void draw_string( LAYOUT* node, const CLIPINFO& ci,
                           const int color, const int color_back, const int byte_from, const int byte_to );
+        void render_text_glyphstring( RenderTextArguments& args );
+        void render_text_pangolayout( RenderTextArguments& args );
         bool draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci );
         char get_layout_fontid(LAYOUT *layout ) const;
         void set_node_font( LAYOUT* layout );
