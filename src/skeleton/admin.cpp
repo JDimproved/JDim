@@ -955,7 +955,7 @@ void Admin::update_boardname( const std::string& url )
 //
 // URLやステータスを更新
 //
-void Admin::update_status( View* view, const bool force )
+void Admin::update_status( const View* view, const bool force )
 {
     if( view ){
         set_title( view->get_url(), view->get_title(), force );

@@ -164,7 +164,7 @@ namespace SKELETON
         void delete_jdwin();
 
         // URLやステータスを更新
-        void update_status( View* view, const bool force );
+        void update_status( const View* view, const bool force );
 
         DragableNoteBook* get_notebook(){ return m_notebook.get(); }
 
