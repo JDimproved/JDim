@@ -235,7 +235,7 @@ void LinkFilterPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::
 
     LinkFilterDiag diag( this, row[ m_columns.m_col_url ], row[ m_columns.m_col_cmd ] );
     if( diag.run() == Gtk::RESPONSE_OK ){
-        row[ m_columns.m_col_url ] = diag.get_url();
+        row[ m_columns.m_col_url ] = diag.get_entry_url();
         row[ m_columns.m_col_cmd ] = diag.get_cmd();
         static_cast<void>( row ); // cppcheck: unreadVariable
     }
@@ -352,5 +352,5 @@ void LinkFilterPref::slot_delete()
 void LinkFilterPref::slot_add()
 {
     LinkFilterDiag diag( this, "", "" );
-    if( diag.run() == Gtk::RESPONSE_OK ) append_row( diag.get_url(), diag.get_cmd() );
+    if( diag.run() == Gtk::RESPONSE_OK ) append_row( diag.get_entry_url(), diag.get_cmd() );
 }
