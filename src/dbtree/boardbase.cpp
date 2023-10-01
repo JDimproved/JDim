@@ -1075,7 +1075,10 @@ void BoardBase::receive_data( std::string_view buf )
     if( m_rawdata_left.capacity() < bb::kSizeOfRawData ) {
         m_rawdata_left.reserve( bb::kSizeOfRawData );
     }
-    if( get_code() != HTTP_OK ) set_encoding( m_encoding_bak );
+    if( get_code() != HTTP_OK
+        // about:config の「スレ一覧とスレビューのプロパティにあるエンコーディング設定を有効にする」
+        // が"はい"のときはHTTP通信のエンコーディング情報は無視して設定された値を優先する
+        || CONFIG::get_choose_character_encoding() ) set_encoding( m_encoding_bak );
     if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( Encoding::utf8, get_encoding() );
 
     m_rawdata_left.append( buf );
