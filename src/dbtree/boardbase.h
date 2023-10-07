@@ -89,11 +89,15 @@ namespace DBTREE
         int m_view_sort_pre_column;
         int m_view_sort_pre_mode;
 
+        /// @brief trueならUTF-8で書き込む
+        bool m_check_utf8_post{};
+
         // 名無し書き込み不可
         bool m_check_noname{};
 
         // 過去ログも表示する
         bool m_show_oldlog{};
+
 
         //
         // subjectファイルのURLが "http://www.hoge2ch.net/hogeboard/subject.txt"
@@ -282,6 +286,10 @@ namespace DBTREE
         int get_view_sort_pre_mode() const { return m_view_sort_pre_mode; }
         void set_view_sort_pre_mode( int mode ){ m_view_sort_pre_mode = mode; }
 
+        // trueならUTF-8で書き込む
+        bool get_check_utf8_post() const noexcept { return m_check_utf8_post; }
+        void set_check_utf8_post( const bool check ){ m_check_utf8_post = check; }
+
         // 名無し書き込み不可
         bool get_check_noname() const { return m_check_noname; }
         void set_check_noname( const bool check ){ m_check_noname = check; }
@@ -433,9 +441,10 @@ namespace DBTREE
         // read_from_cache : まだスレ一覧を開いていないときにキャッシュのsubject.txtを読み込む
         virtual void download_subject( const std::string& url_update_view, const bool read_from_cache );
 
-        // 新スレ作成用のメッセージ変換
+        // 新スレ作成時の書き込みメッセージ作成
         virtual std::string create_newarticle_message( const std::string& subject, const std::string& name,
-                                                       const std::string& mail, const std::string& msg )
+                                                       const std::string& mail, const std::string& msg,
+                                                       bool utf8_post )
         {
             return {};
         }

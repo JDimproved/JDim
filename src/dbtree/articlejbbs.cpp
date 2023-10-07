@@ -30,7 +30,16 @@ ArticleJBBS::ArticleJBBS( const std::string& datbase, const std::string& _id, bo
 ArticleJBBS::~ArticleJBBS() noexcept = default;
 
 
-std::string ArticleJBBS::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
+/** @brief 書き込みメッセージ作成
+ *
+ * @param[in] name      名前、トリップ
+ * @param[in] mail      メールアドレス、sage
+ * @param[in] msg       書き込むメッセージ
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
+std::string ArticleJBBS::create_write_message( const std::string& name, const std::string& mail,
+                                               const std::string& msg, const bool utf8_post )
 {
     if( msg.empty() ) return std::string();
 
@@ -40,16 +49,18 @@ std::string ArticleJBBS::create_write_message( const std::string& name, const st
     std::string_view dir = std::string_view{ boardid }.substr( 0, i );
     std::string_view bbs = std::string_view{ boardid }.substr( i + 1 );
 
+    const Encoding enc{ utf8_post ? Encoding::utf8 : get_encoding() };
+
     std::stringstream ss_post;
     ss_post.clear();
     ss_post << "BBS="      << bbs
             << "&KEY="     << get_key()
             << "&DIR="     << dir
             << "&TIME="    << get_time_modified()
-            << "&submit="  << MISC::url_encode_plus( "書き込む", get_encoding() )
-            << "&NAME="    << MISC::url_encode_plus( name, get_encoding() )
-            << "&MAIL="    << MISC::url_encode_plus( mail, get_encoding() )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() );
+            << "&submit="  << MISC::url_encode_plus( "書き込む", enc )
+            << "&NAME="    << MISC::url_encode_plus( name, enc )
+            << "&MAIL="    << MISC::url_encode_plus( mail, enc )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, enc );
 
 #ifdef _DEBUG
     std::cout << "Articlejbbs::create_write_message " << ss_post.str() << std::endl;

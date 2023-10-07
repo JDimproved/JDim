@@ -49,10 +49,12 @@ MessageViewMain::~MessageViewMain()
 }
 
 
-//
-// ポストするメッセージ作成
-//
-std::string MessageViewMain::create_message()
+/** @brief ポストするメッセージ作成
+ *
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
+std::string MessageViewMain::create_message( const bool utf8_post )
 {
     if( ! get_text_message() ) return std::string();
 
@@ -122,7 +124,7 @@ std::string MessageViewMain::create_message()
         }
     }
 
-    return DBTREE::create_write_message( get_url(), name, mail, msg );
+    return DBTREE::create_write_message( get_url(), name, mail, msg, utf8_post );
 }
 
 
@@ -165,12 +167,12 @@ void MessageViewMain::reload()
 }
 
 
-
-
-//
-// ポストするメッセージ作成
-//
-std::string MessageViewNew::create_message()
+/** @brief ポストするメッセージ作成
+ *
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
+std::string MessageViewNew::create_message( const bool utf8_post )
 {
     if( ! get_text_message() ) return std::string();
 
@@ -193,7 +195,9 @@ std::string MessageViewNew::create_message()
 
     SKELETON::MsgDiag mdiag( get_parent_win(),
                              "新スレを作成しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-    if( mdiag.run() == Gtk::RESPONSE_YES ) return DBTREE::create_newarticle_message( get_url(), subject, name, mail, msg );
+    if( mdiag.run() == Gtk::RESPONSE_YES ) {
+        return DBTREE::create_newarticle_message( get_url(), subject, name, mail, msg, utf8_post );
+    }
 
     return std::string();
 }

@@ -18,7 +18,7 @@ namespace MESSAGE
 
       private:
         void write_impl( const std::string& msg ) override;
-        std::string create_message() override;
+        std::string create_message( const bool utf8_post ) override;
     };
 
 
@@ -33,7 +33,7 @@ namespace MESSAGE
 
       private:
         void write_impl( const std::string& msg ) override;
-        std::string create_message() override;
+        std::string create_message( const bool utf8_post ) override;
     };
 
 }

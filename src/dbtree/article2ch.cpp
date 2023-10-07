@@ -28,19 +28,29 @@ Article2ch::Article2ch( const std::string& datbase, const std::string& id, bool 
 Article2ch::~Article2ch() noexcept = default;
 
 
-// 書き込みメッセージ変換
-std::string Article2ch::create_write_message( const std::string& name, const std::string& mail, const std::string& msg )
+/** @brief 書き込みメッセージ作成
+ *
+ * @param[in] name      名前、トリップ
+ * @param[in] mail      メールアドレス、sage
+ * @param[in] msg       書き込むメッセージ
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
+std::string Article2ch::create_write_message( const std::string& name, const std::string& mail,
+                                              const std::string& msg, const bool utf8_post )
 {
     if( msg.empty() ) return std::string();
 
+    const Encoding enc{ utf8_post ? Encoding::utf8 : get_encoding() };
+
     std::stringstream ss_post;
-    ss_post << "FROM=" << MISC::url_encode_plus( name, get_encoding() )
-            << "&mail=" << MISC::url_encode_plus( mail, get_encoding() )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() )
+    ss_post << "FROM=" << MISC::url_encode_plus( name, enc )
+            << "&mail=" << MISC::url_encode_plus( mail, enc )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, enc )
             << "&bbs=" << DBTREE::board_id( get_url() )
             << "&key=" << get_key()
             << "&time=" << get_time_modified()
-            << "&submit=" << MISC::url_encode_plus( "書き込む", get_encoding() )
+            << "&submit=" << MISC::url_encode_plus( "書き込む", enc )
             // XXX: ブラウザの種類に関係なく含めて問題ないか？
             << "&oekaki_thread1=";
 

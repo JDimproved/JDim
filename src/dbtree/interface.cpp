@@ -491,6 +491,16 @@ void DBTREE::board_set_view_sort_pre_mode( const std::string& url, int mode )
     DBTREE::get_board( url )->set_view_sort_pre_mode( mode );
 }
 
+bool DBTREE::board_check_utf8_post( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_check_utf8_post();
+}
+
+void DBTREE::board_set_check_utf8_post( const std::string& url, const bool check )
+{
+    DBTREE::get_board( url )->set_check_utf8_post( check );
+}
+
 bool DBTREE::board_check_noname( const std::string& url )
 {
     return DBTREE::get_board( url )->get_check_noname();
@@ -1168,17 +1178,17 @@ void DBTREE::set_write_fixmail( const std::string& url, bool set )
 
 
 std::string DBTREE::create_write_message( const std::string& url, const std::string& name, const std::string& mail,
-                                          const std::string& msg )
+                                          const std::string& msg, const bool utf8_post )
 {
-    return DBTREE::get_article( url )->create_write_message( name, mail, msg );
+    return DBTREE::get_article( url )->create_write_message( name, mail, msg, utf8_post );
 }
 
 
 std::string DBTREE::create_newarticle_message( const std::string& url, const std::string& subject,
                                                const std::string& name, const std::string& mail,
-                                               const std::string& msg )
+                                               const std::string& msg, const bool utf8_post )
 {
-    return DBTREE::get_board( url )->create_newarticle_message( subject, name, mail, msg );
+    return DBTREE::get_board( url )->create_newarticle_message( subject, name, mail, msg, utf8_post );
 }
 
 

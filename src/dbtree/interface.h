@@ -140,6 +140,8 @@ namespace DBTREE
     void board_set_view_sort_pre_column( const std::string& url, int column );
     int board_view_sort_pre_mode( const std::string& url );
     void board_set_view_sort_pre_mode( const std::string& url, int mode );
+    bool board_check_utf8_post( const std::string& url );
+    void board_set_check_utf8_post( const std::string& url, const bool check );
     bool board_check_noname( const std::string& url );
     void board_set_check_noname( const std::string& url, const bool check );
     bool board_show_oldlog( const std::string& url );
@@ -316,10 +318,10 @@ namespace DBTREE
 
     // ポストするメッセージの作成
     std::string create_write_message( const std::string& url, const std::string& name, const std::string& mail,
-                                      const std::string& msg );
+                                      const std::string& msg, const bool utf8_post );
     std::string create_newarticle_message( const std::string& url, const std::string& subject,
                                            const std::string& name, const std::string& mail,
-                                           const std::string& msg );
+                                           const std::string& msg, const bool utf8_post );
 
     // 書き込み時のリファラ
     std::string get_write_referer( const std::string& url );

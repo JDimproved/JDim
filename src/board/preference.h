@@ -66,6 +66,7 @@ namespace BOARD
         Gtk::HBox m_hbox_write2;
         SKELETON::LabelEntry m_entry_writename;
         SKELETON::LabelEntry m_entry_writemail;
+        Gtk::CheckButton m_check_utf8_post; ///< UTF-8で書き込む
         Gtk::CheckButton m_check_noname; // 名無し書き込みチェック
         Gtk::Button m_bt_clear_post_history;
         Gtk::Button m_bt_set_default_namemail;
@@ -123,6 +124,7 @@ namespace BOARD
 
         // samba24
         Gtk::HBox m_hbox_samba;
+        Gtk::Separator m_sep_samba;
         SKELETON::LabelEntry m_label_samba;
         Gtk::Button m_button_clearsamba;
 
