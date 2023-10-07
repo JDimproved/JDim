@@ -140,6 +140,8 @@ namespace DBTREE
     void board_set_view_sort_pre_column( const std::string& url, int column );
     int board_view_sort_pre_mode( const std::string& url );
     void board_set_view_sort_pre_mode( const std::string& url, int mode );
+    bool board_check_utf8_post( const std::string& url );
+    void board_set_check_utf8_post( const std::string& url, const bool check );
     bool board_check_noname( const std::string& url );
     void board_set_check_noname( const std::string& url, const bool check );
     bool board_show_oldlog( const std::string& url );

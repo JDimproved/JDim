@@ -1986,6 +1986,7 @@ void BoardBase::read_board_info()
     m_view_sort_pre_column = cf.get_option_int( "view_sort_pre_column", -1, -1, COL_VISIBLE_END-1 );
     m_view_sort_pre_mode = cf.get_option_int( "view_sort_pre_mode", SORTMODE_ASCEND, 0, SORTMODE_NUM -1 );
 
+    m_check_utf8_post = cf.get_option_bool( "check_utf8_post", false );
     m_check_noname = cf.get_option_bool( "check_noname", false );
 
     m_show_oldlog = cf.get_option_bool( "show_oldlog", false );
@@ -2147,6 +2148,7 @@ void BoardBase::save_jdboard_info()
          << "view_sort_mode = " << m_view_sort_mode << std::endl
          << "view_sort_pre_column = " << m_view_sort_pre_column << std::endl
          << "view_sort_pre_mode = " << m_view_sort_pre_mode << std::endl
+         << "check_utf8_post = " << m_check_utf8_post << std::endl
          << "check_noname = " << m_check_noname << std::endl
          << "show_oldlog = " << m_show_oldlog << std::endl
          << "charset = " << MISC::encoding_to_cstr( get_encoding() ) << std::endl

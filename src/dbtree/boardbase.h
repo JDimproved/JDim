@@ -89,11 +89,15 @@ namespace DBTREE
         int m_view_sort_pre_column;
         int m_view_sort_pre_mode;
 
+        /// @brief trueならUTF-8で書き込む
+        bool m_check_utf8_post{};
+
         // 名無し書き込み不可
         bool m_check_noname{};
 
         // 過去ログも表示する
         bool m_show_oldlog{};
+
 
         //
         // subjectファイルのURLが "http://www.hoge2ch.net/hogeboard/subject.txt"
@@ -281,6 +285,10 @@ namespace DBTREE
         void set_view_sort_pre_column( int column ) { m_view_sort_pre_column = column; }
         int get_view_sort_pre_mode() const { return m_view_sort_pre_mode; }
         void set_view_sort_pre_mode( int mode ){ m_view_sort_pre_mode = mode; }
+
+        // trueならUTF-8で書き込む
+        bool get_check_utf8_post() const noexcept { return m_check_utf8_post; }
+        void set_check_utf8_post( const bool check ){ m_check_utf8_post = check; }
 
         // 名無し書き込み不可
         bool get_check_noname() const { return m_check_noname; }

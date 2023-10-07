@@ -82,6 +82,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         "掲示板がUTF-8の書き込みに対応してるか確認して使用してください。\n"
         "このオプションは実験的なサポートのため変更または廃止の可能性があります。" );
 
+    m_check_utf8_post.set_active( DBTREE::board_check_utf8_post( get_url() ) );
     m_check_noname.set_active( DBTREE::board_check_noname( get_url() ) );
 
     m_entry_writename.set_text( DBTREE::board_get_write_name( get_url() ) ); 
@@ -549,6 +550,7 @@ void Preferences::slot_ok_clicked()
     DBTREE::board_set_local_proxy_port_w( get_url(), atoi( m_proxy_frame_w.entry_port.get_text().c_str() ) );
 
     // 書き込み設定
+    DBTREE::board_set_check_utf8_post( get_url(), m_check_utf8_post.get_active() );
     DBTREE::board_set_check_noname( get_url(), m_check_noname.get_active() );
 
     std::string tmpname = m_entry_writename.get_text();

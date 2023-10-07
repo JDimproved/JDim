@@ -491,6 +491,16 @@ void DBTREE::board_set_view_sort_pre_mode( const std::string& url, int mode )
     DBTREE::get_board( url )->set_view_sort_pre_mode( mode );
 }
 
+bool DBTREE::board_check_utf8_post( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_check_utf8_post();
+}
+
+void DBTREE::board_set_check_utf8_post( const std::string& url, const bool check )
+{
+    DBTREE::get_board( url )->set_check_utf8_post( check );
+}
+
 bool DBTREE::board_check_noname( const std::string& url )
 {
     return DBTREE::get_board( url )->get_check_noname();
