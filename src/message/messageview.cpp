@@ -49,9 +49,11 @@ MessageViewMain::~MessageViewMain()
 }
 
 
-//
-// ポストするメッセージ作成
-//
+/** @brief ポストするメッセージ作成
+ *
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
 std::string MessageViewMain::create_message( const bool utf8_post )
 {
     if( ! get_text_message() ) return std::string();
@@ -165,11 +167,11 @@ void MessageViewMain::reload()
 }
 
 
-
-
-//
-// ポストするメッセージ作成
-//
+/** @brief ポストするメッセージ作成
+ *
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
 std::string MessageViewNew::create_message( const bool utf8_post )
 {
     if( ! get_text_message() ) return std::string();

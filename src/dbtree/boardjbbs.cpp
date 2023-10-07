@@ -97,6 +97,15 @@ std::string BoardJBBS::url_datpath() const
 
 
 
+/** @brief 新スレ作成時の書き込みメッセージ作成
+ *
+ * @param[in] subject   スレタイトル
+ * @param[in] name      名前、トリップ
+ * @param[in] mail      メールアドレス、sage
+ * @param[in] msg       書き込むメッセージ
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
 std::string BoardJBBS::create_newarticle_message( const std::string& subject, const std::string& name,
                                                   const std::string& mail, const std::string& msg, bool utf8_post )
 {

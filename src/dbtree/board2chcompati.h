@@ -37,7 +37,7 @@ namespace DBTREE
         // 確認画面のHTMLから書き込み、スレ立て時に使うフォームデータを取得する
         std::string parse_form_data( const std::string& html ) override;
 
-        // 新スレ作成用のメッセージ変換
+        // 新スレ作成時の書き込みメッセージ作成
         std::string create_newarticle_message( const std::string& subject, const std::string& name,
                                                const std::string& mail, const std::string& msg,
                                                const bool utf8_post ) override;

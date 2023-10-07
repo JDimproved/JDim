@@ -33,6 +33,14 @@ ArticleMachi::ArticleMachi( const std::string& datbase, const std::string& _id, 
 ArticleMachi::~ArticleMachi() noexcept = default;
 
 
+/** @brief 書き込みメッセージ作成
+ *
+ * @param[in] name      名前、トリップ
+ * @param[in] mail      メールアドレス、sage
+ * @param[in] msg       書き込むメッセージ
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
 std::string ArticleMachi::create_write_message( const std::string& name, const std::string& mail,
                                                 const std::string& msg, const bool utf8_post )
 {

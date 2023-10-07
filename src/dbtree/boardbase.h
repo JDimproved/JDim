@@ -441,7 +441,7 @@ namespace DBTREE
         // read_from_cache : まだスレ一覧を開いていないときにキャッシュのsubject.txtを読み込む
         virtual void download_subject( const std::string& url_update_view, const bool read_from_cache );
 
-        // 新スレ作成用のメッセージ変換
+        // 新スレ作成時の書き込みメッセージ作成
         virtual std::string create_newarticle_message( const std::string& subject, const std::string& name,
                                                        const std::string& mail, const std::string& msg,
                                                        bool utf8_post )

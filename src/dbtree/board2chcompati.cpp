@@ -176,7 +176,15 @@ std::string Board2chCompati::parse_form_data( const std::string& html )
 }
 
 
-// 新スレ作成時の書き込みメッセージ作成
+/** @brief 新スレ作成時の書き込みメッセージ作成
+ *
+ * @param[in] subject   スレタイトル
+ * @param[in] name      名前、トリップ
+ * @param[in] mail      メールアドレス、sage
+ * @param[in] msg       書き込むメッセージ
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
 std::string Board2chCompati::create_newarticle_message( const std::string& subject, const std::string& name,
                                                         const std::string& mail, const std::string& msg,
                                                         const bool utf8_post )

@@ -28,7 +28,14 @@ Article2ch::Article2ch( const std::string& datbase, const std::string& id, bool 
 Article2ch::~Article2ch() noexcept = default;
 
 
-// 書き込みメッセージ変換
+/** @brief 書き込みメッセージ作成
+ *
+ * @param[in] name      名前、トリップ
+ * @param[in] mail      メールアドレス、sage
+ * @param[in] msg       書き込むメッセージ
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
 std::string Article2ch::create_write_message( const std::string& name, const std::string& mail,
                                               const std::string& msg, const bool utf8_post )
 {

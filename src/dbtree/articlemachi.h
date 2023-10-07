@@ -20,7 +20,7 @@ namespace DBTREE
         ArticleMachi( const std::string& datbase, const std::string& id, bool cached, const Encoding enc );
         ~ArticleMachi() noexcept;
 
-        // 書き込みメッセージ変換
+        // 書き込みメッセージ作成
         std::string create_write_message( const std::string& name, const std::string& mail,
                                           const std::string& msg, const bool utf8_post ) override;
 

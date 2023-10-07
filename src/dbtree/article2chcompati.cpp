@@ -38,7 +38,14 @@ Article2chCompati::Article2chCompati( const std::string& datbase, const std::str
 Article2chCompati::~Article2chCompati() noexcept = default;
 
 
-// 書き込みメッセージ変換
+/** @brief 書き込みメッセージ作成
+ *
+ * @param[in] name      名前、トリップ
+ * @param[in] mail      メールアドレス、sage
+ * @param[in] msg       書き込むメッセージ
+ * @param[in] utf8_post trueならUTF-8のままURLエンコードする
+ * @return URLエンコードしたフォームデータ (application/x-www-form-urlencoded)
+ */
 std::string Article2chCompati::create_write_message( const std::string& name, const std::string& mail,
                                                      const std::string& msg, const bool utf8_post )
 {
