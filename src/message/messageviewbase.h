@@ -150,7 +150,7 @@ namespace MESSAGE
         void slot_switch_page( Gtk::Widget*, guint page );
         void slot_text_changed();
 
-        virtual std::string create_message() = 0;
+        virtual std::string create_message( const bool utf8_post ) = 0;
 
         void show_status();
 

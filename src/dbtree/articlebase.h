@@ -242,7 +242,7 @@ namespace DBTREE
 
         // 書き込みメッセージ作成
         virtual std::string create_write_message( const std::string& name, const std::string& mail,
-                                                  const std::string& msg ) { return {}; }
+                                                  const std::string& msg, const bool utf8_post ) { return {}; }
 
         // bbscgi のURL
         virtual std::string url_bbscgi() const { return {}; }

@@ -318,10 +318,10 @@ namespace DBTREE
 
     // ポストするメッセージの作成
     std::string create_write_message( const std::string& url, const std::string& name, const std::string& mail,
-                                      const std::string& msg );
+                                      const std::string& msg, const bool utf8_post );
     std::string create_newarticle_message( const std::string& url, const std::string& subject,
                                            const std::string& name, const std::string& mail,
-                                           const std::string& msg );
+                                           const std::string& msg, const bool utf8_post );
 
     // 書き込み時のリファラ
     std::string get_write_referer( const std::string& url );

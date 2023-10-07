@@ -169,7 +169,7 @@ std::string BoardMachi::url_datpath() const
 
 
 std::string BoardMachi::create_newarticle_message( const std::string& subject, const std::string& name,
-                                                   const std::string& mail, const std::string& msg )
+                                                   const std::string& mail, const std::string& msg, const bool )
 {
     if( subject.empty() ) return std::string();
     if( msg.empty() ) return std::string();

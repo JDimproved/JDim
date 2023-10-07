@@ -180,6 +180,10 @@ void Post::post_msg()
     // http://www.asahi-net.or.jp/~sd5a-ucd/rec-html401j/interact/forms.html#h-17.13.4.1
     // http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.1
     data.contenttype = "application/x-www-form-urlencoded";
+    // trueならUTF-8で書き込む
+    if( DBTREE::board_check_utf8_post( m_url ) ) {
+        data.contenttype.append( "; charset=utf-8" );
+    }
 
     data.agent = DBTREE::get_agent_w( m_url );
     data.referer = m_count < 1 ? m_post_strategy->get_referer( m_url ) : m_post_strategy->url_bbscgi( m_url );

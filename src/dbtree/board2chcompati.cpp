@@ -177,21 +177,24 @@ std::string Board2chCompati::parse_form_data( const std::string& html )
 
 
 // 新スレ作成時の書き込みメッセージ作成
-std::string Board2chCompati::create_newarticle_message( const std::string& subject,
-                                                       const std::string& name, const std::string& mail, const std::string& msg )
+std::string Board2chCompati::create_newarticle_message( const std::string& subject, const std::string& name,
+                                                        const std::string& mail, const std::string& msg,
+                                                        const bool utf8_post )
 {
     if( subject.empty() ) return std::string();
     if( msg.empty() ) return std::string();
 
+    const Encoding enc{ utf8_post ? Encoding::utf8 : get_encoding() };
+
     std::stringstream ss_post;
     ss_post.clear();
     ss_post << "bbs="      << get_id()
-            << "&subject=" << MISC::url_encode_plus( subject, get_encoding() )
+            << "&subject=" << MISC::url_encode_plus( subject, enc )
             << "&time="    << get_time_modified()
-            << "&submit="  << MISC::url_encode_plus( "新規スレッド作成", get_encoding() )
-            << "&FROM="    << MISC::url_encode_plus( name, get_encoding() )
-            << "&mail="    << MISC::url_encode_plus( mail, get_encoding() )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() );
+            << "&submit="  << MISC::url_encode_plus( "新規スレッド作成", enc )
+            << "&FROM="    << MISC::url_encode_plus( name, enc )
+            << "&mail="    << MISC::url_encode_plus( mail, enc )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, enc );
 
 #ifdef _DEBUG
     std::cout << "Board2chCompati::create_newarticle_message " << ss_post.str() << std::endl;

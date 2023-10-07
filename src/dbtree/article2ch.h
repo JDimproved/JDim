@@ -20,7 +20,7 @@ namespace DBTREE
 
         // 書き込みメッセージ変換
         std::string create_write_message( const std::string& name, const std::string& mail,
-                                          const std::string& msg ) override;
+                                          const std::string& msg, const bool utf8_post ) override;
 
       protected:
 

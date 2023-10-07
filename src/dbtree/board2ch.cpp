@@ -208,7 +208,8 @@ void Board2ch::download_front()
 
 // 新スレ作成時の書き込みメッセージ作成
 std::string Board2ch::create_newarticle_message( const std::string& subject, const std::string& name,
-                                                 const std::string& mail, const std::string& msg )
+                                                 const std::string& mail, const std::string& msg,
+                                                 const bool utf8_post )
 {
     if( subject.empty() ) return std::string();
     if( msg.empty() ) return std::string();
@@ -219,12 +220,14 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
         return {};
     }
 
+    const Encoding enc{ utf8_post ? Encoding::utf8 : get_encoding() };
+
     std::stringstream ss_post;
-    ss_post << "submit="   << MISC::url_encode_plus( "新規スレッド作成", get_encoding() )
-            << "&subject=" << MISC::url_encode_plus( subject, get_encoding() )
-            << "&FROM="    << MISC::url_encode_plus( name, get_encoding() )
-            << "&mail="    << MISC::url_encode_plus( mail, get_encoding() )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() )
+    ss_post << "submit="   << MISC::url_encode_plus( "新規スレッド作成", enc )
+            << "&subject=" << MISC::url_encode_plus( subject, enc )
+            << "&FROM="    << MISC::url_encode_plus( name, enc )
+            << "&mail="    << MISC::url_encode_plus( mail, enc )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, enc )
             << "&bbs="     << get_id()
             << "&time="    << m_frontloader->get_time_modified();
 

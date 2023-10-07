@@ -98,7 +98,7 @@ std::string BoardJBBS::url_datpath() const
 
 
 std::string BoardJBBS::create_newarticle_message( const std::string& subject, const std::string& name,
-                                                  const std::string& mail, const std::string& msg )
+                                                  const std::string& mail, const std::string& msg, bool utf8_post )
 {
     if( subject.empty() ) return std::string();
     if( msg.empty() ) return std::string();
@@ -109,13 +109,15 @@ std::string BoardJBBS::create_newarticle_message( const std::string& subject, co
     std::string dir = boardid.substr( 0, i );
     std::string bbs = boardid.substr( i + 1 );
 
+    const Encoding enc{ utf8_post ? Encoding::utf8 : get_encoding() };
+
     std::stringstream ss_post;
     ss_post.clear();
-    ss_post << "SUBJECT="  << MISC::url_encode_plus( subject, get_encoding() )
-            << "&submit="  << MISC::url_encode_plus( "新規書き込み", get_encoding() )
-            << "&NAME="    << MISC::url_encode_plus( name, get_encoding() )
-            << "&MAIL="    << MISC::url_encode_plus( mail, get_encoding() )
-            << "&MESSAGE=" << MISC::url_encode_plus( msg, get_encoding() )
+    ss_post << "SUBJECT="  << MISC::url_encode_plus( subject, enc )
+            << "&submit="  << MISC::url_encode_plus( "新規書き込み", enc )
+            << "&NAME="    << MISC::url_encode_plus( name, enc )
+            << "&MAIL="    << MISC::url_encode_plus( mail, enc )
+            << "&MESSAGE=" << MISC::url_encode_plus( msg, enc )
             << "&DIR="     << dir
             << "&BBS="     << bbs
             << "&TIME="    << get_time_modified();

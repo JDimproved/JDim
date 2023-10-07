@@ -633,7 +633,10 @@ void MessageViewBase::write()
         return;
     }
 
-    const std::string msg = create_message();
+    // trueならUTF-8で書き込む
+    const bool utf8_post = DBTREE::board_check_utf8_post( get_url() );
+
+    const std::string msg = create_message( utf8_post );
     if( msg.empty() ) return;
 
     // 数値文字参照(&#????;)書き込み可能か

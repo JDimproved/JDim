@@ -443,7 +443,8 @@ namespace DBTREE
 
         // 新スレ作成用のメッセージ変換
         virtual std::string create_newarticle_message( const std::string& subject, const std::string& name,
-                                                       const std::string& mail, const std::string& msg )
+                                                       const std::string& mail, const std::string& msg,
+                                                       bool utf8_post )
         {
             return {};
         }
