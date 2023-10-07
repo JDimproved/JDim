@@ -28,6 +28,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_frame_write( "書き込み設定" )
     , m_entry_writename( true, "名前：" )
     , m_entry_writemail( true, "メール：" )
+    , m_check_utf8_post( "(実験的な機能) UTF-8で書き込む" )
     , m_check_noname( "名前欄が空白の時は書き込まない" )
     , m_bt_clear_post_history( "この板にある全スレの書き込み履歴クリア" )
     , m_bt_set_default_namemail( "デフォルト" )
@@ -54,6 +55,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_label_last_access( false, "最終アクセス日時 ：" )
     , m_label_modified( false, "最終更新日時 ：" )
     , m_button_clearmodified( "日時クリア" )
+    , m_sep_samba{ Gtk::ORIENTATION_VERTICAL }
     , m_label_samba( false, "書き込み規制秒数 (Samba24) ：" )
     , m_button_clearsamba( "秒数クリア" )
     , m_check_oldlog( "過去ログを表示する" )
@@ -69,8 +71,16 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     else m_label_samba.set_text( std::to_string( samba_sec ) );
 
     m_button_clearsamba.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_samba ) );
+    m_hbox_samba.pack_start( m_check_utf8_post, Gtk::PACK_SHRINK );
+    m_hbox_samba.pack_start( m_sep_samba, Gtk::PACK_SHRINK );
     m_hbox_samba.pack_start( m_label_samba );
     m_hbox_samba.pack_start( m_button_clearsamba, Gtk::PACK_SHRINK );    
+    m_check_utf8_post.set_margin_end( 15 );
+    m_label_samba.set_margin_start( 15 );
+    m_sep_samba.set_hexpand( false );
+    m_check_utf8_post.set_tooltip_text(
+        "掲示板がUTF-8の書き込みに対応してるか確認して使用してください。\n"
+        "このオプションは実験的なサポートのため変更または廃止の可能性があります。" );
 
     m_check_noname.set_active( DBTREE::board_check_noname( get_url() ) );
 
