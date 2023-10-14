@@ -128,6 +128,21 @@ const std::string& ArticleBase::get_since_date()
 }
 
 
+/** @brief テキストエンコーディングを表す列挙型を返す
+ *
+ * @details 板やスレのテキストエンコーディング設定が無効のときは
+ * 板のプロパティにある「テキストエンコーディングを判定する方法」を参照して返す値を決定する。
+ */
+Encoding ArticleBase::get_encoding() const
+{
+    if( ! CONFIG::get_choose_character_encoding()
+            && DBTREE::board_encoding_analysis_method( m_url ) == EncodingAnalysisMethod::use_default ) {
+        return DBTREE::board_default_encoding( m_url );
+    }
+    return m_encoding;
+}
+
+
 // スレ速度
 int ArticleBase::get_speed() const
 {

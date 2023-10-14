@@ -157,7 +157,7 @@ namespace DBTREE
         int get_number_max() const noexcept { return m_number_max; }
 
         // 文字エンコーディング
-        Encoding get_encoding() const noexcept { return m_encoding; }
+        Encoding get_encoding() const;
         void set_encoding( const Encoding encoding ){ m_encoding = encoding; }
 
         // スレ速度

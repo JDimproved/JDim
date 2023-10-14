@@ -1050,6 +1050,7 @@ void BoardBase::create_loaderdata( JDLIB::LOADERDATA& data )
     data.basicauth = get_basicauth();
     data.modified = get_date_modified();
     data.cookie_for_request = cookie_for_request();
+    data.encoding_analysis_method = get_encoding_analysis_method();
 }
 
 
@@ -1427,6 +1428,7 @@ bool BoardBase::start_checkking_if_board_moved()
     data.init_for_data();
     data.url = url_boardbase();
     data.cookie_for_request = cookie_for_request();
+    data.encoding_analysis_method = get_encoding_analysis_method();
 
     if( start_load( data ) ){
         m_read_url_boardbase = true;
@@ -2087,6 +2089,9 @@ void BoardBase::read_board_info()
     // 板のユーザーエージェント設定
     m_board_agent = cf.get_option_str( "user_agent", std::string{} );
 
+    // テキストエンコーディングを判定する方法
+    m_encoding_analysis_method = cf.get_option_int( "encoding_analysis_method", 0, 0, EncodingAnalysisMethod::max );
+
 #ifdef _DEBUG
     std::cout << "modified = " << get_date_modified() << std::endl;
 #endif
@@ -2180,6 +2185,7 @@ void BoardBase::save_jdboard_info()
          << "status = " << m_status << std::endl
          << "max_res = " << m_number_max_res << std::endl
          << "user_agent = " << m_board_agent << std::endl
+         << "encoding_analysis_method = " << m_encoding_analysis_method << std::endl;
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );

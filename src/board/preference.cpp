@@ -223,6 +223,14 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
         m_vbox_encoding.pack_start( m_hbox_encoding, Gtk::PACK_SHRINK );
         m_vbox_encoding.pack_start( m_revealer_encoding, Gtk::PACK_SHRINK );
+
+        if( const int method = DBTREE::board_encoding_analysis_method( get_url() );
+                method == EncodingAnalysisMethod::http_header ) {
+            m_radio_encoding_http_header.set_active( true );
+        }
+        else {
+            m_radio_encoding_default.set_active( true );
+        }
     }
 
     // 一般ページのパッキング
@@ -611,6 +619,14 @@ void Preferences::slot_ok_clicked()
     if( m_check_live.get_active() ) live_sec = m_spin_live.get_value_as_int();
     DBTREE::board_set_live_sec( get_url(), live_sec );
     CORE::core_set_command( "redraw_article_toolbar" );
+
+    // テキストエンコーディングを判定する方法
+    if( m_radio_encoding_http_header.get_active() ) {
+        DBTREE::board_set_encoding_analysis_method( get_url(), EncodingAnalysisMethod::http_header );
+    }
+    else {
+        DBTREE::board_set_encoding_analysis_method( get_url(), EncodingAnalysisMethod::use_default );
+    }
 
     // 最大レス数
     const int number_max_res = m_spin_maxres.get_value_as_int();

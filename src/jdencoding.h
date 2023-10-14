@@ -21,4 +21,16 @@ enum class Encoding
     utf8,  ///< UTF-8
 };
 
+
+/** @brief テキストエンコーディングを判定する方法を表す定数をまとめた構造体
+ *
+ * @details 0 より小さい値は無効な値にするため定義しない
+ */
+struct EncodingAnalysisMethod
+{
+    static constexpr const int use_default = 0; ///< デフォルト設定を使う
+    static constexpr const int http_header = 1; ///< HTTPヘッダーのエンコーディング情報を使う
+    static constexpr const int max = http_header;
+};
+
 #endif

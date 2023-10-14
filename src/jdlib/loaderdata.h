@@ -55,6 +55,8 @@ namespace JDLIB
         size_t size_buf;
         int timeout;
 
+        int encoding_analysis_method; ///< テキストエンコーディングを判定する方法
+
         LOADERDATA();
 
         void init();
