@@ -218,6 +218,9 @@ namespace DBTREE
         /// 板のユーザーエージェント設定 (空のときは全体設定を使う)
         std::string m_board_agent;
 
+        /// テキストエンコーディングを判定する方法
+        int m_encoding_analysis_method{};
+
       protected:
 
         ARTICLE_INFO_LIST& get_list_artinfo(){ return m_list_artinfo; }
@@ -594,6 +597,10 @@ namespace DBTREE
         // 板の更新チェック時に、更新チェックを行うスレのアドレスのリスト
         // キャッシュが存在し、かつdat落ちしていないで新着数が0のスレを速度の順でソートして返す
         std::list< std::string > get_check_update_articles();
+
+        // テキストエンコーディングを判定する方法
+        int get_encoding_analysis_method() const noexcept { return m_encoding_analysis_method; }
+        void set_encoding_analysis_method( int meth ) { m_encoding_analysis_method = meth; }
 
       private:
 

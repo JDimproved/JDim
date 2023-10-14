@@ -108,6 +108,7 @@ namespace DBTREE
     const std::string& board_subjecttxt( const std::string& url );
     Encoding board_encoding( const std::string& url );
     void board_set_encoding( const std::string& url, const Encoding enc );
+    Encoding board_default_encoding( const std::string& url );
     std::string board_cookie_by_host( const std::string& url );
     std::string board_cookie_for_request( const std::string& url );
     std::string board_cookie_for_post( const std::string& url );
@@ -199,6 +200,10 @@ namespace DBTREE
     // 板のユーザーエージェント設定
     const std::string& board_get_board_agent( const std::string& url );
     void board_set_board_agent( const std::string& url, const std::string& user_agent );
+
+    // テキストエンコーディングを判定する方法
+    int board_encoding_analysis_method( const std::string& url );
+    void board_set_encoding_analysis_method( const std::string& url, const int meth );
 
     // 全スレの書き込み履歴のリセット
     void clear_all_post_history();

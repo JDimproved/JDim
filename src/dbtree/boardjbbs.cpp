@@ -38,6 +38,7 @@ BoardJBBS::BoardJBBS( const std::string& root, const std::string& path_board, co
     set_ext( "" );
     set_id( path_board.substr( 1 ) ); // 先頭の '/' を除く  
     set_encoding( Encoding::eucjp );
+    set_default_encoding( Encoding::eucjp );
 }
 
 

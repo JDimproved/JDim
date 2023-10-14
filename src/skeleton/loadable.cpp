@@ -21,12 +21,14 @@ enum class Loadable::CharsetDetection
     parse_header, ///< HTTP header を解析する
     parse_meta,   ///< HTML meta 要素を解析する
     finished,     ///< 検出を終えた
+    use_default,  ///< デフォルト設定を使う
 };
 
 
 Loadable::Loadable()
     : m_charset_det{ CharsetDetection::parse_header }
     , m_encoding{ Encoding::unknown }
+    , m_default_encoding{ Encoding::unknown }
 {
     clear_load_data();
 }
@@ -111,7 +113,13 @@ bool Loadable::start_load( const JDLIB::LOADERDATA& data )
 
     // 情報初期化
     // m_date_modified, m_cookie は初期化しない
-    m_charset_det = CharsetDetection::parse_header;
+    if( data.encoding_analysis_method == EncodingAnalysisMethod::http_header ) {
+        m_charset_det = CharsetDetection::parse_header;
+    }
+    else {
+        m_charset_det = CharsetDetection::use_default;
+        set_encoding( m_default_encoding );
+    }
     m_code = HTTP_INIT;
     m_str_code = std::string();
     m_location = std::string();

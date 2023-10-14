@@ -305,6 +305,12 @@ void DBTREE::board_set_encoding( const std::string& url, const Encoding enc )
 }
 
 
+Encoding DBTREE::board_default_encoding( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_default_encoding();
+}
+
+
 std::string DBTREE::board_cookie_by_host( const std::string& url )
 {
     return DBTREE::get_board( url )->cookie_by_host();
@@ -729,6 +735,17 @@ const std::string& DBTREE::board_get_board_agent( const std::string& url )
 void DBTREE::board_set_board_agent( const std::string& url, const std::string& user_agent )
 {
     DBTREE::get_board( url )->set_board_agent( user_agent );
+}
+
+// テキストエンコーディングを判定する方法
+int DBTREE::board_encoding_analysis_method( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_encoding_analysis_method();
+}
+
+void DBTREE::board_set_encoding_analysis_method( const std::string& url, const int meth )
+{
+    DBTREE::get_board( url )->set_encoding_analysis_method( meth );
 }
 
 

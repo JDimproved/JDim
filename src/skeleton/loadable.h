@@ -74,6 +74,7 @@ namespace SKELETON
 
         CharsetDetection m_charset_det; ///< HTTPやHTMLからテキストの文字エンコーディングを検出する処理の状態
         Encoding m_encoding;
+        Encoding m_default_encoding; ///< デフォルト設定
 
         // ローダからコピーしたデータ
         int m_code;
@@ -98,6 +99,9 @@ namespace SKELETON
 
         Encoding get_encoding() const { return m_encoding; }
         void set_encoding( const Encoding encoding ){ m_encoding = encoding; }
+
+        Encoding get_default_encoding() const noexcept { return m_default_encoding; }
+        void set_default_encoding( const Encoding encoding ) { m_default_encoding = encoding; }
 
         int get_code() const { return m_code; }
         void set_code( int code ) { m_code = code; }

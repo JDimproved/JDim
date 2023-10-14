@@ -84,9 +84,20 @@ namespace BOARD
         Gtk::SpinButton m_spin_live;
 
         // テキストエンコーディング
+        Gtk::Box m_vbox_encoding; ///< テキストエンコーディングの設定をパックする
         Gtk::Box m_hbox_encoding;
         Gtk::Label m_label_charset;
         Gtk::ComboBoxText m_combo_charset;
+
+        Glib::RefPtr<Glib::Binding> m_binding_encoding; ///< ToggleButtonとRevealerをバインドする
+        Gtk::ToggleButton m_toggle_encoding;
+        Gtk::Revealer m_revealer_encoding;
+
+        Gtk::Box m_vbox_encoding_analysis_method; ///< テキストエンコーディングを判定する方法をパックする
+        Gtk::Label m_label_encoding_analysis_method; ///< "エンコーディングの判定"のラベル
+        Gtk::RadioButtonGroup m_group_encoding;
+        Gtk::RadioButton m_radio_encoding_default;
+        Gtk::RadioButton m_radio_encoding_http_header;
 
         // ネットワーク設定
         Gtk::Box m_vbox_network;

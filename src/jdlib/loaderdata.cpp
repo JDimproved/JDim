@@ -56,6 +56,7 @@ void LOADERDATA::init()
     basicauth.clear();
     size_buf = 0;
     timeout = 0;
+    encoding_analysis_method = -1;
 }
 
 
