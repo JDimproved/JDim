@@ -38,6 +38,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     , m_check_live( "実況する" )
 
+    , m_hbox_encoding{ Gtk::ORIENTATION_HORIZONTAL, 4 }
+
     , m_vbox_network{ Gtk::ORIENTATION_VERTICAL, 8 }
     , m_hbox_agent{ Gtk::ORIENTATION_HORIZONTAL, 2 }
     , m_label_agent{ "_User-Agent：", true }
@@ -179,14 +181,14 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_combo_charset.append( MISC::encoding_to_cstr( Encoding::eucjp ) );
         m_combo_charset.set_active_text( tmpcharset );
 
-        m_hbox_live.pack_start( m_label_charset, Gtk::PACK_SHRINK );
-        m_hbox_live.pack_start( m_combo_charset, Gtk::PACK_SHRINK );
+        m_hbox_encoding.pack_start( m_label_charset, Gtk::PACK_SHRINK );
+        m_hbox_encoding.pack_start( m_combo_charset, Gtk::PACK_SHRINK );
     }
     else {
         // エンコーディング設定は安全でないので無効のときは設定欄(コンボボックス)を表示しない
         m_label_charset.set_text( Glib::ustring::compose( "テキストエンコーディング :  %1", tmpcharset ) );
 
-        m_hbox_live.pack_start( m_label_charset, Gtk::PACK_SHRINK );
+        m_hbox_encoding.pack_start( m_label_charset, Gtk::PACK_SHRINK );
     }
 
     // 一般ページのパッキング
@@ -243,6 +245,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox.pack_start( m_label_last_access, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_hbox_encoding, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_check_oldlog, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_frame_write, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_frame_cookie, Gtk::PACK_SHRINK );

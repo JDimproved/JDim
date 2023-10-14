@@ -84,6 +84,7 @@ namespace BOARD
         Gtk::SpinButton m_spin_live;
 
         // テキストエンコーディング
+        Gtk::Box m_hbox_encoding;
         Gtk::Label m_label_charset;
         Gtk::ComboBoxText m_combo_charset;
 
