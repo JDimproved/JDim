@@ -38,7 +38,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     , m_check_live( "実況する" )
 
+    , m_vbox_encoding{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_hbox_encoding{ Gtk::ORIENTATION_HORIZONTAL, 4 }
+    , m_vbox_encoding_analysis_method{ Gtk::ORIENTATION_VERTICAL, 2 }
 
     , m_vbox_network{ Gtk::ORIENTATION_VERTICAL, 8 }
     , m_hbox_agent{ Gtk::ORIENTATION_HORIZONTAL, 2 }
@@ -183,12 +185,44 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
         m_hbox_encoding.pack_start( m_label_charset, Gtk::PACK_SHRINK );
         m_hbox_encoding.pack_start( m_combo_charset, Gtk::PACK_SHRINK );
+
+        m_vbox_encoding.pack_start( m_hbox_encoding, Gtk::PACK_SHRINK );
     }
     else {
         // エンコーディング設定は安全でないので無効のときは設定欄(コンボボックス)を表示しない
         m_label_charset.set_text( Glib::ustring::compose( "テキストエンコーディング :  %1", tmpcharset ) );
 
         m_hbox_encoding.pack_start( m_label_charset, Gtk::PACK_SHRINK );
+
+        m_binding_encoding = Glib::Binding::bind_property( m_toggle_encoding.property_active(),
+                                                           m_revealer_encoding.property_reveal_child() );
+        m_toggle_encoding.set_label( "(実験的な機能) エンコーディングの判定" );
+        m_toggle_encoding.set_tooltip_text(
+            "このオプションは実験的なサポートのため変更または廃止の可能性があります。" );
+        m_toggle_encoding.set_halign( Gtk::ALIGN_END );
+        m_hbox_encoding.pack_end( m_toggle_encoding, Gtk::PACK_SHRINK );
+
+        m_label_encoding_analysis_method.set_markup( "<b>テキストエンコーディングを判定する方法</b>" );
+        m_label_encoding_analysis_method.set_halign( Gtk::ALIGN_START );
+
+        m_radio_encoding_default.set_group( m_group_encoding );
+        m_radio_encoding_default.set_label( "デフォルト設定を使う" );
+
+        m_radio_encoding_http_header.set_group( m_group_encoding );
+        m_radio_encoding_http_header.set_label( "HTTPヘッダーのエンコーディング情報を使う" );
+
+        m_vbox_encoding_analysis_method.set_margin_start( 30 );
+        m_vbox_encoding_analysis_method.set_margin_end( 30 );
+        m_vbox_encoding_analysis_method.set_margin_top( 10 );
+        m_vbox_encoding_analysis_method.set_margin_bottom( 10 );
+        m_vbox_encoding_analysis_method.pack_start( m_label_encoding_analysis_method, Gtk::PACK_SHRINK );
+        m_vbox_encoding_analysis_method.pack_start( m_radio_encoding_default, Gtk::PACK_SHRINK );
+        m_vbox_encoding_analysis_method.pack_start( m_radio_encoding_http_header, Gtk::PACK_SHRINK );
+
+        m_revealer_encoding.add( m_vbox_encoding_analysis_method );
+
+        m_vbox_encoding.pack_start( m_hbox_encoding, Gtk::PACK_SHRINK );
+        m_vbox_encoding.pack_start( m_revealer_encoding, Gtk::PACK_SHRINK );
     }
 
     // 一般ページのパッキング
@@ -245,7 +279,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_vbox.pack_start( m_label_last_access, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_encoding, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_vbox_encoding, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_check_oldlog, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_frame_write, Gtk::PACK_SHRINK );
     m_vbox.pack_start( m_frame_cookie, Gtk::PACK_SHRINK );
