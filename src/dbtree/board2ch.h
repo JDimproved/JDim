@@ -61,12 +61,6 @@ namespace DBTREE
                                                const std::string& mail, const std::string& msg,
                                                const bool utf8_post ) override;
 
-        // 新スレ作成用のbbscgi のURL
-        std::string url_bbscgi_new() const override;
-        
-        // 新スレ作成用のsubbbscgi のURL
-        std::string url_subbbscgi_new() const override;
-
         // datの最大サイズ(Kバイト)
         int get_max_dat_lng() const override { return DEFAULT_MAX_DAT_LNG; }
 
