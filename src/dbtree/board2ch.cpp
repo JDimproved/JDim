@@ -262,29 +262,6 @@ std::string Board2ch::create_newarticle_message( const std::string& subject, con
 }
 
 
-//
-// 新スレ作成時のbbscgi のURL
-//
-// (例) "http://www.hoge2ch.net/test/bbs.cgi"
-//
-//
-std::string Board2ch::url_bbscgi_new() const
-{
-    return Board2chCompati::url_bbscgi_new();
-}
-
-
-//
-// 新スレ作成時のsubbbscgi のURL
-//
-// (例) "http://www.hoge2ch.net/test/subbbs.cgi"
-//
-std::string Board2ch::url_subbbscgi_new() const
-{
-    return Board2chCompati::url_subbbscgi_new();
-}
-
-
 /** @brief SETTING.TXT の項目 BBS_UNICODE の値を返す
  *
  * @remarks 2022-04-30 以降、5chでは BBS_UNICODE が無効になったため
