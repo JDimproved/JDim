@@ -192,7 +192,8 @@ char* NodeTreeMachi::process_raw_lines( std::string& rawlines )
                 std::string reg_subject( "<title>([^<]*)</title>" );
                 if( m_regex->exec( reg_subject, line, offset, icase, newline, usemigemo, wchar ) ){
 
-                    m_subject_machi = MISC::Iconv( m_regex->str( 1 ), Encoding::utf8, get_encoding() );
+                    const Encoding enc = DBTREE::board_encoding( get_url() );
+                    m_subject_machi = MISC::Iconv( m_regex->str( 1 ), Encoding::utf8, enc );
 #ifdef _DEBUG
                     std::cout << "NodeTreeMachi::process_raw_lines" << std::endl;
                     std::cout << "subject = " << m_subject_machi << std::endl;
