@@ -78,6 +78,7 @@ void TextLoader::load_text( const Encoding encoding )
     init();
     set_code( HTTP_INIT );
     set_encoding( encoding );
+    set_default_encoding( encoding );
     receive_finish();
 }
 
@@ -109,6 +110,7 @@ void TextLoader::download_text( const Encoding encoding )
 
     init();
     set_encoding( encoding );
+    set_default_encoding( encoding );
     create_loaderdata( data );
     if( data.url.empty() ) return;
     if( ! start_load( data ) ) clear();
