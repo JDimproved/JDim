@@ -35,6 +35,7 @@ SearchLoader::SearchLoader()
     else if( url.find( "$TEXTE" ) != std::string::npos ) enc = Encoding::sjis;
 
     set_encoding( enc );
+    set_default_encoding( enc );
 
 #ifdef _DEBUG
     std::cout << "SearchLoader::SearchLoader encoding = " << MISC::encoding_to_cstr( enc ) << std::endl;;
