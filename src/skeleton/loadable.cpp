@@ -20,8 +20,8 @@ enum class Loadable::CharsetDetection
 {
     parse_header, ///< HTTP header を解析する
     parse_meta,   ///< HTML meta 要素を解析する
-    finished,     ///< 検出を終えた
-    use_default,  ///< デフォルト設定を使う
+    finished,     ///< 検出を終えた、またはデフォルト設定を使う
+    guess,        ///< テキストからエンコーディングを推測する
 };
 
 
@@ -113,12 +113,17 @@ bool Loadable::start_load( const JDLIB::LOADERDATA& data )
 
     // 情報初期化
     // m_date_modified, m_cookie は初期化しない
-    if( data.encoding_analysis_method == EncodingAnalysisMethod::http_header ) {
-        m_charset_det = CharsetDetection::parse_header;
-    }
-    else {
-        m_charset_det = CharsetDetection::use_default;
-        set_encoding( m_default_encoding );
+    switch( data.encoding_analysis_method ) {
+        case EncodingAnalysisMethod::http_header:
+            m_charset_det = CharsetDetection::parse_header;
+            break;
+        case EncodingAnalysisMethod::guess:
+            m_charset_det = CharsetDetection::guess;
+            break;
+        default:
+            m_charset_det = CharsetDetection::finished;
+            set_encoding( m_default_encoding );
+            break;
     }
     m_code = HTTP_INIT;
     m_str_code = std::string();
@@ -156,7 +161,19 @@ void Loadable::receive( const char* data, size_t size )
     if( ! m_total_length && m_code != HTTP_INIT ) m_total_length = get_loader_length();
     m_current_length += size;
 
-    if( m_charset_det == CharsetDetection::parse_header ) {
+    if( m_charset_det == CharsetDetection::finished ) {
+        receive_data( std::string_view{ data, size } );
+        return;
+    }
+
+    if( m_charset_det == CharsetDetection::guess ) {
+        const Encoding enc = MISC::detect_encoding( std::string_view{ data, size } );
+        if( enc != Encoding::unknown ) {
+            set_encoding( enc );
+            m_charset_det = CharsetDetection::finished;
+        }
+    }
+    else if( m_charset_det == CharsetDetection::parse_header ) {
         const Encoding enc = get_loader_content_charset();
         if( enc != Encoding::unknown ) {
             set_encoding( enc );
