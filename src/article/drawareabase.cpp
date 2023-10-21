@@ -1850,7 +1850,14 @@ void DrawAreaBase::exec_draw_screen( const int y_redraw, const int height_redraw
     // 描画ループ
     CLIPINFO ci = { width_view, pos_y, upper, lower }; // 描画領域
     bool relayout = false;
-    while( header && header->rect->y < pos_y + height_view ){
+    while( header ) {
+        if( ! header->rect ) {
+            header = header->next_header;
+            continue;
+        }
+        if( header->rect->y >= pos_y + height_view ) {
+            break;
+        }
 
         // フォント設定
         set_node_font( header );
