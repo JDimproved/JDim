@@ -30,7 +30,8 @@ struct EncodingAnalysisMethod
 {
     static constexpr const int use_default = 0; ///< デフォルト設定を使う
     static constexpr const int http_header = 1; ///< HTTPヘッダーのエンコーディング情報を使う
-    static constexpr const int max = http_header;
+    static constexpr const int guess = 2; ///< テキストからエンコーディングを推測する
+    static constexpr const int max = guess;
 };
 
 #endif

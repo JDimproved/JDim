@@ -211,6 +211,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_radio_encoding_http_header.set_group( m_group_encoding );
         m_radio_encoding_http_header.set_label( "HTTPヘッダーのエンコーディング情報を使う" );
 
+        m_radio_encoding_guess.set_group( m_group_encoding );
+        m_radio_encoding_guess.set_label( "テキストからエンコーディングを推測する" );
+
         m_vbox_encoding_analysis_method.set_margin_start( 30 );
         m_vbox_encoding_analysis_method.set_margin_end( 30 );
         m_vbox_encoding_analysis_method.set_margin_top( 10 );
@@ -218,18 +221,23 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_vbox_encoding_analysis_method.pack_start( m_label_encoding_analysis_method, Gtk::PACK_SHRINK );
         m_vbox_encoding_analysis_method.pack_start( m_radio_encoding_default, Gtk::PACK_SHRINK );
         m_vbox_encoding_analysis_method.pack_start( m_radio_encoding_http_header, Gtk::PACK_SHRINK );
+        m_vbox_encoding_analysis_method.pack_start( m_radio_encoding_guess, Gtk::PACK_SHRINK );
 
         m_revealer_encoding.add( m_vbox_encoding_analysis_method );
 
         m_vbox_encoding.pack_start( m_hbox_encoding, Gtk::PACK_SHRINK );
         m_vbox_encoding.pack_start( m_revealer_encoding, Gtk::PACK_SHRINK );
 
-        if( const int method = DBTREE::board_encoding_analysis_method( get_url() );
-                method == EncodingAnalysisMethod::http_header ) {
-            m_radio_encoding_http_header.set_active( true );
-        }
-        else {
-            m_radio_encoding_default.set_active( true );
+        switch( DBTREE::board_encoding_analysis_method( get_url() ) ) {
+            case EncodingAnalysisMethod::http_header:
+                m_radio_encoding_http_header.set_active( true );
+                break;
+            case EncodingAnalysisMethod::guess:
+                m_radio_encoding_guess.set_active( true );
+                break;
+            default:
+                m_radio_encoding_default.set_active( true );
+                break;
         }
     }
 
@@ -623,6 +631,9 @@ void Preferences::slot_ok_clicked()
     // テキストエンコーディングを判定する方法
     if( m_radio_encoding_http_header.get_active() ) {
         DBTREE::board_set_encoding_analysis_method( get_url(), EncodingAnalysisMethod::http_header );
+    }
+    else if( m_radio_encoding_guess.get_active() ) {
+        DBTREE::board_set_encoding_analysis_method( get_url(), EncodingAnalysisMethod::guess );
     }
     else {
         DBTREE::board_set_encoding_analysis_method( get_url(), EncodingAnalysisMethod::use_default );
