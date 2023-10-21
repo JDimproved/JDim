@@ -98,6 +98,7 @@ namespace BOARD
         Gtk::RadioButtonGroup m_group_encoding;
         Gtk::RadioButton m_radio_encoding_default;
         Gtk::RadioButton m_radio_encoding_http_header;
+        Gtk::RadioButton m_radio_encoding_guess;
 
         // ネットワーク設定
         Gtk::Box m_vbox_network;
