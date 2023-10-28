@@ -1517,6 +1517,8 @@ void NodeTreeBase::add_raw_lines( std::string& buffer_lines )
 
         // あぼーん判定
         update_abone( num_before +1,  m_id_header );
+        DBTREE::add_abone_id_span( m_url, m_vec_abone_consecutive );
+        m_vec_abone_consecutive.clear();
 
         // 発言数更新
         update_id_name( num_before +1,  m_id_header );
@@ -3255,6 +3257,9 @@ void NodeTreeBase::clear_abone()
         NODE* tmphead = m_vec_header[ i ];
         if( tmphead && tmphead->headinfo ) tmphead->headinfo->abone = false;
     }
+    m_consecutive_count = 0;
+    m_prev_link_id = nullptr;
+    m_vec_abone_consecutive.clear();
 }
 
 
@@ -3274,6 +3279,9 @@ void NodeTreeBase::copy_abone_info( const std::list< std::string >& list_abone_i
 
     m_list_abone_id_board = DBTREE::get_abone_list_id_board( m_url );
     m_list_abone_name_board = DBTREE::get_abone_list_name_board( m_url );
+
+    // 連続投稿したIDをスレのNG IDに追加 (回数)
+    m_abone_consecutive = DBTREE::board_get_abone_consecutive( m_url );
 
     std::list<std::string> list_str;
     const auto make_pattern = []( const std::string& query ) {
@@ -3327,6 +3335,8 @@ void NodeTreeBase::update_abone_all()
     // あぼーん更新
     clear_abone();
     update_abone( 1, m_id_header );
+    DBTREE::add_abone_id_span( m_url, m_vec_abone_consecutive );
+    m_vec_abone_consecutive.clear();
 
     // 発言数更新
     clear_id_name();
@@ -3388,14 +3398,19 @@ bool NodeTreeBase::check_abone_id( const int number )
 {
     const bool check_id = ! m_list_abone_id.empty();
     const bool check_id_board = ! m_list_abone_id_board.empty();
+    const bool check_consecutive{ m_abone_consecutive > 0 };
 
-    if( !m_abone_noid && !check_id && !check_id_board ) return false;
+    if( !m_abone_noid && !check_id && !check_id_board && !check_consecutive ) return false;
 
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
-    if( head->headinfo->abone ) return true;
+    if( head->headinfo->abone ) {
+        m_prev_link_id = nullptr;
+        return true;
+    }
     if( ! head->headinfo->block[ BLOCK_ID_NAME ] ) {
+        m_prev_link_id = nullptr;
         // ID無し
         if( m_abone_noid ) {
             head->headinfo->abone = true;
@@ -3405,7 +3420,10 @@ bool NodeTreeBase::check_abone_id( const int number )
     }
 
     NODE* idnode = head->headinfo->block[ BLOCK_ID_NAME ]->next_node;
-    if( ! idnode || ! idnode->linkinfo ) return false;
+    if( ! idnode || ! idnode->linkinfo ) {
+        m_prev_link_id = nullptr;
+        return false;
+    }
 
     const char* const link_id = idnode->linkinfo->link + std::strlen( PROTO_ID );
     const auto equal_id = [link_id]( const std::string& id ) { return id == link_id; };
@@ -3414,6 +3432,7 @@ bool NodeTreeBase::check_abone_id( const int number )
     if( check_id ){
         if( std::any_of( m_list_abone_id.cbegin(), m_list_abone_id.cend(), equal_id ) ) {
             head->headinfo->abone = true;
+            m_prev_link_id = nullptr;
             return true;
         }
     }
@@ -3422,8 +3441,32 @@ bool NodeTreeBase::check_abone_id( const int number )
     if( check_id_board ){
         if( std::any_of( m_list_abone_id_board.cbegin(), m_list_abone_id_board.cend(), equal_id ) ) {
             head->headinfo->abone = true;
+            m_prev_link_id = nullptr;
             return true;
         }
+    }
+
+    if( ! check_consecutive ) return false;
+
+    // 連続投稿した回数をカウントする
+    if( m_prev_link_id && std::strcmp( link_id, m_prev_link_id ) == 0 ) {
+        m_consecutive_count += 1;
+    }
+    else {
+        m_consecutive_count = 1;
+    }
+    m_prev_link_id = link_id;
+
+    // 連続投稿した回数が設定値以上になったらスレのNG IDに追加する
+    if( m_abone_consecutive <= m_consecutive_count ) {
+        head->headinfo->abone = true;
+        m_prev_link_id = nullptr;
+        // NG IDが重複しないように一時的にローカルのあぼーんするIDに追加する
+        m_list_abone_id.emplace_back( link_id );
+        // IDごとに追加処理を行うと余計なループが発生するため
+        // スレのNG IDに追加するIDを一時保存しておきupdate_abone()を呼び出した後にまとめて追加する
+        m_vec_abone_consecutive.push_back( link_id );
+        return true;
     }
 
     return false;

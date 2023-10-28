@@ -10,6 +10,8 @@
 #include "etcboardinfo.h"
 #include "jdencoding.h"
 
+#include "jdlib/span.h"
+
 #include <atomic>
 #include <ctime>
 #include <list>
@@ -419,6 +421,7 @@ namespace DBTREE
     // 個別のあぼーん情報のセットと更新
     void set_abone_res( const std::string& url, const int num_from, const int num_to, const bool set );
     void add_abone_id( const std::string& url, const std::string& id );
+    void add_abone_id_span( const std::string& url, JDLIB::span<const char*> id_span );
     void add_abone_name( const std::string& url, const std::string& name );
     void add_abone_word( const std::string& url, const std::string& word );
 

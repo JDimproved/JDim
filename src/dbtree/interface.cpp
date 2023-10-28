@@ -1345,6 +1345,13 @@ void DBTREE::add_abone_id( const std::string& url, const std::string& id )
 }
 
 
+/// @brief あぼーんIDを一度に複数追加する
+void DBTREE::add_abone_id_span( const std::string& url, JDLIB::span<const char*> id_span )
+{
+    DBTREE::get_article( url )->add_abone_id_span( id_span );
+}
+
+
 void DBTREE::add_abone_name( const std::string& url, const std::string& name )
 {
     DBTREE::get_article( url )->add_abone_name( name );

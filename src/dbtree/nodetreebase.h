@@ -81,6 +81,12 @@ namespace DBTREE
         // 発言数で色を変える回数
         int m_num_id[ LINK_NUM ];
 
+        // 連続投稿したIDをスレのNG IDに追加 (回数)
+        int m_abone_consecutive{}; ///< あぼーんにする連続投稿回数
+        int m_consecutive_count{}; ///< 連続投稿した回数をカウントする
+        const char* m_prev_link_id{}; ///< 前のレスのIDを保持して比較する
+        std::vector<const char*> m_vec_abone_consecutive; ///< スレのNG IDに追加するIDを一時保存しておく
+
         // あぼーん情報
         // 実体は親のarticlebaseクラスが持っていてcopy_abone_info()でコピーする
         std::list< std::string > m_list_abone_id;   // あぼーんするID
