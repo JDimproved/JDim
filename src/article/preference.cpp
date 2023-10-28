@@ -224,7 +224,12 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_edit_regex.set_editable( false );
     }
 
-    m_label_abone_id.set_text( "ここでIDを削除してもレスが表示されない場合は板全体に対してIDがあぼーん指定されている可能性があります。\n板のプロパティのあぼーん設定も確認してください。" );
+    m_label_abone_id.set_text(
+        "ここでIDを削除してもレスが表示されない場合は板全体に対してIDがあぼーん指定されている可能性があります。\n"
+        "板のプロパティのあぼーん設定も確認してください。\n"
+        "連続投稿したIDをあぼーんする設定が優先されるためIDを削除しても再び登録されることがあります。"
+        );
+
     m_vbox_abone.set_spacing( 8 );
     m_vbox_abone_id.pack_start( m_label_abone_id, Gtk::PACK_SHRINK );
     m_vbox_abone_id.pack_start( m_edit_id );

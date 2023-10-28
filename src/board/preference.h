@@ -146,8 +146,17 @@ namespace BOARD
 
         // あぼーん
         Gtk::Notebook m_notebook_abone;
-        Gtk::Label m_label_warning;
+        Gtk::Box m_vbox_abone_general; ///< "一般"タブの要素をパックする
+        Gtk::Label m_label_warning_subject; ///< "注意"ラベル
+        Gtk::Label m_label_warning; ///< あぼーん設定の注意書き
+        Gtk::Separator m_sep_general; ///< 注意書きと設定欄の境界線
         SKELETON::EditView m_edit_id, m_edit_name, m_edit_word, m_edit_regex;
+
+        // 連続投稿したIDをスレのNG IDに追加
+        Gtk::Box m_hbox_abone_consecutive; ///< ラベルと設定欄をパックする
+        Gtk::Label m_label_abone_consecutive; ///< 設定の項目ラベル
+        Gtk::Label m_label_abone_consecutive_over_n_times; ///< 数値の単位を明示するラベル
+        Gtk::SpinButton m_spin_abone_consecutive; ///< 回数の入力欄
 
         // スレッドあぼーん
         Gtk::Notebook m_notebook_abone_thread;
