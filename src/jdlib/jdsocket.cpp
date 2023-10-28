@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <netinet/in.h>
+#include <poll.h> // poll
 #include <sys/socket.h>
 #include <unistd.h>
 #ifndef MSG_NOSIGNAL
@@ -472,26 +473,26 @@ bool Socket::wait_fds( const WaitFor operation )
 {
     if( ! m_soc || ! m_async ) return true;
 
+    constexpr ::nfds_t nfds = 1;
+    ::pollfd pfds[nfds];
+    pfds[0].fd = m_soc;
+    pfds[0].events = ( operation == WaitFor::recv ) ? POLLIN : POLLOUT;
+    pfds[0].revents = 0;
+
+    constexpr int timeout_ms = 1000; // 時間の単位は milliseconds, タイムアウトを1秒に設定する
+    const int input_event = pfds[0].events;
     int count = 0;
     while( 1 ) {
 
         errno = 0;
-
-        int ret;
-        fd_set fdset;
-        FD_ZERO( &fdset );
-        FD_SET( m_soc, &fdset );
-        struct timeval tv = { 1, 0 }; // タイムアウトを1秒に設定する
-
-        if( operation == WaitFor::recv ) ret = select( m_soc + 1, &fdset, nullptr, nullptr, &tv );
-        else ret = select( m_soc + 1, nullptr, &fdset, nullptr, &tv );
+        int ret = ::poll( pfds, nfds, timeout_ms );
 
         if( errno != EINTR && ret < 0 ) {
             MISC::ERRMSG( std::string{ "Socket::wait_fds: " } + std::strerror( errno ) );
             break;
         }
 
-        if( errno != EINTR && FD_ISSET( m_soc, &fdset ) ) return true;
+        if( errno != EINTR && pfds[0].revents & input_event ) return true;
         if( m_stop.load( std::memory_order_acquire ) ) break;
 
         if( ++count >= m_tout ) break;
