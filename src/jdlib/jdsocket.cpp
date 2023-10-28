@@ -492,8 +492,12 @@ bool Socket::wait_fds( const WaitFor operation )
             break;
         }
 
-        if( errno != EINTR && pfds[0].revents & input_event ) return true;
+        // linuxではselect(2)やpoll(2)を使ってsocketのファイルディスクリプタを待つと
+        // 読み込みの準備完了ができたと通知がきた場合でも読み込みがブロックされることがある
+        // 間違った準備完了でIO待機を抜ける状況では読み込みブロックとIO待機が繰り返されて
+        // stopの確認が不能になるため返り値よりstopの確認を先に行う
         if( m_stop.load( std::memory_order_acquire ) ) break;
+        if( errno != EINTR && pfds[0].revents & input_event ) return true;
 
         if( ++count >= m_tout ) break;
 #ifdef _DEBUG
