@@ -405,6 +405,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_spin_abone_consecutive.set_increments( 1, 1 );
     m_spin_abone_consecutive.set_sensitive( true );
     m_spin_abone_consecutive.set_range( 0, 1000 );
+    const int abone_consecutive = DBTREE::board_get_abone_consecutive( get_url() );
+    m_spin_abone_consecutive.set_value( abone_consecutive );
 
     m_hbox_abone_consecutive.pack_start( m_label_abone_consecutive, Gtk::PACK_SHRINK );
     m_hbox_abone_consecutive.pack_start( m_spin_abone_consecutive, Gtk::PACK_SHRINK );
@@ -690,6 +692,10 @@ void Preferences::slot_ok_clicked()
     if( board_agent != DBTREE::board_get_board_agent( get_url() ) ) {
         DBTREE::board_set_board_agent( get_url(), board_agent );
     }
+
+    // 連続投稿したIDをスレのNG IDに追加 (回数)
+    const int abone_consecutive = m_spin_abone_consecutive.get_value_as_int();
+    DBTREE::board_set_abone_consecutive( get_url(), abone_consecutive );
 
     // あぼーん再設定
     std::list< std::string > list_id = MISC::get_lines( m_edit_id.get_text() );

@@ -221,6 +221,9 @@ namespace DBTREE
         /// テキストエンコーディングを判定する方法
         int m_encoding_analysis_method{};
 
+        /// 連続投稿したIDをスレのNG IDに追加 (回数)
+        int m_abone_consecutive{};
+
       protected:
 
         ARTICLE_INFO_LIST& get_list_artinfo(){ return m_list_artinfo; }
@@ -601,6 +604,10 @@ namespace DBTREE
         // テキストエンコーディングを判定する方法
         int get_encoding_analysis_method() const noexcept { return m_encoding_analysis_method; }
         void set_encoding_analysis_method( int meth ) { m_encoding_analysis_method = meth; }
+
+        // 連続投稿したIDをスレのNG IDに追加 (回数)
+        int get_abone_consecutive() const noexcept { return m_abone_consecutive; }
+        void set_abone_consecutive( const int count ) { m_abone_consecutive = count; }
 
       private:
 

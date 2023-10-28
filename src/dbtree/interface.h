@@ -205,6 +205,10 @@ namespace DBTREE
     int board_encoding_analysis_method( const std::string& url );
     void board_set_encoding_analysis_method( const std::string& url, const int meth );
 
+    // 連続投稿したIDをスレのNG IDに追加 (回数)
+    int board_get_abone_consecutive( const std::string& url );
+    void board_set_abone_consecutive( const std::string& url, const int count );
+
     // 全スレの書き込み履歴のリセット
     void clear_all_post_history();
 

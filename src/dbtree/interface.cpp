@@ -748,6 +748,17 @@ void DBTREE::board_set_encoding_analysis_method( const std::string& url, const i
     DBTREE::get_board( url )->set_encoding_analysis_method( meth );
 }
 
+// 連続投稿したIDをスレのNG IDに追加 (回数)
+int DBTREE::board_get_abone_consecutive( const std::string& url )
+{
+    return DBTREE::get_board( url )->get_abone_consecutive();
+}
+
+void DBTREE::board_set_abone_consecutive( const std::string& url, const int count )
+{
+    DBTREE::get_board( url )->set_abone_consecutive( count );
+}
+
 
 /////////////////////////////////////////////////
 
