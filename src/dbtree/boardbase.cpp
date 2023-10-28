@@ -2092,6 +2092,9 @@ void BoardBase::read_board_info()
     // テキストエンコーディングを判定する方法
     m_encoding_analysis_method = cf.get_option_int( "encoding_analysis_method", 0, 0, EncodingAnalysisMethod::max );
 
+    // 連続投稿したIDをスレのNG IDに追加 (回数)
+    m_abone_consecutive = cf.get_option_int( "abone_consecutive", 0, 0, 1000 );
+
 #ifdef _DEBUG
     std::cout << "modified = " << get_date_modified() << std::endl;
 #endif
@@ -2185,7 +2188,8 @@ void BoardBase::save_jdboard_info()
          << "status = " << m_status << std::endl
          << "max_res = " << m_number_max_res << std::endl
          << "user_agent = " << m_board_agent << std::endl
-         << "encoding_analysis_method = " << m_encoding_analysis_method << std::endl;
+         << "encoding_analysis_method = " << m_encoding_analysis_method << std::endl
+         << "abone_consecutive = " << m_abone_consecutive << std::endl;
     ;
 
     CACHE::save_rawdata( path_info, sstr.str() );

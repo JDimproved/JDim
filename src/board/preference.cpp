@@ -63,6 +63,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_label_samba( false, "書き込み規制秒数 (Samba24) ：" )
     , m_button_clearsamba( "秒数クリア" )
     , m_check_oldlog( "過去ログを表示する" )
+    , m_vbox_abone_general{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_sep_general{ Gtk::ORIENTATION_HORIZONTAL }
+    , m_hbox_abone_consecutive{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_label_abone_consecutive{ "(実験的な機能) 連続投稿したIDをスレのNG IDに追加する (0 : 未設定)：" }
+    , m_label_abone_consecutive_over_n_times{ " 回以上" }
     , m_hbox_low_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
     , m_hbox_high_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
     , m_button_remove_old_title( "dat落ちしたスレのタイトルを削除する" )
@@ -383,12 +388,40 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     std::list< std::string > list_regex = DBTREE::get_abone_list_regex_board( get_url() );
     m_edit_regex.set_text( MISC::concat_with_suffix( list_regex, '\n' ) );
 
+    // 一般
+    m_label_warning_subject.set_markup( R"(<span size="large" weight="bold">注意</span>)" );
+    m_label_warning_subject.set_margin_top( 20 );
+    m_label_warning_subject.set_margin_bottom( 20 );
+
     m_label_warning.set_text(
         "ここでのあぼーん設定は「" +  DBTREE::board_name( get_url() ) + "」板の全スレに適用されます。\n\n"
         "設定のし過ぎは板内の全スレの表示速度を低下させます。\n\n設定のし過ぎに気を付けてください。\n\n"
         "なおNG IDはJDimを再起動するとリセットされます。" );
 
-    m_notebook_abone.append_page( m_label_warning, "注意" );
+    m_sep_general.set_margin_top( 50 );
+    m_sep_general.set_margin_bottom( 40 );
+
+    // 連続投稿したIDをスレのNG IDに追加
+    m_spin_abone_consecutive.set_increments( 1, 1 );
+    m_spin_abone_consecutive.set_sensitive( true );
+    m_spin_abone_consecutive.set_range( 0, 1000 );
+    const int abone_consecutive = DBTREE::board_get_abone_consecutive( get_url() );
+    m_spin_abone_consecutive.set_value( abone_consecutive );
+
+    m_hbox_abone_consecutive.pack_start( m_label_abone_consecutive, Gtk::PACK_SHRINK );
+    m_hbox_abone_consecutive.pack_start( m_spin_abone_consecutive, Gtk::PACK_SHRINK );
+    m_hbox_abone_consecutive.pack_start( m_label_abone_consecutive_over_n_times, Gtk::PACK_SHRINK );
+    m_hbox_abone_consecutive.set_tooltip_text(
+        "このオプションは実験的なサポートのため変更または廃止の可能性があります。" );
+
+    m_vbox_abone_general.pack_start( m_label_warning_subject, Gtk::PACK_SHRINK );
+    m_vbox_abone_general.pack_start( m_label_warning, Gtk::PACK_SHRINK );
+    m_vbox_abone_general.pack_start( m_sep_general, Gtk::PACK_SHRINK );
+    m_vbox_abone_general.pack_start( m_hbox_abone_consecutive, Gtk::PACK_SHRINK );
+    m_vbox_abone_general.set_margin_start( 20 );
+    m_vbox_abone_general.set_margin_end( 20 );
+
+    m_notebook_abone.append_page( m_vbox_abone_general, "一般" );
     m_notebook_abone.append_page( m_edit_id, "NG ID" );
     m_notebook_abone.append_page( m_edit_name, "NG 名前" );
     m_notebook_abone.append_page( m_edit_word, "NG ワード" );
@@ -659,6 +692,10 @@ void Preferences::slot_ok_clicked()
     if( board_agent != DBTREE::board_get_board_agent( get_url() ) ) {
         DBTREE::board_set_board_agent( get_url(), board_agent );
     }
+
+    // 連続投稿したIDをスレのNG IDに追加 (回数)
+    const int abone_consecutive = m_spin_abone_consecutive.get_value_as_int();
+    DBTREE::board_set_abone_consecutive( get_url(), abone_consecutive );
 
     // あぼーん再設定
     std::list< std::string > list_id = MISC::get_lines( m_edit_id.get_text() );

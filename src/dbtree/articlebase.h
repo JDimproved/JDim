@@ -11,6 +11,7 @@
 
 #include "jdencoding.h"
 
+#include "jdlib/span.h"
 #include "skeleton/lockable.h"
 
 #include <ctime>
@@ -374,6 +375,7 @@ namespace DBTREE
 
         // あぼ〜ん状態更新(reset_abone()と違って各項目ごと個別におこなう)
         void add_abone_id( const std::string& id );
+        void add_abone_id_span( JDLIB::span<const char*> id_span );
         void add_abone_name( const std::string& name );
         void add_abone_word( const std::string& word );
         void set_abone_res( const int num_from, const int num_to, const bool set );

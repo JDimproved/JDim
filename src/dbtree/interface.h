@@ -10,6 +10,8 @@
 #include "etcboardinfo.h"
 #include "jdencoding.h"
 
+#include "jdlib/span.h"
+
 #include <atomic>
 #include <ctime>
 #include <list>
@@ -204,6 +206,10 @@ namespace DBTREE
     // テキストエンコーディングを判定する方法
     int board_encoding_analysis_method( const std::string& url );
     void board_set_encoding_analysis_method( const std::string& url, const int meth );
+
+    // 連続投稿したIDをスレのNG IDに追加 (回数)
+    int board_get_abone_consecutive( const std::string& url );
+    void board_set_abone_consecutive( const std::string& url, const int count );
 
     // 全スレの書き込み履歴のリセット
     void clear_all_post_history();
@@ -415,6 +421,7 @@ namespace DBTREE
     // 個別のあぼーん情報のセットと更新
     void set_abone_res( const std::string& url, const int num_from, const int num_to, const bool set );
     void add_abone_id( const std::string& url, const std::string& id );
+    void add_abone_id_span( const std::string& url, JDLIB::span<const char*> id_span );
     void add_abone_name( const std::string& url, const std::string& name );
     void add_abone_word( const std::string& url, const std::string& word );
 

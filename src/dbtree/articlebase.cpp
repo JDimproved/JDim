@@ -762,6 +762,28 @@ void ArticleBase::add_abone_id( const std::string& id )
 }
 
 
+/** @brief あぼーんIDを一度に複数追加する
+ *
+ * @details URLが未設定または渡されたIDが無いときは何もしない
+ * @param[in] id_span あぼーんするID
+ */
+void ArticleBase::add_abone_id_span( JDLIB::span<const char*> id_span )
+{
+    if( empty() ) return;
+    if( id_span.empty() ) return;
+
+#ifdef _DEBUG
+    std::cout << "ArticleBase::add_abone_id_span : " << id_span.size() << std::endl;
+#endif
+
+    std::copy( id_span.begin(), id_span.end(), std::back_inserter( m_list_abone_id ) );
+
+    update_abone();
+
+    m_save_info = true;
+}
+
+
 //
 // あぼーん名前追加
 //
