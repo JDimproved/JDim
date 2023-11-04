@@ -12,9 +12,9 @@ enum{
     TIMER_TIMEOUT_SMOOTH_SCROLL = 33, // msec  スレビューのスムーススクロール描画用クロック周期
 
     MAX_MG_LNG = 5,  // マウスジェスチャの最大ストローク
-
-    ICON_SIZE = 32 // 画像アイコンの大きさ
 };
+
+static constexpr const int ICON_SIZE = 32; // 画像アイコンの大きさ
 
 
 // 書き込みビューの名前欄の空白
