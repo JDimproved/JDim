@@ -32,8 +32,6 @@
 using namespace SKELETON;
 
 
-constexpr const char* DragTreeView::s_css_classname;
-
 DragTreeView::DragTreeView( const std::string& url, const std::string& dndtarget,
     const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even )
     : JDTreeViewBase()

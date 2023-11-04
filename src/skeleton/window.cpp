@@ -46,7 +46,6 @@ enum
 
 using namespace SKELETON;
 
-constexpr const char* JDWindow::s_css_stat_label;
 
 // メッセージウィンドウでは m_mginfo が不要なので need_mginfo = false になる
 JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
