@@ -6,9 +6,9 @@
 #include <string>
 
 
+static constexpr const int TIMER_TIMEOUT = 50; ///< msec  内部クロックの周期
 enum{
 
-    TIMER_TIMEOUT = 50, // msec  内部クロックの周期
     TIMER_TIMEOUT_SMOOTH_SCROLL = 33, // msec  スレビューのスムーススクロール描画用クロック周期
 
     MAX_MG_LNG = 5,  // マウスジェスチャの最大ストローク
