@@ -780,8 +780,6 @@ EditView::EditView()
 EditView::~EditView() noexcept = default;
 
 
-constexpr const char* EditView::s_css_classname;
-
 //
 // EditTextViewのスタイルを更新する
 //

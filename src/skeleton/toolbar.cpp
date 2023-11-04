@@ -30,8 +30,6 @@
 using namespace SKELETON;
 
 
-constexpr const char* ToolBar::s_css_label;
-
 ToolBar::ToolBar( Admin* admin )
     : m_admin( admin )
     , m_enable_slot{ true }
