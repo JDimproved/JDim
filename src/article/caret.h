@@ -18,8 +18,7 @@ namespace ARTICLE
         LAYOUT* layout{}; // キャレットの属するレイアウトノードへのポインタ
         long byte{}; // 何バイト目の文字の「前」か
 
-        CARET_POSITION() noexcept = default;
-        ~CARET_POSITION() noexcept = default;
+        // リソース管理は行わないのでコンストラクタ、デストラクタ、コピー演算子は暗黙に実装する
 
         // キャレット座標計算関数
         void set( LAYOUT* _layout, long _byte,
