@@ -12,7 +12,7 @@
 
 
 static std::mutex dispatch_mutex;
-CORE::DispatchManager* instance_dispmanager = nullptr;
+static CORE::DispatchManager* instance_dispmanager = nullptr;
 
 
 CORE::DispatchManager* CORE::get_dispmanager()

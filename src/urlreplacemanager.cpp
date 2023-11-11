@@ -13,7 +13,8 @@
 #include <list>
 
 
-CORE::Urlreplace_Manager* instance_urlreplace_manager = nullptr;
+static CORE::Urlreplace_Manager* instance_urlreplace_manager = nullptr;
+
 
 CORE::Urlreplace_Manager* CORE::get_urlreplace_manager()
 {

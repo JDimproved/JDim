@@ -64,7 +64,7 @@
 using namespace CORE;
 
 
-Core* instance_core;
+static Core* instance_core;
 
 
 Core* CORE::get_instance()

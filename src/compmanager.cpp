@@ -15,7 +15,8 @@ enum
     MAX_COMPLETION = 50
 };
 
-CORE::Completion_Manager* instance_completion_manager = nullptr;
+
+static CORE::Completion_Manager* instance_completion_manager = nullptr;
 
 
 CORE::Completion_Manager* CORE::get_completion_manager()

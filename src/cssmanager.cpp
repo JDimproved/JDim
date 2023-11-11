@@ -22,7 +22,8 @@ enum
     SIZE_OF_HEAP = 16 * 1024
 };
 
-CORE::Css_Manager* instance_css_manager = nullptr;
+
+static CORE::Css_Manager* instance_css_manager = nullptr;
 
 
 CORE::Css_Manager* CORE::get_css_manager()

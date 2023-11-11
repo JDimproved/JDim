@@ -12,8 +12,9 @@
 
 #include "global.h"
 
+
 // インスタンスは Core でひとつだけ作って、Coreのデストラクタでdeleteする
-DBTREE::Root *instance_dbtree_root = nullptr;
+static DBTREE::Root *instance_dbtree_root = nullptr;
 
 
 void DBTREE::create_root()

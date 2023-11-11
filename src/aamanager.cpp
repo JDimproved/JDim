@@ -14,7 +14,9 @@
 #include "cache.h"
 #include "type.h"
 
-CORE::AAManager* instance_aamanager = nullptr;
+
+static CORE::AAManager* instance_aamanager = nullptr;
+
 
 CORE::AAManager* CORE::get_aamanager()
 {

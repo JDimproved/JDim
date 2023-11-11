@@ -18,7 +18,8 @@
 
 
 // お気に入りの共通UNDOバッファ
-SKELETON::UNDO_BUFFER *instance_undo_buffer_favorite = nullptr;
+static SKELETON::UNDO_BUFFER *instance_undo_buffer_favorite = nullptr;
+
 
 SKELETON::UNDO_BUFFER* BBSLIST::get_undo_buffer_favorite()
 {
@@ -38,7 +39,8 @@ void BBSLIST::delete_undo_buffer_favorite()
 //////////////////////////////////////////////
 
 
-BBSLIST::BBSListAdmin *instance_bbslistadmin = nullptr;
+static BBSLIST::BBSListAdmin *instance_bbslistadmin = nullptr;
+
 
 BBSLIST::BBSListAdmin* BBSLIST::get_admin()
 {

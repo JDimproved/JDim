@@ -21,7 +21,9 @@
 #include "global.h"
 #include "session.h"
 
-MESSAGE::MessageAdmin* instance_messageadmin = nullptr;
+
+static MESSAGE::MessageAdmin* instance_messageadmin = nullptr;
+
 
 MESSAGE::MessageAdmin* MESSAGE::get_admin()
 {

@@ -18,7 +18,8 @@
 #include <system_error>
 
 
-CORE::Search_Manager* instance_search_manager = nullptr;
+static CORE::Search_Manager* instance_search_manager = nullptr;
+
 
 CORE::Search_Manager* CORE::get_search_manager()
 {

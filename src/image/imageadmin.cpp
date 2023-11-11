@@ -28,7 +28,8 @@
 #include <limits>
 
 
-IMAGE::ImageAdmin *instance_imageadmin = nullptr;
+static IMAGE::ImageAdmin *instance_imageadmin = nullptr;
+
 
 IMAGE::ImageAdmin* IMAGE::get_admin()
 {
