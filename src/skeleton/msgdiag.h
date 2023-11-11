@@ -33,7 +33,7 @@ namespace SKELETON
                  Gtk::ButtonsType buttons = Gtk::BUTTONS_OK,
                  bool modal = false);
 
-        ~MsgDiag() noexcept;
+        ~MsgDiag() noexcept override;
 
         void add_default_button( const Glib::ustring& label, const int id );
         void add_default_button( Gtk::Widget* button, const int id );
@@ -66,7 +66,7 @@ namespace SKELETON
                       Gtk::ButtonsType buttons = Gtk::BUTTONS_OK,
                       const int default_response = -1
             );
-        ~MsgCheckDiag() noexcept;
+        ~MsgCheckDiag() noexcept override;
 
         Gtk::CheckButton& get_chkbutton(){ return m_chkbutton; }
     };
@@ -88,7 +88,7 @@ namespace SKELETON
       public:
 
         explicit MsgOverwriteDiag( Gtk::Window* parent );
-        ~MsgOverwriteDiag() noexcept;
+        ~MsgOverwriteDiag() noexcept override;
     };
 }
 

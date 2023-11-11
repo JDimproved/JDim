@@ -18,7 +18,7 @@ namespace SKELETON
     {
     public:
         JDToolbar();
-        ~JDToolbar() noexcept;
+        ~JDToolbar() noexcept override;
     };
 }
 

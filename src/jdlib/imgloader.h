@@ -39,7 +39,7 @@ namespace JDLIB
         int m_loadedlevel;
         
     public:
-        virtual ~ImgLoader();
+        ~ImgLoader() override;
         static Glib::RefPtr< ImgLoader > get_loader( const std::string& file );
         
         const std::string& get_errmsg() const { return m_errmsg; }

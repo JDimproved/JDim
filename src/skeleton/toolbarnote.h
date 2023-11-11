@@ -18,7 +18,7 @@ namespace SKELETON
       public:
 
         explicit ToolBarNotebook( DragableNoteBook* );
-        ~ToolBarNotebook() noexcept;
+        ~ToolBarNotebook() noexcept override;
     };
 }
 

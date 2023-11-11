@@ -15,7 +15,7 @@ namespace SKELETON
       public:
 
         using Gtk::VBox::VBox;
-        ~JDVBox() noexcept;
+        ~JDVBox() noexcept override;
 
         // unpack = true の時取り除く
         void pack_remove_start( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );

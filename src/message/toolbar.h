@@ -21,7 +21,7 @@ namespace MESSAGE
       public:
 
         MessageToolBarBase();
-        ~MessageToolBarBase() noexcept = default;
+        ~MessageToolBarBase() noexcept override = default;
 
         // previewボタンのトグル
         void set_active_previewbutton( const bool active );
@@ -52,7 +52,7 @@ namespace MESSAGE
       public:
 
         MessageToolBar();
-        ~MessageToolBar() noexcept;
+        ~MessageToolBar() noexcept override;
 
         void show_entry_new_subject( bool show );
         std::string get_new_subject() const;
@@ -76,7 +76,7 @@ namespace MESSAGE
       public:
 
         MessageToolBarPreview();
-        ~MessageToolBarPreview() noexcept;
+        ~MessageToolBarPreview() noexcept override;
 
       protected:
 
