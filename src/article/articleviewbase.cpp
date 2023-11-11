@@ -2429,6 +2429,7 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
                     status_url = tmp;
                     break;
 
+                case Encoding::unknown: // suppress -Wswitch-enum
                 default:
 
                     status_url = url;

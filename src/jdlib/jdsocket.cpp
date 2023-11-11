@@ -277,6 +277,8 @@ bool Socket::socks_handshake( const std::string& hostname, const std::string& po
         *p++ = 0;
         break;
 
+    case Proxy::none: // suppress -Wswitch-enum
+    case Proxy::http:
     default:
         // XXX SOCK5未対応
         return ret;
