@@ -24,7 +24,7 @@ namespace SKELETON
       public:
 
         explicit TabSwitchButton( DragableNoteBook* );
-        ~TabSwitchButton() noexcept;
+        ~TabSwitchButton() noexcept override;
 
         Gtk::Button& get_button(){ return m_button; }
         void show_button();

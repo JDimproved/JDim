@@ -18,7 +18,7 @@ namespace SKELETON
       public:
 
         explicit ViewNotebook( DragableNoteBook* );
-        ~ViewNotebook() noexcept;
+        ~ViewNotebook() noexcept override;
     };
 }
 

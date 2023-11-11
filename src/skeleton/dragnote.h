@@ -110,7 +110,7 @@ namespace SKELETON
         SIG_DRAG_DATA_GET sig_drag_data_get() { return m_sig_drag_data_get; }
 
         DragableNoteBook();
-        ~DragableNoteBook() noexcept;
+        ~DragableNoteBook() noexcept override;
 
         void clock_in();
 

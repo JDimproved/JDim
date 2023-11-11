@@ -177,7 +177,7 @@ namespace SKELETON
         SIG_RESIZE_POPUP sig_resize_popup(){ return m_sig_resize_popup; }
         
         explicit View( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
-        ~View() noexcept = default;
+        ~View() noexcept override = default;
 
         virtual void save_session() = 0;
 

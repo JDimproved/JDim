@@ -26,7 +26,7 @@ namespace HISTORY
       public:
 
         explicit HistorySubMenu( const std::string& url_history );
-        ~HistorySubMenu();
+        ~HistorySubMenu() override;
 
         // 履歴の先頭を復元
         void restore_history();
