@@ -42,6 +42,7 @@ static JDWinMain* Win_Main = nullptr;
 
 
 // SIGINTのハンドラ
+[[noreturn]]
 void sig_handler( int sig )
 {
     if( sig == SIGHUP || sig == SIGINT || sig == SIGQUIT ){
