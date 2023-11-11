@@ -12,7 +12,8 @@
 
 #include <algorithm>
 
-CORE::CheckUpdate_Manager* instance_checkupdate_manager = nullptr;
+
+static CORE::CheckUpdate_Manager* instance_checkupdate_manager = nullptr;
 
 
 CORE::CheckUpdate_Manager* CORE::get_checkupdate_manager()

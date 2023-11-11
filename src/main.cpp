@@ -38,8 +38,7 @@ struct XSMPDATA
 #endif
 
 
-JDWinMain* Win_Main = nullptr;
-
+static JDWinMain* Win_Main = nullptr;
 
 
 // SIGINTのハンドラ

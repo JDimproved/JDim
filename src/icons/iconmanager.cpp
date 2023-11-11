@@ -53,7 +53,7 @@
 #include "info.h"
 
 
-ICON::ICON_Manager* instance_icon_manager = nullptr;
+static ICON::ICON_Manager* instance_icon_manager = nullptr;
 
 
 ICON::ICON_Manager* ICON::get_icon_manager()

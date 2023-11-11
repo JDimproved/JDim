@@ -26,7 +26,8 @@ constexpr std::size_t kSizeOfRawData = 64 * 1024;
 #endif
 
 
-CORE::Login2ch* instance_login2ch = nullptr;
+static CORE::Login2ch* instance_login2ch = nullptr;
+
 
 CORE::Login2ch* CORE::get_login2ch()
 {

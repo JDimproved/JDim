@@ -23,7 +23,8 @@ constexpr std::size_t kSizeOfRawData = 64 * 1024;
 }
 
 
-CORE::LoginBe* instance_loginbe = nullptr;
+static CORE::LoginBe* instance_loginbe = nullptr;
+
 
 CORE::LoginBe* CORE::get_loginbe()
 {

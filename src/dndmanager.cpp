@@ -5,7 +5,7 @@
 #include "dndmanager.h"
 
 
-CORE::DND_Manager* instance_dnd_manager = nullptr;
+static CORE::DND_Manager* instance_dnd_manager = nullptr;
 
 
 CORE::DND_Manager* CORE::get_dnd_manager()

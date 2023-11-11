@@ -29,8 +29,8 @@
 #include "dndmanager.h"
 
 
+static BOARD::BoardAdmin *instance_boardadmin = nullptr;
 
-BOARD::BoardAdmin *instance_boardadmin = nullptr;
 
 BOARD::BoardAdmin* BOARD::get_admin()
 {

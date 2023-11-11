@@ -7,7 +7,9 @@
 
 #include "cache.h"
 
-SOUND::SOUND_Manager* instance_sound_manager = nullptr;
+
+static SOUND::SOUND_Manager* instance_sound_manager = nullptr;
+
 
 SOUND::SOUND_Manager* SOUND::get_sound_manager()
 {

@@ -33,7 +33,9 @@
 #include "config/globalconf.h"
 #include "dndmanager.h"
 
-ARTICLE::ArticleAdmin *instance_articleadmin = nullptr;
+
+static ARTICLE::ArticleAdmin *instance_articleadmin = nullptr;
+
 
 ARTICLE::ArticleAdmin* ARTICLE::get_admin()
 {

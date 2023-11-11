@@ -29,7 +29,8 @@ enum
 };
 
 
-MESSAGE::Log_Manager* instance_log_manager = nullptr;
+static MESSAGE::Log_Manager* instance_log_manager = nullptr;
+
 
 MESSAGE::Log_Manager* MESSAGE::get_log_manager()
 {

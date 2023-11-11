@@ -12,7 +12,7 @@
 
 
 // インスタンスは Core でひとつだけ作って、Coreのデストラクタでdeleteする
-DBIMG::ImgRoot *instance_dbimg_root = nullptr;
+static DBIMG::ImgRoot *instance_dbimg_root = nullptr;
 
 
 void DBIMG::create_root()

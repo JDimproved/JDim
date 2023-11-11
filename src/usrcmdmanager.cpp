@@ -23,7 +23,9 @@
 
 #include "config/globalconf.h"
 
-CORE::Usrcmd_Manager* instance_usrcmd_manager = nullptr;
+
+static CORE::Usrcmd_Manager* instance_usrcmd_manager = nullptr;
+
 
 CORE::Usrcmd_Manager* CORE::get_usrcmd_manager()
 {

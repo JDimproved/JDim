@@ -21,7 +21,7 @@
 #include "global.h"
 
 
-HISTORY::History_Manager* instance_history_manager = nullptr;
+static HISTORY::History_Manager* instance_history_manager = nullptr;
 
 
 HISTORY::History_Manager* HISTORY::get_history_manager()
