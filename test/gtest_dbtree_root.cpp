@@ -108,4 +108,31 @@ TEST_F(DBTREE_Root_IsJBBSTest, match_jbbs_shitaraba_net)
     EXPECT_TRUE( DBTREE::Root::is_JBBS( "https://jbbs.shitaraba.net/board/24680" ) );
 }
 
+
+class DBTREE_Root_IsMachiTest : public ::testing::Test {};
+
+TEST_F(DBTREE_Root_IsMachiTest, empty_string)
+{
+    EXPECT_FALSE( DBTREE::Root::is_machi( "" ) );
+}
+
+TEST_F(DBTREE_Root_IsMachiTest, not_match_other_domains)
+{
+    EXPECT_FALSE( DBTREE::Root::is_machi( "https://subdomain.2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_machi( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_machi( "http://subdomain.bbspink.com/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsMachiTest, match_machi_to_without_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_machi( "http://machi.to/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_machi( "https://machi.to/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsMachiTest, match_machi_to_with_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_machi( "http://subdomain.machi.to/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_machi( "https://subdomain.machi.to/board" ) );
+}
+
 } // namespace
