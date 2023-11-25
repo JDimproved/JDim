@@ -162,4 +162,32 @@ TEST_F(DBTREE_Root_IsVip2chTest, match_vip2ch_com_with_subdomain)
     EXPECT_TRUE( DBTREE::Root::is_vip2ch( "https://subdomain.vip2ch.com/board" ) );
 }
 
+
+class DBTREE_Root_IsLocalTest : public ::testing::Test {};
+
+TEST_F(DBTREE_Root_IsLocalTest, empty_string)
+{
+    EXPECT_FALSE( DBTREE::Root::is_local( "" ) );
+}
+
+TEST_F(DBTREE_Root_IsLocalTest, not_match_other_domains)
+{
+    EXPECT_FALSE( DBTREE::Root::is_local( "https://subdomain.2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_local( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_local( "http://subdomain.bbspink.com/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsLocalTest, match_file_scheme_at_head)
+{
+    EXPECT_TRUE( DBTREE::Root::is_local( "file://2ch.net/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_local( "file:///home/user/foobar" ) );
+}
+
+TEST_F(DBTREE_Root_IsLocalTest, match_file_scheme_at_middle_or_tail)
+{
+    // file:// の位置が先頭にあるかチェックしていない
+    EXPECT_TRUE( DBTREE::Root::is_local( "http://2ch.net/file://board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_local( "https:://5ch.net/board/file://" ) );
+}
+
 } // namespace
