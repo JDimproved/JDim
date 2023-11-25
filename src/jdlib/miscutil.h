@@ -232,7 +232,7 @@ namespace MISC
 
     // path からホスト名だけ取り出す
     // protocol = false のときはプロトコルを除く
-    std::string get_hostname( const std::string& path, const bool protocol = true );
+    std::string get_hostname( std::string_view path, const bool protocol = true );
 
     // path からファイル名だけ取り出す
     std::string get_filename( const std::string& path );
