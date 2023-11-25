@@ -198,7 +198,6 @@ namespace DBTREE
         void load_movetable();
 
         // urlのタイプ判定
-        static bool is_JBBS( const std::string& url );
         static bool is_machi( const std::string& url );
         static bool is_vip2ch( const std::string& url );
         static bool is_local( const std::string& url );
@@ -206,6 +205,7 @@ namespace DBTREE
       public:
 
         static bool is_2ch( const std::string& url );
+        static bool is_JBBS( const std::string& url );
     };
 }
 
