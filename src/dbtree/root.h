@@ -197,6 +197,8 @@ namespace DBTREE
         void load_etc();
         void load_movetable();
 
+      public:
+
         // urlのタイプ判定
         static bool is_2ch( const std::string& url );
         static bool is_JBBS( const std::string& url );
