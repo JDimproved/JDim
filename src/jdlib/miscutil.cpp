@@ -1764,27 +1764,28 @@ std::string MISC::tolower_str( const std::string& str )
 
 
 
-//
-// path からホスト名だけ取り出す
-//
-// protocol = false のときはプロトコルを除く
-//
-std::string MISC::get_hostname( const std::string& path, bool protocol )
+/** @brief path からホスト名だけ取り出してコピーを返す
+ *
+ * @param[in] path     ホスト名を取り出す文字列
+ * @param[in] protocol false のときはプロトコルを除く
+ * @return ホスト名の文字列 (protocolがtrueのときは先頭にプロトコルが付く)
+ */
+std::string MISC::get_hostname( std::string_view path, bool protocol )
 {
-    int lng = 0;
+    std::size_t lng = 0;
     if( path.rfind( "http://", 0 ) == 0 ) lng = strlen( "http://" );
     else if( path.rfind( "https://", 0 ) == 0 ) lng = strlen( "https://" );
     else if( path.rfind( "ftp://", 0 ) == 0 ) lng = strlen( "ftp://" );
     if( !lng ) return std::string();
 
-    int pos = 0;
+    std::size_t pos = 0;
     if( ! protocol ) pos = lng;
 
     size_t i = path.find( '/', lng );
 
-    if( i == std::string::npos ) return path.substr( pos );
+    if( i == std::string_view::npos ) return std::string{ path.substr( pos ) };
 
-    return path.substr( pos, i - pos );
+    return std::string{ path.substr( pos, i - pos ) };
 }
 
 
