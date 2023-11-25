@@ -135,4 +135,31 @@ TEST_F(DBTREE_Root_IsMachiTest, match_machi_to_with_subdomain)
     EXPECT_TRUE( DBTREE::Root::is_machi( "https://subdomain.machi.to/board" ) );
 }
 
+
+class DBTREE_Root_IsVip2chTest : public ::testing::Test {};
+
+TEST_F(DBTREE_Root_IsVip2chTest, empty_string)
+{
+    EXPECT_FALSE( DBTREE::Root::is_vip2ch( "" ) );
+}
+
+TEST_F(DBTREE_Root_IsVip2chTest, not_match_other_domains)
+{
+    EXPECT_FALSE( DBTREE::Root::is_vip2ch( "https://subdomain.2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_vip2ch( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_vip2ch( "http://subdomain.bbspink.com/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsVip2chTest, not_match_vip2ch_com_without_subdomain)
+{
+    EXPECT_FALSE( DBTREE::Root::is_vip2ch( "http://vip2ch.com/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_vip2ch( "https://vip2ch.com/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsVip2chTest, match_vip2ch_com_with_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_vip2ch( "http://subdomain.vip2ch.com/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_vip2ch( "https://subdomain.vip2ch.com/board" ) );
+}
+
 } // namespace
