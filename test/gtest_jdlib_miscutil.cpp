@@ -619,6 +619,63 @@ TEST_F(IsUrlSchemeTest, url_sssp)
 }
 
 
+class MISC_GetHostNameTest : public ::testing::Test {};
+
+TEST_F(MISC_GetHostNameTest, empty_input)
+{
+    EXPECT_EQ( "", MISC::get_hostname( "", true ) );
+    EXPECT_EQ( "", MISC::get_hostname( "", false ) );
+}
+
+TEST_F(MISC_GetHostNameTest, does_not_have_protocol)
+{
+    EXPECT_EQ( "", MISC::get_hostname( "//spam.ham/eggs", true ) );
+    EXPECT_EQ( "", MISC::get_hostname( "//spam.ham/eggs", false ) );
+}
+
+TEST_F(MISC_GetHostNameTest, not_support_protocol)
+{
+    // テストケースは網羅はしてない
+    EXPECT_EQ( "", MISC::get_hostname( "file://spam.ham/eggs", true ) );
+    EXPECT_EQ( "", MISC::get_hostname( "file://spam.ham/eggs", false ) );
+
+    EXPECT_EQ( "", MISC::get_hostname( "ws://spam.ham/eggs", true ) );
+    EXPECT_EQ( "", MISC::get_hostname( "ws://spam.ham/eggs", false ) );
+
+    EXPECT_EQ( "", MISC::get_hostname( "mailto:foobar@example.test", true ) );
+    EXPECT_EQ( "", MISC::get_hostname( "mailto:foobar@example.test", false ) );
+}
+
+TEST_F(MISC_GetHostNameTest, http_with_protocol)
+{
+    EXPECT_EQ( "http://spam.ham", MISC::get_hostname( "http://spam.ham/eggs", true ) );
+}
+
+TEST_F(MISC_GetHostNameTest, http_without_protocol)
+{
+    EXPECT_EQ( "spam.ham", MISC::get_hostname( "http://spam.ham/eggs", false ) );
+}
+
+TEST_F(MISC_GetHostNameTest, https_with_protocol)
+{
+    EXPECT_EQ( "https://spam.ham", MISC::get_hostname( "https://spam.ham/eggs", true ) );
+}
+
+TEST_F(MISC_GetHostNameTest, https_without_protocol)
+{
+    EXPECT_EQ( "spam.ham", MISC::get_hostname( "https://spam.ham/eggs", false ) );
+}
+
+TEST_F(MISC_GetHostNameTest, ftp_with_protocol)
+{
+    EXPECT_EQ( "ftp://spam.ham", MISC::get_hostname( "ftp://spam.ham/eggs", true ) );
+}
+
+TEST_F(MISC_GetHostNameTest, ftp_without_protocol)
+{
+    EXPECT_EQ( "spam.ham", MISC::get_hostname( "ftp://spam.ham/eggs", false ) );
+}
+
 
 class MISC_AscTest : public ::testing::Test {};
 
