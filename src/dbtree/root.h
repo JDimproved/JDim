@@ -206,6 +206,7 @@ namespace DBTREE
         static bool is_vip2ch( const std::string& url );
         static bool is_open2ch( std::string_view url );
         static bool is_next2ch( std::string_view url );
+        static bool is_2chsc( std::string_view url );
         static bool is_local( const std::string& url );
     };
 }
