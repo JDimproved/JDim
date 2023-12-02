@@ -11,6 +11,9 @@ enum
     TYPE_BOARD_LOCAL,        // ローカルファイル
     TYPE_BOARD_JBBS,         // したらば
     TYPE_BOARD_MACHI,        // まち
+    TYPE_BOARD_OPEN2CH,      // おーぷん２ちゃんねる
+    TYPE_BOARD_NEXT2CH,      // Next2ch
+    TYPE_BOARD_2CHSC,        // 2ch.sc
     TYPE_BOARD_UNKNOWN,
 
     // その他一般的なデータタイプ

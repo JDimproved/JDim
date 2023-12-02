@@ -163,6 +163,94 @@ TEST_F(DBTREE_Root_IsVip2chTest, match_vip2ch_com_with_subdomain)
 }
 
 
+class DBTREE_Root_IsOpen2chTest : public ::testing::Test {};
+
+TEST_F(DBTREE_Root_IsOpen2chTest, empty_string)
+{
+    EXPECT_FALSE( DBTREE::Root::is_open2ch( "" ) );
+}
+
+TEST_F(DBTREE_Root_IsOpen2chTest, not_match_other_domains)
+{
+    EXPECT_FALSE( DBTREE::Root::is_open2ch( "https://subdomain.2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_open2ch( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_open2ch( "http://subdomain.bbspink.com/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsOpen2chTest, not_match_open2ch_net_without_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_open2ch( "http://open2ch.net/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_open2ch( "https://open2ch.net/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsOpen2chTest, match_open2ch_net_with_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_open2ch( "http://subdomain.open2ch.net/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_open2ch( "https://subdomain.open2ch.net/board" ) );
+}
+
+
+class DBTREE_Root_IsNext2chTest : public ::testing::Test {};
+
+TEST_F(DBTREE_Root_IsNext2chTest, empty_string)
+{
+    EXPECT_FALSE( DBTREE::Root::is_open2ch( "" ) );
+}
+
+TEST_F(DBTREE_Root_IsNext2chTest, not_match_other_domains)
+{
+    EXPECT_FALSE( DBTREE::Root::is_next2ch( "https://subdomain.2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_next2ch( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_next2ch( "http://subdomain.bbspink.com/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsNext2chTest, not_match_next2ch_net_without_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_next2ch( "http://next2ch.net/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_next2ch( "https://next2ch.net/board" ) );
+}
+
+TEST_F(DBTREE_Root_IsNext2chTest, match_next2ch_net_with_subdomain)
+{
+    EXPECT_FALSE( DBTREE::Root::is_next2ch( "http://subdomain.next2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_next2ch( "https://subdomain.next2ch.net/board" ) );
+}
+
+
+class DBTREE_Root_Is2chscTest : public ::testing::Test {};
+
+TEST_F(DBTREE_Root_Is2chscTest, empty_string)
+{
+    EXPECT_FALSE( DBTREE::Root::is_2chsc( "" ) );
+}
+
+TEST_F(DBTREE_Root_Is2chscTest, not_match_other_domains)
+{
+    EXPECT_FALSE( DBTREE::Root::is_2chsc( "https://subdomain.open2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_2chsc( "https://next2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_2chsc( "http://subdomain.2ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_2chsc( "http://subdomain.5ch.net/board" ) );
+}
+
+TEST_F(DBTREE_Root_Is2chscTest, not_match_2chsc_without_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_2chsc( "http://2ch.sc/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_2chsc( "https://2ch.sc/board" ) );
+}
+
+TEST_F(DBTREE_Root_Is2chscTest, match_2chsc_with_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_2chsc( "http://subdomain.2ch.sc/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_2chsc( "https://subdomain.2ch.sc/board" ) );
+}
+
+TEST_F(DBTREE_Root_Is2chscTest, not_match_2chsc_with_info_subdomain)
+{
+    EXPECT_FALSE( DBTREE::Root::is_2chsc( "http://info.2ch.sc/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_2chsc( "https://info.2ch.sc/board" ) );
+}
+
+
 class DBTREE_Root_IsLocalTest : public ::testing::Test {};
 
 TEST_F(DBTREE_Root_IsLocalTest, empty_string)
