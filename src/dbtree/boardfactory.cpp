@@ -20,6 +20,7 @@ std::unique_ptr<DBTREE::BoardBase> DBTREE::BoardFactory( int type, const std::st
 
         case TYPE_BOARD_2CH_COMPATI:
         case TYPE_BOARD_OPEN2CH:
+        case TYPE_BOARD_NEXT2CH:
             return std::make_unique<Board2chCompati>( root, path_board, name, basicauth );
 
         case TYPE_BOARD_LOCAL: return std::make_unique<BoardLocal>( root, path_board, name );

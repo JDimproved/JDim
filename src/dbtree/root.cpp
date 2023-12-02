@@ -491,6 +491,7 @@ void Root::bbsmenu2xml( const std::string& menu )
                      || is_JBBS( url )
                      || is_vip2ch( url )
                      || is_open2ch( url )
+                     || is_next2ch( url )
                 ) element_name = "board";
             else element_name = "link";
 
@@ -633,6 +634,7 @@ int Root::get_board_type( const std::string& url, std::string& root, std::string
             path_board = regex.str( 2 );
 
             if( is_open2ch( url ) ) type = TYPE_BOARD_OPEN2CH;
+            else if( is_next2ch( url ) ) type = TYPE_BOARD_NEXT2CH;
             else type = TYPE_BOARD_2CH_COMPATI;
         }
     }
@@ -665,6 +667,10 @@ int Root::get_board_type( const std::string& root ) const
     // おーぷん２ちゃんねる
     else if( is_open2ch( root ) ) {
         type = TYPE_BOARD_OPEN2CH;
+    }
+    // Next2ch
+    else if( is_next2ch( root ) ) {
+        type = TYPE_BOARD_NEXT2CH;
     }
     // ローカルファイル
     else if( is_local( root ) )
@@ -1633,6 +1639,20 @@ bool Root::is_open2ch( std::string_view url )
     const std::string hostname = MISC::get_hostname( url, protocol );
 
     return MISC::ends_with( hostname, "open2ch.net" );
+}
+
+
+/** @brief Next2chのURLかどうか
+ *
+ * @param[in] url チェック対象
+ * @return マッチしたらtrueを返す
+ */
+bool Root::is_next2ch( std::string_view url )
+{
+    constexpr bool protocol = false;
+    const std::string hostname = MISC::get_hostname( url, protocol );
+
+    return hostname == "next2ch.net";
 }
 
 
