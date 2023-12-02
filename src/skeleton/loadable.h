@@ -111,7 +111,7 @@ namespace SKELETON
 
         const std::string& get_contenttype() const { return m_contenttype; }
 
-        const std::list< std::string >& cookies() { return m_cookies; }
+        const std::list< std::string >& cookies() const { return m_cookies; }
         const std::string& location() const { return m_location; }
 
         size_t total_length() const { return m_total_length; }
@@ -121,7 +121,7 @@ namespace SKELETON
         void set_current_length( int length ){ m_current_length = length; }
 
         // 更新時刻関係
-        time_t get_time_modified();
+        std::time_t get_time_modified() const;
         const std::string& get_date_modified() const { return m_date_modified; }
         void set_date_modified( const std::string& date ){ m_date_modified = date; }
 

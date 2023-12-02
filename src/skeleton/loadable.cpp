@@ -79,10 +79,12 @@ bool Loadable::is_loading() const
 }
 
 
-//
-// 更新時刻
-//
-time_t Loadable::get_time_modified()
+/** @brief 更新時刻を返す
+ *
+ * @details 更新時刻のデータが無い、または形式が不正のときは現在時刻の600秒前を返す。
+ * @return 更新時刻を表すエポックから経過した秒数
+ */
+std::time_t Loadable::get_time_modified() const
 {
     time_t time_out;
     time_out = MISC::datetotime( m_date_modified );
