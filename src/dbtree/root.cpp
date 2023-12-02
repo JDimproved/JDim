@@ -1576,10 +1576,12 @@ void Root::save_movetable()
 
 
 
-//
-// 2ch型のURLかどうか
-//
-bool Root::is_2ch( const std::string& url )
+/** @brief 2ch.net or 5ch.net or bbspink.comのURLかどうか
+ *
+ * @param[in] url チェック対象
+ * @return マッチしたらtrueを返す
+ */
+bool Root::is_2ch( std::string_view url )
 {
     constexpr bool protocol = false;
     const std::string hostname = MISC::get_hostname( url, protocol );
@@ -1594,25 +1596,28 @@ bool Root::is_2ch( const std::string& url )
 
 
 
-//
-// JBBS型のURLかどうか
-//
-bool Root::is_JBBS( const std::string& url )
+/** @brief したらば掲示板(JBBS)型のURLかどうか
+ *
+ * @param[in] url チェック対象
+ * @return マッチしたらtrueを返す
+ */
+bool Root::is_JBBS( std::string_view url )
 {
-    const std::string hostname = MISC::get_hostname( url );
+    constexpr bool protocol = false;
+    const std::string hostname = MISC::get_hostname( url, protocol );
 
-    if( hostname.find( "jbbs.livedoor.jp" ) != std::string::npos
-        || hostname.find( "jbbs.shitaraba.com" ) != std::string::npos
-        || hostname.find( "jbbs.shitaraba.net" ) != std::string::npos ) return true;
-
-    return false;
+    return ( hostname == "jbbs.shitaraba.net"
+            || hostname == "jbbs.shitaraba.com"
+            || hostname == "jbbs.livedoor.jp" );
 }
 
 
-//
-// まち型のURLかどうか
-//
-bool Root::is_machi( const std::string& url )
+/** @brief まちBBS型のURLかどうか
+ *
+ * @param[in] url チェック対象
+ * @return マッチしたらtrueを返す
+ */
+bool Root::is_machi( std::string_view url )
 {
     constexpr bool protocol = false;
     const std::string hostname = MISC::get_hostname( url, protocol );
@@ -1621,16 +1626,17 @@ bool Root::is_machi( const std::string& url )
 }
 
 
-//
-// vipサービスのURLか
-//
-bool Root::is_vip2ch( const std::string& url )
+/** @brief VIPサービスのURLかどうか
+ *
+ * @param[in] url チェック対象
+ * @return マッチしたらtrueを返す
+ */
+bool Root::is_vip2ch( std::string_view url )
 {
-    const std::string hostname = MISC::get_hostname( url );
+    constexpr bool protocol = false;
+    const std::string hostname = MISC::get_hostname( url, protocol );
 
-    if( hostname.find( ".vip2ch.com" ) != std::string::npos ) return true;
-
-    return false;
+    return MISC::ends_with( hostname, ".vip2ch.com" );
 }
 
 
@@ -1676,12 +1682,14 @@ bool Root::is_2chsc( std::string_view url )
 }
 
 
-//
-// ローカルファイルか
-//
-bool Root::is_local( const std::string& url )
+/** @brief ローカルファイルのURLかどうか
+ *
+ * @param[in] url チェック対象
+ * @return マッチしたらtrueを返す
+ */
+bool Root::is_local( std::string_view url )
 {
-    if( url.find( "file://" ) != std::string::npos ) return true;
+    if( url.find( "file://" ) != std::string_view::npos ) return true;
 
     return false;
 }
