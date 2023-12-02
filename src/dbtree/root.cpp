@@ -1603,13 +1603,12 @@ bool Root::is_2ch( std::string_view url )
  */
 bool Root::is_JBBS( std::string_view url )
 {
-    const std::string hostname = MISC::get_hostname( url );
+    constexpr bool protocol = false;
+    const std::string hostname = MISC::get_hostname( url, protocol );
 
-    if( hostname.find( "jbbs.livedoor.jp" ) != std::string_view::npos
-        || hostname.find( "jbbs.shitaraba.com" ) != std::string_view::npos
-        || hostname.find( "jbbs.shitaraba.net" ) != std::string_view::npos ) return true;
-
-    return false;
+    return ( hostname == "jbbs.shitaraba.net"
+            || hostname == "jbbs.shitaraba.com"
+            || hostname == "jbbs.livedoor.jp" );
 }
 
 
@@ -1634,11 +1633,10 @@ bool Root::is_machi( std::string_view url )
  */
 bool Root::is_vip2ch( std::string_view url )
 {
-    const std::string hostname = MISC::get_hostname( url );
+    constexpr bool protocol = false;
+    const std::string hostname = MISC::get_hostname( url, protocol );
 
-    if( hostname.find( ".vip2ch.com" ) != std::string_view::npos ) return true;
-
-    return false;
+    return MISC::ends_with( hostname, ".vip2ch.com" );
 }
 
 
