@@ -41,7 +41,17 @@ JDimはGPLv2の下で公開されている [JD][] からforkしたソフトウ�
 
 <a name="license"></a>
 ### ライセンス
-[GNU General Public License, version 2][gpl2]
+[GNU General Public License, version 2][gpl2-ja]
+<br>
+ただし、ドキュメントやメタデータなどに GPL と互換性のある寛容なライセンスが使われているファイルがあります。
+
+4a3db9cf601 (2023-12-09) 以降に取り込まれた修正(パッチやコミット)は [GPL-2.0-or-later][gpl2-or-later] でライセンスされます。
+寛容なライセンスが使われているファイルの修正にはそのライセンスが適用されます。 ([RFC 0013][rfc0013])
+
+#### JDimproved projectに参加・貢献した皆様へお願い
+
+既存のファイルのライセンスを GPL-2.0-or-later に変更するためファイルを編集した貢献者の皆様に確認を行っています。
+[Issue 1297][issue1297] でライセンス変更の賛否を表明していただけると幸いです。
 
 
 <a name="contact"></a>
@@ -60,7 +70,10 @@ LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報�
 [JD]: https://ja.osdn.net/projects/jd4linux/ "JD for Linux プロジェクト日本語トップページ"
 [yama-natuki]: https://github.com/yama-natuki
 [repository]: https://github.com/JDimproved/JDim
-[gpl2]: https://ja.osdn.net/projects/opensource/wiki/licenses%2FGNU_General_Public_License
+[gpl2-ja]: https://licenses.opensource.jp/GPL-2.0/GPL-2.0.html
+[gpl2-or-later]: https://spdx.org/licenses/GPL-2.0-or-later.html
+[rfc0013]: https://github.com/JDimproved/rfcs/tree/master/docs/0013-introduce-license-gpl-2.0-or-later.md
+[issue1297]: https://github.com/JDimproved/JDim/issues/1297
 [linux]: https://mao.5ch.net/linux/
 [#445]: https://github.com/JDimproved/JDim/issues/445
 

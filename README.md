@@ -353,9 +353,22 @@ fork元の JD:
 ## ライセンス
 
 JDim は GPLv2 の下で公開されています。
-[GNU General Public License, version 2][lisence]
+[GNU General Public License, version 2][license]
+<br>
+ただし、ドキュメントやメタデータなどに GPL と互換性のある寛容なライセンスが使われているファイルがあります。
 
-[lisence]: https://github.com/JDimproved/JDim/blob/master/COPYING
+4a3db9cf601 (2023-12-09) 以降に取り込まれた修正(パッチやコミット)は [GPL-2.0-or-later][gpl2-or-later] でライセンスされます。
+寛容なライセンスが使われているファイルの修正にはそのライセンスが適用されます。 ([RFC 0013][rfc0013])
+
+### JDimproved projectに参加・貢献した皆様へお願い
+
+既存のファイルのライセンスを GPL-2.0-or-later に変更するためファイルを編集した貢献者の皆様に確認を行っています。
+[Issue 1297][issue1297] でライセンス変更の賛否を表明していただけると幸いです。
+
+[license]: https://github.com/JDimproved/JDim/blob/master/COPYING
+[gpl2-or-later]: https://spdx.org/licenses/GPL-2.0-or-later.html
+[rfc0013]: https://github.com/JDimproved/rfcs/tree/master/docs/0013-introduce-license-gpl-2.0-or-later.md
+[issue1297]: https://github.com/JDimproved/JDim/issues/1297
 
 
 ## 連絡先
