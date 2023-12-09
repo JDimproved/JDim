@@ -48,7 +48,7 @@ FavoriteListView::~FavoriteListView()
 void FavoriteListView::save_xml()
 {
     const std::string file = CACHE::path_xml_favorite();
-    save_xml_impl( file, fv::kRootNodeName, "" );
+    save_xml_impl( file, fv::kRootNodeName, {} );
 }
 
 

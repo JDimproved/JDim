@@ -3202,12 +3202,15 @@ bool BBSListViewBase::slot_query_tooltip( int x, int y, bool keyboard_tooltip,
 
 
 
-//
-// XML保存
-//
-// remove_dir != empty()の時はその名前のディレクトリを削除する
-//
-void BBSListViewBase::save_xml_impl( const std::string& file, const std::string& root, const std::string& remove_dir )
+/** @brief 板一覧などサイドバーのビューをXMLに保存する
+ *
+ * @details remove_dirs != empty() の時は指定された名前のディレクトリを除外して保存する。
+ * @param[in] file        XMLを保存するファイルパス
+ * @param[in] root        DOMのルート要素名
+ * @param[in] remove_dirs 除外するディレクトリ名のリスト
+ */
+void BBSListViewBase::save_xml_impl( const std::string& file, const std::string& root,
+                                     JDLIB::span<const std::string_view> remove_dirs )
 {
     if( file.empty() ) return;
     if( root.empty() ) return;
@@ -3215,22 +3218,25 @@ void BBSListViewBase::save_xml_impl( const std::string& file, const std::string&
 
 #ifdef _DEBUG
     std::cout << "BBSListViewBase::save_xml file = " << file << " root = " << root
-              << " remove_dir = " << remove_dir << std::endl;
+              << " remove_dirs size = " << remove_dirs.size() << std::endl;
 #endif
 
     tree2xml( root );
 
     // 指定したディレクトリを取り除く
-    if( ! remove_dir.empty() )
-    {
+    if( ! remove_dirs.empty() ) {
         XML::Dom* domroot = m_document.get_root_element( root );
-        const auto is_remove_dir = [&remove_dir]( const XML::Dom* child ) {
-            return child->nodeName() == "subdir" && child->getAttribute( "name" ) == remove_dir;
-        };
-        auto it = std::find_if( domroot->begin(), domroot->end(), is_remove_dir );
-        if( it != domroot->end() )
-        {
-            domroot->removeChild( *it );
+
+        for( std::string_view remove_dir : remove_dirs ) {
+            if( remove_dir.empty() ) continue;
+
+            const auto is_remove_dir = [&remove_dir]( const XML::Dom* child ) {
+                return child->nodeName() == "subdir" && child->getAttribute( "name" ) == remove_dir;
+            };
+            auto it = std::find_if( domroot->begin(), domroot->end(), is_remove_dir );
+            if( it != domroot->end() ) {
+                domroot->removeChild( *it );
+            }
         }
     }
 

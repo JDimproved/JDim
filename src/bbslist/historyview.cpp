@@ -50,7 +50,7 @@ void HistoryViewBase::show_view()
 // xml保存
 void HistoryViewBase::save_xml()
 {
-    save_xml_impl( m_file_xml, hv::kRootNodeName, "" );
+    save_xml_impl( m_file_xml, hv::kRootNodeName, {} );
 }
 
 

@@ -48,7 +48,8 @@ BBSListViewMain::~BBSListViewMain()
 void BBSListViewMain::save_xml()
 {
     const std::string file = CACHE::path_xml_listmain();
-    save_xml_impl( file, ROOT_NODE_NAME, SUBDIR_ETCLIST );
+    constexpr std::string_view remove_dirs[] = { SUBDIR_ETCLIST };
+    save_xml_impl( file, ROOT_NODE_NAME, remove_dirs );
 }
 
 
