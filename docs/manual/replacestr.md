@@ -2,6 +2,7 @@
 title: 置換文字列の設定(ReplaceStr)
 layout: default
 ---
+<!-- SPDX-License-Identifier: FSFAP OR GPL-2.0-or-later -->
 
 &gt; [Top](../) &gt; [その他]({{ site.baseurl }}/info/) &gt; {{ page.title }}
 
