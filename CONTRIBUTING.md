@@ -56,6 +56,7 @@ Pull requestは`master`ブランチに対してお願いいたします。
 * コーディングスタイルは周囲のコードになるべく合わせる。
 * ソースコードを修正したときはビルド可能なことチェックする。
 * 修正前よりコンパイル時警告を増やさないように気をつける。
+* ファイルの作成、ファイル間で内容のコピーを行うとき[ライセンスに注意する点](#notice-about-license)があります。(下記参照)
 
 C++17で追加された標準ライブラリのうちg++ 8またはclang++ 7が[サポート][support]していないものに注意
 
@@ -126,3 +127,36 @@ ninja -C builddir
 ```
 
 [meson-unity-build]: https://mesonbuild.com/Unity-builds.html
+
+
+<a name="notice-about-license"></a>
+#### ソースコードのファイルを新しく作成するときは
+ファイルの冒頭に GPL-2.0-or-later を表示するSPDX形式のコメントを追加してください。
+```cpp
+// SPDX-License-Identifier: GPL-2.0-or-later
+```
+
+- <https://spdx.org/licenses/GPL-2.0-or-later.html>
+- <https://spdx.github.io/spdx-spec/v2.3/using-SPDX-short-identifiers-in-source-files/>
+
+##### ソースコード以外のファイルを新しく作成するときは
+ソースコードと同様にファイルの冒頭にライセンスを表示するSPDXのコメントを追加してください。
+コメントが書けないファイル形式のときはコミットメッセージにファイル名とライセンスを書いて指定できます
+（未指定のときはGPL-2.0-or-later）。
+
+JDimのプログラムに影響しないドキュメントやメタデータなどのファイルはGPLと互換性のある寛容なライセンスを使用しても問題ありません。
+
+
+#### ファイルの内容を移動、コピーするときの取り扱い
+GPL-2.0-or-later のファイルに GPL2 の内容をコピーしないよう注意してください。
+
+コピー元 | コピー先 | 可否
+--- | --- | ---
+GPL2 | GPL-2.0-or-later | :x: ライセンスがGPL2に変わるためコピーは避ける &#8251;
+GPL-2.0-or-later | GPL2 | :heavy_check_mark: コピーしてよい
+
+&#8251; ライセンス変更に承諾した貢献者が書いた修正であり既存の改変ではなく新しく追加したコードブロックであるならコピーしてもよい
+
+ファイルのライセンスついては [RFC 0013: ライセンス GPL-2.0-or-later を導入する][rfc0013] も参照してください。
+
+[rfc0013]: https://github.com/JDimproved/rfcs/tree/master/docs/0013-introduce-license-gpl-2.0-or-later.md
