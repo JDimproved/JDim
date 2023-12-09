@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 sources = [
   'article2ch.cpp',
   'article2chcompati.cpp',

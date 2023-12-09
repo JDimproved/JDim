@@ -7,3 +7,4 @@ sitemap: false
 permalink: manual/
 redirect_to: /
 ---
+<!-- SPDX-License-Identifier: FSFAP OR GPL-2.0-or-later -->

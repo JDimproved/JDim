@@ -1,4 +1,4 @@
-// ライセンス: GPL2
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 //#define _DEBUG
 #include "jddebug.h"

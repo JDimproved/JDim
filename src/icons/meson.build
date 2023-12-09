@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 gdk_pixbuf_csource = find_program('gdk-pixbuf-csource')
 gen = generator(gdk_pixbuf_csource,
                 output : '@BASENAME@.h',

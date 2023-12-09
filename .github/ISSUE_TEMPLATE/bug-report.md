@@ -6,7 +6,7 @@ labels: bug
 assignees: ''
 
 ---
-
+<!-- SPDX-License-Identifier: FSFAP -->
 <!--
 バグの報告ありがとうございます！
 以下の項目は修正の手掛かり・助けになりますので記入をお願いいたします。

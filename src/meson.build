@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 config_h = configure_file(output : 'config.h',
                           configuration : conf)
 config_h_dep = declare_dependency(compile_args : '-DHAVE_CONFIG_H=1',

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 option('alsa', type : 'feature', value : 'disabled', description : 'Use sound effects')
 option('build_tests', type : 'feature', value : 'auto', description : 'Build tests if gtest is found')
 option('compat_cache_dir', type : 'feature', value : 'enabled', description : 'Use compatible cache directory')

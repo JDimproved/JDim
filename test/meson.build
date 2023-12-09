@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+
 # Add test code source files to following list.
 sources = [
   'gtest_dbtree_nodetreebase.cpp',

@@ -1,4 +1,4 @@
-// License: GPL2
+// SPDX-License-Identifier: GPL-2.0-or-later
 
 #include "jdencoding.h"
 #include "jdlib/jdiconv.h"

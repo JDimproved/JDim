@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
 # JDim用 meson.build
 
 # Autotoolsからの移行はGNOMEのガイドラインを参考にする
