@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: FSFAP -->
+
 # JDim テストガイド
 
 JDimは [Google Test][google_test] (gtest)を使って機能をテストします。

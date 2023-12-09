@@ -1,4 +1,5 @@
 ---
+# SPDX-License-Identifier: FSFAP
 Language:        Cpp
 # BasedOnStyle:  LLVM
 AccessModifierOffset: -2

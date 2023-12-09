@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2019 JDimproved project -->
+<!-- SPDX-License-Identifier: FSFAP -->
+<!-- Copyright (c) 2019-2023 JDimproved project -->
 <component type="desktop-application">
   <id>com.github.jdimproved.jdim</id>
   <metadata_license>FSFAP</metadata_license>

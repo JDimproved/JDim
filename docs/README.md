@@ -1,3 +1,5 @@
+<!-- SPDX-License-Identifier: FSFAP -->
+
 # オンラインマニュアルのメンテナンスについて
 
 - [概要](#概要)
@@ -10,7 +12,7 @@
 JDimのマニュアルは更新作業を簡素化するためMarkdownで記述し、
 [GitHub pages][gh-pages]の機能([jekyll][jekyll])を利用してHTMLに変換する方法をとっています。
 
-また、この文書は https://jd4linux.osdn.jp/maintenance_of_manual.html のコピーを起点としています。
+この文書は https://jd4linux.osdn.jp/maintenance_of_manual.html を参考にしています。
 
 
 ## ポリシー

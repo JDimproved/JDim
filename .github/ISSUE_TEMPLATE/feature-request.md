@@ -6,6 +6,7 @@ labels: feature
 assignees: ''
 
 ---
+<!-- SPDX-License-Identifier: FSFAP -->
 
 **背景や動機**
 <!-- 機能の変更が必要になった原因があれば書く -->
