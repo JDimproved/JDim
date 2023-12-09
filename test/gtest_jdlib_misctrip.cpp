@@ -1,5 +1,5 @@
-// License: GPL-2.0
-// Copyright (C) 2019, JDimproved project
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (C) 2019-2023, JDimproved project
 
 #include "jdlib/misctrip.h"
 

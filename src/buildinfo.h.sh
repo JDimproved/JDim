@@ -1,4 +1,5 @@
 #!/usr/bin/sh
+# SPDX-License-Identifier: GPL-2.0-or-later
 # Generate the header file for including git repository HEAD information.
 
 OUTPUT="$1"

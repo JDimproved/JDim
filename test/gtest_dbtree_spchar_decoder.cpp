@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
 #include "dbtree/node.h"
 #include "dbtree/spchar_decoder.h"
 #include "dbtree/spchar_tbl.h"

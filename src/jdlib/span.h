@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+// SPDX-License-Identifier: GPL-2.0-or-later
 /**
  * @file span.h
  * @brief C++20 std::span のサブセットを実装するヘッダー
