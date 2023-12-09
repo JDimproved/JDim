@@ -10,6 +10,7 @@
 #include "skeleton/view.h"
 #include "skeleton/edittreeview.h"
 
+#include "jdlib/span.h"
 #include "xml/document.h"
 
 #include "columns.h"
@@ -19,6 +20,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <unordered_set>
 
 
@@ -181,8 +183,9 @@ namespace BBSLIST
         // xml保存
         virtual void save_xml() = 0;
 
-        // remove_dir != empty()の時はその名前のディレクトリを削除する
-        void save_xml_impl( const std::string& file, const std::string& root, const std::string& remove_dir );
+        // remove_dirs で指定した名前のディレクトリを除外して保存する
+        void save_xml_impl( const std::string& file, const std::string& root,
+                            JDLIB::span<const std::string_view> remove_dirs );
 
         // idからポップアップメニュー取得
         Gtk::Menu* id2popupmenu( const std::string& id );
