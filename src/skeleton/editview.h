@@ -63,7 +63,7 @@ namespace SKELETON
         SIG_BUTTON_PRESS sig_button_press() { return m_sig_button_press; }
 
         EditTextView();
-        ~EditTextView() noexcept;
+        ~EditTextView() noexcept override;
 
         void insert_str( const std::string& str, bool use_br );
 
@@ -129,7 +129,7 @@ namespace SKELETON
     public:
 
         EditView();
-        ~EditView() noexcept;
+        ~EditView() noexcept override;
 
         SIG_BUTTON_PRESS sig_button_press(){ return m_textview.sig_button_press(); }
         SIG_KEY_PRESS sig_key_press(){ return m_textview.sig_key_press(); }

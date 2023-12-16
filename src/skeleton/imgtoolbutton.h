@@ -32,7 +32,7 @@ namespace SKELETON
             : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ) ) ), label )
         {}
 
-        ~ToolButtonExtension() noexcept = default;
+        ~ToolButtonExtension() noexcept override = default;
     };
 
     using ImgToolButton = ToolButtonExtension<Gtk::ToolButton>;

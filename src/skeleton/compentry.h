@@ -43,7 +43,7 @@ namespace SKELETON
 
         // mode は補完モード ( compmanager.h 参照 )
         explicit CompletionEntry( const int mode );
-        ~CompletionEntry() noexcept;
+        ~CompletionEntry() noexcept override;
 
         SIG_OPERATE signal_operate(){ return m_sig_operate; }
         SIG_ACTIVATE signal_activate(){ return m_sig_activate; }

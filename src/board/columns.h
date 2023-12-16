@@ -66,7 +66,7 @@ namespace BOARD
             add( m_col_article );
         }
 
-        ~TreeColumns() noexcept = default;
+        ~TreeColumns() noexcept override = default;
     };
 }
 

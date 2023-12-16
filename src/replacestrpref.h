@@ -39,7 +39,7 @@ namespace CORE
 
         ReplaceStrDiag( Gtk::Window* parent, ReplaceStrCondition condition,
                         const Glib::ustring& pattern, const Glib::ustring& replace );
-        ~ReplaceStrDiag() noexcept = default;
+        ~ReplaceStrDiag() noexcept override = default;
 
         bool get_active() const { return m_check_active.get_active(); }
         bool get_icase() const { return m_check_icase.get_active(); }
@@ -77,7 +77,7 @@ namespace CORE
             add( m_col_pattern );
             add( m_col_replace );
         }
-        ~ReplaceRecord() noexcept = default;
+        ~ReplaceRecord() noexcept override = default;
     };
 
     class ReplaceStrPref : public SKELETON::PrefDiag
@@ -111,7 +111,7 @@ namespace CORE
       public:
 
         ReplaceStrPref( Gtk::Window* parent, const std::string& url );
-        ~ReplaceStrPref() noexcept = default;
+        ~ReplaceStrPref() noexcept override = default;
 
       private:
 

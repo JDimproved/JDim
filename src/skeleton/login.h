@@ -28,7 +28,7 @@ namespace SKELETON
       public:
 
         explicit Login( const std::string& url );
-        ~Login();
+        ~Login() override;
 
         bool login_now() const { return m_login_now; }
         void set_login_now( bool login_now ){ m_login_now = login_now; }

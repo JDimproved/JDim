@@ -26,7 +26,7 @@ namespace BBSLIST
       public:
 
         EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeStore >& treestore );
-        ~EditListWin() noexcept;
+        ~EditListWin() noexcept override;
 
         void clock_in();
         void append_item();

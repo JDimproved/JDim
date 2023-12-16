@@ -31,7 +31,7 @@ namespace SKELETON
                         const bool show_arrow ,
                         const int id );
 
-        ~ToolMenuButton() noexcept;
+        ~ToolMenuButton() noexcept override;
 
         SKELETON::MenuButton* get_button(){ return m_button; }
 
