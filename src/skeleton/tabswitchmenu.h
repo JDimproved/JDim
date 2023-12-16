@@ -30,7 +30,7 @@ namespace SKELETON
         static Glib::RefPtr<TabSwitchMenu> create( DragableNoteBook* notebook );
 
         explicit TabSwitchMenu( DragableNoteBook* notebook );
-        ~TabSwitchMenu() noexcept = default;
+        ~TabSwitchMenu() noexcept override = default;
 
         /// メニュー項目を作り直してラベルとアイコンを更新する
         void update_labels_and_icons();

@@ -152,7 +152,7 @@ namespace CORE
 
       public:
         SetupWizard();
-        ~SetupWizard();
+        ~SetupWizard() override;
 
       private:
         void slot_switch_page( Gtk::Widget* notebookpage, guint page );

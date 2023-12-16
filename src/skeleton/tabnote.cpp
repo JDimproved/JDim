@@ -27,7 +27,7 @@ public:
     {
         set_has_window( false );
     }
-    ~DummyWidget() noexcept = default;
+    ~DummyWidget() noexcept override = default;
 };
 
 

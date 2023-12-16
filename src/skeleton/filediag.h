@@ -48,7 +48,7 @@ namespace SKELETON
             else set_transient_for( *CORE::get_mainwindow() );
         }
 
-        ~FileDiag() noexcept = default;
+        ~FileDiag() noexcept override = default;
 
         virtual int run(){
 

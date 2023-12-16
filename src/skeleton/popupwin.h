@@ -30,7 +30,7 @@ namespace SKELETON
     public:
 
         PopupWin( Gtk::Widget* parent, SKELETON::View* view, const int mrg_x, const int mrg_y );
-        ~PopupWin() noexcept = default;
+        ~PopupWin() noexcept override = default;
 
         // m_view　からの hide シグナルをブリッジする
         SIG_HIDE_POPUP& sig_hide_popup() { return m_sig_hide_popup; }

@@ -275,7 +275,7 @@ namespace ARTICLE
         auto sig_view_map() { return m_view.signal_map(); }
 
         explicit DrawAreaBase( const std::string& url );
-        ~DrawAreaBase();
+        ~DrawAreaBase() override;
 
         const std::string& get_url() const { return m_url; }
         int width_client() const { return m_width_client; }
