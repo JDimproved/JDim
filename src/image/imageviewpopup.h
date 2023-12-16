@@ -25,7 +25,7 @@ namespace IMAGE
       public:
 
         explicit ImageViewPopup( const std::string& url );
-        ~ImageViewPopup() noexcept = default;
+        ~ImageViewPopup() noexcept override = default;
 
         void clock_in() override;
 

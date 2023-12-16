@@ -72,7 +72,7 @@ namespace SKELETON
     public:
 
         explicit Admin( const std::string& url );
-        ~Admin();
+        ~Admin() override;
 
         // コピー禁止
         Admin( const Admin& ) = delete;

@@ -50,7 +50,7 @@ class SimpleCookieManager : public JDLIB::CookieManager
 public:
 
     SimpleCookieManager() = default;
-    ~SimpleCookieManager() = default;
+    ~SimpleCookieManager() override = default;
 
     // シングルトン オブジェクトが前提になっているためコピーとムーブ禁止
     SimpleCookieManager( const SimpleCookieManager& ) = delete;

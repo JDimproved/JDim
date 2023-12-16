@@ -26,7 +26,7 @@ namespace DBIMG
       public:
 
         DelImgCacheDiag();
-        ~DelImgCacheDiag();
+        ~DelImgCacheDiag() override;
 
         // 画像キャッシュ削除スレッド
         void main_thread();

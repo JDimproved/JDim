@@ -12,7 +12,7 @@ namespace MESSAGE
     {
       public:
         MessageViewMain( const std::string& url, const std::string& msg );
-        ~MessageViewMain();
+        ~MessageViewMain() override;
 
         void reload() override;
 
@@ -27,7 +27,7 @@ namespace MESSAGE
     {
       public:
         MessageViewNew( const std::string& url, const std::string& msg );
-        ~MessageViewNew() noexcept = default;
+        ~MessageViewNew() noexcept override = default;
 
         void reload() override;
 

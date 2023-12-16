@@ -77,7 +77,7 @@ namespace CORE
       public:
 
         Search_Manager();
-        ~Search_Manager();
+        ~Search_Manager() override;
 
         SIG_SEARCH_FIN sig_search_fin(){ return m_sig_search_fin; }
 

@@ -57,7 +57,7 @@ namespace SOUND
       public:
 
         Play_Sound();
-        ~Play_Sound();
+        ~Play_Sound() override;
 
         bool is_playing() const { return m_playing; }
 

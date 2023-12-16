@@ -32,7 +32,7 @@ namespace BBSLIST
       public:
 
         explicit BBSListAdmin( const std::string& url );
-        ~BBSListAdmin();
+        ~BBSListAdmin() override;
 
         void save_session() override;
         

@@ -60,7 +60,7 @@ namespace CONFIG
       public:
 
         explicit AboutConfig( Gtk::Window* parent );
-        ~AboutConfig() noexcept = default;
+        ~AboutConfig() noexcept override = default;
 
       private:
 

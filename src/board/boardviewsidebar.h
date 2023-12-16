@@ -24,7 +24,7 @@ namespace BOARD
       public:
 
         BoardViewSidebar( const std::string& url, const bool set_history );
-        ~BoardViewSidebar();
+        ~BoardViewSidebar() override;
 
         void stop() override {}
         void reload() override;

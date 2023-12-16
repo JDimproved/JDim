@@ -67,7 +67,7 @@ namespace SKELETON
         SIG_SCROLL_EVENT sig_scroll_event(){ return m_sig_scroll_event; }
 
         explicit TabNotebook( DragableNoteBook* parent );
-        ~TabNotebook() noexcept;
+        ~TabNotebook() noexcept override;
 
         void clock_in();
 

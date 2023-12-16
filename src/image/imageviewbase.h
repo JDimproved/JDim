@@ -68,7 +68,7 @@ namespace IMAGE
       public:
 
         explicit ImageViewBase( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
-        ~ImageViewBase();
+        ~ImageViewBase() override;
 
         bool is_under_mouse() const { return m_under_mouse; }
 

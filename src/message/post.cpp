@@ -33,7 +33,7 @@ namespace {
 struct WriteStrategy : public MESSAGE::PostStrategy
 {
     WriteStrategy() noexcept = default;
-    ~WriteStrategy() noexcept = default;
+    ~WriteStrategy() noexcept override = default;
     std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi( url ); }
     std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi( url ); }
 
@@ -46,7 +46,7 @@ struct WriteStrategy : public MESSAGE::PostStrategy
 struct NewArticleStrategy : public MESSAGE::PostStrategy
 {
     NewArticleStrategy() noexcept = default;
-    ~NewArticleStrategy() noexcept = default;
+    ~NewArticleStrategy() noexcept override = default;
     std::string url_bbscgi( const std::string& url ) override { return DBTREE::url_bbscgi_new( url ); }
     std::string url_subbbscgi( const std::string& url ) override { return DBTREE::url_subbbscgi_new( url ); }
 

@@ -55,7 +55,7 @@ namespace SKELETON
       public:
 
         explicit JDWindow( const bool fold_when_focusout, const bool need_mginfo = true );
-        ~JDWindow() noexcept = default;
+        ~JDWindow() noexcept override = default;
 
         Gtk::HBox& get_statbar(){ return  m_statbar; }
 

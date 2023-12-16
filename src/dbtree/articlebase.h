@@ -127,7 +127,7 @@ namespace DBTREE
       public:
 
         ArticleBase( const std::string& datbase, const std::string& id, bool cached, const Encoding enc );
-        ~ArticleBase();
+        ~ArticleBase() override;
 
         bool empty() const noexcept { return m_url.empty(); }
 
