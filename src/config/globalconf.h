@@ -6,6 +6,10 @@
 #ifndef _GLOBALCONF_H
 #define _GLOBALCONF_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <string>
 #include <list>
 
