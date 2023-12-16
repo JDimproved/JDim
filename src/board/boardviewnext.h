@@ -28,7 +28,7 @@ namespace BOARD
       public:
 
         BoardViewNext( const std::string& url, const std::string& url_pre_article );
-        ~BoardViewNext();
+        ~BoardViewNext() override;
 
         void reload() override;
         void update_view() override;

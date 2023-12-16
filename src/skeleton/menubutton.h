@@ -41,7 +41,7 @@ namespace SKELETON
 
         MenuButton( const bool show_arrow , const int id );
 
-        ~MenuButton() noexcept = default;
+        ~MenuButton() noexcept override = default;
 
       Gtk::Widget* get_label_widget(){ return m_label; }
 

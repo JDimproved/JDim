@@ -188,7 +188,7 @@ namespace BOARD
 
       public:
         Preferences( Gtk::Window* parent, const std::string& url, const std::string& command );
-        ~Preferences() noexcept = default;
+        ~Preferences() noexcept override = default;
 
       private:
         void slot_clear_modified();

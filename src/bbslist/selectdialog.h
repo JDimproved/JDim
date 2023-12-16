@@ -36,7 +36,7 @@ namespace BBSLIST
       public:
 
         SelectListDialog( Gtk::Window* parent, const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore );
-        ~SelectListDialog() noexcept;
+        ~SelectListDialog() noexcept override;
 
         std::string get_name();
         std::string get_path() const;

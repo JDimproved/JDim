@@ -14,7 +14,7 @@ namespace BOARD
       public:
 
         explicit BoardView( const std::string& url );
-        ~BoardView();
+        ~BoardView() override;
 
         // SKELETON::View の関数のオーバロード
 

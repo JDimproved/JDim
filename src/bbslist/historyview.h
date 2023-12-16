@@ -17,7 +17,7 @@ namespace BBSLIST
 
         HistoryViewBase( const std::string& url, const std::string& file_xml,
                          const std::string& arg1, const std::string& arg2 );
-        ~HistoryViewBase();
+        ~HistoryViewBase() override;
 
         void show_view() override;
 

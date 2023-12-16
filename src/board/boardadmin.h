@@ -24,7 +24,7 @@ namespace BOARD
 
       public:
         explicit BoardAdmin( const std::string& url );
-        ~BoardAdmin() = default;
+        ~BoardAdmin() override = default;
 
         void save_session() override;
 

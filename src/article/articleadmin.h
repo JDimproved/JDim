@@ -44,7 +44,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleAdmin( const std::string& url );
-        ~ArticleAdmin();
+        ~ArticleAdmin() override;
 
         void save_session() override;
        

@@ -23,7 +23,7 @@ namespace BBSLIST
       public:
 
         explicit SelectListView( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
-        ~SelectListView() noexcept;
+        ~SelectListView() noexcept override;
 
         SIG_CLOSE_DIALOG sig_close_dialog() { return m_sig_close_dialog; }
         SIG_FOCUS_ENTRY_SEARCH sig_focus_entry_search() { return m_sig_focus_entry_search; }

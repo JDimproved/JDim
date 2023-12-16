@@ -19,7 +19,7 @@ namespace BOARD
       public:
 
         explicit BoardViewLog( const std::string& url );
-        ~BoardViewLog();
+        ~BoardViewLog() override;
 
         void stop() override;
         void reload() override;

@@ -264,7 +264,7 @@ namespace DBTREE
       public:
 
         BoardBase( const std::string& root, const std::string& path_board, const std::string& name );
-        ~BoardBase();
+        ~BoardBase() override;
         bool empty() const;
 
         // 状態 ( global.hで定義 )
