@@ -77,7 +77,7 @@ namespace MESSAGE
       public:
 
         explicit MessageViewBase( const std::string& url );
-        ~MessageViewBase();
+        ~MessageViewBase() override;
 
         //
         // SKELETON::View の関数のオーバロード

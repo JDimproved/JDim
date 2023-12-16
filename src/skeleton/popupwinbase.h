@@ -30,7 +30,7 @@ namespace SKELETON
 
         // draw_frame == true なら枠を描画する
         explicit PopupWinBase( bool draw_frame );
-        ~PopupWinBase() noexcept = default;
+        ~PopupWinBase() noexcept override = default;
 
         SIG_CONFIGURED_POPUP sig_configured(){ return m_sig_configured; }
 

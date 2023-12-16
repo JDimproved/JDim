@@ -18,7 +18,7 @@ namespace MESSAGE
       public:
 
         ConfirmDiag( const std::string& url, const std::string& message );
-        ~ConfirmDiag() noexcept;
+        ~ConfirmDiag() noexcept override;
 
         Gtk::CheckButton& get_chkbutton(){ return m_chkbutton; }
 

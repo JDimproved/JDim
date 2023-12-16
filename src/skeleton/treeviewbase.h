@@ -43,7 +43,7 @@ namespace SKELETON
         SIG_MOTION_NOTIFY& sig_motion_notify() { return m_sig_motion_notify; }
 
         JDTreeViewBase();
-        ~JDTreeViewBase() noexcept;
+        ~JDTreeViewBase() noexcept override;
 
         // 行数
         int get_row_size() const;

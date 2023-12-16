@@ -89,7 +89,7 @@ namespace SKELETON
       public:
 
         Loadable();
-        ~Loadable();
+        ~Loadable() override;
 
         // HTTPコードなどの完全クリア
         void clear_load_data();

@@ -14,7 +14,7 @@ namespace MESSAGE
       public:
 
         MessageWin();
-        ~MessageWin();
+        ~MessageWin() override;
 
       protected:
 

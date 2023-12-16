@@ -33,7 +33,7 @@ namespace SKELETON
         SIG_OPERATE signal_operate(){ return m_sig_operate; }
 
         using Gtk::Entry::Entry;
-        ~JDEntry() noexcept;
+        ~JDEntry() noexcept override;
 
         // CONTROL::Control のモード設定( controlid.h 参照 )
         // キー入力をフックして JDEntry::on_key_release_event() で SIG_OPERATE をemitする
