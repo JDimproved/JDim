@@ -33,7 +33,7 @@ namespace IMAGE
 
       public:
         explicit ImageViewMain( const std::string& url );
-        ~ImageViewMain();
+        ~ImageViewMain() override;
 
         void clock_in() override;
         void show_view() override;

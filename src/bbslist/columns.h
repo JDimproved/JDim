@@ -17,7 +17,7 @@ namespace BBSLIST
     public:
 
         using SKELETON::EditColumns::EditColumns;
-        ~TreeColumns() noexcept;
+        ~TreeColumns() noexcept override;
 
         void setup_row( Gtk::TreeModel::Row& row,
                         const Glib::ustring url, const Glib::ustring name, const Glib::ustring data,

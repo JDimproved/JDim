@@ -32,7 +32,7 @@ namespace IMAGE
       public:
 
         explicit ImageAreaIcon( const std::string& url );
-        ~ImageAreaIcon();
+        ~ImageAreaIcon() override;
 
         void show_image() override;
 

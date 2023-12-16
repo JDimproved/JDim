@@ -68,7 +68,7 @@ namespace SKELETON
         // use_usr_fontcolor が true の時はフォントや色を指定する
         DragTreeView( const std::string& url, const std::string& dndtarget,
                       const bool use_usr_fontcolor, const std::string& fontname, const int colorid_text, const int colorid_bg, const int colorid_bg_even );
-        ~DragTreeView() noexcept;
+        ~DragTreeView() noexcept override;
 
         virtual void clock_in();
 

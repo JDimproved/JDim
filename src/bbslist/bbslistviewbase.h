@@ -193,7 +193,7 @@ namespace BBSLIST
       public:
 
         explicit BBSListViewBase( const std::string& url, const std::string& arg1 = {}, const std::string& arg2 = {} );
-        ~BBSListViewBase() noexcept;
+        ~BBSListViewBase() noexcept override;
 
         //
         // SKELETON::View の関数のオーバロード

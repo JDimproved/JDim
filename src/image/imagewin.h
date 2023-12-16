@@ -20,7 +20,7 @@ namespace IMAGE
       public:
 
         ImageWin();
-        ~ImageWin();
+        ~ImageWin() override;
 
         void pack_remove_tab( bool unpack, Widget& tab );
 

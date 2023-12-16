@@ -61,7 +61,7 @@ namespace MESSAGE
       public:
 
         Post( Gtk::Widget* parent, const std::string& url, const std::string& msg, bool new_article );
-        ~Post();
+        ~Post() override;
         SIG_FIN sig_fin() const { return m_sig_fin; }
         const std::string& get_return_html() const { return m_return_html;}
         const std::string& get_errmsg() const { return m_errmsg; }

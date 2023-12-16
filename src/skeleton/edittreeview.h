@@ -84,7 +84,7 @@ namespace SKELETON
 
         EditTreeView( const std::string& url, const std::string& dndtarget, EditColumns& columns );
 
-        ~EditTreeView();
+        ~EditTreeView() override;
 
         void clock_in() override;
 

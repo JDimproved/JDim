@@ -18,7 +18,7 @@ namespace IMAGE
 
       public:
         explicit ImageViewIcon( const std::string& url );
-        ~ImageViewIcon();
+        ~ImageViewIcon() override;
 
         void clock_in() override;
         void focus_view() override;

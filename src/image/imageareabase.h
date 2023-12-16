@@ -50,7 +50,7 @@ namespace IMAGE
         // 1 -> INTERP_BILINEAR
         // 3 -> INTERP_HYPER
         ImageAreaBase( const std::string& url, const int interptype );
-        ~ImageAreaBase();
+        ~ImageAreaBase() override;
 
         void stop();
         void wait();

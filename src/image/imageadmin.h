@@ -42,7 +42,7 @@ namespace IMAGE
       public:
 
         explicit ImageAdmin( const std::string& url );
-        ~ImageAdmin();
+        ~ImageAdmin() override;
 
         void save_session() override;
 
