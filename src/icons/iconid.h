@@ -25,6 +25,7 @@ namespace ICON
         LINK,
 
         // サイドバーやタブで使用するアイコン
+        BBSMENU,
         BOARD,
         BOARD_UPDATE,
         THREAD,

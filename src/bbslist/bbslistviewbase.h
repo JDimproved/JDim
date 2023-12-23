@@ -31,6 +31,7 @@ namespace SKELETON
 
 
 #define SUBDIR_ETCLIST "外部板"
+#define SUBDIR_BBSMENU "外部BBSMENU"
 
 
 namespace BBSLIST
@@ -125,9 +126,16 @@ namespace BBSLIST
         // 外部板のディレクトリか
         bool is_etcdir( Gtk::TreePath path );
 
+        // 外部BBSMENUのディレクトリか
+        bool is_bbsmenudir( Gtk::TreePath path );
+
         // 外部板か
         bool is_etcboard( const Gtk::TreeModel::iterator& it );
         bool is_etcboard( Gtk::TreePath path );
+
+        // 外部BBSMENUか
+        bool is_bbsmenu( const Gtk::TreeModel::iterator& it );
+        bool is_bbsmenu( Gtk::TreePath path );
 
         // 起動時や移転があったときなどに行に含まれるURlを変更する
         void update_urls();
@@ -293,7 +301,9 @@ namespace BBSLIST
         void slot_append_favorite();
         void slot_newdir();
         void slot_newcomment();
+        void slot_newbbsmenu();
         void slot_newetcboard();
+        void slot_movebbsmenu();
         void slot_moveetcboard();
         void slot_rename();
         void slot_copy_url();
@@ -306,6 +316,7 @@ namespace BBSLIST
         void slot_create_vboard();
         void slot_search_cache_board();
         void slot_import_dat();
+        void slot_preferences_bbsmenu();
         void slot_preferences_board();
         void slot_preferences_article();
         void slot_preferences_image();
@@ -316,6 +327,9 @@ namespace BBSLIST
         void slot_sort( const int mode );
 
         virtual void delete_view_impl();
+
+        // 外部BBSMENU追加/編集
+        void add_newbbsmenu( const bool move, const std::string& _url, const std::string& _name );
 
         // 外部板追加/編集
         void add_newetcboard( const bool move, const std::string& _url, const std::string& _name, const std::string& _id, const std::string& _passwd );

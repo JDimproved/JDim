@@ -240,6 +240,9 @@ ICON_Manager::ICON_Manager()
     const NamedIconLoader icon_loader{ size_menu };
     std::vector<Glib::ustring> icon_names;
 
+    // サイドバーやタブで使用するアイコン
+    m_list_icons[ ICON::BBSMENU ] = icon_loader.load_icon( "emblem-documents", size_menu );
+
     // 共通
     m_list_icons[ ICON::SEARCH_PREV ] = icon_loader.load_icon( "go-up", size_menu );
     m_list_icons[ ICON::SEARCH_NEXT ] = icon_loader.load_icon( "go-down", size_menu );
