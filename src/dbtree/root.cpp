@@ -7,32 +7,31 @@
 #include "jddebug.h"
 
 #include "root.h"
-#include "boardfactory.h"
-#include "boardbase.h"
-#include "articlebase.h"
 
+#include "bbsmenu.h"
+#include "boardbase.h"
+#include "boardfactory.h"
+
+#include "config/globalconf.h"
 #include "jdlib/cookiemanager.h"
 #include "jdlib/jdiconv.h"
 #include "jdlib/jdregex.h"
-#include "jdlib/miscutil.h"
-#include "jdlib/miscmsg.h"
 #include "jdlib/loaderdata.h"
-
+#include "jdlib/miscmsg.h"
+#include "jdlib/miscutil.h"
 #include "skeleton/editviewdialog.h"
 #include "skeleton/msgdiag.h"
 
-#include "type.h"
-#include "command.h"
-#include "config/globalconf.h"
 #include "cache.h"
-#include "httpcode.h"
+#include "command.h"
 #include "environment.h"
 #include "global.h"
+#include "httpcode.h"
+#include "type.h"
 
-#include <sys/types.h> // chmod
 #include <sys/stat.h>
+#include <sys/types.h> // chmod
 
-#include <cstring>
 #include <iterator>
 #include <sstream>
 
@@ -66,6 +65,7 @@ enum
 Root::Root()
     : SKELETON::Loadable()
     , m_board_null{ std::make_unique<DBTREE::BoardBase>( "", "", "" ) }
+    , m_bbsmenu_null{ std::make_unique<DBTREE::BBSMenu>( "", "" ) }
     , m_enable_save_movetable( true )
 {
     m_xml_document.clear();
@@ -74,6 +74,7 @@ Root::Root()
     load_movetable();
     load_cache();
     load_etc();
+    load_bbsmenu();
 
     // JDのサポートBBS登録
     set_board( ENVIRONMENT::get_jdbbs(), "JDサポートBBS" );
@@ -96,6 +97,9 @@ Root::~Root()
 #ifdef _DEBUG    
     std::cout << "Root::~Root\n";
 #endif
+
+    // JDim 終了時に bbsmenu.txt を保存しないと板移転の結果が反映されない
+    save_bbsmenu();
 
     clear();
 
@@ -509,37 +513,38 @@ void Root::bbsmenu2xml( const std::string& menu )
 }
 
 
-
-//
-// XML に含まれる板情報を取り出してデータベースを更新
-//
-void Root::analyze_board_xml()
+/** @brief XML に含まれる板情報を取り出してデータベースを更新
+ *
+ * @param[in,out] bbsmenu BBSMENU から取得した板の情報
+ */
+template<typename T>
+void Root::slot_analyze_board_xml( T& bbsmenu )
 {
-    m_move_info = std::string();
+    m_move_info.clear();
     m_analyzing_board_xml = true;
     m_analyzed_path_board.clear();
 
-    const std::list<XML::Dom*> boards = m_xml_document.getElementsByTagName( "board" );
+    const std::list<XML::Dom*> boards = bbsmenu.xml_document().getElementsByTagName( "board" );
 
-    for( const XML::Dom* child : boards )
-    {
+    for( const XML::Dom* child : boards ) {
+
         const std::string name = child->getAttribute( "name" );
         const std::string url = child->getAttribute( "url" );
 
-        //板情報セット
+        // 板情報セット
         set_board( url, name );
     }
 
     // 移転があった
-    if( ! m_move_info.empty() )
-    {
+    if( ! m_move_info.empty() ) {
+
         SKELETON::EditViewDialog diag( m_move_info, "移転板一覧", false );
-        diag.resize( 600, 400 );
+        diag.set_default_size( 600, 400 );
         diag.run();
 
-        if( m_enable_save_movetable ){
+        if( m_enable_save_movetable ) {
 
-            //移転テーブル保存
+            // 移転テーブル保存
             save_movetable();
 
             // サイドバーに登録されているURL更新
@@ -547,15 +552,15 @@ void Root::analyze_board_xml()
         }
     }
 
-    const XML::Dom* root = m_xml_document.get_root_element( std::string( ROOT_NODE_NAME ) );
-    if( root ) set_date_modified( root->getAttribute( "date_modified" ) );
+    const XML::Dom* root = bbsmenu.xml_document().get_root_element( ROOT_NODE_NAME );
+    if( root ) bbsmenu.set_date_modified( root->getAttribute( "date_modified" ) );
 
     m_analyzing_board_xml = false;
     m_analyzed_path_board.clear();
 
 #ifdef _DEBUG
-    std::cout << "Root::analyze_board_xml\n";
-    std::cout << "date_modified = " << get_date_modified() << std::endl;
+    std::cout << "Root::slot_analyze_board_xml : date_modified = "
+              << bbsmenu.get_date_modified() << std::endl;
 #endif
 }
 
@@ -1732,4 +1737,207 @@ void Root::reset_all_write_date()
 void Root::reset_all_access_date()
 {
     for( auto& b : m_list_board ) b->reset_all_access_date();
+}
+
+
+/** Rootに登録されたBBSMenuを返す
+ *
+ * @details URLに一致するBBSMenuがないときはNull objectを返す
+ * @param[in] url BBSMENUのURL
+ * @return urlのBBSMENU
+ */
+BBSMenu* Root::get_bbsmenu( std::string_view url )
+{
+    if( ! url.empty() ) {
+        auto it = std::find_if( m_list_bbsmenu.begin(), m_list_bbsmenu.end(),
+                                [url]( const BBSMenu& b ) { return b.equals( url ); } );
+        if( it != m_list_bbsmenu.end() ) {
+            return std::addressof( *it );
+        }
+    }
+    return m_bbsmenu_null.get();
+}
+
+
+/** @brief bbsmenu/bbsmenu.txt から外部BBSMENU情報を読み込む
+ *
+ * @details bbsmenu/bbsmeu.txt を読み込んで外部BBSMENU情報( bbsmenu.h )作成およびデータベース登録。
+ * Navi2chと互換はない。
+ */
+void Root::load_bbsmenu()
+{
+    m_list_bbsmenu.clear();
+
+    const std::string bbsmenu_txt = CACHE::path_bbsmenu();
+    std::string bbsmenu_data;
+    if( ! CACHE::load_rawdata( bbsmenu_txt, bbsmenu_data ) ) return;
+
+    // ファイル内容から使わない部分を省く
+    std::list<std::string> list_bbsmenu = MISC::get_lines( bbsmenu_data );
+    for( auto it = list_bbsmenu.begin(); it != list_bbsmenu.end(); ) {
+
+        // trim spaces
+        std::string tmp_str = MISC::utf8_trim( *it );
+        // remove empty line or comment line
+        if( tmp_str.empty() || tmp_str[0] == '#' ) {
+            it = list_bbsmenu.erase( it );
+            continue;
+        }
+        // update line
+        *it = std::move( tmp_str );
+        ++it;
+    }
+
+    // 文字列の行が不足した場合は追加処理を打ち切る
+    for( auto it = list_bbsmenu.begin(); it != list_bbsmenu.end(); ++it ) {
+
+        std::string& name = *it;
+        if( ++it == list_bbsmenu.end() ) break;
+
+        std::string& url = *it;
+        if( ++it == list_bbsmenu.end() ) break;
+
+        // 未使用データ
+        if( it == list_bbsmenu.end() ) break;
+
+#ifdef _DEBUG
+        std::cout << "Root::load_bbsmenu: name = " << name << ", url = " << url << std::endl;
+#endif
+        // 設定ファイルから読み込むときは重複チェックしない
+        BBSMenu& bbsmenu = m_list_bbsmenu.emplace_back( url, name );
+        bbsmenu.sig_analyze_board_xml().connect( sigc::mem_fun( *this, &Root::slot_analyze_board_xml<BBSMenu> ) );
+
+        bbsmenu.load_cache();
+    }
+}
+
+
+/** Rootに外部BBSMENUを追加する
+ *
+ * @details URLが重複していたら追加せず失敗(false)を返す
+ * @param[in] url  BBSMENUのURL
+ * @param[in] name BBSMENUの名前
+ * @return 追加に成功したらtrue
+ */
+bool Root::add_bbsmenu( const std::string& url, const std::string& name )
+{
+#ifdef _DEBUG
+    std::cout << "Root::add_bbsmenu url = " << url << " name = " << name << std::endl;
+#endif
+
+    auto it = std::find_if( m_list_bbsmenu.begin(), m_list_bbsmenu.end(),
+                            [&url]( const BBSMenu& b ) { return b.equals( url ); } );
+    if( it == m_list_bbsmenu.end() ) {
+        auto& bbsmenu = m_list_bbsmenu.emplace_front( url, name );
+        bbsmenu.sig_analyze_board_xml().connect( sigc::mem_fun( *this, &Root::slot_analyze_board_xml<BBSMenu> ) );
+        return true;
+    }
+
+    MISC::ERRMSG( "BBSMENU: Failed to add " + url + " : " + name );
+    return false;
+}
+
+
+/** 外部BBSMENUを更新する
+ *
+ * @param[in] url_old  現在のURL
+ * @param[in] url_new  新しいURL
+ * @param[in] name_old 現在の名前
+ * @param[in] name_new 新しい名前
+ * @return 更新に成功したらtrue
+ */
+bool Root::move_bbsmenu( const std::string& url_old, const std::string& url_new,
+                         const std::string& name_old, const std::string& name_new )
+{
+    decltype( m_list_bbsmenu.begin() ) it;
+    if( url_old == url_new ) {
+        // 新旧でデータが同じかチェックしてURLと名前が同一なら成功を返す
+        if( name_old == name_new ) return true;
+
+        // 名前を入れ替えるBBSMenuを探す
+        it = std::find_if( m_list_bbsmenu.begin(), m_list_bbsmenu.end(),
+                           [&url_old, &name_old]( const BBSMenu& b ) { return b.equals( url_old, name_old ); } );
+    }
+    else {
+        // 新しいURLが登録済みなら失敗を返す
+        if( std::any_of( m_list_bbsmenu.begin(), m_list_bbsmenu.end(),
+                         [&url_new]( const BBSMenu& b ) { return b.equals( url_new ); } ) ) return false;
+
+        // URLと名前を入れ替えるBBSMenuを探す
+        it = std::find_if( m_list_bbsmenu.begin(), m_list_bbsmenu.end(),
+                           [&url_old]( const BBSMenu& b ) { return b.equals( url_old ); } );
+    }
+
+    // 登録されていないときは失敗を返す
+    if( it == m_list_bbsmenu.end() ) return false;
+
+    // URLと名前を入れ替えて構築したデータをリセットする
+    it->reset( url_new, name_new );
+    // キャッシュディレクトリの bbsmenu/ は Root::save_bbsmenu() で作成する
+    save_bbsmenu();
+    it->download_bbsmenu();
+
+    return true;
+}
+
+
+/** @brief 外部BBSMENUを削除する
+ *
+ * @param[in] url  BBSMENUのURL
+ * @param[in] name BBSMENUの名前
+ * @return 削除に成功したらtrueを返す
+ */
+bool Root::remove_bbsmenu( const std::string& url, const std::string& name )
+{
+#ifdef _DEBUG
+    std::cout << "Root::remove_bbsmenu url = " << url << " name = " << name << std::endl;
+#endif
+    // リストが空のときは失敗を返す
+    if( m_list_bbsmenu.empty() ) return false;
+
+    auto it = std::find_if( m_list_bbsmenu.begin(), m_list_bbsmenu.end(),
+                            [&url, &name]( const BBSMenu& b ) { return b.equals( url, name ); } );
+    if( it != m_list_bbsmenu.end() ) {
+        m_list_bbsmenu.erase( it );
+        return true;
+    }
+
+    return false;
+}
+
+
+/** @brief 外部BBSMENUのURLリストを保存 (キャッシュディレクトリの bbsmenu/ 作成)
+ *
+ * @details BBSMenuのオブジェクトから bbsmenu.txt を作成する。
+ * Root::save_etc() を参考にしているがNavi2chとは関係ない。
+ * m_list_bbsmenu が空でも保存する。
+ */
+void Root::save_bbsmenu()
+{
+    std::string bbsmenu_data;
+
+    for( const DBTREE::BBSMenu& bbsmenu : m_list_bbsmenu ) {
+
+        bbsmenu_data.append( bbsmenu.get_name() );
+        bbsmenu_data.push_back( '\n' );
+        bbsmenu_data.append( bbsmenu.get_url() );
+        bbsmenu_data.push_back( '\n' );
+        bbsmenu_data.append( bbsmenu.path_bbsmenu_boards_xml() );
+        bbsmenu_data.push_back( '\n' );
+    }
+
+    const std::string bbsmenu_root = CACHE::path_bbsmenu_root();
+    if( ! CACHE::jdmkdir( bbsmenu_root ) ) {
+        MISC::ERRMSG( "Can't create " + bbsmenu_root );
+        return;
+    }
+
+    const std::string bbsmenu_txt = CACHE::path_bbsmenu();
+    if( ! CACHE::save_rawdata( bbsmenu_txt, bbsmenu_data ) && ! bbsmenu_txt.empty() ) {
+        MISC::ERRMSG( "Failed to save " + bbsmenu_txt );
+    }
+
+#ifdef _DEBUG
+    std::cout << "Root::save_bbsmenu : bbsmenu_data = " << bbsmenu_data << std::endl;
+#endif
 }
