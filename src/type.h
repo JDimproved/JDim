@@ -17,6 +17,7 @@ enum
     TYPE_BOARD_UNKNOWN,
 
     // その他一般的なデータタイプ
+    TYPE_BBSMENU,
     TYPE_BOARD,
     TYPE_BOARD_UPDATE,
     TYPE_THREAD,

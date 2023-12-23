@@ -28,6 +28,7 @@ namespace XML
 namespace DBTREE
 {
     class Root;
+    class BBSMenu;
     class BoardBase;
     class NodeTreeBase;
     class ArticleBase;
@@ -37,6 +38,7 @@ namespace DBTREE
 
     // 各クラスのポインタ取得
     Root* get_root();
+    BBSMenu* get_bbsmenu( std::string_view url );
     BoardBase* get_board( const std::string& url );
     ArticleBase* get_article( const std::string& url );
 
@@ -95,6 +97,18 @@ namespace DBTREE
     void download_bbsmenu();
     const std::string& get_date_modified(); // bbsmenuの更新時間( 文字列 )
     time_t get_time_modified(); // bbsmenuの更新時間( time_t )
+
+    // 外部BBSMENU系
+    const std::list<DBTREE::BBSMenu>& get_bbsmenus();
+    std::string bbsmenu_name( std::string_view url );
+    bool add_bbsmenu( const std::string& url, const std::string& name );
+    bool move_bbsmenu( const std::string& url_old, const std::string& url_new,
+                       const std::string& name_old, const std::string& name_new );
+    bool remove_bbsmenu( const std::string& url, const std::string& name );
+    void save_bbsmenu();
+    void download_bbsmenu( const std::string& url );
+    const std::string& bbsmenu_get_date_modified( const std::string& url ); ///< 外部BBSMENUの更新時間( 文字列 )
+    std::time_t bbsmenu_get_time_modified( const std::string& url ); ///< 外部BBSMENUの更新時間( time_t )
 
     // board 系
     const std::string& board_path( const std::string& url );

@@ -19,6 +19,10 @@ std::string XML::get_name( const int type_id )
             name = "subdir";
             break;
 
+        case TYPE_BBSMENU: // 外部BBSMENU
+            name = "bbsmenu";
+            break;
+
         case TYPE_BOARD: // 板
             name = "board";
             break;
@@ -91,7 +95,11 @@ int XML::get_type( const std::string& node_name )
 {
     int type = TYPE_UNKNOWN;
 
-    if( node_name == "board" )
+    if( node_name == "bbsmenu" )
+    {
+        type = TYPE_BBSMENU;
+    }
+    else if( node_name == "board" )
     {
         type = TYPE_BOARD;
     }
@@ -171,6 +179,10 @@ Glib::RefPtr< Gdk::Pixbuf > XML::get_icon( const int type_id )
     {
         case TYPE_DIR:
             icon = ICON::get_icon( ICON::DIR );
+            break;
+
+        case TYPE_BBSMENU:
+            icon = ICON::get_icon( ICON::BBSMENU );
             break;
 
         case TYPE_BOARD:

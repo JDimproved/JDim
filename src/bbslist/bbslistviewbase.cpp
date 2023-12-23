@@ -13,9 +13,10 @@
 
 #include "skeleton/msgdiag.h"
 
-#include "jdlib/miscutil.h"
-#include "jdlib/miscgtk.h"
 #include "jdlib/jdregex.h"
+#include "jdlib/miscgtk.h"
+#include "jdlib/misctime.h"
+#include "jdlib/miscutil.h"
 
 #include "dbtree/interface.h"
 
@@ -161,6 +162,32 @@ constexpr const char* popup_menu =
     POPUPMENU_BOARD2
     "</interface>";
 
+/// 板一覧 (外部BBSMENU)
+constexpr const char* popup_menu_bbsmenu =
+    "<interface>"
+    R"(<menu id="popup_menu_bbsmenu">)"
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_OPEN_BROWSER "(_W)", "bbslist.OpenBrowser")
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_COPY_URL "(_U)", "bbslist.CopyURL")
+    MENU_ITEM_ELEM(ITEM_NAME_COPY_TITLE_URL "(_L)", "bbslist.CopyTitleURL")
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_APPENDFAVORITE "(_F)...", "bbslist.AppendFavorite")
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM("編集(_E)...", "bbslist.MoveBBSMenu")
+    "</section>"
+    "<section>"
+    SUBMENU_ELEM(ITEM_NAME_DELETE "(_D)", MENU_ITEM_ELEM("外部BBSMENUを削除する(_D)", "bbslist.DeleteBBSMenu"))
+    "</section>"
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_PREF_BBSMENU "(_B)...", "bbslist.PreferenceBBSMenu")
+    "</section>"
+    "</menu>"
+    "</interface>";
+
 /// 板一覧 (外部板)
 constexpr const char* popup_menu_etc =
     "<interface>"
@@ -184,6 +211,19 @@ constexpr const char* popup_menu_mul =
     "</menu>"
     "</interface>";
 
+/// 板一覧 (複数選択,外部BBSMENU含む)
+constexpr const char* popup_menu_mul_bbsmenu =
+    "<interface>"
+    R"(<menu id="popup_menu_mul_bbsmenu">)"
+    "<section>"
+    MENU_ITEM_ELEM(ITEM_NAME_APPENDFAVORITE "(_F)...", "bbslist.AppendFavorite")
+    "</section>"
+    "<section>"
+    SUBMENU_ELEM(ITEM_NAME_DELETE "(_D)", MENU_ITEM_ELEM("外部BBSMENUを削除する(_D)", "bbslist.DeleteBBSMenu"))
+    "</section>"
+    "</menu>"
+    "</interface>";
+
 /// 板一覧 (複数選択, 外部板含む)
 constexpr const char* popup_menu_mul_etc =
     "<interface>"
@@ -201,6 +241,17 @@ constexpr const char* popup_menu_dir =
     "<interface>"
     R"(<menu id="popup_menu_dir">)"
     MENU_ITEM_ELEM("全て選択(_A)", "bbslist.SelectDir")
+    "</menu>"
+    "</interface>";
+
+/// 板一覧 (外部BBSMENUディレクトリ)
+constexpr const char* popup_menu_bbsmenudir =
+    "<interface>"
+    R"(<menu id="popup_menu_bbsmenudir">)"
+    MENU_ITEM_ELEM("全て選択(_A)", "bbslist.SelectDir")
+    "<section>"
+    MENU_ITEM_ELEM("外部BBSMENU追加(_B)...", "bbslist.NewBBSMenu")
+    "</section>"
     "</menu>"
     "</interface>";
 
@@ -400,11 +451,14 @@ const char* get_menu_ui( const std::string& id )
 {
     const char* menu_ui;
     if( id == "popup_menu" ) menu_ui = popup_menu;
+    else if( id == "popup_menu_bbsmenu" ) menu_ui = popup_menu_bbsmenu;
     else if( id == "popup_menu_etc" ) menu_ui = popup_menu_etc;
     else if( id == "popup_menu_mul" ) menu_ui = popup_menu_mul;
+    else if( id == "popup_menu_mul_bbsmenu" ) menu_ui = popup_menu_mul_bbsmenu;
     else if( id == "popup_menu_mul_etc" ) menu_ui = popup_menu_mul_etc;
     else if( id == "popup_menu_dir" ) menu_ui = popup_menu_dir;
     else if( id == "popup_menu_etcdir" ) menu_ui = popup_menu_etcdir;
+    else if( id == "popup_menu_bbsmenudir" ) menu_ui = popup_menu_bbsmenudir;
     else if( id == "popup_menu_favorite" ) menu_ui = popup_menu_favorite;
     else if( id == "popup_menu_favorite_mul" ) menu_ui = popup_menu_favorite_mul;
     else if( id == "popup_menu_favorite_space" ) menu_ui = popup_menu_favorite_space;
@@ -493,10 +547,13 @@ BBSListViewBase::BBSListViewBase( const std::string& url, const std::string& arg
     m_action_group->add_action( "AppendFavorite", sigc::mem_fun( *this, &BBSListViewBase::slot_append_favorite ) );
     m_action_group->add_action( "NewDir", sigc::mem_fun( *this, &BBSListViewBase::slot_newdir ) );
     m_action_group->add_action( "NewCom", sigc::mem_fun( *this, &BBSListViewBase::slot_newcomment ) );
+    m_action_group->add_action( "NewBBSMenu", sigc::mem_fun( *this, &BBSListViewBase::slot_newbbsmenu ) );
     m_action_group->add_action( "NewEtc", sigc::mem_fun( *this, &BBSListViewBase::slot_newetcboard ) );
     m_action_group->add_action( "MoveEtc", sigc::mem_fun( *this, &BBSListViewBase::slot_moveetcboard ) );
+    m_action_group->add_action( "MoveBBSMenu", sigc::mem_fun( *this, &BBSListViewBase::slot_movebbsmenu ) );
     m_action_group->add_action( "Rename", sigc::mem_fun( *this, &BBSListViewBase::slot_rename ) );
     m_action_group->add_action( "Delete", sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
+    m_action_group->add_action( "DeleteBBSMenu", sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
     m_action_group->add_action( "DeleteEtc", sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
     m_action_group->add_action( "DeleteHist", sigc::mem_fun( *this, &BBSListViewBase::delete_view_impl ) );
     m_action_group->add_action( "OpenRows", sigc::mem_fun( *this, &BBSListViewBase::open_selected_rows ) );
@@ -526,6 +583,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url, const std::string& arg
     m_action_group->add_action( "ImportDat", sigc::mem_fun( *this, &BBSListViewBase::slot_import_dat ) );
 
     m_action_group->add_action( "PreferenceArticle", sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_article ) );
+    m_action_group->add_action( "PreferenceBBSMenu", sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_bbsmenu ) );
     m_action_group->add_action( "PreferenceBoard", sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_board ) );
     m_action_group->add_action( "PreferenceImage", sigc::mem_fun( *this, &BBSListViewBase::slot_preferences_image ) );
 
@@ -1402,6 +1460,15 @@ void BBSListViewBase::slot_newcomment()
 }
 
 
+/**
+ * @brief メニューで外部BBSMENU追加を選択
+ */
+void BBSListViewBase::slot_newbbsmenu()
+{
+    add_newbbsmenu( false, "", "" );
+}
+
+
 //
 // メニューで外部板追加を選択
 //
@@ -1411,12 +1478,143 @@ void BBSListViewBase::slot_newetcboard()
 }
 
 
+/**
+ * @brief メニューで外部BBSMENU編集を選択
+ */
+void BBSListViewBase::slot_movebbsmenu()
+{
+    add_newbbsmenu( true, "", "" );
+}
+
+
 //
 // メニューで外部板編集を選択
 //
 void BBSListViewBase::slot_moveetcboard()
 {
     add_newetcboard( true, "", "", "", "" );
+}
+
+
+/** @brief 外部BBSMENU追加
+ *
+ * @param[in] move  true なら編集モード
+ * @param[in] _url  BBSMENUのURL
+ * @param[in] _name BBSMENUの名前
+ */
+void BBSListViewBase::add_newbbsmenu( const bool move, const std::string& _url, const std::string& _name )
+{
+    if( m_path_selected.empty() ) return;
+
+    std::string url_old;
+    std::string name_old;
+
+    std::string url = _url;
+    std::string name = _name;
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase::add_newbbsmenu move = " << move << std::endl;
+#endif
+
+    if( move ) {
+        url_old = path2url( m_path_selected );
+        name_old = path2name( m_path_selected );
+
+#ifdef _DEBUG
+        std::cout << "url_old = " << url_old << std::endl
+                  << "name_old = " << name_old << std::endl
+                  << "bbsname_name = " << DBTREE::bbsmenu_name( url_old ) << std::endl;
+#endif
+
+        if( DBTREE::bbsmenu_name( url_old ) != name_old ) return;
+
+        if( url.empty() ) url = url_old;
+        if( name.empty() ) name = name_old;
+    }
+
+    BBSLIST::AddEtcBBSMenuDialog diag{ get_parent_win(), move, url, name };
+    if( diag.run() != Gtk::RESPONSE_OK ) return;
+
+    diag.hide();
+
+    std::string url_org = MISC::utf8_trim( diag.get_url() );
+    name = MISC::utf8_trim( diag.get_name() );
+    url = url_org;
+
+    if( name.empty() || url.empty() ) {
+        SKELETON::MsgDiag mdiag( get_parent_win(), "BBSMENU名またはアドレスが空白です",
+                                 false, Gtk::MESSAGE_ERROR );
+        mdiag.run();
+        mdiag.hide();
+        add_newbbsmenu( move, url_org, name );
+        return;
+    }
+
+    // http[s] が無ければ付ける
+    if( url.find( "://" ) == std::string::npos ) url = "http://" + url;
+
+#ifdef _DEBUG
+    std::cout << "url_old = " << url_old << std::endl
+              << "name_old = " << name_old << std::endl
+              << "url = " << url << std::endl
+              << "name = " << name << std::endl;
+#endif
+
+    // 既に登録されているか確認
+    if( ! move && ! DBTREE::bbsmenu_name( url ).empty() ) {
+        SKELETON::MsgDiag mdiag( get_parent_win(), name + "\n" + url + "\n\nは既に登録されています",
+                                 false, Gtk::MESSAGE_ERROR );
+        mdiag.run();
+        mdiag.hide();
+        add_newbbsmenu( move, url_org, name );
+        return;
+    }
+
+    // データベースに登録してツリーに表示
+    if( ! move && DBTREE::add_bbsmenu( url, name ) ) {
+
+        CORE::DATA_INFO_LIST list_info;
+        CORE::DATA_INFO info;
+        info.type = TYPE_BBSMENU;
+        info.url = url;
+        info.name = name;
+        info.path = m_path_selected.to_string();
+        list_info.push_back( info );
+
+        constexpr bool before = false;
+        constexpr bool scroll = false;
+        constexpr bool force = true; // 強制的に追加
+        constexpr bool cancel_undo_commit = false;
+        constexpr int check_dup = 0; // 項目の重複チェックをしない
+        m_treeview.append_info( list_info, m_path_selected, before, scroll, force, cancel_undo_commit, check_dup );
+        m_path_selected = m_treeview.get_current_path();
+
+        // bbsmenu.txt保存
+        DBTREE::save_bbsmenu();
+        DBTREE::download_bbsmenu( url );
+    }
+
+    // 編集
+    else if( move && DBTREE::move_bbsmenu( url_old, url, name_old, name ) ) {
+
+        Gtk::TreeModel::Row row = m_treeview.get_row( m_path_selected );
+        if( row ){
+            row[ m_columns.m_url ] = url;
+            row[ m_columns.m_name ] = name;
+            static_cast<void>( row ); // cppcheck: unreadVariable
+            DBTREE::download_bbsmenu( url );
+        }
+    }
+
+    else {
+
+        SKELETON::MsgDiag mdiag( get_parent_win(), "外部BBSMENUの登録に失敗しました。アドレスを確認してください",
+                                 false, Gtk::MESSAGE_ERROR );
+        mdiag.run();
+        mdiag.hide();
+        add_newbbsmenu( move, url_org, name );
+        return;
+    }
 }
 
 
@@ -1836,6 +2034,29 @@ void BBSListViewBase::slot_import_dat()
 }
 
 
+/**
+ * @brief 外部BBSMENUのプロパティ表示
+ */
+void BBSListViewBase::slot_preferences_bbsmenu()
+{
+    if( m_path_selected.empty() ) return;
+    const std::string url = path2url( m_path_selected );
+
+    Glib::ustring modified = "最終更新日時 ：";
+
+    if( DBTREE::bbsmenu_get_date_modified( url ).empty() ) modified += "未取得";
+    else {
+        const std::time_t time_modified = DBTREE::bbsmenu_get_time_modified( url );
+        modified += MISC::timettostr( time_modified, MISC::TIME_WEEK ) + " ( "
+                    + MISC::timettostr( time_modified, MISC::TIME_PASSED ) + " )";
+    }
+
+    SKELETON::MsgDiag mdiag( get_parent_win(), modified, false );
+    mdiag.set_title( "BBSMENUのプロパティ" );
+    mdiag.run();
+}
+
+
 //
 // 板プロパティ表示
 //
@@ -2177,6 +2398,20 @@ size_t BBSListViewBase::row2dirid( const Gtk::TreeModel::Row& row ) const
 }
 
 
+/**
+ * @brief 外部BBSMENUのディレクトリか
+ */
+bool BBSListViewBase::is_bbsmenudir( Gtk::TreePath path )
+{
+    const std::string name = path2name( path );
+
+#ifdef _DEBUG
+    std::cout << "BBSListViewBase:is_bbsmenudir path = " << path.to_string() << " name = " << name << std::endl;
+#endif
+    return name == SUBDIR_BBSMENU;
+}
+
+
 //
 // 外部板のディレクトリか
 //
@@ -2208,6 +2443,28 @@ bool BBSListViewBase::is_etcboard( Gtk::TreePath path )
 {
     path.up();
     return is_etcdir( path );
+}
+
+
+/** @brief 外部BBSMENUか
+ *
+ * @param[in] it TreeModelのイテレーター
+ */
+bool BBSListViewBase::is_bbsmenu( const Gtk::TreeModel::iterator& it )
+{
+    Gtk::TreePath path = get_treestore()->get_path( *it );
+    return is_bbsmenu( path );
+}
+
+
+/** @brief 外部BBSMENUか
+ *
+ * @param[in] path TreeViewのパス
+ */
+bool BBSListViewBase::is_bbsmenu( Gtk::TreePath path )
+{
+    path.up();
+    return is_bbsmenudir( path );
 }
 
 
@@ -3205,6 +3462,7 @@ bool BBSListViewBase::slot_query_tooltip( int x, int y, bool keyboard_tooltip,
 /** @brief 板一覧などサイドバーのビューをXMLに保存する
  *
  * @details remove_dirs != empty() の時は指定された名前のディレクトリを除外して保存する。
+ * また、data属性の値が "nosave" のディレクトリも取り除く。
  * @param[in] file        XMLを保存するファイルパス
  * @param[in] root        DOMのルート要素名
  * @param[in] remove_dirs 除外するディレクトリ名のリスト
@@ -3223,9 +3481,10 @@ void BBSListViewBase::save_xml_impl( const std::string& file, const std::string&
 
     tree2xml( root );
 
+    XML::Dom* domroot = m_document.get_root_element( root );
+
     // 指定したディレクトリを取り除く
     if( ! remove_dirs.empty() ) {
-        XML::Dom* domroot = m_document.get_root_element( root );
 
         for( std::string_view remove_dir : remove_dirs ) {
             if( remove_dir.empty() ) continue;
@@ -3238,6 +3497,13 @@ void BBSListViewBase::save_xml_impl( const std::string& file, const std::string&
                 domroot->removeChild( *it );
             }
         }
+    }
+    // data属性の値が "nosave" のディレクトリを取り除く
+    if( domroot && domroot->hasChildNodes() ) {
+        const auto is_remove_dir = []( const XML::Dom* child ) {
+            return child->nodeName() == "subdir" && child->getAttribute( "data" ) == "nosave";
+        };
+        domroot->remove_if( is_remove_dir );
     }
 
     CACHE::save_rawdata( file, m_document.get_xml() );

@@ -1,5 +1,5 @@
 ---
-title: 外部板について
+title: 外部板と外部BBSMENUについて
 layout: default
 ---
 
@@ -10,6 +10,7 @@ layout: default
 - [現在の対応板](#support)
 - [外部板の登録方法](#register)
 - [まちBBSのofflaw形式対応について](#machi_offlaw)
+- [外部BBSMENUの登録方法](#register_bbsmenu)
 
 
 <a name="support"></a>
@@ -43,3 +44,18 @@ offlaw形式での読み込みには以下のような長短がある。
 
 × リモートホストが取得できなくなった<br>
 × offlaw形式で読み込んだログは過去のバージョンのJDimでは読めない
+
+
+<a name="register_bbsmenu"></a>
+### 外部BBSMENUの登録方法
+<small>v0.10.1-20231223 から追加</small>
+
+外部BBSMENUを登録するには、サイドバーの板一覧の一番上にある「`外部BBSMENU`」フォルダを右クリックして
+「`外部BBSMENU追加`」を選択し、BBSMENU名とアドレスを入力してOKボタンを押す。
+BBSMENUが読み込まれると板一覧の下部に読み込んだ板が追加される。
+後からBBSMENUのアドレスや名前を変更する場合は対象のBBSMENUの上で右クリックすると出てくる「`編集`」メニューからおこなう。
+
+設定ファイルのフォーマットは予告なく変更する場合がある。
+そのためファイルの編集による登録はサポートしていない。
+
+注意: 実験的なサポートのため変更または廃止の可能性があります。

@@ -108,6 +108,7 @@ static constexpr const int ICON_SIZE = 32; // 画像アイコンの大きさ
 #define ITEM_NAME_SELECTABONEIMG "選択範囲の画像をあぼ〜ん"
 
 #define ITEM_NAME_PREFERENCEVIEW "プロパティ"
+#define ITEM_NAME_PREF_BBSMENU   "BBSMENUのプロパティ"
 #define ITEM_NAME_PREF_BOARD     "板のプロパティ"
 #define ITEM_NAME_PREF_THREAD    "スレのプロパティ"
 #define ITEM_NAME_PREF_IMAGE     "画像のプロパティ"

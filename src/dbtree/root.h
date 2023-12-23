@@ -23,8 +23,9 @@
 
 namespace DBTREE
 {
-    class BoardBase;
     class ArticleBase;
+    class BBSMenu;
+    class BoardBase;
 
     // サーバ移転テーブル
     //
@@ -59,6 +60,9 @@ namespace DBTREE
         // 鯖移転テーブル
         std::list< MOVETABLE > m_movetable;
 
+        /// @brief 外部BBSMENU情報を保持するリスト
+        std::list<BBSMenu> m_list_bbsmenu;
+
         XML::Document m_xml_document;
         std::string m_rawdata;
         std::list< DBTREE::ETCBOARDINFO > m_etcboards; // 外部板情報
@@ -70,6 +74,9 @@ namespace DBTREE
 
         // Null board クラス
         std::unique_ptr<BoardBase> m_board_null;
+
+        /// @brief Null BBSMenu クラス
+        std::unique_ptr<BBSMenu> m_bbsmenu_null;
 
         // get_board()のキャッシュ
         // get_article_fromURL()のキャッシュ
@@ -154,6 +161,19 @@ namespace DBTREE
         // 全てのスレの書き込み履歴削除
         void clear_all_post_history();
 
+        /// @brief 外部BBSMENU情報を取得
+        const std::list<BBSMenu>& get_bbsmenus() const { return m_list_bbsmenu; }
+
+        // 外部BBSMENU
+        BBSMenu* get_bbsmenu( std::string_view url );
+        bool add_bbsmenu( const std::string& url, const std::string& name );
+        bool move_bbsmenu( const std::string& url_old, const std::string& url_new,
+                           const std::string& name_old, const std::string& name_new );
+        bool remove_bbsmenu( const std::string& url, const std::string& name );
+        void save_bbsmenu();
+        template<typename T>
+        void slot_analyze_board_xml( T& bbsmenu );
+
       private:
 
         // bbsmenuのダウンロード用関数
@@ -162,8 +182,8 @@ namespace DBTREE
         void receive_finish() override;
         void bbsmenu2xml( const std::string& menu );
 
-        // XML に含まれる板情報を取り出してデータベースを更新
-        void analyze_board_xml();
+        /// @brief XML に含まれる板情報を取り出してデータベースを更新
+        void analyze_board_xml() { slot_analyze_board_xml( *this ); }
 
         // 板のタイプを判定
         int get_board_type( const std::string& url, std::string& root, std::string& path_board ) const;
@@ -193,6 +213,7 @@ namespace DBTREE
                        const std::string& name,
                        BoardBase** board_old );
 
+        void load_bbsmenu();
         void load_cache();
         void load_etc();
         void load_movetable();
