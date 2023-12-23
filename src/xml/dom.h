@@ -117,6 +117,8 @@ namespace XML
         Dom* appendChild( const int node_type, const std::string& node_name );
         bool removeChild( Dom* node );
         Dom* emplace_front( int node_type, const std::string& node_name );
+        template<class Predicate>
+        std::size_t remove_if( Predicate pred );
 
         // 属性
         std::string getAttribute( const std::string& name ) const;
@@ -128,6 +130,29 @@ namespace XML
         auto begin() const noexcept { return m_childNodes.cbegin(); }
         auto end() const noexcept { return m_childNodes.cend(); }
     };
+
+    /** @brief 子ノードのうちpred(child)がtrueを返すものをすべて削除する
+     *
+     * @details このメンバー関数はchild自体もdeleteして開放する
+     * @tparam Predicate bool(const Dom*), trueなら削除する
+     * @param[in] pred 削除するかどうかチェックする関数呼び出し可能なオブジェクト
+     * @return 削除したノード数
+     */
+    template<typename Predicate>
+    std::size_t Dom::remove_if( Predicate pred )
+    {
+        std::size_t count = 0;
+        for( auto it = m_childNodes.begin(), end = m_childNodes.end(); it != end; ) {
+            it = std::find_if( it, end, pred );
+            if( it == end ) break;
+
+            Dom* child = *it;
+            it = m_childNodes.erase( it );
+            delete child;
+            ++count;
+        }
+        return count;
+    }
 }
 
 #endif

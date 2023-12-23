@@ -235,6 +235,29 @@ TEST_F(XML_DomChildren, emplace_front)
     EXPECT_EQ( dom.firstChild(), third_child );
 }
 
+TEST_F(XML_DomChildren, remove_if)
+{
+    XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "friends" };
+    XML::Dom* child;
+
+    child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "Alice" );
+    child->setAttribute( "pet", "dog" );
+    child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "Bob" );
+    child->setAttribute( "pet", "cat" );
+    child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "Carol" );
+    child->setAttribute( "pet", "dog" );
+    child = dom.appendChild( XML::NODE_TYPE_ELEMENT, "Dave" );
+    child->setAttribute( "pet", "hamster" );
+
+    const std::size_t removed = dom.remove_if(
+        []( const XML::Dom* child ) { return child->getAttribute( "pet" ) == "dog"; } );
+
+    EXPECT_EQ( removed, 2 );
+    EXPECT_EQ( dom.firstChild()->nodeName(), "Bob" );
+    EXPECT_EQ( dom.firstChild()->getAttribute( "pet" ), "cat" );
+    EXPECT_EQ( dom.size(), 2 );
+}
+
 TEST_F(XML_DomChildren, children_clear)
 {
     XML::Dom dom{ XML::NODE_TYPE_UNKNOWN, "test" };
