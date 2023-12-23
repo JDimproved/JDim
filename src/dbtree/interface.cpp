@@ -4,9 +4,11 @@
 #include "jddebug.h"
 
 #include "interface.h"
-#include "root.h"
-#include "boardbase.h"
+
 #include "articlebase.h"
+#include "bbsmenu.h"
+#include "boardbase.h"
+#include "root.h"
 
 #include "jdlib/miscutil.h"
 
@@ -43,6 +45,13 @@ DBTREE::Root* DBTREE::get_root()
 {
     assert( instance_dbtree_root != nullptr );
     return instance_dbtree_root;
+}
+
+DBTREE::BBSMenu* DBTREE::get_bbsmenu( std::string_view url )
+{
+    auto bbsmenu = DBTREE::get_root()->get_bbsmenu( url );
+    assert( bbsmenu != nullptr );
+    return bbsmenu;
 }
 
 DBTREE::BoardBase* DBTREE::get_board( const std::string& url )
@@ -229,6 +238,63 @@ const std::string& DBTREE::get_date_modified()
 time_t DBTREE::get_time_modified()
 {
     return get_root()->get_time_modified();
+}
+
+
+const std::list<DBTREE::BBSMenu>& DBTREE::get_bbsmenus()
+{
+    return DBTREE::get_root()->get_bbsmenus();
+}
+
+
+std::string DBTREE::bbsmenu_name( std::string_view url )
+{
+    return DBTREE::get_bbsmenu( url )->get_name();
+}
+
+
+bool DBTREE::add_bbsmenu( const std::string& url, const std::string& name )
+{
+    return DBTREE::get_root()->add_bbsmenu( url, name );
+}
+
+
+bool DBTREE::move_bbsmenu( const std::string& url_old, const std::string& url_new,
+                           const std::string& name_old, const std::string& name_new )
+{
+    return DBTREE::get_root()->move_bbsmenu( url_old, url_new, name_old, name_new );
+}
+
+
+bool DBTREE::remove_bbsmenu( const std::string& url, const std::string& name )
+{
+    return DBTREE::get_root()->remove_bbsmenu( url, name );
+}
+
+
+void DBTREE::save_bbsmenu()
+{
+    DBTREE::get_root()->save_bbsmenu();
+}
+
+
+void DBTREE::download_bbsmenu( const std::string& url )
+{
+    DBTREE::get_bbsmenu( url )->download_bbsmenu();
+}
+
+
+// 外部BBSMENUの更新時間( std::time_t )
+std::time_t DBTREE::bbsmenu_get_time_modified( const std::string& url )
+{
+    return DBTREE::get_bbsmenu( url )->get_time_modified();
+}
+
+
+// 外部BBSMENUの更新時間( 文字列 )
+const std::string& DBTREE::bbsmenu_get_date_modified( const std::string& url )
+{
+    return DBTREE::get_bbsmenu( url )->get_date_modified();
 }
 
 
