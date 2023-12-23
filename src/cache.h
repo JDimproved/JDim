@@ -60,6 +60,10 @@ namespace CACHE
     // 外部板設定ファイル( navi2ch 互換 )
     std::string path_etcboard();
 
+    // 外部BBSMENUのディレクトリと設定ファイル
+    std::string path_bbsmenu_root();
+    std::string path_bbsmenu();
+
     // ユーザーコマンド設定ファイル
     std::string path_usrcmd();
 

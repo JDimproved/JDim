@@ -129,6 +129,20 @@ std::string CACHE::path_etcboard()
 }
 
 
+/// @brief 外部BBSMENUのディレクトリ
+std::string CACHE::path_bbsmenu_root()
+{
+    return CACHE::path_root() + "bbsmenu/";
+}
+
+
+/// @brief 外部BBSMENUの設定ファイル
+std::string CACHE::path_bbsmenu()
+{
+    return CACHE::path_bbsmenu_root() + "bbsmenu.txt";
+}
+
+
 // ユーザーコマンド設定ファイル
 std::string CACHE::path_usrcmd()
 {
