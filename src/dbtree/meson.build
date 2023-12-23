@@ -8,6 +8,7 @@ sources = [
   'articlejbbs.cpp',
   'articlelocal.cpp',
   'articlemachi.cpp',
+  'bbsmenu.cpp',
   'board2ch.cpp',
   'board2chcompati.cpp',
   'boardbase.cpp',
