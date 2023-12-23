@@ -16,7 +16,7 @@ layout: default
 - [マウスジェスチャについて]({{ site.baseurl }}/mouse/)
 
 - [お気に入りについて]({{ site.baseurl }}/favorite/)
-- [外部板について]({{ site.baseurl }}/external/)
+- [外部板と外部BBSMENUについて]({{ site.baseurl }}/external/)
 - [実況モードについて]({{ site.baseurl }}/live/)
 - [ユーザーコマンド、リンクフィルタについて]({{ site.baseurl }}/usrcmd/)
 - [アスキーアート(AA)の入力について]({{ site.baseurl }}/asciiart/)
