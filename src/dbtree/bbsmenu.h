@@ -15,16 +15,6 @@
 
 namespace DBTREE
 {
-// clang 8以下ではnoexceptがついたdefault constructorがコンパイルできない
-// 参考文献: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86583
-namespace {
-#if defined(__clang__) && __clang_major__ < 9
-constexpr bool kSupportNoexceptDefaultCtor = false;
-#else
-constexpr bool kSupportNoexceptDefaultCtor = true;
-#endif
-}
-
 
 /** @brief BBSMENUの取得と板一覧のデータを構築するクラス
  *
@@ -60,12 +50,13 @@ public:
     {
     }
 
-    BBSMenu( BBSMenu&& ) noexcept(kSupportNoexceptDefaultCtor)= default;
+    // copyとmoveは SKELETON::Loadable と XML::Document の対応が必要
+    BBSMenu( BBSMenu&& ) = delete;
     BBSMenu( const BBSMenu& ) = delete;
 
     ~BBSMenu() noexcept = default;
 
-    BBSMenu& operator=( BBSMenu&& ) noexcept(kSupportNoexceptDefaultCtor) = default;
+    BBSMenu& operator=( BBSMenu&& ) = delete;
     BBSMenu& operator=( const BBSMenu& ) = delete;
 
     /// @brief 外部BBSMENUは name の重複を許すため url のみで検索するときに使う
