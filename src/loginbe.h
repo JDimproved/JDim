@@ -24,7 +24,7 @@ namespace CORE
       public:
 
         LoginBe();
-        ~LoginBe() = default;
+        ~LoginBe() override = default;
 
         void start_login() override;
         void logout() override;

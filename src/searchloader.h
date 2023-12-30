@@ -24,7 +24,7 @@ namespace CORE
       public:
 
         SearchLoader();
-        ~SearchLoader();
+        ~SearchLoader() override;
 
         SIG_SEARCH_FIN sig_search_fin(){ return m_sig_search_fin; }
 

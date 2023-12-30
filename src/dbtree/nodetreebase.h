@@ -158,7 +158,7 @@ namespace DBTREE
       public:
 
         NodeTreeBase( const std::string& url, const std::string& date_modified );
-        ~NodeTreeBase();
+        ~NodeTreeBase() override;
 
         bool empty() const noexcept { return m_url.empty(); }
         void update_url( const std::string& url );

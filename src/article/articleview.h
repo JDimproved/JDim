@@ -40,7 +40,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewMain( const std::string& url );
-        ~ArticleViewMain();
+        ~ArticleViewMain() override;
 
         void clock_in() override;
         void clock_in_always() override;

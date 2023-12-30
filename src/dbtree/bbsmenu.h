@@ -54,7 +54,7 @@ public:
     BBSMenu( BBSMenu&& ) = delete;
     BBSMenu( const BBSMenu& ) = delete;
 
-    ~BBSMenu() noexcept = default;
+    ~BBSMenu() noexcept override = default;
 
     BBSMenu& operator=( BBSMenu&& ) = delete;
     BBSMenu& operator=( const BBSMenu& ) = delete;

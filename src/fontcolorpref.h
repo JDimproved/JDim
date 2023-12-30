@@ -82,7 +82,7 @@ namespace CORE
       public:
 
         FontColorPref( Gtk::Window* parent, const std::string& url );
-        ~FontColorPref() noexcept;
+        ~FontColorPref() noexcept override;
 
       private:
 

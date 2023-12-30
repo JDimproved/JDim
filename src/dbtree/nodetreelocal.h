@@ -16,7 +16,7 @@ namespace DBTREE
       public:
 
         explicit NodeTreeLocal( const std::string& url );
-        ~NodeTreeLocal();
+        ~NodeTreeLocal() override;
 
         // ダウンロードしない
         void download_dat( const bool check_update ) override {}

@@ -14,7 +14,7 @@ namespace CORE
       public:
 
         SearchItemPref( Gtk::Window* parent, const std::string& url );
-        ~SearchItemPref() noexcept = default;
+        ~SearchItemPref() noexcept override = default;
 
       private:
 

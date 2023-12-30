@@ -29,7 +29,7 @@ namespace DBTREE
       public:
 
         NodeTreeJBBS( const std::string& url, const std::string& date_modified );
-        ~NodeTreeJBBS();
+        ~NodeTreeJBBS() override;
 
       protected:
 

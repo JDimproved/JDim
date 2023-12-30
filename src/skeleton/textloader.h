@@ -33,7 +33,7 @@ namespace SKELETON
       public:
 
         TextLoader();
-        ~TextLoader();
+        ~TextLoader() override;
 
         const std::string& get_data() const { return m_data; }
 

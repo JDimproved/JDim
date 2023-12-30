@@ -31,7 +31,7 @@ namespace SKELETON
       public:
 
         explicit AAMenu( Gtk::Window& parent );
-        ~AAMenu();
+        ~AAMenu() override;
 
         // 選択されたらemitされる
         SIG_AAMENU_SELECTED sig_selected() { return m_sig_selected; }

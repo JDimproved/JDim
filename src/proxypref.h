@@ -256,7 +256,7 @@ namespace CORE
             show_all_children();
         }
 
-        ~ProxyPref() noexcept = default;
+        ~ProxyPref() noexcept override = default;
     };
 
 }

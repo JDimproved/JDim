@@ -49,7 +49,7 @@ namespace SKELETON
       public:
 
         explicit TabLabel( const std::string& url );
-        ~TabLabel() noexcept = default;
+        ~TabLabel() noexcept override = default;
 
         SIG_TAB_MOTION_EVENT sig_tab_motion_event(){ return  m_sig_tab_motion_event; }
         SIG_TAB_LEAVE_EVENT sig_tab_leave_event(){ return m_sig_tab_leave_event; }

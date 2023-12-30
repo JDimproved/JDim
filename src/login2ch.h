@@ -24,7 +24,7 @@ namespace CORE
       public:
 
         Login2ch();
-        ~Login2ch() = default;
+        ~Login2ch() override = default;
 
         void start_login() override;
         void logout() override;

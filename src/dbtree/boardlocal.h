@@ -16,7 +16,7 @@ namespace DBTREE
       public:
 
         BoardLocal( const std::string& root, const std::string& path_board, const std::string& name );
-        ~BoardLocal() noexcept;
+        ~BoardLocal() noexcept override;
 
         // url がこの板のものかどうか
         bool equal( const std::string& url ) const override;

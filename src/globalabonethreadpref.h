@@ -133,7 +133,7 @@ namespace CORE
             show_all_children();
         }
 
-        ~GlobalAboneThreadPref() noexcept = default;
+        ~GlobalAboneThreadPref() noexcept override = default;
     };
 
 }

@@ -19,7 +19,7 @@ namespace CORE
       public:
 
         explicit OpenURLDialog( const std::string& url );
-        ~OpenURLDialog() noexcept = default;
+        ~OpenURLDialog() noexcept override = default;
 
       protected:
 

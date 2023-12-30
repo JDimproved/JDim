@@ -19,7 +19,7 @@ namespace SKELETON
       public:
 
         explicit JDHPaned( const int fixmode );
-        ~JDHPaned() noexcept;
+        ~JDHPaned() noexcept override;
 
         HPaneControl& get_ctrl(){ return m_pctrl; }
 

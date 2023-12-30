@@ -100,7 +100,7 @@ namespace SKELETON
       public:
 
         using PaneControl::PaneControl;
-        ~HPaneControl() noexcept = default;
+        ~HPaneControl() noexcept override = default;
 
       protected:
 
@@ -122,7 +122,7 @@ namespace SKELETON
       public:
 
         using PaneControl::PaneControl;
-        ~VPaneControl() noexcept = default;
+        ~VPaneControl() noexcept override = default;
 
       protected:
 

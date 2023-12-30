@@ -88,7 +88,7 @@ namespace DBTREE
       public:
 
         Root();
-        ~Root();
+        ~Root() override;
 
         // 板一覧のxml
         const XML::Document& xml_document() const { return m_xml_document; }

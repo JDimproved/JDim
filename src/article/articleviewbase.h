@@ -94,7 +94,7 @@ namespace ARTICLE
     public:
 
         ArticleViewBase( const std::string& url, const std::string& url_article );
-        ~ArticleViewBase();
+        ~ArticleViewBase() override;
 
         const std::string& url_article() const { return m_url_article; }
 
