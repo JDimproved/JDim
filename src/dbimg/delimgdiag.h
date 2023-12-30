@@ -118,7 +118,7 @@ namespace DBIMG
             show_all_children();
         }
 
-        ~DelImgDiag() noexcept = default;
+        ~DelImgDiag() noexcept override = default;
     };
 
 }

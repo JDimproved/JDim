@@ -78,7 +78,7 @@ namespace CORE
             show_all_children();
         }
 
-        ~PrivacyPref() noexcept = default;
+        ~PrivacyPref() noexcept override = default;
     };
 
 }

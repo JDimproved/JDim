@@ -14,7 +14,7 @@ namespace CORE
       public:
 
         BoardItemColumnPref( Gtk::Window* parent, const std::string& url );
-        ~BoardItemColumnPref() noexcept = default;
+        ~BoardItemColumnPref() noexcept override = default;
 
       private:
 
@@ -30,7 +30,7 @@ namespace CORE
       public:
 
         BoardItemPref( Gtk::Window* parent, const std::string& url );
-        ~BoardItemPref() noexcept = default;
+        ~BoardItemPref() noexcept override = default;
 
       private:
 

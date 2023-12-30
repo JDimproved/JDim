@@ -14,7 +14,7 @@ namespace CORE
       public:
 
         ArticleItemPref( Gtk::Window* parent, const std::string& url );
-        ~ArticleItemPref() noexcept = default;
+        ~ArticleItemPref() noexcept override = default;
 
       private:
 
