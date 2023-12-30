@@ -51,7 +51,7 @@ namespace BBSLIST
       public:
 
         AddEtcBBSMenuDialog( Gtk::Window* parent, const bool edit, const Glib::ustring& url, const Glib::ustring& name );
-        ~AddEtcBBSMenuDialog() noexcept = default;
+        ~AddEtcBBSMenuDialog() noexcept override = default;
 
         std::string get_name() const { return m_entry_name.get_text(); }
         std::string get_url() const { return m_entry_url.get_text(); }
