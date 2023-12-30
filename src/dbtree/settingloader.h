@@ -39,7 +39,7 @@ namespace DBTREE
       public:
 
         explicit SettingLoader( const std::string& url_boardbase );
-        ~SettingLoader();
+        ~SettingLoader() override;
 
         const std::string& default_noname() const { return m_default_noname; }
         int line_number() const noexcept { return m_line_number; }

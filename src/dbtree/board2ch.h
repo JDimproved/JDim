@@ -29,7 +29,7 @@ namespace DBTREE
       public:
 
         Board2ch( const std::string& root, const std::string& path_board,const std::string& name );
-        ~Board2ch() noexcept;
+        ~Board2ch() noexcept override;
 
         // ユーザーエージェント
         const std::string& get_agent() const override; // ダウンロード用

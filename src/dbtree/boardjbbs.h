@@ -25,7 +25,7 @@ namespace DBTREE
       public:
 
         BoardJBBS( const std::string& root, const std::string& path_board,const std::string& name );
-        ~BoardJBBS() noexcept;
+        ~BoardJBBS() noexcept override;
 
         std::string url_datpath() const override;
 
