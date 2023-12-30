@@ -14,7 +14,7 @@ namespace ARTICLE
     {
       public:
         explicit ArticleViewInfo( const std::string& url );
-        ~ArticleViewInfo();
+        ~ArticleViewInfo() override;
 
         // viewの操作をキャンセル
         bool operate_view( const int control ) override { return false; }

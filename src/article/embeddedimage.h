@@ -34,7 +34,7 @@ namespace ARTICLE
       public:
 
         explicit EmbeddedImage( const std::string& url );
-        ~EmbeddedImage();
+        ~EmbeddedImage() override;
 
         Glib::RefPtr< Gdk::Pixbuf > get_pixbuf(){ return m_pixbuf; }
 

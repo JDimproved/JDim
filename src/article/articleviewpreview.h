@@ -16,7 +16,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewPreview( const std::string& url );
-        ~ArticleViewPreview();
+        ~ArticleViewPreview() override;
 
         bool operate_view( const int control ) override;
 

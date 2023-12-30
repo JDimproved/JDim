@@ -81,7 +81,7 @@ namespace ARTICLE
       public:
 
         Preferences( Gtk::Window* parent, const std::string& url, const std::string& command );
-        ~Preferences() noexcept;
+        ~Preferences() noexcept override;
 
       private:
         void slot_ok_clicked() override;

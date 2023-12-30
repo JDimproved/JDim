@@ -16,7 +16,7 @@ namespace DBTREE
       public:
 
         Article2ch( const std::string& datbase, const std::string& id, bool cached, const Encoding enc );
-        ~Article2ch() noexcept;
+        ~Article2ch() noexcept override;
 
         // 書き込みメッセージ作成
         std::string create_write_message( const std::string& name, const std::string& mail,

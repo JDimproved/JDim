@@ -29,7 +29,7 @@ namespace ARTICLE
       public:
 
         ArticleToolBar(); 
-        ~ArticleToolBar() noexcept;
+        ~ArticleToolBar() noexcept override;
 
         // タブが切り替わった時に呼び出される( Viewの情報を取得する )
         void set_view( SKELETON::View * view ) override;

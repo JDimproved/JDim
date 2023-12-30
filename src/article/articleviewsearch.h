@@ -31,7 +31,7 @@ namespace ARTICLE
 
         // exec_search == true ならviewを開いてすぐに検索開始
         ArticleViewSearch( const std::string& url, const bool exec_search );
-        ~ArticleViewSearch();
+        ~ArticleViewSearch() override;
 
         // SKELETON::View の関数のオーバロード
 
