@@ -19,7 +19,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewRes( const std::string& url );
-        ~ArticleViewRes();
+        ~ArticleViewRes() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -43,7 +43,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewName( const std::string& url );
-        ~ArticleViewName();
+        ~ArticleViewName() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -67,7 +67,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewID( const std::string& url );
-        ~ArticleViewID();
+        ~ArticleViewID() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -91,7 +91,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewBM( const std::string& url );
-        ~ArticleViewBM();
+        ~ArticleViewBM() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -116,7 +116,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewPost( const std::string& url );
-        ~ArticleViewPost();
+        ~ArticleViewPost() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -141,7 +141,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewHighRefRes( const std::string& url );
-        ~ArticleViewHighRefRes();
+        ~ArticleViewHighRefRes() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -164,7 +164,7 @@ namespace ARTICLE
     {
       public:
         explicit ArticleViewURL( const std::string& url );
-        ~ArticleViewURL();
+        ~ArticleViewURL() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -188,7 +188,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewRefer( const std::string& url );
-        ~ArticleViewRefer();
+        ~ArticleViewRefer() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -214,7 +214,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewDrawout( const std::string& url );
-        ~ArticleViewDrawout();
+        ~ArticleViewDrawout() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
@@ -237,7 +237,7 @@ namespace ARTICLE
 
       public:
         explicit ArticleViewPostlog( const std::string& url );
-        ~ArticleViewPostlog();
+        ~ArticleViewPostlog() override;
 
         // SKELETON::View の関数のオーバロード
         void relayout( const bool completely = false ) override;
