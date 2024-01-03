@@ -7,6 +7,7 @@ layout: default
 
 ## {{ page.title }}
 
+- [2024年]({{ site.baseurl }}/2024/)
 - [2023年]({{ site.baseurl }}/2023/)
 - [2022年]({{ site.baseurl }}/2022/)
 - [2021年]({{ site.baseurl }}/2021/)
