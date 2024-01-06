@@ -565,6 +565,15 @@ void Root::slot_analyze_board_xml( T& bbsmenu )
 }
 
 
+/**
+ * @brief XML に含まれる板情報を取り出してデータベースを更新
+ */
+void Root::analyze_board_xml()
+{
+    slot_analyze_board_xml( *this );
+}
+
+
 //
 // 板のタイプを判定
 //
