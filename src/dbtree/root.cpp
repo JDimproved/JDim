@@ -1914,32 +1914,32 @@ bool Root::remove_bbsmenu( const std::string& url, const std::string& name )
  */
 void Root::save_bbsmenu()
 {
-    std::string bbsmenu_data;
+    std::string buf;
 
     for( const DBTREE::BBSMenu& bbsmenu : m_list_bbsmenu ) {
 
-        bbsmenu_data.append( bbsmenu.get_name() );
-        bbsmenu_data.push_back( '\n' );
-        bbsmenu_data.append( bbsmenu.get_url() );
-        bbsmenu_data.push_back( '\n' );
-        bbsmenu_data.append( bbsmenu.path_bbsmenu_boards_xml() );
-        bbsmenu_data.push_back( '\n' );
+        buf.append( bbsmenu.get_name() );
+        buf.push_back( '\n' );
+        buf.append( bbsmenu.get_url() );
+        buf.push_back( '\n' );
+        buf.append( bbsmenu.path_bbsmenu_boards_xml() );
+        buf.push_back( '\n' );
     }
 
-    const std::string bbsmenu_root = CACHE::path_bbsmenu_root();
-    if( ! CACHE::jdmkdir( bbsmenu_root ) ) {
-        MISC::ERRMSG( "Can't create " + bbsmenu_root );
+    if( const std::string path_root = CACHE::path_bbsmenu_root();
+            ! CACHE::jdmkdir( path_root ) ) {
+        MISC::ERRMSG( "Can't create " + path_root );
         return;
     }
 
-    const std::string bbsmenu_txt = CACHE::path_bbsmenu();
     // save_rawdata() は保存に失敗したとき、または空データを保存(空ファイルを作成)したときに 0 を返す
-    // bbsmenu_data の長さが 0 つまり空データときはエラーを表示しないようにする
-    if( ! CACHE::save_rawdata( bbsmenu_txt, bbsmenu_data ) && ! bbsmenu_data.empty() ) {
-        MISC::ERRMSG( "Failed to save " + bbsmenu_txt );
+    // buf の長さが 0 つまり空データときはエラーを表示しないようにする
+    if( const std::string path = CACHE::path_bbsmenu();
+            ! CACHE::save_rawdata( path, buf ) && ! buf.empty() ) {
+        MISC::ERRMSG( "Failed to save " + path );
     }
 
 #ifdef _DEBUG
-    std::cout << "Root::save_bbsmenu : bbsmenu_data = " << bbsmenu_data << std::endl;
+    std::cout << "Root::save_bbsmenu : bbsmenu data = " << buf << std::endl;
 #endif
 }
