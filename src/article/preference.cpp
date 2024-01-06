@@ -271,7 +271,7 @@ void Preferences::slot_ok_clicked()
     std::vector< char > vec_abone_res;
     vec_abone_res.resize( DBTREE::article_number_load( get_url() ) + 1 );
     std::list< std::string > list_res = MISC::get_lines( m_edit_res.get_text() );
-    for( std::string& num_str : list_res ) {
+    for( const std::string& num_str : list_res ) {
 
         int number = atoi( num_str.c_str() );
         if( number >= 1 ){
