@@ -1910,7 +1910,7 @@ bool Root::remove_bbsmenu( const std::string& url, const std::string& name )
  *
  * @details BBSMenuのオブジェクトから bbsmenu.txt を作成する。
  * Root::save_etc() を参考にしているがNavi2chとは関係ない。
- * m_list_bbsmenu が空でも保存する。
+ * m_list_bbsmenu が空でもデータを更新するため保存する。
  */
 void Root::save_bbsmenu()
 {
@@ -1933,7 +1933,9 @@ void Root::save_bbsmenu()
     }
 
     const std::string bbsmenu_txt = CACHE::path_bbsmenu();
-    if( ! CACHE::save_rawdata( bbsmenu_txt, bbsmenu_data ) && ! bbsmenu_txt.empty() ) {
+    // save_rawdata() は保存に失敗したとき、または空データを保存(空ファイルを作成)したときに 0 を返す
+    // bbsmenu_data の長さが 0 つまり空データときはエラーを表示しないようにする
+    if( ! CACHE::save_rawdata( bbsmenu_txt, bbsmenu_data ) && ! bbsmenu_data.empty() ) {
         MISC::ERRMSG( "Failed to save " + bbsmenu_txt );
     }
 
