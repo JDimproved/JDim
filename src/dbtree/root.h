@@ -182,8 +182,8 @@ namespace DBTREE
         void receive_finish() override;
         void bbsmenu2xml( const std::string& menu );
 
-        /// @brief XML に含まれる板情報を取り出してデータベースを更新
-        void analyze_board_xml() { slot_analyze_board_xml( *this ); }
+        // XML に含まれる板情報を取り出してデータベースを更新
+        void analyze_board_xml();
 
         // 板のタイプを判定
         int get_board_type( const std::string& url, std::string& root, std::string& path_board ) const;
