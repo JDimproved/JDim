@@ -3701,7 +3701,7 @@ bool NodeTreeBase::check_abone_chain( const int number )
                     // ひとつでもあぼーんされていないレスが見付かったらあぼーんしない
                     while( anc_from <= anc_to ){
 
-                        NODE* tmphead = res_header( anc_from++ );
+                        const NODE* tmphead = res_header( anc_from++ );
                         if( tmphead && ! tmphead->headinfo->abone ) return false;
                     }
 
@@ -3782,7 +3782,7 @@ void NodeTreeBase::check_reference( const int number )
 #ifdef _DEBUG
                     std::cout << "from " << from << std::endl;
 #endif
-                    NODE* tmphead = res_header( from );
+                    const NODE* tmphead = res_header( from );
                     if( tmphead && ! tmphead->headinfo->abone ){
                         m_refer_posts.insert( from );
                     }

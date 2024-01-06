@@ -76,7 +76,7 @@ namespace CORE
         std::string arg4;
     };
     
-    SKELETON::View* ViewFactory( int type, const std::string& url, VIEWFACTORY_ARGS view_args = VIEWFACTORY_ARGS() );
+    SKELETON::View* ViewFactory( int type, const std::string& url, const VIEWFACTORY_ARGS& view_args = {} );
 }
 
 #endif

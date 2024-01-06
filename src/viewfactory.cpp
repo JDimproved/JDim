@@ -26,7 +26,7 @@
 
 #include "message/messageview.h"
 
-SKELETON::View* CORE::ViewFactory( int type, const std::string& url, VIEWFACTORY_ARGS view_args )
+SKELETON::View* CORE::ViewFactory( int type, const std::string& url, const VIEWFACTORY_ARGS& view_args )
 {
     switch( type )
     {

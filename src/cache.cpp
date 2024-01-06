@@ -1119,7 +1119,7 @@ guint64 CACHE::get_dirsize( const std::string& dir )
     DIR *dirp = opendir( to_locale_cstr( dir ) );
     if( !dirp ) return 0;
 
-    struct dirent *direntry;
+    const struct dirent *direntry;
     while( ( direntry = readdir( dirp ) ) ){
         std::string filename = dir + direntry->d_name;
         total_size += CACHE::get_filesize( filename );
