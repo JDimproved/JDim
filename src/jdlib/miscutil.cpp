@@ -1843,9 +1843,9 @@ std::string MISC::recover_path( const std::string& str )
     return str;
 }
 
-std::vector< std::string > MISC::recover_path( std::vector< std::string > list_str )
+std::vector<std::string> MISC::recover_path( const std::vector<std::string>& list_path )
 {
-    return list_str;
+    return list_path;
 }
 
 
