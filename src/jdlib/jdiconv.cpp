@@ -135,7 +135,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
     const char* buf_in_end = str_in + size_in;
 
     char* buf_out_tmp = out_buf.data();
-    char* buf_out_end = out_buf.data() + out_buf.size();
+    const char* buf_out_end = out_buf.data() + out_buf.size();
 
     const char* pre_check = nullptr; // 前回チェックしたUTF-8の先頭
 
