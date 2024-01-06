@@ -1,3 +1,4 @@
+<!-- SPDX-License-Identifier: FSFAP -->
 <!--
 Pull request(PR)の作成ありがとうございます！
 このコメントやテンプレートは変形・削除しても問題ありません。
