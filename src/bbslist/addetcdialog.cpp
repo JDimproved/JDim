@@ -67,8 +67,8 @@ AddEtcBBSMenuDialog::AddEtcBBSMenuDialog( Gtk::Window* parent, const bool edit,
     , m_label_supplement{ Glib::ustring{ edit ? "「OK」を押すとBBSMENUをダウンロードして更新します。"
                                               : "「OK」を押すとBBSMENUをダウンロードして板一覧の下部に追加します。" }
                           + "\nこの機能は実験的なサポートのため変更または廃止の可能性があります。" }
-    , m_label_name{ "板名(_N)", true }
-    , m_label_url{ "アドレス(_U)", true }
+    , m_label_name{ "板名(_N):", true }
+    , m_label_url{ "アドレス(_U):", true }
 {
     set_default_size( 600, -1 );
 
@@ -82,7 +82,7 @@ AddEtcBBSMenuDialog::AddEtcBBSMenuDialog( Gtk::Window* parent, const bool edit,
     m_entry_name.set_text( name );
     m_entry_url.set_text( url );
 
-    m_grid.set_column_spacing( 8 );
+    m_grid.set_column_spacing( 10 );
     m_grid.set_row_spacing( 8 );
     m_grid.attach( m_label_name, 0, 0, 1, 1 );
     m_grid.attach( m_entry_name, 1, 0, 1, 1 );
