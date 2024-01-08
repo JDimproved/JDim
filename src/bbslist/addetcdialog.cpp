@@ -67,7 +67,7 @@ AddEtcBBSMenuDialog::AddEtcBBSMenuDialog( Gtk::Window* parent, const bool edit,
     , m_label_supplement{ Glib::ustring{ edit ? "「OK」を押すとBBSMENUをダウンロードして更新します。"
                                               : "「OK」を押すとBBSMENUをダウンロードして板一覧の下部に追加します。" }
                           + "\nこの機能は実験的なサポートのため変更または廃止の可能性があります。" }
-    , m_label_name{ "板名(_N):", true }
+    , m_label_name{ "BBSMENU名(_N):", true }
     , m_label_url{ "アドレス(_U):", true }
 {
     set_default_size( 600, -1 );
