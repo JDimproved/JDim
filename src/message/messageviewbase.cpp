@@ -1068,7 +1068,12 @@ void MessageViewBase::save_postlog()
     if( ! m_text_message ) return;
 
     std::string subject = MESSAGE::get_admin()->get_new_subject();
-    if( subject.empty() ) subject = DBTREE::article_subject( get_url() );
+    if( subject.empty() ) {
+        // article_subject() の戻り値はスレの文字エンコーディングで扱えない文字を文字参照に変換している。
+        // そのまま Log_Manager::save() に渡すと & が二重にエスケープされるため
+        // 文字参照をUTF-8テキストにデコードしておく。
+        subject = MISC::chref_decode( DBTREE::article_subject( get_url() ) );
+    }
     const std::string msg = m_text_message->get_text();
     const std::string name = get_entry_name().get_text();
     const std::string mail = get_entry_mail().get_text();
