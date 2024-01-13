@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- SPDX-License-Identifier: FSFAP -->
-<!-- Copyright (c) 2019-2023 JDimproved project -->
+<!-- Copyright (c) 2019-2024 JDimproved project -->
 <component type="desktop-application">
   <id>com.github.jdimproved.jdim</id>
   <metadata_license>FSFAP</metadata_license>
@@ -54,6 +54,12 @@
   </provides>
 
   <releases>
+    <release version="0.11.0" date="2024-01-13">
+      <description>
+        <p>End-of-life for build system Autotools support</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.11.0</url>
+    </release>
     <release version="0.10.1" date="2023-07-23">
       <description>
         <p>Implement reading past logs with access to 5ch.net DAT files</p>
