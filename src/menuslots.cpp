@@ -661,7 +661,7 @@ void Core::slot_toggle_use_machi_offlaw()
     if( CONFIG::get_use_machi_offlaw() ){
 
         SKELETON::MsgDiag mdiag(
-            nullptr, "offlaw.cgiを使用するとリモートホストが表示されない問題が生じるので注意して下さい。" );
+            nullptr, "offlaw.cgiを使用するとリモートホストのかわりにIDを取得して表示しますので注意して下さい。" );
         mdiag.run();
     }
 }
