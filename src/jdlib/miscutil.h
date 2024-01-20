@@ -102,7 +102,7 @@ namespace MISC
     std::list<std::string> replace_str_list( const std::list<std::string>& list_in,
                                              std::string_view pattern, std::string_view replacement );
 
-    /// str に含まれる改行文字(`\r\n`)を replace に置き換え
+    /// str に含まれる改行文字(\\r\\n)を replace に置き換え
     std::string replace_newlines_to_str( const std::string& str, std::string_view replace );
 
     // " を \" に置き換え

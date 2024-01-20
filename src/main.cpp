@@ -476,7 +476,6 @@ void App::slot_activate()
  *
  * URLを複数渡して起動しても最初の一つのみ開く
  * @param[in] files URLやDATファイルのリスト
- * @param[in] hint  未使用
  */
 void App::slot_open( const Gio::Application::type_vec_files& files, const Glib::ustring& )
 {

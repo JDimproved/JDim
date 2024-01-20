@@ -532,7 +532,7 @@ std::list<std::string> MISC::replace_str_list( const std::list<std::string>& lis
 }
 
 
-/** @brief str に含まれる改行文字(`\r\n`)を replace に置き換え
+/** @brief str に含まれる改行文字(\\r\\n)を replace に置き換え
  *
  * @param[in] str 処理する文字列
  * @param[in] replace マッチした改行文字と置き換える内容
@@ -1068,7 +1068,7 @@ std::string MISC::to_plain( const std::string& html )
 
 /** @brief HTMLをPango markupテキストに変換する
  *
- * @details `<mark>`と`<span>`タグの色を設定して文字参照をデコードして返す。
+ * @details @c @<mark@> と @c @<span@> タグの色を設定して文字参照をデコードして返す。
  * @param[in] html Pango markupテキストに変換する入力
  * @return 変換した結果
  */
