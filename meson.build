@@ -13,7 +13,7 @@
 #   dnf install gnutls-devel gtkmm30-devel libSM-devel
 #   ```
 #
-# Debian Buster(backports), Ubuntu 20.04
+# Debian bullseye, Ubuntu 20.04
 #   ディストロのパッケージをインストールする
 #   ```
 #   sudo apt install build-essential git meson
@@ -63,7 +63,7 @@ endif
 #
 # 必須パッケージのチェック
 #
-gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.24.0')
+gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.24.2')
 gtkmm_dep = declare_dependency(compile_args : '-DGTK_DOMAIN="gtk30"',
                                dependencies : gtkmm_dep)
 threads_dep = dependency('threads')
@@ -119,7 +119,7 @@ endif
 # TLS
 tls_opt = get_option('tls')
 if tls_opt == 'gnutls'
-  tls_dep = dependency('gnutls', version : '>= 3.6.7')
+  tls_dep = dependency('gnutls', version : '>= 3.6.13')
   conf.set('USE_GNUTLS', 1)
 elif tls_opt == 'openssl'
   tls_dep = dependency('openssl', version : '>= 1.1.1')

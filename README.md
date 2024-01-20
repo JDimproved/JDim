@@ -47,7 +47,7 @@ JDim は GPLv2 の下で公開されている [JD][jd-project] からforkした�
 LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
 
 ##### サポートの最新情報
-gccのバージョンが9未満のプラットフォームはサポートを終了する予定となりました。
+gccのバージョンが9未満のプラットフォームはサポートを終了しました。
 Ubuntu 20.04(2020年)より前にリリースされたディストリビューションを利用されている場合は更新をお願いいたします。
 
 メンテナンスの都合によりWindows(MinGW)版のサポートは[終了][#445]しました。
@@ -82,11 +82,11 @@ i386版ディストロを利用されている場合は更新をお願いいた�
 dnf install gtkmm30-devel gnutls-devel libSM-devel meson git
 ```
 
-#### Debian (buster以降)
+#### Debian (bullseye以降)
 ```sh
 sudo apt install libc6-dev meson gcc g++ git
 sudo vi /etc/apt/sources.list
-# ↑エディタは何でも良い。deb-src行でbuster以降を有効にする
+# ↑エディタは何でも良い。deb-src行でbullseye以降を有効にする
 sudo apt update
 sudo apt build-dep jdim
 ```
