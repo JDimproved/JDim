@@ -81,7 +81,7 @@ bool InputDiag::on_key_press_event( GdkEventKey* event )
         m_str_motion = std::string();
 
         const std::string keyname = CONTROL::get_keyname( key );
-        std::string control_label;
+        std::string ctrl_label;
         if( ! keyname.empty() ){
             if( ctrl )  m_str_motion += "Ctrl+";
             if( shift ) m_str_motion += "Shift+";
@@ -89,10 +89,10 @@ bool InputDiag::on_key_press_event( GdkEventKey* event )
             m_str_motion += keyname;
 
             // ラベルに被っている操作名を表示
-            control_label = get_key_label();
+            ctrl_label = get_key_label();
         }
 
-        m_label.set_label( m_str_motion + "\n" + control_label );
+        m_label.set_label( m_str_motion + "\n" + ctrl_label );
 
         // エンターやスペースキーを押すとキャンセルボタンが押されてしまうのでキャンセルする
         if( keyname == "Space" || keyname == "Enter" ) return true;
@@ -130,7 +130,7 @@ bool InputDiag::on_button_press_event( GdkEventButton* event )
 
         m_str_motion = std::string();
         std::string buttonname;
-        std::string control_label;
+        std::string ctrl_label;
 
         if( button == 1 ){
             if( trpclick ) buttonname = "TrpLeft";
@@ -159,10 +159,10 @@ bool InputDiag::on_button_press_event( GdkEventButton* event )
 
             m_str_motion += buttonname;
 
-            control_label = get_button_label();
+            ctrl_label = get_button_label();
         }
 
-        m_label.set_label( m_str_motion + "\n" + control_label );
+        m_label.set_label( m_str_motion + "\n" + ctrl_label );
     }
     
     return ret;
