@@ -250,7 +250,7 @@ TEST_F(XML_DomChildren, remove_if)
     child->setAttribute( "pet", "hamster" );
 
     const std::size_t removed = dom.remove_if(
-        []( const XML::Dom* child ) { return child->getAttribute( "pet" ) == "dog"; } );
+        []( const XML::Dom* c ) { return c->getAttribute( "pet" ) == "dog"; } );
 
     EXPECT_EQ( removed, 2 );
     EXPECT_EQ( dom.firstChild()->nodeName(), "Bob" );
