@@ -58,22 +58,17 @@ Pull requestは`master`ブランチに対してお願いいたします。
 * 修正前よりコンパイル時警告を増やさないように気をつける。
 * ファイルの作成、ファイル間で内容のコピーを行うとき[ライセンスに注意する点](#notice-about-license)があります。(下記参照)
 
-C++17で追加された標準ライブラリのうちg++ 8またはclang++ 7が[サポート][support]していないものに注意
+C++17で追加された標準ライブラリのうちg++ 9またはclang++ 10が[サポート][support]していないものに注意
 
 | JDimの動作環境に合わない標準ライブラリ | ヘッダー | gcc | clang |
 | --- | --- | ---:| ---:|
 | [Standardization of Parallelism TS][cpp17exe] | `<execution>` | 9 | n/a |
 | [Hardware interference size][cpp17his]  | | 12 | n/a |
-| ( [File system library][cpp17fs] ) | `<filesystem>` | 8 | 7 |
 | [Polymorphic memory resources][cpp17pmr] | `<memory_resources>` | 9 | 16 |
 | [Mathematical special functions][cpp17math] | | 7 | n/a |
-| Splicing [Maps][cpp17maps] and [Sets][cpp17sets] | | 7 | 8 |
 | [Elementary string conversions][cpp17conv] (floating-point support) | `<charconv>` | 11 | n/a |
 | `std::shared_ptr` and `std::weak_ptr` with array support | | 7 | 11 |
-| DR: [`std::hash<std::filesystem::path>`][cpp17fspathhash] | | 11.4  | n/a |
-
-* [gcc-8][gcc8fs] と [clang-7][clang7fs] の `<filesystem>` はライブラリが分かれている  
-  使うときは別途リンクが必要なことをREADMEに注意書きすること
+| DR: [`std::hash<std::filesystem::path>`][cpp17fspathhash] | | 11.4  | 17 |
 
 [readme-md]: https://github.com/JDimproved/JDim/tree/master/README.md
 [issues]: https://github.com/JDimproved/JDim/issues
@@ -88,15 +83,10 @@ C++17で追加された標準ライブラリのうちg++ 8またはclang++ 7が[
 [test-readme]: https://github.com/JDimproved/JDim/tree/master/test/README.md
 [isocpp]: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
 [support]: https://en.cppreference.com/w/cpp/compiler_support/17
-[clang7fs]: https://releases.llvm.org/7.1.0/projects/libcxx/docs/UsingLibcxx.html
 [cpp17exe]: https://en.cppreference.com/w/cpp/header/execution
 [cpp17his]: https://en.cppreference.com/w/cpp/thread/hardware_destructive_interference_size
-[gcc8fs]: https://stackoverflow.com/questions/53201991/how-to-use-stdfilesystem-on-gcc-8
-[cpp17fs]: https://en.cppreference.com/w/cpp/filesystem
 [cpp17pmr]: https://en.cppreference.com/w/cpp/header/memory_resource
 [cpp17math]: https://en.cppreference.com/w/cpp/numeric/special_functions
-[cpp17maps]: https://en.cppreference.com/w/cpp/container/map/merge
-[cpp17sets]: https://en.cppreference.com/w/cpp/container/set/merge
 [cpp17conv]: https://en.cppreference.com/w/cpp/header/charconv
 [cpp17fspathhash]: https://en.cppreference.com/w/cpp/filesystem/path/hash
 
