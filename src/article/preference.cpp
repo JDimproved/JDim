@@ -23,13 +23,16 @@ using namespace ARTICLE;
 
 Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string& command )
     : SKELETON::PrefDiag( parent, url )
-    , m_label_name( false, "スレタイトル : ", MISC::to_plain( DBTREE::article_subject( get_url() ) ) )
-    , m_label_url( false, "スレのURL : ", DBTREE::url_readcgi( get_url(), 0, 0 ) )
-    , m_label_url_dat( false, "DATファイルのURL : ", DBTREE::url_dat( get_url() ) )
-    , m_label_cache( false, "ローカルキャッシュパス : ", std::string() )
-    , m_label_size( false, "サイズ( byte / Kbyte ) : ", std::string() )
-    , m_hbox_size{ Gtk::ORIENTATION_HORIZONTAL, 0 }
-    , m_label_maxres{ "最大レス数 (0 : 未設定)：" }
+    , m_label_name{ "スレタイトル:" }
+    , m_label_name_value{ MISC::to_plain( DBTREE::article_subject( get_url() ) ) }
+    , m_label_url{ "スレのURL:" }
+    , m_label_url_value{ DBTREE::url_readcgi( get_url(), 0, 0 ) }
+    , m_label_url_dat{ "DATファイルのURL:" }
+    , m_label_url_dat_value{ DBTREE::url_dat( get_url() ) }
+    , m_label_cache{ "ローカルキャッシュパス:" }
+    , m_label_size{ "サイズ( byte / Kbyte ):" }
+    , m_label_maxres{ "最大レス数 (0 : 未設定):" }
+    , m_label_charset{ "テキストエンコーディング:" }
     , m_check_transpabone( "透明あぼ〜ん" )
     , m_check_chainabone( "連鎖あぼ〜ん" )
     , m_check_ageabone( "sage以外をあぼ〜ん" )
@@ -37,67 +40,62 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_check_noidabone( "ID無しをあぼ〜ん" )
     , m_check_boardabone( "板レベルでのあぼ〜んを有効にする" )
     , m_check_globalabone( "全体レベルでのあぼ〜んを有効にする" )
-    , m_hbox_since{ Gtk::ORIENTATION_HORIZONTAL, 0 }
-    , m_label_since( false, "スレ立て日時 : ", std::string() )
-    , m_label_modified( false, "最終更新日時 : ", std::string() )
+    , m_label_since{ "スレ立て日時:" }
+    , m_label_modified{ "最終更新日時:" }
     , m_button_clearmodified( "日時クリア" )
-    , m_label_write( false, "最終書き込み日時 : ", std::string() )
+    , m_label_write{ "最終書き込み日時:" }
     , m_bt_clear_post_history( "書き込み履歴クリア" )
-    , m_label_write_name( false, "名前 : ", std::string() )
-    , m_label_write_mail( false, "メール : ", std::string() )
+    , m_label_write_name{ "名前:" }
+    , m_label_write_mail{ "メール:" }
 {
     // 一般
     if( DBTREE::article_is_cached( get_url() ) ){
 
         int size = DBTREE::article_lng_dat( get_url() );
 
-        m_label_cache.set_text( CACHE::path_dat( get_url() ) );
-        m_label_size.set_text( std::to_string( size )  + " / " + std::to_string( size/1024 ) );
+        m_label_cache_value.set_text( CACHE::path_dat( get_url() ) );
+        m_label_size_value.set_text( std::to_string( size )  + " / " + std::to_string( size/1024 ) );
 
-        if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
-        else m_label_modified.set_text(
+        if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified_value.set_text( "未取得" );
+        else m_label_modified_value.set_text(
             MISC::timettostr( DBTREE::article_time_modified( get_url() ), MISC::TIME_WEEK )
             + " ( " + MISC::timettostr( DBTREE::article_time_modified( get_url() ), MISC::TIME_PASSED ) + " )"
             );
 
-        if( DBTREE::article_write_time( get_url() ) ) m_label_write.set_text(
+        if( DBTREE::article_write_time( get_url() ) ) m_label_write_value.set_text(
             MISC::timettostr( DBTREE::article_write_time( get_url() ), MISC::TIME_WEEK )
             + " ( " + MISC::timettostr( DBTREE::article_write_time( get_url() ), MISC::TIME_PASSED ) + " )"
             );
     }
 
-    m_label_since.set_text(
+    m_label_since_value.set_text(
             MISC::timettostr( DBTREE::article_since_time( get_url() ), MISC::TIME_WEEK )
             + " ( " + MISC::timettostr( DBTREE::article_since_time( get_url() ), MISC::TIME_PASSED ) + " )"
         );
 
     m_button_clearmodified.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_modified ) );
-    m_hbox_modified.pack_start( m_label_modified );
-    m_hbox_modified.pack_start( m_button_clearmodified, Gtk::PACK_SHRINK );    
 
     m_bt_clear_post_history.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_post_history ) );
-    m_hbox_write.pack_start( m_label_write );
-    m_hbox_write.pack_start( m_bt_clear_post_history, Gtk::PACK_SHRINK );    
-
-    m_hbox_since.pack_start( m_label_since );
 
     // テキストエンコーディング
     const char* tmpcharset = MISC::encoding_to_cstr( DBTREE::article_encoding( get_url() ) );
     if( CONFIG::get_choose_character_encoding() ) {
-        m_label_charset.set_text( "テキストエンコーディング : " );
         m_combo_charset.append( MISC::encoding_to_cstr( Encoding::utf8 ) );
         m_combo_charset.append( MISC::encoding_to_cstr( Encoding::sjis ) );
         m_combo_charset.append( MISC::encoding_to_cstr( Encoding::eucjp ) );
         m_combo_charset.set_active_text( tmpcharset );
 
-        m_hbox_since.pack_start( m_label_charset, Gtk::PACK_SHRINK );
-        m_hbox_since.pack_start( m_combo_charset, Gtk::PACK_SHRINK );
+        m_grid_info.attach( m_label_charset, 2, 5, 1, 1 );
+        m_grid_info.attach( m_combo_charset, 3, 5, 1, 1 );
     }
     else {
         // エンコーディング設定は安全でないので無効のときは設定欄(コンボボックス)を表示しない
-        m_label_charset.set_text( Glib::ustring::compose( "テキストエンコーディング :  %1", tmpcharset ) );
+        m_label_charset_value.set_halign( Gtk::ALIGN_START );
+        m_label_charset_value.set_hexpand( true );
+        m_label_charset_value.set_text( tmpcharset );
 
-        m_hbox_since.pack_start( m_label_charset, Gtk::PACK_SHRINK );
+        m_grid_info.attach( m_label_charset, 2, 5, 1, 1 );
+        m_grid_info.attach( m_label_charset_value, 3, 5, 1, 1 );
     }
 
     // 最大レス数
@@ -106,26 +104,67 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_spin_maxres.set_increments( 1, 1 );
     m_spin_maxres.set_value( max_res );
 
-    m_hbox_size.pack_start( m_label_size );
-    m_hbox_size.pack_start( m_label_maxres, Gtk::PACK_SHRINK );
-    m_hbox_size.pack_start( m_spin_maxres, Gtk::PACK_SHRINK );
+    m_label_name_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_url_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_url_dat_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_cache_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_size_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_write_name_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_write_mail_value.set_ellipsize( Pango::ELLIPSIZE_END );
 
-    m_vbox_info.set_border_width( 16 );
-    m_vbox_info.set_spacing( 8 );
-    m_vbox_info.pack_start( m_label_name, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_label_url, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_label_url_dat, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_label_cache, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_hbox_size, Gtk::PACK_SHRINK );
+    m_label_maxres.set_halign( Gtk::ALIGN_START );
+    m_label_charset.set_halign( Gtk::ALIGN_START );
 
-    m_vbox_info.pack_start( m_hbox_since, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_hbox_write, Gtk::PACK_SHRINK );
+    m_button_clearmodified.set_halign( Gtk::ALIGN_END );
+    m_bt_clear_post_history.set_halign( Gtk::ALIGN_END );
 
-    if( DBTREE::write_fixname( get_url() ) ) m_label_write_name.set_text( DBTREE::write_name( get_url() ) );
-    if( DBTREE::write_fixmail( get_url() ) ) m_label_write_mail.set_text( DBTREE::write_mail( get_url() ) );
-    m_vbox_info.pack_start( m_label_write_name, Gtk::PACK_SHRINK );
-    m_vbox_info.pack_start( m_label_write_mail, Gtk::PACK_SHRINK );
+    m_grid_info.property_margin() = 16;
+    m_grid_info.set_column_spacing( 10 );
+    m_grid_info.set_row_spacing( 8 );
+
+    // grid layout: width = 4, height = 10
+    m_grid_info.attach( m_label_name, 0, 0, 1, 1 );
+    m_grid_info.attach( m_label_name_value, 1, 0, 3, 1 );
+    m_grid_info.attach( m_label_url, 0, 1, 1, 1 );
+    m_grid_info.attach( m_label_url_value, 1, 1, 3, 1 );
+    m_grid_info.attach( m_label_url_dat, 0, 2, 1, 1 );
+    m_grid_info.attach( m_label_url_dat_value, 1, 2, 3, 1 );
+    m_grid_info.attach( m_label_cache, 0, 3, 1, 1 );
+    m_grid_info.attach( m_label_cache_value, 1, 3, 3, 1 );
+    m_grid_info.attach( m_label_size, 0, 4, 1, 1 );
+    m_grid_info.attach( m_label_size_value, 1, 4, 1, 1 );
+    m_grid_info.attach( m_label_maxres, 2, 4, 1, 1 );
+    m_grid_info.attach( m_spin_maxres, 3, 4, 1, 1 );
+
+    m_grid_info.attach( m_label_since, 0, 5, 1, 1 );
+    m_grid_info.attach( m_label_since_value, 1, 5, 1, 1 );
+
+    m_grid_info.attach( m_label_modified, 0, 6, 1, 1 );
+    m_grid_info.attach( m_label_modified_value, 1, 6, 1, 1 );
+    m_grid_info.attach( m_button_clearmodified, 2, 6, 2, 1 );
+
+    m_grid_info.attach( m_label_write, 0, 7, 1, 1 );
+    m_grid_info.attach( m_label_write_value, 1, 7, 1, 1 );
+    m_grid_info.attach( m_bt_clear_post_history, 2, 7, 2, 1 );
+
+    if( DBTREE::write_fixname( get_url() ) ) m_label_write_name_value.set_text( DBTREE::write_name( get_url() ) );
+    if( DBTREE::write_fixmail( get_url() ) ) m_label_write_mail_value.set_text( DBTREE::write_mail( get_url() ) );
+    m_grid_info.attach( m_label_write_name, 0, 8, 1, 1 );
+    m_grid_info.attach( m_label_write_name_value, 1, 8, 3, 1 );
+    m_grid_info.attach( m_label_write_mail, 0, 9, 1, 1 );
+    m_grid_info.attach( m_label_write_mail_value, 1, 9, 3, 1 );
+
+    for( int y = 0; y < 10; ++y ) {
+        // label column
+        Gtk::Widget* child = m_grid_info.get_child_at( 0, y );
+        child->set_halign( Gtk::ALIGN_START );
+
+        // value column
+        child = m_grid_info.get_child_at( 1, y );
+        child->set_halign( Gtk::ALIGN_START );
+        child->set_hexpand( true );
+        static_cast<Gtk::Label*>( child )->set_selectable( true );
+    }
 
     // あぼーん設定
 
@@ -241,7 +280,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_notebook_abone.append_page( m_edit_word, "NG ワード" );
     m_notebook_abone.append_page( m_edit_regex, "NG 正規表現" );
 
-    m_notebook.append_page( m_vbox_info, "一般" );
+    m_notebook.append_page( m_grid_info, "一般" );
     const int page_abone = 1;
     m_notebook.append_page( m_notebook_abone, "あぼ〜ん設定" );
 
@@ -311,8 +350,8 @@ void Preferences::slot_clear_modified()
 {
     DBTREE::article_set_date_modified( get_url(), "" );
 
-    if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
-    else m_label_modified.set_text(
+    if( DBTREE::article_date_modified( get_url() ).empty() ) m_label_modified_value.set_text( "未取得" );
+    else m_label_modified_value.set_text(
         MISC::timettostr( DBTREE::article_time_modified( get_url() ), MISC::TIME_WEEK )
         + " ( " + MISC::timettostr( DBTREE::article_time_modified( get_url() ), MISC::TIME_PASSED ) + " )"
         );
@@ -322,13 +361,13 @@ void Preferences::slot_clear_modified()
 
 void Preferences::slot_clear_post_history()
 {
-    if( m_label_write.get_text().empty() ) return;
+    if( m_label_write_value.get_text().empty() ) return;
 
     SKELETON::MsgDiag mdiag( nullptr, "書き込み履歴を削除しますか？", false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
     if( mdiag.run() != Gtk::RESPONSE_YES ) return;
 
     DBTREE::article_clear_post_history( get_url() );
-    m_label_write.set_text( "" );
+    m_label_write_value.set_text( "" );
     CORE::core_set_command( "redraw_article" );
 
     // BoardViewの行を更新
