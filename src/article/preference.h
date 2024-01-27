@@ -5,7 +5,6 @@
 
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
-#include "skeleton/label_entry.h"
 
 namespace ARTICLE
 {
@@ -14,14 +13,17 @@ namespace ARTICLE
         Gtk::Notebook m_notebook;
 
         // 情報
-        Gtk::VBox m_vbox_info;
-        SKELETON::LabelEntry m_label_name;
-        SKELETON::LabelEntry m_label_url;
-        SKELETON::LabelEntry m_label_url_dat;
-        SKELETON::LabelEntry m_label_cache;
-        SKELETON::LabelEntry m_label_size;
-
-        Gtk::Box m_hbox_size;
+        Gtk::Grid m_grid_info;
+        Gtk::Label m_label_name;
+        Gtk::Label m_label_name_value;
+        Gtk::Label m_label_url;
+        Gtk::Label m_label_url_value;
+        Gtk::Label m_label_url_dat;
+        Gtk::Label m_label_url_dat_value;
+        Gtk::Label m_label_cache;
+        Gtk::Label m_label_cache_value;
+        Gtk::Label m_label_size;
+        Gtk::Label m_label_size_value;
 
         // 最大レス数
         Gtk::Label m_label_maxres;
@@ -29,6 +31,7 @@ namespace ARTICLE
 
         // テキストエンコーディング
         Gtk::Label m_label_charset;
+        Gtk::Label m_label_charset_value;
         Gtk::ComboBoxText m_combo_charset;
 
         // あぼーん
@@ -61,22 +64,24 @@ namespace ARTICLE
         // 全体レベルでのあぼーん
         Gtk::CheckButton m_check_globalabone;
 
-        Gtk::Box m_hbox_since;
-        SKELETON::LabelEntry m_label_since;
+        Gtk::Label m_label_since;
+        Gtk::Label m_label_since_value;
 
         // 最終更新日時
-        Gtk::HBox m_hbox_modified;
-        SKELETON::LabelEntry m_label_modified;
+        Gtk::Label m_label_modified;
+        Gtk::Label m_label_modified_value;
         Gtk::Button m_button_clearmodified;
 
         // 書き込み日時
-        Gtk::HBox m_hbox_write;
-        SKELETON::LabelEntry m_label_write;
+        Gtk::Label m_label_write;
+        Gtk::Label m_label_write_value;
         Gtk::Button m_bt_clear_post_history;
 
         // 名前とメール
-        SKELETON::LabelEntry m_label_write_name;
-        SKELETON::LabelEntry m_label_write_mail;
+        Gtk::Label m_label_write_name;
+        Gtk::Label m_label_write_name_value;
+        Gtk::Label m_label_write_mail;
+        Gtk::Label m_label_write_mail_value;
 
       public:
 
