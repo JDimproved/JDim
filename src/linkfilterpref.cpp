@@ -213,10 +213,10 @@ void LinkFilterPref::slot_ok_clicked()
             LinkFilterItem item;
             item.url = row[ m_columns.m_col_url ];
             item.cmd = row[ m_columns.m_col_cmd ];
-            list_item.push_back( std::move( item ) );
 #ifdef _DEBUG
             std::cout << item.url << " " << item.cmd << std::endl;
 #endif
+            list_item.push_back( std::move( item ) );
         }
     }
 
