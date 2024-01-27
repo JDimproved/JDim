@@ -269,7 +269,7 @@ namespace ARTICLE
         bool slot_motion_notify( GdkEventMotion* event );
         bool slot_key_release( GdkEventKey* event );
         bool slot_scroll_event( GdkEventScroll* event );
-        bool slot_leave_notify( GdkEventCrossing* ev );
+        bool slot_leave_notify( GdkEventCrossing* event );
 
         // レスポップアップ関係
 

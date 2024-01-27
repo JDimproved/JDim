@@ -16,9 +16,9 @@
 
 using namespace DBTREE;
 
-Article2chCompati::Article2chCompati( const std::string& datbase, const std::string& _id, bool cached,
+Article2chCompati::Article2chCompati( const std::string& datbase, const std::string& id, bool cached,
                                       const Encoding enc )
-    : ArticleBase( datbase, _id, cached, enc )
+    : ArticleBase( datbase, id, cached, enc )
 {
     assert( ! get_id().empty() );
 

@@ -407,7 +407,7 @@ bool CONFIG::get_instruct_tglart(){
     get_confitem()->instruct_tglart_end = true; // 一度表示したら表示しない
     return get_confitem()->instruct_tglart;
 }
-void CONFIG::set_instruct_tglart( const bool tgl ){ get_confitem()->instruct_tglart = tgl; }
+void CONFIG::set_instruct_tglart( const bool set ){ get_confitem()->instruct_tglart = set; }
 
 bool CONFIG::get_instruct_tglimg(){
 
@@ -417,7 +417,7 @@ bool CONFIG::get_instruct_tglimg(){
     return get_confitem()->instruct_tglimg;
 }
 
-void CONFIG::set_instruct_tglimg( bool tgl ){ get_confitem()->instruct_tglimg = tgl; }
+void CONFIG::set_instruct_tglimg( bool set ){ get_confitem()->instruct_tglimg = set; }
 
 
 // スレビューでdeleteを押したときに確認ダイアログを表示する

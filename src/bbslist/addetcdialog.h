@@ -27,7 +27,8 @@ namespace BBSLIST
 
       public:
 
-        AddEtcDialog( const bool move, const std::string& url, const std::string& _name, const std::string& _id, const std::string& _passwd );
+        AddEtcDialog( const bool move, const std::string& url, const std::string& name,
+                      const std::string& id, const std::string& passwd );
         ~AddEtcDialog() noexcept override;
 
         std::string get_name() const { return m_entry_name.get_text(); }
