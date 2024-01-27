@@ -344,10 +344,10 @@ int DragableNoteBook::get_tabicon( const int page )
 //
 // タブにアイコンをセットする
 //
-void DragableNoteBook::set_tabicon( const std::string& iconname, const int page, const int id )
+void DragableNoteBook::set_tabicon( const std::string& iconname, const int page, const int icon_id )
 {
     SKELETON::TabLabel* tablabel = m_notebook_tab.get_tablabel( page );
-    if( tablabel && id != ICON::NONE ) tablabel->set_id_icon( id );
+    if( tablabel && icon_id != ICON::NONE ) tablabel->set_id_icon( icon_id );
 }
 
 

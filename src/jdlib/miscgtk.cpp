@@ -213,9 +213,9 @@ std::string MISC::color_to_str( const Gdk::RGBA& rgba )
 //
 // 入力文字列は大文字小文字を区別しない
 // 未知のキーワードや不正な値は変換して返す
-std::string MISC::htmlcolor_to_str( const std::string& _htmlcolor )
+std::string MISC::htmlcolor_to_str( const std::string& htmlcolor_ )
 {
-    std::string htmlcolor = MISC::tolower_str( _htmlcolor );
+    std::string htmlcolor = MISC::tolower_str( htmlcolor_ );
 
     if( htmlcolor[0] != '#' ) {
         const color_map key{ htmlcolor.c_str(), nullptr };

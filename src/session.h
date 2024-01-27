@@ -196,13 +196,13 @@ namespace SESSION
 
     // 各window が最大化されているか
     bool is_maximized_win_main(); // メインウィンドウ
-    void set_maximized_win_main( const bool maximized );
+    void set_maximized_win_main( const bool set );
 
     bool is_maximized_win_img(); // 画像ウィンドウ
     void set_maximized_win_img( const bool set );
 
     bool is_maximized_win_mes(); // 書き込みウィンドウ
-    void set_maximized_win_mes( const bool maximized );
+    void set_maximized_win_mes( const bool set );
 
 
     // 各window が最小化されているか
@@ -308,7 +308,7 @@ namespace SESSION
     // サイドバーのツールバー項目
     const std::string& get_items_sidebar_toolbar_str();
     std::string get_items_sidebar_toolbar_default_str();
-    void set_items_sidebar_toolbar_str( const std::string& items );
+    void set_items_sidebar_toolbar_str( const std::string& items_str );
     int get_item_sidebar_toolbar( const int num );
 
     // メインツールバーの項目
@@ -332,19 +332,19 @@ namespace SESSION
     // スレ一覧のツールバー項目
     const std::string& get_items_board_toolbar_str();
     std::string get_items_board_toolbar_default_str();
-    void set_items_board_toolbar_str( const std::string& items );
+    void set_items_board_toolbar_str( const std::string& items_str );
     int get_item_board_toolbar( const int num );
 
     // 書き込みビューのツールバー項目
     const std::string& get_items_msg_toolbar_str();
     std::string get_items_msg_toolbar_default_str();
-    void set_items_msg_toolbar_str( const std::string& items );
+    void set_items_msg_toolbar_str( const std::string& items_str );
     int get_item_msg_toolbar( const int num );
 
     // スレ一覧の列項目
     const std::string& get_items_board_col_str();
     std::string get_items_board_col_default_str();
-    void set_items_board_col_str( const std::string& items );
+    void set_items_board_col_str( const std::string& items_str );
     int get_item_board_col( const int num );
 
     // スレ一覧のコンテキストメニュー項目

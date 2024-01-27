@@ -100,22 +100,22 @@ void MouseConfig::set_one_motion_impl( const int id, const int mode, const std::
 
 
 // 操作文字列取得
-std::string MouseConfig::get_str_motions( const int id_ ) const
+std::string MouseConfig::get_str_motions( const int id ) const
 {
-    int id = id_;
+    int id_ = id;
 
     // (注) この行が無いと画像ビューのコンテキストメニューにマウスジェスチャが表示されない
-    if( id == CONTROL::CancelMosaic ) id = CONTROL::CancelMosaicButton;
+    if( id_ == CONTROL::CancelMosaic ) id_ = CONTROL::CancelMosaicButton;
 
-    return MouseKeyConf::get_str_motions( id );
+    return MouseKeyConf::get_str_motions( id_ );
 }
 
 
 // IDからデフォルトの操作文字列取得
-std::string MouseConfig::get_default_motions( const int id_ ) const
+std::string MouseConfig::get_default_motions( const int id ) const
 {
-    int id = id_;
-    if( id == CONTROL::CancelMosaic ) id = CONTROL::CancelMosaicButton;
+    int id_ = id;
+    if( id_ == CONTROL::CancelMosaic ) id_ = CONTROL::CancelMosaicButton;
 
-    return MouseKeyConf::get_default_motions( id );
+    return MouseKeyConf::get_default_motions( id_ );
 }

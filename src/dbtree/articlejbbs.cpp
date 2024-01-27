@@ -14,8 +14,8 @@
 
 using namespace DBTREE;
 
-ArticleJBBS::ArticleJBBS( const std::string& datbase, const std::string& _id, bool cached, const Encoding enc )
-    : ArticleBase( datbase, _id, cached, enc )
+ArticleJBBS::ArticleJBBS( const std::string& datbase, const std::string& id, bool cached, const Encoding enc )
+    : ArticleBase( datbase, id, cached, enc )
 {
     assert( ! get_id().empty() );
 

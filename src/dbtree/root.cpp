@@ -1188,7 +1188,7 @@ void Root::load_etc()
 //
 // 外部板追加
 //
-bool Root::add_etc( const std::string& url, const std::string& name, const std::string& basicauth, const std::string& boardid )
+bool Root::add_etc( const std::string& url, const std::string& name, const std::string& basicauth, const std::string& id )
 {
 #ifdef _DEBUG
     std::cout << "Root::add_etc url = " << url << " name = " << name
@@ -1199,7 +1199,7 @@ bool Root::add_etc( const std::string& url, const std::string& name, const std::
     info.url = url;
     info.name = name;
     info.basicauth = basicauth;
-    info.boardid = boardid;
+    info.boardid = id;
 
     if( set_board( info.url, info.name, info.basicauth ) )
     {

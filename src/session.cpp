@@ -835,7 +835,7 @@ void SESSION::set_full_win_main( const bool set ){ full_win_main = set; }
 bool SESSION::is_dialog_shown(){ return dialog_shown; }
 void SESSION::set_dialog_shown( const bool set ){ dialog_shown = set; }
 
-void SESSION::set_show_sidebar( const bool showurl ){ win_show_sidebar = showurl; }
+void SESSION::set_show_sidebar( const bool showbar ){ win_show_sidebar = showbar; }
 
 
 // メインウィンドウのペインの敷居の位置

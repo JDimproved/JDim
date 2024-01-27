@@ -16,9 +16,9 @@
 using namespace DBTREE;
 
 
-FrontLoader::FrontLoader( const std::string& url_boadbase )
+FrontLoader::FrontLoader( const std::string& url_boardbase )
     : SKELETON::TextLoader()
-    , m_url_boadbase( url_boadbase )
+    , m_url_boadbase( url_boardbase )
 {
 }
 

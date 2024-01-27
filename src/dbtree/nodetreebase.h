@@ -356,7 +356,7 @@ namespace DBTREE
         // m_buffer_write に作成した文字列をセットする
         void parse_write( std::string_view str, const std::size_t max_lng_write );
 
-        bool check_anchor( const int mode, const char* str_in, int& n, std::string& str_out, std::string& str_link,
+        bool check_anchor( const int mode, const char* str_in, int& n_in, std::string& str_out, std::string& str_link,
                            ANCINFO* ancinfo ) const;
         /// リンクが現れたかチェックして文字列を取得する関数
         int check_link( const char* str_in, int& lng_in, std::string& str_text, std::string& str_link ) const;
