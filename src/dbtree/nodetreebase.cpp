@@ -82,13 +82,13 @@ enum
 using namespace DBTREE;
 
 
-NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified )
+NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& date_modified )
     : SKELETON::Loadable()
     , m_url( url )
     , m_resume( RESUME_NO )
     , m_heap( SIZE_OF_HEAP )
 {
-    set_date_modified( modified );
+    set_date_modified( date_modified );
 
     // ルートヘッダ作成。中は空。
     m_id_header = -1; // ルートヘッダIDが 0 になるように -1
@@ -116,7 +116,7 @@ NodeTreeBase::NodeTreeBase( const std::string& url, const std::string& modified 
     }
 
 #ifdef _DEBUG
-    std::cout << "NodeTreeBase::NodeTreeBase url = " << m_url << " modified = " << get_date_modified()
+    std::cout << "NodeTreeBase::NodeTreeBase url = " << m_url << " date_modified = " << get_date_modified()
               << " noname = " << m_default_noname << std::endl;
 #endif
 }

@@ -125,7 +125,7 @@ namespace SKELETON
 
         int append_page( const std::string& url, Gtk::Widget& child );
         int insert_page( const std::string& url, Gtk::Widget& child, int page );
-        void remove_page( const int page, const bool adust_tab );
+        void remove_page( const int page, const bool adjust_tab );
 
         // ツールバー関係
         // 各Adminクラスの virtual void show_toolbar()でツールバーを作成してappend_toolbar()で登録する
@@ -144,7 +144,7 @@ namespace SKELETON
 
         // タブのアイコン取得/セット
         int get_tabicon( const int page );
-        void set_tabicon( const std::string& iconname, const int page, const int icon );
+        void set_tabicon( const std::string& iconname, const int page, const int icon_id );
 
         // ドラッグ可/不可切り替え(デフォルト false );
         void set_dragable( bool dragable ){ m_dragable = dragable; }

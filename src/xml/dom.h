@@ -77,7 +77,7 @@ namespace XML
         void append_treestore( Glib::RefPtr< Gtk::TreeStore >& treestore,
                                SKELETON::EditColumns& columns,
                                std::list< Gtk::TreePath >& list_path_expand,
-                               const Gtk::TreeModel::Row& parnet = Gtk::TreeModel::Row() ) const;
+                               const Gtk::TreeModel::Row& parent = Gtk::TreeModel::Row() ) const;
 
       public:
 
