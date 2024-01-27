@@ -7,19 +7,23 @@
 #define _ADDETCDIALOG_H
 
 #include "skeleton/prefdiag.h"
-#include "skeleton/label_entry.h"
 
 namespace BBSLIST
 {
     class AddEtcDialog : public SKELETON::PrefDiag
     {
-        SKELETON::LabelEntry m_entry_name;
-        SKELETON::LabelEntry m_entry_url;
+        Gtk::Grid m_grid;
+        Gtk::Label m_label_name;
+        Gtk::Entry m_entry_name;
+        Gtk::Label m_label_url;
+        Gtk::Entry m_entry_url;
 
         Gtk::Frame m_frame;
-        Gtk::VBox m_vbox;
-        SKELETON::LabelEntry m_entry_id;
-        SKELETON::LabelEntry m_entry_pw;
+        Gtk::Grid m_grid_auth;
+        Gtk::Label m_label_id;
+        Gtk::Entry m_entry_id;
+        Gtk::Label m_label_pw;
+        Gtk::Entry m_entry_pw;
 
       public:
 

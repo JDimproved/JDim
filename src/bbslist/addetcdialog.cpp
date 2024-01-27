@@ -13,32 +13,62 @@ using namespace BBSLIST;
 
 
 AddEtcDialog::AddEtcDialog( const bool move, const std::string& url, const std::string& name, const std::string& id, const std::string& passwd )
-    : SKELETON::PrefDiag( nullptr, url, true ),
-      m_entry_name( true, "板名(_N)：", name ),
-      m_entry_url( true, "アドレス(_U)：", url ),
-      m_entry_id( true, "ID(_I)：", id ),
-      m_entry_pw( true, "パスワード(_P)：", passwd )
+    : SKELETON::PrefDiag( nullptr, url, true )
+    , m_label_name{ "板名(_N):", true }
+    , m_label_url{ "アドレス(_U):", true }
+    , m_label_id{ "ID(_I):", true }
+    , m_label_pw{ "パスワード(_P):", true }
 {
-    resize( 600, 1 );
+    set_default_size( 600, -1 );
 
-    m_vbox.set_spacing( 8 );
-    m_vbox.set_border_width( 8 );
-    m_vbox.add( m_entry_id );
-    m_vbox.add( m_entry_pw );
+    m_label_name.set_alignment( Gtk::ALIGN_START );
+    m_label_url.set_alignment( Gtk::ALIGN_START );
+    m_label_id.set_alignment( Gtk::ALIGN_START );
+    m_label_pw.set_alignment( Gtk::ALIGN_START );
 
-    set_activate_entry( m_entry_id );
-    set_activate_entry( m_entry_pw );
+    m_label_name.set_mnemonic_widget( m_entry_name );
+    m_label_url.set_mnemonic_widget( m_entry_url );
+    m_label_id.set_mnemonic_widget( m_entry_id );
+    m_label_pw.set_mnemonic_widget( m_entry_pw );
 
-    m_frame.set_label( "BASIC認証" );
-    m_frame.add( m_vbox );
+    m_entry_name.set_hexpand( true );
+    m_entry_url.set_hexpand( true );
+    m_entry_id.set_hexpand( true );
+    m_entry_pw.set_hexpand( true );
 
-    get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_entry_name );
-    get_content_area()->pack_start( m_entry_url );
-    get_content_area()->pack_start( m_frame );
+    m_entry_name.set_text( name );
+    m_entry_url.set_text( url );
+    m_entry_id.set_text( id );
+    m_entry_pw.set_text( passwd );
 
     set_activate_entry( m_entry_name );
     set_activate_entry( m_entry_url );
+    set_activate_entry( m_entry_id );
+    set_activate_entry( m_entry_pw );
+
+    m_grid.set_column_spacing( 10 );
+    m_grid.set_row_spacing( 8 );
+    // attach( child, x, y, width, height )
+    m_grid.attach( m_label_name, 0, 0, 1, 1 );
+    m_grid.attach( m_entry_name, 1, 0, 1, 1 );
+    m_grid.attach( m_label_url, 0, 1, 1, 1 );
+    m_grid.attach( m_entry_url, 1, 1, 1, 1 );
+
+    m_grid_auth.property_margin() = 8;
+    m_grid_auth.set_column_spacing( 10 );
+    m_grid_auth.set_row_spacing( 8 );
+    m_grid_auth.attach( m_label_id, 0, 0, 1, 1 );
+    m_grid_auth.attach( m_entry_id, 1, 0, 1, 1 );
+    m_grid_auth.attach( m_label_pw, 0, 1, 1, 1 );
+    m_grid_auth.attach( m_entry_pw, 1, 1, 1, 1 );
+
+    m_frame.set_label( "BASIC認証" );
+    m_frame.add( m_grid_auth );
+
+    get_content_area()->set_spacing( 8 );
+    get_content_area()->property_margin() = 8;
+    get_content_area()->pack_start( m_grid );
+    get_content_area()->pack_start( m_frame );
 
     if( move ){
         set_title( "外部板編集" );
