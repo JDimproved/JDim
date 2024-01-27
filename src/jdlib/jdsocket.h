@@ -69,7 +69,7 @@ namespace JDLIB
         /// @brief タイムアウト時間 (単位は秒) を設定する
         void set_timeout( long timeout ) { m_tout = timeout; }
 
-        bool connect( const std::string& host, const std::string& port, const bool use_ipv6 );
+        bool connect( const std::string& hostname, const std::string& port, const bool use_ipv6 );
         void close();
 
         int write( const char* buf, const std::size_t bufsize );

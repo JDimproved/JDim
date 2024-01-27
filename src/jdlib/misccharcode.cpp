@@ -194,25 +194,25 @@ bool MISC::is_eucjp( std::string_view input, std::size_t read_byte )
  *
  * エスケープシーケンス(ESC = \\x1B)の有無と該当しないバイトが含まれるかチェックする。
  * 呼び出し元の処理のため空文字列に対する返り値は他の`is_*`関数と逆(false)になっている。
- * @param[in] input 入力
- * @param[in,out] byte チェックを開始する位置、チェックを打ち切った位置を返す
+ * @param[in]     input     入力
+ * @param[in,out] read_byte チェックを開始する位置、チェックを打ち切った位置を返す
  * @return
  *   - ESCを見つけたらtrue
  *   - 0x80以上を見つけたらfalse
  *   - 空文字列またはASCIIのみならfalse
  */
-bool MISC::is_jis( std::string_view input, std::size_t& byte )
+bool MISC::is_jis( std::string_view input, std::size_t& read_byte )
 {
     if( input.empty() ) return false;
 
-    while( byte < input.size() && byte < CHECK_LIMIT )
+    while( read_byte < input.size() && read_byte < CHECK_LIMIT )
     {
         // ESCが出現したか否かだけで判断
-        if( JIS_ESC_SEQ_START( input[ byte ] ) ) return true;
+        if( JIS_ESC_SEQ_START( input[ read_byte ] ) ) return true;
         // JISに該当しないコード 0x80〜
-        else if( ! CTRL_AND_ASCII_RANGE( input[ byte ] ) ) return false;
+        else if( ! CTRL_AND_ASCII_RANGE( input[ read_byte ] ) ) return false;
 
-        ++byte;
+        ++read_byte;
     }
 
     // ループが終了していたら制御文字かアスキー

@@ -17,9 +17,9 @@
 
 using namespace DBTREE;
 
-RuleLoader::RuleLoader( const std::string& url_boadbase )
+RuleLoader::RuleLoader( const std::string& url_boardbase )
     : SKELETON::TextLoader()
-    , m_url_boadbase( url_boadbase )
+    , m_url_boadbase( url_boardbase )
 {
 #ifdef _DEBUG
     std::cout << "RuleLoader::RuleLoader : " << RuleLoader::get_url() << std::endl;

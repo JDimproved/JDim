@@ -20,7 +20,7 @@ namespace MISC
     std::string color_to_str( const Gdk::RGBA& rgba );
 
     // htmlカラー (#ffffffなど) -> 16進数表記の文字列
-    std::string htmlcolor_to_str( const std::string& htmlcolor );
+    std::string htmlcolor_to_str( const std::string& htmlcolor_ );
 
     // Gdk::RGBA -> int 変換
     guint32 color_to_int( const Gdk::RGBA& color );
