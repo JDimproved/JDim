@@ -6,7 +6,6 @@
 #define _PASSWDPREF_H
 
 #include "skeleton/prefdiag.h"
-#include "skeleton/label_entry.h"
 
 #include "login2ch.h"
 #include "loginbe.h"
@@ -21,67 +20,112 @@ enum
 namespace CORE
 {
     // 2chログイン用
-    class PasswdFrame2ch : public Gtk::VBox
+    class PasswdFrame2ch : public Gtk::Grid
     {
-        SKELETON::LabelEntry m_label_sid_2ch;
+        Gtk::Label m_label_sid_2ch;
+        Gtk::Label m_label_sid_2ch_value;
+
+        Gtk::Label m_label_id;
+        Gtk::Label m_label_passwd;
 
       public:
 
-        SKELETON::LabelEntry entry_id;
-        SKELETON::LabelEntry entry_passwd;
+        Gtk::Entry entry_id;
+        Gtk::Entry entry_passwd;
 
         PasswdFrame2ch()
-            : m_label_sid_2ch( false, "SID： ", "2chのログインは現在サポート中止しています。" )
-            , entry_id( true, "ユーザID(_I)： " )
-            , entry_passwd( true, "パスワード(_P)： " )
+            : m_label_sid_2ch{ "SID:" }
+            , m_label_sid_2ch_value{ "2chのログインは現在サポート中止しています。" }
+            , m_label_id{ "ユーザID(_I):", true }
+            , m_label_passwd{ "パスワード(_P):", true }
         {
-            const int mrg = 8;
+            property_margin() = 16;
+            set_column_spacing( 10 );
+            set_row_spacing( 16 );
+            set_vexpand( true );
 
-            set_border_width( BOXSPACING );
+            m_label_id.set_halign( Gtk::ALIGN_START );
+            m_label_id.set_mnemonic_widget( entry_id );
+            entry_id.set_hexpand( true );
 
-            entry_id.set_border_width( BOXSPACING );
-            pack_start( entry_id );
-
-            entry_passwd.set_border_width( BOXSPACING );
+            m_label_passwd.set_halign( Gtk::ALIGN_START );
+            m_label_passwd.set_mnemonic_widget( entry_passwd );
+            entry_passwd.set_hexpand( true );
             entry_passwd.set_visibility( false );
-            pack_start( entry_passwd, Gtk::PACK_SHRINK );
 
-            m_label_sid_2ch.set_border_width( BOXSPACING );
-            pack_start( m_label_sid_2ch );
+            m_label_sid_2ch.set_halign( Gtk::ALIGN_START );
+            m_label_sid_2ch.set_valign( Gtk::ALIGN_END );
+            m_label_sid_2ch_value.set_ellipsize( Pango::ELLIPSIZE_END );
+            m_label_sid_2ch_value.set_halign( Gtk::ALIGN_START );
+            m_label_sid_2ch_value.set_valign( Gtk::ALIGN_END );
+            m_label_sid_2ch_value.set_hexpand( true );
+            m_label_sid_2ch_value.set_selectable( true );
 
-            set_border_width( mrg );
+            attach( m_label_id, 0, 0, 1, 1 );
+            attach( entry_id, 1, 0, 1, 1 );
+            attach( m_label_passwd, 0, 1, 1, 1 );
+            attach( entry_passwd, 1, 1, 1, 1 );
+            attach( m_label_sid_2ch, 0, 2, 1, 1 );
+            attach( m_label_sid_2ch_value, 1, 2, 1, 1 );
+
         }
     };
 
     // BEログイン用
-    class PasswdFrameBe : public Gtk::VBox
+    class PasswdFrameBe : public Gtk::Grid
     {
-        SKELETON::LabelEntry m_label_dmdm;
-        SKELETON::LabelEntry m_label_mdmd;
+        Gtk::Label m_label_dmdm;
+        Gtk::Label m_label_dmdm_value;
+        Gtk::Label m_label_mdmd;
+        Gtk::Label m_label_mdmd_value;
+
+        Gtk::Label m_label_id;
+        Gtk::Label m_label_passwd;
 
       public:
 
-        SKELETON::LabelEntry entry_id;
-        SKELETON::LabelEntry entry_passwd;
+        Gtk::Entry entry_id;
+        Gtk::Entry entry_passwd;
 
-      PasswdFrameBe()
-          : m_label_dmdm( false, "DMDM： ", CORE::get_loginbe()->get_sessionid() ),
-            m_label_mdmd( false, "MDMD： ", CORE::get_loginbe()->get_sessiondata() ),
-            entry_id( true, "メールアドレス(_I)： " ), entry_passwd( true, "パスワード(_P)： " )
+        PasswdFrameBe()
+            : m_label_dmdm{ "DMDM:" }
+            , m_label_dmdm_value{ CORE::get_loginbe()->get_sessionid() }
+            , m_label_mdmd{ "MDMD:" }
+            , m_label_mdmd_value{ CORE::get_loginbe()->get_sessiondata() }
+            , m_label_id{ "メールアドレス(_I):", true }
+            , m_label_passwd{ "パスワード(_P):", true }
         {
-            set_border_width( BOXSPACING );
+            property_margin() = 16;
+            set_column_spacing( 10 );
+            set_row_spacing( 8 );
 
-            entry_id.set_border_width( BOXSPACING );
-            pack_start( entry_id );
+            entry_id.set_hexpand( true );
+            m_label_id.set_mnemonic_widget( entry_id );
 
-            entry_passwd.set_border_width( BOXSPACING );
+            entry_passwd.set_hexpand( true );
             entry_passwd.set_visibility( false );
-            pack_start( entry_passwd, Gtk::PACK_SHRINK );
+            m_label_passwd.set_mnemonic_widget( entry_passwd );
 
-            pack_start( m_label_dmdm );
-            pack_start( m_label_mdmd );
+            m_label_id.set_halign( Gtk::ALIGN_START );
+            m_label_passwd.set_halign( Gtk::ALIGN_START );
+            m_label_dmdm.set_halign( Gtk::ALIGN_START );
+            m_label_dmdm_value.set_halign( Gtk::ALIGN_START );
+            m_label_mdmd.set_halign( Gtk::ALIGN_START );
+            m_label_mdmd_value.set_halign( Gtk::ALIGN_START );
 
-            set_border_width( BOXSPACING );
+            m_label_dmdm_value.set_ellipsize( Pango::ELLIPSIZE_END );
+            m_label_mdmd_value.set_ellipsize( Pango::ELLIPSIZE_END );
+            m_label_dmdm_value.set_selectable( true );
+            m_label_mdmd_value.set_selectable( true );
+
+            attach( m_label_id, 0, 0, 1, 1 );
+            attach( entry_id, 1, 0, 1, 1 );
+            attach( m_label_passwd, 0, 1, 1, 1 );
+            attach( entry_passwd, 1, 1, 1, 1 );
+            attach( m_label_dmdm, 0, 2, 1, 1 );
+            attach( m_label_dmdm_value, 1, 2, 1, 1 );
+            attach( m_label_mdmd, 0, 3, 1, 1 );
+            attach( m_label_mdmd_value, 1, 3, 1, 1 );
         }
     };
 
