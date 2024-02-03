@@ -20,7 +20,7 @@ jobs:
       # https://github.com/JDimproved/JDim/issues/943
       AVOID_CRASH: -Wl,--push-state,--no-as-needed -lcrypt -Wl,--pop-state
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: dependencies installation
         run: |
           sudo apt update
@@ -63,7 +63,7 @@ jobs:
             cxx: clang++-10
             package: clang-10
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: dependencies installation
         run: |
           sudo apt update
@@ -104,7 +104,7 @@ jobs:
             cxx: clang++-15
             package: clang-15
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: dependencies installation
         run: |
           sudo apt update
@@ -134,7 +134,7 @@ jobs:
           - config_args: -Dtls=openssl -Dsessionlib=xsmp -Dalsa=enabled -Dpangolayout=enabled
             packages: libssl-dev libasound2-dev
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: dependencies installation (${{ matrix.deps.packages }})
         run: |
           sudo apt update
@@ -164,7 +164,7 @@ jobs:
           - config_args: -Dtls=openssl -Dsessionlib=xsmp -Dalsa=enabled -Dpangolayout=enabled
             packages: libssl-dev libasound2-dev
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: dependencies installation (${{ matrix.deps.packages }})
         run: |
           sudo apt update
@@ -182,7 +182,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/jekyll-build-pages@v1
         with:
           source: ./docs
