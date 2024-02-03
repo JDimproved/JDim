@@ -21,7 +21,10 @@ namespace DBTREE
 {
     class NodeTree2chCompati : public NodeTreeBase
     {
+        enum class Mode;
+
         std::unique_ptr<JDLIB::Iconv> m_iconv;
+        Mode m_mode;
 
       public:
 
@@ -35,6 +38,7 @@ namespace DBTREE
         const char* raw2dat( char* rawlines, int& byte ) override;
 
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;
+        void receive_finish() override;
     };
 }
 
