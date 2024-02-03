@@ -5,26 +5,31 @@
 
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
-#include "skeleton/label_entry.h"
 
 namespace IMAGE
 {
     class Preferences : public SKELETON::PrefDiag
     {
         // 情報
-        Gtk::VBox m_vbox_info;
+        Gtk::Grid m_grid_info;
 
-        SKELETON::LabelEntry m_label_url;
-        SKELETON::LabelEntry m_label_cache;
-        SKELETON::LabelEntry m_label_ref;
+        Gtk::Label m_label_url;
+        Gtk::Label m_label_url_value;
+        Gtk::Label m_label_cache;
+        Gtk::Label m_label_cache_value;
+        Gtk::Label m_label_ref;
+        Gtk::Label m_label_ref_value;
 
-        Gtk::HBox m_hbox_ref;
-        SKELETON::LabelEntry m_label_url_ref;
+        Gtk::Label m_label_url_ref;
+        Gtk::Label m_label_url_ref_value;
         Gtk::Button m_open_ref;
 
-        SKELETON::LabelEntry m_label_wh;
-        SKELETON::LabelEntry m_label_size;
-        SKELETON::LabelEntry m_label_type;
+        Gtk::Label m_label_wh;
+        Gtk::Label m_label_wh_value;
+        Gtk::Label m_label_size;
+        Gtk::Label m_label_size_value;
+        Gtk::Label m_label_type;
+        Gtk::Label m_label_type_value;
 
         Gtk::CheckButton m_check_protect;
 
