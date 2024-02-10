@@ -35,11 +35,9 @@ LivePref::LivePref( Gtk::Window* parent, const std::string& url )
     m_spin_speed.set_range( 0, 50 );
     m_spin_speed.set_increments( 1, 1 );
     m_spin_speed.set_value( CONFIG::get_live_speed() );
-    m_label_speed.set_text_with_mnemonic( "可変モードでの最低速度/一定モードでの速度(_S)：" );
+    m_label_speed.set_text_with_mnemonic( "可変モードでの最低速度/一定モードでの速度(_S):" );
     m_label_speed.set_mnemonic_widget( m_spin_speed );
-    m_hbox_speed.set_spacing( mrg );
-    m_hbox_speed.pack_start( m_label_speed, Gtk::PACK_SHRINK );
-    m_hbox_speed.pack_start( m_spin_speed, Gtk::PACK_SHRINK );
+    m_label_speed.set_halign( Gtk::ALIGN_START );
 
     set_activate_entry( m_spin_speed );
 
@@ -47,25 +45,31 @@ LivePref::LivePref( Gtk::Window* parent, const std::string& url )
     m_spin_th.set_range( 1, 50 );
     m_spin_th.set_increments( 1, 1 );
     m_spin_th.set_value( CONFIG::get_live_threshold() );
-    m_label_th.set_text_with_mnemonic( "しきい値(_T)：" );
+    m_label_th.set_text_with_mnemonic( "しきい値(_T):" );
     m_label_th.set_mnemonic_widget( m_spin_th );
-    m_hbox_th.set_spacing( mrg );
-    m_hbox_th.pack_start( m_label_th, Gtk::PACK_SHRINK );
-    m_hbox_th.pack_start( m_spin_th, Gtk::PACK_SHRINK );
+    m_label_th.set_halign( Gtk::ALIGN_START );
 
     set_activate_entry( m_spin_th );
 
+    // デフォルトに戻す
     m_bt_reset.signal_clicked().connect( sigc::mem_fun( *this, &LivePref::slot_reset ) );
 
-    m_vbox.pack_start( m_frame_mode, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_speed, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_th,  Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_bt_reset, Gtk::PACK_SHRINK );
-    m_vbox.set_border_width( mrg );
+    m_grid.property_margin() = 10;
+    m_grid.set_column_spacing( 10 );
+    m_grid.set_row_spacing( 8 );
 
-    get_content_area()->set_spacing( mrg );
-    get_content_area()->pack_start( m_label_inst, Gtk::PACK_SHRINK );
-    get_content_area()->pack_start( m_vbox, Gtk::PACK_SHRINK );
+    m_grid.attach( m_label_inst, 0, 0, 4, 1 );
+    m_grid.attach( m_frame_mode, 0, 1, 4, 1 );
+
+    m_grid.attach( m_label_speed, 0, 2, 3, 1 );
+    m_grid.attach( m_spin_speed, 3, 2, 1, 1 );
+
+    m_grid.attach( m_label_th, 0, 3, 3, 1 );
+    m_grid.attach( m_spin_th, 3, 3, 1, 1 );
+
+    m_grid.attach( m_bt_reset, 0, 4, 4, 1 );
+
+    get_content_area()->pack_start( m_grid, Gtk::PACK_SHRINK );
 
     set_title( "実況設定" );
     show_all_children();
