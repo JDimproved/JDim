@@ -12,7 +12,7 @@ namespace CORE
 {
     class LivePref : public SKELETON::PrefDiag
     {
-        Gtk::VBox m_vbox;
+        Gtk::Grid m_grid;
 
         Gtk::Label m_label_inst;
 
@@ -22,11 +22,9 @@ namespace CORE
         Gtk::RadioButton m_mode1;
         Gtk::RadioButton m_mode2;
 
-        Gtk::HBox m_hbox_speed;
         Gtk::SpinButton m_spin_speed;
         Gtk::Label m_label_speed;
 
-        Gtk::HBox m_hbox_th;
         Gtk::SpinButton m_spin_th;
         Gtk::Label m_label_th;
 
