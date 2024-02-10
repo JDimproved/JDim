@@ -8,7 +8,6 @@
 #define _SELECTDIALOG_H
 
 #include "skeleton/prefdiag.h"
-#include "skeleton/label_entry.h"
 
 #include <vector>
 #include <memory>
@@ -23,12 +22,13 @@ namespace BBSLIST
         Glib::RefPtr< Gtk::TreeStore >& m_treestore;
         std::vector< std::string > m_vec_path;
 
-        SKELETON::LabelEntry m_label_name;
+        Gtk::Grid m_grid;
 
-        Gtk::HBox m_hbox_dirs;
+        Gtk::Label m_label_name;
+        Gtk::Entry m_entry_name;
+
         Gtk::Label m_label_dirs;
         Gtk::ComboBoxText m_combo_dirs;
-
         Gtk::ToggleButton m_bt_show_tree;
 
         std::unique_ptr<SelectListView> m_selectview;

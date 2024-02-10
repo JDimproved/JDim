@@ -28,19 +28,13 @@ enum
 SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url, Glib::RefPtr< Gtk::TreeStore >& treestore )
     : SKELETON::PrefDiag( parent, url, true )
     , m_treestore( treestore )
-    , m_label_name( CORE::SBUF_size() == 1, "名前 ：" )
-    , m_label_dirs( "ディレクトリ ：" )
+    , m_label_name{ "名前:" }
+    , m_label_dirs{ "ディレクトリ:" }
     , m_bt_show_tree( "詳細" )
 {
-    const int mrg = 8;
-
-    if( CORE::SBUF_size() ) m_label_name.set_text(  ( *CORE::SBUF_list_info().begin() ).name );
-    set_activate_entry( m_label_name );
-
-    m_hbox_dirs.set_spacing( mrg );
-    m_hbox_dirs.pack_start( m_label_dirs, Gtk::PACK_SHRINK );
-    m_hbox_dirs.pack_start( m_combo_dirs, Gtk::PACK_EXPAND_WIDGET );
-    m_hbox_dirs.pack_start( m_bt_show_tree, Gtk::PACK_SHRINK );
+    if( CORE::SBUF_size() ) m_entry_name.set_text(  ( *CORE::SBUF_list_info().begin() ).name );
+    m_entry_name.set_editable( CORE::SBUF_size() == 1 );
+    set_activate_entry( m_entry_name );
 
     // コンボボックスにディレクトリをセット
     int active_row = 0;
@@ -81,12 +75,29 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
 #endif 
     m_combo_dirs.set_active( active_row );
 
-    get_content_area()->pack_start( m_label_name, Gtk::PACK_SHRINK );
-    get_content_area()->pack_start( m_hbox_dirs, Gtk::PACK_SHRINK );
+    m_label_name.set_halign( Gtk::ALIGN_START );
+    m_entry_name.set_hexpand( true );
+    m_label_dirs.set_halign( Gtk::ALIGN_START );
+    m_combo_dirs.set_hexpand( true );
+
     m_bt_show_tree.signal_clicked().connect( sigc::mem_fun( *this, &SelectListDialog::slot_show_tree ) );
 
+    m_grid.set_margin_bottom( 8 );
+    m_grid.set_column_spacing( 10 );
+    m_grid.set_row_spacing( 8 );
+
+    m_grid.attach( m_label_name, 0, 0, 1, 1 );
+    m_grid.attach( m_entry_name, 1, 0, 2, 1 );
+
+    m_grid.attach( m_label_dirs, 0, 1, 1, 1 );
+    m_grid.attach( m_combo_dirs, 1, 1, 1, 1 );
+    m_grid.attach( m_bt_show_tree, 2, 1, 1, 1 );
+
+    get_content_area()->property_margin() = 8;
+    get_content_area()->pack_start( m_grid );
+
     set_title( "お気に入り追加先選択" );
-    resize( SELECTDIAG_WIDTH, 1 );
+    set_default_size( SELECTDIAG_WIDTH, -1 );
 
     set_default_response( Gtk::RESPONSE_OK );
     grab_ok();
