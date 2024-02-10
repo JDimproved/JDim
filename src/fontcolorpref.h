@@ -4,7 +4,6 @@
 #define _FONTCOLORPREF_H
 
 #include "skeleton/prefdiag.h"
-#include "skeleton/label_entry.h"
 
 #include <vector>
 
@@ -40,23 +39,21 @@ namespace CORE
         std::vector< int > m_font_tbl;
         std::vector< std::string > m_tooltips_font;
 
-        Gtk::HBox m_hbox_font;
-        Gtk::VBox m_vbox_font;
+        Gtk::Grid m_grid_font;
+        Gtk::Box m_hbox_font;
         Gtk::EventBox m_event_font;
         Gtk::ComboBoxText m_combo_font;
         Gtk::FontButton m_fontbutton;
 
-        Gtk::HBox m_hbox_checkbutton;
         Gtk::CheckButton m_checkbutton_font;
 
-        Gtk::HBox m_hbox_space;
-        Gtk::HBox m_hbox_ubar;
         Gtk::Label m_label_space;
         Gtk::SpinButton m_spin_space;
         Gtk::Label m_label_ubar;
         Gtk::SpinButton m_spin_ubar;
 
-        SKELETON::LabelEntry m_label_aafont;
+        Gtk::Label m_label_aafont;
+        Gtk::Entry m_entry_aafont;
 
         Gtk::Button m_bt_reset_font;
 
