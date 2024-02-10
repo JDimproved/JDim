@@ -272,6 +272,9 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
             name = m_regex->str( 2 );
             mail = m_regex->str( 3 );
             date = m_regex->str( 4 );
+            // ID: が見つからなければあぼ〜ん
+            const auto i = date.rfind( "ID:" );
+            if( i == std::string::npos ) continue;
             body = m_regex->str( 5 );
             if( num == 1 ) m_subject_machi = m_regex->str( 6 );
         }
