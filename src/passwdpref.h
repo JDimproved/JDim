@@ -19,6 +19,9 @@ enum
 
 namespace CORE
 {
+    constexpr const char* kViewConcealSymbolic = "view-conceal-symbolic";
+    constexpr const char* kViewRevealSymbolic = "view-reveal-symbolic";
+
     // 2chログイン用
     class PasswdFrame2ch : public Gtk::Grid
     {
@@ -68,6 +71,27 @@ namespace CORE
             attach( m_label_sid_2ch, 0, 2, 1, 1 );
             attach( m_label_sid_2ch_value, 1, 2, 1, 1 );
 
+            entry_passwd.set_icon_from_icon_name( kViewConcealSymbolic, Gtk::ENTRY_ICON_SECONDARY );
+            entry_passwd.signal_icon_release().connect(
+                sigc::bind( &PasswdFrame2ch::slot_icon_release, &entry_passwd ) );
+        }
+
+        /** @brief アイコンをクリックしてマウスボタンを離したときにパスワードとアイコンの状態を切り替える
+         *
+         * @details PasswdFrameBe でも使うため static メンバー関数にする。
+         * アイコンは現在の状態を表す (非表示の状態では非表示のアイコン、表示の状態では表示のアイコン)。
+         * @param[in,out] entry パスワード入力欄
+         */
+        static void slot_icon_release( Gtk::EntryIconPosition, const GdkEventButton*, Gtk::Entry* entry )
+        {
+            if( entry->get_visibility() ) {
+                entry->set_icon_from_icon_name( kViewConcealSymbolic, Gtk::ENTRY_ICON_SECONDARY );
+                entry->set_visibility( false );
+            }
+            else {
+                entry->set_icon_from_icon_name( kViewRevealSymbolic, Gtk::ENTRY_ICON_SECONDARY );
+                entry->set_visibility( true );
+            }
         }
     };
 
@@ -126,6 +150,10 @@ namespace CORE
             attach( m_label_dmdm_value, 1, 2, 1, 1 );
             attach( m_label_mdmd, 0, 3, 1, 1 );
             attach( m_label_mdmd_value, 1, 3, 1, 1 );
+
+            entry_passwd.set_icon_from_icon_name( kViewConcealSymbolic, Gtk::ENTRY_ICON_SECONDARY );
+            entry_passwd.signal_icon_release().connect(
+                sigc::bind( &PasswdFrame2ch::slot_icon_release, &entry_passwd ) );
         }
     };
 
