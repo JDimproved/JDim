@@ -25,13 +25,14 @@
 using namespace CORE;
 
 FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::PrefDiag( parent, url, true, true ),
-      m_label_aafont( true, "AAレスと判定する正規表現(_R)： " ),
-      m_bt_reset_font( "フォントの設定を全てデフォルトに戻す(_F)", true ),
+    : SKELETON::PrefDiag( parent, url, true, true )
+    , m_hbox_font{ Gtk::ORIENTATION_HORIZONTAL, 8 }
+    , m_label_aafont{ "AAレスと判定する正規表現(_R):", true }
+    , m_bt_reset_font{ "フォントの設定を全てデフォルトに戻す(_F)", true }
 
-      m_bt_change_color( "選択行の色を設定する(_S)", true ),
-      m_bt_reset_color( "選択行の色をデフォルトに戻す(_R)", true ),
-      m_bt_reset_all_colors( "色の設定を全てデフォルトに戻す(_C)", true )
+    , m_bt_change_color{ "選択行の色を設定する(_S)", true }
+    , m_bt_reset_color{ "選択行の色をデフォルトに戻す(_R)", true }
+    , m_bt_reset_all_colors{ "色の設定を全てデフォルトに戻す(_C)", true }
 {
     CONFIG::bkup_conf();
 
@@ -119,34 +120,39 @@ void FontColorPref::pack_widget()
 {
     const int mrg = 8;
 
+    m_grid_font.property_margin() = 8;
+    m_grid_font.set_column_spacing( 10 );
+    m_grid_font.set_row_spacing( 8 );
+    m_grid_font.set_vexpand( true );
+
     // フォント
     m_event_font.add( m_combo_font );
-
+    m_combo_font.set_hexpand( false );
+    m_fontbutton.set_hexpand( true );
     m_hbox_font.pack_start( m_event_font, Gtk::PACK_SHRINK );
-    m_hbox_font.pack_start( m_fontbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
+    m_hbox_font.pack_start( m_fontbutton, Gtk::PACK_EXPAND_WIDGET );
 
-    m_vbox_font.set_border_width( mrg );
-    m_vbox_font.pack_start( m_hbox_font, Gtk::PACK_SHRINK, mrg/2 );
+    m_grid_font.attach( m_hbox_font, 0, 0, 2, 1 );
 
     m_checkbutton_font.add_label( "スレビューでフォント幅の近似計算を厳密に行う(_S)", true ),
     m_checkbutton_font.set_active( CONFIG::get_strict_char_width() );
     m_checkbutton_font.set_tooltip_text( WARNING_STRICTCHAR );
-    m_hbox_checkbutton.pack_start( m_checkbutton_font, Gtk::PACK_SHRINK );
-    m_vbox_font.pack_start( m_hbox_checkbutton, Gtk::PACK_SHRINK, mrg/2 );
+    m_grid_font.attach( m_checkbutton_font, 0, 1, 2, 1 );
 
     // 行高さ
     m_spin_space.set_digits( 1 );
     m_spin_space.set_range( 0.1, 10.0 );
     m_spin_space.set_increments( 0.1, 0.1 );
     m_spin_space.set_value( CONFIG::get_adjust_line_space() );
-    m_label_space.set_text_with_mnemonic( "スレビューの文字列の行の高さ(_H)： " );
+    m_spin_space.set_halign( Gtk::ALIGN_START );
+    m_spin_space.set_hexpand( true );
+    m_label_space.set_text_with_mnemonic( "スレビューの文字列の行の高さ(_H):" );
     m_label_space.set_mnemonic_widget( m_spin_space );
+    m_label_space.set_halign( Gtk::ALIGN_START );
 
-    m_hbox_space.set_spacing ( mrg );
-    m_hbox_space.pack_start( m_label_space, Gtk::PACK_SHRINK );
-    m_hbox_space.pack_start( m_spin_space, Gtk::PACK_SHRINK );
+    m_grid_font.attach( m_label_space, 0, 2, 1, 1 );
+    m_grid_font.attach( m_spin_space, 1, 2, 1, 1 );
     m_spin_space.set_tooltip_text( "スレビューにおいて行の高さを調節します( 標準は 1 )" );
-    m_vbox_font.pack_start( m_hbox_space, Gtk::PACK_SHRINK, mrg/2 );
 
     set_activate_entry( m_spin_space );
 
@@ -155,29 +161,39 @@ void FontColorPref::pack_widget()
     m_spin_ubar.set_range( 0.1, 10.0 );
     m_spin_ubar.set_increments( 0.1, 0.1 );
     m_spin_ubar.set_value( CONFIG::get_adjust_underline_pos() );
-    m_label_ubar.set_text_with_mnemonic( "スレビューの文字列の下線位置(_U)： " );
+    m_spin_ubar.set_halign( Gtk::ALIGN_START );
+    m_spin_ubar.set_hexpand( true );
+    m_label_ubar.set_text_with_mnemonic( "スレビューの文字列の下線位置(_U):" );
     m_label_ubar.set_mnemonic_widget( m_spin_ubar );
+    m_label_ubar.set_halign( Gtk::ALIGN_START );
 
-    m_hbox_ubar.pack_start( m_label_ubar, Gtk::PACK_SHRINK );
-    m_hbox_ubar.pack_start( m_spin_ubar, Gtk::PACK_SHRINK );
-    m_vbox_font.pack_start( m_hbox_ubar, Gtk::PACK_SHRINK, mrg/2 );
+    m_grid_font.attach( m_label_ubar, 0, 3, 1, 1 );
+    m_grid_font.attach( m_spin_ubar, 1, 3, 1, 1 );
     m_spin_ubar.set_tooltip_text( "スレビューにおいてアンカーなどの下線の位置を調節します( 標準は 1 )" );
 
     set_activate_entry( m_spin_ubar );
 
     // AAレスと判定する正規表現
-    m_label_aafont.set_text( CONFIG::get_regex_res_aa() );
-    m_vbox_font.pack_start( m_label_aafont, Gtk::PACK_SHRINK, mrg/2 );
-    m_label_aafont.set_tooltip_text(
-        "この正規表現に一致したレスは、アスキーアートフォントで表示します( 次に開いたスレから有効 )" );
+    m_entry_aafont.set_text( CONFIG::get_regex_res_aa() );
+    m_label_aafont.set_halign( Gtk::ALIGN_START );
+    m_label_aafont.set_mnemonic_widget( m_entry_aafont );
 
-    set_activate_entry( m_label_aafont );
+    m_grid_font.attach( m_label_aafont, 0, 4, 1, 1 );
+    m_grid_font.attach( m_entry_aafont, 1, 4, 1, 1 );
+    constexpr const char* aafont_tooltip =
+        "この正規表現に一致したレスは、アスキーアートフォントで表示します( 次に開いたスレから有効 )";
+    m_label_aafont.set_tooltip_text( aafont_tooltip );
+    m_entry_aafont.set_tooltip_text( aafont_tooltip );
+
+    set_activate_entry( m_entry_aafont );
 
     // フォントのリセット
+    m_bt_reset_font.set_valign( Gtk::ALIGN_END  );
+    m_bt_reset_font.set_vexpand( true );
     m_bt_reset_font.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_font ) );
-    m_vbox_font.pack_end( m_bt_reset_font, Gtk::PACK_SHRINK );
+    m_grid_font.attach( m_bt_reset_font, 0, 10, 2, 1 );
 
-    m_notebook.append_page( m_vbox_font, "フォントの設定" );    
+    m_notebook.append_page( m_grid_font, "フォントの設定" );
 
     m_combo_font.signal_changed().connect( sigc::mem_fun( *this, &FontColorPref::slot_combo_font_changed ) );
     m_fontbutton.signal_font_set().connect( sigc::mem_fun( *this, &FontColorPref::slot_fontbutton_on_set ) );
@@ -265,7 +281,7 @@ void FontColorPref::slot_ok_clicked()
 
     CONFIG::set_adjust_line_space( m_spin_space.get_value() );
     CONFIG::set_adjust_underline_pos( m_spin_ubar.get_value() );
-    CONFIG::set_regex_res_aa( m_label_aafont.get_text() );
+    CONFIG::set_regex_res_aa( m_entry_aafont.get_text() );
 
     CONFIG::set_strict_char_width( m_checkbutton_font.property_active() );
 
@@ -377,7 +393,7 @@ void FontColorPref::slot_reset_font()
 
     m_spin_space.set_value( CONFIG::CONF_ADJUST_LINE_SPACE );
     m_spin_ubar.set_value( CONFIG::CONF_ADJUST_UNDERLINE_POS );
-    m_label_aafont.set_text( CONF_REGEX_RES_AA_DEFAULT );
+    m_entry_aafont.set_text( CONF_REGEX_RES_AA_DEFAULT );
 }
 
 
