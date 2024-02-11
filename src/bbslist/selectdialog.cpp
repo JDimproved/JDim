@@ -118,9 +118,9 @@ void SelectListDialog::slot_ok_clicked()
 }
 
 
-std::string SelectListDialog::get_name()
+std::string SelectListDialog::get_name() const
 {
-    return m_label_name.get_text();
+    return m_entry_name.get_text();
 }
 
 std::string SelectListDialog::get_path() const
