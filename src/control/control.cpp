@@ -157,7 +157,9 @@ bool Control::get_eventbutton( const int id, GdkEventButton& event )
         if( dblclick ) event.type = GDK_2BUTTON_PRESS;
         if( trpclick ) event.type = GDK_3BUTTON_PRESS;
         event.button = button;
-        event.state = ( GDK_CONTROL_MASK & ctrl ) | ( GDK_SHIFT_MASK & shift ) | ( GDK_MOD1_MASK & alt );
+        event.state = ( ctrl ? GDK_CONTROL_MASK : 0 )
+                      | ( shift ? GDK_SHIFT_MASK : 0 )
+                      | ( alt ? GDK_MOD1_MASK : 0 );
         return true;
     }
 
