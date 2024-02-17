@@ -26,8 +26,9 @@ using namespace BOARD;
 Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std::string& command )
     : SKELETON::PrefDiag( parent, url )
     , m_frame_write( "書き込み設定" )
-    , m_entry_writename( true, "名前：" )
-    , m_entry_writemail( true, "メール：" )
+    , m_hbox_write{ Gtk::ORIENTATION_HORIZONTAL, 10 }
+    , m_label_writename{ "名前:" }
+    , m_label_writemail{ "メール:" }
     , m_check_utf8_post( "(実験的な機能) UTF-8で書き込む" )
     , m_check_noname( "名前欄が空白の時は書き込まない" )
     , m_bt_clear_post_history( "この板にある全スレの書き込み履歴クリア" )
@@ -36,10 +37,12 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_frame_cookie( "クッキーと書き込みキーワード" )
     , m_button_cookie( "削除" )
 
+    , m_hbox_live{ Gtk::ORIENTATION_HORIZONTAL, 10 }
+    , m_label_live{ "実況時の更新間隔(秒):" }
     , m_check_live( "実況する" )
 
-    , m_vbox_encoding{ Gtk::ORIENTATION_VERTICAL, 0 }
-    , m_hbox_encoding{ Gtk::ORIENTATION_HORIZONTAL, 4 }
+    , m_hbox_charset{ Gtk::ORIENTATION_HORIZONTAL, 10 }
+    , m_label_charset{ "テキストエンコーディング:" }
     , m_vbox_encoding_analysis_method{ Gtk::ORIENTATION_VERTICAL, 2 }
 
     , m_vbox_network{ Gtk::ORIENTATION_VERTICAL, 8 }
@@ -48,19 +51,24 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_proxy_frame( "読み込み用" )
     , m_proxy_frame_w( "書き込み用" )
 
-    , m_label_name( false, "板タイトル：", DBTREE::board_name( get_url() ) )
-    , m_label_url( false, "板のURL：", DBTREE::url_boardbase( get_url() ) )
-    , m_label_cache( false, "ローカルキャッシュのルートパス",
-                     CACHE::path_board_root( DBTREE::url_boardbase( get_url() ) ) )
+    , m_label_name{ "板タイトル:" }
+    , m_label_name_value{ DBTREE::board_name( get_url() ) }
+    , m_label_url{ "板のURL:" }
+    , m_label_url_value{  DBTREE::url_boardbase( get_url() ) }
+    , m_label_cache{ "ローカルキャッシュのルートパス:" }
+    , m_label_cache_value{ CACHE::path_board_root( DBTREE::url_boardbase( get_url() ) ) }
 
-    , m_label_noname( false, "デフォルト名無し：", DBTREE::default_noname( get_url() ) )
-    , m_label_max_line( false, "1レスの最大改行数：" )
-    , m_label_max_byte( false, "1レスの最大バイト数：" )
-    , m_label_last_access( false, "最終アクセス日時 ：" )
-    , m_label_modified( false, "最終更新日時 ：" )
+    , m_label_noname{ "デフォルト名無し:" }
+    , m_label_noname_value{ DBTREE::default_noname( get_url() ) }
+    , m_label_max_line{ "1レスの最大改行数:" }
+    , m_label_max_byte{ "1レスの最大バイト数:" }
+    , m_label_maxres{ "最大レス数 (0 : 未設定):" }
+    , m_label_last_access{ "最終アクセス日時:" }
+    , m_hbox_modified{ Gtk::ORIENTATION_HORIZONTAL, 10 }
+    , m_label_modified{ "最終更新日時:" }
     , m_button_clearmodified( "日時クリア" )
-    , m_sep_samba{ Gtk::ORIENTATION_VERTICAL }
-    , m_label_samba( false, "書き込み規制秒数 (Samba24) ：" )
+    , m_hbox_samba{ Gtk::ORIENTATION_HORIZONTAL, 10 }
+    , m_label_samba{ "書き込み規制秒数 (Samba24):" }
     , m_button_clearsamba( "秒数クリア" )
     , m_check_oldlog( "過去ログを表示する" )
     , m_vbox_abone_general{ Gtk::ORIENTATION_VERTICAL, 0 }
@@ -76,17 +84,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     // 書き込み設定
     const int samba_sec = DBTREE::board_samba_sec( get_url() );
-    if( ! samba_sec ) m_label_samba.set_text( "未取得" );
-    else m_label_samba.set_text( std::to_string( samba_sec ) );
+    if( ! samba_sec ) m_label_samba_value.set_text( "未取得" );
+    else m_label_samba_value.set_text( std::to_string( samba_sec ) );
 
     m_button_clearsamba.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_samba ) );
-    m_hbox_samba.pack_start( m_check_utf8_post, Gtk::PACK_SHRINK );
-    m_hbox_samba.pack_start( m_sep_samba, Gtk::PACK_SHRINK );
-    m_hbox_samba.pack_start( m_label_samba );
-    m_hbox_samba.pack_start( m_button_clearsamba, Gtk::PACK_SHRINK );    
-    m_check_utf8_post.set_margin_end( 15 );
-    m_label_samba.set_margin_start( 15 );
-    m_sep_samba.set_hexpand( false );
     m_check_utf8_post.set_tooltip_text(
         "掲示板がUTF-8の書き込みに対応してるか確認して使用してください。\n"
         "このオプションは実験的なサポートのため変更または廃止の可能性があります。" );
@@ -105,24 +106,46 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     else if( m_entry_writemail.get_text() == JD_MAIL_BLANK ) m_entry_writemail.set_text( std::string() );
 
     m_bt_clear_post_history.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_post_history ) );
-    m_hbox_write1.set_spacing( 8 );
-    m_hbox_write1.pack_start( m_check_noname );
-    m_hbox_write1.pack_start( m_bt_clear_post_history );
 
     m_bt_set_default_namemail.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_set_default_namemail ) );
 
-    m_hbox_write2.set_spacing( 8 );
-    m_hbox_write2.pack_start( m_entry_writename );
-    m_hbox_write2.pack_end( m_bt_set_default_namemail, Gtk::PACK_SHRINK );
-    m_hbox_write2.pack_end( m_entry_writemail, Gtk::PACK_SHRINK );
+    m_label_samba.set_halign( Gtk::ALIGN_START );
+    m_label_samba_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_samba_value.set_halign( Gtk::ALIGN_START );
+    m_label_samba_value.set_hexpand( true );
+    m_label_samba_value.set_selectable( true );
+    m_button_clearsamba.set_halign( Gtk::ALIGN_END );
 
-    m_vbox_write.set_border_width( 8 );
-    m_vbox_write.set_spacing( 8 );
-    m_vbox_write.pack_start( m_hbox_samba,  Gtk::PACK_SHRINK );
-    m_vbox_write.pack_start( m_hbox_write1, Gtk::PACK_SHRINK );
-    m_vbox_write.pack_start( m_hbox_write2, Gtk::PACK_SHRINK );
+    m_hbox_samba.pack_start( m_label_samba_value );
+    m_hbox_samba.pack_end( m_button_clearsamba, Gtk::PACK_SHRINK );
 
-    m_frame_write.add( m_vbox_write );
+    m_check_utf8_post.set_halign( Gtk::ALIGN_START );
+    m_check_noname.set_halign( Gtk::ALIGN_START );
+    m_bt_clear_post_history.set_halign( Gtk::ALIGN_END );
+
+    m_label_writename.set_halign( Gtk::ALIGN_START );
+    m_entry_writename.set_hexpand( true );
+    m_label_writemail.set_halign( Gtk::ALIGN_START );
+    m_bt_set_default_namemail.set_halign( Gtk::ALIGN_END );
+
+    m_hbox_write.pack_start( m_label_writename, Gtk::PACK_SHRINK );
+    m_hbox_write.pack_start( m_entry_writename );
+    m_hbox_write.pack_start( m_label_writemail, Gtk::PACK_SHRINK );
+    m_hbox_write.pack_start( m_entry_writemail );
+    m_hbox_write.pack_start( m_bt_set_default_namemail, Gtk::PACK_SHRINK );
+
+    m_grid_write.property_margin() = 8;
+    m_grid_write.set_column_spacing( 10 );
+    m_grid_write.set_row_spacing( 8 );
+
+    m_grid_write.attach( m_label_samba,           0, 0, 1, 1 );
+    m_grid_write.attach( m_hbox_samba,            1, 0, 1, 1 );
+    m_grid_write.attach( m_check_utf8_post,       1, 1, 2, 1 );
+    m_grid_write.attach( m_check_noname,          1, 2, 2, 1 );
+    m_grid_write.attach( m_bt_clear_post_history, 1, 3, 2, 1 );
+    m_grid_write.attach( m_hbox_write,            0, 4, 3, 1 );
+
+    m_frame_write.add( m_grid_write );
 
     set_activate_entry( m_entry_writename );
     set_activate_entry( m_entry_writemail );
@@ -157,7 +180,6 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     // 実況
     const int live_sec = DBTREE::board_get_live_sec( get_url() );
-    m_label_live.set_text( "実況時の更新間隔(秒)：" );
 
     m_spin_live.set_range( MIN_LIVE_RELOAD_SEC, 1200 );
     m_spin_live.set_increments( 1, 1 );
@@ -172,40 +194,38 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     }
     m_check_live.signal_toggled().connect( sigc::mem_fun(*this, &Preferences::slot_check_live ) );
 
-    m_hbox_live.set_spacing( 4 );
-    m_hbox_live.pack_start( m_label_live, Gtk::PACK_SHRINK );
-    m_hbox_live.pack_start( m_spin_live, Gtk::PACK_SHRINK );
-    m_hbox_live.pack_start( m_check_live );
-
     set_activate_entry( m_spin_live );
 
     // テキストエンコーディング
     const char* tmpcharset = MISC::encoding_to_cstr( DBTREE::board_encoding( get_url() ) );
     if( CONFIG::get_choose_character_encoding() ) {
-        m_label_charset.set_text( "テキストエンコーディング : " );
         m_combo_charset.append( MISC::encoding_to_cstr( Encoding::utf8 ) );
         m_combo_charset.append( MISC::encoding_to_cstr( Encoding::sjis ) );
         m_combo_charset.append( MISC::encoding_to_cstr( Encoding::eucjp ) );
         m_combo_charset.set_active_text( tmpcharset );
 
-        m_hbox_encoding.pack_start( m_label_charset, Gtk::PACK_SHRINK );
-        m_hbox_encoding.pack_start( m_combo_charset, Gtk::PACK_SHRINK );
+        m_combo_charset.set_halign( Gtk::ALIGN_START );
+        m_combo_charset.set_hexpand( true );
 
-        m_vbox_encoding.pack_start( m_hbox_encoding, Gtk::PACK_SHRINK );
+        m_hbox_charset.pack_start( m_combo_charset );
     }
     else {
         // エンコーディング設定は安全でないので無効のときは設定欄(コンボボックス)を表示しない
-        m_label_charset.set_text( Glib::ustring::compose( "テキストエンコーディング :  %1", tmpcharset ) );
-
-        m_hbox_encoding.pack_start( m_label_charset, Gtk::PACK_SHRINK );
+        m_label_charset_value.set_text( tmpcharset );
 
         m_binding_encoding = Glib::Binding::bind_property( m_toggle_encoding.property_active(),
                                                            m_revealer_encoding.property_reveal_child() );
         m_toggle_encoding.set_label( "(実験的な機能) エンコーディングの判定" );
         m_toggle_encoding.set_tooltip_text(
             "このオプションは実験的なサポートのため変更または廃止の可能性があります。" );
+
+        m_label_charset_value.set_halign( Gtk::ALIGN_START );
+        m_label_charset_value.set_hexpand( true );
+        m_label_charset_value.set_selectable( true );
         m_toggle_encoding.set_halign( Gtk::ALIGN_END );
-        m_hbox_encoding.pack_end( m_toggle_encoding, Gtk::PACK_SHRINK );
+
+        m_hbox_charset.pack_start( m_label_charset_value );
+        m_hbox_charset.pack_end( m_toggle_encoding, Gtk::PACK_SHRINK );
 
         m_label_encoding_analysis_method.set_markup( "<b>テキストエンコーディングを判定する方法</b>" );
         m_label_encoding_analysis_method.set_halign( Gtk::ALIGN_START );
@@ -230,9 +250,6 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
         m_revealer_encoding.add( m_vbox_encoding_analysis_method );
 
-        m_vbox_encoding.pack_start( m_hbox_encoding, Gtk::PACK_SHRINK );
-        m_vbox_encoding.pack_start( m_revealer_encoding, Gtk::PACK_SHRINK );
-
         switch( DBTREE::board_encoding_analysis_method( get_url() ) ) {
             case EncodingAnalysisMethod::http_header:
                 m_radio_encoding_http_header.set_active( true );
@@ -247,39 +264,31 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     }
 
     // 一般ページのパッキング
-    m_label_max_line.set_text( std::to_string( DBTREE::line_number( get_url() ) * 2 ) );
-    m_label_max_byte.set_text( std::to_string( DBTREE::message_count( get_url() ) ) );
-    m_hbox_max.pack_start( m_label_max_line );
-    m_hbox_max.pack_start( m_label_max_byte );
+    m_label_max_line_value.set_text( std::to_string( DBTREE::line_number( get_url() ) * 2 ) );
+    m_label_max_byte_value.set_text( std::to_string( DBTREE::message_count( get_url() ) ) );
 
     // 最大レス数
     const int max_res = DBTREE::board_get_number_max_res( get_url() );
-    m_label_maxres.set_text( "最大レス数 (0 : 未設定)：" );
     m_spin_maxres.set_range( 0, CONFIG::get_max_resnumber() );
     m_spin_maxres.set_increments( 1, 1 );
     m_spin_maxres.set_value( max_res );
     m_spin_maxres.set_sensitive( true );
 
-    m_hbox_max.pack_start( m_label_maxres, Gtk::PACK_SHRINK );
-    m_hbox_max.pack_start( m_spin_maxres, Gtk::PACK_SHRINK );
-
     set_activate_entry( m_spin_maxres );
 
     const time_t last_access = DBTREE::board_last_access_time( get_url() );
-    if( last_access ) m_label_last_access.set_text(
+    if( last_access ) m_label_last_access_value.set_text(
         MISC::timettostr( last_access, MISC::TIME_WEEK )
         + " ( " + MISC::timettostr( last_access, MISC::TIME_PASSED ) + " )"
         );
 
-    if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
-    else m_label_modified.set_text(
+    if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified_value.set_text( "未取得" );
+    else m_label_modified_value.set_text(
         MISC::timettostr( DBTREE::board_time_modified( get_url() ), MISC::TIME_WEEK )
         + " ( " + MISC::timettostr( DBTREE::board_time_modified( get_url() ), MISC::TIME_PASSED ) + " )"
         );
 
     m_button_clearmodified.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_clear_modified ) );
-    m_hbox_modified.pack_start( m_label_modified );
-    m_hbox_modified.pack_start( m_button_clearmodified, Gtk::PACK_SHRINK );    
 
     // 過去ログ表示
     if( CONFIG::get_show_oldarticle() ){
@@ -289,21 +298,86 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     }
     else m_check_oldlog.set_active( DBTREE::board_show_oldlog( get_url() ) );
 
-    m_vbox.set_border_width( 16 );
-    m_vbox.set_spacing( 8 );
-    m_vbox.pack_start( m_label_name, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_label_url, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_label_cache, Gtk::PACK_SHRINK );
+    m_label_name_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_url_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_cache_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_noname_value.set_ellipsize( Pango::ELLIPSIZE_END );
 
-    m_vbox.pack_start( m_label_noname, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_max, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_label_last_access, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_modified, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_live, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_vbox_encoding, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_check_oldlog, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_frame_write, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_frame_cookie, Gtk::PACK_SHRINK );
+    m_spin_maxres.set_halign( Gtk::ALIGN_START );
+    m_spin_maxres.set_hexpand( true );
+
+    m_label_last_access_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_last_access_value.set_halign( Gtk::ALIGN_START );
+    m_label_last_access_value.set_hexpand( true );
+    m_label_last_access_value.set_selectable( true );
+
+    m_label_modified_value.set_ellipsize( Pango::ELLIPSIZE_END );
+    m_label_modified_value.set_halign( Gtk::ALIGN_START );
+    m_label_modified_value.set_hexpand( true );
+    m_label_modified_value.set_selectable( true );
+    m_button_clearmodified.set_halign( Gtk::ALIGN_END );
+
+    m_hbox_modified.pack_start( m_label_modified_value );
+    m_hbox_modified.pack_end( m_button_clearmodified, Gtk::PACK_SHRINK );
+
+    m_spin_live.set_halign( Gtk::ALIGN_START );
+    m_check_live.set_halign( Gtk::ALIGN_START );
+    m_check_live.set_hexpand( true );
+
+    m_hbox_live.pack_start( m_spin_live, Gtk::PACK_SHRINK );
+    m_hbox_live.pack_start( m_check_live );
+
+    m_grid_general.property_margin() = 16;
+    m_grid_general.set_column_spacing( 10 );
+    m_grid_general.set_row_spacing( 8 );
+
+    m_grid_general.attach( m_label_name,           0, 0, 1, 1 );
+    m_grid_general.attach( m_label_name_value,     1, 0, 1, 1 );
+    m_grid_general.attach( m_label_url,            0, 1, 1, 1 );
+    m_grid_general.attach( m_label_url_value,      1, 1, 1, 1 );
+    m_grid_general.attach( m_label_cache,          0, 2, 1, 1 );
+    m_grid_general.attach( m_label_cache_value,    1, 2, 1, 1 );
+    m_grid_general.attach( m_label_noname,         0, 3, 1, 1 );
+    m_grid_general.attach( m_label_noname_value,   1, 3, 1, 1 );
+    m_grid_general.attach( m_label_max_line,       0, 4, 1, 1 );
+    m_grid_general.attach( m_label_max_line_value, 1, 4, 1, 1 );
+    m_grid_general.attach( m_label_max_byte,       0, 5, 1, 1 );
+    m_grid_general.attach( m_label_max_byte_value, 1, 5, 1, 1 );
+
+    m_grid_general.attach( m_label_maxres,            0, 6, 1, 1 );
+    m_grid_general.attach( m_spin_maxres,             1, 6, 1, 1 );
+    m_grid_general.attach( m_label_last_access,       0, 7, 1, 1 );
+    m_grid_general.attach( m_label_last_access_value, 1, 7, 1, 1 );
+    m_grid_general.attach( m_label_modified,          0, 8, 1, 1 );
+    m_grid_general.attach( m_hbox_modified,           1, 8, 1, 1 );
+    m_grid_general.attach( m_label_live,              0, 9, 1, 1 );
+    m_grid_general.attach( m_hbox_live,               1, 9, 1, 1 );
+    m_grid_general.attach( m_label_charset,           0, 10, 1, 1 );
+    m_grid_general.attach( m_hbox_charset,            1, 10, 1, 1 );
+
+    m_grid_general.attach( m_revealer_encoding, 0, 11, 2, 1 );
+    m_grid_general.attach( m_check_oldlog,      1, 12, 1, 1 );
+    m_grid_general.attach( m_frame_write,       0, 13, 2, 1 );
+    m_grid_general.attach( m_frame_cookie,      0, 14, 2, 1 );
+
+    // 項目名と値のラベルを設定する
+    for( int y = 0; y < 6; ++y ) {
+        // label column
+        Gtk::Widget* child = m_grid_general.get_child_at( 0, y );
+        child->set_halign( Gtk::ALIGN_START );
+
+        // value column
+        child = m_grid_general.get_child_at( 1, y );
+        child->set_halign( Gtk::ALIGN_START );
+        child->set_hexpand( true );
+        static_cast<Gtk::Label*>( child )->set_selectable( true );
+    }
+    // 項目名を設定する
+    for( int y = 6; y < 11; ++y ) {
+        // label column
+        Gtk::Widget* child = m_grid_general.get_child_at( 0, y );
+        child->set_halign( Gtk::ALIGN_START );
+    }
 
     // ローカルルール
     m_localrule.reset( CORE::ViewFactory( CORE::VIEW_ARTICLEINFO, get_url() ) );
@@ -496,7 +570,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_edit_settingtxt.set_text( DBTREE::settingtxt( get_url() ) );
 
     // ディスプレイ解像度が小さい環境で表示できるようにスクロール可能にする
-    m_scroll_vbox.add( m_vbox );
+    m_scroll_vbox.add( m_grid_general );
     m_scroll_vbox.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC );
     m_scroll_network.add( m_vbox_network );
     m_scroll_network.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC );
@@ -527,8 +601,8 @@ void Preferences::slot_clear_modified()
 {
     DBTREE::board_set_date_modified( get_url(), "" );
 
-    if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified.set_text( "未取得" );
-    else m_label_modified.set_text(
+    if( DBTREE::board_date_modified( get_url() ).empty() ) m_label_modified_value.set_text( "未取得" );
+    else m_label_modified_value.set_text(
         MISC::timettostr( DBTREE::board_time_modified( get_url() ), MISC::TIME_WEEK )
         + " ( " + MISC::timettostr( DBTREE::board_time_modified( get_url() ), MISC::TIME_PASSED ) + " )"
         );
@@ -540,8 +614,8 @@ void Preferences::slot_clear_samba()
     DBTREE::board_set_samba_sec( get_url(), 0 );
 
     const int samba_sec = DBTREE::board_samba_sec( get_url() );
-    if( ! samba_sec ) m_label_samba.set_text( "未取得" );
-    else m_label_samba.set_text( std::to_string( samba_sec ) );
+    if( ! samba_sec ) m_label_samba_value.set_text( "未取得" );
+    else m_label_samba_value.set_text( std::to_string( samba_sec ) );
 }
 
 
