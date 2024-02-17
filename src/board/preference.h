@@ -55,17 +55,18 @@ namespace BOARD
     class Preferences : public SKELETON::PrefDiag
     {
         Gtk::Notebook m_notebook;
-        Gtk::VBox m_vbox;
+        Gtk::Grid m_grid_general;
         Gtk::ScrolledWindow m_scroll_vbox; ///< "一般"タブをスクロール可能にする
         Gtk::ScrolledWindow m_scroll_network; ///< "ネットワーク設定"タブをスクロール可能にする
 
         // 書き込み時のデフォルト名とメール
         Gtk::Frame m_frame_write;
-        Gtk::VBox m_vbox_write;
-        Gtk::HBox m_hbox_write1;
-        Gtk::HBox m_hbox_write2;
-        SKELETON::LabelEntry m_entry_writename;
-        SKELETON::LabelEntry m_entry_writemail;
+        Gtk::Grid m_grid_write;
+        Gtk::Box m_hbox_write;
+        Gtk::Label m_label_writename;
+        Gtk::Entry m_entry_writename;
+        Gtk::Label m_label_writemail;
+        Gtk::Entry m_entry_writemail;
         Gtk::CheckButton m_check_utf8_post; ///< UTF-8で書き込む
         Gtk::CheckButton m_check_noname; // 名無し書き込みチェック
         Gtk::Button m_bt_clear_post_history;
@@ -78,15 +79,15 @@ namespace BOARD
         Gtk::Button m_button_cookie;
 
         // 実況の更新間隔
-        Gtk::HBox m_hbox_live;
+        Gtk::Box m_hbox_live;
         Gtk::Label m_label_live;
         Gtk::CheckButton m_check_live;
         Gtk::SpinButton m_spin_live;
 
         // テキストエンコーディング
-        Gtk::Box m_vbox_encoding; ///< テキストエンコーディングの設定をパックする
-        Gtk::Box m_hbox_encoding;
+        Gtk::Box m_hbox_charset;
         Gtk::Label m_label_charset;
+        Gtk::Label m_label_charset_value;
         Gtk::ComboBoxText m_combo_charset;
 
         Glib::RefPtr<Glib::Binding> m_binding_encoding; ///< ToggleButtonとRevealerをバインドする
@@ -115,30 +116,37 @@ namespace BOARD
         ProxyFrame m_proxy_frame_w;
 
         // 情報
-        SKELETON::LabelEntry m_label_name;
-        SKELETON::LabelEntry m_label_url;
-        SKELETON::LabelEntry m_label_cache;
+        Gtk::Label m_label_name;
+        Gtk::Label m_label_name_value;
+        Gtk::Label m_label_url;
+        Gtk::Label m_label_url_value;
+        Gtk::Label m_label_cache;
+        Gtk::Label m_label_cache_value;
 
-        SKELETON::LabelEntry m_label_noname;
+        Gtk::Label m_label_noname;
+        Gtk::Label m_label_noname_value;
 
-        Gtk::HBox m_hbox_max;
-        SKELETON::LabelEntry m_label_max_line;
-        SKELETON::LabelEntry m_label_max_byte;
+        Gtk::Label m_label_max_line;
+        Gtk::Label m_label_max_line_value;
+        Gtk::Label m_label_max_byte;
+        Gtk::Label m_label_max_byte_value;
 
         // 最大レス数
         Gtk::Label m_label_maxres;
         Gtk::SpinButton m_spin_maxres;
 
-        SKELETON::LabelEntry m_label_last_access;
+        Gtk::Label m_label_last_access;
+        Gtk::Label m_label_last_access_value;
 
-        Gtk::HBox m_hbox_modified;
-        SKELETON::LabelEntry m_label_modified;
+        Gtk::Box m_hbox_modified;
+        Gtk::Label m_label_modified;
+        Gtk::Label m_label_modified_value;
         Gtk::Button m_button_clearmodified;
 
         // samba24
-        Gtk::HBox m_hbox_samba;
-        Gtk::Separator m_sep_samba;
-        SKELETON::LabelEntry m_label_samba;
+        Gtk::Box m_hbox_samba;
+        Gtk::Label m_label_samba;
+        Gtk::Label m_label_samba_value;
         Gtk::Button m_button_clearsamba;
 
         // 過去ログ表示
