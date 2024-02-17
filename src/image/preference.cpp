@@ -91,6 +91,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         child->set_halign( Gtk::ALIGN_START );
         child->set_hexpand( true );
         static_cast<Gtk::Label*>( child )->set_selectable( true );
+        static_cast<Gtk::Label*>( child )->set_ellipsize( Pango::ELLIPSIZE_END );
     }
 
     set_title( "画像のプロパティ" );
