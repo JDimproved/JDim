@@ -292,8 +292,12 @@ void Img::download_img( const std::string& refurl, const bool mosaic, const int 
         return;
     }
 
+    // download_img( m_refurl, ... ) の形で呼び出すと下の clear() で
+    // m_refurl -> refurl がクリアされて情報が失われるため refurl を一時変数にコピーしておく。
+    std::string refurl_tmp = refurl;
+
     clear();
-    m_refurl = refurl;
+    m_refurl = std::move( refurl_tmp );
     m_mosaic = mosaic;
 
     JDLIB::LOADERDATA data;
