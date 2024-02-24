@@ -114,9 +114,14 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
                     get_url(), offset, icase, newline, usemigemo, wchar ) ) {
 
         data.url = regex.replace( "\\1/bbs/offlaw.cgi/2/\\2/\\3" );
-        if( id_header() >= 1 ) {
-            data.url += "/" + std::to_string( id_header() +1 ) + "-";
-        }
+    }
+    else {
+        // offlaw.cgi v2 のdat URL
+        data.url = get_url();
+    }
+
+    if( id_header() >= 1 ) {
+        data.url += "/" + std::to_string( id_header() +1 ) + "-";
     }
 
     data.agent = DBTREE::get_agent( get_url() );
