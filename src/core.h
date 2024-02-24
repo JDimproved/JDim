@@ -284,7 +284,7 @@ namespace CORE
         void slot_toggle_save_post_log();
         void slot_toggle_save_post_history();
         void slot_toggle_use_mosaic();
-        void slot_toggle_use_machi_offlaw();
+        void slot_toggle_show_machi_id();
         void slot_toggle_tabbutton();
         void slot_toggle_popupwarpmode();
         void slot_shortmargin_popup();

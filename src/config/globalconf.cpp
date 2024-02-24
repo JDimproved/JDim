@@ -604,9 +604,9 @@ bool CONFIG::get_change_statitle_color(){ return get_confitem()->change_statitle
 // Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )
 int CONFIG::get_use_header_bar() { return get_confitem()->use_header_bar; }
 
-// まちBBSの取得に offlaw.cgi を使用する
-bool CONFIG::get_use_machi_offlaw(){ return get_confitem()->use_machi_offlaw; }
-void CONFIG::set_use_machi_offlaw( const bool set ){ get_confitem()->use_machi_offlaw = set; }
+// まちBBSでID表示を使用する
+bool CONFIG::get_show_machi_id(){ return get_confitem()->show_machi_id; }
+void CONFIG::set_show_machi_id( const bool set ){ get_confitem()->show_machi_id = set; }
 
 // 書き込み履歴のあるスレを削除する時にダイアログを表示
 bool CONFIG::get_show_del_written_thread_diag(){ return get_confitem()->show_del_written_thread_diag; }

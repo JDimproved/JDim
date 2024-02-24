@@ -150,7 +150,45 @@ std::string BoardMachi::url_dat( const std::string& url, int& num_from, int& num
                   << "num = " << num_str << std::endl;
 #endif
     }
-    else return std::string();
+    else {
+        // offlaw.cgi v2 のdat URLを解析する
+        // NOTE: read.cgi のdat URLはお気に入りやスレ履歴の保存に使われているため、
+        // url_dat() の戻り値を offlaw.cgi v2 の形式に変更すると互換性が壊れる。
+        // 1. offlaw.cgi v2 のURL解析を実装しておき互換性の問題が小さくなる将来まで待つ。 <- いまここ
+        // 2. url_dat() の戻り値を offlaw.cgi v2 の形式に変更する。
+        // 3. read.cgi のdat URLを解析する処理は後方互換性のため残す。
+        const std::string datpath2 = MISC::replace_str( "/bbs/offlaw.cgi/2/" + get_id() + "/", "?", "\\?" );
+        const std::string query_dat2 = "^ *https?://.+" + datpath2 + "([0-9]+)(?:/|/l([0-9]+)|/([0-9]+)(-)?([0-9]+)?)?";
+        if( regex.exec( query_dat2, url, offset, icase, newline, usemigemo, wchar ) ) {
+
+            id = regex.str( 1 );
+
+            if( regex.length( 2 ) > 0 ) { // l50 など
+                num_from = 1;
+                num_to = std::atoi( regex.str( 2 ).c_str() );
+            }
+            else {
+                num_from = std::atoi( regex.str( 3 ).c_str() );
+                num_to = std::atoi( regex.str( 5 ).c_str() );
+            }
+
+            if( num_from != 0 ) {
+                num_from = (std::max)( 1, num_from );
+
+                // 12- みたいな場合はとりあえず大きい数字を入れとく
+                if( regex.length( 4 ) > 0 && num_to == 0 ) num_to = CONFIG::get_max_resnumber() + 1;
+            }
+
+            // -15 みたいな場合
+            else if( num_to != 0 ) {
+                num_from = 1;
+            }
+
+            num_to = (std::max)( num_from, num_to );
+            num_str = MISC::get_filename( url );
+        }
+        else return std::string();
+    }
 
     return url_datbase() + id;
 }
