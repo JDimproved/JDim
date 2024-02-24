@@ -201,7 +201,7 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
             if( num == 1 ) m_subject_machi = m_regex->str( 6 );
 
             // ホスト情報を表示するモードのときはID部分を削除して置き換える
-            if( ! CONFIG::get_use_machi_offlaw() ) {
+            if( ! CONFIG::get_show_machi_id() ) {
                 // v1 (num == 1) or v2
                 if( m_regex->length( 7 ) > 0 ) {
                     date.resize( i );
@@ -238,7 +238,7 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
             body = m_regex->str( 6 );
 
             // ホスト情報を表示するモードのときはID部分を削除して置き換える
-            if( ! CONFIG::get_use_machi_offlaw() && m_regex->length( 5 ) > 0 ) {
+            if( ! CONFIG::get_show_machi_id() && m_regex->length( 5 ) > 0 ) {
                 if( const auto i = date.rfind( "ID:" ); i != std::string::npos ) {
                     date.resize( i );
                 }

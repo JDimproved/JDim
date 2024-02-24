@@ -162,7 +162,7 @@ namespace CONFIG
         CONF_CHANGE_STASTATUS_COLOR = 1, // 状態変更時にメインステータスバーの色を変える
         CONF_CHANGE_STATITLE_COLOR = 1, // 状態変更時にスレビュータイトルの色を変える
         CONF_USE_HEADER_BAR = 2, // Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )
-        CONF_USE_MACHI_OFFLAW = 0, // まちBBSの取得に offlaw.cgi を使用する
+        CONF_SHOW_MACHI_ID = 0, ///< まちBBSでID表示を使用する
         CONF_SHOW_DEL_WRITTEN_THREAD_DIAG = 1, // 書き込み履歴のあるスレを削除する時にダイアログを表示
         CONF_DELETE_IMG_IN_THREAD = 0, // スレを削除する時に画像キャッシュも削除する ( 0: ダイアログ表示 1: 削除 2: 削除しない )
         CONF_MAX_RESNUMBER = 65536, //最大表示可能レス数

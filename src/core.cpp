@@ -623,8 +623,9 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::mem_fun( *this, &Core::slot_toggle_save_post_history ) );
 
 
-    m_action_group->add( Gtk::ToggleAction::create( "UseMachiOfflaw", "まちBBSでID表示を使用する(_I)", std::string(), CONFIG::get_use_machi_offlaw() ),
-                         sigc::mem_fun( *this, &Core::slot_toggle_use_machi_offlaw ) );
+    m_action_group->add( Gtk::ToggleAction::create( "ShowMachiID", "まちBBSでID表示を使用する(_I)",
+                                                    std::string(), CONFIG::get_show_machi_id() ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_show_machi_id ) );
 
 
     // マウス／キーボード
@@ -988,7 +989,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                 "<menuitem action='SavePostLog'/>"
                 "<menuitem action='SavePostHist'/>"
                 "<separator/>"
-                "<menuitem action='UseMachiOfflaw'/>"
+                "<menuitem action='ShowMachiID'/>"
             "</menu>"
             "<separator/>"
 

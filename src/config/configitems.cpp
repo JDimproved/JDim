@@ -582,7 +582,10 @@ bool ConfigItems::load( const bool restore )
     use_header_bar = cf.get_option_int( "use_header_bar", CONF_USE_HEADER_BAR, 0, 2 );
 
     // まちBBSの取得に offlaw.cgi を使用する
-    use_machi_offlaw = cf.get_option_bool( "use_machi_offlaw", CONF_USE_MACHI_OFFLAW );
+    use_machi_offlaw = cf.get_option_bool( "use_machi_offlaw", false );
+
+    // まちBBSでID表示を使用する
+    show_machi_id = cf.get_option_bool( "show_machi_id", CONF_SHOW_MACHI_ID );
 
     // 書き込み履歴のあるスレを削除する時にダイアログを表示
     show_del_written_thread_diag = cf.get_option_bool( "show_del_written_thread_diag", CONF_SHOW_DEL_WRITTEN_THREAD_DIAG );
@@ -954,6 +957,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "change_statitle_color", change_statitle_color );
     cf.update( "use_header_bar", use_header_bar );
     cf.update( "use_machi_offlaw", use_machi_offlaw );
+    cf.update( "show_machi_id", show_machi_id );
     cf.update( "show_del_written_thread_diag", show_del_written_thread_diag );
     cf.update( "delete_img_in_thread", delete_img_in_thread );
     cf.update( "max_resnumber", max_resnumber );

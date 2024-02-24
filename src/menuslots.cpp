@@ -651,12 +651,12 @@ void Core::slot_toggle_use_mosaic()
 }
 
 
-//
-// まちBBSのofflawモードの切り替え
-//
-void Core::slot_toggle_use_machi_offlaw()
+/**
+ * @brief まちBBSのスレ表示でホスト情報とIDを切り替え
+ */
+void Core::slot_toggle_show_machi_id()
 {
-    CONFIG::set_use_machi_offlaw( ! CONFIG::get_use_machi_offlaw() );
+    CONFIG::set_show_machi_id( ! CONFIG::get_show_machi_id() );
 
     // ノードツリーはホスト情報またはIDのどちらかしか保持していない
     // そのため全ArticleViewのノードツリーを再構築してレイアウトし直す

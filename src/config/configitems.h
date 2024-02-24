@@ -526,8 +526,11 @@ namespace CONFIG
         // Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )
         int use_header_bar{};
 
-        // まちBBSの取得に offlaw.cgi を使用する
-        bool use_machi_offlaw{};
+        // まちBBSの取得に offlaw.cgi を使用する (未使用だが互換性のため廃止予定にする)
+        bool use_machi_offlaw{}; // Deprecated in v0.11.0 (2024-02) is superseded by show_machi_id.
+
+        /// @brief まちBBSでID表示を使用する
+        bool show_machi_id{};
 
         // 書き込み履歴のあるスレを削除する時にダイアログを表示
         bool show_del_written_thread_diag{};

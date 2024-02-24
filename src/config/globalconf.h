@@ -608,9 +608,9 @@ namespace CONFIG
     // Client-Side Decorationを使うか( 0: 使わない 1: 使う 2: デスクトップに合わせる )
     int get_use_header_bar();
 
-    // まちBBSの取得に offlaw.cgi を使用する
-    bool get_use_machi_offlaw();
-    void set_use_machi_offlaw( const bool set );
+    // まちBBSでID表示を使用する
+    bool get_show_machi_id();
+    void set_show_machi_id( const bool set );
 
     // 書き込み履歴のあるスレを削除する時にダイアログを表示
     bool get_show_del_written_thread_diag();
