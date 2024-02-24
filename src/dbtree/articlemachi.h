@@ -31,9 +31,6 @@ namespace DBTREE
         std::string url_subbbscgi() const override;
 
       private:
-        
-        // offlawモードなら更新チェック可能
-        bool enable_check_update() const override;
 
         NodeTreeBase* create_nodetree() override;
     };

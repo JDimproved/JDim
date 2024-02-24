@@ -658,12 +658,9 @@ void Core::slot_toggle_use_machi_offlaw()
 {
     CONFIG::set_use_machi_offlaw( ! CONFIG::get_use_machi_offlaw() );
 
-    if( CONFIG::get_use_machi_offlaw() ){
-
-        SKELETON::MsgDiag mdiag(
-            nullptr, "offlaw.cgiを使用するとリモートホストのかわりにIDを取得して表示しますので注意して下さい。" );
-        mdiag.run();
-    }
+    // ノードツリーはホスト情報またはIDのどちらかしか保持していない
+    // そのため全ArticleViewのノードツリーを再構築してレイアウトし直す
+    CORE::core_set_command( "relayout_all_article", "", "completely" );
 }
 
 

@@ -61,9 +61,6 @@ void NodeTreeMachi::clear()
     m_decoded_lines.clear();
     m_decoded_lines.shrink_to_fit();
 
-    m_buffer.clear();
-    m_buffer.shrink_to_fit();
-
     m_buffer_for_200.clear();
     m_buffer_for_200.shrink_to_fit();
 }
@@ -88,44 +85,38 @@ void NodeTreeMachi::init_loading()
     if( ! m_iconv ) m_iconv = std::make_unique<JDLIB::Iconv>( Encoding::utf8, DBTREE::article_encoding( get_url() ) );
 
     m_buffer_for_200.clear();
-
-    m_tmp_buffer = std::string();
 }
 
 
 
 
-//
-// ロード用データ作成
-//
+/** @brief ロード用データ作成
+ *
+ * @details read.cgiを使ってダウンロードする方法はサポートを終了した。(since v0.11.0-20240224) @n
+ * また、read.cgiからダウンロードしたHTMLをrawデータに変換する処理 NodeTreeMachi::process_raw_lines() も削除した。
+ *
+ * @param[out] data ローダーで使うデータを格納する
+ */
 void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
 {
     // レジュームはしない代わりにスレを直接指定
     set_resume( false );
 
-    // offlaw 形式
-    if( CONFIG::get_use_machi_offlaw() ){
+    JDLIB::Regex regex;
+    constexpr std::size_t offset = 0;
+    constexpr bool icase = false;
+    constexpr bool newline = true;
+    constexpr bool usemigemo = false;
+    constexpr bool wchar = false;
 
-        JDLIB::Regex regex;
-        const size_t offset = 0;
-        const bool icase = false;
-        const bool newline = true;
-        const bool usemigemo = false;
-        const bool wchar = false;
+    // read.cgi のdat URLを offlaw.cgi v2 のdat URLに変換する
+    if( regex.exec( "(https?://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)",
+                    get_url(), offset, icase, newline, usemigemo, wchar ) ) {
 
-        if( regex.exec( "(https?://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)", get_url(), offset, icase, newline, usemigemo, wchar ) ){
-
-            // offlaw.cgi v2 のURLに変換する
-            data.url = regex.replace( "\\1/bbs/offlaw.cgi/2/\\2/\\3" );
-            if( id_header() >= 1 ) data.url += "/" + std::to_string( id_header() +1 ) + "-";
+        data.url = regex.replace( "\\1/bbs/offlaw.cgi/2/\\2/\\3" );
+        if( id_header() >= 1 ) {
+            data.url += "/" + std::to_string( id_header() +1 ) + "-";
         }
-    }
-
-    // read.cgi 形式
-    else{
-
-        data.url = get_url();
-        if( id_header() ) data.url += "&START=" + std::to_string( id_header() + 1 );
     }
 
     data.agent = DBTREE::get_agent( get_url() );
@@ -145,86 +136,14 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
 }
 
 
-
-//
-// キャッシュに保存する前の前処理
-//
-char* NodeTreeMachi::process_raw_lines( std::string& rawlines )
-{
-    // オフラインか offlaw 形式を使用する場合はそのまま返す
-    if( ! is_loading() || CONFIG::get_use_machi_offlaw() ) return rawlines.data();
-
-    const size_t offset = 0;
-    const bool icase = false;
-    const bool newline = true;
-    const bool usemigemo = false;
-    const bool wchar = false;
-
-    std::string buffer;
-
-    // オンラインでかつ read.cgi 形式の場合は
-    // 入力データを行ごとに分割して余計なタグを取り除いて本文だけ取り出す
-    std::list< std::string > lines = MISC::get_lines( rawlines );
-    for( std::string& line : lines ) {
-
-        line = MISC::utf8_trim( line );
-
-        if( m_tmp_buffer.empty() ){
-
-            if( line.rfind( "<dt>", 0 ) == 0 ){
-
-                // 既に読み込んでいる場合は飛ばす
-                char num_tmp[ 8 ];
-                memcpy( num_tmp, line.c_str() + strlen( "<dt>" ), 5 );
-                num_tmp[ 5 ] = '0';
-                if( atoi( num_tmp ) <= id_header() ) continue;
-
-                // 行の途中で改行が入ったときは一時バッファに貯めておく
-                if( line.find( "<dd>" ) != std::string::npos ){
-                    buffer += line;
-                    buffer += "\n";
-                }
-                else m_tmp_buffer = line;
-            }
-
-            // タイトル取得
-            else if( ! id_header() && m_subject_machi.empty() ){
-
-                std::string reg_subject( "<title>([^<]*)</title>" );
-                if( m_regex->exec( reg_subject, line, offset, icase, newline, usemigemo, wchar ) ){
-
-                    const Encoding enc = DBTREE::board_encoding( get_url() );
-                    m_subject_machi = MISC::Iconv( m_regex->str( 1 ), Encoding::utf8, enc );
-#ifdef _DEBUG
-                    std::cout << "NodeTreeMachi::process_raw_lines" << std::endl;
-                    std::cout << "subject = " << m_subject_machi << std::endl;
-#endif
-                }
-            }
-
-        }
-        else{
-
-            if( line.find( "<dd>" ) != std::string::npos ){
-
-                buffer += m_tmp_buffer;
-                buffer += line;
-                buffer += "\n";
-
-                m_tmp_buffer.clear();
-            }
-        }
-    }
-
-    m_buffer = std::move( buffer );
-
-    return &*m_buffer.begin();
-}
-
-
-//
-// raw データを dat 形式に変換
-//
+/** @brief raw データを dat 形式に変換 (read.cgi と offlaw.cgi v1, v2 に対応)
+ *
+ * @details 後方互換性のためofflaw.cgi v1と
+ * read.cgiからダウンロードして作成したrawデータをサポートする。
+ * @param[in]  rawlines rawデータ
+ * @param[out] byte     変換したdatのサイズ
+ * @return dat形式のデータ
+ */
 const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
 {
 #ifdef _DEBUG
@@ -280,6 +199,20 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
             if( i == std::string::npos ) continue;
             body = m_regex->str( 5 );
             if( num == 1 ) m_subject_machi = m_regex->str( 6 );
+
+            // ホスト情報を表示するモードのときはID部分を削除して置き換える
+            if( ! CONFIG::get_use_machi_offlaw() ) {
+                // v1 (num == 1) or v2
+                if( m_regex->length( 7 ) > 0 ) {
+                    date.resize( i );
+                    date += "HOST:" + m_regex->str( 7 );
+                }
+                // v1 (num >= 2)
+                else if( m_regex->length( 6 ) > 0 ) {
+                    date.resize( i );
+                    date += "HOST:" + m_regex->str( 6 );
+                }
+            }
         }
 
         // read.cgi 形式
@@ -302,8 +235,19 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
             name = m_regex->str( 3 );
             mail = m_regex->str( 2 );
             date = m_regex->str( 4 );
-            if( std::string id = m_regex->str( 5 ); ! id.empty() ) date += " HOST:" + id;
             body = m_regex->str( 6 );
+
+            // ホスト情報を表示するモードのときはID部分を削除して置き換える
+            if( ! CONFIG::get_use_machi_offlaw() && m_regex->length( 5 ) > 0 ) {
+                if( const auto i = date.rfind( "ID:" ); i != std::string::npos ) {
+                    date.resize( i );
+                }
+                else {
+                    // IDが見つからないときは日付と区切るため半角空白を追加する
+                    date.push_back( ' ' );
+                }
+                date += "HOST:" + m_regex->str( 5 );
+            }
         }
 
         while( next < num ){
