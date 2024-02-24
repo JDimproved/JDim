@@ -115,7 +115,8 @@ void NodeTreeMachi::create_loaderdata( JDLIB::LOADERDATA& data )
 
         if( regex.exec( "(https?://[^/]*)/bbs/read.cgi\\?BBS=([^&]*)&KEY=([0-9]*)", get_url(), offset, icase, newline, usemigemo, wchar ) ){
 
-            data.url = regex.str( 1 ) + std::string( "/bbs/offlaw.cgi/" ) + regex.str( 2 ) + std::string( "/" ) +  regex.str( 3 );
+            // offlaw.cgi v2 のURLに変換する
+            data.url = regex.replace( "\\1/bbs/offlaw.cgi/2/\\2/\\3" );
             if( id_header() >= 1 ) data.url += "/" + std::to_string( id_header() +1 ) + "-";
         }
     }
@@ -256,9 +257,11 @@ const char* NodeTreeMachi::raw2dat( char* rawlines, int& byte )
         std::string body;
 
         // offlaw 形式
-        if( line.c_str()[ 0 ] != '<' ){
+        if( line[0] != '<' ) {
 
-            std::string reg( "(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)$");
+            // offlaw.cgi v1 and v2, 2021-08-04 のバージョンに対応する正規表現
+            // http://www.machi.to/bbs/read.cgi/tawara/1416672649/87
+            std::string reg( "(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)<>(.*?)(?:<>(.*?))?$" );
 
             if( ! m_regex->exec( reg, line, offset, icase, newline, usemigemo, wchar ) ){
 #ifdef _DEBUG
