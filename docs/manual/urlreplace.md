@@ -84,12 +84,14 @@ http://www\.foobar\.com/view/([0-9]+)	$0	$0	$IMAGE
   </dd>
   <dt>imgurの拡張子無しURLを画像リンク(jpg)にする</dt>
   <dd>
-<pre><code>^https?://imgur\.com/([0-9A-Za-z]{7})$	https://i.imgur.com/$1.jpg		$IMAGE
+<pre><code>^https?://imgur\.com/([0-9A-Za-z]{7})$	https://i.imgur.com/$1.jpg	https://imgur.com/	$IMAGE
 </code></pre>
   </dd>
   <dt>imgurの画像URLは偽装チェックしない</dt>
   <dd>
-<pre><code>^https?://i\.imgur\.com/([^#&=/]+)$	$0		$GENUINE
+<pre><code>^https?://(?:i\.)?imgur\.com/([^#&=/]+)$	$0	https://imgur.com/	$GENUINE
 </code></pre>
+imgur.com の画像URLはリファラを送信しないと開けないことがある。
+(<a href="https://github.com/JDimproved/JDim/issues/1353">Issue 1353</a>)。
   </dd>
 </dl>

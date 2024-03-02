@@ -51,6 +51,7 @@ using namespace CORE;
     "https?://www\\.youtube\\.com/watch\\?(|[^#]+&)v=([^&#/]+)	http://img.youtube.com/vi/$2/0.jpg\n" \
     "https?://youtu\\.be/([^#&=/]+)	http://img.youtube.com/vi/$1/0.jpg\n" \
     "https?://img\\.youtube\\.com/vi/[^/]+/0.jpg	$0		$THUMBNAIL\n" \
+    "^https?://(?:i\\.)?imgur\\.com/([^#&=/]+)$\t$0\thttps://imgur.com/\n" \
     "\n"
 
 
