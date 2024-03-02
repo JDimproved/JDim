@@ -289,7 +289,7 @@ namespace SKELETON
         // クロック入力
         // clock_in()はビューがアクティブのときに呼び出される
         // clock_in_always()はviewの種類に依らず常に呼び出されるので重い処理を含めてはいけない
-        virtual void clock_in(){};
+        virtual void clock_in() {}
         virtual void clock_in_always();
 
         virtual void write(){}

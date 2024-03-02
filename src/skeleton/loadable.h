@@ -153,7 +153,7 @@ namespace SKELETON
       private:
 
         virtual void receive_data( std::string_view ) {}
-        virtual void receive_finish(){};
+        virtual void receive_finish() {}
 
         void callback_dispatch() override;
 

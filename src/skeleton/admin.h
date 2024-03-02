@@ -191,7 +191,7 @@ namespace SKELETON
         virtual std::string command_to_url( const COMMAND_ARGS& command ){ return command.url; }
 
         // view_modeに該当するページを探す
-        virtual int find_view( const std::string& view_mode ){ return -1; };
+        virtual int find_view( const std::string& view_mode ) { return -1; }
 
         virtual void open_view( const COMMAND_ARGS& command );
         virtual void switch_admin() = 0;  // CORE::core_set_command( "switch_*" )　を送る
@@ -246,7 +246,7 @@ namespace SKELETON
 
         void open_list( const COMMAND_ARGS& command_list );
         virtual COMMAND_ARGS get_open_list_args( const std::string& url, const COMMAND_ARGS& command_list ){ return COMMAND_ARGS(); }
-        virtual View* create_view( const COMMAND_ARGS& command ){ return nullptr; };
+        virtual View* create_view( const COMMAND_ARGS& command ) { return nullptr; }
         virtual View* get_view( const std::string& url );
 
         // url を含むビュークラスをリストで取得 ( url と一致するビューでは無い )

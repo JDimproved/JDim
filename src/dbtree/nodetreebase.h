@@ -311,7 +311,7 @@ namespace DBTREE
         void sweep_buffer();
 
         // 拡張属性を取り出す
-        virtual void parse_extattr( std::string_view str ) {};
+        virtual void parse_extattr( std::string_view str ) {}
 
       private:
 
