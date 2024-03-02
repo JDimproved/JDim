@@ -92,6 +92,6 @@ http://www\.foobar\.com/view/([0-9]+)	$0	$0	$IMAGE
 <pre><code>^https?://(?:i\.)?imgur\.com/([^#&=/]+)$	$0	https://imgur.com/	$GENUINE
 </code></pre>
 imgur.com の画像URLはリファラを送信しないと開けないことがある。
-(<a href="https://github.com/JDimproved/JDim/issues/1353">Issue 1353</a>)。
+(<a href="https://github.com/JDimproved/JDim/issues/1353">Issue 1353</a>)
   </dd>
 </dl>
