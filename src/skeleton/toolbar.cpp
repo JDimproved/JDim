@@ -56,11 +56,13 @@ void ToolBar::set_url( const std::string& url )
 }
 
 
-//
-// タブが切り替わった時にDragableNoteBook::set_current_toolbar()から呼び出される( Viewの情報を取得する )
-//
-// virtual
-void ToolBar::set_view( SKELETON::View* view )
+/**
+ * @brief タブが切り替わった時にDragableNoteBook::set_current_toolbar()から呼び出される( Viewの情報をGUIに反映する )
+ *
+ * @param[in] view        Viewの情報を取得する
+ * @param[in] share_query true ならビューの検索クエリをタブ間で共有する
+ */
+void ToolBar::set_view( SKELETON::View* view, const bool share_query )
 {
     if( ! view ) return;
 
@@ -92,7 +94,11 @@ void ToolBar::set_view( SKELETON::View* view )
 
     if( m_button_write ) m_button_write->set_sensitive( view->is_writeable() );
 
-    if( m_entry_search ) m_entry_search->set_text( view->get_search_query() );
+    if( m_entry_search ) {
+        // 共有する設定のときは検索ボックスのクエリをビューに反映する
+        if( share_query ) view->set_search_query( m_entry_search->get_text() );
+        else m_entry_search->set_text( view->get_search_query() );
+    }
 
     if( m_label_board ) m_label_board->set_text( DBTREE::board_name( get_url() ) );
 

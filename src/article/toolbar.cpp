@@ -7,9 +7,9 @@
 #include "articleadmin.h"
 #include "articleviewbase.h"
 
-#include "control/controlutil.h"
+#include "config/globalconf.h"
 #include "control/controlid.h"
-
+#include "control/controlutil.h"
 #include "icons/iconmanager.h"
 
 #include "command.h"
@@ -54,7 +54,7 @@ ArticleToolBar::~ArticleToolBar() noexcept = default;
 // virtual
 void ArticleToolBar::set_view( SKELETON::View * view )
 {
-    SKELETON::ToolBar::set_view( view );
+    SKELETON::ToolBar::set_view( view, CONFIG::get_share_query_among_tabs() );
 
     m_enable_slot = false;
 
