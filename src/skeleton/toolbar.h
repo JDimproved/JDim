@@ -81,7 +81,8 @@ namespace SKELETON
         const std::string& get_url() const { return m_url; }
 
         // タブが切り替わった時にDragableNoteBookから呼び出される( Viewの情報を取得する )
-        virtual void set_view( SKELETON::View * view );
+        void set_view( SKELETON::View* view, const bool share_query );
+        virtual void set_view( SKELETON::View* view ) { set_view( view, false ); }
 
         // タブが切り替わった時にDragableNoteBookから呼び出される( ツールバーを表示する )
         void show_toolbar();

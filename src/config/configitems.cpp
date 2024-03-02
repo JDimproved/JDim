@@ -599,6 +599,9 @@ bool ConfigItems::load( const bool restore )
     // スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )
     text_rendering_method = cf.get_option_int( "text_rendering_method", CONF_TEXT_RENDERING_METHOD, 0, 1 );
 
+    // (実験的な機能) スレビューの検索クエリをタブ間で共有する
+    share_query_among_tabs = cf.get_option_bool( "share_query_among_tabs", CONF_SHARE_QUERY_AMONG_TABS );
+
     // FIFOの作成などにエラーがあったらダイアログを表示する
     show_diag_fifo_error = cf.get_option_bool( "show_diag_fifo_error", CONF_SHOW_DIAG_FIFO_ERROR );
 
@@ -962,6 +965,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "delete_img_in_thread", delete_img_in_thread );
     cf.update( "max_resnumber", max_resnumber );
     cf.update( "text_rendering_method", text_rendering_method );
+    cf.update( "share_query_among_tabs", share_query_among_tabs );
     cf.update( "show_diag_fifo_error", show_diag_fifo_error );
     cf.update( "save_session", save_session );
 
