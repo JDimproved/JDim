@@ -278,7 +278,7 @@ namespace DBTREE
         void clear_post_history();
 
         // スレ立て時刻
-        time_t get_since_time() const noexcept { return m_since_time; };
+        std::time_t get_since_time() const noexcept { return m_since_time; }
         const std::string& get_since_date();
         void reset_since_date(){ m_since_date = std::string(); }
 

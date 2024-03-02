@@ -95,7 +95,7 @@ namespace SKELETON
 
         void set_undo_buffer( UNDO_BUFFER* undo_buffer ){ m_undo_buffer = undo_buffer; }
 
-        bool is_updated() const { return m_updated; };
+        bool is_updated() const { return m_updated; }
         void set_updated( const bool set ){ m_updated = set; }
 
         // treestoreのセット
