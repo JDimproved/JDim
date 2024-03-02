@@ -623,6 +623,9 @@ void CONFIG::set_max_resnumber( const int set ){ get_confitem()->max_resnumber =
 /// @brief スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )
 int CONFIG::get_text_rendering_method() { return get_confitem()->text_rendering_method; }
 
+/// @brief (実験的な機能) スレビューの検索クエリをタブ間で共有する
+bool CONFIG::get_share_query_among_tabs() { return get_confitem()->share_query_among_tabs; }
+
 // FIFOの作成などにエラーがあったらダイアログを表示する
 bool CONFIG::get_show_diag_fifo_error(){ return get_confitem()->show_diag_fifo_error; }
 void CONFIG::set_show_diag_fifo_error( const bool set ){ get_confitem()->show_diag_fifo_error = set; }

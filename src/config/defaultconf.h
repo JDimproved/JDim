@@ -171,6 +171,7 @@ namespace CONFIG
 #else
         CONF_TEXT_RENDERING_METHOD = 0, ///< スレビューのテキストを描画する方法 ( 0: PangoGlyphString 1: PangoLayout )
 #endif
+        CONF_SHARE_QUERY_AMONG_TABS = 0, ///< (実験的な機能) スレビューの検索クエリをタブ間で共有する
         CONF_SHOW_DIAG_FIFO_ERROR = 1, // FIFOの作成などにエラーがあったらダイアログを表示する
         CONF_SAVE_SESSION = 0, // 指定した分ごとにセッションを自動保存 (0: 保存しない)
         CONF_BROKEN_SJIS_BE_UTF8 = 0, ///< 不正なMS932文字列をUTF-8と見なす
