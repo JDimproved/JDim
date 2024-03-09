@@ -96,7 +96,7 @@ namespace DBTREE
     {
         NODE* next_header; // 次のヘッダノードのアドレス
 
-        bool abone; // あぼーんされているか
+        Abone abone; ///< @brief あぼーんの有無と理由
         int num_reference; // 他のレスから参照されている数
         char* name; // 名前
         bool sage; // メール欄がsageか

@@ -258,7 +258,7 @@ namespace DBTREE
         virtual void download_dat( const bool check_update );
 
         // あぼーんしているか
-        bool get_abone( int number ) const;
+        bool get_abone( int number, Abone* abone = nullptr ) const;
 
         // あぼーん情報を親クラスのarticlebaseからコピーする
         void copy_abone_info( const std::list< std::string >& list_abone_id,

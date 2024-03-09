@@ -298,8 +298,12 @@ void LayoutTree::append_node( DBTREE::NODE* node_header, const bool joint )
 #endif
 
     // あぼーん
-    if( ! m_article->empty() && ! m_show_abone && m_article->get_abone( res_number ) ){
-        append_abone_node( node_header );
+    DBTREE::Abone abone{};
+    if( ! m_article->empty() && ! m_show_abone && m_article->get_abone( res_number, &abone ) ){
+        const char* abone_reason = nullptr;
+        if( CONFIG::get_show_abone_reason() ) abone_reason = DBTREE::NodeTreeBase::get_abone_reason( abone );
+
+        append_abone_node( node_header, abone_reason );
         return;
     }
 
@@ -460,10 +464,12 @@ void LayoutTree::append_block( DBTREE::NODE* block, const int res_number, IMGDAT
 
 
 
-//
-// レイアウトツリーの一番最後にあぼーんノード追加
-//
-void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
+/** @brief レイアウトツリーの一番最後にあぼーんノード追加
+ *
+ * @param[in] node_header  レス番号のテキストを含むノード
+ * @param[in] abone_reason あぼーんされた理由のテキスト (nullable)
+ */
+void LayoutTree::append_abone_node( DBTREE::NODE* node_header, const char* abone_reason )
 {
     const int res_number = node_header->id_header;
     if( res_number > m_max_res_number ) m_max_res_number = res_number;
@@ -487,7 +493,7 @@ void LayoutTree::append_abone_node( DBTREE::NODE* node_header )
 
     create_layout_link( node->text, node->linkinfo->link, &node->color_text, node->bold );
     create_layout_text( " ", nullptr, false );
-    create_layout_link( "あぼ〜ん", PROTO_ABONE, nullptr, false );
+    create_layout_link( abone_reason ? abone_reason : "あぼ〜ん", PROTO_ABONE, nullptr, false );
 
     classid = CORE::get_css_manager()->get_classid( "mes" );
     layout = create_layout_div( classid );

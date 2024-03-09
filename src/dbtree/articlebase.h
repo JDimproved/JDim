@@ -24,6 +24,7 @@
 
 namespace DBTREE
 {
+    enum class Abone : unsigned char;
     class NodeTreeBase;
     struct NODE;
 
@@ -357,7 +358,7 @@ namespace DBTREE
         bool get_abone_global() const { return m_abone_global; }
 
         // number番のレスがあぼーんされているか
-        bool get_abone( int number );
+        bool get_abone( int number, Abone* abone = nullptr );
 
         // 全レスのあぼーん状態の更新
         void update_abone();
