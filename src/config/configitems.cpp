@@ -533,6 +533,9 @@ bool ConfigItems::load( const bool restore )
     abone_icase = cf.get_option_bool( "abone_icase", CONF_ABONE_ICASE );
     abone_wchar = cf.get_option_bool( "abone_wchar", CONF_ABONE_WCHAR );
 
+    // (実験的な機能) あぼーんしたレスに判定理由を表示するか
+    show_abone_reason = cf.get_option_bool( "show_abone_reason", CONF_SHOW_ABONE_REASON );
+
     // 右ペーンが空の時にサイドバーを閉じるか
     expand_sidebar = cf.get_option_bool( "expand_sidebar", CONF_EXPAND_SIDEBAR );
 
@@ -940,6 +943,8 @@ void ConfigItems::save_impl( const std::string& path )
 
     cf.update( "abone_icase", abone_icase );
     cf.update( "abone_wchar", abone_wchar );
+
+    cf.update( "show_abone_reason", show_abone_reason );
 
     cf.update( "expand_sidebar", expand_sidebar );
     cf.update( "expand_rpane", expand_rpane );

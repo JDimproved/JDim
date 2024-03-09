@@ -555,6 +555,10 @@ namespace CONFIG
     bool get_abone_wchar();
     void set_abone_wchar( const bool set );
 
+    // (実験的な機能) あぼーんしたレスに判定理由を表示するか
+    bool get_show_abone_reason();
+    void set_show_abone_reason( const bool set );
+
     // 右ペーンが空の時にサイドバーを閉じるか
     bool get_expand_sidebar();
 

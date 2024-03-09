@@ -478,6 +478,9 @@ namespace CONFIG
         bool abone_icase{};
         bool abone_wchar{};
 
+        /// @brief (実験的な機能) あぼーんしたレスに判定理由を表示するか
+        bool show_abone_reason{};
+
         // 右ペーンが空の時にサイドバーを閉じるか
         bool expand_sidebar{};
 
