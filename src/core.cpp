@@ -686,6 +686,10 @@ void Core::run( const bool init, const bool skip_setupdiag )
                                                     ( CONFIG::get_abone_icase() && CONFIG::get_abone_wchar() ) ),
                                                     sigc::mem_fun( *this, &Core::slot_toggle_abone_icase_wchar ) );
 
+    m_action_group->add( Gtk::ToggleAction::create( "ShowAboneReason", "(実験的な機能) あぼーんしたレスに判定理由を表示する(_R)",
+                                                    Glib::ustring{}, CONFIG::get_show_abone_reason() ),
+                                                    sigc::mem_fun( *this, &Core::slot_toggle_show_abone_reason ) );
+
     // その他
     m_action_group->add( Gtk::Action::create( "Etc_Menu", "その他(_O)" ) );    
     m_action_group->add( Gtk::Action::create( "LivePref", "実況設定(_L)..." ), sigc::mem_fun( *this, &Core::slot_setup_live ) );
@@ -1025,6 +1029,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                 "<separator/>"
                 "<menuitem action='TranspChainAbone'/>"
                 "<menuitem action='IcaseWcharAbone'/>"
+                "<menuitem action='ShowAboneReason'/>"
             "</menu>"
             "<separator/>"
 

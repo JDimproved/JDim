@@ -983,6 +983,17 @@ void Core::slot_toggle_abone_icase_wchar()
 }
 
 
+/**
+ * @brief (実験的な機能) あぼーんしたレスの判定理由の表示を切り替え
+ */
+void Core::slot_toggle_show_abone_reason()
+{
+    CONFIG::set_show_abone_reason( ! CONFIG::get_show_abone_reason() );
+
+    CORE::core_set_command( "relayout_all_article" );
+}
+
+
 // 実況設定
 void Core::slot_setup_live()
 {

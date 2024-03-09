@@ -552,6 +552,9 @@ void CONFIG::set_abone_icase( const bool set ){ get_confitem()->abone_icase = se
 bool CONFIG::get_abone_wchar(){ return get_confitem()->abone_wchar; }
 void CONFIG::set_abone_wchar( const bool set ){ get_confitem()->abone_wchar = set; }
 
+// (実験的な機能) あぼーんしたレスに判定理由を表示するか
+bool CONFIG::get_show_abone_reason() { return get_confitem()->show_abone_reason; }
+void CONFIG::set_show_abone_reason( const bool set ) { get_confitem()->show_abone_reason = set; }
 
 bool CONFIG::get_expand_sidebar(){ return get_confitem()->expand_sidebar; }
 

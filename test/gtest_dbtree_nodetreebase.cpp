@@ -153,4 +153,103 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_machi_to_bbs_link_cgi)
     }
 }
 
+
+class DBTREE_NodeTreeBase_GetAboneReasonTest : public ::testing::Test {};
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_none)
+{
+    EXPECT_STREQ( "", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::none ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_res)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG レス番号]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::res ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_noid)
+{
+    EXPECT_STREQ( "あぼ〜ん [ID無し]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::noid ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_id_thread)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG ID:スレ]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::id_thread ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_id_board)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG ID:板]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::id_board ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_default_name)
+{
+    EXPECT_STREQ( "あぼ〜ん [デフォルト名無し]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::default_name ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_name_thread)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG 名前:スレ]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::name_thread ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_name_board)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG 名前:板]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::name_board ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_name_global)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG 名前:全体]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::name_global ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_not_sage)
+{
+    EXPECT_STREQ( "あぼ〜ん [sage以外]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::not_sage ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_word_thread)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG ワード:スレ]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::word_thread ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_regex_thread)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG 正規表現:スレ]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::regex_thread ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_word_board)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG ワード:板]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::word_board ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_regex_board)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG 正規表現:板]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::regex_board ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_word_global)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG ワード:全体]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::word_global ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_regex_global)
+{
+    EXPECT_STREQ( "あぼ〜ん [NG 正規表現:全体]", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::regex_global ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_chain)
+{
+    EXPECT_STREQ( "連鎖あぼ〜ん", DBTREE::NodeTreeBase::get_abone_reason( DBTREE::Abone::chain ) );
+}
+
+TEST_F(DBTREE_NodeTreeBase_GetAboneReasonTest, abone_out_of_range)
+{
+    DBTREE::Abone out_of_range;
+
+    out_of_range = static_cast<DBTREE::Abone>( static_cast<unsigned char>( DBTREE::Abone::none ) - 1 );
+    EXPECT_STREQ( "", DBTREE::NodeTreeBase::get_abone_reason( out_of_range ) );
+
+    out_of_range = static_cast<DBTREE::Abone>( static_cast<unsigned char>( DBTREE::Abone::chain ) + 1 );
+    EXPECT_STREQ( "", DBTREE::NodeTreeBase::get_abone_reason( out_of_range ) );
+}
+
 } // namespace

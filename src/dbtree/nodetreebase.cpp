@@ -513,7 +513,7 @@ std::list< ANCINFO* > NodeTreeBase::get_res_anchors( const int number )
 
     NODE* head = res_header( number );
     if( head && head->headinfo
-            && ! head->headinfo->abone ){
+             && head->headinfo->abone == Abone::none ){
 
         for( int block = 0; block < BLOCK_NUM; ++block ){
 
@@ -3238,14 +3238,20 @@ int NodeTreeBase::check_link( const char* str_in, int& lng_in, std::string& str_
 
 
 
-// あぼーんしているか
-bool NodeTreeBase::get_abone( int number ) const
+/** @brief あぼーんしてるか
+ *
+ * @param[in]  number レス番号
+ * @param[out] abone  あぼーんした理由を表す列挙型を返す (nullable)
+ * @return あばーんしてるなら true
+ */
+bool NodeTreeBase::get_abone( int number, Abone* abone ) const
 {
     const NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
 
-    return head->headinfo->abone;
+    if( abone ) *abone = head->headinfo->abone;
+    return head->headinfo->abone != Abone::none;
 }
 
 
@@ -3255,7 +3261,7 @@ void NodeTreeBase::clear_abone()
 {
     for( int i = 1; i <= m_id_header; ++i ){
         NODE* tmphead = m_vec_header[ i ];
-        if( tmphead && tmphead->headinfo ) tmphead->headinfo->abone = false;
+        if( tmphead && tmphead->headinfo ) tmphead->headinfo->abone = Abone::none;
     }
     m_consecutive_count = 0;
     m_prev_link_id = nullptr;
@@ -3384,7 +3390,7 @@ bool NodeTreeBase::check_abone_res( const int number )
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
 
-    head->headinfo->abone = true;
+    head->headinfo->abone = Abone::res;
     return true;
 }
 
@@ -3405,7 +3411,7 @@ bool NodeTreeBase::check_abone_id( const int number )
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
-    if( head->headinfo->abone ) {
+    if( head->headinfo->abone != Abone::none ) {
         m_prev_link_id = nullptr;
         return true;
     }
@@ -3413,7 +3419,7 @@ bool NodeTreeBase::check_abone_id( const int number )
         m_prev_link_id = nullptr;
         // ID無し
         if( m_abone_noid ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::noid;
             return true;
         }
         return false;
@@ -3431,7 +3437,7 @@ bool NodeTreeBase::check_abone_id( const int number )
     // ローカルID
     if( check_id ){
         if( std::any_of( m_list_abone_id.cbegin(), m_list_abone_id.cend(), equal_id ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::id_thread;
             m_prev_link_id = nullptr;
             return true;
         }
@@ -3440,7 +3446,7 @@ bool NodeTreeBase::check_abone_id( const int number )
     // 板レベル ID
     if( check_id_board ){
         if( std::any_of( m_list_abone_id_board.cbegin(), m_list_abone_id_board.cend(), equal_id ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::id_board;
             m_prev_link_id = nullptr;
             return true;
         }
@@ -3459,7 +3465,7 @@ bool NodeTreeBase::check_abone_id( const int number )
 
     // 連続投稿した回数が設定値以上になったらスレのNG IDに追加する
     if( m_abone_consecutive <= m_consecutive_count ) {
-        head->headinfo->abone = true;
+        head->headinfo->abone = Abone::id_thread;
         m_prev_link_id = nullptr;
         // NG IDが重複しないように一時的にローカルのあぼーんするIDに追加する
         m_list_abone_id.emplace_back( link_id );
@@ -3489,7 +3495,7 @@ bool NodeTreeBase::check_abone_name( const int number )
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
-    if( head->headinfo->abone ) return true;
+    if( head->headinfo->abone != Abone::none ) return true;
     if( ! head->headinfo->name ) return false;
 
     // デフォルト名無し
@@ -3497,7 +3503,7 @@ bool NodeTreeBase::check_abone_name( const int number )
         const NODE* idnode = head->headinfo->block[ BLOCK_NAMELINK ]->next_node;
         // デフォルトのときはリンクがない
         if( idnode && ! idnode->linkinfo ){
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::default_name;
             return true;
         }
     }
@@ -3509,7 +3515,7 @@ bool NodeTreeBase::check_abone_name( const int number )
         const auto& list = m_list_abone_name;
         if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& name )
                          { return name_str.find( name ) != std::string_view::npos; } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::name_thread;
             return true;
         }
     }
@@ -3519,7 +3525,7 @@ bool NodeTreeBase::check_abone_name( const int number )
         const auto& list = m_list_abone_name_board;
         if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& name )
                          { return name_str.find( name ) != std::string_view::npos; } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::name_board;
             return true;
         }
     }
@@ -3529,7 +3535,7 @@ bool NodeTreeBase::check_abone_name( const int number )
         const auto& list = CONFIG::get_list_abone_name();
         if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& name )
                          { return name_str.find( name ) != std::string_view::npos; } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::name_global;
             return true;
         }
     }
@@ -3550,10 +3556,10 @@ bool NodeTreeBase::check_abone_mail( const int number )
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
-    if( head->headinfo->abone ) return true;
+    if( head->headinfo->abone != Abone::none ) return true;
 
     if( ! head->headinfo->sage ){
-        head->headinfo->abone = true;        
+        head->headinfo->abone = Abone::not_sage;
         return true;
     }
 
@@ -3584,7 +3590,7 @@ bool NodeTreeBase::check_abone_word( const int number )
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
-    if( head->headinfo->abone ) return true;
+    if( head->headinfo->abone != Abone::none ) return true;
 
     const std::string res_str = get_res_str( number );
     JDLIB::Regex regex;
@@ -3596,7 +3602,7 @@ bool NodeTreeBase::check_abone_word( const int number )
         const auto& list = m_list_abone_word;
         if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& word )
                          { return res_str.find( word ) != std::string::npos; } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::word_thread;
             return true;
         }
     }
@@ -3607,7 +3613,7 @@ bool NodeTreeBase::check_abone_word( const int number )
         const auto& list = m_list_abone_regex;
         if( std::any_of( list.cbegin(), list.cend(), [&]( const JDLIB::RegexPattern& pattern )
                          { return regex.match( pattern, res_str, offset ); } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::regex_thread;
             return true;
         }
     }
@@ -3618,7 +3624,7 @@ bool NodeTreeBase::check_abone_word( const int number )
         const auto& list = m_list_abone_word_board;
         if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& word )
                          { return res_str.find( word ) != std::string::npos; } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::word_board;
             return true;
         }
     }
@@ -3629,7 +3635,7 @@ bool NodeTreeBase::check_abone_word( const int number )
         const auto& list = m_list_abone_regex_board;
         if( std::any_of( list.cbegin(), list.cend(), [&]( const JDLIB::RegexPattern& pattern )
                          { return regex.match( pattern, res_str, offset ); } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::regex_board;
             return true;
         }
     }
@@ -3640,7 +3646,7 @@ bool NodeTreeBase::check_abone_word( const int number )
         const auto& list = m_list_abone_word_global;
         if( std::any_of( list.cbegin(), list.cend(), [&]( const std::string& word )
                          { return res_str.find( word ) != std::string::npos; } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::word_global;
             return true;
         }
     }
@@ -3651,7 +3657,7 @@ bool NodeTreeBase::check_abone_word( const int number )
         const auto& list = m_list_abone_regex_global;
         if( std::any_of( list.cbegin(), list.cend(), [&]( const JDLIB::RegexPattern& pattern )
                          { return regex.match( pattern, res_str, offset ); } ) ) {
-            head->headinfo->abone = true;
+            head->headinfo->abone = Abone::regex_global;
             return true;
         }
     }
@@ -3674,7 +3680,7 @@ bool NodeTreeBase::check_abone_chain( const int number )
     NODE* head = res_header( number );
     if( ! head ) return false;
     if( ! head->headinfo ) return false;
-    if( head->headinfo->abone ) return true;
+    if( head->headinfo->abone != Abone::none ) return true;
 
     bool abone = false;
     for( int block = 0; block < BLOCK_NUM; ++block ){
@@ -3702,7 +3708,7 @@ bool NodeTreeBase::check_abone_chain( const int number )
                     while( anc_from <= anc_to ){
 
                         const NODE* tmphead = res_header( anc_from++ );
-                        if( tmphead && ! tmphead->headinfo->abone ) return false;
+                        if( tmphead && tmphead->headinfo->abone == Abone::none ) return false;
                     }
 
                     abone = true;
@@ -3712,7 +3718,7 @@ bool NodeTreeBase::check_abone_chain( const int number )
         }
     }
 
-    head->headinfo->abone = abone;
+    head->headinfo->abone = abone ? Abone::chain : Abone::none;
     return abone;
 }
 
@@ -3754,7 +3760,7 @@ void NodeTreeBase::check_reference( const int number )
     if( ! head ) return;
 
     // 既にあぼーんしているならチェックしない
-    if( head->headinfo->abone ) return;
+    if( head->headinfo->abone != Abone::none ) return;
 
     // 2重チェック防止用
     std::unordered_set< int > checked;
@@ -3783,7 +3789,7 @@ void NodeTreeBase::check_reference( const int number )
                     std::cout << "from " << from << std::endl;
 #endif
                     const NODE* tmphead = res_header( from );
-                    if( tmphead && ! tmphead->headinfo->abone ){
+                    if( tmphead && tmphead->headinfo->abone == Abone::none ){
                         m_refer_posts.insert( from );
                     }
                 }
@@ -3859,7 +3865,7 @@ void NodeTreeBase::check_reference( const int number )
                             // 過去へのレス
                             NODE* tmphead = res_header( i );
                             if( tmphead
-                                && ! tmphead->headinfo->abone // 対象スレがあぼーんしていたらカウントしない
+                                && tmphead->headinfo->abone == Abone::none // 対象スレがあぼーんしていたらカウントしない
                                 && tmphead->headinfo->block[ BLOCK_NUMBER ]
                                 ){
 
@@ -4144,4 +4150,36 @@ void NodeTreeBase::clear_post_history()
 {
     m_posts.clear();
     m_refer_posts.clear();
+}
+
+
+/** @brief あぼーんした理由をテキストで取得する
+ *
+ * @param[in] abone あぼーんした理由を表す列挙型
+ * @return あぼーんした理由のテキスト
+ */
+const char* NodeTreeBase::get_abone_reason( Abone abone )
+{
+    if( abone > Abone::chain ) abone = Abone::none;
+
+    constexpr const char* reason_strings[] = {
+        "",                             // none
+        "あぼ〜ん [NG レス番号]",       // res
+        "あぼ〜ん [ID無し]",            // noid
+        "あぼ〜ん [NG ID:スレ]",        // id_thread
+        "あぼ〜ん [NG ID:板]",          // id_board
+        "あぼ〜ん [デフォルト名無し]",  // default_name
+        "あぼ〜ん [NG 名前:スレ]",      // name_thread
+        "あぼ〜ん [NG 名前:板]",        // name_board
+        "あぼ〜ん [NG 名前:全体]",      // name_global
+        "あぼ〜ん [sage以外]",          // not_sage
+        "あぼ〜ん [NG ワード:スレ]",    // word_thread
+        "あぼ〜ん [NG 正規表現:スレ]",  // regex_thread
+        "あぼ〜ん [NG ワード:板]",      // word_board
+        "あぼ〜ん [NG 正規表現:板]",    // regex_board
+        "あぼ〜ん [NG ワード:全体]",    // word_global
+        "あぼ〜ん [NG 正規表現:全体]",  // regex_global
+        "連鎖あぼ〜ん",                 // chain
+    };
+    return reason_strings[ static_cast<unsigned>( abone ) ];
 }

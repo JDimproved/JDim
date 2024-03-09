@@ -173,7 +173,7 @@ namespace ARTICLE
         LAYOUT* create_layout_img( const char* link );
         LAYOUT* create_layout_sssp( const char* link );
 
-        void append_abone_node( DBTREE::NODE* node_header );
+        void append_abone_node( DBTREE::NODE* node_header, const char* abone_reason );
         LAYOUT* create_separator();
     };
 }

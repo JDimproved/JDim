@@ -649,12 +649,15 @@ bool ArticleBase::get_abone_chain() const
 }
 
 
-//
-// あぼーんしてるか
-//
-bool ArticleBase::get_abone( int number )
+/** @brief あぼーんしてるか
+ *
+ * @param[in]  number レス番号
+ * @param[out] abone  あぼーんした理由を表す列挙型を返す (nullable)
+ * @return あばーんしてるなら true
+ */
+bool ArticleBase::get_abone( int number, Abone* abone )
 {
-    return get_nodetree()->get_abone( number );
+    return get_nodetree()->get_abone( number, abone );
 }
 
 

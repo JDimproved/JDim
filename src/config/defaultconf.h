@@ -146,6 +146,7 @@ namespace CONFIG
         CONF_ABONE_CHAIN = 0,       // デフォルトで連鎖あぼーんをする
         CONF_ABONE_ICASE = 0,       // NG正規表現によるあぼーん時に大小文字の違いを無視
         CONF_ABONE_WCHAR = 0,       // NG正規表現によるあぼーん時に全角半角文字の違いを無視
+        CONF_SHOW_ABONE_REASON = 0, ///< (実験的な機能) あぼーんしたレスに判定理由を表示するか
         CONF_EXPAND_SIDEBAR = 0,      // 右ペーンが空の時にサイドバーを閉じる
         CONF_EXPAND_RPANE = 1,        // 3ペーン時にスレ一覧やスレビューを最大化する
         CONF_OPEN_SIDEBAR_BY_CLICK = 1, // ペーンの境界をクリックしてサイドバーを開け閉めする
