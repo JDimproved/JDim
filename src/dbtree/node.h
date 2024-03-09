@@ -59,6 +59,28 @@ namespace DBTREE
         BLOCK_NUM
     };
 
+    /// @brief あぼーんした理由を表す列挙型
+    enum class Abone : unsigned char
+    {
+        none = 0,     ///< あぼ〜んしていない
+        res,          ///< NG レス番号
+        noid,         ///< ID無しをあぼ〜ん
+        id_thread,    ///< NG ID:スレ
+        id_board,     ///< NG ID:板
+        default_name, ///< デフォルト名無しをあぼ〜ん
+        name_thread,  ///< NG 名前:スレ
+        name_board,   ///< NG 名前:板
+        name_global,  ///< NG 名前:全体
+        not_sage,     ///< sage以外
+        word_thread,  ///< NG ワード:スレ
+        regex_thread, ///< NG 正規表現:スレ
+        word_board,   ///< NG ワード:板
+        regex_board,  ///< NG 正規表現:板
+        word_global,  ///< NG ワード:全体
+        regex_global, ///< NG 正規表現:全体
+        chain,        ///< 連鎖あぼ〜ん
+    };
+
     struct NODE;
 
     // アンカー情報

@@ -418,6 +418,9 @@ namespace DBTREE
       public:
         // http://ime.nu/ などをリンクから削除
         static bool remove_imenu( std::string& str_link );
+
+        // あぼーんした理由をテキストで取得する
+        static const char* get_abone_reason( Abone abone );
     };
 }
 

@@ -4145,3 +4145,35 @@ void NodeTreeBase::clear_post_history()
     m_posts.clear();
     m_refer_posts.clear();
 }
+
+
+/** @brief あぼーんした理由をテキストで取得する
+ *
+ * @param[in] abone あぼーんした理由を表す列挙型
+ * @return あぼーんした理由のテキスト
+ */
+const char* NodeTreeBase::get_abone_reason( Abone abone )
+{
+    if( abone > Abone::chain ) abone = Abone::none;
+
+    constexpr const char* reason_strings[] = {
+        "",                             // none
+        "あぼ〜ん [NG レス番号]",       // res
+        "あぼ〜ん [ID無し]",            // noid
+        "あぼ〜ん [NG ID:スレ]",        // id_thread
+        "あぼ〜ん [NG ID:板]",          // id_board
+        "あぼ〜ん [デフォルト名無し]",  // default_name
+        "あぼ〜ん [NG 名前:スレ]",      // name_thread
+        "あぼ〜ん [NG 名前:板]",        // name_board
+        "あぼ〜ん [NG 名前:全体]",      // name_global
+        "あぼ〜ん [sage以外]",          // not_sage
+        "あぼ〜ん [NG ワード:スレ]",    // word_thread
+        "あぼ〜ん [NG 正規表現:スレ]",  // regex_thread
+        "あぼ〜ん [NG ワード:板]",      // word_board
+        "あぼ〜ん [NG 正規表現:板]",    // regex_board
+        "あぼ〜ん [NG ワード:全体]",    // word_global
+        "あぼ〜ん [NG 正規表現:全体]",  // regex_global
+        "連鎖あぼ〜ん",                 // chain
+    };
+    return reason_strings[ static_cast<unsigned>( abone ) ];
+}
