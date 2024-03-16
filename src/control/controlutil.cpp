@@ -554,7 +554,7 @@ std::string CONTROL::get_label_motions( const int id )
 // 共通操作
 bool CONTROL::operate_common( const int control, const std::string& url, SKELETON::Admin* admin )
 {
-    if( control == CONTROL::None ) return false;;
+    if( control == CONTROL::None ) return false;
 
     switch( control ){
             

@@ -396,7 +396,7 @@ void ImageViewMain::add_tab_number()
                 + " (" + MISC::get_hostname( get_url(), false ) + ")]" );
 
 #ifdef _DEBUG
-    std::cout << "ImageViewMain::add_tab_number : " << get_status() << std::endl;;
+    std::cout << "ImageViewMain::add_tab_number : " << get_status() << std::endl;
 #endif
 }
 

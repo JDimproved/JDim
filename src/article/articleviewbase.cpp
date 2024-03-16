@@ -1039,7 +1039,7 @@ bool ArticleViewBase::operate_view( const int control )
 
     if( CONTROL::operate_common( control, get_url(), ARTICLE::get_admin() ) ) return true;
 
-    if( control == CONTROL::None ) return false;;
+    if( control == CONTROL::None ) return false;
 
     // スクロール系操作
     if( m_drawarea->set_scroll( control ) ) return true;
@@ -3757,7 +3757,7 @@ void ArticleViewBase::set_favorite()
     CORE::DATA_INFO info;
     info.type = TYPE_THREAD;
     info.parent = ARTICLE::get_admin()->get_win();
-    info.url = m_url_article;;
+    info.url = m_url_article;
     info.name = MISC::to_plain( DBTREE::article_modified_subject( m_url_article ) );
     info.path = Gtk::TreePath( "0" ).to_string();
 

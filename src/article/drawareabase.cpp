@@ -130,7 +130,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
                                                               : &DrawAreaBase::render_text_pangolayout }
 {
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;;
+    std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;
 #endif
 
     // フォント設定
@@ -152,7 +152,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 DrawAreaBase::~DrawAreaBase()
 {
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::~DrawAreaBase " << m_url << std::endl;;
+    std::cout << "DrawAreaBase::~DrawAreaBase " << m_url << std::endl;
 #endif
 
     cancel_deceleration();

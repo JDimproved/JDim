@@ -485,7 +485,7 @@ void ArticleViewMain::update_finish()
 
 #ifdef _DEBUG
     const int code = DBTREE::article_code( url_article() );
-    std::cout << "ArticleViewMain::update_finish " << str_tablabel << " code = " << code << std::endl;;
+    std::cout << "ArticleViewMain::update_finish " << str_tablabel << " code = " << code << std::endl;
 #endif
 
     // 新着セパレータを消す
@@ -669,7 +669,7 @@ void ArticleViewMain::show_instruct_diag()
 void ArticleViewMain::relayout( const bool completely )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewMain::relayout " << DBTREE::article_subject( url_article() ) << std::endl;;
+    std::cout << "ArticleViewMain::relayout " << DBTREE::article_subject( url_article() ) << std::endl;
 #endif
 
     hide_popup( true );
@@ -691,7 +691,7 @@ void ArticleViewMain::relayout( const bool completely )
 void ArticleViewMain::do_relayout( const bool completely )
 {
 #ifdef _DEBUG
-    std::cout << "ArticleViewMain::do_relayout " << url_article() << std::endl;;
+    std::cout << "ArticleViewMain::do_relayout " << url_article() << std::endl;
 #endif
 
     int seen = drawarea()->get_seen_current();
