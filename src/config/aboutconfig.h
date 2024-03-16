@@ -51,9 +51,15 @@ namespace CONFIG
 
     class AboutConfig : public SKELETON::PrefDiag
     {
+        Gtk::Box m_hbox_search;
         Gtk::Label m_label;
+        Gtk::ToggleButton m_toggle_search;
+        Glib::RefPtr<Glib::Binding> m_binding_search; ///< ToggleButtonとSearchBarをバインドする
+        Gtk::SearchBar m_search_bar;
+        Gtk::SearchEntry m_search_entry;
         Gtk::TreeView m_treeview;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
+        Glib::RefPtr<Gtk::TreeModelFilter> m_model_filter;
         TreeColumn m_columns;
         Gtk::ScrolledWindow m_scrollwin;
 
@@ -69,6 +75,9 @@ namespace CONFIG
         void slot_ok_clicked() override;
         void slot_cancel_clicked() override;
 
+        bool slot_key_press_event( GdkEventKey* event );
+        void slot_entry_changed();
+        bool slot_visible_func( const Gtk::TreeModel::const_iterator& iter );
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
 
         void append_rows();
