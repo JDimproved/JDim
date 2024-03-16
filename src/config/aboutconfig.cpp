@@ -32,6 +32,8 @@ using namespace CONFIG;
 
 AboutConfig::AboutConfig( Gtk::Window* parent )
     : SKELETON::PrefDiag( parent, "", true )
+    , m_hbox_search{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_label{ "動作保証外です。高度な設定を変更するとJDimが誤作動する場合があります。", false }
 {
     CONFIG::bkup_conf();
 
@@ -44,11 +46,34 @@ AboutConfig::AboutConfig( Gtk::Window* parent )
 //
 void AboutConfig::pack_widgets()
 {
-    m_label.set_text( "動作保証外です。高度な設定を変更するとJDimが誤作動する場合があります。" );
+    signal_key_press_event().connect( sigc::mem_fun( *this, &AboutConfig::slot_key_press_event ) );
+
+    m_hbox_search.pack_start( m_label );
+    m_hbox_search.pack_end( m_toggle_search, Gtk::PACK_SHRINK );
+
+    m_label.set_hexpand( true );
+    m_toggle_search.set_image_from_icon_name( "edit-find-symbolic" );
+    // m_toggle_search 以外にも m_search_bar を閉じる操作があるため双方向にバインドする
+    m_binding_search = Glib::Binding::bind_property( m_toggle_search.property_active(),
+                                                     m_search_bar.property_search_mode_enabled(),
+                                                     Glib::BINDING_BIDIRECTIONAL );
+
+    m_search_bar.add( m_search_entry );
+    m_search_bar.connect_entry( m_search_entry );
+    m_search_bar.set_hexpand( true );
+    m_search_bar.set_show_close_button( true );
+
+    m_search_entry.set_hexpand( true );
+    m_search_entry.set_width_chars( 50 );
+    m_search_entry.signal_changed().connect( sigc::mem_fun( *this, &AboutConfig::slot_entry_changed ) );
 
     m_liststore = Gtk::ListStore::create( m_columns );
+    m_model_filter = Gtk::TreeModelFilter::create( m_liststore );
+    m_model_filter->set_visible_func( sigc::mem_fun( *this, &AboutConfig::slot_visible_func ) );
+
     m_treeview.property_fixed_height_mode() = true;
-    m_treeview.set_model( m_liststore );
+    m_treeview.set_model( m_model_filter );
+    m_treeview.set_search_entry( m_search_entry );
     m_treeview.set_size_request( 700, 400 );
     m_treeview.signal_row_activated().connect( sigc::mem_fun( *this, &AboutConfig::slot_row_activated ) );
 
@@ -68,12 +93,13 @@ void AboutConfig::pack_widgets()
     if( cell ) column->set_cell_data_func( *cell, sigc::mem_fun( *this, &AboutConfig::slot_cell_data ) );
 
     m_scrollwin.add( m_treeview );
+    m_scrollwin.set_margin_bottom( 8 );
     m_scrollwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
     m_scrollwin.set_propagate_natural_height( true );
     m_scrollwin.set_propagate_natural_width( true );
 
-    get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_hbox_search, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_search_bar, Gtk::PACK_SHRINK );
     get_content_area()->pack_start( m_scrollwin );
 
     set_title( "about:config 高度な設定" );
@@ -99,6 +125,69 @@ void AboutConfig::slot_ok_clicked()
 void AboutConfig::slot_cancel_clicked()
 {
     CONFIG::restore_conf();
+}
+
+
+/** @brief ダイアログ内で Ctrl+F が押されたときは検索ボックスを表示する
+ *
+ * @param[in] event キーイベントの状態
+ * @return 検索ボックスが非表示のときは m_search_bar の処理から返す、それ以外は false (GDK_EVENT_PROPAGATE)
+ */
+bool AboutConfig::slot_key_press_event( GdkEventKey* event )
+{
+    if( ( event->state & GDK_CONTROL_MASK ) && event->keyval == 'f' ) {
+        if( m_search_bar.get_search_mode() ) {
+            m_search_entry.grab_focus();
+        }
+        else {
+            m_search_bar.set_search_mode( true );
+            return m_search_bar.handle_event( event );
+        }
+    }
+    return false;
+}
+
+
+/**
+ * @brief 検索ボックスに入力されたテキストで設定項目のフィルタリングを実行する
+ */
+void AboutConfig::slot_entry_changed()
+{
+    m_model_filter->refilter();
+}
+
+
+/** @brief 検索ボックスに入力されたテキストが設定の名称に含まれるかチェックする
+ *
+ * @details 入力は1つのキーワードとして検索する。
+ * 空白でテキストを区切ってもAND検索やOR検索は行わない。
+ * @param[in] iter 設定項目の行
+ * @return チェックした行を表示するなら true
+ * - 設定の名称に入力テキストが含まれるなら表示する
+ * - 検索ボックスが非表示のときや入力テキストが空のときはすべての行を表示する
+ */
+bool AboutConfig::slot_visible_func( const Gtk::TreeModel::const_iterator& iter )
+{
+    if( ! m_search_bar.get_search_mode() ) return true;
+
+    Glib::ustring query = m_search_entry.get_text();
+    if( query.empty() ) return true;
+
+    const Gtk::TreeModel::Row& row = *iter;
+    // 検索中は設定カテゴリの名前や空行を取り除く
+    if( row[ m_columns.m_col_type ] == CONFTYPE_COMMENT ) return false;
+
+    // 検索クエリの前後にある空白文字は無視する
+    constexpr auto is_not_space = []( gunichar uc ) { return uc != U' ' && uc != U'\u3000'; };
+    if( auto it = std::find_if( query.begin(), query.end(), is_not_space ); it != query.begin() ) {
+        query.erase( query.begin(), it );
+    }
+    if( auto rit = std::find_if( query.rbegin(), query.rend(), is_not_space ); rit != query.rbegin() ) {
+        query.erase( rit.base(), query.end() );
+    }
+
+    const Glib::ustring& name = row[ m_columns.m_col_name ];
+    return name.find( query ) != std::string::npos;
 }
 
 
@@ -401,7 +490,7 @@ void AboutConfig::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tre
     std::cout << "AboutConfig::slot_row_activated path = " << path.to_string() << std::endl;
 #endif
 
-    Gtk::TreeModel::Row row = *( m_liststore->get_iter( path ) );
+    Gtk::TreeModel::Row row = *( m_model_filter->get_iter( path ) );
     if( ! row ) return;
 
     const int type = row[ m_columns.m_col_type ];
