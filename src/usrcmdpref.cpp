@@ -160,7 +160,7 @@ bool UsrCmdPref::slot_button_release( GdkEventButton* event )
     m_path_selected = m_treeview.get_path_under_xy( (int)event->x, (int)event->y );
 
 #ifdef _DEBUG
-    std::cout << "UsrCmdPref::slot_button_release path = " << m_path_selected.to_string() << std::endl;;
+    std::cout << "UsrCmdPref::slot_button_release path = " << m_path_selected.to_string() << std::endl;
 #endif
 
     if( m_control.button_alloted( event, CONTROL::PopupmenuButton ) ) show_popupmenu();

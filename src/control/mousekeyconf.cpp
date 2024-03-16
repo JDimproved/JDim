@@ -61,7 +61,7 @@ int MouseKeyConf::get_id( const int mode,
                           const guint motion, const bool ctrl, const bool shift, const bool alt,
                           const bool dblclick, const bool trpclick ) const
 {
-    int id = CONTROL::None;;
+    int id = CONTROL::None;
     for( const MouseKeyItem& item : m_vec_items ) {
 
         id = item.is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );

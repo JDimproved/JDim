@@ -1006,9 +1006,9 @@ EXIT_LOADING:
     finish_loading();
 
 #ifdef _DEBUG
-    std::cout << "Loader::run_main : finish loading : " << m_data.url << std::endl;;
-    std::cout << "read size : " << m_data.length_current << " / " << m_data.length << std::endl;;    
-    std::cout << "data size : " << m_data.size_data << std::endl;;
+    std::cout << "Loader::run_main : finish loading : " << m_data.url << std::endl;
+    std::cout << "read size : " << m_data.length_current << " / " << m_data.length << std::endl;
+    std::cout << "data size : " << m_data.size_data << std::endl;
     std::cout << "code : " << m_data.code << std::endl << std::endl;
 #endif    
 }

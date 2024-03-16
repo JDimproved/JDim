@@ -2790,7 +2790,7 @@ void Core::set_command( const COMMAND_ARGS& command )
 #ifdef _DEBUG
             std::cout << "Core::set_command : open_message subject = "
                       << DBTREE::article_modified_subject( command.url )
-                      << ", max lng = " << max_lng << std::endl;;
+                      << ", max lng = " << max_lng << std::endl;
 #endif
 
             if( max_lng == 0 ) max_lng = DBTREE::board_get_max_dat_lng( command.url );

@@ -724,7 +724,7 @@ void BoardViewBase::update_columns()
             rentext->property_xpad() = 4;
 
             // 行間スペース
-            rentext->property_ypad() = CONFIG::get_tree_ypad();;
+            rentext->property_ypad() = CONFIG::get_tree_ypad();
 
             // 文字位置
             switch( id ){
@@ -1447,7 +1447,7 @@ bool BoardViewBase::operate_view( const int control )
 
     bool open_tab = false;
 
-    Gtk::TreePath path = m_treeview.get_current_path();;
+    Gtk::TreePath path = m_treeview.get_current_path();
 
     switch( control ){
 
@@ -1936,7 +1936,7 @@ void BoardViewBase::update_row_common( const Gtk::TreeModel::Row& row )
     if( load ){
         row[ m_columns.m_col_str_load ] = Glib::ustring::compose( "%1", load );
         const int new_arrival = res - load;
-        row[ m_columns.m_col_str_new ] = Glib::ustring::compose( "%1", new_arrival );;
+        row[ m_columns.m_col_str_new ] = Glib::ustring::compose( "%1", new_arrival );
         row[ m_columns.m_col_new ] = new_arrival;
     }
     else{
@@ -2516,7 +2516,7 @@ bool BoardViewBase::open_row( const Gtk::TreePath& path, const bool tab, const b
     std::string str_tab = "false";
     if( tab ) str_tab = "opentab";
 
-    std::string mode = std::string();;
+    std::string mode;
 
     const std::string url_target = path2daturl( path );
 
@@ -2566,7 +2566,7 @@ bool BoardViewBase::open_row( const Gtk::TreePath& path, const bool tab, const b
 //
 void BoardViewBase::open_selected_rows( const bool reget )
 {
-    std::string mode = std::string();;
+    std::string mode;
     std::string list_url;
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
 
@@ -2735,7 +2735,7 @@ void BoardViewBase::exec_search()
     focus_view();
     if( query.empty() ) return;
 
-    Gtk::TreePath path = m_treeview.get_current_path();;
+    Gtk::TreePath path = m_treeview.get_current_path();
     if( path.empty() ){
         if( m_search_invert ) path = GET_PATH( *( m_liststore->children().begin() ) );
         else {

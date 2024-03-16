@@ -130,7 +130,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
                                                               : &DrawAreaBase::render_text_pangolayout }
 {
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;;
+    std::cout << "DrawAreaBase::DrawAreaBase " << m_url << std::endl;
 #endif
 
     // フォント設定
@@ -152,7 +152,7 @@ DrawAreaBase::DrawAreaBase( const std::string& url )
 DrawAreaBase::~DrawAreaBase()
 {
 #ifdef _DEBUG
-    std::cout << "DrawAreaBase::~DrawAreaBase " << m_url << std::endl;;
+    std::cout << "DrawAreaBase::~DrawAreaBase " << m_url << std::endl;
 #endif
 
     cancel_deceleration();
@@ -2195,8 +2195,8 @@ void DrawAreaBase::draw_div( LAYOUT* layout_div, const CLIPINFO& ci )
 
     int border_left = layout_div->css->border_left_width;
     int border_right = layout_div->css->border_right_width;
-    int border_top = layout_div->css->border_top_width;;
-    int border_bottom = layout_div->css->border_bottom_width;;
+    int border_top = layout_div->css->border_top_width;
+    int border_bottom = layout_div->css->border_bottom_width;
 
     int border_style = layout_div->css->border_style;
 
@@ -3392,7 +3392,7 @@ void DrawAreaBase::goto_num( int num )
         m_goto_num_reserve = num;
 
 #ifdef _DEBUG
-        std::cout << "reserve goto_num(2) num = " << m_goto_num_reserve << std::endl;;
+        std::cout << "reserve goto_num(2) num = " << m_goto_num_reserve << std::endl;
 #endif
         return;
     }
@@ -4302,7 +4302,7 @@ bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANGLE* re
     // 前回の呼び出しからキャレット位置が変わってない
     if( m_caret_pos == caret_pos ) return false;
 
-    m_caret_pos_pre = m_caret_pos;;
+    m_caret_pos_pre = m_caret_pos;
     m_caret_pos = caret_pos;
 
 #ifdef _DEBUG
@@ -4321,7 +4321,7 @@ bool DrawAreaBase::set_selection( const CARET_POSITION& caret_pos, RECTANGLE* re
         m_selection.select = true;
 
         if( m_caret_pos_dragstart > m_caret_pos ){
-            m_selection.caret_from = m_caret_pos;;
+            m_selection.caret_from = m_caret_pos;
             m_selection.caret_to = m_caret_pos_dragstart;
         }
         else{
@@ -5152,7 +5152,7 @@ bool DrawAreaBase::motion_mouse()
 
 #ifdef _DEBUG
                 std::cout << "slot_motion_notify_drawarea : enter link = " << m_link_current
-                          << " imgurl = " << imgurl << std::endl;;
+                          << " imgurl = " << imgurl << std::endl;
 #endif
                 m_sig_on_url.emit( m_link_current, imgurl, res_num );
             }

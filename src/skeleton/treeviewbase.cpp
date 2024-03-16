@@ -288,7 +288,7 @@ Gtk::TreePath JDTreeViewBase::prev_path( const Gtk::TreePath& path, bool check_e
     path_out = path;
     if( ! path_out.prev() && path_out.size() >= 2 ) path_out.up();
 
-    return path_out;;
+    return path_out;
 }
 
 

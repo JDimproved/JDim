@@ -214,7 +214,7 @@ void ImageViewIcon::slot_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& co
 {
 #ifdef _DEBUG
     std::cout << "ImageViewIcon::on_drag_data_get target = " << selection_data.get_target()
-              << " url = " << get_url() << std::endl;;
+              << " url = " << get_url() << std::endl;
 #endif
 
     set_image_to_buffer();
