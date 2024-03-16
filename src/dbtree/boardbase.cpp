@@ -2190,7 +2190,6 @@ void BoardBase::save_jdboard_info()
          << "user_agent = " << m_board_agent << std::endl
          << "encoding_analysis_method = " << m_encoding_analysis_method << std::endl
          << "abone_consecutive = " << m_abone_consecutive << std::endl;
-    ;
 
     CACHE::save_rawdata( path_info, sstr.str() );
 }

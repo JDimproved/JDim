@@ -662,7 +662,7 @@ void LayoutTree::hide_separator()
 
         // あぼーんしているレスは飛ばす
         LAYOUT* header_before;
-        int num_tmp = m_separator_new -1;;
+        int num_tmp = m_separator_new -1;
         while( ! ( header_before = get_header_of_res( num_tmp ) ) && num_tmp-- > 1 );
         if( header_before ) header_before->next_header = m_separator_header->next_header;
     }

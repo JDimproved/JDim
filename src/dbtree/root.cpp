@@ -192,7 +192,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
 #ifdef _SHOW_GETBOARD
             std::cout << "found\n";
 #endif
-        return m_get_board;;
+        return m_get_board;
     }
 
     // 見つからなかった
@@ -257,7 +257,7 @@ BoardBase* Root::get_board( const std::string& url, const int count )
     }
 
 #ifdef _DEBUG            
-    std::cout << "Root::get_board: not found url = " << url << std::endl;;
+    std::cout << "Root::get_board: not found url = " << url << std::endl;
 #endif
     
     // それでも見つからなかったらNullクラスを返す

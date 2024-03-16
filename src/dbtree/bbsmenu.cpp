@@ -282,6 +282,6 @@ void BBSMenu::bbsmenu2xml( const std::string& menu )
     CACHE::save_rawdata( path, m_xml_document.get_xml() );
 
 #ifdef _DEBUG
-    std::cout << "BBSMenu::bbsmenu2xml : save " << path << std::endl;;
+    std::cout << "BBSMenu::bbsmenu2xml : save " << path << std::endl;
 #endif
 }

@@ -186,7 +186,7 @@ void TabLabel::on_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
 {
 #ifdef _DEBUG
     std::cout << "TabLabel::on_drag_data_get target = " << selection_data.get_target()
-              << " " << m_fulltext << std::endl;;
+              << " " << m_fulltext << std::endl;
 #endif
 
     Gtk::EventBox::on_drag_data_get( context, selection_data, info, time );
@@ -201,7 +201,7 @@ void TabLabel::on_drag_data_get( const Glib::RefPtr<Gdk::DragContext>& context,
 void TabLabel::on_drag_end( const Glib::RefPtr< Gdk::DragContext >& context )
 {
 #ifdef _DEBUG
-    std::cout << "TabLabel::on_drag_end " << m_fulltext << std::endl;;
+    std::cout << "TabLabel::on_drag_end " << m_fulltext << std::endl;
 #endif
 
     Gtk::EventBox::on_drag_end( context );
