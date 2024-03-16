@@ -4151,7 +4151,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 set_node_font( layout );
 
                 // ポインタの下にあるノードを探す
-                int pos;
+                int pos = 0;
                 while( rect ){
 
                     int width_line;
