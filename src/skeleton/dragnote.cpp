@@ -501,7 +501,7 @@ bool DragableNoteBook::slot_scroll_event( GdkEventScroll* event )
 #endif
 
     bool ret = false;
-    int next_page;
+    int next_page = 0;
 
     if( event->direction == GDK_SCROLL_UP ) {
         next_page = get_current_page() - 1; // If negative, the last page will be used.
