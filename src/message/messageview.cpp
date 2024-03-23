@@ -152,9 +152,15 @@ void MessageViewMain::reload()
  MessageViewNew::MessageViewNew( const std::string& url, const std::string& msg )
     : MessageViewBase( url )
 {
+    m_max_subject = DBTREE::subject_count( get_url() );
+
     setup_view();
 
     set_message( msg );
+
+    // MessageAdmin のシグナルに接続して MessageToolBar のスレタイトル入力欄に橋渡ししてもらう
+    MESSAGE::get_admin()->sig_new_subject_changed().connect(
+        sigc::mem_fun( *this, &MessageViewBase::slot_new_subject_changed ) );
 
     // ツールバーのスレタイトルを編集可能にする
     MESSAGE::get_admin()->show_entry_new_subject( true );
@@ -183,6 +189,7 @@ std::string MessageViewNew::create_message( const bool utf8_post )
 
     const char* reason = nullptr;
     if( subject.empty() ) reason = "スレタイトルが空欄です。";
+    else if( m_max_subject < get_lng_encoded_subject() ) reason = "スレタイトルの文字数が多すぎます。";
     else if( msg.empty() ) reason = "本文が空欄です。";
 
     if( reason ) {

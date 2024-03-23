@@ -41,6 +41,7 @@ namespace MESSAGE
         // インスタンスを破棄しないで、前回書き込みビューを閉じた時の
         // 日本語のON/OFF状態を次回開いたときに継続させる
         std::unique_ptr<SKELETON::EditView> m_text_message;
+        sigc::signal<void> m_sig_new_subject_changed;
 
       public:
 
@@ -51,6 +52,10 @@ namespace MESSAGE
 
         void show_entry_new_subject( bool show );
         std::string get_new_subject() const;
+        /// @brief ツールバーにあるスレタイトル入力欄のmap, changedシグナルにつなげたいハンドラをここに接続する
+        sigc::signal<void> sig_new_subject_changed() { return m_sig_new_subject_changed; }
+        /// @brief ツールバーのスレタイトル入力欄に接続して橋渡しするシグナルハンドラ
+        void slot_new_subject_changed() { m_sig_new_subject_changed.emit(); }
 
         SKELETON::EditView* get_text_message();
 

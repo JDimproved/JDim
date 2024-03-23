@@ -64,6 +64,7 @@ namespace MESSAGE
         int m_max_line;
         int m_max_str;
         int m_lng_str_enc{};
+        int m_lng_encoded_subject{}; ///< @brief エンコードしたスレタイトルのバイト数
         int m_lng_iconv;
 
         // 経過時間表示用
@@ -71,9 +72,11 @@ namespace MESSAGE
         std::string m_str_pass;
 
         bool m_text_changed{};
+        bool m_new_subject_changed{}; ///< @brief true なら新スレ作成でスレタイトルが編集された
 
         bool m_over_lines{};
         bool m_over_lng{};
+        bool m_over_subject{}; ///< @brief true ならスレタイトルの最大バイト数を超過した
 
       public:
 
@@ -101,10 +104,15 @@ namespace MESSAGE
         bool is_loading() const override;
 
         // 規制中や行数や文字列がオーバーして書き込めない
-        bool is_broken() const override { return ( ! m_str_pass.empty() || m_over_lines || m_over_lng ); }
+        bool is_broken() const override
+        {
+            return ( ! m_str_pass.empty() || m_over_lines || m_over_lng || m_over_subject );
+        }
 
         // キーを押した        
         bool slot_key_press( GdkEventKey* event ) override;
+
+        void slot_new_subject_changed();
 
         void clock_in() override;
         void write() override;
@@ -115,6 +123,7 @@ namespace MESSAGE
         void focus_view() override;
         bool operate_view( const int control ) override;
 
+        // 特殊文字で増加する文字数を計算する
         static int count_diffs_for_special_char( std::string_view source );
 
       private:
@@ -157,6 +166,9 @@ namespace MESSAGE
 
         void show_status();
 
+        /// @brief スレタイトルの最大バイト数
+        virtual int get_max_subject() const noexcept { return 0; }
+
       protected:
 
         // Viewが所属するAdminクラス
@@ -178,6 +190,9 @@ namespace MESSAGE
 
         // テキストの折り返し
         void set_wrap();
+
+        /// @brief エンコードしたスレタイトルのバイト数
+        int get_lng_encoded_subject() const noexcept { return m_lng_encoded_subject; }
     };
 }
 

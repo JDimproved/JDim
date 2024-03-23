@@ -969,6 +969,17 @@ void MessageViewBase::slot_text_changed()
 }
 
 
+/**
+ * @brief 書き込み欄のスレタイトルが更新された
+ */
+void MessageViewBase::slot_new_subject_changed()
+{
+    m_new_subject_changed = true;
+    show_status();
+    m_new_subject_changed = false;
+}
+
+
 //
 // ステータス表示
 //
@@ -1011,6 +1022,18 @@ void MessageViewBase::show_status()
         ss << "/ " << m_max_str;
         if( m_max_str < m_lng_str_enc ) m_over_lng = true;
         else m_over_lng = false;
+    }
+
+    // スレタイトルの最大バイト数が設定されている板は文字(バイト)数をカウントして表示する
+    if( const int max_subject = get_max_subject(); max_subject ) {
+        if( m_new_subject_changed ) {
+            std::string new_subject = MESSAGE::get_admin()->get_new_subject();
+            const std::string& encoded_subject = m_iconv->convert( new_subject.data(), new_subject.size() );
+            m_lng_encoded_subject = static_cast<int>( encoded_subject.size() );
+            m_lng_encoded_subject += count_diffs_for_special_char( encoded_subject );
+        }
+        ss << "   /  スレタイトルの文字数 " << m_lng_encoded_subject << "/ " << max_subject;
+        m_over_subject = max_subject < m_lng_encoded_subject;
     }
 
     if( DBTREE::get_unicode( get_url() ) == "pass" ) ss << " / unicode ○";
