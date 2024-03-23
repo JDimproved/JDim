@@ -247,6 +247,15 @@ int BoardBase::line_number() const
 }
 
 
+/**
+ * @brief スレタイトルの最大バイト数
+ */
+int BoardBase::subject_count() const
+{
+    return 0;
+}
+
+
 // 最大書き込みバイト数
 int BoardBase::message_count() const
 {

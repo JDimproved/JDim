@@ -324,6 +324,9 @@ namespace DBTREE
     // 最大改行数/2
     int line_number( const std::string& url );
 
+    /// @brief スレタイトルの最大バイト数
+    int subject_count( const std::string& url );
+
     // 最大書き込みバイト数
     int message_count( const std::string& url );
 

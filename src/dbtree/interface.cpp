@@ -1220,6 +1220,11 @@ int DBTREE::line_number( const std::string& url )
     return DBTREE::get_board( url )->line_number();
 }
 
+int DBTREE::subject_count( const std::string& url )
+{
+    return DBTREE::get_board( url )->subject_count();
+}
+
 int DBTREE::message_count( const std::string& url )
 {
     return DBTREE::get_board( url )->message_count();

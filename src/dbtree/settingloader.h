@@ -30,6 +30,9 @@ namespace DBTREE
         // 最大改行数/2
         int m_line_number{};
 
+        /// @brief スレタイトルの最大バイト数
+        int m_subject_count{};
+
         // 最大書き込みバイト数
         int m_message_count{};
 
@@ -43,6 +46,7 @@ namespace DBTREE
 
         const std::string& default_noname() const { return m_default_noname; }
         int line_number() const noexcept { return m_line_number; }
+        int subject_count() const noexcept { return m_subject_count; }
         int message_count() const noexcept { return m_message_count; }
         const std::string& get_unicode() const { return m_unicode; }
 

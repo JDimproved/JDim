@@ -78,6 +78,7 @@ void SettingLoader::parse_data()
 
     m_default_noname = cf.get_option_str( "BBS_NONAME_NAME", "No Name" );
     m_line_number = cf.get_option_int( "BBS_LINE_NUMBER", 0, 0, 8192 );
+    m_subject_count = cf.get_option_int( "BBS_SUBJECT_COUNT", 0, 0, 8192 );
     m_message_count = cf.get_option_int( "BBS_MESSAGE_COUNT", 0, 0, 81920 );
     m_unicode = cf.get_option_str( "BBS_UNICODE", "" );
     const int num_stop = cf.get_option_int( "BBS_THREAD_STOP", 0, 0, CONFIG::get_max_resnumber() );
@@ -94,6 +95,7 @@ void SettingLoader::parse_data()
     std::cout << "SettingLoader::parse url = " << get_url() << std::endl
               << "default_noname = " << m_default_noname << std::endl
               << "line_number = " << m_line_number << std::endl
+              << "subject_count = " << m_subject_count << std::endl
               << "message_count = " << m_message_count << std::endl
               << "unicode = " << m_unicode << std::endl;
 #endif

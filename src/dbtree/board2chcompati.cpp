@@ -456,6 +456,18 @@ int Board2chCompati::line_number() const
 }
 
 
+/**
+ * @brief スレタイトルの最大バイト数
+ */
+int Board2chCompati::subject_count() const
+{
+    if( m_settingloader
+        && m_settingloader->get_code() == HTTP_OK ) return m_settingloader->subject_count();
+
+    return BoardBase::subject_count();
+}
+
+
 int Board2chCompati::message_count() const
 {
     if( m_settingloader

@@ -58,6 +58,7 @@ namespace DBTREE
         std::string settingtxt() const override;
         std::string default_noname() const override;
         int line_number() const override;
+        int subject_count() const override;
         int message_count() const override;
         std::string get_unicode() const override;
 

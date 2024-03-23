@@ -344,6 +344,9 @@ namespace DBTREE
         // 最大改行数/2
         virtual int line_number() const;
 
+        /// @brief スレタイトルの最大バイト数
+        virtual int subject_count() const;
+
         // 最大書き込みバイト数
         virtual int message_count() const;
 
