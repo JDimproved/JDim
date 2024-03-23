@@ -10,6 +10,7 @@
 #include "skeleton/jdtoolbar.h"
 
 #include <memory>
+#include <string_view>
 
 
 namespace JDLIB
@@ -113,6 +114,8 @@ namespace MESSAGE
         void redraw_view() override;
         void focus_view() override;
         bool operate_view( const int control ) override;
+
+        static int count_diffs_for_special_char( std::string_view source );
 
       private:
 

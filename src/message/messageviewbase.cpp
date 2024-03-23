@@ -1001,18 +1001,7 @@ void MessageViewBase::show_status()
     {
         const std::string& str_enc = m_iconv->convert( message.data(), message.size() );
         m_lng_str_enc = str_enc.length();
-
-        // 特殊文字の文字数を計算
-        for( const char c : str_enc ) {
-            if( c == '\n' || c == '"' ) {
-                // " <br> " = 6バイト,  &quot; = 6バイト
-                m_lng_str_enc += 5;
-            }
-            else if( c == '<' || c == '>' ) {
-                // &lt; = 4バイト, &gt; = 4バイト
-                m_lng_str_enc += 3;
-            }
-        }
+        m_lng_str_enc += count_diffs_for_special_char( str_enc );
 
         ss << m_lng_str_enc;
     }
@@ -1079,4 +1068,27 @@ void MessageViewBase::save_postlog()
     const std::string mail = get_entry_mail().get_text();
 
     MESSAGE::get_log_manager()->save( get_url(), subject, msg, name, mail );
+}
+
+
+/** @brief 特殊文字で増加する文字数を計算する
+ *
+ * @details 書き込み内容に含まれるいくつかの文字(=特殊文字)は変換されて文字数が増える。
+ * @param[in] source 特殊文字が含まれているかもしれない文字列
+ * @return 特殊文字を変換したとき入力文字列より増加した分の文字数を返す
+ */
+int MessageViewBase::count_diffs_for_special_char( std::string_view source )
+{
+    int diff = 0;
+    for( const char c : source ) {
+        if( c == '\n' || c == '"' ) {
+            // " <br> " = 6バイト,  &quot; = 6バイト
+            diff += 5;
+        }
+        else if( c == '<' || c == '>' ) {
+            // &lt; = 4バイト, &gt; = 4バイト
+            diff += 3;
+        }
+    }
+    return diff;
 }
