@@ -969,6 +969,17 @@ void MessageViewBase::slot_text_changed()
 }
 
 
+/**
+ * @brief 書き込み欄のスレタイトルが更新された
+ */
+void MessageViewBase::slot_new_subject_changed()
+{
+    m_new_subject_changed = true;
+    show_status();
+    m_new_subject_changed = false;
+}
+
+
 //
 // ステータス表示
 //
@@ -1001,18 +1012,7 @@ void MessageViewBase::show_status()
     {
         const std::string& str_enc = m_iconv->convert( message.data(), message.size() );
         m_lng_str_enc = str_enc.length();
-
-        // 特殊文字の文字数を計算
-        for( const char c : str_enc ) {
-            if( c == '\n' || c == '"' ) {
-                // " <br> " = 6バイト,  &quot; = 6バイト
-                m_lng_str_enc += 5;
-            }
-            else if( c == '<' || c == '>' ) {
-                // &lt; = 4バイト, &gt; = 4バイト
-                m_lng_str_enc += 3;
-            }
-        }
+        m_lng_str_enc += count_diffs_for_special_char( str_enc );
 
         ss << m_lng_str_enc;
     }
@@ -1022,6 +1022,18 @@ void MessageViewBase::show_status()
         ss << "/ " << m_max_str;
         if( m_max_str < m_lng_str_enc ) m_over_lng = true;
         else m_over_lng = false;
+    }
+
+    // スレタイトルの最大バイト数が設定されている板は文字(バイト)数をカウントして表示する
+    if( const int max_subject = get_max_subject(); max_subject ) {
+        if( m_new_subject_changed ) {
+            std::string new_subject = MESSAGE::get_admin()->get_new_subject();
+            const std::string& encoded_subject = m_iconv->convert( new_subject.data(), new_subject.size() );
+            m_lng_encoded_subject = static_cast<int>( encoded_subject.size() );
+            m_lng_encoded_subject += count_diffs_for_special_char( encoded_subject );
+        }
+        ss << "   /  スレタイトルの文字数 " << m_lng_encoded_subject << "/ " << max_subject;
+        m_over_subject = max_subject < m_lng_encoded_subject;
     }
 
     if( DBTREE::get_unicode( get_url() ) == "pass" ) ss << " / unicode ○";
@@ -1079,4 +1091,27 @@ void MessageViewBase::save_postlog()
     const std::string mail = get_entry_mail().get_text();
 
     MESSAGE::get_log_manager()->save( get_url(), subject, msg, name, mail );
+}
+
+
+/** @brief 特殊文字で増加する文字数を計算する
+ *
+ * @details 書き込み内容に含まれるいくつかの文字(=特殊文字)は変換されて文字数が増える。
+ * @param[in] source 特殊文字が含まれているかもしれない文字列
+ * @return 特殊文字を変換したとき入力文字列より増加した分の文字数を返す
+ */
+int MessageViewBase::count_diffs_for_special_char( std::string_view source )
+{
+    int diff = 0;
+    for( const char c : source ) {
+        if( c == '\n' || c == '"' ) {
+            // " <br> " = 6バイト,  &quot; = 6バイト
+            diff += 5;
+        }
+        else if( c == '<' || c == '>' ) {
+            // &lt; = 4バイト, &gt; = 4バイト
+            diff += 3;
+        }
+    }
+    return diff;
 }

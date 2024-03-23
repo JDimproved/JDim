@@ -25,6 +25,8 @@ namespace MESSAGE
     // 新スレ立て用ビュー
     class MessageViewNew : public MessageViewBase
     {
+        int m_max_subject; ///< @brief スレタイトルの最大バイト数
+
       public:
         MessageViewNew( const std::string& url, const std::string& msg );
         ~MessageViewNew() noexcept override = default;
@@ -34,6 +36,7 @@ namespace MESSAGE
       private:
         void write_impl( const std::string& msg ) override;
         std::string create_message( const bool utf8_post ) override;
+        int get_max_subject() const noexcept override { return m_max_subject; }
     };
 
 }

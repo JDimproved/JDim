@@ -149,6 +149,11 @@ void MessageToolBar::pack_buttons()
 
                         m_tool_new_subject = Gtk::manage( new Gtk::ToolItem );
                         m_entry_new_subject = Gtk::manage( new Gtk::Entry );
+                        // map(表示)したときと新規スレ名を入力したときに処理するシグナル
+                        m_entry_new_subject->signal_map().connect(
+                            sigc::mem_fun( MESSAGE::get_admin(), &MessageAdmin::slot_new_subject_changed ) );
+                        m_entry_new_subject->signal_changed().connect(
+                            sigc::mem_fun( MESSAGE::get_admin(), &MessageAdmin::slot_new_subject_changed ) );
 
                         m_entry_new_subject->set_size_request( 0 );
 

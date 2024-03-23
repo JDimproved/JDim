@@ -62,6 +62,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_label_noname_value{ DBTREE::default_noname( get_url() ) }
     , m_label_max_line{ "1レスの最大改行数:" }
     , m_label_max_byte{ "1レスの最大バイト数:" }
+    , m_label_max_subject_byte{ "スレタイトルの最大バイト数:" }
     , m_label_maxres{ "最大レス数 (0 : 未設定):" }
     , m_label_last_access{ "最終アクセス日時:" }
     , m_hbox_modified{ Gtk::ORIENTATION_HORIZONTAL, 10 }
@@ -266,6 +267,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     // 一般ページのパッキング
     m_label_max_line_value.set_text( std::to_string( DBTREE::line_number( get_url() ) * 2 ) );
     m_label_max_byte_value.set_text( std::to_string( DBTREE::message_count( get_url() ) ) );
+    m_label_max_subject_byte_value.set_text( std::to_string( DBTREE::subject_count( get_url() ) ) );
 
     // 最大レス数
     const int max_res = DBTREE::board_get_number_max_res( get_url() );
@@ -331,37 +333,39 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_grid_general.set_column_spacing( 10 );
     m_grid_general.set_row_spacing( 8 );
 
-    m_grid_general.attach( m_label_name,           0, 0, 1, 1 );
-    m_grid_general.attach( m_label_name_value,     1, 0, 1, 1 );
-    m_grid_general.attach( m_label_url,            0, 1, 1, 1 );
-    m_grid_general.attach( m_label_url_value,      1, 1, 1, 1 );
-    m_grid_general.attach( m_label_cache,          0, 2, 1, 1 );
-    m_grid_general.attach( m_label_cache_value,    1, 2, 1, 1 );
-    m_grid_general.attach( m_label_noname,         0, 3, 1, 1 );
-    m_grid_general.attach( m_label_noname_value,   1, 3, 1, 1 );
-    m_grid_general.attach( m_label_max_line,       0, 4, 1, 1 );
-    m_grid_general.attach( m_label_max_line_value, 1, 4, 1, 1 );
-    m_grid_general.attach( m_label_max_byte,       0, 5, 1, 1 );
-    m_grid_general.attach( m_label_max_byte_value, 1, 5, 1, 1 );
+    m_grid_general.attach( m_label_name,                   0, 0, 1, 1 );
+    m_grid_general.attach( m_label_name_value,             1, 0, 1, 1 );
+    m_grid_general.attach( m_label_url,                    0, 1, 1, 1 );
+    m_grid_general.attach( m_label_url_value,              1, 1, 1, 1 );
+    m_grid_general.attach( m_label_cache,                  0, 2, 1, 1 );
+    m_grid_general.attach( m_label_cache_value,            1, 2, 1, 1 );
+    m_grid_general.attach( m_label_noname,                 0, 3, 1, 1 );
+    m_grid_general.attach( m_label_noname_value,           1, 3, 1, 1 );
+    m_grid_general.attach( m_label_max_line,               0, 4, 1, 1 );
+    m_grid_general.attach( m_label_max_line_value,         1, 4, 1, 1 );
+    m_grid_general.attach( m_label_max_byte,               0, 5, 1, 1 );
+    m_grid_general.attach( m_label_max_byte_value,         1, 5, 1, 1 );
+    m_grid_general.attach( m_label_max_subject_byte,       0, 6, 1, 1 );
+    m_grid_general.attach( m_label_max_subject_byte_value, 1, 6, 1, 1 );
 
-    m_grid_general.attach( m_label_maxres,            0, 6, 1, 1 );
-    m_grid_general.attach( m_spin_maxres,             1, 6, 1, 1 );
-    m_grid_general.attach( m_label_last_access,       0, 7, 1, 1 );
-    m_grid_general.attach( m_label_last_access_value, 1, 7, 1, 1 );
-    m_grid_general.attach( m_label_modified,          0, 8, 1, 1 );
-    m_grid_general.attach( m_hbox_modified,           1, 8, 1, 1 );
-    m_grid_general.attach( m_label_live,              0, 9, 1, 1 );
-    m_grid_general.attach( m_hbox_live,               1, 9, 1, 1 );
-    m_grid_general.attach( m_label_charset,           0, 10, 1, 1 );
-    m_grid_general.attach( m_hbox_charset,            1, 10, 1, 1 );
+    m_grid_general.attach( m_label_maxres,            0, 7, 1, 1 );
+    m_grid_general.attach( m_spin_maxres,             1, 7, 1, 1 );
+    m_grid_general.attach( m_label_last_access,       0, 8, 1, 1 );
+    m_grid_general.attach( m_label_last_access_value, 1, 8, 1, 1 );
+    m_grid_general.attach( m_label_modified,          0, 9, 1, 1 );
+    m_grid_general.attach( m_hbox_modified,           1, 9, 1, 1 );
+    m_grid_general.attach( m_label_live,              0, 10, 1, 1 );
+    m_grid_general.attach( m_hbox_live,               1, 10, 1, 1 );
+    m_grid_general.attach( m_label_charset,           0, 11, 1, 1 );
+    m_grid_general.attach( m_hbox_charset,            1, 11, 1, 1 );
 
-    m_grid_general.attach( m_revealer_encoding, 0, 11, 2, 1 );
-    m_grid_general.attach( m_check_oldlog,      1, 12, 1, 1 );
-    m_grid_general.attach( m_frame_write,       0, 13, 2, 1 );
-    m_grid_general.attach( m_frame_cookie,      0, 14, 2, 1 );
+    m_grid_general.attach( m_revealer_encoding, 0, 12, 2, 1 );
+    m_grid_general.attach( m_check_oldlog,      1, 13, 1, 1 );
+    m_grid_general.attach( m_frame_write,       0, 14, 2, 1 );
+    m_grid_general.attach( m_frame_cookie,      0, 15, 2, 1 );
 
     // 項目名と値のラベルを設定する
-    for( int y = 0; y < 6; ++y ) {
+    for( int y = 0; y < 7; ++y ) {
         // label column
         Gtk::Widget* child = m_grid_general.get_child_at( 0, y );
         child->set_halign( Gtk::ALIGN_START );
@@ -373,7 +377,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         static_cast<Gtk::Label*>( child )->set_selectable( true );
     }
     // 項目名を設定する
-    for( int y = 6; y < 11; ++y ) {
+    for( int y = 7; y < 12; ++y ) {
         // label column
         Gtk::Widget* child = m_grid_general.get_child_at( 0, y );
         child->set_halign( Gtk::ALIGN_START );
