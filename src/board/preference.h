@@ -130,6 +130,8 @@ namespace BOARD
         Gtk::Label m_label_max_line_value;
         Gtk::Label m_label_max_byte;
         Gtk::Label m_label_max_byte_value;
+        Gtk::Label m_label_max_subject_byte;
+        Gtk::Label m_label_max_subject_byte_value;
 
         // 最大レス数
         Gtk::Label m_label_maxres;
