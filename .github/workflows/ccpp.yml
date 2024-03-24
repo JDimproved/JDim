@@ -31,13 +31,9 @@ jobs:
       - name: ninja -C builddir
         run: ninja -C builddir
         # Since Meson 0.57, `test` subcommand will only rebuild test program.
-        # Set a timeout for test program using AddressSanitizer to prevent hang-ups.
-      - name: meson test -v -C builddir --timeout-multiplier 1
-        run: meson test -v -C builddir --timeout-multiplier 1
-        continue-on-error: true
-        id: meson_test
+      - name: meson test -v -C builddir
+        run: meson test -v -C builddir
       - name: ./builddir/src/jdim -V
-        if: ${{ steps.meson_test.outcome == 'success' }}
         run: ./builddir/src/jdim -V
 
   compiler-20:
