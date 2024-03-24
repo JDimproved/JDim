@@ -139,8 +139,12 @@ WaylandやXWaylandではX11限定の機能を使うことができないため�
 * Wayland環境では画像ビュー(ウインドウ表示)のフォーカスが外れたら折りたたむ機能が正常に動作しない。
 * gcc(バージョン10以降)を使いAddressSanitizer(ASan)を有効にしてビルドすると
   書き込みのプレビューでトリップを表示するときにクラッシュすることがある。([Issue #943][#943]を参照)
+* Ubuntu 22.04(23.10でも確認)の環境でASanを有効にしてビルドしたプログラムを実行すると
+  `AddressSanitizer:DEADLYSIGNAL`を出力し続けてハングアップすることがある。([README.md][readme-hungup-asan]を参照)
+
 
 [#943]: https://github.com/JDimproved/JDim/issues/943
+[readme-hungup-asan]: https://github.com/JDimproved/JDim/blob/master/README.md#hungup-with-asan
 
 
 <a name="compatibility"></a>

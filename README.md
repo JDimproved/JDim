@@ -55,7 +55,6 @@ Ubuntu 20.04(2020年)より前にリリースされたディストリビュー�
 Snap i386(32bit)版は2023年1月のリリースをもって[更新を終了][#890]しました。
 i386版ディストロを利用されている場合は更新をお願いいたします。
 
-[#1035]: https://github.com/JDimproved/JDim/issues/1035
 [#445]: https://github.com/JDimproved/JDim/issues/445
 [#890]: https://github.com/JDimproved/JDim/issues/890
 
@@ -183,6 +182,25 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
     ```
 
 [trip]: https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%AA%E3%83%83%E3%83%97_(%E9%9B%BB%E5%AD%90%E6%8E%B2%E7%A4%BA%E6%9D%BF)
+
+<a name="hungup-with-asan"></a>
+* **AddressSanitizer(ASan) を有効にするときの注意 その2**
+
+  Ubuntu 22.04(23.10でも確認)の環境でASanを有効にしてビルドしたプログラムを実行すると
+  `AddressSanitizer:DEADLYSIGNAL`を出力し続けてハングアップすることがある。([#1363 (comment)][#1363])
+
+  #### ASanを有効したプログラムでハングアップを回避する方法
+
+  sysctl で設定値を表示して `vm.mmap_rnd_bits = 32` になっていたら値を `28` に変更してJDimやテストを実行する
+  ```sh
+  $ sudo sysctl -a | grep vm.mmap.rnd
+  vm.mmap_rnd_bits = 32
+  vm.mmap_rnd_compat_bits = 16
+
+  $ sudo sysctl vm.mmap_rnd_bits=28
+  ```
+
+[#1363]: https://github.com/JDimproved/JDim/pull/1363#issuecomment-2001988311
 
 <a name="sudo-meson-install"></a>
 * **`sudo meson install`するとバージョンからgitコミット情報が消える場合**
@@ -314,6 +332,8 @@ WaylandやXWaylandではX11限定の機能を使うことができないため�
 * Wayland環境では画像ビュー(ウインドウ表示)のフォーカスが外れたら折りたたむ機能が正常に動作しない。
 * gcc(バージョン10以降)を使いAddressSanitizer(ASan)を有効にしてビルドすると
   書き込みのプレビューでトリップを表示するときにクラッシュすることがある。([上記](#crash-with-asan)を参照)
+* Ubuntu 22.04(23.10でも確認)の環境でASanを有効にしてビルドしたプログラムを実行すると
+  `AddressSanitizer:DEADLYSIGNAL`を出力し続けてハングアップすることがある。([上記](#hungup-with-asan)を参照)
 
 
 ## JDとの互換性
