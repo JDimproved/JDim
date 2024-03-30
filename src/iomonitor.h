@@ -11,6 +11,9 @@
 
 namespace CORE
 {
+    /// @brief メインウインドウの仮想URL
+    constexpr const char* kURL_WinMain = "jdwin://main";
+
     enum
     {
         FIFO_OK = 0,
