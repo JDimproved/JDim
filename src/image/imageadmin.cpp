@@ -847,7 +847,7 @@ void ImageAdmin::switch_img( const std::string& url )
     auto adjust = m_scrwin.get_hadjustment();
     if( page != -1 && adjust ){
         double pos = adjust->get_value();
-        double upper =  m_list_view.size() * ICON_SIZE;
+        double upper = static_cast<double>( m_list_view.size() * ICON_SIZE );
         double width = adjust->get_page_size();
         double pos_to = page * ICON_SIZE;
 

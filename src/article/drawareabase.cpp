@@ -5449,7 +5449,7 @@ gboolean DrawAreaBase::deceleration_tick_cb( GtkWidget* cwidget, GdkFrameClock* 
 gboolean DrawAreaBase::deceleration_tick_impl( GdkFrameClock* clock )
 {
     const gint64 current_time = gdk_frame_clock_get_frame_time( clock );
-    m_deceleration.elapsed += ( current_time - m_deceleration.last_time ) * kDecelerationRatio;
+    m_deceleration.elapsed += static_cast<double>( current_time - m_deceleration.last_time ) * kDecelerationRatio;
     m_deceleration.last_time = current_time;
     const double exp_part = std::exp( -kDecelerationFriction * m_deceleration.elapsed );
     const double dy = -kDecelerationFriction * exp_part * m_deceleration.initial_dy;
