@@ -268,7 +268,7 @@ int SESSION::parse_item( const std::string& item_name )
 }
 
 
-std::vector< int > parse_items( const std::string& items_str )
+static std::vector<int> parse_items( const std::string& items_str )
 {
     std::vector< int > items;
     const std::list< std::string > list_order = MISC::split_line( items_str );
@@ -283,7 +283,7 @@ std::vector< int > parse_items( const std::string& items_str )
 }
 
 
-void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls,  std::list< std::string >& list_urls )
+static void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls,  std::list< std::string >& list_urls )
 {
     list_urls.clear();
 
@@ -295,7 +295,7 @@ void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls,  std::li
 }
 
 
-void read_list_locked( JDLIB::ConfLoader& cf, const std::string& id_locked, std::list< bool >& list_locked )
+static void read_list_locked( JDLIB::ConfLoader& cf, const std::string& id_locked, std::list< bool >& list_locked )
 {
     list_locked.clear();
 

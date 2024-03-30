@@ -790,7 +790,7 @@ Gtk::AccelKey CONTROL::get_accelkey( const int id )
 /////////////////////////////////////////////////////////
 
 
-const std::string convert_mouse_motions( std::string motions )
+static std::string convert_mouse_motions( std::string motions )
 {
     motions = MISC::replace_str( motions, "8", "↑" );
     motions = MISC::replace_str( motions, "6", "→" );
@@ -801,7 +801,7 @@ const std::string convert_mouse_motions( std::string motions )
 }
 
 
-const std::string convert_mouse_motions_reverse( std::string motions )
+static std::string convert_mouse_motions_reverse( std::string motions )
 {
     motions = MISC::replace_str( motions, "↑", "8" );
     motions = MISC::replace_str( motions, "→", "6" );

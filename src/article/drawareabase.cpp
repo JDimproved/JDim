@@ -4073,7 +4073,7 @@ LAYOUT* DrawAreaBase::set_caret( CARET_POSITION& caret_pos, int x, int y )
 //
 
 // 区切り文字
-bool is_separate_char( const char32_t unich )
+static bool is_separate_char( const char32_t unich )
 {
     if( unich == ' '
 

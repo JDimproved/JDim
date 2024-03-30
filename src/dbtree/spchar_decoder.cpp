@@ -15,19 +15,6 @@
 #include <stdlib.h>
 
 
-bool check_spchar( const char* n_in, const char* spchar )
-{
-    int i = 0;
-    while( spchar[ i ] != '\0' ){
-
-        if( n_in[ i ] != spchar[ i ] ) return false;
-        ++i;
-    }
-
-    return true;
-}
-
-
 /**
  * @brief HTMLの数値文字参照 `&#数字;` をUTF-8文字列にデコードする
  *
