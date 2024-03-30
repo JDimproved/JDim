@@ -107,7 +107,7 @@ std::string ENVIRONMENT::get_configure_args( const int mode )
 // リビジョンが得られなかった場合（tarballのソース等）は、fallbackの日付を返す
 // git_dirtyは、まだcommitされてない変更があるかどうか
 //
-std::string get_git_revision (const char *git_date, const char *git_hash, const int git_dirty, const char *fallback_date)
+static std::string get_git_revision (const char *git_date, const char *git_hash, const int git_dirty, const char *fallback_date)
 {
     bool date_valid = false;
     if( git_date )

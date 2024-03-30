@@ -38,7 +38,7 @@ enum
 //
 // 行の最新アドレスを取得
 //
-const std::string get_uptodate_url( const std::string& url_org, const int type )
+static std::string get_uptodate_url( const std::string& url_org, const int type )
 {
     std::string url = url_org;
 
@@ -58,7 +58,7 @@ const std::string get_uptodate_url( const std::string& url_org, const int type )
 //
 // 行の最新状態を取得
 //
-int get_uptodate_type( const std::string& url, const int type_org )
+static int get_uptodate_type( const std::string& url, const int type_org )
 {
     int type = type_org;
 

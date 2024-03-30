@@ -43,7 +43,7 @@ static JDWinMain* Win_Main = nullptr;
 
 // SIGINTのハンドラ
 [[noreturn]]
-void sig_handler( int sig )
+static void sig_handler( int sig )
 {
     if( sig == SIGHUP || sig == SIGINT || sig == SIGQUIT ){
 
@@ -62,12 +62,12 @@ void sig_handler( int sig )
 #ifdef USE_XSMP
 
 // セッションが終了したので情報を保存するコールバック関数
-void xsmp_session_save_yourself( SmcConn smc_connect,
-                                 SmPointer client_data,
-                                 int save_type,
-                                 Bool shutdown,
-                                 int interact_style,
-                                 Bool fast )
+static void xsmp_session_save_yourself( SmcConn smc_connect,
+                                        SmPointer client_data,
+                                        int save_type,
+                                        Bool shutdown,
+                                        int interact_style,
+                                        Bool fast )
 {
     if( shutdown && !fast ){
 #ifdef _DEBUG
@@ -81,15 +81,15 @@ void xsmp_session_save_yourself( SmcConn smc_connect,
 
 
 // ダミー
-void xsmp_session_die( SmcConn conn, SmPointer data ){}
-void xsmp_session_save_complete( SmcConn conn, SmPointer data ){}
-void xsmp_session_shutdown_cancelled( SmcConn conn, SmPointer data ){} 
+static void xsmp_session_die( SmcConn conn, SmPointer data ) {}
+static void xsmp_session_save_complete( SmcConn conn, SmPointer data ) {}
+static void xsmp_session_shutdown_cancelled( SmcConn conn, SmPointer data ) {}
 
 
 
-gboolean ice_process_message( GIOChannel *channel,
-                              GIOCondition condition,
-                              XSMPDATA *xsmpdata )
+static gboolean ice_process_message( GIOChannel *channel,
+                                     GIOCondition condition,
+                                     XSMPDATA *xsmpdata )
 {
     if( ! xsmpdata->ice_connect ) return FALSE;
 
@@ -114,10 +114,10 @@ gboolean ice_process_message( GIOChannel *channel,
 }
 
 
-void ice_watch_proc( IceConn ice_connect,
-                     IcePointer client_data,
-                     Bool opening,
-                     IcePointer *watch_data )
+static void ice_watch_proc( IceConn ice_connect,
+                            IcePointer client_data,
+                            Bool opening,
+                            IcePointer *watch_data )
 {
     XSMPDATA *xsmpdata = reinterpret_cast<XSMPDATA*>( client_data );
     xsmpdata->ice_connect = ice_connect;
@@ -156,7 +156,7 @@ void ice_watch_proc( IceConn ice_connect,
 
 
 // XSMP初期化関数
-void xsmp_session_init( XSMPDATA* xsmpdata )
+static void xsmp_session_init( XSMPDATA* xsmpdata )
 {
     if( xsmpdata->smc_connect ) return;
     if( g_getenv("SESSION_MANAGER") == nullptr ) return;
@@ -192,7 +192,7 @@ void xsmp_session_init( XSMPDATA* xsmpdata )
 
 
 // XSMP終了関数
-void xsmp_session_end( XSMPDATA* xsmpdata )
+static void xsmp_session_end( XSMPDATA* xsmpdata )
 {
     if( xsmpdata->smc_connect ) SmcCloseConnection( xsmpdata->smc_connect, 0, nullptr );
     xsmpdata->smc_connect = nullptr;

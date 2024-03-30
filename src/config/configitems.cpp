@@ -33,7 +33,7 @@ using namespace CONFIG;
 
 #define IS_DEFAULT_FONT( name ) do{ if( set_fonts.find( name ) != set_fonts.end() ) return name; } while(0)
 
-std::string get_default_font()
+static std::string get_default_font()
 {
     std::set< std::string > set_fonts = MISC::get_font_families();
 
