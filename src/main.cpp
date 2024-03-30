@@ -406,15 +406,13 @@ bool App::setup_fifo( std::string url )
             // マルチモードでなく、メインプロセスでもない場合は終了
             if( ! multi_mode && ! iomonitor.is_main_process() ) return false;
         }
-        // マルチモードでなく、メインプロセスでもない場合は問い合わせる
+        // マルチモードではなく、メインプロセスでもない場合はメインプロセスのウインドウを最前面に表示して終了する
+        // NOTE: "最前面に表示" はデスクトップ環境によって挙動が異なる可能性がある
         else if( ! multi_mode && ! iomonitor.is_main_process() )
         {
-            Gtk::MessageDialog mdiag( "JDimは既に起動しています。起動しますか？\n\n起動中のJDimが存在しない場合\n"
-                                          + CACHE::path_lock() + " を削除してください。",
-                                      false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
-            mdiag.set_title( "ロックファイルが見つかりました" );
-            const int ret = mdiag.run();
-            if( ret != Gtk::RESPONSE_YES ) return false;
+            // FIFOに書き込む
+            iomonitor.send_command( CORE::kURL_WinMain );
+            return false;
         }
     }
     // FIFOに問題がある(FATで作成出来ないなど)

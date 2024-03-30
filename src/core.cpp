@@ -3197,6 +3197,12 @@ void Core::exec_command()
     else if( command.command  == "quit_jd" ) slot_quit();
 
 
+    // メインウインドウを最前面に表示する
+    // NOTE: "最前面に表示" はデスクトップ環境によって挙動が異なる可能性がある
+    else if( command.command == "present_mainwin" ) {
+        m_win_main.present( static_cast<guint32>( g_get_monotonic_time() / 1000 ) );
+    }
+
     // 最大化/最大化解除
     else if( command.command == "maximize_mainwin" ){
 
