@@ -861,9 +861,9 @@ NODE* NodeTreeBase::create_node_space( const int type, const int bg )
                              && m_node_previous->type != NODE_MULTISP
                              && m_node_previous->type != NODE_HTAB ) ) {
         tmpnode = create_node();
-        tmpnode->type = type;
+        tmpnode->type = static_cast<unsigned char>( type );
         tmpnode->color_text = COLOR_CHAR;
-        tmpnode->color_back = bg;
+        tmpnode->color_back = static_cast<unsigned char>( bg );
         tmpnode->bold = false;
     }
     else {

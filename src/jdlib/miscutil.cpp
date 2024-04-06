@@ -1473,8 +1473,8 @@ std::string MISC::base64( const std::string& str )
         unsigned char key[ 4 ];
 
         key[ 0 ] = (*cstr) >> 2;
-        key[ 1 ] = ( ( (*cstr) << 4 ) + ( (*(cstr+1)) >> 4 ) );
-        key[ 2 ] = ( ( (*(cstr+1)) << 2 ) + ( (*(cstr+2)) >> 6 ) );
+        key[ 1 ] = static_cast<unsigned char>( ( (*cstr) << 4 ) + ( (*(cstr+1)) >> 4 ) );
+        key[ 2 ] = static_cast<unsigned char>( ( (*(cstr+1)) << 2 ) + ( (*(cstr+2)) >> 6 ) );
         key[ 3 ] = *(cstr+2);
 
         for( int j = 0; j < 4; ++j ){

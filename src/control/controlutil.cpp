@@ -288,7 +288,7 @@ std::string CONTROL::get_keyname( const guint keysym )
     // データベース内に見つからなかったらアスキー文字を返す
     if( CONTROL::is_ascii( keysym ) ){
         char c[ 2 ];
-        c[ 0 ] = keysym;
+        c[ 0 ] = static_cast<char>( keysym );
         c[ 1 ] = '\0';
         return std::string( c );
     }
