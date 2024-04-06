@@ -490,25 +490,25 @@ int MISC::utf32toutf8( const char32_t uch,  char* utf8str )
 
     if( uch <= 0x7F ){ // ascii
         byte = 1;
-        utf8str[0] = uch;
+        utf8str[0] = static_cast<char>( uch );
     }
     else if( uch <= 0x07FF ){
         byte = 2;
-        utf8str[0] = ( 0xC0 ) + ( uch >> 6 );
-        utf8str[1] = ( 0x80 ) + ( uch & 0x3F );
+        utf8str[0] = static_cast<char>( 0xC0 + ( uch >> 6 ) );
+        utf8str[1] = static_cast<char>( 0x80 + ( uch & 0x3F ) );
     }
     else if( uch <= 0xFFFF ){
         byte = 3;
-        utf8str[0] = ( 0xE0 ) + ( uch >> 12 );
-        utf8str[1] = ( 0x80 ) + ( ( uch >> 6 ) & 0x3F );
-        utf8str[2] = ( 0x80 ) + ( uch & 0x3F );
+        utf8str[0] = static_cast<char>( 0xE0 + ( uch >> 12 ) );
+        utf8str[1] = static_cast<char>( 0x80 + ( ( uch >> 6 ) & 0x3F ) );
+        utf8str[2] = static_cast<char>( 0x80 + ( uch & 0x3F ) );
     }
     else if( uch <= 0x10FFFF ){
         byte = 4;
-        utf8str[0] = ( 0xF0 ) + ( uch >> 18 );
-        utf8str[1] = ( 0x80 ) + ( ( uch >> 12 ) & 0x3F );
-        utf8str[2] = ( 0x80 ) + ( ( uch >> 6 ) & 0x3F );
-        utf8str[3] = ( 0x80 ) + ( uch & 0x3F );
+        utf8str[0] = static_cast<char>( 0xF0 + ( uch >> 18 ) );
+        utf8str[1] = static_cast<char>( 0x80 + ( ( uch >> 12 ) & 0x3F ) );
+        utf8str[2] = static_cast<char>( 0x80 + ( ( uch >> 6 ) & 0x3F ) );
+        utf8str[3] = static_cast<char>( 0x80 + ( uch & 0x3F ) );
     }
 #ifdef _DEBUG
     else{

@@ -2439,7 +2439,7 @@ bool DrawAreaBase::get_selection_byte( const LAYOUT* layout, const SELECTION& se
 //
 // ノードで使うフォントを得る
 //
-char DrawAreaBase::get_layout_fontid( LAYOUT* layout ) const
+int DrawAreaBase::get_layout_fontid( LAYOUT* layout ) const
 {
     if( ! layout->node ) return m_fontid;
 
@@ -2479,7 +2479,7 @@ void DrawAreaBase::set_node_font( LAYOUT* layout )
     if( ! layout->node ) return;
 
     // フォント設定
-    char layout_fontid = get_layout_fontid( layout );
+    const int layout_fontid = get_layout_fontid( layout );
     if( m_fontid != layout_fontid ){
         m_fontid = layout_fontid; // 新しいフォントIDをセット
         switch( m_fontid ){

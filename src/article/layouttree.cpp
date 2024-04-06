@@ -119,7 +119,7 @@ RECTANGLE* LayoutTree::create_rect()
 LAYOUT* LayoutTree::create_layout( const int type )
 {
     LAYOUT* tmplayout = m_heap.heap_alloc<LAYOUT>();
-    tmplayout->type = type;
+    tmplayout->type = static_cast<unsigned char>( type );
     tmplayout->id_header = m_id_header; 
     tmplayout->id = m_id_layout++;
     tmplayout->header = m_last_header;

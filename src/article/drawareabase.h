@@ -445,7 +445,7 @@ namespace ARTICLE
         void render_text_glyphstring( RenderTextArguments& args );
         void render_text_pangolayout( RenderTextArguments& args );
         bool draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci );
-        char get_layout_fontid(LAYOUT *layout ) const;
+        int get_layout_fontid( LAYOUT *layout ) const;
         void set_node_font( LAYOUT* layout );
 
         // drawarea がリサイズ実行
