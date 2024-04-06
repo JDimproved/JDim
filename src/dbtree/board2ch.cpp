@@ -10,8 +10,9 @@
 
 #include "config/globalconf.h"
 
-#include "jdlib/miscutil.h"
+#include "jdlib/cookiemanager.h"
 #include "jdlib/misctime.h"
+#include "jdlib/miscutil.h"
 
 #include "login2ch.h"
 #include "loginbe.h"
@@ -292,13 +293,38 @@ ArticleBase* Board2ch::append_article( const std::string& datbase, const std::st
 
 
 
-// 2chのクッキー
+/** @brief 5ch.net または bbspink.com のクッキーを取得する
+ *
+ * @details about:config 設定から取得したクッキーはHTTPクッキー管理マネージャにまとめる。
+ */
 std::string Board2ch::get_hap() const
 {
     if( ! CONFIG::get_use_cookie_hap() ) return std::string();
 
-    if( get_root().find( ".bbspink.com" ) != std::string::npos ) return CONFIG::get_cookie_hap_bbspink();
-    return CONFIG::get_cookie_hap();
+    std::string saved_cookie;
+    const char* domain; // クッキーはサイトのトップに追加する
+    if( get_root().find( ".bbspink.com" ) != std::string::npos ) {
+        saved_cookie = CONFIG::get_cookie_hap_bbspink();
+        domain = ".bbspink.com";
+    }
+    else {
+        saved_cookie = CONFIG::get_cookie_hap();
+        domain = ".5ch.net";
+    }
+
+    JDLIB::CookieManager* cookie_manager = JDLIB::get_cookie_manager();
+
+    std::size_t start = 0;
+    while( start < saved_cookie.size() ) {
+        const std::size_t end = saved_cookie.find( ';', start );
+        cookie_manager->feed( domain, MISC::utf8_trim( saved_cookie.substr( start, end - start ) ) );
+
+        if( end == std::string::npos ) break;
+        start = end + 1;
+    }
+
+    const std::string hostname = MISC::get_hostname( get_root(), false );
+    return cookie_manager->get_cookie_by_host( hostname );
 }
 
 void Board2ch::set_hap( const std::string& hap )
