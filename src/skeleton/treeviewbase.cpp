@@ -152,8 +152,9 @@ void JDTreeViewBase::delete_selected_rows( const bool force )
     const bool gotobottom = ( ! get_row( next ) );
     if( ! gotobottom ) set_cursor( next );
 
-    for( const Gtk::TreePath& path : list_path ) {
-        Gtk::TreeRow row = get_row( path );
+    // 先頭のrowから削除すると後続のイテレーターが指すrowがずれるため末尾のrowから削除していく
+    for( auto rit = list_path.rbegin(); rit != list_path.rend(); ++rit ) {
+        Gtk::TreeRow row = get_row( *rit );
 
         if( treestore ) treestore->erase( row );
         else liststore->erase( row );
