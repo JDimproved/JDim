@@ -6,10 +6,13 @@
 #include "cookiemanager.h"
 
 #include "jdregex.h"
+#include "misctime.h"
 #include "miscutil.h"
 
+#include <ctime>
 #include <map>
 #include <mutex>
+#include <optional>
 
 
 namespace JDLIB
@@ -25,6 +28,7 @@ struct SimpleCookie
     std::string name;
     std::string value;
     std::string domain;
+    std::optional<std::time_t> expires;
 };
 
 
@@ -129,6 +133,11 @@ bool SimpleCookieParser::parse( const std::string& input, SimpleCookie& result )
         return false;
     }
 
+    if( regex.exec( R"-(expires=([^;]+))-", input, offset, icase, newline, usemigemo, wchar ) ) {
+        if( regex.length( 1 ) > 0 ) {
+            result.expires = MISC::datetotime( regex.str( 1 ) );
+        }
+    }
     if( regex.exec( R"-(path=/([^;]+))-", input, offset, icase, newline, usemigemo, wchar ) ) {
         // ルート(/)以外のpathは解析失敗にする
         if( regex.length( 1 ) ) return false;
@@ -163,7 +172,17 @@ void SimpleCookieManager::feed( const std::string& hostname, const std::string& 
 #endif
 
     std::lock_guard<std::mutex> lock( s_simple_cookie_manager_mutex );
-    m_storage[result.domain][result.name] = result.value;
+    const std::time_t now = std::time( nullptr );
+
+    if( result.expires.has_value() && now > *result.expires ) {
+        // 現在時刻より有効期限が古いcookieは値を消去する
+        auto& domain_cookies = m_storage[result.domain];
+        auto it = domain_cookies.find( result.name );
+        if( it != domain_cookies.end() ) domain_cookies.erase( it );
+    }
+    else {
+        m_storage[result.domain][result.name] = result.value;
+    }
 }
 
 
