@@ -343,7 +343,7 @@ void Board2ch::update_hap()
 {
     if( ! CONFIG::get_use_cookie_hap() ) return;
 
-    const std::string new_cookie = Board2chCompati::cookie_for_request();
+    const std::string new_cookie = cookie_by_host();
 
     if( ! new_cookie.empty() ) {
 #ifdef _DEBUG
