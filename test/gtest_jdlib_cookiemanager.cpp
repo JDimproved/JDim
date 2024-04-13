@@ -74,6 +74,25 @@ TEST_F(CookieManager_GetCookieByHost, parsing_path)
     EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "example.com" ) );
 }
 
+TEST_F(CookieManager_GetCookieByHost, parsing_expires)
+{
+    std::string expect;
+
+    the_cookie_manager->feed( "example.test", "foo=bar" );
+    expect = "foo=bar";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "example.test" ) );
+
+    // expires属性が設定されていないcookieは値を更新する
+    the_cookie_manager->feed( "example.test", "foo=qux;" );
+    expect = "foo=qux";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "example.test" ) );
+
+    // cookieの有効期限が現在時刻より古いときは値を消去する
+    the_cookie_manager->feed( "example.test", "foo=bar; expires=Mon, 01 Apr 2024 09:00:00 GMT" );
+    expect = "";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "example.test" ) );
+}
+
 
 class CookieManager_DeleteCookieByHost : public CookieManager_TestBase {};
 
