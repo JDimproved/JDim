@@ -10,12 +10,14 @@
 #include "misctime.h"
 #include "miscmsg.h"
 
+#include <sys/time.h>
+
+#include <algorithm>
 #include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <locale>
 #include <sstream>
-#include <sys/time.h>
 #include <vector>
 
 
@@ -30,17 +32,29 @@ std::string MISC::timevaltostr( const struct timeval& tv )
 }
 
 
-//
-// 時刻を紀元からの経過秒に直す
-// 日時のフォーマットはHTTPリクエストの形式(RFC 7232 IMF-fixdate)
-//
+/** @brief 時刻を紀元からの経過秒に直す
+ *
+ * @details 日時のフォーマットはHTTPリクエストの形式(RFC 7232 IMF-fixdate)。
+ * 年月日の区切りに半角空白(U+0020)ではなくハイフンマイナス(U+002D)を使う変種も解析する。
+ * @param[in] date IMF-fixdate形式のテキスト
+ * @retval 0 解析に失敗した場合
+ */
 time_t MISC::datetotime( const std::string& date )
 {
     if( date.empty() ) return 0;
 
     std::tm buf{};
-    std::istringstream iss( date );
+    std::istringstream iss;
     iss.imbue( std::locale::classic() ); // Cロケール
+
+    if( const auto i = date.find( '-' ); i != std::string::npos ) {
+        std::string corrected_date = date;
+        std::replace( corrected_date.begin() + i, corrected_date.end(), '-', ' ' );
+        iss.str( std::move( corrected_date ) );
+    }
+    else {
+        iss.str( date );
+    }
 
     iss >> std::get_time( &buf, "%a, %d %b %Y %T GMT" );
     if( iss.fail() ) return 0;
