@@ -21,7 +21,7 @@ namespace CONTROL
 //
 // モード名
 //
-    char mode_label[][ MAX_CONTROL_LABEL ] ={
+    constexpr const char mode_label[][ MAX_CONTROL_LABEL ] ={
         "共通",
         "板一覧／お気に入り",
         "スレ一覧",
