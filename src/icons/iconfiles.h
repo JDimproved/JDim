@@ -12,7 +12,7 @@ enum
 
 namespace ICON
 {
-    char iconfiles[][ MAX_ICON_FILES ]={
+    constexpr const char iconfiles[][ MAX_ICON_FILES ]={
 
         "jd16",
         "jd32",

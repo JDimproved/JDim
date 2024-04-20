@@ -11,7 +11,7 @@ enum
 
 namespace CORE
 {
-    char browsers[ BROWSER_NUM ][ 2 ][ MAX_TEXT ]={
+    constexpr const char browsers[ BROWSER_NUM ][ 2 ][ MAX_TEXT ]={
 
         { "ユーザ設定", "" },
         { "標準ブラウザ(xdg-open)",   "xdg-open \"%LINK\"" },

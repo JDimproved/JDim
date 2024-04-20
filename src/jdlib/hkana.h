@@ -5,7 +5,7 @@
 #ifndef _HKANA_H_
 #define _HKANA_H_
 
-unsigned char hkana_table1[][2][8] =
+constexpr const unsigned char hkana_table1[][2][8] =
 {
     { "｡", "。" }, { "｢", "「" }, { "｣", "」" }, { "､", "、" }, { "･", "・" },
     { "ｦ", "ヲ" },

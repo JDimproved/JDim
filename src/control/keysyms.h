@@ -20,7 +20,7 @@ struct KEYSYMS
 
 namespace CONTROL
 {
-    KEYSYMS keysyms[] ={
+    constexpr KEYSYMS keysyms[] ={
 
         { "Space", GDK_KEY_space },
         { "Escape", GDK_KEY_Escape },
