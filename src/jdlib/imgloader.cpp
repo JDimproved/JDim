@@ -262,9 +262,9 @@ Glib::RefPtr< ImgLoader > ImgProvider::get_loader( const std::string& file )
 // NOT thread safe
 void ImgProvider::set_loader( Glib::RefPtr< ImgLoader > loader )
 {
-    int size = CONFIG::get_imgcache_size();
-    if( size ) {
-        if( m_cache.size() >= (size_t)size ) {
+    const int size = CONFIG::get_imgcache_size();
+    if( size > 0 ) {
+        if( m_cache.size() >= static_cast<std::size_t>(size) ) {
             m_cache.pop_back();
         }
         m_cache.push_front( loader );

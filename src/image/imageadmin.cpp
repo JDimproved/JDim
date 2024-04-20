@@ -984,7 +984,7 @@ void ImageAdmin::scroll_tab( int scroll )
         else if( pos + width >= upper ) pos = upper - width;
 
         // ICON_SIZEの倍数にする
-        else pos = ICON_SIZE * ( ( (int)pos ) / ICON_SIZE );
+        else pos = ICON_SIZE * ( static_cast<int>(pos) / ICON_SIZE );
 
         adjust->set_value( pos );
     }

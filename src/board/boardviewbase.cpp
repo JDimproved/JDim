@@ -2143,8 +2143,8 @@ bool BoardViewBase::slot_button_release( GdkEventButton* event )
         return true;
     }
 
-    const int x = (int)event->x;
-    const int y = (int)event->y;
+    const int x = static_cast<int>(event->x);
+    const int y = static_cast<int>(event->y);
     Gtk::TreeModel::Path path;
     Gtk::TreeViewColumn* column;
     int cell_x;

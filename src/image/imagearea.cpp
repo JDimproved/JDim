@@ -73,23 +73,23 @@ void ImageAreaMain::show_image()
 
     // 画面サイズに合わせる
     if( zoom_to_fit && w_org && h_org ){
-        double scale_w = ( double ) width_max / w_org;
-        double scale_h = ( double ) height_max / h_org;
+        double scale_w = static_cast<double>(width_max) / w_org;
+        double scale_h = static_cast<double>(height_max) / h_org;
 
         const double scale = ( SESSION::get_img_fit_mode() == SESSION::IMG_FIT_NORMAL ) ? std::fmin( scale_w, scale_h )
                                                                                         : scale_w;
 
         if( scale < 1 ){
-            set_width( (int)( w_org * scale ) );
-            set_height( (int)( h_org * scale ) );
+            set_width( static_cast<int>( w_org * scale ) );
+            set_height( static_cast<int>( h_org * scale ) );
         }
     }
 
     // サイズ変更
     else if( size != 100 ){
         const double scale = size / 100.0;
-        set_width( (int)( w_org * scale ) );
-        set_height( (int)( h_org * scale ) );
+        set_width( static_cast<int>( w_org * scale ) );
+        set_height( static_cast<int>( h_org * scale ) );
     }
 
     //データベースのサイズ情報更新

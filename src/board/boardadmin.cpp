@@ -426,7 +426,7 @@ void BoardAdmin::slot_drag_data_get( Gtk::SelectionData& selection_data, const i
     std::cout << "BoardAdmin::slot_drag_data_get page = " << page  << std::endl;
 #endif
 
-    SKELETON::View* view = ( SKELETON::View* )get_notebook()->get_nth_page( page );
+    SKELETON::View* view = dynamic_cast<SKELETON::View*>(get_notebook()->get_nth_page( page ));
     if( ! view ) return;
 
     const std::string url = view->get_url();
