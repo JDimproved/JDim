@@ -124,7 +124,7 @@ void UNDO_BUFFER::commit()
 
     ++m_pos;
     m_max = m_pos;
-    if( (int)m_vec_undo.size() == m_pos ) m_vec_undo.push_back( UNDO_DATA() );
+    if( static_cast<int>(m_vec_undo.size()) == m_pos ) m_vec_undo.push_back( UNDO_DATA() );
     m_first = true;
     m_sig_commit.emit();
 

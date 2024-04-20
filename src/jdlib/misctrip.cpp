@@ -131,7 +131,7 @@ std::string create_trip_newtype( const std::string& key )
                 for( n = 17; n < 19 && key[n]; ++n )
                 {
                     // [./0-9A-Za-z]
-                    if( isalnum( key[n] ) != 0 || (unsigned char)( key[n] - 0x2e ) < 2 )
+                    if( isalnum( key[n] ) != 0 || static_cast<unsigned char>( key[n] - 0x2e ) < 2 )
                     {
                         salt.push_back( key[n] );
                     }
@@ -209,17 +209,17 @@ std::string create_trip_conventional( const std::string& key )
     for( n = 0; n < salt_length; n++ )
     {
         // 0x2e〜0x7aの範囲にないものは '.'(0x2e)
-        if( (unsigned char)( salt[n] - 0x2E ) > 0x4C )
+        if( static_cast<unsigned char>( salt[n] - 0x2E ) > 0x4C )
         {
             salt[n] = 0x2e;
         }
         // :;<=>?@ (0x3a〜0x40) は A〜G (0x41〜0x47)
-        else if( (unsigned char)( salt[n] - 0x3A ) < 0x07 )
+        else if( static_cast<unsigned char>( salt[n] - 0x3A ) < 0x07 )
         {
             salt[n] += 7;
         }
         // [\]^_` (0x5b〜0x60) は a〜f (0x61〜0x66)
-        else if( (unsigned char)( salt[n] - 0x5B ) < 0x06 )
+        else if( static_cast<unsigned char>( salt[n] - 0x5B ) < 0x06 )
         {
             salt[n] += 6;
         }
