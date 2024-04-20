@@ -1016,8 +1016,8 @@ NODE* NodeTreeBase::create_node_ntext( const char* text, const int n, const int 
 
         tmpnode->text = m_heap.heap_alloc<char>( n + MAX_RES_DIGIT + 4 );
         memcpy( tmpnode->text, text, n ); tmpnode->text[ n ] = '\0';
-        tmpnode->color_text = color_text;
-        tmpnode->color_back = color_back;
+        tmpnode->color_text = static_cast<unsigned char>( color_text );
+        tmpnode->color_back = static_cast<unsigned char>( color_back );
         tmpnode->bold = bold;
         if ( fontid != FONT_MAIN ) tmpnode->fontid = fontid;
     }
