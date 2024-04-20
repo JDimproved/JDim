@@ -111,7 +111,7 @@ void Urlreplace_Manager::conf2list( const std::string& conf )
         item.replace = std::move( *str );
         std::string tgt_text = "$0";
         std::string rep_text = "\\0";
-        for( int n = '0'; n <= '9'; ++n ) {
+        for( char n = '0'; n <= '9'; ++n ) {
             tgt_text[1] = rep_text[1] = n;
             item.replace = MISC::replace_str( item.replace, tgt_text, rep_text );
         }

@@ -527,7 +527,7 @@ TEST_F(IsUtf8Test, invalid_byte)
     // マルチバイトの後続部分
     char invalid_seq[2]{};
     for( int i = 0x80; i < 0xC0; ++i ) {
-        invalid_seq[0] = i;
+        invalid_seq[0] = static_cast<char>( i );
         EXPECT_FALSE( MISC::is_utf8( invalid_seq, 0 ) );
     }
 
@@ -596,7 +596,7 @@ TEST_F(Utf8BytesTest, ascii)
 {
     char ascii_seq[2]{};
     for( int i = 1; i < 0x80; ++i ) {
-        ascii_seq[0] = i;
+        ascii_seq[0] = static_cast<char>( i );
         EXPECT_EQ( 1, MISC::utf8bytes( ascii_seq ) );
     }
 }
@@ -655,7 +655,7 @@ TEST_F(Utf8BytesTest, invalid_byte)
     // マルチバイトの後続部分
     char invalid_seq[2]{};
     for( int i = 0x80; i < 0xC0; ++i ) {
-        invalid_seq[0] = i;
+        invalid_seq[0] = static_cast<char>( i );
         EXPECT_EQ( 0, MISC::utf8bytes( invalid_seq ) );
     }
 

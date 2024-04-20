@@ -119,9 +119,9 @@ void AAManager::load_label()
             m_vec_aa.push_back( asciiart );
 
             // ショートカット
-            char shortcut = 0;
-            const int base_a = 10;
-            const int base_A = base_a + 'z' - 'a' -4 + 1;
+            int shortcut = 0;
+            constexpr int base_a = 10;
+            constexpr int base_A = base_a + 'z' - 'a' -4 + 1;
             if( id <= 9 ) shortcut = '0' + id;
             else if( id <= base_a + 'z' - 'a' -4 ){
                 shortcut = 'a' + id - base_a;
@@ -131,7 +131,7 @@ void AAManager::load_label()
             else if( id <= base_A + 'Z' - 'A' ){
                 shortcut = 'A' + id - base_A;
             }
-            if( shortcut ) m_map_shortcut.insert( std::make_pair( id, shortcut ) );
+            if( shortcut ) m_map_shortcut.try_emplace( id, static_cast<char>( shortcut ) );
         }
     }
 }
@@ -249,7 +249,7 @@ std::string AAManager::id2shortcut( const int id )
     std::cout << "AAManager::id2shortcut id = " << id << std::endl;
 #endif
 
-    int key = m_map_shortcut[ id ];
+    const char key = m_map_shortcut[ id ];
     if( !key ) return std::string();
 
     char tmpchar[2];
