@@ -257,7 +257,7 @@ guint CONTROL::get_keysym( const std::string& keyname )
     // データベース内に見つからなかったらアスキー文字を返す
 
 #ifdef _DEBUG
-    std::cout << " not found sym = " << ( guint )keyname[ 0 ] << std::endl;
+    std::cout << " not found sym = " << static_cast<guint>(keyname[ 0 ]) << std::endl;
 #endif
 
     return keyname[ 0 ];

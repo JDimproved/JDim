@@ -275,7 +275,7 @@ void ViewHistory::append( const std::string& url )
 #endif
 
             bool pback = ( m_items.size() < MAX_LOCAL_HISTORY
-                           && m_history_top == ( int )m_items.size() -1
+                           && m_history_top == static_cast<int>(m_items.size()) -1
                            && m_history_top == m_history_current
                 );
 

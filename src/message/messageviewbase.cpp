@@ -1004,7 +1004,7 @@ void MessageViewBase::show_status()
 
     ss << "   /  文字数 ";
 
-    if( ( int ) message.size() > m_lng_iconv )
+    if( static_cast<int>(message.size()) > m_lng_iconv )
     {
         ss << "過多";
     }

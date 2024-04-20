@@ -194,8 +194,8 @@ bool Control::MG_start( const GdkEventButton* event )
     if( ! button_alloted( event, CONTROL::GestureButton ) ) return false;
 
     m_mg = true;
-    m_mg_x = ( int ) event->x;
-    m_mg_y = ( int ) event->y;
+    m_mg_x = static_cast<int>( event->x );
+    m_mg_y = static_cast<int>( event->y );
 
 #ifdef _DEBUG
     std::cout << "Control::MG_start\n";
@@ -215,8 +215,8 @@ bool Control::MG_motion( const GdkEventMotion* event )
         if( m_send_mg_info ) CORE::core_set_command( "set_mginfo", "", "■" );
     }
 
-    const int x = ( int ) event->x;
-    const int y = ( int ) event->y;
+    const int x = static_cast<int>( event->x );
+    const int y = static_cast<int>( event->y );
 
     const int dx = x - m_mg_x;
     const int dy = y - m_mg_y;
