@@ -52,13 +52,13 @@ void ImageAreaPopup::show_image()
     // 縮小比率を計算
     const int w_org = get_img()->get_width();
     const int h_org = get_img()->get_height();
-    const double scale_w = ( double ) width_max / w_org;
-    const double scale_h = ( double ) height_max / h_org;
+    const double scale_w = static_cast<double>(width_max) / w_org;
+    const double scale_h = static_cast<double>(height_max) / h_org;
     const double scale = MIN( scale_w, scale_h );
 
     if( scale < 1 ){
-        set_width( (int)( w_org * scale ) );
-        set_height( (int)( h_org * scale ) );
+        set_width( static_cast<int>( w_org * scale ) );
+        set_height( static_cast<int>( h_org * scale ) );
     }
     else{
         set_width( w_org );

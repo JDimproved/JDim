@@ -635,7 +635,7 @@ void Img::receive_finish()
     }
 
     // 画像やファイルサイズが大きい
-    else if( current_length() > (size_t) CONFIG::get_max_img_size() * 1024 * 1024
+    else if( current_length() > static_cast<std::size_t>(CONFIG::get_max_img_size()) * 1024 * 1024
              || m_width * m_height > CONFIG::get_max_img_pixel() * 1000 * 1000
         ){
 
@@ -691,12 +691,12 @@ void Img::set_embedded_size()
 
     // 縮小比率を計算してサイズ取得
     double scale;
-    double scale_w = ( double ) CONFIG::get_embimg_width() / m_width;
-    double scale_h = ( double ) CONFIG::get_embimg_height() / m_height;
+    double scale_w = static_cast<double>(CONFIG::get_embimg_width()) / m_width;
+    double scale_h = static_cast<double>(CONFIG::get_embimg_height()) / m_height;
     scale = MIN( scale_w, scale_h );
     if( scale < 1.0 ){
-        m_width_emb = (int)( m_width * scale );
-        m_height_emb = (int)( m_height * scale );
+        m_width_emb = static_cast<int>( m_width * scale );
+        m_height_emb = static_cast<int>( m_height * scale );
     }
     else{
         m_width_emb = m_width;

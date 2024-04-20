@@ -126,7 +126,7 @@ void BoardViewNext::update_by_tfidf( std::vector< NEXT_ITEM >& next_items )
 
         const Glib::ustring subject = item.article->get_subject();
         MISC::tfidf_calc_vec_tfifd( vec_tfidf, subject, vec_idf, vec_words );
-        item.value = ( int )( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
+        item.value = static_cast<int>( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
         if( item.value >= CONFIG::get_threshold_next() ){
 
 #ifdef _DEBUG

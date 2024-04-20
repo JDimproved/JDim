@@ -205,7 +205,7 @@ bool Log_Manager::check_write( const std::string& url, const bool newthread, con
                 while( item.head[ i ] == ' ' ) ++i;
                 while( msg[ i2 ] == ' ' ) ++i2;
 #ifdef _DEBUG
-                std::cout << (int)( item.head[ i ] ) << " - " << (int)( msg[ i2 ] ) << std::endl;
+                std::cout << static_cast<int>( item.head[ i ] ) << " - " << static_cast<int>( msg[ i2 ] ) << std::endl;
 #endif
                 // もしバッファの最後が空白で終わっていたら成功と見なす
                 if( i && i2

@@ -168,7 +168,7 @@ void Play_Sound::play_wavfile()
         std::cout << "rate = " << wavefmt.rate << std::endl
                   << "chn = " << wavefmt.chn << std::endl
                   << "bit = " << wavefmt.bit << std::endl
-                  << "sec = " << (double)datachk.size/wavefmt.average << std::endl;
+                  << "sec = " << static_cast<double>(datachk.size)/wavefmt.average << std::endl;
 #endif
 
         // デバイスオープン
@@ -214,7 +214,7 @@ void Play_Sound::play_wavfile()
 
             snd_pcm_sframes_t frames = snd_pcm_writei( handle, buffer.data(), readsize / wavefmt.block );
             if( frames < 0 ) frames = snd_pcm_recover( handle, frames, 0 );  // レジューム
-            if( frames < 0 || frames < ( snd_pcm_sframes_t ) ( readsize / wavefmt.block ) )
+            if( frames < 0 || frames < static_cast<snd_pcm_sframes_t>( readsize / wavefmt.block ) )
                 throw std::string( "failed to snd_pcm_write : " ) + snd_strerror( err );
         }
     }

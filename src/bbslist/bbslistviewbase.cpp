@@ -681,7 +681,8 @@ void BBSListViewBase::clock_in()
         if( adjust && adjust->get_upper() > m_jump_y ){
 
 #ifdef _DEBUG
-            std::cout << "BBSListViewBase::clock_in jump to = " << m_jump_y << " upper = " << (int)adjust->get_upper() << std::endl;
+            std::cout << "BBSListViewBase::clock_in jump to = " << m_jump_y
+                      << " upper = " << static_cast<int>(adjust->get_upper()) << std::endl;
 #endif
 
             // 何故か先頭にジャンプ出来ないので 1 にジャンプする
@@ -1206,7 +1207,7 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
 
     show_status();
 
-    m_path_selected = m_treeview.get_path_under_xy( (int)event->x, (int)event->y );
+    m_path_selected = m_treeview.get_path_under_xy( static_cast<int>(event->x), static_cast<int>(event->y) );
 
     // ダブルクリックの処理のため一時的にtypeを切替える
     GdkEventType type_copy = event->type;
@@ -1240,8 +1241,8 @@ bool BBSListViewBase::slot_motion_notify( GdkEventMotion* event )
     /// マウスジェスチャ
     get_control().MG_motion( event );
 
-    int x = (int)event->x;
-    int y = (int)event->y;
+    const int x = static_cast<int>(event->x);
+    const int y = static_cast<int>(event->y);
     Gtk::TreeModel::Path path;
     Gtk::TreeView::Column* column;
     int cell_x;
@@ -2499,7 +2500,7 @@ void BBSListViewBase::tree2xml( const std::string& root_name )
     if( adjust )
     {
         if( m_jump_y != -1 && adjust->get_upper() > m_jump_y ) y = m_jump_y;
-        else  y = ( int ) adjust->get_value();
+        else  y = static_cast<int>(adjust->get_value());
     }
     else if( m_jump_y != -1 ) y = m_jump_y;
 

@@ -431,10 +431,10 @@ bool ConfigItems::load( const bool restore )
     show_delartdiag = cf.get_option_bool( "show_delartdiag", CONF_SHOW_DELARTDIAG );
 
     // 下線位置
-    adjust_underline_pos = cf.get_option_double( "adjust_underline_pos", ( double )CONF_ADJUST_UNDERLINE_POS, ( double )0, ( double )64 );
+    adjust_underline_pos = cf.get_option_double( "adjust_underline_pos", CONF_ADJUST_UNDERLINE_POS, 0, 64 );
 
     // 行間スペース
-    adjust_line_space = cf.get_option_double( "adjust_line_space", ( double )CONF_ADJUST_LINE_SPACE, ( double )0, ( double )64 );
+    adjust_line_space = cf.get_option_double( "adjust_line_space", CONF_ADJUST_LINE_SPACE, 0, 64 );
 
     // リンク下線を表示
     draw_underline = cf.get_option_bool( "draw_underline", CONF_DRAW_UNDERLINE );

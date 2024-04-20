@@ -80,11 +80,11 @@ void ImageAreaIcon::show_image()
         double scale;
         int w_org = get_img()->get_width();
         int h_org = get_img()->get_height();
-        double scale_w = ( double ) ICON_SIZE / w_org;
-        double scale_h = ( double ) ICON_SIZE / h_org;
+        double scale_w = static_cast<double>(ICON_SIZE) / w_org;
+        double scale_h = static_cast<double>(ICON_SIZE) / h_org;
         scale = MIN( scale_w, scale_h );
-        set_width( (int)( w_org * scale ) );
-        set_height( (int)( h_org * scale ) );
+        set_width( static_cast<int>( w_org * scale ) );
+        set_height( static_cast<int>( h_org * scale ) );
 
         load_image();
     }

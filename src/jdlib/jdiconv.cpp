@@ -52,7 +52,7 @@ Iconv::Iconv( const Encoding to, const Encoding from, const bool broken_sjis_be_
     errno = 0;
     m_cd = g_iconv_open( to_str, from_str );
 
-    if( m_cd == ( GIConv) -1 ) open_by_alternative_names( to_str, from_str );
+    if( m_cd == reinterpret_cast<GIConv>(-1) ) open_by_alternative_names( to_str, from_str );
 }
 
 
@@ -63,7 +63,7 @@ void Iconv::open_by_alternative_names( const char* to_str, const char* from_str 
     else if( m_enc_from == Encoding::sjis ) m_cd = g_iconv_open( to_str, "CP932" );
 
     // "EUCJP-MS"で失敗したら"EUCJP"で試してみる
-    if( m_cd == ( GIConv ) - 1 && ( errno & EINVAL ) != 0 )
+    if( m_cd == reinterpret_cast<GIConv>(-1) && ( errno & EINVAL ) != 0 )
     {
         if( m_enc_to == Encoding::eucjp ) m_cd = g_iconv_open( "EUCJP//TRANSLIT", from_str );
         else if( m_enc_from == Encoding::eucjp )
@@ -73,7 +73,7 @@ void Iconv::open_by_alternative_names( const char* to_str, const char* from_str 
         }
     }
 
-    if( m_cd == ( GIConv ) -1 ){
+    if( m_cd == reinterpret_cast<GIConv>(-1) ){
         std::string msg = "can't open iconv coding = ";
         msg += MISC::encoding_to_iconv_cstr( m_enc_from );
         msg += " to ";
@@ -89,7 +89,7 @@ Iconv::~Iconv()
     std::cout << "Iconv::~Iconv\n";
 #endif
 
-    if( m_cd != ( GIConv ) -1 ) g_iconv_close( m_cd );
+    if( m_cd != reinterpret_cast<GIConv>(-1) ) g_iconv_close( m_cd );
 }
 
 
@@ -121,7 +121,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
     std::cout << "Iconv::convert size_in = " << size_in << std::endl;
 #endif
 
-    if( m_cd == ( GIConv ) -1 ) {
+    if( m_cd == reinterpret_cast<GIConv>(-1) ) {
         out_buf.clear();
         return out_buf;
     }

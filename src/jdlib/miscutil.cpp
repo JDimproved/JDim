@@ -1280,7 +1280,7 @@ static const char s_url_char[ 128 ] = {
 };
 bool MISC::is_url_char( const char* str_in, const bool loose_url )
 {
-    unsigned char c = (unsigned char)(*str_in);
+    const unsigned char c = static_cast<unsigned char>(*str_in);
 
     // 128以上のテーブルはないので先に判定
     if( c & 0x80 ) return false;
