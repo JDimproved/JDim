@@ -109,28 +109,28 @@ Encoding MISC::encoding_from_web_charset( std::string_view charset )
 #define CTRL_RNAGE( target ) ( target < 0x20 || target == 0x7F )
 
 // [ ASCII ] 0x20〜0x7E
-#define ASCII_RANGE( target ) ( (unsigned char)( target - 0x20 ) < 0x5F )
+#define ASCII_RANGE( target ) ( static_cast<unsigned char>( target - 0x20 ) < 0x5F )
 
 // [ 制御文字とASCII ] 0x00〜0x7F
-#define CTRL_AND_ASCII_RANGE( target ) ( (unsigned char)target < 0x80 )
+#define CTRL_AND_ASCII_RANGE( target ) ( static_cast<unsigned char>(target) < 0x80 )
 
 
 /*---- EUC-JP -------------------------------------------------------*/
 //
 // [ カナ ]
 // 1バイト目 0x8E
-#define EUC_CODE_KANA( target ) ( (unsigned char)target == 0x8E )
+#define EUC_CODE_KANA( target ) ( static_cast<unsigned char>(target) == 0x8E )
 // 2バイト目 0xA1〜0xDF
-#define EUC_RANGE_KANA( target ) ( (unsigned char)( target - 0xA1 ) < 0x3F )
+#define EUC_RANGE_KANA( target ) ( static_cast<unsigned char>( target - 0xA1 ) < 0x3F )
 //
 // [ 補助漢字 ]
 // 1バイト目 0x8F
-#define EUC_CODE_SUB_KANJI( target ) ( (unsigned char)target == 0x8F )
+#define EUC_CODE_SUB_KANJI( target ) ( static_cast<unsigned char>(target) == 0x8F )
 //
 // [ 漢字 ]
 // 1バイト目 0xA1〜0xFE
 // 2バイト目 0xA1〜0xFE
-#define EUC_RANGE_MULTI( target ) ( (unsigned char)( target - 0xA1 ) < 0x5E )
+#define EUC_RANGE_MULTI( target ) ( static_cast<unsigned char>( target - 0xA1 ) < 0x5E )
 //
 /** @brief 文字列のエンコーディングがEUC-JPかチェックする
  *
@@ -223,23 +223,23 @@ bool MISC::is_jis( std::string_view input, std::size_t& read_byte )
 /*---- Shift_JIS ----------------------------------------------------*/
 //
 // [ カナ ] 0xA1〜0xDF
-#define SJIS_RANGE_KANA( target ) ( (unsigned char)( target - 0xA1 ) < 0x3F )
+#define SJIS_RANGE_KANA( target ) ( static_cast<unsigned char>( target - 0xA1 ) < 0x3F )
 //
 // [ 漢字 ]
 // 1バイト目 0x81〜0x9F 0xE0〜0xFC( 0xEF )
 //#define SJIS_RANGE_1( target ) ( (unsigned char)( target ^ 0x20 ) - 0xA1 < 0x2F )
-#define SJIS_RANGE_1( target ) ( ( (unsigned char)target ^ 0x20 ) - 0xA1 < 0x3C )
+#define SJIS_RANGE_1( target ) ( ( static_cast<unsigned char>(target) ^ 0x20 ) - 0xA1 < 0x3C )
 // 0x81〜0x9F
-#define SJIS_RANGE_1_H( target ) ( (unsigned char)( target - 0x81 ) < 0x1F )
+#define SJIS_RANGE_1_H( target ) ( static_cast<unsigned char>( target - 0x81 ) < 0x1F )
 // 0xE0〜0xFC
-#define SJIS_RANGE_1_T( target ) ( (unsigned char)( target - 0xE0 ) < 0x1D )
+#define SJIS_RANGE_1_T( target ) ( static_cast<unsigned char>( target - 0xE0 ) < 0x1D )
 //
 // 2バイト目 0x40〜0x7E 0x80〜0xFC
-#define SJIS_RANGE_2( target ) ( (unsigned char)( target - 0x40 ) < 0xBD && target != 0x7F )
+#define SJIS_RANGE_2( target ) ( static_cast<unsigned char>( target - 0x40 ) < 0xBD && target != 0x7F )
 // 0x40〜0x7E
-#define SJIS_RANGE_2_H( target ) ( (unsigned char)( target - 0x40 ) < 0x3F )
+#define SJIS_RANGE_2_H( target ) ( static_cast<unsigned char>( target - 0x40 ) < 0x3F )
 // 0x80〜0xFC
-#define SJIS_RANGE_2_T( target ) ( (unsigned char)( target - 0x80 ) < 0x7D )
+#define SJIS_RANGE_2_T( target ) ( static_cast<unsigned char>( target - 0x80 ) < 0x7D )
 //
 /** @brief 文字列のエンコーディングがShift_JISか簡易チェックする
  *
