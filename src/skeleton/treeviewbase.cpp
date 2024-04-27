@@ -240,7 +240,7 @@ void JDTreeViewBase::page_up()
 
     // 選択行移動
     Gtk::TreePath path;
-    if( set_top ) path = get_path_under_xy( 0, (int)adj->get_page_size() - 4 );
+    if( set_top ) path = get_path_under_xy( 0, static_cast<int>(adj->get_page_size()) - 4 );
     else path = get_path_under_xy( 0, 0 );
     if( path.size() && get_row( path ) )set_cursor( path );
 }
@@ -263,7 +263,7 @@ void JDTreeViewBase::page_down()
     // 選択行移動
     Gtk::TreePath path;
     if( set_bottom ) path = get_path_under_xy( 0, 0 );
-    else path = get_path_under_xy( 0, (int)adj->get_page_size() - 4 );
+    else path = get_path_under_xy( 0, static_cast<int>(adj->get_page_size()) - 4 );
     if( path.size() && get_row( path ) ) set_cursor( path );
 }
 

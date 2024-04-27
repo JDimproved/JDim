@@ -325,7 +325,7 @@ bool TabNotebook::adjust_tabwidth()
     m_pre_width = get_width();
     const int width_notebook = m_pre_width - mrg_notebook;
 
-    int avg_width_tab = (int)( (double)width_notebook / MAX( 3, pages ) );  // タブ幅の平均値
+    int avg_width_tab = static_cast<int>( static_cast<double>(width_notebook) / MAX( 3, pages ) );  // タブ幅の平均値
     if( avg_width_tab < label_margin ){
         avg_width_tab = label_margin;
     }
@@ -385,7 +385,7 @@ bool TabNotebook::adjust_tabwidth()
                 }
 
                 // 最大値を越えていたら、概算で収まるように縮める
-                int n = label_width - (int)( (double)label_width * max_width / width );
+                int n = label_width - static_cast<int>( static_cast<double>(label_width) * max_width / width );
                 if( n < 1 ) n = 1;
                 if( label_width - n < CONFIG::get_tab_min_str() ){
                     n = label_width - CONFIG::get_tab_min_str();

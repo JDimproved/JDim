@@ -227,13 +227,13 @@ void AAManager::save_history()
 // ラベル、AA取得
 std::string AAManager::get_label( const int id ) const
 {
-    if( id >= (int) m_vec_label.size() ) return std::string();
+    if( id >= static_cast<int>(m_vec_label.size()) ) return std::string();
     return m_vec_label[ id ];
 }
 
 std::string AAManager::get_aa( const int id ) const
 {
-    if( id >= (int) m_vec_aa.size() ) return std::string();
+    if( id >= static_cast<int>(m_vec_aa.size()) ) return std::string();
     return m_vec_aa[ id ]; 
 }
 
@@ -243,7 +243,7 @@ std::string AAManager::get_aa( const int id ) const
 //
 std::string AAManager::id2shortcut( const int id )
 {
-    if( id >= (int) m_map_shortcut.size() ) return std::string();
+    if( id >= static_cast<int>(m_map_shortcut.size()) ) return std::string();
 
 #ifdef _DEBUG
     std::cout << "AAManager::id2shortcut id = " << id << std::endl;

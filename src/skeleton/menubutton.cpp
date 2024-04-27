@@ -187,7 +187,7 @@ bool MenuButton::slot_enter( GdkEventCrossing* event )
     std::cout << "MenuButton::slot_enter\n";
 #endif
 
-    check_on_arrow( (int)event->x );
+    check_on_arrow( static_cast<int>(event->x) );
 
     return true;
 }
@@ -207,7 +207,7 @@ bool MenuButton::slot_leave( GdkEventCrossing* event )
 
 bool MenuButton::slot_motion( GdkEventMotion* event )
 {
-    check_on_arrow( (int)event->x );
+    check_on_arrow( static_cast<int>(event->x) );
 
     return true;
 }

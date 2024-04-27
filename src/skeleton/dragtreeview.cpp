@@ -271,7 +271,7 @@ void DragTreeView::delete_popup()
 //
 bool DragTreeView::on_button_press_event( GdkEventButton* event )
 {
-    Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
+    Gtk::TreeModel::Path path = get_path_under_xy( static_cast<int>(event->x), static_cast<int>(event->y) );
     m_dragging = false;
     m_selection_canceled = false;
     sig_button_press().emit( event );
@@ -314,7 +314,7 @@ bool DragTreeView::on_button_release_event( GdkEventButton* event )
 {
     bool emit_sig = false; // true なら m_sig_button_release をemitする
 
-    Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
+    Gtk::TreeModel::Path path = get_path_under_xy( static_cast<int>(event->x), static_cast<int>(event->y) );
 
     if( ! m_dragging // ドラッグ中ではない
         && !m_selection_canceled // on_button_press_event()で選択状態を解除していない
@@ -442,7 +442,7 @@ bool DragTreeView::on_motion_notify_event( GdkEventMotion* event )
     // drag_source_set() でセットしたボタン以外でドラッグして範囲選択
     // m_path_dragstart が empty で無いときに実行
     // DragTreeView::on_button_press_event() も参照せよ
-    Gtk::TreeModel::Path path = get_path_under_xy( (int)event->x, (int)event->y );
+    Gtk::TreeModel::Path path = get_path_under_xy( static_cast<int>(event->x), static_cast<int>(event->y) );
     if( ! m_path_dragstart.empty() && !path.empty() && path != m_path_dragpre ){
         get_selection()->unselect_all();
         get_selection()->select( path, m_path_dragstart );

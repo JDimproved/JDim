@@ -227,16 +227,17 @@ void EditTreeView::clock_in()
             if( get_row( path ) && adjust ){
 
                 const int height = get_height();
-                const int step = (int)adjust->get_step_increment() / 2;
+                const int step = static_cast<int>(adjust->get_step_increment()) / 2;
                 int val = -1;
                 int x,y;
                 MISC::get_pointer_at_window( get_window(), x, y );
 
                 if( y < step * 2 ){
-                    val = MAX( 0, (int)adjust->get_value() - step );
+                    val = MAX( 0, static_cast<int>(adjust->get_value()) - step );
                 }
                 else if( y > height - step * 2 ){
-                    val = MIN( (int)adjust->get_value() + step, (int)( adjust->get_upper() - adjust->get_page_size() ) );
+                    val = MIN( static_cast<int>(adjust->get_value()) + step,
+                               static_cast<int>(adjust->get_upper() - adjust->get_page_size()) );
                 }
 
                 if( val != -1 ){
@@ -252,7 +253,7 @@ void EditTreeView::clock_in()
     // 正しくスクロールしないので更新されてからスクロールする
     else if( m_pre_adjust_upper && ! m_jump_path.empty() ){
 
-        const int upper = ( int )( get_vadjustment()->get_upper() );
+        const int upper = static_cast<int>(get_vadjustment()->get_upper());
 
 #ifdef _DEBUG
         std::cout << "adjust_upper : " << m_pre_adjust_upper << " -> " << upper << " count = " << m_jump_count << std::endl;
@@ -288,7 +289,7 @@ void EditTreeView::clock_in()
 //
 void EditTreeView::set_scroll( const Gtk::TreePath& path )
 {
-    m_pre_adjust_upper = ( int )( get_vadjustment()->get_upper() );
+    m_pre_adjust_upper = static_cast<int>(get_vadjustment()->get_upper());
     m_jump_path = path;
     m_jump_count = 0;
 }

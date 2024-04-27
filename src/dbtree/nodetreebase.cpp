@@ -2989,8 +2989,8 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
                 pos += 4;
             }
             // utf-8で"＞"
-            else if( ( unsigned char )( *pos ) == 0xef && ( unsigned char ) ( *( pos + 1 ) ) == 0xbc
-                     && ( unsigned char ) ( *( pos + 2 ) ) == 0x9e ){
+            else if( static_cast<unsigned char>( *pos ) == 0xef && static_cast<unsigned char>( *( pos + 1 ) ) == 0xbc
+                     && static_cast<unsigned char>( *( pos + 2 ) ) == 0x9e ){
                 tmp_out[ lng_out++ ] = static_cast< char >( 0xef );
                 tmp_out[ lng_out++ ] = static_cast< char >( 0xbc );
                 tmp_out[ lng_out++ ] = static_cast< char >( 0x9e );
@@ -3013,8 +3013,8 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
         }
 
         // utf-8で"、"
-        else if( ( unsigned char )( *pos ) == 0xe3 && ( unsigned char ) ( *( pos + 1 ) ) == 0x80
-                 && ( unsigned char ) ( *( pos + 2 ) ) == 0x81 ){
+        else if( static_cast<unsigned char>( *pos ) == 0xe3 && static_cast<unsigned char>( *( pos + 1 ) ) == 0x80
+                 && static_cast<unsigned char>( *( pos + 2 ) ) == 0x81 ){
 
             tmp_out[ lng_out++ ] = static_cast< char >( 0xe3 );
             tmp_out[ lng_out++ ] = static_cast< char >( 0x80 );
@@ -3034,7 +3034,7 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
     if( dig == 0 || dig > MAX_RES_DIGIT || num == 0 ){
 
         // モード2で数字が長すぎるときは飛ばす
-        if( mode == 2 && dig > MAX_RES_DIGIT ) n_in = ( int )( pos - str_in ) + n;
+        if( mode == 2 && dig > MAX_RES_DIGIT ) n_in = static_cast<int>( pos - str_in ) + n;
 
         return false;
     }
@@ -3075,12 +3075,12 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
     if( *( pos ) == '-' ) offset = 1;
 
     // utf-8で"−"
-    else if( ( unsigned char )( * pos ) == 0xef && ( unsigned char ) ( *( pos + 1 ) ) == 0xbc
-             && ( unsigned char ) ( *( pos + 2 ) ) == 0x8d ) offset = 3;
+    else if( static_cast<unsigned char>( *pos ) == 0xef && static_cast<unsigned char>( *( pos + 1 ) ) == 0xbc
+             && static_cast<unsigned char>( *( pos + 2 ) ) == 0x8d ) offset = 3;
 
     // 半角"-"
-    else if( ( unsigned char )( * pos ) == 0xef && ( unsigned char ) ( *( pos + 1 ) ) == 0xbd
-             && ( unsigned char ) ( *( pos + 2 ) ) == 0xb0 ) offset = 3;
+    else if( static_cast<unsigned char>( *pos ) == 0xef && static_cast<unsigned char>( *( pos + 1 ) ) == 0xbd
+             && static_cast<unsigned char>( *( pos + 2 ) ) == 0xb0 ) offset = 3;
 
     if( offset ){
         
@@ -3101,7 +3101,7 @@ bool NodeTreeBase::check_anchor( const int mode, const char* str_in,
     //"&gt;&gt;数字-数字</a>"のパターンの時に</a>をのぞく
     if( *( pos ) == '<' && *( pos + 1 ) == '/' && ( *( pos + 2 ) == 'a' || *( pos + 2 ) == 'A' ) && *( pos + 3 ) == '>' ) pos += 4;
     
-    n_in = ( int )( pos - str_in );
+    n_in = static_cast<int>( pos - str_in );
 
     return true;
 }

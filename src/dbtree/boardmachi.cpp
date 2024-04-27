@@ -276,7 +276,7 @@ void BoardMachi::parse_subject( const char* str_subject_txt )
             MISC::ERRMSG( "subject.txt is broken" );
             break;
         }
-        lng_subject = ( int )( pos - str_subject );
+        lng_subject = static_cast<int>( pos - str_subject );
 
         // レス数取得 (符号付き32bit整数より大きいと未定義)
         ++pos;

@@ -420,7 +420,7 @@ bool DragableNoteBook::slot_button_press_event( GdkEventButton* event )
 
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::on_button_press_event page = " << m_page  << std::endl;
-    std::cout << "x = " << (int)event->x_root << " y = " << (int)event->y_root
+    std::cout << "x = " << static_cast<int>(event->x_root) << " y = " << static_cast<int>(event->y_root)
               << " dblclick = " << m_dblclick << std::endl;
 #endif
 
@@ -447,12 +447,12 @@ bool DragableNoteBook::slot_button_press_event( GdkEventButton* event )
 bool DragableNoteBook::slot_button_release_event( GdkEventButton* event )
 {
     const int page = m_notebook_tab.get_page_under_mouse();
-    const int x = (int)event->x_root;
-    const int y = (int)event->y_root;
+    const int x = static_cast<int>(event->x_root);
+    const int y = static_cast<int>(event->y_root);
 
 #ifdef _DEBUG
     std::cout << "DragableNoteBook::on_button_release_event\n";
-    std::cout << "x = " << (int)event->x_root << " y = " << (int)event->y_root << std::endl;
+    std::cout << "x = " << static_cast<int>(event->x_root) << " y = " << static_cast<int>(event->y_root) << std::endl;
 #endif
 
     if( ! m_dragging_tab && m_page >= 0 && m_page < get_n_pages() ){

@@ -144,8 +144,8 @@ static void ice_watch_proc( IceConn ice_connect,
             *watch_data =  xsmpdata;
             xsmpdata->id_process_message = g_io_add_watch_full( channel,
                                                                 G_PRIORITY_DEFAULT,
-                                                                ( GIOCondition )( G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP ),
-                                                                ( GIOFunc ) ice_process_message,
+                                                                static_cast<GIOCondition>( G_IO_IN | G_IO_PRI | G_IO_ERR | G_IO_HUP ),
+                                                                reinterpret_cast<GIOFunc>(ice_process_message),
                                                                 xsmpdata,
                                                                 nullptr );
             g_io_channel_unref( channel );

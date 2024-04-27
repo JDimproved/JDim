@@ -380,10 +380,10 @@ CSS_PROPERTY Css_Manager::create_property( const std::map<std::string, std::stri
             }
             else
             {
-                css.border_left_width_px = (int)size;
-                css.border_right_width_px = (int)size;
-                css.border_top_width_px = (int)size;
-                css.border_bottom_width_px = (int)size;
+                css.border_left_width_px = static_cast<int>(size);
+                css.border_right_width_px = static_cast<int>(size);
+                css.border_top_width_px = static_cast<int>(size);
+                css.border_bottom_width_px = static_cast<int>(size);
             }
         }
         // border-*-width
@@ -397,10 +397,22 @@ CSS_PROPERTY Css_Manager::create_property( const std::map<std::string, std::stri
 #ifdef _DEBUG
             std::cout << "border-" << mode << "-width size = " << size << " type = " << type << std::endl;
 #endif
-            if( mode == "left" ){ if( type == SIZETYPE_EM ) css.border_left_width_em = size; else css.border_left_width_px = (int)size; }
-            else if( mode == "right" ){ if( type == SIZETYPE_EM ) css.border_right_width_em = size; else css.border_right_width_px = (int)size; }
-            else if( mode == "top" ){ if( type == SIZETYPE_EM ) css.border_top_width_em = size; else css.border_top_width_px = (int)size; }
-            else if( mode == "bottom" ){ if( type == SIZETYPE_EM ) css.border_bottom_width_em = size; else css.border_bottom_width_px = (int)size; }
+            if( mode == "left" ) {
+                if( type == SIZETYPE_EM ) css.border_left_width_em = size;
+                else css.border_left_width_px = static_cast<int>(size);
+            }
+            else if( mode == "right" ) {
+                if( type == SIZETYPE_EM ) css.border_right_width_em = size;
+                else css.border_right_width_px = static_cast<int>(size);
+            }
+            else if( mode == "top" ) {
+                if( type == SIZETYPE_EM ) css.border_top_width_em = size;
+                else css.border_top_width_px = static_cast<int>(size);
+            }
+            else if( mode == "bottom" ) {
+                if( type == SIZETYPE_EM ) css.border_bottom_width_em = size;
+                else css.border_bottom_width_px = static_cast<int>(size);
+            }
         }
         // color
         else if( key == "color" )
@@ -433,10 +445,10 @@ CSS_PROPERTY Css_Manager::create_property( const std::map<std::string, std::stri
             }
             else
             {
-                css.mrg_left_px = (int)size;
-                css.mrg_right_px = (int)size;
-                css.mrg_top_px = (int)size;
-                css.mrg_bottom_px = (int)size;
+                css.mrg_left_px = static_cast<int>(size);
+                css.mrg_right_px = static_cast<int>(size);
+                css.mrg_top_px = static_cast<int>(size);
+                css.mrg_bottom_px = static_cast<int>(size);
             }
         }
         // margin-*
@@ -451,11 +463,23 @@ CSS_PROPERTY Css_Manager::create_property( const std::map<std::string, std::stri
             std::cout << "margin-" << mode << " size = " << size << " type = " << type << std::endl;
 #endif
 
-            if( mode == "left" ){ if( type == SIZETYPE_EM ) css.mrg_left_em = size; else css.mrg_left_px = (int)size; }
-            else if( mode == "right" ){ if( type == SIZETYPE_EM ) css.mrg_right_em = size; else css.mrg_right_px = (int)size; }
-            else if( mode == "top" ){ if( type == SIZETYPE_EM ) css.mrg_top_em = size; else css.mrg_top_px = (int)size; }
-            else if( mode == "bottom" ){ if( type == SIZETYPE_EM ) css.mrg_bottom_em = size; else css.mrg_bottom_px = (int)size; }
-        }            
+            if( mode == "left" ) {
+                if( type == SIZETYPE_EM ) css.mrg_left_em = size;
+                else css.mrg_left_px = static_cast<int>(size);
+            }
+            else if( mode == "right" ) {
+                if( type == SIZETYPE_EM ) css.mrg_right_em = size;
+                else css.mrg_right_px = static_cast<int>(size);
+            }
+            else if( mode == "top" ) {
+                if( type == SIZETYPE_EM ) css.mrg_top_em = size;
+                else css.mrg_top_px = static_cast<int>(size);
+            }
+            else if( mode == "bottom" ) {
+                if( type == SIZETYPE_EM ) css.mrg_bottom_em = size;
+                else css.mrg_bottom_px = static_cast<int>(size);
+            }
+        }
         // padding
         else if( key == "padding" )
         {
@@ -476,10 +500,10 @@ CSS_PROPERTY Css_Manager::create_property( const std::map<std::string, std::stri
             }
             else
             {
-                css.padding_left_px = (int)size;
-                css.padding_right_px = (int)size;
-                css.padding_top_px = (int)size;
-                css.padding_bottom_px = (int)size;
+                css.padding_left_px = static_cast<int>(size);
+                css.padding_right_px = static_cast<int>(size);
+                css.padding_top_px = static_cast<int>(size);
+                css.padding_bottom_px = static_cast<int>(size);
             }
         }
         // padding-*

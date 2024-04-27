@@ -718,7 +718,8 @@ void ArticleBase::reset_abone( const std::list< std::string >& ids,
 
     if( vec_abone_res.size() ){
 
-        for( int i = 1; i <= MIN( m_number_load, (int)vec_abone_res.size() ) ; ++i ){
+        const int num = (std::min)( m_number_load, static_cast<int>(vec_abone_res.size()) );
+        for( int i = 1; i <= num; ++i ){
             if( vec_abone_res[ i ] ) {
                 m_abone_reses.insert( i );
             }
@@ -1510,7 +1511,7 @@ void ArticleBase::slot_load_finished()
                 MISC::tfidf_calc_vec_tfifd( vec_tfidf_src, pre_subject, vec_idf, vec_words );
                 MISC::tfidf_calc_vec_tfifd( vec_tfidf, m_subject, vec_idf, vec_words );
 
-                value = ( int )( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
+                value = static_cast<int>( MISC::tfidf_cos_similarity( vec_tfidf_src, vec_tfidf ) * 10 + .5 );
             }
 
             // subject がキャッシュに無い場合はレーベンシュタイン距離を使って類似度チェック
@@ -1520,7 +1521,7 @@ void ArticleBase::slot_load_finished()
 #endif
                 const int MAXSTR = 256;
                 std::vector< std::vector< int > > dist( MAXSTR, std::vector< int >( MAXSTR ) );
-                value = 10 - ( int )( MISC::leven( dist, pre_subject, m_subject ) * 10 + .5 );
+                value = 10 - static_cast<int>( MISC::leven( dist, pre_subject, m_subject ) * 10 + .5 );
             }
 
 #ifdef _DEBUG
