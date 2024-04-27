@@ -50,11 +50,11 @@ void MISC::tfidf_create_vec_words( VEC_WORDS& vec_words, const Glib::ustring& do
 //
 void MISC::tfidf_create_vec_idf( VEC_IDF& vec_idf, const Glib::ustring& document, const VEC_WORDS& vec_words )
 {
-    const int n = vec_words.size();
+    const std::size_t n = vec_words.size();
 
-    if( ! n || n != (int)vec_idf.size() ) return;
+    if( ! n || n != vec_idf.size() ) return;
 
-    for( int i = 0; i < n; ++i ){
+    for( std::size_t i = 0; i < n; ++i ){
         if( document.find( vec_words[ i ] ) != Glib::ustring::npos ) vec_idf[ i ] += 1;
     }
 }
@@ -77,7 +77,7 @@ void MISC::tfidf_calc_vec_tfifd( VEC_TFIDF& vec_tfidf, const Glib::ustring& docu
     std::cout << "n = " << n << " n_doc = " << n_doc << std::endl;
 #endif
 
-    if( ! n || n_doc <= 0 || n != (int)vec_tfidf.size() ) return;
+    if( ! n || n_doc <= 0 || n != static_cast<int>(vec_tfidf.size()) ) return;
 
     double total = 0;
     for( int i = 0; i < n; ++i ){
@@ -111,19 +111,19 @@ void MISC::tfidf_calc_vec_tfifd( VEC_TFIDF& vec_tfidf, const Glib::ustring& docu
 //
 double MISC::tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_TFIDF& vec_tfidf2 )
 {
-    const int n = vec_tfidf1.size();
+    const std::size_t n = vec_tfidf1.size();
 
 #ifdef _DEBUG
     std::cout << "MISC::tfidf_cos_similarity n = " << n << std::endl;
 #endif
 
-    if( ! n || n != (int)vec_tfidf1.size() ) return 0;
+    if( ! n || n != vec_tfidf1.size() ) return 0;
 
     double product = 0;
     double lng1 = 0;
     double lng2 = 0;
 
-    for( int i = 0; i < n; ++i ){
+    for( std::size_t i = 0; i < n; ++i ){
         product += vec_tfidf1[ i ] * vec_tfidf2[ i ];
         lng1 += vec_tfidf1[ i ] * vec_tfidf1[ i ];
         lng2 += vec_tfidf2[ i ] * vec_tfidf2[ i ];
@@ -172,10 +172,10 @@ void MISC::tfidf_create_vec_idf_from_board( VEC_IDF& vec_idf,
             ++D;
         }
     }
-    for( int i = 0; i < (int)vec_words.size(); ++i ){
+    for( std::size_t i = 0, end = vec_words.size(); i < end; ++i ){
 
 #ifdef _DEBUG
-        std::cout << vec_words[ i ].raw() << " hit = " << (int)vec_idf[ i ] << " / " << D;
+        std::cout << vec_words[ i ].raw() << " hit = " << static_cast<int>(vec_idf[ i ]) << " / " << D;
 #endif
 
         vec_idf[ i ] = log( D / vec_idf[ i ] );
@@ -252,6 +252,6 @@ double MISC::leven( std::vector< std::vector< int > >& dist,
 #endif
 
     // 0 - 1 の範囲に正規化
-    return ( double )dist[ lng1 ][ lng2 ] / MAX( dist[ lng1 ][ 0 ], dist[ 0 ][ lng2 ] );
+    return static_cast<double>(dist[ lng1 ][ lng2 ]) / MAX( dist[ lng1 ][ 0 ], dist[ 0 ][ lng2 ] );
 }
 
