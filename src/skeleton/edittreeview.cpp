@@ -289,7 +289,7 @@ void EditTreeView::clock_in()
 //
 void EditTreeView::set_scroll( const Gtk::TreePath& path )
 {
-    m_pre_adjust_upper = ( int )( get_vadjustment()->get_upper() );
+    m_pre_adjust_upper = static_cast<int>(get_vadjustment()->get_upper());
     m_jump_path = path;
     m_jump_count = 0;
 }
