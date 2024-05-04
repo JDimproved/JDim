@@ -61,7 +61,7 @@ HistorySubMenu::HistorySubMenu( const std::string& url_history )
     append( *item );
 
     // 履歴項目
-    for( int i = 0; i < CONFIG::get_history_size(); ++i ){
+    for( unsigned int i = 0, end = static_cast<unsigned int>(CONFIG::get_history_size()); i < end; ++i ) {
 
         Gtk::Image* image = Gtk::manage( new Gtk::Image() );
         m_vec_images.push_back( image );
@@ -80,8 +80,8 @@ HistorySubMenu::HistorySubMenu( const std::string& url_history )
 
         item = Gtk::manage( new Gtk::MenuItem( *hbox ) );
         append( *item );
-        item->signal_activate().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_active ), i ) );
-        item->signal_button_press_event().connect( sigc::bind< int >( sigc::mem_fun( *this, &HistorySubMenu::slot_button_press ), i ) );
+        item->signal_activate().connect( sigc::bind( sigc::mem_fun( *this, &HistorySubMenu::slot_active ), i ) );
+        item->signal_button_press_event().connect( sigc::bind( sigc::mem_fun( *this, &HistorySubMenu::slot_button_press ), i ) );
     }
 
     // ポップアップメニュー作成
@@ -129,12 +129,12 @@ void HistorySubMenu::restore_history()
 
 
 // 履歴を開く
-bool HistorySubMenu::open_history( const int i )
+bool HistorySubMenu::open_history( const unsigned int i )
 {
     bool ret = false;
     CORE::DATA_INFO_LIST info_list;
     SESSION::get_history( m_url_history, info_list );
-    if( (int)info_list.size() <= i ) return ret;
+    if( info_list.size() <= i ) return ret;
 
     if( ! info_list[ i ].url.empty() ){
 
@@ -186,7 +186,7 @@ bool HistorySubMenu::open_history( const int i )
 
 
 // メニューアイテムがactiveになった
-void HistorySubMenu::slot_active( const int i )
+void HistorySubMenu::slot_active( const unsigned int i )
 {
 #ifdef _DEBUG
     std::cout << "HistorySubMenu::slot_key_press key = " << "no = " << i << std::endl;
@@ -199,7 +199,7 @@ void HistorySubMenu::slot_active( const int i )
 
 
 // マウスボタンをクリックした
-bool HistorySubMenu::slot_button_press( GdkEventButton* event, int i )
+bool HistorySubMenu::slot_button_press( GdkEventButton* event, unsigned int i )
 {
 #ifdef _DEBUG
     std::cout << "HistorySubMenu::slot_button_press button = " << event->button << " no = " << i << std::endl;
@@ -289,11 +289,11 @@ void HistorySubMenu::slot_remove_history()
     std::cout << "HistorySubMenu::slot_remove_history no = " << m_number_menuitem << std::endl;
 #endif 
 
-    const int i = m_number_menuitem;
+    const unsigned int i = m_number_menuitem;
 
     CORE::DATA_INFO_LIST info_list;
     SESSION::get_history( m_url_history, info_list );
-    if( (int)info_list.size() <= i ) return;
+    if( info_list.size() <= i ) return;
 
     CORE::core_set_command( "remove_history", m_url_history, info_list[ i ].url );
 }
@@ -307,11 +307,11 @@ void HistorySubMenu::slot_show_property()
     std::cout << "HistorySubMenu::slot_show_property no = " << m_number_menuitem << std::endl;
 #endif
 
-    const int i = m_number_menuitem;
+    const unsigned int i = m_number_menuitem;
 
     CORE::DATA_INFO_LIST info_list;
     SESSION::get_history( m_url_history, info_list );
-    if( (int)info_list.size() <= i ) return;
+    if( info_list.size() <= i ) return;
 
     if( ! info_list[ i ].url.empty() ){
 
