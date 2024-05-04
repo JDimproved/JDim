@@ -21,7 +21,7 @@ namespace HISTORY
 
         // ポップアップメニュー
         Gtk::Menu m_popupmenu;
-        int m_number_menuitem{};
+        unsigned int m_number_menuitem{};
 
       public:
 
@@ -36,15 +36,15 @@ namespace HISTORY
 
       private:
 
-        bool open_history( const int i );
+        bool open_history( const unsigned int i );
 
         // メニューのslot関数
         void slot_clear();
         void slot_switch_sideber();
 
         // メニューアイテムがactiveになった
-        void slot_active( const int i );
-        bool slot_button_press( GdkEventButton* event, int i );
+        void slot_active( const unsigned int i );
+        bool slot_button_press( GdkEventButton* event, unsigned int i );
 
         // ポップアップメニューのslot
         void slot_open_history();
