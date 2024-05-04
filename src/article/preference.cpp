@@ -15,6 +15,8 @@
 #include "cache.h"
 #include "command.h"
 
+#include <algorithm>
+#include <cstdlib>
 #include <list>
 #include <set>
 #include <string>
@@ -316,7 +318,10 @@ void Preferences::slot_ok_clicked()
         if( number >= 1 ){
             int number_end = number;
             size_t pos = num_str.find( '-' );
-            if( pos != std::string::npos ) number_end = MIN( (int)vec_abone_res.size(), MAX( number, atoi( num_str.substr( pos + 1 ).c_str() ) ) );
+            if( pos != std::string::npos ) {
+                number_end = std::clamp( std::atoi( num_str.substr( pos + 1 ).c_str() ),
+                                         number, static_cast<int>(vec_abone_res.size()) );
+            }
             for( int i = number; i <= number_end; ++i ) vec_abone_res[ i ] = true;
         }
     }
