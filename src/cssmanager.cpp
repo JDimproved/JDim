@@ -517,10 +517,22 @@ CSS_PROPERTY Css_Manager::create_property( const std::map<std::string, std::stri
 #ifdef _DEBUG
             std::cout << "padding-" << mode << " size = " << size << " type = " << type << std::endl;
 #endif
-            if( mode == "left" ){ if( type == SIZETYPE_EM ) css.padding_left_em = size; else css.padding_left_px = (int)size; }
-            else if( mode == "right" ){ if( type == SIZETYPE_EM ) css.padding_right_em = size; else css.padding_right_px = (int)size; }
-            else if( mode == "top" ){ if( type == SIZETYPE_EM ) css.padding_top_em = size; else css.padding_top_px = (int)size; }
-            else if( mode == "bottom" ){ if( type == SIZETYPE_EM ) css.padding_bottom_em = size; else css.padding_bottom_px = (int)size; }
+            if( mode == "left" ) {
+                if( type == SIZETYPE_EM ) css.padding_left_em = size;
+                else css.padding_left_px = static_cast<int>(size);
+            }
+            else if( mode == "right" ) {
+                if( type == SIZETYPE_EM ) css.padding_right_em = size;
+                else css.padding_right_px = static_cast<int>(size);
+            }
+            else if( mode == "top" ) {
+                if( type == SIZETYPE_EM ) css.padding_top_em = size;
+                else css.padding_top_px = static_cast<int>(size);
+            }
+            else if( mode == "bottom" ) {
+                if( type == SIZETYPE_EM ) css.padding_bottom_em = size;
+                else css.padding_bottom_px = static_cast<int>(size);
+            }
         }
         // text-align
         else if( key == "text-align" )
@@ -602,10 +614,10 @@ void Css_Manager::set_size( CSS_PROPERTY* css, double height ) const
     if( css->padding_top_px > 0 ) css->padding_top = css->padding_top_px;
     if( css->padding_bottom_px > 0 ) css->padding_bottom = css->padding_bottom_px;
 
-    if( css->padding_left_em > 0 ) css->padding_left = (int)(height * css->padding_left_em);
-    if( css->padding_right_em > 0 ) css->padding_right = (int)(height * css->padding_right_em);
-    if( css->padding_top_em > 0 ) css->padding_top = (int)(height * css->padding_top_em);
-    if( css->padding_bottom_em > 0 ) css->padding_bottom = (int)(height * css->padding_bottom_em);
+    if( css->padding_left_em > 0 ) css->padding_left = static_cast<int>(height * css->padding_left_em);
+    if( css->padding_right_em > 0 ) css->padding_right = static_cast<int>(height * css->padding_right_em);
+    if( css->padding_top_em > 0 ) css->padding_top = static_cast<int>(height * css->padding_top_em);
+    if( css->padding_bottom_em > 0 ) css->padding_bottom = static_cast<int>(height * css->padding_bottom_em);
 
     ///////////////////////////////////////
 
@@ -619,10 +631,10 @@ void Css_Manager::set_size( CSS_PROPERTY* css, double height ) const
     if( css->mrg_top_px > 0 ) css->mrg_top = css->mrg_top_px;
     if( css->mrg_bottom_px > 0 ) css->mrg_bottom = css->mrg_bottom_px;
 
-    if( css->mrg_left_em > 0 ) css->mrg_left = (int)(height * css->mrg_left_em);
-    if( css->mrg_right_em > 0 ) css->mrg_right = (int)(height * css->mrg_right_em);
-    if( css->mrg_top_em > 0 ) css->mrg_top = (int)(height * css->mrg_top_em);
-    if( css->mrg_bottom_em > 0 ) css->mrg_bottom = (int)(height * css->mrg_bottom_em);
+    if( css->mrg_left_em > 0 ) css->mrg_left = static_cast<int>(height * css->mrg_left_em);
+    if( css->mrg_right_em > 0 ) css->mrg_right = static_cast<int>(height * css->mrg_right_em);
+    if( css->mrg_top_em > 0 ) css->mrg_top = static_cast<int>(height * css->mrg_top_em);
+    if( css->mrg_bottom_em > 0 ) css->mrg_bottom = static_cast<int>(height * css->mrg_bottom_em);
 
     ///////////////////////////////////////
 
@@ -636,10 +648,18 @@ void Css_Manager::set_size( CSS_PROPERTY* css, double height ) const
     if( css->border_top_width_px > 0 ) css->border_top_width = css->border_top_width_px;
     if( css->border_bottom_width_px > 0 ) css->border_bottom_width = css->border_bottom_width_px;
 
-    if( css->border_left_width_em > 0 ) css->border_left_width = (int)(height * css->border_left_width_em);
-    if( css->border_right_width_em > 0 ) css->border_right_width = (int)(height * css->border_right_width_em);
-    if( css->border_top_width_em > 0 ) css->border_top_width = (int)( height * css->border_top_width_em);
-    if( css->border_bottom_width_em > 0 ) css->border_bottom_width = (int)(height * css->border_bottom_width_em);
+    if( css->border_left_width_em > 0 ) {
+        css->border_left_width = static_cast<int>(height * css->border_left_width_em);
+    }
+    if( css->border_right_width_em > 0 ) {
+        css->border_right_width = static_cast<int>(height * css->border_right_width_em);
+    }
+    if( css->border_top_width_em > 0 ) {
+        css->border_top_width = static_cast<int>(height * css->border_top_width_em);
+    }
+    if( css->border_bottom_width_em > 0 ) {
+        css->border_bottom_width = static_cast<int>(height * css->border_bottom_width_em);
+    }
 
     ///////////////////////////////////////
 
