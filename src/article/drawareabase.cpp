@@ -3283,7 +3283,7 @@ void DrawAreaBase::exec_scroll()
             break;
     }
 
-    const int y_new = static_cast<int>(std::clamp<double>( adjust->get_upper() - adjust->get_page_size(), 0, y ));
+    const int y_new = static_cast<int>(std::clamp<double>( y, 0, adjust->get_upper() - adjust->get_page_size() ));
     if( current_y != y_new ){
 
         m_cancel_change_adjust = true;
