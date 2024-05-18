@@ -304,6 +304,10 @@ namespace CONFIG
     // 画像のメモリキャッシュ枚数
     int get_imgcache_size();
 
+    // 画像のハッシュ値を計算してNG 画像ハッシュとの差がしきい値以下の画像をあぼ〜んする
+    bool get_enable_img_hash();
+    void set_enable_img_hash( bool enabled );
+
     // NG 画像ハッシュの初期設定のしきい値
     int get_img_hash_initial_threshold();
     void set_img_hash_initial_threshold( int threshold );
