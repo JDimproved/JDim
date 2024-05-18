@@ -5,8 +5,11 @@
 #ifndef _IMG_H
 #define _IMG_H
 
+#include "imghash.h"
+
 #include "skeleton/loadable.h"
 
+#include <optional>
 #include <string>
 #include <string_view>
 
@@ -52,6 +55,8 @@ namespace DBIMG
 
         // 保存用ファイルハンドラ
         FILE* m_fout{};
+
+        std::optional<DHash> m_dhash{}; ///< 画像のハッシュ値
 
       public:
 
@@ -110,6 +115,9 @@ namespace DBIMG
 
         // 拡張子が偽装されているか
         bool is_fake() const;
+
+        void set_dhash( const DHash& dhash );
+        const std::optional<DHash>& get_dhash() const noexcept { return m_dhash; }
 
         // ロード開始
         // receive_data()　と receive_finish() がコールバックされる

@@ -5,11 +5,21 @@
 #ifndef _IMGROOT_H
 #define _IMGROOT_H
 
+#include "imghash.h"
+
+#include "jdlib/span.h"
+
 #include <list>
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
+
+namespace Gdk
+{
+    class Pixbuf;
+}
 
 namespace DBIMG
 {
@@ -18,6 +28,7 @@ namespace DBIMG
     class ImgRoot
     {
         std::map<std::string, std::unique_ptr<Img>> m_map_img;
+        std::vector<AboneImgHash> m_vec_abone_imghash;
         std::list< Img* > m_list_wait; // ロード待ち状態のImgクラス
         std::list< Img* > m_list_delwait; // ロード待ち状態のImgクラスを削除する時の一時変数
         bool m_webp_support{}; // WebP の読み込みに対応しているか
@@ -59,6 +70,19 @@ namespace DBIMG
 
         // 全キャッシュ削除
         void delete_all_files();
+
+        const std::vector<AboneImgHash>& get_vec_abone_imghash() const noexcept { return m_vec_abone_imghash; }
+        void push_abone_imghash( const std::string& url, const int threshold );
+        bool test_imghash( Img& img );
+        void load_imghash_list( const std::string& contents );
+        void save_abone_imghash_list();
+        void update_abone_imghash_list( JDLIB::span<AboneImgHash> span )
+        {
+            m_vec_abone_imghash.assign( span.begin(), span.end() );
+        }
+
+        static DBIMG::DHash calc_dhash_from_pixbuf( const Gdk::Pixbuf& pixbuf );
+        static int calc_hamming_distance( const DBIMG::DHash& a, const DBIMG::DHash& b ) noexcept;
 
       private:
 

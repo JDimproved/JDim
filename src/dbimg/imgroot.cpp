@@ -9,6 +9,7 @@
 #include "imginterface.h"
 
 #include "jdlib/confloader.h"
+#include "jdlib/miscgtk.h"
 
 #ifdef _DEBUG
 #include "jdlib/misctime.h"
@@ -21,7 +22,19 @@
 
 #include <sys/time.h>
 
+#include <bitset>
+#include <charconv>
+#include <ios>
+#include <limits>
 #include <sstream>
+#include <string_view>
+
+
+namespace DBIMG::ir {
+/// @brief NG 画像ハッシュの設定ファイル名
+constexpr const char* kDHashListFileName = "dhash_list.txt";
+}
+
 
 using namespace DBIMG;
 
@@ -37,6 +50,14 @@ ImgRoot::ImgRoot()
             m_avif_support = true;
         }
     }
+
+    const std::string img_abone_imghash_list = CACHE::path_img_abone_root() + ir::kDHashListFileName;
+    if( CACHE::file_exists( img_abone_imghash_list ) != CACHE::EXIST_FILE ) return;
+
+    std::string contents;
+    if( ! CACHE::load_rawdata( img_abone_imghash_list, contents ) ) return;
+
+    load_imghash_list( contents );
 }
 
 
@@ -46,6 +67,8 @@ ImgRoot::~ImgRoot()
         key_val.second->terminate_load();
         key_val.second.reset(); // call unique_ptr::reset()
     }
+
+    save_abone_imghash_list();
 }
 
 
@@ -374,6 +397,143 @@ void ImgRoot::delete_all_files()
 }
 
 
+/** @brief 画像URLからハッシュ値を登録して画像をあぼーんする
+ *
+ * @param[in] url       画像URL
+ * @param[in] threshold あぼーん判定のしきい値
+ */
+void ImgRoot::push_abone_imghash( const std::string& url, const int threshold )
+{
+    Img* img = get_img( url );
+    if( ! img ) return;
+
+    std::optional<DHash> dhash = img->get_dhash();
+    if( ! dhash ) return;
+
+    img->set_abone( true );
+    delete_cache( url );
+
+    m_vec_abone_imghash.push_back( AboneImgHash{ *dhash, threshold, img->get_time_modified(), url } );
+}
+
+
+/** @brief 画像のハッシュ値がNG 画像のハッシュの設定にマッチするかテストする
+ *
+ * @details マッチしたら画像をあぼーんしてキャッシュを削除する。
+ * @param[in] img ハッシュ値を比較する画像データ
+ * @return NG 画像ハッシュにマッチしたらtrue
+ */
+bool ImgRoot::test_imghash( Img& img )
+{
+    std::optional<DHash> dhash = img.get_dhash();
+    if( ! dhash.has_value() ) {
+#ifdef _DEBUG
+        std::cout << "ImgRoot::test_imghash not has value" << std::endl;
+#endif
+        return false;
+    }
+    if( img.is_protected() ) return false;
+
+    for( auto& [abone_dhash, threshold, last_matched, u] : m_vec_abone_imghash ) {
+        if( threshold < 0 ) continue;
+
+        if( calc_hamming_distance( abone_dhash, *dhash ) <= threshold ) {
+            last_matched = std::time( nullptr );
+            std::string url = img.url();
+            img.set_abone( true );
+            delete_cache( url );
+#ifdef _DEBUG
+            std::cout << "ImgRoot::test_imghash abone url = " << url << std::endl;
+#endif
+            return true;
+        }
+    }
+#ifdef _DEBUG
+    std::cout << "ImgRoot::test_imghash not hit url = " << img.url() << std::endl;
+#endif
+    return false;
+}
+
+
+/** @brief 文字列からNG 画像ハッシュの設定を読み込む
+ *
+ * @details NG 画像ハッシュの設定は改行文字で区切って読み込む。
+ * @param[in] contents NG 画像ハッシュのリスト
+ */
+void ImgRoot::load_imghash_list( const std::string& contents )
+{
+    m_vec_abone_imghash.clear();
+
+    // ファイルフォーマット
+    // v0: ROW COL THD RESERVED TIME URL
+    std::size_t line_start = 0;
+    for( std::size_t line_end = contents.find( '\n' );
+            line_end != std::string::npos;
+            line_end = contents.find( '\n', line_start )) {
+
+        auto row_end = contents.find( ' ', line_start );
+        if( row_end == std::string::npos ) continue;
+        auto col_end = contents.find( ' ', row_end + 1 );
+        if( col_end == std::string::npos ) continue;
+        auto thd_end = contents.find( ' ', col_end + 1 );
+        if( thd_end == std::string::npos ) continue;
+        auto reserved_end = contents.find( ' ', thd_end + 1 );
+        if( reserved_end == std::string::npos ) continue;
+        auto time_end = contents.find( ' ', reserved_end + 1 );
+        if( time_end == std::string::npos ) continue;
+
+        std::from_chars_result result;
+        std::string_view elem;
+
+        elem = std::string_view{ contents }.substr( line_start );
+        std::uint64_t row_hash;
+        result = std::from_chars( elem.data(), elem.data() + row_end, row_hash, 16 );
+        if( result.ec != std::errc{} ) row_hash = 0;
+
+        elem = std::string_view{ contents }.substr( row_end + 1 );
+        std::uint64_t col_hash;
+        result = std::from_chars( elem.data(), elem.data() + col_end, col_hash, 16 );
+        if( result.ec != std::errc{} ) col_hash = 0;
+
+        elem = std::string_view{ contents }.substr( col_end + 1 );
+        int threshold;
+        result = std::from_chars( elem.data(), elem.data() + thd_end, threshold, 10 );
+        if( result.ec != std::errc{} ) threshold = -1;
+
+        elem = std::string_view{ contents }.substr( reserved_end + 1 );
+        std::time_t last_matched;
+        result = std::from_chars( elem.data(), elem.data() + time_end, last_matched, 10 );
+        if( result.ec != std::errc{} ) last_matched = 0;
+
+        std::string source_url = contents.substr( time_end + 1, line_end - (time_end + 1) );
+
+        m_vec_abone_imghash.push_back( AboneImgHash{ { row_hash, col_hash }, threshold, last_matched, source_url } );
+
+        line_start = line_end + 1;
+    }
+}
+
+
+/**
+ * @brief NG 画像ハッシュの設定をキャッシュディレクトリにファイル保存する
+ */
+void ImgRoot::save_abone_imghash_list()
+{
+    std::stringstream ss;
+    for( auto& [dhash, threshold, date_modified, source_url] : m_vec_abone_imghash ) {
+        ss << std::uppercase << std::hex << dhash.row_hash << " "
+           << std::uppercase << std::hex << dhash.col_hash << " "
+           << std::nouppercase << std::dec << threshold << " "
+           << DBIMG::kImgHashReserved << " "
+           << date_modified << " "
+           << source_url << "\n";
+    }
+
+    const std::string img_abone_imghash_list = CACHE::path_img_abone_root() + ir::kDHashListFileName;
+    CACHE::save_rawdata( img_abone_imghash_list, ss.str() );
+}
+
+
 //
 // Img クラスの情報をリセット
 //
@@ -382,4 +542,62 @@ void ImgRoot::reset_imgs()
     for( auto& key_val : m_map_img ) {
         key_val.second->reset(); // call Img::reset()
     }
+}
+
+
+/** @brief 画像データから画像ハッシュ(dHash)を計算して返す
+ *
+ * @param[in] pixbuf ハッシュを計算する画像データ
+ * @return 計算した画像ハッシュ
+ */
+DBIMG::DHash ImgRoot::calc_dhash_from_pixbuf( const Gdk::Pixbuf& pixbuf )
+{
+    // グレースケール化
+    auto gray = MISC::convert_to_grayscale( pixbuf );
+
+    // グレースケール画像を縮小する
+    constexpr int bit_map_size = 9;
+    auto bit_map = gray->scale_simple( bit_map_size, bit_map_size, Gdk::INTERP_BILINEAR );
+
+    // ピクセルデータの取得
+    const guint8* pixels = bit_map->get_pixels();
+    const int rowstride = bit_map->get_rowstride();
+    const int n_channels = bit_map->get_n_channels();
+
+    // 隣のピクセルより小さければ1、そうでないなら0としてハッシュ化する
+    std::uint64_t row_hash = 0;
+    std::uint64_t col_hash = 0;
+    for( int y = 0; y < 8; ++y ) {
+        for( int x = 0; x < 8; ++x ) {
+            const guint8* pos = pixels + y * rowstride + x * n_channels;
+            const guint8* next_row = pixels + (y + 1) * rowstride + x * n_channels;
+            const guint8* next_col = pixels + y * rowstride + (x + 1) * n_channels;
+
+            const int row_bit = *pos < *next_row;
+            row_hash = (row_hash << 1) | row_bit;
+            const int col_bit = *pos < *next_col;
+            col_hash = (col_hash << 1) | col_bit;
+        }
+    }
+
+#ifdef _DEBUG
+    std::cout << "ImgRoot::calc_dhash_from_pixbuf dhash row = " << std::hex << row_hash
+              << ", col = " << col_hash << std::dec << std::endl;
+#endif
+    return DBIMG::DHash{ row_hash, col_hash };
+}
+
+
+/** @brief 2つのdHashからハミング距離を計算する
+ *
+ * @details 2つの画像が似ているほど計算値が低くなる。 0 は同一画像の判定。
+ * @return 計算結果は [0, 127] の範囲
+ */
+int ImgRoot::calc_hamming_distance( const DBIMG::DHash& a, const DBIMG::DHash& b ) noexcept
+{
+    std::bitset<64> bset_row( a.row_hash ^ b.row_hash );
+    std::bitset<64> bset_col( a.col_hash ^ b.col_hash );
+
+    auto num_bits_different = bset_row.count() + bset_col.count();
+    return static_cast<int>( num_bits_different );
 }
