@@ -329,3 +329,45 @@ Glib::RefPtr<Gdk::Window> MISC::get_pointer_at_window( const Glib::RefPtr<const 
     const auto device = Gdk::Display::get_default()->get_default_seat()->get_pointer();
     return window->get_device_position( device, x, y, unused );
 }
+
+
+/** @brief 画像データをグレイスケール(白黒)画像に変換する
+ *
+ * @param[in] pixbuf グレースケールに変換する画像データ
+ * @return グレースケールの画像データ
+ */
+Glib::RefPtr<Gdk::Pixbuf> MISC::convert_to_grayscale( const Gdk::Pixbuf& pixbuf )
+{
+    const int width = pixbuf.get_width();
+    const int height = pixbuf.get_height();
+    const int rowstride = pixbuf.get_rowstride();
+    const guint8* pixels = pixbuf.get_pixels();
+    const int n_channels = pixbuf.get_n_channels();
+    const bool has_alpha_channel{ n_channels == 4 };
+
+    // 画像データをコピーしてグレイスケール画像の出力データに使う
+    Glib::RefPtr<Gdk::Pixbuf> gray_pixbuf = pixbuf.copy();
+    guint8* gray_pixels = gray_pixbuf->get_pixels();
+
+    // ピクセルデータにアクセスしてグレースケールに変換し出力データに書き込む
+    for( int y = 0; y < height; ++y ) {
+        for( int x = 0; x < width; ++x ) {
+            const guint8* p = pixels + y * rowstride + x * n_channels;
+            guint8* gp = gray_pixels + y * rowstride + x * n_channels;
+
+            // RGBデータから光度を計算する (Rec.601)
+            const guint8 gray = static_cast<guint8>( 0.3 * p[0] + 0.59 * p[1] + 0.11 * p[2] );
+
+            // RGBデータに求めた光度の値を書き込む
+            gp[0] = gray;
+            gp[1] = gray;
+            gp[2] = gray;
+
+            // アルファチャンネルがあるデータはコピーする
+            if( has_alpha_channel ) {
+                gp[3] = p[3];
+            }
+        }
+    }
+    return gray_pixbuf;
+}
