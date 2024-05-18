@@ -181,6 +181,12 @@ namespace CONFIG
         // 画像のメモリキャッシュ枚数
         int imgcache_size{};
 
+        /// @brief 画像のハッシュ値を計算してNG 画像ハッシュとの差がしきい値以下の画像をあぼ〜んする
+        bool enable_img_hash{};
+
+        /// @brief NG 画像ハッシュの初期設定のしきい値
+        int img_hash_initial_threshold{};
+
         // JD ホームページのアドレス
         std::string url_jdhp;
 

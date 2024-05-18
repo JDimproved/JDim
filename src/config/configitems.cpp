@@ -236,6 +236,12 @@ bool ConfigItems::load( const bool restore )
     // 画像のメモリキャッシュ枚数
     imgcache_size = cf.get_option_int( "imgcache_size", CONF_IMGCACHE_SIZE, 0, 20 );
 
+    // 画像のハッシュ値を計算してNG 画像ハッシュとの差がしきい値以下の画像をあぼ〜んする
+    enable_img_hash = cf.get_option_bool( "enable_img_hash", CONF_ENABLE_IMG_HASH );
+
+    // NG 画像ハッシュの初期設定のしきい値
+    img_hash_initial_threshold = cf.get_option_int( "img_hash_initial_threshold", CONF_IMG_HASH_INITIAL_THRESHOLD, -1, 128 );
+
     // JD ホームページのアドレス
     url_jdhp = cf.get_option_str( "url_jdhp", CONF_URL_JDHP );
 
@@ -778,6 +784,8 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "max_img_size", max_img_size );
     cf.update( "max_img_pixel", max_img_pixel );
     cf.update( "imgcache_size", imgcache_size );
+    cf.update( "enable_img_hash", enable_img_hash );
+    cf.update( "img_hash_initial_threshold", img_hash_initial_threshold );
 
     cf.update( "cl_char", str_color[ COLOR_CHAR ] );
     cf.update( "cl_char_name", str_color[ COLOR_CHAR_NAME ] );

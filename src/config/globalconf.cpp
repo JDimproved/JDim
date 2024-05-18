@@ -302,6 +302,11 @@ int CONFIG::get_max_img_size(){ return get_confitem()->max_img_size; }
 int CONFIG::get_max_img_pixel(){ return get_confitem()->max_img_pixel; }
 int CONFIG::get_imgcache_size(){ return get_confitem()->imgcache_size; }
 
+bool CONFIG::get_enable_img_hash() { return get_confitem()->enable_img_hash; }
+void CONFIG::set_enable_img_hash( bool enabled ) { get_confitem()->enable_img_hash = enabled; }
+int CONFIG::get_img_hash_initial_threshold(){ return get_confitem()->img_hash_initial_threshold; }
+void CONFIG::set_img_hash_initial_threshold( int threshold ) { get_confitem()->img_hash_initial_threshold = threshold; }
+
 int CONFIG::get_newthread_hour(){ return get_confitem()->newthread_hour; }
 
 bool CONFIG::get_inc_search_board(){ return get_confitem()->inc_search_board; }

@@ -30,7 +30,11 @@ namespace IMAGE
         Gtk::Label m_label_size_value;
         Gtk::Label m_label_type;
         Gtk::Label m_label_type_value;
+        Gtk::Label m_label_imghash;
+        Gtk::Label m_label_imghash_value;
 
+        Gtk::Button* m_button_copy{};
+        Gtk::CheckButton* m_check_abone{};
         Gtk::CheckButton m_check_protect;
 
       public:
@@ -39,6 +43,9 @@ namespace IMAGE
       private:
         void slot_ok_clicked() override;
         void slot_open_ref();
+        void slot_copy_clicked();
+        void slot_button_icon_timeout();
+        void slot_toggled_protect();
     };
 
 }

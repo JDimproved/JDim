@@ -103,6 +103,55 @@ std::string DBIMG::get_cache_path( const std::string& url )
 }
 
 
+std::optional<DBIMG::DHash> DBIMG::get_dhash( const std::string& url )
+{
+    const DBIMG::Img* img = DBIMG::get_img( url );
+    if( img ) return img->get_dhash();
+
+    return std::nullopt;
+}
+
+JDLIB::span<const DBIMG::AboneImgHash> DBIMG::get_span_abone_imghash()
+{
+    if( ! instance_dbimg_root ) return JDLIB::span<const DBIMG::AboneImgHash>{};
+
+    return instance_dbimg_root->get_vec_abone_imghash();
+}
+
+void DBIMG::push_abone_imghash( const std::string& url, const int threshold )
+{
+    if( ! instance_dbimg_root ) return;
+
+    instance_dbimg_root->push_abone_imghash( url, threshold );
+}
+
+bool DBIMG::test_imghash( DBIMG::Img& img )
+{
+    if( ! instance_dbimg_root ) return false;
+
+    return instance_dbimg_root->test_imghash( img );
+}
+
+void DBIMG::save_abone_imghash_list()
+{
+    if( ! instance_dbimg_root ) return;
+
+    instance_dbimg_root->save_abone_imghash_list();
+}
+
+void DBIMG::update_abone_imghash_list( JDLIB::span<DBIMG::AboneImgHash> span )
+{
+    if( ! instance_dbimg_root ) return;
+
+    instance_dbimg_root->update_abone_imghash_list( span );
+}
+
+DBIMG::DHash DBIMG::calc_dhash_from_pixbuf( const Gdk::Pixbuf& pixbuf )
+{
+    return DBIMG::ImgRoot::calc_dhash_from_pixbuf( pixbuf );
+}
+
+
 void DBIMG::download_img( const std::string& url, const std::string& refurl, const bool mosaic )
 {
     DBIMG::Img* img = DBIMG::get_img( url );

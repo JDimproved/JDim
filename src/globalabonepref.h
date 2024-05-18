@@ -5,6 +5,8 @@
 #ifndef _GLOBALABONPREF_H
 #define _GLOBALABONPREF_H
 
+#include "imagehashtab.h"
+
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
 
@@ -16,12 +18,15 @@
 
 #include "command.h"
 
+
+
 namespace CORE
 {
     class GlobalAbonePref : public SKELETON::PrefDiag
     {
         Gtk::Notebook m_notebook;
         SKELETON::EditView m_edit_name, m_edit_word, m_edit_regex;
+        ImageHashTab m_image_hash_tab;
         Gtk::Label m_label_warning;
 
         // OK押した
@@ -36,6 +41,7 @@ namespace CORE
             CONFIG::set_list_abone_name( list_name );
             CONFIG::set_list_abone_word( list_word );
             CONFIG::set_list_abone_regex( list_regex );
+            m_image_hash_tab.slot_ok_clicked();
 
             // あぼーん情報更新
             DBTREE::update_abone_all_article();
@@ -45,7 +51,8 @@ namespace CORE
       public:
 
         GlobalAbonePref( Gtk::Window* parent, const std::string& url )
-        : SKELETON::PrefDiag( parent, url )
+            : SKELETON::PrefDiag( parent, url )
+            , m_image_hash_tab{ this }
         {
             // name
             std::list< std::string > list_name = CONFIG::get_list_abone_name();
@@ -65,11 +72,13 @@ namespace CORE
             m_notebook.append_page( m_edit_name, "NG 名前" );
             m_notebook.append_page( m_edit_word, "NG ワード" );
             m_notebook.append_page( m_edit_regex, "NG 正規表現" );
+            m_notebook.append_page( m_image_hash_tab.get_widget(), "NG 画像ハッシュ" );
 
             get_content_area()->pack_start( m_notebook );
             set_title( "全体あぼ〜ん設定" );
             resize( 600, 400 );
             show_all_children();
+            m_notebook.set_current_page( 0 );
         }
 
         ~GlobalAbonePref() noexcept override = default;
