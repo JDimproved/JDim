@@ -42,6 +42,9 @@ namespace MISC
 
     // ウィジェット左上隅を基準としたマウスポインターの座標を取得
     Glib::RefPtr<Gdk::Window> get_pointer_at_window( const Glib::RefPtr<const Gdk::Window>& window, int& x, int& y );
+
+    // 画像データをグレイスケール(白黒)画像に変換する
+    Glib::RefPtr<Gdk::Pixbuf> convert_to_grayscale( const Gdk::Pixbuf& pixbuf );
 }
 
 #endif
