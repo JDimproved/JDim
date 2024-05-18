@@ -33,6 +33,64 @@
 namespace DBIMG::ir {
 /// @brief NG 画像ハッシュの設定ファイル名
 constexpr const char* kDHashListFileName = "dhash_list.txt";
+
+/** @brief NG 画像ハッシュのデフォルト設定
+ *
+ * @details 最後にマッチした日時は 2000-01-01 (Sat) 09:00:00 JST に設定。
+ * ハッシュのソースURLはデフォルト設定の目印として U+2699 GEAR を追加した。
+ *
+ * NGの対象は大量にレスを投稿する荒らしが繰り返し書き込んでいたグロテスク・ゴア・残虐な画像。
+ */
+constexpr const char* kDefaultConfig =
+    "1028040033BF4F7C A2A430B1B070E1E 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/qsO20Gk.jpg\n"
+    "178FC74220E94A20 E8E8E86828694BDE 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/wzq202L.jpg\n"
+    "1CE2D3C1FF7E98 3B1D395D4D0F0F07 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/vjijPhf.jpg\n"
+    "1EFBFC7BF208E7FC 6F7BB63B524E774F 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/PgMJGnN.jpg\n"
+    "1F7CC23143F7CCBE 4D76B3B9EBADAEB5 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/WFteJZP.jpg\n"
+    "1FE7F321F079D 4D5D0D8990CC643D 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/0B8cU8D.jpg\n"
+    "23E0039D80C1633F B7E68A8E0E232317 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/Qwvsb6e.jpg\n"
+    "291A080018FF7F86 4D5E65771B3372F2 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/FYYmQwu.jpg\n"
+    "3882A2E73C4B04FF F6325450D4B2787 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/WJikloU.jpg\n"
+    "3F63030079FC3ECC 1371CDAC4C86A2EC 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/lSkTyBs.jpg\n"
+    "4343061C38B46C 636226A48C94F448 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/4EIF09A.gif\n"
+    "5540FBCF8974002 6D6AAB475536AE2 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/Eq8pFcA.gif\n"
+    "6378061381C4667D 73CFE3C1E474313D 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/iDOOCc5.jpg\n"
+    "79FFBF3EB1C0006C 18D5A0E0E0E0E424 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/OXQ59ju.jpg\n"
+    "7CB3772F0EC190AE 777367666E7C3E26 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/0pNEpr3.jpg\n"
+    "7E81C2A1703111C7 B2B8262446C746E7 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/IQRJ6Xq.jpg\n"
+    "801C308FFF0FBEFF B0F23C2C0E4F67C 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/Osuen0U.jpg\n"
+    "811D3E8AB74916FF D0E2B3B376F173A 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/fZRYVgw.jpg\n"
+    "833C6FCEC0BFFF3F 670663C3939112A2 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/8ftQr1w.jpg\n"
+    "837FFCF18000E 382C23474D0D5656 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/ZX5KXSN.jpg\n"
+    "923727080000C0E0 E9E5EC494C4C3D2D 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/7y8F03y.jpg\n"
+    "9D0100000000E1 BCD46033B038B030 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/L5teub6.jpg\n"
+    "A33F7A45411D7F01 333370507090F0F0 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/aZdlsbt.jpg\n"
+    "B1B1F74F7E0017F0 B838326A3C74612C 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/Y1jjgEE.jpg\n"
+    "BC3E3EC7420A9F01 E2373736A293931 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/31x4INT.jpg\n"
+    "BE367CF7C091C3E9 A6366AD1E9922A2E 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/eZb4Fc4.jpg\n"
+    "BEFF47593FFDC7FF 3371715D1B556727 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/wUyhJXD.jpg\n"
+    "BF7FE1C1FCBFCE43 8171F8E9CFC3C771 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/OIbTczq.jpg\n"
+    "C0841F8B3701F97C 20871131313D2D14 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/TUjtfzL.jpg\n"
+    "C0BE3C856FDF3649 6F3F3C7432143468 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/JR8NIaZ.jpg\n"
+    "C1EFA790F9B70E7 F0F8C0D8FC63667 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/Qw4FWRT.jpg\n"
+    "C2099C00FF7FC7C2 C8CC8E333B39735A 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/NElZob7.jpg\n"
+    "C2CCC0851116FBFE C7CF91041E022B27 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/ujTeALn.jpg\n"
+    "C563F0FEF736D10 437130F8F85868D0 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/t5hnSAS.jpg\n"
+    "C78038BF478E7B78 C68E8F6767EF3D7C 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/946sigr.jpg\n"
+    "CCC231839C1BFC61 C693AF2B1F4B6E63 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/VouEyc3.jpg\n"
+    "CD933744FCE0 9515173237658E9B 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/rWpzvPL.jpg\n"
+    "D8F7F6001BDDFF9 FCB636BFFDDF5B7B 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/RA9YiOK.jpg\n"
+    "DC1CFF37F3BD9D 70711B1A3830442 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/BPKDY3I.jpg\n"
+    "DFE3810D6C0E02B1 E824A406361B3B19 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/eaT3GmP.jpg\n"
+    "E3320C33CE3C0003 37364C594E3E7173 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/pe3oWus.jpg\n"
+    "E72C816360A4CCFE E3CD594946464A5A 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/WdpCuFp.jpg\n"
+    "F1E8CC20071F3FF7 ACCFC793C7C3B76E 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/ciXyCsx.jpg\n"
+    "F70000B070000B06 FCFC7CFB75F5F5F7 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/Vdjgk2P.jpg\n"
+    "F77980FE04000040 FA5C2E3E3C3C7C7E 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/nQoL19D.jpg\n"
+    "FC800461BFFF7C80 872323230B0E2CB1 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/8gJqNJM.jpg\n"
+    "FD811DF2DF7ED8C1 B070626A686870B0 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/GEswgVB.jpg\n"
+    "FEFE210104FF9D00 D2393868E43989B9 30 0 946684800 \xE2\x9A\x99+https://i.imgur.com/HRmhuay.jpg\n"
+    ;
 }
 
 
@@ -52,10 +110,15 @@ ImgRoot::ImgRoot()
     }
 
     const std::string img_abone_imghash_list = CACHE::path_img_abone_root() + ir::kDHashListFileName;
-    if( CACHE::file_exists( img_abone_imghash_list ) != CACHE::EXIST_FILE ) return;
-
     std::string contents;
-    if( ! CACHE::load_rawdata( img_abone_imghash_list, contents ) ) return;
+    if( CACHE::file_exists( img_abone_imghash_list ) == CACHE::EXIST_FILE ) {
+        // ファイルがあるときは内容の有無に関係なくデフォルト設定は使わない
+        if( ! CACHE::load_rawdata( img_abone_imghash_list, contents ) ) return;
+    }
+    else {
+        // 設定ファイルが見つからないときはデフォルト設定を読み込む
+        contents = ir::kDefaultConfig;
+    }
 
     load_imghash_list( contents );
 }
