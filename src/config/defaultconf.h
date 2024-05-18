@@ -136,6 +136,7 @@ namespace CONFIG
         CONF_MAX_IMG_SIZE = 16,     // ダウンロードする画像の最大サイズ(Mbyte)
         CONF_MAX_IMG_PIXEL = 20,     // 画像の最大サイズ(Mピクセル)
         CONF_IMGCACHE_SIZE = 3,      // 画像のメモリキャッシュ枚数
+        CONF_ENABLE_IMG_HASH = 0, ///< 画像のハッシュ値を計算してNG 画像ハッシュとの差がしきい値以下の画像をあぼ〜んする
         CONF_IMG_HASH_INITIAL_THRESHOLD = 30, ///< NG 画像ハッシュの初期設定のしきい値
         CONF_USE_LINK_AS_BOARD = 0,     // bbsmenu.html内にあるリンクは全て板とみなす
         CONF_SHOW_MOVEDIAG = 1,    // 板移転時に確認ダイアログを表示する
