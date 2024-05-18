@@ -12,6 +12,8 @@
 
 #include "config/globalconf.h"
 
+#include "command.h"
+
 #include <mutex>
 #include <system_error>
 
@@ -193,17 +195,33 @@ bool ImageAreaBase::create_imgloader( const bool pixbufonly, std::string& errmsg
     if( ! ret ) {
         errmsg = m_imgloader->get_errmsg();
     }
+    else if( CONFIG::get_enable_img_hash() ) {
+        DBIMG::Img* img = get_img();
+        if( ! img->get_dhash() ) {
+            Glib::RefPtr<Gdk::Pixbuf> pixbuf = m_imgloader->get_pixbuf();
+            DBIMG::DHash dhash = DBIMG::calc_dhash_from_pixbuf( *pixbuf.get() );
+            img->set_dhash( dhash );
+        }
+
+        DBIMG::test_imghash( *img );
+    }
     return ret;
 }
 
 
-//
-// ディスパッチャのコールバック関数
-//
+/** @brief ディスパッチャのコールバック関数
+ *
+ * @details 画像があぼーんされたときは画像やポップアップを非表示にする。
+ */
 void ImageAreaBase::callback_dispatch()
 {
-    set_image();
+    const bool abone = get_img()->get_abone();
+    if( ! abone ) set_image();
     wait();
+    if( abone ) {
+        clear();
+        CORE::core_set_command( "hide_popup" );
+    }
 }
 
 
