@@ -304,6 +304,10 @@ namespace CONFIG
     // 画像のメモリキャッシュ枚数
     int get_imgcache_size();
 
+    // NG 画像ハッシュの初期設定のしきい値
+    int get_img_hash_initial_threshold();
+    void set_img_hash_initial_threshold( int threshold );
+
     // スレ一覧で指定した値(時間)よりも後に立てられたスレを新着とみなす
     int get_newthread_hour();
 

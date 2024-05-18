@@ -181,6 +181,9 @@ namespace CONFIG
         // 画像のメモリキャッシュ枚数
         int imgcache_size{};
 
+        /// @brief NG 画像ハッシュの初期設定のしきい値
+        int img_hash_initial_threshold{};
+
         // JD ホームページのアドレス
         std::string url_jdhp;
 
