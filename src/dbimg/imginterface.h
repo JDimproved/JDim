@@ -7,7 +7,18 @@
 #ifndef _IMGINTERFACE_H
 #define _IMGINTERFACE_H
 
+#include "imghash.h"
+
+#include "jdlib/span.h"
+
+#include <optional>
 #include <string>
+
+
+namespace Gdk
+{
+    class Pixbuf;
+}
 
 namespace Gtk
 {
@@ -39,6 +50,8 @@ namespace DBIMG
         T_FORCEIMAGE, // 拡張子がなくても画像として扱う
     };
 
+    constexpr int kImgHashReserved = 0;
+
     class Img;
 
     void create_root();
@@ -69,6 +82,14 @@ namespace DBIMG
 
     DBIMG::Img* get_img( const std::string& url );
     std::string get_cache_path( const std::string& url );
+
+    std::optional<DBIMG::DHash> get_dhash( const std::string& url );
+    JDLIB::span<const AboneImgHash> get_span_abone_imghash();
+    void push_abone_imghash( const std::string& url, const int threshold );
+    bool test_imghash( DBIMG::Img& img );
+    void save_abone_imghash_list();
+    void update_abone_imghash_list( JDLIB::span<AboneImgHash> span );
+    DBIMG::DHash calc_dhash_from_pixbuf( const Gdk::Pixbuf& pixbuf );
 
     // ロード開始
     // refurl : 参照元のスレのアドレス

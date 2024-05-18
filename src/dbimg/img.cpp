@@ -129,6 +129,7 @@ void Img::clear()
     m_abone = false;
     m_wait = false;
     m_wait_counter = 0;
+    m_dhash.reset();
 }
 
 
@@ -454,6 +455,12 @@ bool Img::is_fake() const
     return ret;
 }
 
+
+void Img::set_dhash( const DHash& dhash )
+{
+    m_dhash = dhash;
+    save_info();
+}
 
 //
 // データ受信
@@ -838,6 +845,23 @@ void Img::read_info()
         GET_INFOVALUE( str_tmp, "height = " );
         if( ! str_tmp.empty() ) m_height =  atoi( str_tmp.c_str() );
 
+        std::optional<std::uint64_t> row_hash;
+        GET_INFOVALUE( str_tmp, "dhash_row = " );
+        if( ! str_tmp.empty() ) {
+            row_hash = std::strtoull( str_tmp.c_str(), nullptr, 16 );
+        }
+
+        std::optional<std::uint64_t> col_hash;
+        GET_INFOVALUE( str_tmp, "dhash_col = " );
+        if( ! str_tmp.empty() ) {
+            col_hash = std::strtoull( str_tmp.c_str(), nullptr, 16 );
+        }
+
+        m_dhash.reset();
+        if( row_hash && col_hash ) {
+            m_dhash = DBIMG::DHash{ *row_hash, *col_hash };
+        }
+
         if( ! total_length() ){
             set_total_length( CACHE::get_filesize( get_cache_path() ) );
             if( total_length() ) save_info();
@@ -900,7 +924,10 @@ void Img::save_info()
         << "mosaic = " << m_mosaic << std::endl
         << "type = " << m_type << std::endl
         << "width = " << m_width << std::endl
-        << "height = " << m_height << std::endl;
+        << "height = " << m_height << std::endl
+        << "dhash_row = " << std::uppercase << std::hex << (m_dhash.has_value() ? m_dhash->row_hash : 0) << std::endl
+        << "dhash_col = " << std::uppercase << std::hex << (m_dhash.has_value() ? m_dhash->col_hash : 0)
+        << std::nouppercase << std::dec << std::endl;
 
 #ifdef _DEBUG
     std::cout << "Img::save_info file = " << path_info << std::endl;
