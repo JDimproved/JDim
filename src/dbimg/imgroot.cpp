@@ -511,7 +511,8 @@ bool ImgRoot::test_imghash( Img& img )
     for( auto& [abone_dhash, threshold, last_matched, source_url] : m_vec_abone_imghash ) {
         if( threshold < 0 ) continue;
 
-        if( calc_hamming_distance( abone_dhash, *dhash ) <= threshold ) {
+        const int distance = calc_hamming_distance( abone_dhash, *dhash );
+        if( distance <= threshold ) {
             last_matched = std::time( nullptr );
             std::string url = img.url();
             ss.str("");
@@ -523,6 +524,10 @@ bool ImgRoot::test_imghash( Img& img )
                << " (しきい値: " << threshold
                << ")<br>" << source_url
                << " の類似画像です。";
+#ifdef JDIM_DEVTOOLS
+            // 開発者向けの機能: あぼーん判定理由にハッシュ値を比較した計算結果を追加
+            ss << "(相違度: " << distance << ")";
+#endif
             img.set_abone( true, ss.str() );
             delete_cache( url );
 #ifdef _DEBUG
