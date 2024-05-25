@@ -82,6 +82,7 @@ namespace DBIMG
 
     DBIMG::Img* get_img( const std::string& url );
     std::string get_cache_path( const std::string& url );
+    std::string get_img_abone_reason( const std::string& url );
 
     std::optional<DBIMG::DHash> get_dhash( const std::string& url );
     JDLIB::span<const AboneImgHash> get_span_abone_imghash();

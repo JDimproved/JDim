@@ -2171,6 +2171,11 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
             if( DBIMG::get_abone( url )){
                 SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています" );
+                std::string abone_reason = DBIMG::get_img_abone_reason( url );
+                if( ! abone_reason.empty() ) {
+                    abone_reason = MISC::replace_str( abone_reason, "<br>", "\n" );
+                    mdiag.set_secondary_text( abone_reason );
+                }
                 mdiag.run();
             }
             else{

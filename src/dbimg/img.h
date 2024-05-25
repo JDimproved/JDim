@@ -57,6 +57,7 @@ namespace DBIMG
         FILE* m_fout{};
 
         std::optional<DHash> m_dhash{}; ///< 画像のハッシュ値
+        std::string m_abone_reason; ///< あぼーんした理由のテキスト
 
       public:
 
@@ -93,7 +94,7 @@ namespace DBIMG
         bool is_cached() const;
 
         bool get_abone() const { return m_abone; }
-        void set_abone( bool abone );
+        void set_abone( bool abone, const std::string& abone_reason = {} );
 
         bool get_mosaic() const { return m_mosaic; }
         void set_mosaic( const bool mosaic );
@@ -118,6 +119,8 @@ namespace DBIMG
 
         void set_dhash( const DHash& dhash );
         const std::optional<DHash>& get_dhash() const noexcept { return m_dhash; }
+
+        std::string get_abone_reason() const noexcept { return m_abone_reason; }
 
         // ロード開始
         // receive_data()　と receive_finish() がコールバックされる

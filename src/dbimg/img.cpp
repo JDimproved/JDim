@@ -220,12 +220,13 @@ bool Img::is_cached() const
 }
 
 
-//
-// あぼーん状態セット
-//
-// キャッシュに無くてもinfoを作るので is_cached() でチェックしない
-//
-void Img::set_abone( bool abone )
+/** @brief あぼーん状態セット
+ *
+ * @details キャッシュに無くてもinfoを作るので is_cached() でチェックしない
+ * @param[in] abone        trueならあぼーんする, falseなら解除する
+ * @param[in] abone_reason あぼーんした理由のテキスト
+ */
+void Img::set_abone( bool abone, const std::string& abone_reason )
 {
     if( m_abone == abone ) return;
 
@@ -235,6 +236,7 @@ void Img::set_abone( bool abone )
 
     if( abone ) clear();
     m_abone = abone;
+    m_abone_reason = abone_reason;
     save_info();
 }
 
@@ -868,6 +870,16 @@ void Img::read_info()
         }
         set_current_length( total_length() );
     }
+    else if( m_abone ) {
+        std::string str_info;
+        CACHE::load_rawdata( path_info, str_info );
+
+        std::size_t i = str_info.find( "abone_reason = " );
+        if( i != std::string::npos ) {
+            i += 15;
+            m_abone_reason = str_info.substr( i, str_info.find( '\n', i ) - i );
+        }
+    }
 
 #ifdef _DEBUG
     std::cout << "path_info = " << path_info << std::endl;
@@ -927,7 +939,8 @@ void Img::save_info()
         << "height = " << m_height << std::endl
         << "dhash_row = " << std::uppercase << std::hex << (m_dhash.has_value() ? m_dhash->row_hash : 0) << std::endl
         << "dhash_col = " << std::uppercase << std::hex << (m_dhash.has_value() ? m_dhash->col_hash : 0)
-        << std::nouppercase << std::dec << std::endl;
+        << std::nouppercase << std::dec << std::endl
+        << "abone_reason = " << m_abone_reason << std::endl;
 
 #ifdef _DEBUG
     std::cout << "Img::save_info file = " << path_info << std::endl;

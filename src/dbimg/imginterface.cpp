@@ -102,6 +102,14 @@ std::string DBIMG::get_cache_path( const std::string& url )
     return std::string();
 }
 
+std::string DBIMG::get_img_abone_reason( const std::string& url )
+{
+    const DBIMG::Img* img = DBIMG::get_img( url );
+    if( img ) return img->get_abone_reason();
+
+    return std::string{};
+}
+
 
 std::optional<DBIMG::DHash> DBIMG::get_dhash( const std::string& url )
 {

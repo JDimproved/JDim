@@ -473,7 +473,17 @@ void ImgRoot::push_abone_imghash( const std::string& url, const int threshold )
     std::optional<DHash> dhash = img->get_dhash();
     if( ! dhash ) return;
 
-    img->set_abone( true );
+    std::stringstream ss;
+    ss << "NG 画像ハッシュ "
+       << std::uppercase << std::hex << dhash->row_hash
+       << " "
+       << std::uppercase << std::hex << dhash->col_hash
+       << std::nouppercase << std::dec
+       << " (しきい値: " << threshold
+       << ")<br>" << url
+       << " のソースURLです。";
+
+    img->set_abone( true, ss.str() );
     delete_cache( url );
 
     m_vec_abone_imghash.push_back( AboneImgHash{ *dhash, threshold, img->get_time_modified(), url } );
@@ -497,13 +507,23 @@ bool ImgRoot::test_imghash( Img& img )
     }
     if( img.is_protected() ) return false;
 
-    for( auto& [abone_dhash, threshold, last_matched, u] : m_vec_abone_imghash ) {
+    std::stringstream ss;
+    for( auto& [abone_dhash, threshold, last_matched, source_url] : m_vec_abone_imghash ) {
         if( threshold < 0 ) continue;
 
         if( calc_hamming_distance( abone_dhash, *dhash ) <= threshold ) {
             last_matched = std::time( nullptr );
             std::string url = img.url();
-            img.set_abone( true );
+            ss.str("");
+            ss << "NG 画像ハッシュ "
+               << std::uppercase << std::hex << abone_dhash.row_hash
+               << " "
+               << std::uppercase << std::hex << abone_dhash.col_hash
+               << std::nouppercase << std::dec
+               << " (しきい値: " << threshold
+               << ")<br>" << source_url
+               << " の類似画像です。";
+            img.set_abone( true, ss.str() );
             delete_cache( url );
 #ifdef _DEBUG
             std::cout << "ImgRoot::test_imghash abone url = " << url << std::endl;
