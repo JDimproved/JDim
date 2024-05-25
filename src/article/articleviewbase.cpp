@@ -2240,6 +2240,11 @@ void ArticleViewBase::slot_on_url( const std::string& url, const std::string& im
         // あぼーん
         if( DBIMG::get_abone( imgurl ) ){
             args.arg1 = "あぼ〜んされています";
+            std::string abone_reason = DBIMG::get_img_abone_reason( imgurl );
+            if( ! abone_reason.empty() ) {
+                args.arg1.append( "<br>" );
+                args.arg1.append( MISC::replace_str( abone_reason, "://", "&#58;//" ) );
+            }
             view_popup = CORE::ViewFactory( CORE::VIEW_ARTICLEPOPUPHTML, m_url_article, args );
         }
 
@@ -2736,6 +2741,11 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         else if( DBIMG::get_abone( url )){
             SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています" );
+            std::string abone_reason = DBIMG::get_img_abone_reason( url );
+            if( ! abone_reason.empty() ) {
+                abone_reason = MISC::replace_str( abone_reason, "<br>", "\n" );
+                mdiag.set_secondary_text( abone_reason );
+            }
             mdiag.run();
         }
 

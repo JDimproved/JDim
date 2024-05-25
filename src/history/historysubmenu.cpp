@@ -170,6 +170,11 @@ bool HistorySubMenu::open_history( const unsigned int i )
 
                 if( DBIMG::get_abone( info_list[ i ].url )){
                     SKELETON::MsgDiag mdiag( nullptr, "あぼ〜んされています" );
+                    std::string abone_reason = DBIMG::get_img_abone_reason( info_list[i].url );
+                    if( ! abone_reason.empty() ) {
+                        abone_reason = MISC::replace_str( abone_reason, "<br>", "\n" );
+                        mdiag.set_secondary_text( abone_reason );
+                    }
                     mdiag.run();
                 }
                 else{
