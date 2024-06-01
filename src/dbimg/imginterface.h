@@ -50,6 +50,10 @@ namespace DBIMG
         T_FORCEIMAGE, // 拡張子がなくても画像として扱う
     };
 
+    constexpr const char* kTemporaryMosaicQuestion =
+        "モザイクをかけて画像を表示しますか？「はい」を選択して画像を表示すると、JDimを再起動する、"
+        "あぼ〜んを解除する、またはモザイクを解除するまでNG 画像ハッシュは適用されません。";
+
     constexpr int kImgHashReserved = 0;
 
     class Img;

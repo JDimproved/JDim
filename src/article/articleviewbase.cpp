@@ -2740,13 +2740,34 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
 
         else if( DBIMG::get_abone( url )){
-            SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています" );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています", false,
+                                     Gtk::MESSAGE_INFO, Gtk::BUTTONS_YES_NO );
             std::string abone_reason = DBIMG::get_img_abone_reason( url );
             if( ! abone_reason.empty() ) {
                 abone_reason = MISC::replace_str( abone_reason, "<br>", "\n" );
-                mdiag.set_secondary_text( abone_reason );
+                abone_reason.append( "\n\n" );
             }
-            mdiag.run();
+            abone_reason.append( DBIMG::kTemporaryMosaicQuestion );
+            mdiag.set_secondary_text( abone_reason );
+            const int response = mdiag.run();
+            if( response == Gtk::RESPONSE_YES ) {
+
+                const bool open_imageview{ ! sssp // sssp の時は画像ビューを開かない
+                                           && CONFIG::get_use_image_view()
+                                           && ( control.button_alloted( event, CONTROL::ClickButton )
+                                                || control.button_alloted( event, CONTROL::OpenBackImageButton ) ) };
+
+                const bool open_browser{ ! open_imageview
+                                         && control.button_alloted( event, CONTROL::ClickButton ) };
+
+                const bool mosaic{ ! sssp }; // sssp の時はモザイクをかけない
+
+                // 画像ビューに切り替える
+                const bool switch_image{ open_imageview
+                                         && ! control.button_alloted( event, CONTROL::OpenBackImageButton ) };
+
+                open_image( url, res_number, open_imageview, open_browser, mosaic, switch_image );
+            }
         }
 
         else if( DBIMG::get_type_real( url ) == DBIMG::T_LARGE ){
