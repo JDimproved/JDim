@@ -93,7 +93,9 @@ void Img::clock_in()
     if( m_wait ){
 
         --m_wait_counter;
-        if( m_wait_counter <= 0 ) download_img( m_refurl, m_mosaic, 0 );
+        const int mosaic_mode{ m_force_mosaic ? DBIMG::kForceMosaic
+                                              : static_cast<int>(m_mosaic) };
+        if( m_wait_counter <= 0 ) download_img( m_refurl, mosaic_mode, 0 );
     }
 }
 
@@ -117,6 +119,7 @@ void Img::clear()
     clear_load_data(); // HTTPコードのクリア
 
     m_mosaic = CONFIG::get_use_mosaic();
+    m_force_mosaic = false;
     m_zoom_to_fit = CONFIG::get_zoom_to_fit();
     m_size = 100;
     m_type = T_UNKNOWN;
@@ -136,7 +139,7 @@ void Img::clear()
 //
 // ロード待ち状態セット/リセット
 //
-bool Img::set_wait( const std::string& refurl, const bool mosaic, const int waitsec )
+bool Img::set_wait( const std::string& refurl, const int mosaic_mode, const int waitsec )
 {
     if( waitsec && ! m_wait ){
 
@@ -148,7 +151,8 @@ bool Img::set_wait( const std::string& refurl, const bool mosaic, const int wait
         DBIMG::set_clock_in( this );
 
         m_refurl = refurl;
-        m_mosaic = mosaic;
+        m_mosaic = ( mosaic_mode != 0 );
+        if( ! m_force_mosaic ) m_force_mosaic = ( mosaic_mode == DBIMG::kForceMosaic );
 
         CORE::core_set_command( "redraw", m_url );
         CORE::core_set_command( "redraw_article" );
@@ -255,10 +259,11 @@ std::string Img::get_cache_path() const
 // receive_data()　と receive_finish() がコールバックされる
 //
 // refurl : 参照元のスレのアドレス
-// mosaic : モザイク表示するか
+// mosaic_mode : モザイク表示するか
+//               ( 0: モザイク表示しない, 1: モザイク表示する, 2: 強制的にモザイク表示する )
 // waitsec: 指定した秒数経過後にロード開始
 //
-void Img::download_img( const std::string& refurl, const bool mosaic, const int waitsec )
+void Img::download_img( const std::string& refurl, const int mosaic_mode, const int waitsec )
 {
     // ダウンロード初回(リダイレクトでは無い)
     if( ! m_count_redirect ) m_url_alt = std::string();
@@ -277,7 +282,7 @@ void Img::download_img( const std::string& refurl, const bool mosaic, const int 
     if( is_wait() && waitsec ) return;
 
     // ロード待ち状態にセット
-    if( set_wait( refurl, mosaic, waitsec ) ) return;
+    if( set_wait( refurl, mosaic_mode, waitsec ) ) return;
 
     // ロード待ち状態解除
     reset_wait();
@@ -301,7 +306,8 @@ void Img::download_img( const std::string& refurl, const bool mosaic, const int 
 
     clear();
     m_refurl = std::move( refurl_tmp );
-    m_mosaic = mosaic;
+    m_mosaic = ( mosaic_mode != 0 );
+    if( ! m_force_mosaic ) m_force_mosaic = ( mosaic_mode == DBIMG::kForceMosaic );
 
     JDLIB::LOADERDATA data;
     data.init_for_data();
@@ -383,6 +389,7 @@ void Img::set_mosaic( const bool mosaic )
     if( ! is_cached() ) return;
 
     m_mosaic = mosaic;
+    if( ! m_mosaic ) m_force_mosaic = false;
     save_info();
 
     // 再描画
@@ -574,7 +581,9 @@ void Img::receive_finish()
 #endif
             ++m_count_redirect;
             m_url_alt = location();
-            download_img( m_refurl, m_mosaic, 0 );
+            const int mosaic_mode{ m_force_mosaic ? DBIMG::kForceMosaic
+                                                  : static_cast<int>(m_mosaic) };
+            download_img( m_refurl, mosaic_mode, 0 );
             return;
         }
         else m_type = T_NODATA;

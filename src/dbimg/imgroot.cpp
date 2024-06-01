@@ -505,7 +505,7 @@ bool ImgRoot::test_imghash( Img& img )
 #endif
         return false;
     }
-    if( img.is_protected() ) return false;
+    if( img.is_protected() || img.is_force_mosaic() ) return false;
 
     std::stringstream ss;
     for( auto& [abone_dhash, threshold, last_matched, source_url] : m_vec_abone_imghash ) {

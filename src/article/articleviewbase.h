@@ -340,7 +340,8 @@ namespace ARTICLE
         void slot_leave_url();
         bool click_url( std::string url, int res_number, GdkEventButton* event );
         void open_image( const std::string& url, const int res_number,
-                         const bool open_imageview, const bool open_browser, const bool mosaic, const bool switch_image );
+                         const bool open_imageview, const bool open_browser,
+                         const int mosaic_mode, const bool switch_image );
 
         // 画像ポップアップメニュー用
         void slot_cancel_mosaic();

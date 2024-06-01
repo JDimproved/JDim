@@ -43,6 +43,7 @@ namespace DBIMG
         int m_height_mosaic;
 
         bool m_mosaic; // モザイクかける
+        bool m_force_mosaic{}; ///< true なら強制的にモザイク表示するモード
         bool m_zoom_to_fit; // windowにサイズをあわせる
         int m_size; // 画像の大きさ(パーセントで)
         bool m_protect; // true ならキャッシュを保護する( delete_cache()で削除しない )
@@ -99,6 +100,8 @@ namespace DBIMG
         bool get_mosaic() const { return m_mosaic; }
         void set_mosaic( const bool mosaic );
 
+        bool is_force_mosaic() const noexcept { return m_force_mosaic; }
+
         void show_large_img();
 
         bool is_zoom_to_fit() const { return m_zoom_to_fit; }
@@ -125,9 +128,10 @@ namespace DBIMG
         // ロード開始
         // receive_data()　と receive_finish() がコールバックされる
         // refurl : 参照元のスレのアドレス
-        // mosaic : モザイク表示するか
+        // mosaic_mode : モザイク表示するか
+        //               ( 0: モザイク表示しない, 1: モザイク表示する, 2: 強制的にモザイク表示する )
         // waitsec: 指定した秒数経過後にロード開始
-        void download_img( const std::string& refurl, const bool mosaic, const int waitsec );
+        void download_img( const std::string& refurl, const int mosaic_mode, const int waitsec );
 
         // ロード停止
         void stop_load() override;
@@ -140,7 +144,7 @@ namespace DBIMG
         void receive_finish() override;
 
         // ロード待ち状態セット/リセット
-        bool set_wait( const std::string& refurl, const bool mosaic, const int waitsec );
+        bool set_wait( const std::string& refurl, const int mosaic_mode, const int waitsec );
         void reset_wait();
 
         // 埋め込み画像のサイズを計算
