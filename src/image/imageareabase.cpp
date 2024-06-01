@@ -5,6 +5,7 @@
 
 #include "imageareabase.h"
 
+#include "jdlib/miscgtk.h"
 #include "jdlib/miscmsg.h"
 
 #include "dbimg/imginterface.h"
@@ -267,6 +268,11 @@ void ImageAreaBase::set_mosaic( Glib::RefPtr< Gdk::Pixbuf > pixbuf )
     const int mosheight = get_img()->get_height_mosaic();
 
     if( moswidth && mosheight ){
+        if( CONFIG::get_use_grayscale_mosaic() ) {
+            // グレースケール化
+            Glib::RefPtr<Gdk::Pixbuf> gray = MISC::convert_to_grayscale( *pixbuf.get() );
+            pixbuf = std::move( gray );
+        }
 
         Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
         pixbuf2 = pixbuf->scale_simple( moswidth, mosheight, Gdk::INTERP_NEAREST );

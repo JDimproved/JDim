@@ -22,6 +22,7 @@ namespace IMAGE
     class ImageAreaIcon : public ImageAreaBase
     {
         bool m_shown{};
+        bool m_use_grayscale_mosaic{};
         int m_imagetype{}; // dispatch()前に表示する画像を入れる
 
         Glib::RefPtr< Gdk::Pixbuf > m_pixbuf;

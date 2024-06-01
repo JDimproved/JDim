@@ -54,8 +54,9 @@ void ImageAreaIcon::show_image()
 
     if( is_loading() )  return;
 
-    // 既に画像が表示されている
-    if( m_shown && get_img()->is_cached() ) return;
+    // 既に画像が表示されているときは処理を行わない
+    // ただし、グレースケール化しているときは処理を続行する
+    if( m_shown && get_img()->is_cached() && ! m_use_grayscale_mosaic ) return;
 
     if( m_pixbuf ){
         m_pixbuf.reset();
@@ -107,8 +108,16 @@ void ImageAreaIcon::load_image_thread()
     std::string errmsg;
     if( create_imgloader( pixbufonly, errmsg ) ){
         Glib::RefPtr< Gdk::Pixbuf > pixbuf = m_imgloader->get_pixbuf();
-        if( pixbuf ) 
+        if( pixbuf ) {
+            m_use_grayscale_mosaic = get_img()->get_mosaic() && CONFIG::get_use_grayscale_mosaic();
+            if( m_use_grayscale_mosaic ) {
+
+                // グレースケール化
+                Glib::RefPtr<Gdk::Pixbuf> gray = MISC::convert_to_grayscale( *pixbuf.get() );
+                pixbuf = std::move( gray );
+            }
             m_pixbuf_icon = pixbuf->scale_simple( get_width(), get_height(), Gdk::INTERP_NEAREST );
+        }
     }
     m_imgloader.reset();
 
