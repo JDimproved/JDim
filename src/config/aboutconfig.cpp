@@ -336,6 +336,7 @@ void AboutConfig::append_rows()
     append_row( "指定したサイズ(M byte)より大きい画像を表示するときに警告する", get_confitem()->max_img_size, CONF_MAX_IMG_SIZE );
     append_row( "指定した画素数(M pixel)より大きい画像を表示するときに警告する", get_confitem()->max_img_pixel, CONF_MAX_IMG_PIXEL );
     append_row( "モザイクのレベル", get_confitem()->mosaic_size, CONF_MOSAIC_SIZE );
+    append_row( "(実験的な機能) 画像をモザイクで開くときはグレースケール(白黒)で表示する", get_confitem()->use_grayscale_mosaic, CONF_USE_GRAYSCALE_MOSAIC );
     append_row( "画像ビューのスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgmain_interp, CONF_IMGMAIN_INTERP );
     append_row( "インライン画像のスムージングレベル(0-2, 大きい程高画質で低速)", get_confitem()->imgemb_interp, CONF_IMGEMB_INTERP );
     append_row( "インライン画像の最大幅", get_confitem()->embimg_width, CONF_EMBIMG_WIDTH );

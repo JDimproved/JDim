@@ -218,6 +218,9 @@ bool ConfigItems::load( const bool restore )
     // モザイクの大きさ
     mosaic_size = cf.get_option_int( "mosaic_size", CONF_MOSAIC_SIZE, 1, 1024 );
 
+    // 画像をモザイクで開くときはグレースケール(白黒)で表示する
+    use_grayscale_mosaic = cf.get_option_bool( "use_grayscale_mosaic", CONF_USE_GRAYSCALE_MOSAIC );
+
     // 画像をデフォルトでウィンドウサイズに合わせる
     zoom_to_fit = cf.get_option_bool( "zoom_to_fit", CONF_ZOOM_TO_FIT );
 
@@ -778,6 +781,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "show_delimgdiag", show_delimgdiag );
     cf.update( "use_mosaic", use_mosaic );
     cf.update( "mosaic_size", mosaic_size );
+    cf.update( "use_grayscale_mosaic", use_grayscale_mosaic );
     cf.update( "zoom_to_fit", zoom_to_fit );
     cf.update( "del_img_day", del_img_day );
     cf.update( "del_imgabone_day", del_imgabone_day );

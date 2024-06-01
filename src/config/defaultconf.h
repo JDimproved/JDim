@@ -130,6 +130,7 @@ namespace CONFIG
         CONF_SHOW_DELIMGDIAG = 1 ,     // 画像ビューでdeleteを押したときに確認ダイアログを表示する
         CONF_USE_MOSAIC = 1,        // 画像にモザイクをかける
         CONF_MOSAIC_SIZE = 60,        // モザイクの大きさ
+        CONF_USE_GRAYSCALE_MOSAIC = 0, ///< 画像をモザイクで開くときはグレースケール(白黒)で表示する
         CONF_ZOOM_TO_FIT = 1,       // 画像をデフォルトでウィンドウサイズに合わせる
         CONF_DEL_IMG_DAY = 20,      // 画像キャッシュ削除の日数
         CONF_DEL_IMGABONE_DAY = 20, // 画像あぼーん削除の日数

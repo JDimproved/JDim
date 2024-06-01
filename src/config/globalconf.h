@@ -283,6 +283,9 @@ namespace CONFIG
     // モザイクの大きさ
     int get_mosaic_size();
 
+    /// @brief 画像をモザイクで開くときはグレースケール(白黒)で表示する
+    bool get_use_grayscale_mosaic();
+
     // 画像をデフォルトでウィンドウサイズに合わせる
     bool get_zoom_to_fit();
     void set_zoom_to_fit( const bool fit );

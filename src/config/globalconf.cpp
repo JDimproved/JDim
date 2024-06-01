@@ -292,6 +292,7 @@ void CONFIG::set_show_delimgdiag( const bool show ){ get_confitem()->show_delimg
 bool CONFIG::get_use_mosaic(){ return get_confitem()->use_mosaic; }
 void CONFIG::set_use_mosaic( const bool mosaic ) { get_confitem()->use_mosaic = mosaic; }
 int CONFIG::get_mosaic_size(){ return get_confitem()->mosaic_size; }
+bool CONFIG::get_use_grayscale_mosaic(){ return get_confitem()->use_grayscale_mosaic; }
 bool CONFIG::get_zoom_to_fit(){ return get_confitem()->zoom_to_fit; }
 void CONFIG::set_zoom_to_fit( const bool fit ){ get_confitem()->zoom_to_fit = fit; }
 int CONFIG::get_del_img_day(){ return get_confitem()->del_img_day; }
