@@ -2740,13 +2740,35 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         }
 
         else if( DBIMG::get_abone( url )){
-            SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています" );
+            SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています", false,
+                                     Gtk::MESSAGE_INFO, Gtk::BUTTONS_YES_NO );
             std::string abone_reason = DBIMG::get_img_abone_reason( url );
             if( ! abone_reason.empty() ) {
                 abone_reason = MISC::replace_str( abone_reason, "<br>", "\n" );
-                mdiag.set_secondary_text( abone_reason );
+                abone_reason.append( "\n\n" );
             }
-            mdiag.run();
+            abone_reason.append( DBIMG::kTemporaryMosaicQuestion );
+            mdiag.set_secondary_text( abone_reason );
+            const int response = mdiag.run();
+            if( response == Gtk::RESPONSE_YES ) {
+
+                const bool open_imageview{ ! sssp // sssp の時は画像ビューを開かない
+                                           && CONFIG::get_use_image_view()
+                                           && ( control.button_alloted( event, CONTROL::ClickButton )
+                                                || control.button_alloted( event, CONTROL::OpenBackImageButton ) ) };
+
+                const bool open_browser{ ! open_imageview
+                                         && control.button_alloted( event, CONTROL::ClickButton ) };
+
+                const int mosaic_mode{ sssp ? 0 // sssp の時はモザイクをかけない
+                                            : DBIMG::kForceMosaic };
+
+                // 画像ビューに切り替える
+                const bool switch_image{ open_imageview
+                                         && ! control.button_alloted( event, CONTROL::OpenBackImageButton ) };
+
+                open_image( url, res_number, open_imageview, open_browser, mosaic_mode, switch_image );
+            }
         }
 
         else if( DBIMG::get_type_real( url ) == DBIMG::T_LARGE ){
@@ -2811,11 +2833,12 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 // 画像表示
 //
 void ArticleViewBase::open_image( const std::string& url, const int res_number,
-                                  const bool open_imageview, const bool open_browser, const bool mosaic, const bool switch_image )
+                                  const bool open_imageview, const bool open_browser,
+                                  const int mosaic_mode, const bool switch_image )
 {
 #ifdef _DEBUG
     std::cout << "ArticleViewBase::open_image url = " << url << " num = " << res_number
-              << " open_view = " << open_imageview << " open_browser = " << open_browser << " mosaic = " << mosaic
+              << " open_view = " << open_imageview << " open_browser = " << open_browser << " mosaic = " << mosaic_mode
               << " switch_image = " << switch_image << std::endl;
 #endif
 
@@ -2824,7 +2847,7 @@ void ArticleViewBase::open_image( const std::string& url, const int res_number,
     // キャッシュに無かったらロード
     if( ! DBIMG::is_cached( url ) ){
 
-        DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ), mosaic );
+        DBIMG::download_img( url, DBTREE::url_readcgi( m_url_article, res_number, 0 ), mosaic_mode );
 
         // ポップアップ表示してダウンロードサイズを表示
         hide_popup();
@@ -2838,7 +2861,7 @@ void ArticleViewBase::open_image( const std::string& url, const int res_number,
     // 画像ビューを開く
     if( open_imageview ){
 
-        CORE::core_set_command( "open_image", url );
+        CORE::core_set_command( "open_image", url, mosaic_mode == DBIMG::kForceMosaic ? "force_mosaic" : "" );
         if( ! load && switch_image ) CORE::core_set_command( "switch_image" );
     }
 
@@ -4086,10 +4109,10 @@ void ArticleViewBase::slot_show_image_with_mosaic()
 
     const bool open_imageview = CONFIG::get_use_image_view();
     const bool open_browser = ! open_imageview;
-    const bool mosaic = true;
+    constexpr int mosaic_mode = DBIMG::kForceMosaic;
     const bool switch_image = open_imageview;
 
-    open_image( m_url_tmp, res_number, open_imageview, open_browser, mosaic, switch_image );
+    open_image( m_url_tmp, res_number, open_imageview, open_browser, mosaic_mode, switch_image );
 }
 
 

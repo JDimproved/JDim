@@ -2753,8 +2753,9 @@ void Core::set_command( const COMMAND_ARGS& command )
 
         // キャッシュに無かったらロード
         if( ! DBIMG::is_cached( command.url ) && ! DBIMG::is_loading( command.url ) && ! DBIMG::is_wait( command.url ) ){
-            const bool mosaic = CONFIG::get_use_mosaic();
-            DBIMG::download_img( command.url, std::string(), mosaic );
+            const int mosaic_mode = ( command.arg1 == "force_mosaic" ) ? DBIMG::kForceMosaic : CONFIG::get_use_mosaic();
+
+            DBIMG::download_img( command.url, std::string(), mosaic_mode );
         }
 
         IMAGE::get_admin()->set_command( "open_view", command.url );

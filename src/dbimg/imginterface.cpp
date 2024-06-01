@@ -160,10 +160,10 @@ DBIMG::DHash DBIMG::calc_dhash_from_pixbuf( const Gdk::Pixbuf& pixbuf )
 }
 
 
-void DBIMG::download_img( const std::string& url, const std::string& refurl, const bool mosaic )
+void DBIMG::download_img( const std::string& url, const std::string& refurl, const int mosaic_mode )
 {
     DBIMG::Img* img = DBIMG::get_img( url );
-    if( img ) img->download_img( refurl, mosaic, 0 );
+    if( img ) img->download_img( refurl, mosaic_mode, 0 );
 }
 
 void DBIMG::download_img_wait( const std::string& url, const std::string& refurl, const bool mosaic, const int first )

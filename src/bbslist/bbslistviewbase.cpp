@@ -2152,6 +2152,8 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
     if( type != TYPE_DIR && url.empty() ) return false;
 
+    bool open_image = false;
+    std::string open_mode;
     switch( type ){
 
         case TYPE_BOARD:
@@ -2169,17 +2171,28 @@ bool BBSListViewBase::open_row( Gtk::TreePath& path, const bool tab )
 
         case TYPE_IMAGE:
 
-            if( DBIMG::get_abone( url )){
-                SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています" );
+            if( DBIMG::get_abone( url ) ) {
+                SKELETON::MsgDiag mdiag( get_parent_win(), "あぼ〜んされています", false,
+                                         Gtk::MESSAGE_INFO, Gtk::BUTTONS_YES_NO );
                 std::string abone_reason = DBIMG::get_img_abone_reason( url );
                 if( ! abone_reason.empty() ) {
                     abone_reason = MISC::replace_str( abone_reason, "<br>", "\n" );
-                    mdiag.set_secondary_text( abone_reason );
+                    abone_reason.append( "\n\n" );
                 }
-                mdiag.run();
+                abone_reason.append( DBIMG::kTemporaryMosaicQuestion );
+                mdiag.set_secondary_text( abone_reason );
+                const int response = mdiag.run();
+                if( response == Gtk::RESPONSE_YES ) {
+                    open_image = true;
+                    open_mode = "force_mosaic";
+                }
             }
-            else{
-                CORE::core_set_command( "open_image", url );
+            else {
+                open_image = true;
+            }
+
+            if( open_image ) {
+                CORE::core_set_command( "open_image", url, open_mode );
                 CORE::core_set_command( "switch_image" );
             }
             break;

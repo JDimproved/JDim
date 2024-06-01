@@ -50,6 +50,13 @@ namespace DBIMG
         T_FORCEIMAGE, // 拡張子がなくても画像として扱う
     };
 
+    // DBIMG::download_img( url, refurl, mosaic_mode ) の mosaic_mode に渡す定数
+    constexpr const int kForceMosaic = 2; ///< 強制的にモザイク表示する
+
+    constexpr const char* kTemporaryMosaicQuestion =
+        "モザイクをかけて画像を表示しますか？「はい」を選択して画像を表示すると、JDimを再起動する、"
+        "あぼ〜んを解除する、またはモザイクを解除するまでNG 画像ハッシュは適用されません。";
+
     constexpr int kImgHashReserved = 0;
 
     class Img;
@@ -94,8 +101,9 @@ namespace DBIMG
 
     // ロード開始
     // refurl : 参照元のスレのアドレス
-    // mosaic : モザイク表示するか
-    void download_img( const std::string& url, const std::string& refurl, const bool mosaic );
+    // mosaic_mode : モザイク表示するか
+    //               ( 0: モザイク表示しない, 1: モザイク表示する, 2: 強制的にモザイク表示する )
+    void download_img( const std::string& url, const std::string& refurl, const int mosaic_mode );
 
     // 時間差ロード
     // first : 一番最初の画像か

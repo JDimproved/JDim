@@ -138,11 +138,15 @@ bool HistorySubMenu::open_history( const unsigned int i )
 
     if( ! info_list[ i ].url.empty() ){
 
+        const std::string& url = info_list[i].url;
 #ifdef _DEBUG
-        std::cout << "open " << info_list[ i ].url << std::endl;
+        std::cout << "open " << url << std::endl;
 #endif
         const std::string tab = "newtab";
         const std::string mode = "";
+
+        bool open_image = false;
+        std::string open_mode;
 
         switch( info_list[ i ].type ){
 
@@ -150,35 +154,47 @@ bool HistorySubMenu::open_history( const unsigned int i )
             case TYPE_THREAD_UPDATE:
             case TYPE_THREAD_OLD:
 
-                CORE::core_set_command( "open_article" , DBTREE::url_dat( info_list[ i ].url ), tab, mode );
+                CORE::core_set_command( "open_article" , DBTREE::url_dat( url ), tab, mode );
                 ret = true;
                 break;
 
             case TYPE_BOARD:
                 
-                CORE::core_set_command( "open_board", DBTREE::url_boardbase( info_list[ i ].url ), tab, mode );
+                CORE::core_set_command( "open_board", DBTREE::url_boardbase( url ), tab, mode );
                 ret = true;
                 break;
 
             case TYPE_VBOARD:
 
-                CORE::core_set_command( "open_sidebar_board", info_list[ i ].url, tab, mode, "", "set_history" );
+                CORE::core_set_command( "open_sidebar_board", url, tab, mode, "", "set_history" );
                 ret = true;
                 break;
 
             case TYPE_IMAGE:
 
-                if( DBIMG::get_abone( info_list[ i ].url )){
-                    SKELETON::MsgDiag mdiag( nullptr, "あぼ〜んされています" );
-                    std::string abone_reason = DBIMG::get_img_abone_reason( info_list[i].url );
+                if( DBIMG::get_abone( url )){
+                    SKELETON::MsgDiag mdiag( nullptr, "あぼ〜んされています", false,
+                                             Gtk::MESSAGE_INFO, Gtk::BUTTONS_YES_NO );
+                    std::string abone_reason = DBIMG::get_img_abone_reason( url );
                     if( ! abone_reason.empty() ) {
                         abone_reason = MISC::replace_str( abone_reason, "<br>", "\n" );
-                        mdiag.set_secondary_text( abone_reason );
+                        abone_reason.append( "\n\n" );
                     }
-                    mdiag.run();
+                    abone_reason.append( DBIMG::kTemporaryMosaicQuestion );
+                    mdiag.set_secondary_text( abone_reason );
+
+                    const int response = mdiag.run();
+                    if( response == Gtk::RESPONSE_YES ) {
+                        open_image = true;
+                        open_mode = "force_mosaic";
+                    }
                 }
-                else{
-                    CORE::core_set_command( "open_image", info_list[ i ].url );
+                else {
+                    open_image = true;
+                }
+
+                if( open_image ) {
+                    CORE::core_set_command( "open_image", url, open_mode );
                     CORE::core_set_command( "switch_image" );
                     ret = true;
                 }
