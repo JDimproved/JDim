@@ -2656,6 +2656,11 @@ bool DrawAreaBase::draw_one_img_node( LAYOUT* layout, const CLIPINFO& ci )
                     const int mosheight = img->get_height_mosaic();
 
                     if( moswidth && mosheight ){
+                        if( CONFIG::get_use_grayscale_mosaic() ) {
+                            // グレースケール化
+                            Glib::RefPtr<Gdk::Pixbuf> gray = MISC::convert_to_grayscale( *pixbuf.get() );
+                            pixbuf = std::move( gray );
+                        }
 
                         Glib::RefPtr< Gdk::Pixbuf > pixbuf2;
                         pixbuf2 = pixbuf->scale_simple( moswidth, mosheight, Gdk::INTERP_NEAREST );

@@ -163,6 +163,9 @@ namespace CONFIG
         // 画像のサイズがmosaic_sizeより小さい場合はモザイクをかけない
         int mosaic_size{};
 
+        /// @brief 画像をモザイクで開くときはグレースケール(白黒)で表示する
+        bool use_grayscale_mosaic{};
+
         // 画像をデフォルトでウィンドウサイズに合わせる
         bool zoom_to_fit{};
 
