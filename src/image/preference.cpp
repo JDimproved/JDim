@@ -80,6 +80,23 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
         m_check_abone->set_halign( Gtk::ALIGN_START );
 
         m_check_protect.signal_toggled().connect( sigc::mem_fun( *this, &IMAGE::Preferences::slot_toggled_protect ) );
+
+    }
+
+    Gtk::Label* label_abone_reason{};
+    Gtk::Label* label_abone_reason_value{};
+    std::string abone_reason = DBIMG::get_img_abone_reason( get_url() );
+    if( ! abone_reason.empty() ) {
+        abone_reason = MISC::replace_str( abone_reason, "<br>", "\n" );
+        label_abone_reason_value = Gtk::make_managed<Gtk::Label>( abone_reason );
+        label_abone_reason_value->set_ellipsize( Pango::ELLIPSIZE_END );
+        label_abone_reason_value->set_halign( Gtk::ALIGN_START );
+        label_abone_reason_value->set_hexpand( true );
+        label_abone_reason_value->set_selectable( true );
+
+        label_abone_reason = Gtk::make_managed<Gtk::Label>( "備考:" );
+        label_abone_reason->set_halign( Gtk::ALIGN_START );
+        label_abone_reason->set_valign( Gtk::ALIGN_START );
     }
 
     m_check_protect.set_active( DBIMG::is_protected( get_url() ) );
@@ -104,13 +121,21 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     m_grid_info.attach( m_label_type_value, 1, 6, 2, 1 );
     m_grid_info.attach( m_label_imghash, 0, 7, 1, 1 );
 
+    int bottom_of_row;
     if( m_button_copy ) {
         m_grid_info.attach( m_label_imghash_value, 1, 7, 1, 1 );
         m_grid_info.attach( *m_button_copy, 2, 7, 1, 1 );
         m_grid_info.attach( *m_check_abone, 1, 8, 2, 1 );
+        bottom_of_row = 9;
     }
     else {
         m_grid_info.attach( m_label_imghash_value, 1, 7, 2, 1 );
+        bottom_of_row = 8;
+    }
+
+    if( label_abone_reason ) {
+        m_grid_info.attach( *label_abone_reason, 0, bottom_of_row, 1, 1 );
+        m_grid_info.attach( *label_abone_reason_value, 1, bottom_of_row, 2, 1 );
     }
 
     for( int y = 0; y < 8; ++y ) {
