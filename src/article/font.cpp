@@ -105,7 +105,10 @@ bool ARTICLE::get_width_of_char( const char32_t code, const char pre_char, int& 
                 width_of_char[ mode ][ code ].width = new unsigned int[ 128 ]{};
             }
 
-            const int pre_char_num = ( int ) pre_char;
+            // ここの比較はASCIIの範囲 [0, 127] を想定しているが、
+            // char型はCPUアーキテクチャによって符号の有無が変わるので、
+            // 明示的にunsigned char型へ変換して比較する。
+            const auto pre_char_num = static_cast<unsigned char>(pre_char);
             if( pre_char_num < 128 ) width = width_of_char[ mode ][ code ].width[ pre_char_num ];
         }
     }
@@ -146,7 +149,10 @@ void ARTICLE::set_width_of_char( const char32_t code, const char pre_char, const
     // 半角モードの幅を厳密に求める場合
     if( code < 128 && strict_of_char ){
 
-        const int pre_char_num = pre_char;
+        // ここの比較はASCIIの範囲 [0, 127] を想定しているが、
+        // char型はCPUアーキテクチャによって符号の有無が変わるので、
+        // 明示的にunsigned char型へ変換して比較する。
+        const auto pre_char_num = static_cast<unsigned char>(pre_char);
         if( pre_char_num < 128 ) width_of_char[ mode ][ code ].width[ pre_char_num ] = width;
     }
 
