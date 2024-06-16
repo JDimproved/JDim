@@ -102,6 +102,10 @@ namespace SESSION
     bool loginbe();
     void set_loginbe( const bool login );
 
+    // どんぐり警備員ログイン中
+    bool loginacorn();
+    void set_loginacorn( const bool login );
+
     bool loginp2() = delete; // Removed in v0.3.0 (2020-05)
     void set_loginp2( const bool login ) = delete; // Removed in v0.3.0 (2020-05)
 

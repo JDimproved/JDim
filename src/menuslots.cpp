@@ -11,6 +11,7 @@
 #include "session.h"
 #include "login2ch.h"
 #include "loginbe.h"
+#include "loginacorn.h"
 #include "winmain.h"
 #include "fontid.h"
 #include "colorid.h"
@@ -111,6 +112,27 @@ void Core::slot_toggle_loginbe()
 
     // ログオフ中ならログイン開始
     else CORE::get_loginbe()->start_login();
+
+    set_maintitle();
+}
+
+
+/**
+ * @brief どんぐり警備員にログイン
+ */
+void Core::slot_toggle_loginacorn()
+{
+    if( ! m_enable_menuslot ) return;
+
+#ifdef _DEBUG
+    std::cout << "Core::slot_toggle_loginacorn\n";
+#endif
+
+    // ログイン中ならログアウト
+    if( CORE::get_loginacorn()->login_now() ) CORE::get_loginacorn()->logout();
+
+    // ログオフ中ならログイン開始
+    else CORE::get_loginacorn()->start_login();
 
     set_maintitle();
 }

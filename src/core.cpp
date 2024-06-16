@@ -23,6 +23,7 @@
 #include "updatemanager.h"
 #include "login2ch.h"
 #include "loginbe.h"
+#include "loginacorn.h"
 #include "environment.h"
 #include "setupwizard.h"
 #include "cache.h"
@@ -108,6 +109,9 @@ Core::Core( JDWinMain& win_main )
 
     // BEログインマネージャ作成
     CORE::get_loginbe();
+
+    // どんぐり警備員ログインマネージャ作成
+    CORE::get_loginacorn();
 
     // マウス、キー設定読み込み
     CONTROL::load_conf();
@@ -224,6 +228,9 @@ Core::~Core()
     // BEログインマネージャ削除
     CORE::delete_loginbe();
 
+    // どんぐり警備員ログインマネージャ削除
+    CORE::delete_loginacorn();
+
     // データベース削除
     DBTREE::delete_root();
     DBIMG::delete_root();
@@ -312,6 +319,8 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン(_B)", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_loginbe ) );
+    m_action_group->add( Gtk::ToggleAction::create( "LoginAcorn", "どんぐり警備員にログイン(_G)", {}, false ),
+                         sigc::mem_fun( *this, &Core::slot_toggle_loginacorn ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
     m_action_group->add( Gtk::Action::create( "SaveSession", "セッション保存(_S)"), sigc::mem_fun( *this, &Core::save_session ) );
@@ -791,6 +800,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
             "<separator/>"
             "<menuitem action='Login2ch'/>"
             "<menuitem action='LoginBe'/>"
+            "<menuitem action='LoginAcorn'/>"
             "<separator/>"
             "<menuitem action='SaveSession'/>"
             "<separator/>"
@@ -1355,6 +1365,7 @@ void Core::set_maintitle()
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
+    if( CORE::get_loginacorn()->login_now() ) title +=" [ どんぐり警備員 ]";
     if( ! SESSION::is_online() ) title += " [ offline ]";
     m_win_main.set_title( title );
 }
@@ -1493,6 +1504,13 @@ void Core::slot_activate_menubar()
 
         if( CORE::get_loginbe()->login_now() ) tact->set_active( true );
         else tact->set_active( false );
+    }
+
+    // どんぐり警備員ログイン
+    act = m_action_group->get_action( "LoginAcorn" );
+    tact = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic( act );
+    if( tact ) {
+        tact->set_active( CORE::get_loginacorn()->login_now() );
     }
 
     // 表示->スレ一覧に切替 (アクティブ状態を切り替える)
@@ -3150,6 +3168,9 @@ void Core::exec_command()
     // BEへのログイン処理が完了した
     else if( command.command  == "loginbe_finished" ) set_maintitle();
 
+    // どんぐり警備員へのログイン処理が完了した
+    else if( command.command  == "loginacorn_finished" ) set_maintitle();
+
     // あるadminのnotebookが空になった
     else if( command.command  == "empty_page" ) empty_page( command.url );
 
@@ -3354,6 +3375,9 @@ void Core::exec_command_after_boot()
 
     // BEログイン
     if( SESSION::loginbe() ) slot_toggle_loginbe();
+
+    // どんぐり警備員ログイン
+    if( SESSION::loginacorn() ) slot_toggle_loginacorn();
 
     // タイトル表示
     set_maintitle();
