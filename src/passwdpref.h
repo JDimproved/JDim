@@ -279,6 +279,7 @@ namespace CORE
 
             set_title( "パスワード設定" );
             show_all_children();
+            set_default_size( 450, -1 );
         }
 
         ~PasswdPref() noexcept override = default;
