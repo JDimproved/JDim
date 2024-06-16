@@ -240,6 +240,7 @@ namespace CORE
         void slot_toggle_online();
         void slot_toggle_login2ch();
         void slot_toggle_loginbe();
+        void slot_toggle_loginacorn();
         void slot_reload_list();
         void slot_quit();
         ///
