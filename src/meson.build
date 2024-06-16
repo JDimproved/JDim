@@ -54,6 +54,7 @@ core_sources = files(
   'livepref.cpp',
   'login2ch.cpp',
   'loginbe.cpp',
+  'loginacorn.cpp',
   'mainitempref.cpp',
   'maintoolbar.cpp',
   'menuslots.cpp',

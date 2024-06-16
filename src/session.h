@@ -102,6 +102,8 @@ namespace SESSION
     bool loginbe();
     void set_loginbe( const bool login );
 
+    void set_loginacorn( const bool login );
+
     bool loginp2() = delete; // Removed in v0.3.0 (2020-05)
     void set_loginp2( const bool login ) = delete; // Removed in v0.3.0 (2020-05)
 

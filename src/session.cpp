@@ -714,6 +714,8 @@ void SESSION::set_login2ch( const bool login ){ mode_login2ch = login; }
 bool SESSION::loginbe(){ return mode_loginbe; }
 void SESSION::set_loginbe( const bool login ){ mode_loginbe = login; }
 
+void SESSION::set_loginacorn( const bool login ){ }
+
 bool SESSION::show_sidebar(){ return win_show_sidebar; }
 
 bool SESSION::show_menubar(){ return win_show_menubar; }
