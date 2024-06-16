@@ -9,6 +9,7 @@
 
 #include "login2ch.h"
 #include "loginbe.h"
+#include "loginacorn.h"
 
 #include "jdlib/miscutil.h"
 
@@ -157,6 +158,68 @@ namespace CORE
         }
     };
 
+    // どんぐり警備員ログイン用
+    class PasswdFrameAcorn : public Gtk::Grid
+    {
+        Gtk::Label m_label_account;
+        Gtk::Label m_label_account_value;
+        Gtk::Label m_label_cookie;
+        Gtk::Label m_label_cookie_value;
+
+        Gtk::Label m_label_id;
+        Gtk::Label m_label_passwd;
+
+      public:
+
+        Gtk::Entry entry_id;
+        Gtk::Entry entry_passwd;
+
+        PasswdFrameAcorn()
+            : m_label_account{ "アカウント:" }
+            , m_label_account_value{ CORE::get_loginacorn()->get_sessionid() }
+            , m_label_cookie{ "クッキー(acorn):" }
+            , m_label_cookie_value{ CORE::get_loginacorn()->get_sessiondata() }
+            , m_label_id{ "メールアドレス(_I):", true }
+            , m_label_passwd{ "パスワード(_P):", true }
+        {
+            property_margin() = 16;
+            set_column_spacing( 10 );
+            set_row_spacing( 8 );
+
+            entry_id.set_hexpand( true );
+            m_label_id.set_mnemonic_widget( entry_id );
+
+            entry_passwd.set_hexpand( true );
+            entry_passwd.set_visibility( false );
+            m_label_passwd.set_mnemonic_widget( entry_passwd );
+
+            m_label_id.set_halign( Gtk::ALIGN_START );
+            m_label_passwd.set_halign( Gtk::ALIGN_START );
+            m_label_account.set_halign( Gtk::ALIGN_START );
+            m_label_account_value.set_halign( Gtk::ALIGN_START );
+            m_label_cookie.set_halign( Gtk::ALIGN_START );
+            m_label_cookie_value.set_halign( Gtk::ALIGN_START );
+
+            m_label_account_value.set_ellipsize( Pango::ELLIPSIZE_END );
+            m_label_cookie_value.set_ellipsize( Pango::ELLIPSIZE_END );
+            m_label_account_value.set_selectable( true );
+            m_label_cookie_value.set_selectable( true );
+
+            attach( m_label_id, 0, 0, 1, 1 );
+            attach( entry_id, 1, 0, 1, 1 );
+            attach( m_label_passwd, 0, 1, 1, 1 );
+            attach( entry_passwd, 1, 1, 1, 1 );
+            attach( m_label_account, 0, 2, 1, 1 );
+            attach( m_label_account_value, 1, 2, 1, 1 );
+            attach( m_label_cookie, 0, 3, 1, 1 );
+            attach( m_label_cookie_value, 1, 3, 1, 1 );
+
+            entry_passwd.set_icon_from_icon_name( kViewConcealSymbolic, Gtk::ENTRY_ICON_SECONDARY );
+            entry_passwd.signal_icon_release().connect(
+                sigc::bind( &PasswdFrame2ch::slot_icon_release, &entry_passwd ) );
+        }
+    };
+
 
     class PasswdPref : public SKELETON::PrefDiag
     {
@@ -165,6 +228,7 @@ namespace CORE
 
         PasswdFrame2ch m_frame_2ch;
         PasswdFrameBe m_frame_be;
+        PasswdFrameAcorn m_frame_acorn;
 
         // OK押した
         void slot_ok_clicked() override
@@ -176,13 +240,16 @@ namespace CORE
             // BE
             CORE::get_loginbe()->set_username( MISC::utf8_trim( m_frame_be.entry_id.get_text().raw() ) );
             CORE::get_loginbe()->set_passwd( MISC::utf8_trim( m_frame_be.entry_passwd.get_text().raw() ) );
+
+            // どんぐり警備員
+            CORE::get_loginacorn()->set_username( MISC::utf8_trim( m_frame_acorn.entry_id.get_text().raw() ) );
+            CORE::get_loginacorn()->set_passwd( MISC::utf8_trim( m_frame_acorn.entry_passwd.get_text().raw() ) );
         }
 
       public:
 
         PasswdPref( Gtk::Window* parent, const std::string& url )
-        : SKELETON::PrefDiag( parent, url )
-        , m_frame_2ch(), m_frame_be()
+            : SKELETON::PrefDiag( parent, url )
         {
             // 2chログイン用
             m_frame_2ch.entry_id.set_text( CORE::get_login2ch()->get_username() );
@@ -198,8 +265,16 @@ namespace CORE
             set_activate_entry( m_frame_be.entry_id );
             set_activate_entry( m_frame_be.entry_passwd );
 
+            // どんぐり警備員用
+            m_frame_acorn.entry_id.set_text( CORE::get_loginacorn()->get_username() );
+            m_frame_acorn.entry_passwd.set_text( CORE::get_loginacorn()->get_passwd() );
+
+            set_activate_entry( m_frame_acorn.entry_id );
+            set_activate_entry( m_frame_acorn.entry_passwd );
+
             m_notebook.append_page( m_frame_2ch, "2ch" );
             m_notebook.append_page( m_frame_be, "BE" );
+            m_notebook.append_page( m_frame_acorn, "どんぐり警備員" );
             get_content_area()->pack_start( m_notebook );
 
             set_title( "パスワード設定" );
