@@ -3450,11 +3450,16 @@ void DrawAreaBase::goto_next_res()
 //
 void DrawAreaBase::goto_pre_res()
 {
+    if( m_seen_current == max_number() ) {
+        goto_top();
+        return;
+    }
+
     // 表示するレスを検索
     const LAYOUT* header;
     int num = m_seen_current;
     int pos_y = get_vscr_val();
-    do{ header = m_layout_tree->get_header_of_res_const( --num ); } while( num && ( ! header || header->rect->y >= pos_y ) );
+    do{ header = m_layout_tree->get_header_of_res_const( --num ); } while( 0 < num && ( ! header || header->rect->y >= pos_y ) );
     goto_num( num );
 }
 
