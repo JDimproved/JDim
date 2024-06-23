@@ -319,7 +319,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン(_B)", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_loginbe ) );
-    m_action_group->add( Gtk::ToggleAction::create( "LoginAcorn", "どんぐり警備員にログイン(_G)", {}, false ),
+    m_action_group->add( Gtk::ToggleAction::create( "LoginAcorn", "どんぐりシステムにGmail警備員●でログイン(_G)", {}, false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_loginacorn ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
@@ -1365,7 +1365,7 @@ void Core::set_maintitle()
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
-    if( CORE::get_loginacorn()->login_now() ) title +=" [ どんぐり警備員 ]";
+    if( CORE::get_loginacorn()->login_now() ) title +=" [ 警備員● ]";
     if( ! SESSION::is_online() ) title += " [ offline ]";
     m_win_main.set_title( title );
 }
