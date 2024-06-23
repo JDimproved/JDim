@@ -110,7 +110,7 @@ Core::Core( JDWinMain& win_main )
     // BEログインマネージャ作成
     CORE::get_loginbe();
 
-    // どんぐり警備員ログインマネージャ作成
+    // どんぐりシステム メールアドレス登録警備員のログインマネージャ作成
     CORE::get_loginacorn();
 
     // マウス、キー設定読み込み
@@ -228,7 +228,7 @@ Core::~Core()
     // BEログインマネージャ削除
     CORE::delete_loginbe();
 
-    // どんぐり警備員ログインマネージャ削除
+    // どんぐりシステム メールアドレス登録警備員のログインマネージャ削除
     CORE::delete_loginacorn();
 
     // データベース削除
@@ -319,7 +319,7 @@ void Core::run( const bool init, const bool skip_setupdiag )
                          sigc::mem_fun( *this, &Core::slot_toggle_login2ch ) );
     m_action_group->add( Gtk::ToggleAction::create( "LoginBe", "BEにログイン(_B)", std::string(), false ),
                         sigc::mem_fun( *this, &Core::slot_toggle_loginbe ) );
-    m_action_group->add( Gtk::ToggleAction::create( "LoginAcorn", "どんぐり警備員にログイン(_G)", {}, false ),
+    m_action_group->add( Gtk::ToggleAction::create( "LoginAcorn", "どんぐりシステムにGmail警備員●でログイン(_G)", {}, false ),
                          sigc::mem_fun( *this, &Core::slot_toggle_loginacorn ) );
     m_action_group->add( Gtk::Action::create( "ReloadList", "板一覧再読込(_R)"), sigc::mem_fun( *this, &Core::slot_reload_list ) );
 
@@ -1365,7 +1365,7 @@ void Core::set_maintitle()
 
     if( CORE::get_login2ch()->login_now() ) title +=" [ ● ]";
     if( CORE::get_loginbe()->login_now() ) title +=" [ BE ]";
-    if( CORE::get_loginacorn()->login_now() ) title +=" [ どんぐり警備員 ]";
+    if( CORE::get_loginacorn()->login_now() ) title +=" [ 警備員● ]";
     if( ! SESSION::is_online() ) title += " [ offline ]";
     m_win_main.set_title( title );
 }
@@ -1506,7 +1506,7 @@ void Core::slot_activate_menubar()
         else tact->set_active( false );
     }
 
-    // どんぐり警備員ログイン
+    // どんぐりシステム メールアドレス登録警備員のログイン
     act = m_action_group->get_action( "LoginAcorn" );
     tact = Glib::RefPtr<Gtk::ToggleAction>::cast_dynamic( act );
     if( tact ) {
@@ -3168,7 +3168,7 @@ void Core::exec_command()
     // BEへのログイン処理が完了した
     else if( command.command  == "loginbe_finished" ) set_maintitle();
 
-    // どんぐり警備員へのログイン処理が完了した
+    // どんぐりシステム メールアドレス登録警備員へのログイン処理が完了した
     else if( command.command  == "loginacorn_finished" ) set_maintitle();
 
     // あるadminのnotebookが空になった
@@ -3376,7 +3376,7 @@ void Core::exec_command_after_boot()
     // BEログイン
     if( SESSION::loginbe() ) slot_toggle_loginbe();
 
-    // どんぐり警備員ログイン
+    // どんぐりシステム メールアドレス登録警備員のログイン
     if( SESSION::loginacorn() ) slot_toggle_loginacorn();
 
     // タイトル表示

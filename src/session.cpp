@@ -328,7 +328,7 @@ void SESSION::init_session()
     // beログイン
     mode_loginbe = cf.get_option_bool( "mode_loginbe", false );
 
-    // どんぐり警備員ログイン
+    // どんぐりシステム メールアドレス登録警備員のログイン
     mode_loginacorn = cf.get_option_bool( "mode_loginacorn", false );
 
     // paneのモード

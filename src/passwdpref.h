@@ -158,7 +158,7 @@ namespace CORE
         }
     };
 
-    // どんぐり警備員ログイン用
+    // どんぐりシステム メールアドレス登録警備員のログイン用
     class PasswdFrameAcorn : public Gtk::Grid
     {
         Gtk::Label m_label_account;
@@ -182,11 +182,14 @@ namespace CORE
             , m_label_id{ "メールアドレス(_I):", true }
             , m_label_passwd{ "パスワード(_P):", true }
         {
+            constexpr const char* mail_addr_tooltip = "警備員アカウントを登録したGmailアドレスを設定してください。";
+
             property_margin() = 16;
             set_column_spacing( 10 );
             set_row_spacing( 8 );
 
             entry_id.set_hexpand( true );
+            entry_id.set_tooltip_text( mail_addr_tooltip );
             m_label_id.set_mnemonic_widget( entry_id );
 
             entry_passwd.set_hexpand( true );
@@ -194,6 +197,7 @@ namespace CORE
             m_label_passwd.set_mnemonic_widget( entry_passwd );
 
             m_label_id.set_halign( Gtk::ALIGN_START );
+            m_label_id.set_tooltip_text( mail_addr_tooltip );
             m_label_passwd.set_halign( Gtk::ALIGN_START );
             m_label_account.set_halign( Gtk::ALIGN_START );
             m_label_account_value.set_halign( Gtk::ALIGN_START );
@@ -241,7 +245,7 @@ namespace CORE
             CORE::get_loginbe()->set_username( MISC::utf8_trim( m_frame_be.entry_id.get_text().raw() ) );
             CORE::get_loginbe()->set_passwd( MISC::utf8_trim( m_frame_be.entry_passwd.get_text().raw() ) );
 
-            // どんぐり警備員
+            // どんぐりシステム メールアドレス登録警備員
             CORE::get_loginacorn()->set_username( MISC::utf8_trim( m_frame_acorn.entry_id.get_text().raw() ) );
             CORE::get_loginacorn()->set_passwd( MISC::utf8_trim( m_frame_acorn.entry_passwd.get_text().raw() ) );
         }
@@ -265,7 +269,7 @@ namespace CORE
             set_activate_entry( m_frame_be.entry_id );
             set_activate_entry( m_frame_be.entry_passwd );
 
-            // どんぐり警備員用
+            // どんぐりシステム メールアドレス登録警備員
             m_frame_acorn.entry_id.set_text( CORE::get_loginacorn()->get_username() );
             m_frame_acorn.entry_passwd.set_text( CORE::get_loginacorn()->get_passwd() );
 
@@ -274,7 +278,7 @@ namespace CORE
 
             m_notebook.append_page( m_frame_2ch, "2ch" );
             m_notebook.append_page( m_frame_be, "BE" );
-            m_notebook.append_page( m_frame_acorn, "どんぐり警備員" );
+            m_notebook.append_page( m_frame_acorn, "どんぐりシステム" );
             get_content_area()->pack_start( m_notebook );
 
             set_title( "パスワード設定" );

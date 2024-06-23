@@ -118,7 +118,7 @@ void Core::slot_toggle_loginbe()
 
 
 /**
- * @brief どんぐり警備員にログイン
+ * @brief どんぐりシステム メールアドレス登録警備員にログイン
  */
 void Core::slot_toggle_loginacorn()
 {
