@@ -158,7 +158,7 @@ namespace CORE
         }
     };
 
-    // どんぐり警備員ログイン用
+    // どんぐりシステム メールアドレス登録警備員のログイン用
     class PasswdFrameAcorn : public Gtk::Grid
     {
         Gtk::Label m_label_account;
@@ -245,7 +245,7 @@ namespace CORE
             CORE::get_loginbe()->set_username( MISC::utf8_trim( m_frame_be.entry_id.get_text().raw() ) );
             CORE::get_loginbe()->set_passwd( MISC::utf8_trim( m_frame_be.entry_passwd.get_text().raw() ) );
 
-            // どんぐり警備員
+            // どんぐりシステム メールアドレス登録警備員
             CORE::get_loginacorn()->set_username( MISC::utf8_trim( m_frame_acorn.entry_id.get_text().raw() ) );
             CORE::get_loginacorn()->set_passwd( MISC::utf8_trim( m_frame_acorn.entry_passwd.get_text().raw() ) );
         }
@@ -269,7 +269,7 @@ namespace CORE
             set_activate_entry( m_frame_be.entry_id );
             set_activate_entry( m_frame_be.entry_passwd );
 
-            // どんぐり警備員用
+            // どんぐりシステム メールアドレス登録警備員
             m_frame_acorn.entry_id.set_text( CORE::get_loginacorn()->get_username() );
             m_frame_acorn.entry_passwd.set_text( CORE::get_loginacorn()->get_passwd() );
 

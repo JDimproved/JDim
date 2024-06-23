@@ -102,7 +102,7 @@ namespace SESSION
     bool loginbe();
     void set_loginbe( const bool login );
 
-    // どんぐり警備員ログイン中
+    // どんぐりシステム メールアドレス登録警備員にログイン中
     bool loginacorn();
     void set_loginacorn( const bool login );
 
