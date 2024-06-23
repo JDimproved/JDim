@@ -182,11 +182,14 @@ namespace CORE
             , m_label_id{ "メールアドレス(_I):", true }
             , m_label_passwd{ "パスワード(_P):", true }
         {
+            constexpr const char* mail_addr_tooltip = "警備員アカウントを登録したGmailアドレスを設定してください。";
+
             property_margin() = 16;
             set_column_spacing( 10 );
             set_row_spacing( 8 );
 
             entry_id.set_hexpand( true );
+            entry_id.set_tooltip_text( mail_addr_tooltip );
             m_label_id.set_mnemonic_widget( entry_id );
 
             entry_passwd.set_hexpand( true );
@@ -194,6 +197,7 @@ namespace CORE
             m_label_passwd.set_mnemonic_widget( entry_passwd );
 
             m_label_id.set_halign( Gtk::ALIGN_START );
+            m_label_id.set_tooltip_text( mail_addr_tooltip );
             m_label_passwd.set_halign( Gtk::ALIGN_START );
             m_label_account.set_halign( Gtk::ALIGN_START );
             m_label_account_value.set_halign( Gtk::ALIGN_START );
@@ -274,7 +278,7 @@ namespace CORE
 
             m_notebook.append_page( m_frame_2ch, "2ch" );
             m_notebook.append_page( m_frame_be, "BE" );
-            m_notebook.append_page( m_frame_acorn, "どんぐり警備員" );
+            m_notebook.append_page( m_frame_acorn, "どんぐりシステム" );
             get_content_area()->pack_start( m_notebook );
 
             set_title( "パスワード設定" );
