@@ -3450,7 +3450,7 @@ void DrawAreaBase::goto_next_res()
 //
 void DrawAreaBase::goto_pre_res()
 {
-    if( m_seen_current == max_number() ) {
+    if( m_seen_current == 0 ) {
         goto_top();
         return;
     }
