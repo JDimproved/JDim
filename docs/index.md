@@ -17,6 +17,7 @@ layout: default
 
 - [お気に入りについて]({{ site.baseurl }}/favorite/)
 - [外部板と外部BBSMENUについて]({{ site.baseurl }}/external/)
+- [5ch.net どんぐりシステムの利用方法]({{ site.baseurl }}/donguri/)
 - [実況モードについて]({{ site.baseurl }}/live/)
 - [ユーザーコマンド、リンクフィルタについて]({{ site.baseurl }}/usrcmd/)
 - [アスキーアート(AA)の入力について]({{ site.baseurl }}/asciiart/)
