@@ -37,6 +37,7 @@ std::string ENVIRONMENT::get_jd2chlog(){ return JD2CHLOG; }
 std::string ENVIRONMENT::get_jdhelp(){ return JDHELP; }
 std::string ENVIRONMENT::get_jdhelpcmd(){ return JDHELPCMD; }
 std::string ENVIRONMENT::get_jdhelpreplstr() { return JDHELPREPLSTR; }
+std::string ENVIRONMENT::get_jdhelpimghash() { return JDHELPIMGHASH; }
 std::string ENVIRONMENT::get_jdlicense(){ return JDLICENSE; }
 
 
