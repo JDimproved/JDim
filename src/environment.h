@@ -40,6 +40,7 @@ namespace ENVIRONMENT
 	std::string get_jdhelp();
 	std::string get_jdhelpcmd();
 	std::string get_jdhelpreplstr();
+	std::string get_jdhelpimghash();
     std::string get_jdlicense();
     std::string get_configure_args( const int mode = CONFIGURE_OMITTED );
 

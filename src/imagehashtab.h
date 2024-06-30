@@ -12,6 +12,8 @@
 #include "jdlib/misctime.h"
 #include "skeleton/msgdiag.h"
 
+#include "environment.h"
+
 #include <gtkmm.h>
 
 #include <cinttypes>
@@ -84,6 +86,8 @@ class ImageHashTab : public sigc::trackable
     Gtk::Revealer m_revealer_notes;
     Gtk::Label m_label_notes;
 
+    Gtk::LinkButton m_link_manual;
+
     // NG 画像ハッシュのリスト
     Gtk::ScrolledWindow m_scroll;
     Gtk::TreeView m_treeview;
@@ -112,6 +116,7 @@ public:
                          "・ハッシュ値を削除したりしきい値を変更してもあぼ〜んされた画像は解除されません。\n"
                          "・判定基準のしきい値を大きくすると誤判定する可能性が高くなります。\n"
                          "・マイナスのしきい値に設定したハッシュ値はあぼ〜んの判定を行いません。" }
+        , m_link_manual{ ENVIRONMENT::get_jdhelpimghash(), "オンラインマニュアル(_M)" }
         , m_col{ -2 }
     {
         m_grid.set_row_spacing( 8 );
@@ -160,8 +165,12 @@ public:
         m_button_reset_initial_threshold.show();
         m_button_reset_initial_threshold.signal_clicked().connect(
             sigc::mem_fun( *this, &ImageHashTab::slot_reset_initial_threshold ) );
+        m_link_manual.set_halign( Gtk::ALIGN_END );
+        m_link_manual.set_use_underline( true );
+        m_link_manual.show();
         m_hbox_initial_threshold.pack_start( m_spin_initial_threshold, Gtk::PACK_SHRINK );
         m_hbox_initial_threshold.pack_start( m_button_reset_initial_threshold, Gtk::PACK_SHRINK );
+        m_hbox_initial_threshold.pack_end( m_link_manual, Gtk::PACK_SHRINK );
         m_hbox_initial_threshold.show();
 
         m_label_tool.set_halign( Gtk::ALIGN_START );

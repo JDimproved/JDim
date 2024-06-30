@@ -31,6 +31,7 @@
 #define JDHELP "https://jdimproved.github.io/JDim/"
 #define JDHELPCMD JDHELP "usrcmd/"
 #define JDHELPREPLSTR JDHELP "replacestr/"
+#define JDHELPIMGHASH JDHELP "imghash/"
 
 // [ ライセンス表記 ]
 //
