@@ -122,7 +122,6 @@ URL | 説明
 <https://donguri.5ch.net>  | どんぐりシステムのトップページ (ログインページとどんぐりベース)
 <https://donguri.5ch.net/faq>  | 公式FAQページ
 <https://kes.5ch.net/donguri/> | 5ch.net どんぐり板 (どんぐりシステムの話題を扱う)
-<https://nanjya.net/donguri/>  | 有志まとめ: 5chどんぐりシステムの備忘録
 <http://dongurirank.starfree.jp/acorn.html> | 有志まとめ: どんぐりシステムが導入されている板一覧
 
 [donguri-top]: https://donguri.5ch.net
