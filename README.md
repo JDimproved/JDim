@@ -162,7 +162,7 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
 <a name="crash-with-asan"></a>
 * **AddressSanitizer(ASan) を有効にするときの注意**
 
-  gcc(バージョン10以降)を使いASanを有効にしてビルドすると
+  gcc(バージョン10から13まで)を使いASanを有効にしてビルドすると
   書き込みのプレビューで[トリップ][trip]を表示するときにクラッシュすることがある。
   詳細は <https://github.com/JDimproved/JDim/issues/943> を参照。
 
@@ -330,7 +330,7 @@ WaylandやXWaylandではX11限定の機能を使うことができないため�
 * Weston(Waylandコンポジタ)環境でXWaylandをバックエンドに指定して起動した場合、右クリックしながらポップアップ内に
   マウスポインターを動かすとポップアップ内容ではなくポップアップに隠れたスレビューに反応する。
 * Wayland環境では画像ビュー(ウインドウ表示)のフォーカスが外れたら折りたたむ機能が正常に動作しない。
-* gcc(バージョン10以降)を使いAddressSanitizer(ASan)を有効にしてビルドすると
+* gcc(バージョン10から13まで)を使いAddressSanitizer(ASan)を有効にしてビルドすると
   書き込みのプレビューでトリップを表示するときにクラッシュすることがある。([上記](#crash-with-asan)を参照)
 * Ubuntu 22.04(23.10でも確認)の環境でASanを有効にしてビルドしたプログラムを実行すると
   `AddressSanitizer:DEADLYSIGNAL`を出力し続けてハングアップすることがある。([上記](#hungup-with-asan)を参照)
