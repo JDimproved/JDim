@@ -12,7 +12,7 @@
 JDimのマニュアルは更新作業を簡素化するためMarkdownで記述し、
 [GitHub pages][gh-pages]の機能([jekyll][jekyll])を利用してHTMLに変換する方法をとっています。
 
-この文書は https://jd4linux.osdn.jp/maintenance_of_manual.html を参考にしています。
+この文書は JD project のマニュアルのメンテナンス文書を参考にしています。
 
 
 ## ポリシー

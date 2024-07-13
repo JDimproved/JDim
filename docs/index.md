@@ -43,7 +43,6 @@ layout: default
 - [JDim 0.3.0-20200118](./link-20200118)
 - [JDim 0.2.0-20190720](./link-20190720)
 - [JDim 0.1.0-20190122](./link-20190122)
-- [JD 2.8.9-150226][jd-289] (jd4linux)
 
 © 2019-2024 JDimproved project
 
@@ -51,4 +50,3 @@ layout: default
 [wiki-faq]: https://ja.osdn.net/projects/jd4linux/wiki/FAQ
 [wiki-tips]: https://ja.osdn.net/projects/jd4linux/wiki/Tips
 [wiki-rfcs]: https://github.com/JDimproved/rfcs/wiki/rfc-index "Request for Comments"
-[jd-289]: https://jd4linux.osdn.jp/manual/289/

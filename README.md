@@ -32,14 +32,14 @@
 JDim (JD improved) は gtkmm/GTK+ を使用した"２ちゃんねる"型マルチスレッドBBSを閲覧するためのブラウザです。
 JDim は GPLv2 の下で公開されている [JD][jd-project] からforkしたソフトウェアであり、
 ルック・アンド・フィールや環境設定は JD と互換性があります。
+(JDim projectを立ち上げた経緯については [Issue 15][issue15] を参照してください)
 
 **注意: 2023-07-11 からJDim本体で5chのスレ閲覧が可能になっています。**
 5ch.netのDATファイルへのアクセスが[開放][5ch-924]されていますが今後の動向に注意してください。
-また、デフォルト設定のユーザーエージェント(UA)のままでレスを書き込むとERRORになるため
-事前にwebブラウザなどのUAに設定変更してください。
 
-[jd-project]: https://jd4linux.osdn.jp/
+[jd-project]: https://ja.osdn.net/projects/jd4linux/
 [5ch-924]: https://agree.5ch.net/test/read.cgi/operate/9240230711/
+[issue15]: https://github.com/JDimproved/JDim/issues/15
 
 
 ## 動作プラットフォーム
@@ -61,7 +61,7 @@ i386版ディストロを利用されている場合は更新をお願いいた�
 
 ## 導入方法
 
-ソースコードからJDimをビルドします。**GTK3版がビルド**されますのでご注意ください。
+ソースコードからJDimをビルドします。
 詳細は [INSTALL](./INSTALL) にも書いてあります。
 
 **Autotools(./configure)のサポートは2023年7月のリリースをもって廃止されました。
@@ -143,21 +143,6 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
   機能を有効にするにはsetupコマンドでビルドオプションを指定します。`meson setup -Dunity=on builddir`
 
 [Unity build]: https://mesonbuild.com/Unity-builds.html
-
-* **CPUに合わせた最適化**
-
-  `meson`を実行するときにCPUの種類(`-march=ARCH`や`-mcpu=CPU`)を`-Dcpp_args`に設定します。
-  ###### 例 (第2世代Coreプロセッサー)
-  ```sh
-  meson setup builddir -Dcpp_args="-march=sandybridge" -Doptimization=2
-  ```
-
-  マシンのCPUは下のコマンドで調べることができます。([GCCの最適化][gentoo-gcc] - Gentoo Wikiより)
-  ```sh
-  gcc -Q -c -march=native --help=target -o /dev/null | grep "march\|mtune\|mcpu"
-  ```
-
-[gentoo-gcc]: https://wiki.gentoo.org/wiki/GCC_optimization/ja#-march
 
 <a name="crash-with-asan"></a>
 * **AddressSanitizer(ASan) を有効にするときの注意**
@@ -297,10 +282,6 @@ NOTE:
 <a name="precaution"></a>
 ## 実行時の注意事項
 
-廃止されたGTK2版同様のルック・アンド・フィールになるように実装していますが、
-技術的な問題やテスト不足から完全な再現はできていません。
-もしお気づきの点などがございましたらご指摘いただけると幸いです。
-
 ### Wayland対応
 JDim はWayland環境で起動しますが動作は安定していません。
 GTKのバックエンドにWaylandを使うかわりに互換レイヤーのXWaylandをインストールして使うことをお薦めします。
@@ -311,17 +292,6 @@ GDK_BACKEND=x11 ./src/jdim
 ```
 
 WaylandやXWaylandではX11限定の機能を使うことができないため注意してください。
-
-### GTK2版から変更/追加された部分
-* GTK+ 3.14以上の環境でタッチスクリーンによる操作に対応した。
-  スレビューのタッチ操作については[マニュアル][manual-touch]を参照。
-* 書き込みビューの配色にGTKテーマを使う設定が追加された。
-  1. メニューバーの`設定(C) > フォントと色(F) > 詳細設定(R)...`からフォントと色の詳細設定を開く
-  2. `色の設定`タブにある`書き込みビューの配色設定に GTKテーマ を用いる(W)`をチェックして適用する
-* GTK 3.16以上の環境で書き込みビューのダブルクリックによる単語の範囲選択、
-  トリプルクリックによる行の範囲選択に対応した。
-
-[manual-touch]: https://jdimproved.github.io/JDim/operation/#threadview_touch "操作方法について | JDim"
 
 ### 既知の問題
 * タブのドラッグ・アンド・ドロップの矢印ポップアップの背景が透過しない環境がある。
