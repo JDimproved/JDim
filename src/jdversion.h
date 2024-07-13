@@ -15,10 +15,10 @@
 // SEE ALSO: ENVIRONMENT::get_jdversion()
 
 #define MAJORVERSION 0
-#define MINORVERSION 12
+#define MINORVERSION 13
 #define MICROVERSION 0
-#define JDDATE_FALLBACK    "20240706"
-#define JDTAG     ""
+#define JDDATE_FALLBACK    "20240713"
+#define JDTAG     "alpha"
 
 //---------------------------------
 
