@@ -32,14 +32,16 @@
 JDim (JD improved) は gtkmm/GTK+ を使用した"２ちゃんねる"型マルチスレッドBBSを閲覧するためのブラウザです。
 JDim は GPLv2 の下で公開されている [JD][jd-project] からforkしたソフトウェアであり、
 ルック・アンド・フィールや環境設定は JD と互換性があります。
+(JDim projectを立ち上げた経緯については [Issue 15][issue15] を参照してください)
 
 **注意: 2023-07-11 からJDim本体で5chのスレ閲覧が可能になっています。**
 5ch.netのDATファイルへのアクセスが[開放][5ch-924]されていますが今後の動向に注意してください。
 また、デフォルト設定のユーザーエージェント(UA)のままでレスを書き込むとERRORになるため
 事前にwebブラウザなどのUAに設定変更してください。
 
-[jd-project]: https://jd4linux.osdn.jp/
+[jd-project]: https://ja.osdn.net/projects/jd4linux/
 [5ch-924]: https://agree.5ch.net/test/read.cgi/operate/9240230711/
+[issue15]: https://github.com/JDimproved/JDim/issues/15
 
 
 ## 動作プラットフォーム
