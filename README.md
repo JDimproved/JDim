@@ -146,21 +146,6 @@ OSやディストリビューション別の解説は [GitHub Discussions][dis59
 
 [Unity build]: https://mesonbuild.com/Unity-builds.html
 
-* **CPUに合わせた最適化**
-
-  `meson`を実行するときにCPUの種類(`-march=ARCH`や`-mcpu=CPU`)を`-Dcpp_args`に設定します。
-  ###### 例 (第2世代Coreプロセッサー)
-  ```sh
-  meson setup builddir -Dcpp_args="-march=sandybridge" -Doptimization=2
-  ```
-
-  マシンのCPUは下のコマンドで調べることができます。([GCCの最適化][gentoo-gcc] - Gentoo Wikiより)
-  ```sh
-  gcc -Q -c -march=native --help=target -o /dev/null | grep "march\|mtune\|mcpu"
-  ```
-
-[gentoo-gcc]: https://wiki.gentoo.org/wiki/GCC_optimization/ja#-march
-
 <a name="crash-with-asan"></a>
 * **AddressSanitizer(ASan) を有効にするときの注意**
 
