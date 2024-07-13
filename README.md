@@ -36,8 +36,6 @@ JDim は GPLv2 の下で公開されている [JD][jd-project] からforkした�
 
 **注意: 2023-07-11 からJDim本体で5chのスレ閲覧が可能になっています。**
 5ch.netのDATファイルへのアクセスが[開放][5ch-924]されていますが今後の動向に注意してください。
-また、デフォルト設定のユーザーエージェント(UA)のままでレスを書き込むとERRORになるため
-事前にwebブラウザなどのUAに設定変更してください。
 
 [jd-project]: https://ja.osdn.net/projects/jd4linux/
 [5ch-924]: https://agree.5ch.net/test/read.cgi/operate/9240230711/
