@@ -89,7 +89,8 @@
     -Dnative=enabled
 
        CPUに合わせた最適化
-       手動でCPUの種類を指定する場合は meson -Dcpp_args="-march=ARCH" を利用してください。
+       このオプションは --buildtype=release または --optimization=3 などの最適化オプションと一緒に使います。
+       通常は最適化オプションだけで十分な効果があるため、妥協できる場合は必要ありません。
 
     -Dtls=[gnutls|openssl]
 
@@ -114,7 +115,7 @@
 
     -Dpackager=PACKAGER
 
-       Meson限定: 動作環境にパッケージや作成者の情報を追加する。(v0.7.0+から追加)
+       動作環境にパッケージや作成者の情報を追加する。(v0.7.0+から追加)
        PACKAGER に改行やHTML文字参照を *含めない* ことを推奨する。
 
 * メモ

@@ -100,7 +100,11 @@ OSやディストリビューション別の解説は [#592][dis592] を参照�
     about:config で変更が可能、空欄にした場合は migemo が無効になる。(変更後は要再起動)
   </dd>
   <dt>-Dnative=enabled</dt>
-  <dd>CPUに合わせた最適化。手動でCPUの種類を指定する場合は <code>meson -Dcpp_args="-march=ARCH"</code> を利用する。</dd>
+  <dd>
+    CPUに合わせた最適化。
+    このオプションは<code>--buildtype=release</code>または<code>--optimization=3</code>などの最適化オプションと一緒に使います。
+    通常は最適化オプションだけで十分な効果があるため、妥協できる場合は必要ありません。
+  </dd>
 
   <dt>-Dtls=[gnutls|openssl]</dt>
   <dd>使用するSSL/TLSライブラリを設定する。デフォルトでは GnuTLS を使用する。</dd>
@@ -121,7 +125,7 @@ OSやディストリビューション別の解説は [#592][dis592] を参照�
   <dd>JDのキャッシュディレクトリ <code>~/.jd</code> を読み込む互換機能を無効化する。</dd>
   <dt>-Dpackager=PACKAGER</dt>
   <dd>
-    Meson限定: 動作環境にパッケージや作成者の情報を追加する。<small>(v0.7.0+から追加)</small>
+    動作環境にパッケージや作成者の情報を追加する。<small>(v0.7.0+から追加)</small>
     <code>PACKAGER</code> に改行やHTML文字参照を <em>含めない</em> ことを推奨する。
   </dd>
 </dl>
