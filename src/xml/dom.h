@@ -97,8 +97,8 @@ namespace XML
 
         // プロパティを扱うアクセッサ
         int nodeType() const noexcept { return m_nodeType; }
-        std::string nodeName() const { return m_nodeName; }
-        std::string nodeValue() const { return m_nodeValue; }
+        const std::string& nodeName() const noexcept { return m_nodeName; }
+        const std::string& nodeValue() const noexcept { return m_nodeValue; }
         void nodeValue( const std::string& value ) { m_nodeValue = value; }
 
         // ノード

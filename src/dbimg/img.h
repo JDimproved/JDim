@@ -123,7 +123,7 @@ namespace DBIMG
         void set_dhash( const DHash& dhash );
         const std::optional<DHash>& get_dhash() const noexcept { return m_dhash; }
 
-        std::string get_abone_reason() const noexcept { return m_abone_reason; }
+        const std::string& get_abone_reason() const noexcept { return m_abone_reason; }
 
         // ロード開始
         // receive_data()　と receive_finish() がコールバックされる
