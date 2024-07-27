@@ -117,7 +117,7 @@ double MISC::tfidf_cos_similarity( const VEC_TFIDF& vec_tfidf1, const VEC_TFIDF&
     std::cout << "MISC::tfidf_cos_similarity n = " << n << std::endl;
 #endif
 
-    if( ! n || n != vec_tfidf1.size() ) return 0;
+    if( ! n || n != vec_tfidf2.size() ) return 0;
 
     double product = 0;
     double lng1 = 0;
