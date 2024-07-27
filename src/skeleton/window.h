@@ -80,7 +80,7 @@ namespace SKELETON
         void set_status( const std::string& stat );
         void set_status_temporary( const std::string& stat );
         void restore_status();
-        std::string get_status() const { return m_status; }
+        const std::string& get_status() const noexcept { return m_status; }
         void set_mginfo( const std::string& mginfo );
 
         // ステータスの色を変える
