@@ -4,22 +4,21 @@ adopt-info: jdim
 license: "GPL-2.0"
 
 confinement: strict
-base: core20
+base: core22
 grade: stable
 icon: jdim.png
 
-# https://snapcraft.io/gnome-3-38-2004
-# Snap Store does not provide gnome-3-38-2004 package for i386, ppc64el and s390x
+# https://snapcraft.io/gnome-42-2204
+# Snap Store does not provide gnome-42-2204 package for i386, ppc64el and s390x
 architectures:
   - build-on: amd64
-    run-on: amd64
+    build-for: amd64
   - build-on: arm64
-    run-on: arm64
+    build-for: arm64
   - build-on: armhf
-    run-on: armhf
+    build-for: armhf
 
-# https://forum.snapcraft.io/t/supported-extensions/20521
-# https://forum.snapcraft.io/t/the-gnome-3-38-extension/22923
+# https://snapcraft.io/docs/gnome-extension
 parts:
   jdim:
     plugin: meson
@@ -35,29 +34,26 @@ parts:
       - -Dbuild_tests=disabled
       - -Dcompat_cache_dir=disabled
       - -Dpangolayout=enabled
-      - -Dpackager="Snap (JDimproved project)"
+      - "-Dpackager=Snap (JDimproved project)"
     build-environment:
       # https://wiki.debian.org/Hardening
       - DEB_BUILD_MAINT_OPTIONS: "hardening=+all"
       # Use -isystem to suppress compiler warning:
-      # /snap/gnome-3-38-2004-sdk/current/usr/include/limits.h:124:3: warning: #include_next is a GCC extension
-      - CPPFLAGS: "$(dpkg-buildflags --get CPPFLAGS) -isystem /snap/gnome-3-38-2004-sdk/current/usr/include"
+      # /snap/gnome-42-2204-sdk/current/usr/include/limits.h:124:3: warning: #include_next is a GCC extension
+      - CPPFLAGS: "$(dpkg-buildflags --get CPPFLAGS) -isystem /snap/gnome-42-2204-sdk/current/usr/include"
       - CXXFLAGS: "$(dpkg-buildflags --get CXXFLAGS)"
       - LDFLAGS: "$(dpkg-buildflags --get LDFLAGS)"
-    build-packages:
-      - libgnutls28-dev
-      - libsigc++-2.0-dev
     override-build: |
       set -eu
-      snapcraftctl build
-      VER="$(${SNAPCRAFT_PART_INSTALL}/bin/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\)(git:\([0-9a-f]\+\).*$%\1-\2-\3%p')"
+      craftctl default
+      VER="$(${CRAFT_PART_INSTALL}/bin/jdim -V | sed -n -e '1s%^[^0-9]*\([^-]\+\)-\([^(]\+\)(git:\([0-9a-f]\+\).*$%\1-\2-\3%p')"
       echo "version ${VER}"
-      snapcraftctl set-version "${VER}"
+      craftctl set version="${VER}"
     override-prime: |
       set -eu
-      snapcraftctl prime
+      craftctl default
       sed --in-place -e 's|^Icon=.*|Icon=\${SNAP}/share/icons/hicolor/48x48/apps/jdim.png|' \
-      ${SNAPCRAFT_PRIME}/share/applications/jdim.desktop
+      ${CRAFT_PRIME}/share/applications/jdim.desktop
     parse-info: [share/metainfo/jdim.metainfo.xml]
 
 apps:
@@ -65,7 +61,7 @@ apps:
     command: bin/jdim
     common-id: com.github.jdimproved.jdim
     desktop: share/applications/jdim.desktop
-    extensions: [gnome-3-38]
+    extensions: [gnome]
     plugs:
       - home
       - network
