@@ -1385,7 +1385,8 @@ void ArticleBase::slot_load_finished()
     if( m_code != HTTP_ERR ){
 
         // DAT落ち
-        if( m_code == HTTP_MOVED_PERM || m_code == HTTP_REDIRECT || m_code == HTTP_NOT_FOUND || m_code == HTTP_OLD ){
+        if( m_code == HTTP_MOVED_PERM || m_code == HTTP_REDIRECT || m_code == HTTP_PERMANENT_REDIRECT
+                || m_code == HTTP_NOT_FOUND || m_code == HTTP_OLD ){
             m_status &= ~STATUS_NORMAL;
             m_status |= STATUS_OLD;
             CORE::core_set_command( "toggle_sidebar_articleicon", m_url );

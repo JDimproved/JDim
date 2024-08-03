@@ -566,7 +566,7 @@ void Img::receive_finish()
     if( get_code() == HTTP_OK && ! current_length() ) m_type = T_NODATA;
 
     // リダイレクト
-    if( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM ){
+    if( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM || get_code() == HTTP_PERMANENT_REDIRECT ){
 #ifdef _DEBUG
         std::cout << "301/302 redirect url = " << location() << std::endl;
 #endif

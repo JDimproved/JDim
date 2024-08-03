@@ -211,7 +211,8 @@ void NodeTree2ch::receive_finish()
     // 更新チェックではない、オンラインの場合は過去ログ倉庫から取得出来るか試みる
     if( ! is_checking_update()
         && SESSION::is_online()
-        && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM || get_code() == HTTP_NOT_FOUND )
+        && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM || get_code() == HTTP_PERMANENT_REDIRECT
+             || get_code() == HTTP_NOT_FOUND )
         ){
 
 /*

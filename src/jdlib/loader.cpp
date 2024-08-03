@@ -1166,7 +1166,8 @@ bool Loader::analyze_header()
 
     // Location
     if( m_data.code == HTTP_REDIRECT
-        || m_data.code == HTTP_MOVED_PERM ) m_data.location = analyze_header_option( "Location: " );
+        || m_data.code == HTTP_MOVED_PERM
+        || m_data.code == HTTP_PERMANENT_REDIRECT ) m_data.location = analyze_header_option( "Location: " );
     else m_data.location.clear();
 
     // Content-Type
