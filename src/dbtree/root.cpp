@@ -376,7 +376,8 @@ void Root::receive_finish()
         return;
     }
 
-    if( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT ) && ! location().empty() ){
+    if( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT || get_code() == HTTP_PERMANENT_REDIRECT )
+            && ! location().empty() ){
 
         const std::string msg = get_str_code() + "\n\n板一覧が " + location() + " に移転しました。更新しますか？";
         SKELETON::MsgDiag mdiag( nullptr, msg, false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );

@@ -145,7 +145,8 @@ void BBSMenu::receive_finish()
         return;
     }
 
-    if( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT ) && ! location().empty() ) {
+    if( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT || get_code() == HTTP_PERMANENT_REDIRECT )
+            && ! location().empty() ) {
 
         auto msg = Glib::ustring::compose( "%1\n\nBBSMENUが %2 に移転しました。更新しますか？",
                                            get_str_code(), location() );

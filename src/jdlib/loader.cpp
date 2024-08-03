@@ -1166,7 +1166,15 @@ bool Loader::analyze_header()
 
     // Location
     if( m_data.code == HTTP_REDIRECT
-        || m_data.code == HTTP_MOVED_PERM ) m_data.location = analyze_header_option( "Location: " );
+        || m_data.code == HTTP_MOVED_PERM
+        || m_data.code == HTTP_PERMANENT_REDIRECT ) {
+
+        m_data.location = analyze_header_option( "Location: " );
+        // ルート相対パスならurlの上位部分で補って絶対パスにする
+        if( ! m_data.location.empty() && m_data.location.front() == '/' ) {
+            m_data.location = MISC::get_hostname( m_data.url, true ) + m_data.location;
+        }
+    }
     else m_data.location.clear();
 
     // Content-Type

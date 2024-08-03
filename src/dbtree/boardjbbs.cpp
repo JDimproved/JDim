@@ -169,7 +169,8 @@ std::string BoardJBBS::localrule() const
         if( m_ruleloader->is_loading() ) return "ロード中です";
         else if( m_ruleloader->get_code() == HTTP_OK
                  || m_ruleloader->get_code() == HTTP_REDIRECT
-                 || m_ruleloader->get_code() == HTTP_MOVED_PERM )
+                 || m_ruleloader->get_code() == HTTP_MOVED_PERM
+                 || m_ruleloader->get_code() == HTTP_PERMANENT_REDIRECT )
         {
             const std::string& data = m_ruleloader->get_data();
             return data.empty() ? "ローカルルールはありません" : data;
@@ -187,7 +188,8 @@ std::string BoardJBBS::settingtxt() const
         if( m_settingloader->is_loading() ) return "ロード中です";
         else if( m_settingloader->get_code() == HTTP_OK
                  || m_settingloader->get_code() == HTTP_REDIRECT
-                 || m_settingloader->get_code() == HTTP_MOVED_PERM )
+                 || m_settingloader->get_code() == HTTP_MOVED_PERM
+                 || m_settingloader->get_code() == HTTP_PERMANENT_REDIRECT )
         {
             const std::string& data = m_settingloader->get_data();
             return data.empty() ? "SETTING.TXTはありません" : data;

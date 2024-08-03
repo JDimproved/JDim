@@ -1146,7 +1146,8 @@ void BoardBase::receive_finish()
         send_update_board();
 
         // Locationヘッダーで移転先を指定された場合
-        if( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT ) && ! location().empty() ) {
+        if( ( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT || get_code() == HTTP_PERMANENT_REDIRECT )
+                && ! location().empty() ) {
 
             // location() は url_boardbase() の移転先 (start_checkking_if_board_moved() を参照)
             if( DBTREE::move_board( url_boardbase(), location() ) ) {
@@ -1231,7 +1232,7 @@ void BoardBase::receive_finish()
         // ちなみにdatの読み込みでリダイレクト(302)が返ってきたときは、移転かdat落ちか判断出来ないので注意
         // NodeTree2ch::receive_finish()も参照せよ
         //
-        if( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM ){
+        if( get_code() == HTTP_MOVED_PERM || get_code() == HTTP_REDIRECT || get_code() == HTTP_PERMANENT_REDIRECT ) {
 
             set_date_modified( std::string() );
 

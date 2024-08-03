@@ -166,8 +166,8 @@ void NodeTree2chCompati::receive_finish()
     // 更新チェックではない、オンラインの場合はURLリダイレクトを処理する
     if( ! is_checking_update()
         && SESSION::is_online()
-        && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM )
-        ){
+        && ( get_code() == HTTP_REDIRECT || get_code() == HTTP_MOVED_PERM || get_code() == HTTP_PERMANENT_REDIRECT )
+      ){
 
         // サーバーから過去ログのURLを通知された
         if( m_mode == Mode::normal ) {
