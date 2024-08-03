@@ -403,7 +403,7 @@ void DrawAreaBase::init_fontinfo( FONTINFO& fi, std::string& fontname )
     fi.height = fi.ascent + fi.descent;
 
     // 改行高さ ( トップからの距離 )
-    fi.br_size = ( int )( fi.height * CONFIG::get_adjust_line_space() );
+    fi.br_size = static_cast<int>( fi.height * CONFIG::get_adjust_line_space() );
 
     const char* wstr = "あいうえお";
     m_pango_layout->set_text( wstr );
@@ -1571,10 +1571,10 @@ int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pr
     if( ! byte ){
 #ifdef _DEBUG
         std::cout << "DrawAreaBase::get_width_of_one_char "
-                  << "invalid char " << (unsigned char)utfstr[ 0 ]
-                  << " " << (unsigned char)utfstr[ 1 ]
-                  << " " << (unsigned char)utfstr[ 2 ]
-                  << " " << (unsigned char)utfstr[ 3 ] << std::endl;
+                  << "invalid char " << static_cast<unsigned char>(utfstr[ 0 ])
+                  << " " << static_cast<unsigned char>(utfstr[ 1 ])
+                  << " " << static_cast<unsigned char>(utfstr[ 2 ])
+                  << " " << static_cast<unsigned char>(utfstr[ 3 ]) << std::endl;
 #endif
         byte = 1;
         return 0;
@@ -3043,7 +3043,7 @@ bool DrawAreaBase::set_scroll( const int control )
         if( std::abs( dy ) > std::numeric_limits<double>::epsilon() ){
 
             m_scrollinfo.reset();
-            m_scrollinfo.dy = ( int ) dy;
+            m_scrollinfo.dy = static_cast<int>(dy);
 
             // キーを押しっぱなしにしてる場合スクロールロックする
             if( m_key_locked ) m_scrollinfo.mode = SCROLL_LOCKED;
@@ -3083,7 +3083,7 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
 
             const auto adjust = m_vscrbar->get_adjustment();
 
-            const int current_y = ( int ) adjust->get_value();
+            const int current_y = static_cast<int>(adjust->get_value());
             if( event->direction == GDK_SCROLL_UP && current_y == 0 ) return;
             if( event->direction == GDK_SCROLL_DOWN
                     && current_y == static_cast<int>( adjust->get_upper() - adjust->get_page_size() ) ) return;
@@ -3094,8 +3094,12 @@ void DrawAreaBase::wheelscroll( GdkEventScroll* event )
             // ホイールのスクロールの場合は必ずスクロール処理を実施する
             m_wait_scroll = Monotonic::duration::zero();
 
-            if( event->direction == GDK_SCROLL_UP ) m_scrollinfo.dy = -( int ) adjust->get_step_increment() * speed;
-            else if( event->direction == GDK_SCROLL_DOWN ) m_scrollinfo.dy = ( int ) adjust->get_step_increment() * speed;
+            if( event->direction == GDK_SCROLL_UP ) {
+                m_scrollinfo.dy = -static_cast<int>(adjust->get_step_increment()) * speed;
+            }
+            else if( event->direction == GDK_SCROLL_DOWN ) {
+                m_scrollinfo.dy = static_cast<int>(adjust->get_step_increment()) * speed;
+            }
             else if( event->direction == GDK_SCROLL_SMOOTH ) {
                 constexpr double smooth_scroll_factor = 4.0;
                 m_smooth_dy += smooth_scroll_factor * event->delta_y;
@@ -3167,7 +3171,7 @@ void DrawAreaBase::exec_scroll()
     // 移動後のスクロール位置を計算
     int y = 0;
     auto adjust = m_vscrbar->get_adjustment();
-    const int current_y = ( int ) adjust->get_value();
+    const int current_y = static_cast<int>(adjust->get_value());
 
     switch( m_scrollinfo.mode ){
 
@@ -3191,7 +3195,7 @@ void DrawAreaBase::exec_scroll()
 
         // 最後に移動
         case SCROLL_TO_BOTTOM:
-            y = (int) adjust->get_upper();
+            y = static_cast<int>(adjust->get_upper());
             m_scrollinfo.reset();
             redraw_all = true;
             break;
@@ -3238,7 +3242,7 @@ void DrawAreaBase::exec_scroll()
                 if( m_drugging ) dy *= 4;  // 範囲選択中ならスピード上げる
             }
 
-            y = current_y -( int ) dy;
+            y = current_y - static_cast<int>(dy);
 
             // 範囲選択中ならキャレット移動して選択範囲更新
             if( m_drugging ){
@@ -3259,7 +3263,7 @@ void DrawAreaBase::exec_scroll()
                 if( m_scrollinfo.live_speed < CONFIG::get_live_threshold() ){
 
                     const int mode = CONFIG::get_live_mode();
-                    if( mode == LIVE_SCRMODE_VARIABLE ) y = ( int ) ( current_y + m_scrollinfo.live_speed );
+                    if( mode == LIVE_SCRMODE_VARIABLE ) y = static_cast<int>( current_y + m_scrollinfo.live_speed );
                     else if( mode == LIVE_SCRMODE_STEADY ) y = current_y + CONFIG::get_live_speed();
                 }
 
@@ -3274,7 +3278,7 @@ void DrawAreaBase::exec_scroll()
 
                     // スクロール中
                     if( m_scrollinfo.live_counter <= step_move ){
-                        y = ( int ) ( current_y + step );
+                        y = static_cast<int>( current_y + step );
                     }
 
                     // 停止中
@@ -3353,7 +3357,7 @@ void DrawAreaBase::exec_scroll()
 //
 int DrawAreaBase::get_vscr_val() const
 {
-    if( m_vscrbar ) return ( int ) m_vscrbar->get_adjustment()->get_value();
+    if( m_vscrbar ) return static_cast<int>(m_vscrbar->get_adjustment()->get_value());
     return 0;
 }
 
@@ -3363,8 +3367,8 @@ int DrawAreaBase::get_vscr_val() const
 //
 int DrawAreaBase::get_vscr_maxval() const
 {
-    if( m_vscrbar ) return ( int ) ( m_vscrbar->get_adjustment()->get_upper()
-                                     - m_vscrbar->get_adjustment()->get_page_size() );
+    if( m_vscrbar ) return static_cast<int>( m_vscrbar->get_adjustment()->get_upper()
+                                             - m_vscrbar->get_adjustment()->get_page_size() );
     return 0;
 }
 
@@ -4871,8 +4875,8 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
     if( m_layout_current ) res_num = m_layout_current->res_number;
 
     const int pos = get_vscr_val();
-    const int x = ( int ) event->x;
-    const int y = ( int ) event->y + pos;
+    const int x = static_cast<int>(event->x);
+    const int y = static_cast<int>(event->y) + pos;
 
     CARET_POSITION caret_pos;
     set_caret( caret_pos, x, y );
@@ -4922,8 +4926,8 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
                 m_scrollinfo.show_marker = true;
                 m_scrollinfo.enable_up = true;
                 m_scrollinfo.enable_down = true;
-                m_scrollinfo.x = ( int ) event->x;
-                m_scrollinfo.y = ( int ) event->y;
+                m_scrollinfo.x = static_cast<int>(event->x);
+                m_scrollinfo.y = static_cast<int>(event->y);
             }
         }
 
@@ -4966,8 +4970,8 @@ bool DrawAreaBase::slot_button_release_event( GdkEventButton* event )
     // slot_motion_notify_eventが呼び出されず m_layout_current が変わらないため
     // リンクを開いてしまう
     CARET_POSITION caret_pos;
-    m_x_pointer = ( int ) event->x;
-    m_y_pointer = ( int ) event->y;
+    m_x_pointer = static_cast<int>(event->x);
+    m_y_pointer = static_cast<int>(event->y);
     m_layout_current = set_caret( caret_pos, m_x_pointer , m_y_pointer + get_vscr_val() );
 
     std::string url;
@@ -5022,10 +5026,10 @@ bool DrawAreaBase::slot_button_release_event( GdkEventButton* event )
 //
 bool DrawAreaBase::slot_motion_notify_event( GdkEventMotion* event )
 {
-    if( m_x_pointer == ( int ) event->x && m_y_pointer == ( int ) event->y ) return true;
+    if( m_x_pointer == static_cast<int>(event->x) && m_y_pointer == static_cast<int>(event->y) ) return true;
 
-    m_x_pointer = ( int ) event->x;
-    m_y_pointer = ( int ) event->y;
+    m_x_pointer = static_cast<int>(event->x);
+    m_y_pointer = static_cast<int>(event->y);
 
     // ホイールスクロール終了直後はある程度マウスを動かすまでモーションイベントをキャンセル
     if( m_scrollinfo.counter_nomotion ){
@@ -5102,7 +5106,7 @@ bool DrawAreaBase::motion_mouse()
     if( m_drugging ){
 
         // ポインタが画面外に近かったらオートスクロールを開始する
-        const int mrg = ( int )( (double)m_font->br_size*0.5 );
+        const int mrg = static_cast<int>( static_cast<double>(m_font->br_size) * 0.5 );
 
         // スクロールのリセット
         if (
