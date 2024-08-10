@@ -90,6 +90,7 @@ KeyPref::KeyPref( Gtk::Window* parent, const std::string& url )
     append_row( CONTROL::TabNum7 );
     append_row( CONTROL::TabNum8 );
     append_row( CONTROL::TabNum9 );
+    append_row( CONTROL::TabLast );
 
     append_row( CONTROL::RestoreLastTab );
 

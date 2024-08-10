@@ -56,6 +56,7 @@ void KeyConfig::load_conf()
     load_keymotions( cf, "TabNum7", KEYCONF_TabNum7 );
     load_keymotions( cf, "TabNum8", KEYCONF_TabNum8 );
     load_keymotions( cf, "TabNum9", KEYCONF_TabNum9 );
+    load_keymotions( cf, "TabLast", KEYCONF_TabLast );
 
     load_keymotions( cf, "RestoreLastTab", KEYCONF_RestoreLastTab );
 
