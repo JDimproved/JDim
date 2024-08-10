@@ -62,6 +62,7 @@ namespace CONTROL
         TabNum7,
         TabNum8,
         TabNum9,
+        TabLast,
 
         CloseAllTabs,
         CloseOtherTabs,

@@ -68,6 +68,7 @@ namespace CONTROL
         { "TabNum7", "タブ7に移動" },
         { "TabNum8", "タブ8に移動" },
         { "TabNum9", "タブ9に移動" },
+        { "TabLast", "最後のタブに移動" },
 
         { "CloseAllTabs", "全てのタブを閉じる" },
         { "CloseOtherTabs", "他のタブを閉じる" },

@@ -50,6 +50,8 @@ layout: default
 
   <dt>Alt+1 〜 Alt+9</dt>
   <dd>左からn番目(1〜9)のタブへ移動</dd>
+  <dt>(デフォルト無し)</dt>
+  <dd>最後(右端)のタブへ移動 <small>( v0.13.0-alpha20240810 から追加 )</small></dd>
   <dt>Alt+&#x1f870;</dt>
   <dd>同じタブで直前に開いていた内容に戻る</dd>
   <dt>Alt+&#x1f872;</dt>

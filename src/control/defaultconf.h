@@ -37,6 +37,7 @@ namespace CONTROL
 #define KEYCONF_TabNum7 "Alt+7"
 #define KEYCONF_TabNum8 "Alt+8"
 #define KEYCONF_TabNum9 "Alt+9"
+#define KEYCONF_TabLast ""
 
 #define KEYCONF_RestoreLastTab "Ctrl+T"
 

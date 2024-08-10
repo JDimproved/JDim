@@ -640,6 +640,11 @@ bool CONTROL::operate_common( const int control, const std::string& url, SKELETO
             if( admin ) admin->set_command( "tab_num", "", "9" );
             break;
 
+        case CONTROL::TabLast:
+            // GtkNotebook の API はマイナスの値で最後のタブを指定する
+            if( admin ) admin->set_command( "tab_num", "", "-1" );
+            break;
+
             // サイドバー表示/非表示
         case CONTROL::ShowSideBar:
             CORE::core_set_command( "toggle_sidebar" );

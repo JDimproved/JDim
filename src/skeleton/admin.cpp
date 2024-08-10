@@ -1372,6 +1372,13 @@ void Admin::tab_num( const std::string& str_num )
 
     const int num = strtol( str_num.c_str(), nullptr, 10 );
 
+    // 最後のタブに移動
+    if( num == -1 ) {
+        // GtkNotebook の API はマイナスの値で最後のタブを指定する
+        set_current_page( -1 );
+        return;
+    }
+
     // Firefoxの動作に合わせた
     // 0 → 無視
     // 8以下で存在する数より多い → 無視
