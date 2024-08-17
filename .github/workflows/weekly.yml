@@ -5,6 +5,7 @@ on:
   schedule:
       # Each Monday, on 00:00 UTC
       - cron: '0 0 * * 1'
+  workflow_dispatch:
 
 jobs:
 
@@ -78,7 +79,14 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-11
+          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev zlib1g-dev g++-11
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+        # Since the muon revision on 2024-08-13, building muon requires Meson features up to version 1.3.0.
+      - name: meson installation
+        run: |
+          pip install meson==1.3.0
       - name: git clone muon
         run: |
           git clone --depth 1 https://git.sr.ht/~lattis/muon muon-src
@@ -93,8 +101,8 @@ jobs:
         run: ./muon-build/muon version
       - name: muon setup builddir
         run: ./muon-build/muon setup -Dcompat_cache_dir=disabled jdim-build
-      - name: ninja -C jdim-build -k0
-        run: ninja -C jdim-build -k0
+        # Use embedded samurai instead of ninja
+      - run: ./muon-build/muon samu -C jdim-build -k0
       - name: muon test
         run: |
           cd jdim-build
