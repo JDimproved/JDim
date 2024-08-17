@@ -79,7 +79,7 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev zlib1g-dev g++-11
+          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev pkg-config zlib1g-dev g++-11
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
