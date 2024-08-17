@@ -86,7 +86,7 @@ jobs:
         # Since the muon revision on 2024-08-13, building muon requires Meson features up to version 1.3.0.
       - name: meson installation
         run: |
-          pip install meson==1.3.0
+          pip install meson==1.3.0 ninja
       - name: git clone muon
         run: |
           git clone --depth 1 https://git.sr.ht/~lattis/muon muon-src
