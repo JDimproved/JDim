@@ -172,7 +172,7 @@ void PaneControl::button_press_event( GdkEventButton* event )
 }
 
 
-void PaneControl::button_release_event( GdkEventButton* event )
+void PaneControl::button_release_event( GdkEventButton* )
 {
 #ifdef _DEBUG
     std::cout << "PaneControl::butoon_release_event clicked = " << m_clicked << " drag = " << m_drag << std::endl;
@@ -217,7 +217,7 @@ void PaneControl::button_release_event( GdkEventButton* event )
 
 
 
-void PaneControl::motion_notify_event( GdkEventMotion* event )
+void PaneControl::motion_notify_event( GdkEventMotion* )
 {
 #ifdef _DEBUG
 //    std::cout << "PaneControl::motion_notify_event\n";
@@ -227,7 +227,7 @@ void PaneControl::motion_notify_event( GdkEventMotion* event )
 }
 
 
-void PaneControl::enter_notify_event( GdkEventCrossing* event )
+void PaneControl::enter_notify_event( GdkEventCrossing* )
 {
 #ifdef _DEBUG
     std::cout << "PaneControl::enter_notify_event\n";
@@ -237,7 +237,7 @@ void PaneControl::enter_notify_event( GdkEventCrossing* event )
 }
 
 
-void PaneControl::leave_notify_event( GdkEventCrossing* event )
+void PaneControl::leave_notify_event( GdkEventCrossing* )
 {
 #ifdef _DEBUG
     std::cout << "PaneControl::leave_notify_event\n";
