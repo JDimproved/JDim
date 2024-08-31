@@ -41,7 +41,7 @@ namespace SKELETON
         Gtk::TreeModel::Path m_path_dragstart;
         Gtk::TreeModel::Path m_path_dragpre;
 
-        static constexpr const char* s_css_classname = u8"jd-dragtreeview";
+        static constexpr const char* s_css_classname = "jd-dragtreeview";
         Glib::RefPtr< Gtk::CssProvider > m_provider = Gtk::CssProvider::create();
 
         // 色

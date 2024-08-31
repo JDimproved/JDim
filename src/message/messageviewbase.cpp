@@ -216,7 +216,7 @@ void MessageViewBase::init_color()
     if( m_text_message ){
 
         if( CONFIG::get_use_message_gtktheme() ) {
-            m_text_message->update_style( u8"" );
+            m_text_message->update_style( "" );
         }
         else {
             const char* const classname = m_text_message->get_css_classname();
@@ -225,7 +225,7 @@ void MessageViewBase::init_color()
             const auto sel_fg = Gdk::RGBA( CONFIG::get_color( COLOR_CHAR_MESSAGE_SELECTION ) ).to_string();
             const auto sel_bg = Gdk::RGBA( CONFIG::get_color( COLOR_BACK_MESSAGE_SELECTION ) ).to_string();
             m_text_message->update_style( Glib::ustring::compose(
-                u8R"(
+                R"(
                     .%1, .%1 text { color: %2; background-color: %3; caret-color: %2; }
                     .%1:selected, .%1:selected:focus,
                     .%1 text:selected, .%1 text:selected:focus,

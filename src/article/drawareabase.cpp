@@ -323,8 +323,8 @@ void DrawAreaBase::init_color()
 
     // スレビューの選択色でgtkrcの設定を使用
     if( CONFIG::get_use_select_gtkrc() ){
-        const bool fg_ok = context->lookup_color( u8"theme_selected_fg_color", m_color[ COLOR_CHAR_SELECTION ] );
-        const bool bg_ok = context->lookup_color( u8"theme_selected_bg_color", m_color[ COLOR_BACK_SELECTION ] );
+        const bool fg_ok = context->lookup_color( "theme_selected_fg_color", m_color[ COLOR_CHAR_SELECTION ] );
+        const bool bg_ok = context->lookup_color( "theme_selected_bg_color", m_color[ COLOR_BACK_SELECTION ] );
         if( !fg_ok || !bg_ok ) {
 #ifdef _DEBUG
             std::cout << "ERROR:DrawAreaBase::init_color lookup theme color failed." << std::endl;
