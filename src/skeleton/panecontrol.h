@@ -79,10 +79,10 @@ namespace SKELETON
         void add_remove2( bool unpack, Gtk::Widget& child );
 
         void button_press_event( GdkEventButton* event );
-        void button_release_event( GdkEventButton* event );
-        void motion_notify_event( GdkEventMotion* event );
-        void enter_notify_event( GdkEventCrossing* event );
-        void leave_notify_event( GdkEventCrossing* event );
+        void button_release_event( GdkEventButton* );
+        void motion_notify_event( GdkEventMotion* );
+        void enter_notify_event( GdkEventCrossing* );
+        void leave_notify_event( GdkEventCrossing* );
 
       protected:
 
