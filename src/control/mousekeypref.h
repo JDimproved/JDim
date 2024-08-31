@@ -7,7 +7,6 @@
 #define _MOUSEKEYPREFPREF_H
 
 #include "skeleton/prefdiag.h"
-#include "skeleton/treeviewbase.h"
 
 #include "control.h"
 
@@ -89,7 +88,7 @@ namespace CONTROL
         int m_controlmode;
         bool m_single{};
 
-        SKELETON::JDTreeViewBase m_treeview;
+        Gtk::TreeView m_treeview;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
         MouseKeyDiagColumn m_columns;
         Gtk::ScrolledWindow m_scrollwin;
@@ -171,7 +170,7 @@ namespace CONTROL
     //
     class MouseKeyPref : public SKELETON::PrefDiag
     {
-        SKELETON::JDTreeViewBase m_treeview;
+        Gtk::TreeView m_treeview;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
         MouseKeyTreeColumn m_columns;
         Gtk::ScrolledWindow m_scrollwin;
