@@ -114,7 +114,7 @@ void DragTreeView::init_color( const int colorid_text, const int colorid_bg, con
 {
     if( CONFIG::get_use_tree_gtkrc() ) {
         m_use_bg_even = false;
-        m_provider->load_from_data( u8"" );
+        m_provider->load_from_data( "" );
         return;
     }
 
@@ -131,7 +131,7 @@ void DragTreeView::init_color( const int colorid_text, const int colorid_bg, con
     // https://gitlab.gnome.org/GNOME/gtk/issues/581
     try {
         m_provider->load_from_data( Glib::ustring::compose(
-            u8".%1.view:not(:selected) { color: %2; background-color: %3; }",
+            ".%1.view:not(:selected) { color: %2; background-color: %3; }",
             s_css_classname, m_color_text.to_string(), m_color_bg.to_string() ) );
     }
     catch( Gtk::CssProviderError& err ) {

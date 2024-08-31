@@ -69,7 +69,7 @@ namespace SKELETON
         SKELETON::ToolBackForwardButton* m_button_back{};
         SKELETON::ToolBackForwardButton* m_button_forward{};
 
-        static constexpr const char* s_css_label = u8"jd-toolbar-label";
+        static constexpr const char* s_css_label = "jd-toolbar-label";
         Glib::RefPtr< Gtk::CssProvider > m_label_provider = Gtk::CssProvider::create();
 
       public:

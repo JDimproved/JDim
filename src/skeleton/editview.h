@@ -123,7 +123,7 @@ namespace SKELETON
     class EditView : public Gtk::ScrolledWindow
     {
         EditTextView m_textview;
-        static constexpr const char* s_css_classname = u8"jd-editview";
+        static constexpr const char* s_css_classname = "jd-editview";
         Glib::RefPtr< Gtk::CssProvider > m_provider = Gtk::CssProvider::create();
 
     public:
