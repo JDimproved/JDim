@@ -14,34 +14,34 @@ class SplitLineTest : public ::testing::Test {};
 TEST_F(SplitLineTest, split_empty)
 {
     std::list< std::string > expect = {};
-    EXPECT_EQ( expect, MISC::split_line( u8"" ) );
+    EXPECT_EQ( expect, MISC::split_line( "" ) );
 }
 
 TEST_F(SplitLineTest, split_U_0020)
 {
     std::list< std::string > expect = {};
-    EXPECT_EQ( expect, MISC::split_line( u8"    " ) );
+    EXPECT_EQ( expect, MISC::split_line( "    " ) );
 
-    expect.assign( { u8"the", u8"quick", u8"brown", u8"fox" } );
-    EXPECT_EQ( expect, MISC::split_line( u8" the quick  brown   fox  " ) );
+    expect.assign( { "the", "quick", "brown", "fox" } );
+    EXPECT_EQ( expect, MISC::split_line( " the quick  brown   fox  " ) );
 }
 
 TEST_F(SplitLineTest, split_U_3000)
 {
     std::list< std::string > expect = {};
-    EXPECT_EQ( expect, MISC::split_line( u8"\u3000 \u3000 " ) );
+    EXPECT_EQ( expect, MISC::split_line( "\u3000 \u3000 " ) );
 
-    expect.assign( { u8"the", u8"quick", u8"brown", u8"fox" } );
-    EXPECT_EQ( expect, MISC::split_line( u8"\u3000the\u3000quick \u3000brown\u3000 \u3000fox\u3000 " ) );
+    expect.assign( { "the", "quick", "brown", "fox" } );
+    EXPECT_EQ( expect, MISC::split_line( "\u3000the\u3000quick \u3000brown\u3000 \u3000fox\u3000 " ) );
 }
 
 TEST_F(SplitLineTest, split_doublequote_U_0020)
 {
     std::list< std::string > expect = {};
-    EXPECT_EQ( expect, MISC::split_line( u8"  \"\"  " ) );
+    EXPECT_EQ( expect, MISC::split_line( "  \"\"  " ) );
 
-    expect.assign( { u8"the quick", u8" ", u8" brown   fox " } );
-    EXPECT_EQ( expect, MISC::split_line( u8" \"the quick\" \" \" \" brown   fox \" " ) );
+    expect.assign( { "the quick", " ", " brown   fox " } );
+    EXPECT_EQ( expect, MISC::split_line( " \"the quick\" \" \" \" brown   fox \" " ) );
 }
 
 TEST_F(SplitLineTest, split_doublequote_U_3000)
