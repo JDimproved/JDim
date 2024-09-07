@@ -22,74 +22,74 @@ inline static std::string get_trip_sjis( std::string u8key )
 
 TEST_F(GetTripTest, trip8_sjis_empty)
 {
-    EXPECT_EQ( "", get_trip_sjis( u8"" ) );
+    EXPECT_EQ( "", get_trip_sjis( "" ) );
 }
 
 TEST_F(GetTripTest, trip8_sjis_A)
 {
-    EXPECT_EQ( "hRJ9Ya./t.", get_trip_sjis( u8"A" ) );
+    EXPECT_EQ( "hRJ9Ya./t.", get_trip_sjis( "A" ) );
 }
 
 TEST_F(GetTripTest, trip8_sjis_hello7)
 {
-    EXPECT_EQ( "/wfpxFEFeQ", get_trip_sjis( u8"hellowo" ) );
+    EXPECT_EQ( "/wfpxFEFeQ", get_trip_sjis( "hellowo" ) );
 }
 
 TEST_F(GetTripTest, trip8_sjis_hello8)
 {
-    EXPECT_EQ( "d75etXAowg", get_trip_sjis( u8"hellowor" ) );
+    EXPECT_EQ( "d75etXAowg", get_trip_sjis( "hellowor" ) );
 }
 
 TEST_F(GetTripTest, trip8_sjis_hello11)
 {
     // 11バイトまでは従来の方式(9〜11バイト目は無視される)
-    EXPECT_EQ( "d75etXAowg", get_trip_sjis( u8"helloworld!" ) );
+    EXPECT_EQ( "d75etXAowg", get_trip_sjis( "helloworld!" ) );
 }
 
 TEST_F(GetTripTest, trip8_sjis_yojijukugo)
 {
-    EXPECT_EQ( "sX.SlNvMe.", get_trip_sjis( u8"四字熟語" ) );
+    EXPECT_EQ( "sX.SlNvMe.", get_trip_sjis( "四字熟語" ) );
 }
 
 TEST_F(GetTripTest, trip8_sjis_hex_less_12)
 {
     // シャープで始まる16進数キーでも12バイト未満なら従来の方式
-    EXPECT_EQ( "RTDIJZhD3g", get_trip_sjis( u8"#0123456789" ) );
+    EXPECT_EQ( "RTDIJZhD3g", get_trip_sjis( "#0123456789" ) );
 }
 
 TEST_F(GetTripTest, trip8_sjis_dollar_less_12)
 {
     // ドル記号で始まるキーでも12バイト未満なら従来の方式
-    EXPECT_EQ( "46g6cHndYk", get_trip_sjis( u8"$0123456789" ) );
+    EXPECT_EQ( "46g6cHndYk", get_trip_sjis( "$0123456789" ) );
 }
 
 TEST_F(GetTripTest, trip12_sjis_hello12)
 {
     // 12バイト以上は新方式
-    EXPECT_EQ( "xwumaTFfu1OK", get_trip_sjis( u8"helloworld!?" ) );
+    EXPECT_EQ( "xwumaTFfu1OK", get_trip_sjis( "helloworld!?" ) );
 }
 
 TEST_F(GetTripTest, trip12_sjis_jdimprovedproject)
 {
     // 新方式の+は.に変換される
-    EXPECT_EQ( "Y7G9gYfXrr6.", get_trip_sjis( u8"jdimprovedproject" ) );
+    EXPECT_EQ( "Y7G9gYfXrr6.", get_trip_sjis( "jdimprovedproject" ) );
 }
 
 TEST_F(GetTripTest, trip12_sjis_hex)
 {
     // 新方式 16進数のキー
-    EXPECT_EQ( "ClNHFHdYIw", get_trip_sjis( u8"#0123456789abcdef" ) );
+    EXPECT_EQ( "ClNHFHdYIw", get_trip_sjis( "#0123456789abcdef" ) );
 }
 
 TEST_F(GetTripTest, trip12_sjis_non_hex)
 {
     // 念の為トライグラフ対策としてエスケープ
-    EXPECT_EQ( "\?\?\?", get_trip_sjis( u8"#あいうえおか" ) );
+    EXPECT_EQ( "\?\?\?", get_trip_sjis( "#あいうえおか" ) );
 }
 
 TEST_F(GetTripTest, trip12_sjis_dollar)
 {
-    EXPECT_EQ( "\?\?\?", get_trip_sjis( u8"$将来の拡張用" ) );
+    EXPECT_EQ( "\?\?\?", get_trip_sjis( "$将来の拡張用" ) );
 }
 
 } // namespace
