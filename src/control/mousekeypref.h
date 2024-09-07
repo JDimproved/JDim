@@ -170,8 +170,14 @@ namespace CONTROL
     //
     class MouseKeyPref : public SKELETON::PrefDiag
     {
+        Gtk::Box m_hbox_search;
+        Gtk::ToggleButton m_toggle_search;
+        Glib::RefPtr<Glib::Binding> m_binding_search; ///< ToggleButtonとSearchBarをバインドする
+        Gtk::SearchBar m_search_bar;
+        Gtk::SearchEntry m_search_entry;
         Gtk::TreeView m_treeview;
         Glib::RefPtr< Gtk::ListStore > m_liststore;
+        Glib::RefPtr<Gtk::TreeModelFilter> m_model_filter;
         MouseKeyTreeColumn m_columns;
         Gtk::ScrolledWindow m_scrollwin;
 
@@ -203,6 +209,9 @@ namespace CONTROL
         void slot_reset();
         void slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* column );
         void slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it );
+        bool slot_key_press_event( GdkEventKey* event );
+        void slot_entry_changed();
+        bool slot_visible_func( const Gtk::TreeModel::const_iterator& iter );
     };
 
 }
