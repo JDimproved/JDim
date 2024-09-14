@@ -70,12 +70,6 @@ int DBIMG::get_image_type( const unsigned char *sign )
     return T_UNKNOWN;
 }
 
-int DBIMG::get_type_ext( const char* url, int n )
-{
-    if( instance_dbimg_root )  return instance_dbimg_root->get_type_ext( url, n );
-    return T_UNKNOWN;
-}
-
 
 int DBIMG::get_type_real( const std::string& url )
 {
