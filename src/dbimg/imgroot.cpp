@@ -271,15 +271,14 @@ int ImgRoot::get_type_ext( const std::string& url ) const
     if( imgctrl & CORE::IMGCTRL_FORCEBROWSER ) return T_UNKNOWN;
 
     // URLの引数とアンカー(フラグメント)を除外して判定する
-    const auto found = url.find_first_of( "#?" );
-    const int n = static_cast<int>( found != std::string::npos ? found : url.size() );
+    const auto trimmed = std::string_view{ url }.substr( 0, url.find_first_of( "#?" ) );
 
-    if( is_jpg( url.c_str(), n ) ) return T_JPG;
-    if( is_png( url.c_str(), n ) ) return T_PNG;
-    if( is_gif( url.c_str(), n ) ) return T_GIF;
-    if( is_bmp( url.c_str(), n ) ) return T_BMP;
-    if( m_webp_support && is_webp( url.c_str(), n ) ) return T_WEBP;
-    if( m_avif_support && is_avif( url.c_str(), n ) ) return T_AVIF;
+    if( is_jpg( trimmed ) ) return T_JPG;
+    if( is_png( trimmed ) ) return T_PNG;
+    if( is_gif( trimmed ) ) return T_GIF;
+    if( is_bmp( trimmed ) ) return T_BMP;
+    if( m_webp_support && is_webp( trimmed ) ) return T_WEBP;
+    if( m_avif_support && is_avif( trimmed ) ) return T_AVIF;
 
     // URLに拡張子がない場合でも画像として扱うか
     if( imgctrl & CORE::IMGCTRL_FORCEIMAGE ) return T_FORCEIMAGE;
@@ -288,120 +287,75 @@ int ImgRoot::get_type_ext( const std::string& url ) const
 }
 
 
-// 今のところ拡張子だけを見る
-bool ImgRoot::is_jpg( const char* url, int n )
+/** @brief 画像URLの拡張子がJPEGか否か判定する
+ *
+ * @details 今のところ拡張子だけを見る
+ * @note URLのチェックは呼び出し側で行う前提で実装しているので注意
+ * @param[in] url 引数とアンカーを取り除いたURL.
+ * @return URLの拡張子がJPEGならtrueを返す
+ */
+bool ImgRoot::is_jpg( std::string_view url )
 {
-    // .jpg
-    if( *( url + n -4 ) == '.' &&
-        *( url + n -3 ) == 'j' &&
-        *( url + n -2 ) == 'p' &&
-        *( url + n -1 ) == 'g'  ) return true;
+    auto ext = url.substr( url.size() - 4 );
+    if( ext == ".jpg" || ext == ".JPG" ) return true;
 
-    if( *( url + n -4 ) == '.' &&
-        *( url + n -3 ) == 'J' &&
-        *( url + n -2 ) == 'P' &&
-        *( url + n -1 ) == 'G'  ) return true;
-
-    // .jpeg
-    if( *( url + n -5 ) == '.' &&
-        *( url + n -4 ) == 'j' &&
-        *( url + n -3 ) == 'p' &&
-        *( url + n -2 ) == 'e' &&
-        *( url + n -1 ) == 'g'  ) return true;
-
-    if( *( url + n -5 ) == '.' &&
-        *( url + n -4 ) == 'J' &&
-        *( url + n -3 ) == 'P' &&
-        *( url + n -2 ) == 'E' &&
-        *( url + n -1 ) == 'G'  ) return true;
-
-    return false;
-}
-
-bool ImgRoot::is_png( const char* url, int n )
-{
-    // .png
-    if( *( url + n -4 ) == '.' &&
-        *( url + n -3 ) == 'p' &&
-        *( url + n -2 ) == 'n' &&
-        *( url + n -1 ) == 'g'  ) return true;
-
-    if( *( url + n -4 ) == '.' &&
-        *( url + n -3 ) == 'P' &&
-        *( url + n -2 ) == 'N' &&
-        *( url + n -1 ) == 'G'  ) return true;
-
-    return false;
-}
-
-bool ImgRoot::is_gif( const char* url, int n )
-{
-    // .gif
-    if( *( url + n -4 ) == '.' &&
-        *( url + n -3 ) == 'g' &&
-        *( url + n -2 ) == 'i' &&
-        *( url + n -1 ) == 'f'  ) return true;
-
-    if( *( url + n -4 ) == '.' &&
-        *( url + n -3 ) == 'G' &&
-        *( url + n -2 ) == 'I' &&
-        *( url + n -1 ) == 'F'  ) return true;
-
-    return false;
-}
-
-bool ImgRoot::is_bmp( const char* url, int n )
-{
-    // .bmp
-    if( *( url + n -4 ) == '.' &&
-        *( url + n -3 ) == 'b' &&
-        *( url + n -2 ) == 'm' &&
-        *( url + n -1 ) == 'p'  ) return true;
-
-    if( *( url + n -4 ) == '.' &&
-        *( url + n -3 ) == 'B' &&
-        *( url + n -2 ) == 'M' &&
-        *( url + n -1 ) == 'P'  ) return true;
-
-    return false;
+    ext = url.substr( url.size() - 5 );
+    return ext == ".jpeg" || ext == ".JPEG";
 }
 
 
-bool ImgRoot::is_webp( const char* url, int n )
+/** @brief 画像URLの拡張子がPNGか否か判定する
+ *
+ * @see ImgRoot::is_jpg()
+ */
+bool ImgRoot::is_png( std::string_view url )
 {
-    // .webp
-    if( *( url + n -5 ) == '.' &&
-        *( url + n -4 ) == 'w' &&
-        *( url + n -3 ) == 'e' &&
-        *( url + n -2 ) == 'b' &&
-        *( url + n -1 ) == 'p'  ) return true;
-
-    if( *( url + n -5 ) == '.' &&
-        *( url + n -4 ) == 'W' &&
-        *( url + n -3 ) == 'E' &&
-        *( url + n -2 ) == 'B' &&
-        *( url + n -1 ) == 'P'  ) return true;
-
-    return false;
+    const auto ext = url.substr( url.size() - 4 );
+    return ext == ".png" || ext == ".PNG";
 }
 
 
-bool ImgRoot::is_avif( const char* url, int n )
+/** @brief 画像URLの拡張子がGIFか否か判定する
+ *
+ * @see ImgRoot::is_jpg()
+ */
+bool ImgRoot::is_gif( std::string_view url )
 {
-    // .avif
-    if( *( url + n -5 ) == '.' &&
-        *( url + n -4 ) == 'a' &&
-        *( url + n -3 ) == 'v' &&
-        *( url + n -2 ) == 'i' &&
-        *( url + n -1 ) == 'f'  ) return true;
+    const auto ext = url.substr( url.size() - 4 );
+    return ext == ".gif" || ext == ".GIF";
+}
 
-    if( *( url + n -5 ) == '.' &&
-        *( url + n -4 ) == 'A' &&
-        *( url + n -3 ) == 'V' &&
-        *( url + n -2 ) == 'I' &&
-        *( url + n -1 ) == 'F'  ) return true;
 
-    return false;
+/** @brief 画像URLの拡張子がBMPか否か判定する
+ *
+ * @see ImgRoot::is_jpg()
+ */
+bool ImgRoot::is_bmp( std::string_view url )
+{
+    const auto ext = url.substr( url.size() - 4 );
+    return ext == ".bmp" || ext == ".BMP";
+}
+
+
+/** @brief 画像URLの拡張子がWebPか否か判定する
+ *
+ * @see ImgRoot::is_jpg()
+ */
+bool ImgRoot::is_webp( std::string_view url )
+{
+    const auto ext = url.substr( url.size() - 5 );
+    return ext == ".webp" || ext == ".WEBP";
+}
+
+
+/** @brief 画像URLの拡張子がAVIFか否か判定する
+ *
+ * @see ImgRoot::is_jpg()
+ */
+bool ImgRoot::is_avif( std::string_view url )
+{
+    const auto ext = url.substr( url.size() - 5 );
+    return ext == ".avif" || ext == ".AVIF";
 }
 
 
