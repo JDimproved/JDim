@@ -261,6 +261,9 @@ int ImgRoot::get_image_type( const unsigned char *sign ) const
 //
 int ImgRoot::get_type_ext( const std::string& url ) const
 {
+    // is_xxx() を安全に実行できない短すぎるURLはタイプを判定せず T_UNKNOWN を返す
+    if( url.size() < 5 ) return T_UNKNOWN;
+
     // Urlreplaceによる画像コントロールを取得する
     int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( url );
 

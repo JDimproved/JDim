@@ -29,6 +29,13 @@ TEST_F(DBIMG_ImgRoot_GetTypeExtTest, not_url)
     EXPECT_EQ( DBIMG::T_UNKNOWN, imgroot.get_type_ext( "test-invalid" ) );
 }
 
+TEST_F(DBIMG_ImgRoot_GetTypeExtTest, too_short_string)
+{
+    DBIMG::ImgRoot imgroot;
+    EXPECT_EQ( DBIMG::T_UNKNOWN, imgroot.get_type_ext( ".jpg" ) );
+    EXPECT_EQ( DBIMG::T_JPG, imgroot.get_type_ext( ".jpeg" ) );
+}
+
 TEST_F(DBIMG_ImgRoot_GetTypeExtTest, not_image_url)
 {
     DBIMG::ImgRoot imgroot;
