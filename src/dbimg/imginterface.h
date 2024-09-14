@@ -81,7 +81,6 @@ namespace DBIMG
     // キャッシュに無くても判断可能
     // 画像ではない場合は T_UNKNOWN を返す
     int get_type_ext( const std::string& url );
-    int get_type_ext( const char* url, int n );
 
     // 実際の画像ファイルの種類を判断
     // 画像がキャッシュに無いときは判断不能( T_UNKNOWN を返す )

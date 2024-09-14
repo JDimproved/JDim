@@ -63,7 +63,6 @@ namespace DBIMG
         // 拡張子から画像タイプを取得
         // 画像ではない場合は T_UNKNOWN を返す
         int get_type_ext( const std::string& url ) const;
-        int get_type_ext( const char* url, int n ) const;
 
         // キャッシュ削除
         void delete_cache( const std::string& url );

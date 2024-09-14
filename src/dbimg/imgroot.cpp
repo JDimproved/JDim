@@ -261,24 +261,20 @@ int ImgRoot::get_image_type( const unsigned char *sign ) const
 //
 int ImgRoot::get_type_ext( const std::string& url ) const
 {
-    return get_type_ext( url.c_str(), url.length() );
-}
-
-
-int ImgRoot::get_type_ext( const char* url, int n ) const
-{
     // Urlreplaceによる画像コントロールを取得する
     int imgctrl = CORE::get_urlreplace_manager()->get_imgctrl( url );
 
     // URLに拡張子があっても画像として扱わない
     if( imgctrl & CORE::IMGCTRL_FORCEBROWSER ) return T_UNKNOWN;
 
-    if( is_jpg( url, n ) ) return T_JPG;
-    if( is_png( url, n ) ) return T_PNG;
-    if( is_gif( url, n ) ) return T_GIF;
-    if( is_bmp( url, n ) ) return T_BMP;
-    if( m_webp_support && is_webp( url, n ) ) return T_WEBP;
-    if( m_avif_support && is_avif( url, n ) ) return T_AVIF;
+    const int n = static_cast<int>(url.size());
+
+    if( is_jpg( url.c_str(), n ) ) return T_JPG;
+    if( is_png( url.c_str(), n ) ) return T_PNG;
+    if( is_gif( url.c_str(), n ) ) return T_GIF;
+    if( is_bmp( url.c_str(), n ) ) return T_BMP;
+    if( m_webp_support && is_webp( url.c_str(), n ) ) return T_WEBP;
+    if( m_avif_support && is_avif( url.c_str(), n ) ) return T_AVIF;
 
     // URLに拡張子がない場合でも画像として扱うか
     if( imgctrl & CORE::IMGCTRL_FORCEIMAGE ) return T_FORCEIMAGE;
