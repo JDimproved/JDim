@@ -102,4 +102,22 @@ TEST_F(DBIMG_ImgRoot_GetTypeExtTest, url_mixcase)
     EXPECT_EQ( DBIMG::T_UNKNOWN, imgroot.get_type_ext( "http://jdim.test/image.avIf" ) );
 }
 
+TEST_F(DBIMG_ImgRoot_GetTypeExtTest, url_with_parameters)
+{
+    DBIMG::ImgRoot imgroot;
+    EXPECT_EQ( DBIMG::T_JPG, imgroot.get_type_ext( "http://jdim.test/image.jpg?" ) );
+    EXPECT_EQ( DBIMG::T_JPG, imgroot.get_type_ext( "http://jdim.test/image.jpeg?foo=bar" ) );
+    EXPECT_EQ( DBIMG::T_PNG, imgroot.get_type_ext( "http://jdim.test/image.png?hoge=1&moge=2" ) );
+    EXPECT_EQ( DBIMG::T_GIF, imgroot.get_type_ext( "http://jdim.test/image.gif?a=b.jpg" ) );
+}
+
+TEST_F(DBIMG_ImgRoot_GetTypeExtTest, url_with_anchor)
+{
+    DBIMG::ImgRoot imgroot;
+    EXPECT_EQ( DBIMG::T_JPG, imgroot.get_type_ext( "http://jdim.test/image.jpg#" ) );
+    EXPECT_EQ( DBIMG::T_JPG, imgroot.get_type_ext( "http://jdim.test/image.jpeg#foo" ) );
+    EXPECT_EQ( DBIMG::T_PNG, imgroot.get_type_ext( "http://jdim.test/image.png?hoge=1#moge" ) );
+    EXPECT_EQ( DBIMG::T_GIF, imgroot.get_type_ext( "http://jdim.test/image.gif#b.jpg" ) );
+}
+
 } // namespace

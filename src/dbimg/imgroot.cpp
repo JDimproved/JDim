@@ -267,7 +267,9 @@ int ImgRoot::get_type_ext( const std::string& url ) const
     // URLに拡張子があっても画像として扱わない
     if( imgctrl & CORE::IMGCTRL_FORCEBROWSER ) return T_UNKNOWN;
 
-    const int n = static_cast<int>(url.size());
+    // URLの引数とアンカー(フラグメント)を除外して判定する
+    const auto found = url.find_first_of( "#?" );
+    const int n = static_cast<int>( found != std::string::npos ? found : url.size() );
 
     if( is_jpg( url.c_str(), n ) ) return T_JPG;
     if( is_png( url.c_str(), n ) ) return T_PNG;
