@@ -13,6 +13,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <string_view>
 #include <vector>
 
 
@@ -85,12 +86,12 @@ namespace DBIMG
 
       private:
 
-        static bool is_jpg( const char* url, int n );
-        static bool is_png( const char* url, int n );
-        static bool is_gif( const char* url, int n );
-        static bool is_bmp( const char* url, int n );
-        static bool is_webp( const char* url, int n );
-        static bool is_avif( const char* url, int n );
+        static bool is_jpg( std::string_view url );
+        static bool is_png( std::string_view url );
+        static bool is_gif( std::string_view url );
+        static bool is_bmp( std::string_view url );
+        static bool is_webp( std::string_view url );
+        static bool is_avif( std::string_view url );
 
         void reset_imgs();
     };
