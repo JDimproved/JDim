@@ -15,7 +15,7 @@ UNDO_BUFFER::UNDO_BUFFER()
 }
 
 
-void UNDO_BUFFER::set_item( UNDO_ITEM& item )
+void UNDO_BUFFER::set_item( UNDO_ITEM item )
 {
 #ifdef _DEBUG
     std::cout << "UNDO_BUFFER::set_item\n";
@@ -28,7 +28,7 @@ void UNDO_BUFFER::set_item( UNDO_ITEM& item )
         m_first = false;
     }
 
-    get_undo_data().push_back( item );
+    get_undo_data().push_back( std::move( item ) );
 #ifdef _DEBUG
     std::cout << "size = " << get_undo_data().size() << std::endl;
 #endif
@@ -72,7 +72,7 @@ void UNDO_BUFFER::set_list_info_selected( const CORE::DATA_INFO_LIST& list_info_
 
     UNDO_ITEM item;
     item.list_info_selected = list_info_selected;
-    set_item( item );
+    set_item( std::move( item ) );
 }
 
 
@@ -88,7 +88,7 @@ void UNDO_BUFFER::set_list_info( const CORE::DATA_INFO_LIST& list_info_append, c
     UNDO_ITEM item;
     item.list_info_append = list_info_append;
     item.list_info_delete = list_info_delete;
-    set_item( item );
+    set_item( std::move( item ) );
 }
 
 
@@ -107,7 +107,7 @@ void UNDO_BUFFER::set_name( const Gtk::TreePath& path_renamed, const Glib::ustri
     item.path_renamed = path_renamed;
     item.name_new = name_new;
     item.name_before = name_before;
-    set_item( item );
+    set_item( std::move( item ) );
 }
 
 
