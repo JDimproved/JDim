@@ -69,7 +69,8 @@ NOTE:
   <dd>エラーなどのメッセージをファイル(キャッシュディレクトリの<code>log/msglog</code>)に出力する</dd>
   <dt>-g, --geometry WxH-X+Y</dt>
   <dd>幅(W)高さ(H)横位置(X)縦位置(Y)の指定。
-  WxHは省略可能(例: <code>-g 100x40-10+30</code>, <code>-g -20+100</code> )</dd>
+  WxHは省略可能(例: <code>-g 100x40-10+30</code>, <code>-g -20+100</code> )
+  <br>注意: Wayland環境で起動したときは位置を指定しても反映されません。</dd>
   <dt>-V, --version</dt><dd>バージョン及びビルドオプションを全て表示</dd>
 </dl>
 
@@ -119,6 +120,11 @@ GDK_BACKEND=x11 ./src/jdim
 ```
 
 WaylandやXWaylandではX11限定の機能を使うことができないため注意すること。
+
+* Wayland環境では about:config の「自前でウィンドウ配置を管理する」の設定に関係なく、
+  ウインドウ（メイン、書き込みビュー、画像ビュー）の位置を復元しません。([Issue #1450][#1450]を参照)
+
+[#1450]: https://github.com/JDimproved/JDim/issues/1450
 
 #### 既知の問題
 * タブのドラッグ・アンド・ドロップの矢印ポップアップの背景が透過しない環境がある。

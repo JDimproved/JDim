@@ -14,6 +14,9 @@
 #include "command.h"
 
 #include <gtk/gtkwindow.h>
+#ifdef GDK_WINDOWING_WAYLAND
+#include <gdk/gdkwayland.h>
+#endif // GDK_WINDOWING_WAYLAND
 
 enum
 {
@@ -278,6 +281,11 @@ void JDWindow::iconify_win()
 void JDWindow::move_win( const int x, const int y )
 {
     if( ! CONFIG::get_manage_winpos() ) return;
+#ifdef GDK_WINDOWING_WAYLAND
+    // Wayland環境で実行するとウインドウの移動が意図した通りに機能しないので、JDimは移動に関与しない
+    // ウインドウの移動や配置はWaylandコンポジタに任せる
+    if( GDK_IS_WAYLAND_DISPLAY( get_display()->gobj() ) ) return;
+#endif
 
 #ifdef _DEBUG
     std::cout << "JDWindow::move_win "
