@@ -354,7 +354,7 @@ void AboutConfig::append_rows()
     append_row( "他のビューを開くときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )", get_confitem()->newtab_pos, CONF_NEWTAB_POS );
     append_row( "ツリービューで選択したビューを開くときのタブの位置 ( 0: 一番右端 1:右隣 2:左隣 )", get_confitem()->opentab_pos, CONF_OPENTAB_POS );
     append_row( "各ビューと枠との間の余白", get_confitem()->view_margin, CONF_VIEW_MARGIN );
-    append_row( "自前でウィンドウ配置を管理する", get_confitem()->manage_winpos, CONF_MANAGE_WINPOS );
+    append_row( "自前でウィンドウ配置を管理する (Waylandでは設定に関係なく管理しない)", get_confitem()->manage_winpos, CONF_MANAGE_WINPOS );
     append_row( "スレビューのスクロールバーを左に配置する", get_confitem()->left_scrbar, CONF_LEFT_SCRBAR );
     append_row( "メニューバーを非表示にした時にダイアログを表示", get_confitem()->show_hide_menubar_diag, CONF_SHOW_HIDE_MENUBAR_DIAG );
     append_row( "状態変更時にメインステータスバーの色を変える", get_confitem()->change_stastatus_color, CONF_CHANGE_STASTATUS_COLOR );
