@@ -604,6 +604,10 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     
     m_data.host = m_data.url.substr( i, i2 - i );
     m_data.path = m_data.url.substr( i2 );
+    // HTTPやURLの仕様に基づいて、リクエストで送信するパスからアンカー(`#`以降の部分)を取り除く
+    if( const auto anchor = m_data.path.find( '#' ); anchor != std::string::npos ) {
+        m_data.path.erase( anchor );
+    }
 
     // ポートセット
     // ホスト名の後に指定されている
