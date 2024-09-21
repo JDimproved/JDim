@@ -86,7 +86,7 @@ namespace SKELETON
 
       private:
 
-        void set_item( UNDO_ITEM& item );
+        void set_item( UNDO_ITEM item );
     };
 
 }
