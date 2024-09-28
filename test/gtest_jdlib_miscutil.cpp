@@ -713,9 +713,9 @@ TEST_F(MISC_AscTest, halfwidth_latin_small_letter)
     std::string output;
     std::vector<int> table;
 
-    MISC::asc( u8"the quick brown fox jumps over the lazy dog.", output, table );
+    MISC::asc( "the quick brown fox jumps over the lazy dog.", output, table );
 
-    EXPECT_EQ( u8"the quick brown fox jumps over the lazy dog.", output );
+    EXPECT_EQ( "the quick brown fox jumps over the lazy dog.", output );
     EXPECT_EQ( output.size(), table.size() - 1 );
     for( int i = 0, size = table.size(); i < size; ++i ) {
         EXPECT_EQ( i, table.at( i ) );
@@ -727,9 +727,9 @@ TEST_F(MISC_AscTest, halfwidth_digit_sign)
     std::string output;
     std::vector<int> table;
 
-    MISC::asc( u8"1234567890+-*/", output, table );
+    MISC::asc( "1234567890+-*/", output, table );
 
-    EXPECT_EQ( u8"1234567890+-*/", output );
+    EXPECT_EQ( "1234567890+-*/", output );
     EXPECT_EQ( output.size(), table.size() - 1 );
     for( int i = 0, size = table.size(); i < size; ++i ) {
         EXPECT_EQ( i, table.at( i ) );
@@ -742,9 +742,9 @@ TEST_F(MISC_AscTest, halfwidth_append_data)
     std::vector<int> table = { 0, 1, 2 };
 
     // アウトプット引数は初期化せずデータを追加する
-    MISC::asc( u8"hello", output, table );
+    MISC::asc( "hello", output, table );
 
-    EXPECT_EQ( u8"123hello", output );
+    EXPECT_EQ( "123hello", output );
     EXPECT_EQ( output.size(), table.size() - 1 );
     const std::vector<int> expected_table = { 0, 1, 2, 0, 1, 2, 3, 4, 5 };
     EXPECT_EQ( expected_table, table );
@@ -769,11 +769,11 @@ TEST_F(MISC_AscTest, fullwidth_latin_capital_letter)
     std::string output;
     std::vector<int> table;
 
-    MISC::asc( u8"ＴＨＥ　ＱＵＩＣＫ　ＢＲＯＷＮ　ＦＯＸ　ＪＵＭＰＳ　ＯＶＥＲ　ＴＨＥ　ＬＡＺＹ　ＤＯＧ．", output,
+    MISC::asc( "ＴＨＥ　ＱＵＩＣＫ　ＢＲＯＷＮ　ＦＯＸ　ＪＵＭＰＳ　ＯＶＥＲ　ＴＨＥ　ＬＡＺＹ　ＤＯＧ．", output,
                table );
 
     // 和字間隔(U+3000)は半角スペースに変換されない
-    EXPECT_EQ( u8"THE　QUICK　BROWN　FOX　JUMPS　OVER　THE　LAZY　DOG．", output );
+    EXPECT_EQ( "THE　QUICK　BROWN　FOX　JUMPS　OVER　THE　LAZY　DOG．", output );
     EXPECT_EQ( output.size(), table.size() - 1 );
     EXPECT_EQ( expected_table_fullwidth_quick_brown_fox(), table );
 }
@@ -783,10 +783,10 @@ TEST_F(MISC_AscTest, fullwidth_latin_small_letter)
     std::string output;
     std::vector<int> table;
 
-    MISC::asc( u8"ｔｈｅ　ｑｕｉｃｋ　ｂｒｏｗｎ　ｆｏｘ　ｊｕｍｐｓ　ｏｖｅｒ　ｔｈｅ　ｌａｚｙ　ｄｏｇ．", output,
+    MISC::asc( "ｔｈｅ　ｑｕｉｃｋ　ｂｒｏｗｎ　ｆｏｘ　ｊｕｍｐｓ　ｏｖｅｒ　ｔｈｅ　ｌａｚｙ　ｄｏｇ．", output,
                table );
 
-    EXPECT_EQ( u8"the　quick　brown　fox　jumps　over　the　lazy　dog．", output );
+    EXPECT_EQ( "the　quick　brown　fox　jumps　over　the　lazy　dog．", output );
     EXPECT_EQ( output.size(), table.size() - 1 );
     EXPECT_EQ( expected_table_fullwidth_quick_brown_fox(), table );
 }
@@ -796,10 +796,10 @@ TEST_F(MISC_AscTest, fullwidth_digit_sign)
     std::string output;
     std::vector<int> table;
 
-    MISC::asc( u8"１２３４５６７８９０＋−＊／", output, table );
+    MISC::asc( "１２３４５６７８９０＋−＊／", output, table );
 
     // 全角数字は半角に変換されるが、全角記号は半角に変換されない
-    EXPECT_EQ( u8"1234567890＋−＊／", output );
+    EXPECT_EQ( "1234567890＋−＊／", output );
     EXPECT_EQ( output.size(), table.size() - 1 );
     const std::vector<int> expected_table = {
         0, 3, 6, 9, 12, 15, 18, 21, 24, 27,
@@ -814,11 +814,11 @@ TEST_F(MISC_AscTest, halfwidth_katakana_without_voiced_sound_mark)
     std::string output;
     std::vector<int> table;
     constexpr const char halfwidth[] {
-        u8"\uFF61\uFF62\uFF63\uFF64\uFF65" u8"\uFF66" u8"\uFF67\uFF68\uFF69\uFF6A\uFF6B"
-        u8"\uFF6C\uFF6D\uFF6E\uFF6F\uFF70" u8"\uFF71\uFF72\uFF73\uFF74\uFF75" u8"\uFF76\uFF77\uFF78\uFF79\uFF7A"
-        u8"\uFF7B\uFF7C\uFF7D\uFF7E\uFF7F" u8"\uFF80\uFF81\uFF82\uFF83\uFF84" u8"\uFF85\uFF86\uFF87\uFF88\uFF89"
-        u8"\uFF8A\uFF8B\uFF8C\uFF8D\uFF8E" u8"\uFF8F\uFF90\uFF91\uFF92\uFF93" u8"\uFF94\uFF95\uFF96"
-        u8"\uFF97\uFF98\uFF99\uFF9A\uFF9B" u8"\uFF9C\uFF9D"
+        "\uFF61\uFF62\uFF63\uFF64\uFF65" "\uFF66" "\uFF67\uFF68\uFF69\uFF6A\uFF6B"
+        "\uFF6C\uFF6D\uFF6E\uFF6F\uFF70" "\uFF71\uFF72\uFF73\uFF74\uFF75" "\uFF76\uFF77\uFF78\uFF79\uFF7A"
+        "\uFF7B\uFF7C\uFF7D\uFF7E\uFF7F" "\uFF80\uFF81\uFF82\uFF83\uFF84" "\uFF85\uFF86\uFF87\uFF88\uFF89"
+        "\uFF8A\uFF8B\uFF8C\uFF8D\uFF8E" "\uFF8F\uFF90\uFF91\uFF92\uFF93" "\uFF94\uFF95\uFF96"
+        "\uFF97\uFF98\uFF99\uFF9A\uFF9B" "\uFF9C\uFF9D"
     };
     constexpr const char fullwidth[] {
         u8"。「」、・" u8"ヲ" u8"ァィゥェォ"
