@@ -12,6 +12,16 @@
 
 #include <gtkmm.h>
 
+#ifdef GDK_WINDOWING_WAYLAND
+#include <gdk/gdkwayland.h>
+#endif
+#ifdef GDK_WINDOWING_X11
+#include <gdk/gdkx.h>
+#endif
+#ifdef GDK_WINDOWING_BROADWAY
+#include <gdk/gdkbroadway.h>
+#endif
+
 #if __has_include(<sys/utsname.h>)
 #define HAVE_SYS_UTSNAME_H
 #include <sys/utsname.h> // uname()
@@ -394,6 +404,31 @@ std::string ENVIRONMENT::get_wm_str()
 }
 
 
+/** @brief ディスプレイサーバーの種類を文字列で返す
+ *
+ * @details ディスプレイサーバーが不明のときは空文字列を返す。
+ * @return 区切りの空白と () で囲われたディスプレイサーバーの種類の文字列
+ */
+const char* ENVIRONMENT::get_display_str()
+{
+    GdkDisplay* display = gdk_display_get_default();
+
+#ifdef GDK_WINDOWING_WAYLAND
+    if( GDK_IS_WAYLAND_DISPLAY( display ) ) return " (Wayland)";
+#endif
+
+#ifdef GDK_WINDOWING_X11
+    if( GDK_IS_X11_DISPLAY( display ) ) return " (X11)";
+#endif
+
+#ifdef GDK_WINDOWING_BROADWAY
+    if( GDK_IS_BROADWAY_DISPLAY( display ) ) return " (Broadway)";
+#endif
+
+    return "";
+}
+
+
 //
 // gtkmmのバージョンを取得
 //
@@ -459,6 +494,9 @@ std::string ENVIRONMENT::get_jdinfo()
     // デスクトップ環境を取得( 環境変数から判別可能の場合 )
     std::string desktop = get_wm_str();
 
+    // ディスプレイサーバーの種類を取得
+    const char* display = get_display_str();
+
     // その他
     std::string other;
 
@@ -471,7 +509,7 @@ std::string ENVIRONMENT::get_jdinfo()
     "[バージョン] " << progname << " " << version << "\n" <<
     "[ディストリ ] " << distribution << "\n" <<
     "[パッケージ] " << JDIM_PACKAGER << "\n" <<
-    "[ DE／WM ] " << desktop << "\n" <<
+    "[ DE／WM ] " << desktop << display << "\n" <<
     "[　gtkmm 　] " << get_gtkmm_version() << "\n" <<
     "[　glibmm 　] " << get_glibmm_version() << "\n" <<
     "[　TLS lib　] " << get_tlslib_version() << "\n" <<
