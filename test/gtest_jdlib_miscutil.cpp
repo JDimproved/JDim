@@ -46,8 +46,8 @@ TEST_F(SplitLineTest, split_doublequote_U_0020)
 
 TEST_F(SplitLineTest, split_doublequote_U_3000)
 {
-    std::list< std::string > expect = { u8"the\u3000quick", u8"\u3000", u8"\u3000brown \u3000fox\u3000" };
-    EXPECT_EQ( expect, MISC::split_line( u8"\u3000\"the\u3000quick\" \"\u3000\" \"\u3000brown \u3000fox\u3000\"" ) );
+    std::list< std::string > expect = { "the\u3000quick", "\u3000", "\u3000brown \u3000fox\u3000" };
+    EXPECT_EQ( expect, MISC::split_line( "\u3000\"the\u3000quick\" \"\u3000\" \"\u3000brown \u3000fox\u3000\"" ) );
 }
 
 
@@ -685,9 +685,9 @@ TEST_F(MISC_AscTest, empty_input)
     std::vector<int> table;
 
     // 入力はヌル終端文字列
-    MISC::asc( u8"", output, table );
+    MISC::asc( "", output, table );
 
-    EXPECT_EQ( u8"", output );
+    EXPECT_EQ( "", output );
     EXPECT_EQ( 0, output.size() );
     // 文字列の終端（ヌル文字）の位置が追加されるためtableのサイズが+1大きくなる
     EXPECT_EQ( 1, table.size() );
@@ -699,9 +699,9 @@ TEST_F(MISC_AscTest, halfwidth_latin_capital_letter)
     std::string output;
     std::vector<int> table;
 
-    MISC::asc( u8"THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.", output, table );
+    MISC::asc( "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.", output, table );
 
-    EXPECT_EQ( u8"THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.", output );
+    EXPECT_EQ( "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG.", output );
     EXPECT_EQ( output.size(), table.size() - 1 );
     for( int i = 0, size = table.size(); i < size; ++i ) {
         EXPECT_EQ( i, table.at( i ) );
