@@ -300,7 +300,7 @@ void AboutDiag::set_environment_list()
 
     row = *( liststore->append() );
     row[ column_name ] = "デスクトップ環境等";
-    row[ column_value ] = ENVIRONMENT::get_wm_str();
+    row[ column_value ] = ENVIRONMENT::get_wm_str() + ENVIRONMENT::get_display_str();
 
     row = *( liststore->append() );
     row[ column_name ] = "gtkmmのバージョン";
