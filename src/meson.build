@@ -31,8 +31,7 @@ subdir('sound')
 subdir('xml')
 
 
-# テストプログラムのビルドで利用するため files() でまとめる
-core_sources = files(
+core_sources = [
   'aamanager.cpp',
   'articleitemmenupref.cpp',
   'articleitempref.cpp',
@@ -76,7 +75,15 @@ core_sources = files(
   'usrcmdpref.cpp',
   'viewfactory.cpp',
   'winmain.cpp',
+]
+
+# テストプログラムのビルドで利用するためライブラリにまとめる
+core_lib = static_library(
+  'core', core_sources,
+  dependencies : [config_h_dep, gtkmm_dep, tls_dep],
+  include_directories : include_directories('.'),
 )
+
 
 sources = [
   'main.cpp',
@@ -104,6 +111,7 @@ jdim_libs = [
   board_lib,
   config_lib,
   control_lib,
+  core_lib,
   dbimg_lib,
   dbtree_lib,
   history_lib,
@@ -118,7 +126,7 @@ jdim_libs = [
 
 
 jdim_exe = executable(
-  'jdim', [core_sources, sources, buildinfo_h],
+  'jdim', [sources, buildinfo_h],
   dependencies : [config_h_dep, jdim_deps],
   include_directories : jdim_incs,
   link_with : jdim_libs,
