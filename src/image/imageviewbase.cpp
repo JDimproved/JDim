@@ -784,7 +784,7 @@ bool ImageViewBase::slot_button_release( GdkEventButton* event )
     // 実行された場合は何もしない 
     if( get_control().MG_wheel_end( event ) ) return true;
 
-    if( mg != CONTROL::None && enable_mg() ){
+    if( mg != CONTROL::NoOperation && enable_mg() ){
         operate_view( mg );
         return true;
     }
@@ -828,7 +828,7 @@ bool ImageViewBase::slot_scroll_event( GdkEventScroll* event )
 {
     // ホイールマウスジェスチャ
     int control = get_control().MG_wheel_scroll( event );
-    if( enable_mg() && control != CONTROL::None ){
+    if( enable_mg() && control != CONTROL::NoOperation ){
         operate_view( control );
         return true;
     }

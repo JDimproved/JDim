@@ -28,6 +28,7 @@ deps = [
   socket_dep,
   tls_dep,
   x11_dep,
+  zlib_dep,
 ]
 
 

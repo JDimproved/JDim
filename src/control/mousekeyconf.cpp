@@ -61,11 +61,11 @@ int MouseKeyConf::get_id( const int mode,
                           const guint motion, const bool ctrl, const bool shift, const bool alt,
                           const bool dblclick, const bool trpclick ) const
 {
-    int id = CONTROL::None;
+    int id = CONTROL::NoOperation;
     for( const MouseKeyItem& item : m_vec_items ) {
 
         id = item.is_activated( mode, motion, ctrl, shift, alt, dblclick, trpclick );
-        if( id != CONTROL::None ) break;
+        if( id != CONTROL::NoOperation ) break;
     }
 
 #ifdef _DEBUG
@@ -124,7 +124,7 @@ std::vector< int > MouseKeyConf::check_conflict( const int mode, const std::stri
     for( const MouseKeyItem& item : m_vec_items ) {
 
         const int id = item.is_activated( mode, str_motion );
-        if( id != CONTROL::None ) vec_ids.push_back( id );
+        if( id != CONTROL::NoOperation ) vec_ids.push_back( id );
     }
 
     return vec_ids;
@@ -185,7 +185,7 @@ void MouseKeyConf::load_keymotions( JDLIB::ConfLoader& cf, const std::string& na
 // スペースで区切られた複数の操作をデータベースに登録
 void MouseKeyConf::set_motions( const int id, const std::string& str_motions )
 {
-    if( id == CONTROL::None ) return;
+    if( id == CONTROL::NoOperation ) return;
 
     const std::string name = CONTROL::get_name( id );
     if( name.empty() ) return;
@@ -201,7 +201,7 @@ void MouseKeyConf::set_motions( const int id, const std::string& str_motions )
 // デフォルト操作を登録
 void MouseKeyConf::set_default_motions( const int id, const std::string& default_motions )
 {
-    if( id == CONTROL::None ) return;
+    if( id == CONTROL::NoOperation ) return;
 
     m_map_default_motions.insert( make_pair( id, default_motions ) );
 }
@@ -211,7 +211,7 @@ void MouseKeyConf::set_default_motions( const int id, const std::string& default
 void MouseKeyConf::set_one_motion( const std::string& name, const std::string& str_motion )
 {
     const int id = CONTROL::get_id( name );
-    if( id == CONTROL::None ) return;
+    if( id == CONTROL::NoOperation ) return;
 
     const int mode = CONTROL::get_mode( id );
     if( mode == CONTROL::MODE_ERROR ) return;

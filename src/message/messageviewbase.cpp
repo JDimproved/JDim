@@ -525,7 +525,7 @@ void MessageViewBase::focus_view()
 //
 bool MessageViewBase::operate_view( const int control )
 {
-    if( control == CONTROL::None ) return false;
+    if( control == CONTROL::NoOperation ) return false;
 
     switch( control ){
 

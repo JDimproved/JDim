@@ -93,10 +93,10 @@ int Control::key_press( const GdkEventKey* event )
     std::cout << "\n";
 #endif    
 
-    int control = CONTROL::None;
+    int control = CONTROL::NoOperation;
     for( const int mode : m_mode ) {
         control = CONTROL::get_keyconfig()->get_id( mode, key, ctrl, shift, alt, dblclick, trpclick );
-        if( control != CONTROL::None ) break;
+        if( control != CONTROL::NoOperation ) break;
     }
 
     return control;
@@ -119,10 +119,10 @@ int Control::button_press( const GdkEventButton* event )
     const bool dblclick = ( event->type == GDK_2BUTTON_PRESS );
     const bool trpclick = ( event->type == GDK_3BUTTON_PRESS );
 
-    int control = CONTROL::None;
+    int control = CONTROL::NoOperation;
     for( const int mode : m_mode ) {
         control = CONTROL::get_buttonconfig()->get_id( mode, button, ctrl, shift, alt, dblclick, trpclick );
-        if( control != CONTROL::None ) break;
+        if( control != CONTROL::NoOperation ) break;
     }
 
     return control;
@@ -266,10 +266,10 @@ bool Control::MG_motion( const GdkEventMotion* event )
             const bool dblclick = false;
             const bool trpclick = false;
 
-            int control = CONTROL::None;
+            int control = CONTROL::NoOperation;
             for( const int mode : m_mode ) {
                 control = CONTROL::get_mouseconfig()->get_id( mode, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
-                if( control != CONTROL::None ) break;
+                if( control != CONTROL::NoOperation ) break;
             }
 
             if( m_send_mg_info ) CORE::core_set_command( "set_mginfo", "", "■" + m_mg_direction + CONTROL::get_label( control ) );
@@ -288,7 +288,7 @@ bool Control::MG_motion( const GdkEventMotion* event )
 // 戻り値はコントロールID
 int Control::MG_end( const GdkEventButton* event )
 {
-    if( ! m_mg ) return None;
+    if( ! m_mg ) return CONTROL::NoOperation;
 
 #ifdef _DEBUG
     std::cout << "Control::MG_end val = " << m_mg_value << std::endl;
@@ -300,17 +300,17 @@ int Control::MG_end( const GdkEventButton* event )
     const bool dblclick = false;
     const bool trpclick = false;
 
-    int control = CONTROL::None;
+    int control = CONTROL::NoOperation;
     for( const int mode : m_mode ) {
         control = CONTROL::get_mouseconfig()->get_id( mode, m_mg_value, ctrl, shift, alt, dblclick, trpclick );
-        if( control != CONTROL::None ) break;
+        if( control != CONTROL::NoOperation ) break;
     }
 
     std::string str_command = CONTROL::get_label( control );
 
     if( m_mg_lng ){
 
-        if( control == CONTROL::None ){
+        if( control == CONTROL::NoOperation ){
             str_command = "Cancel";
             control = CONTROL::CancelMG;
         }
@@ -355,7 +355,7 @@ bool Control::MG_wheel_start( const GdkEventButton* event )
 // ホイールマウスジェスチャ。 戻り値はコントロールID
 int Control::MG_wheel_scroll( const GdkEventScroll* event )
 {
-    int control = CONTROL::None;
+    int control = CONTROL::NoOperation;
 
     const guint direction = event->direction;
 
@@ -387,7 +387,7 @@ int Control::MG_wheel_scroll( const GdkEventScroll* event )
 
         for( const int mode : m_mode ) {
             control = CONTROL::get_buttonconfig()->get_id( mode, button, ctrl, shift, alt, dblclick, trpclick );
-            if( control != CONTROL::None ) break;
+            if( control != CONTROL::NoOperation ) break;
         }
     }
 
@@ -396,7 +396,7 @@ int Control::MG_wheel_scroll( const GdkEventScroll* event )
 
         for( const int mode : m_mode ) {
             control = CONTROL::get_buttonconfig()->get_id( mode, button, ctrl, shift, alt, dblclick, trpclick );
-            if( control != CONTROL::None ) break;
+            if( control != CONTROL::NoOperation ) break;
         }
     }
 
@@ -417,7 +417,7 @@ int Control::MG_wheel_scroll( const GdkEventScroll* event )
     std::cout << "Control::MG_wheel_scroll control = " << control << std::endl;
 #endif
 
-    if( control != CONTROL::None ){
+    if( control != CONTROL::NoOperation ){
         if( m_send_mg_info ) CORE::core_set_command( "set_mginfo", "", CONTROL::get_label( control ) );
         mg_wheel_done = true;
     }

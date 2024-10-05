@@ -373,7 +373,7 @@ std::string MouseKeyDiag::show_inputdiag( bool is_append )
         bool conflict = false;
         const std::vector< int > vec_ids = check_conflict( m_controlmode, diag->get_str_motion() );
         auto it = std::find_if( vec_ids.cbegin(), vec_ids.cend(),
-                                [this]( int id ) { return id != CONTROL::None && id != m_id; } );
+                                [this]( int id ) { return id != CONTROL::NoOperation && id != m_id; } );
         if( it != vec_ids.cend() ) {
             const std::string label = CONTROL::get_label( *it );
             SKELETON::MsgDiag mdiag( nullptr, diag->get_str_motion() + "\n\nは「" + label + "」で使用されています" );
@@ -475,7 +475,7 @@ void MouseKeyDiag::slot_reset()
         bool conflict = false;
         const std::vector< int > vec_ids = check_conflict( m_controlmode, motion );
         auto it = std::find_if( vec_ids.cbegin(), vec_ids.cend(),
-                                [this]( int id ) { return id != CONTROL::None && id != m_id; } );
+                                [this]( int id ) { return id != CONTROL::NoOperation && id != m_id; } );
         if( it != vec_ids.cend() ) {
             const std::string label = CONTROL::get_label( *it );
             SKELETON::MsgDiag mdiag( nullptr, motion + "\n\nは「" + label + "」で使用されています" );
@@ -599,7 +599,7 @@ void MouseKeyPref::append_comment_row( const std::string& comment )
     if( row ){
         row[ m_columns.m_col_label ] = comment;
         row[ m_columns.m_col_motions ] = std::string();
-        row[ m_columns.m_col_id ] = CONTROL::None;
+        row[ m_columns.m_col_id ] = CONTROL::NoOperation;
         row[ m_columns.m_col_drawbg ] = false;
         static_cast<void>( row ); // cppcheck: unreadVariable
     }
@@ -615,7 +615,7 @@ void MouseKeyPref::slot_reset()
     for( Gtk::TreeRow row : children ) {
         if( row ){
             const int id = row[ get_colums().m_col_id ];
-            if( id != CONTROL::None ){
+            if( id != CONTROL::NoOperation ){
 
                 const std::string str_motions = get_default_motions( id );
 
@@ -643,7 +643,7 @@ void MouseKeyPref::slot_row_activated( const Gtk::TreeModel::Path& path, Gtk::Tr
     if( ! row ) return;
 
     const int id = row[ get_colums().m_col_id ];
-    if( id == CONTROL::None ) return;
+    if( id == CONTROL::NoOperation ) return;
 
     std::unique_ptr<MouseKeyDiag> diag = create_setting_diag( id, row[ get_colums().m_col_motions ] );
     if( diag->run() == Gtk::RESPONSE_OK ){
@@ -721,7 +721,7 @@ bool MouseKeyPref::slot_visible_func( const Gtk::TreeModel::const_iterator& iter
 
     const Gtk::TreeModel::Row& row = *iter;
     // 検索中は設定カテゴリの名前や空行を取り除く
-    if( row[ m_columns.m_col_id ] == CONTROL::None ) return false;
+    if( row[ m_columns.m_col_id ] == CONTROL::NoOperation ) return false;
 
     // 検索クエリの前後にある空白文字は無視する
     constexpr auto is_not_space = []( gunichar uc ) { return uc != U' ' && uc != U'\u3000'; };
