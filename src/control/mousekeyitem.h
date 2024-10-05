@@ -58,7 +58,7 @@ namespace CONTROL
         int equal( const std::string& str_motion ) const
         {
             if( str_motion == m_str_motion ) return m_id;
-            return CONTROL::None;
+            return CONTROL::NoOperation;
         }
 
         // モード無視
@@ -67,20 +67,20 @@ namespace CONTROL
         {
             if( motion == m_motion && ctrl == m_ctrl && shift == m_shift && alt == m_alt && dblclick == m_dblclick
                     && trpclick == m_trpclick ) return m_id;
-            return CONTROL::None;
+            return CONTROL::NoOperation;
         }
 
         int is_activated( const int mode, const std::string& str_motion ) const
         {
             if( mode == m_mode ) return equal( str_motion );
-            return CONTROL::None;
+            return CONTROL::NoOperation;
         }
 
         int is_activated( const int mode, const guint motion, const bool ctrl, const bool shift, const bool alt,
                           const bool dblclick, const bool trpclick ) const
         {
             if( mode == m_mode ) return equal( motion, ctrl, shift, alt, dblclick, trpclick );
-            return CONTROL::None;
+            return CONTROL::NoOperation;
         }
     };
 }

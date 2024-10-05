@@ -54,7 +54,7 @@ ArticleViewPreview::~ArticleViewPreview()
 //
 bool ArticleViewPreview::operate_view( const int control )
 {
-    if( control == CONTROL::None ) return false;
+    if( control == CONTROL::NoOperation ) return false;
 
     // スクロール系操作
     if( drawarea()->set_scroll( control ) ) return true;

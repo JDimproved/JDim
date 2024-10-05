@@ -2131,7 +2131,7 @@ bool BoardViewBase::slot_button_release( GdkEventButton* event )
     // 実行された場合は何もしない
     if( get_control().MG_wheel_end( event ) ) return true;
 
-    if( mg != CONTROL::None && enable_mg() ){
+    if( mg != CONTROL::NoOperation && enable_mg() ){
         operate_view( mg );
         return true;
     }
@@ -2216,7 +2216,7 @@ bool BoardViewBase::slot_key_press( GdkEventKey* event )
 {
     m_pressed_key = get_control().key_press( event );
 
-    if( m_pressed_key != CONTROL::None ){
+    if( m_pressed_key != CONTROL::NoOperation ){
 
         // キー入力でスレを開くとkey_releaseイベントがboadviewが画面から
         // 消えてから送られてWIDGET_REALIZED_FOR_EVENT assertionが出るので
@@ -2261,7 +2261,7 @@ bool BoardViewBase::slot_scroll_event( GdkEventScroll* event )
 {
     // ホイールマウスジェスチャ
     const int control = get_control().MG_wheel_scroll( event );
-    if( enable_mg() && control != CONTROL::None ){
+    if( enable_mg() && control != CONTROL::NoOperation ){
         operate_view( control );
         return true;
     }

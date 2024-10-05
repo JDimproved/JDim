@@ -307,7 +307,7 @@ bool JDWinMain::on_button_release_event( GdkEventButton* event )
     const int mg = m_control.MG_end( event );
 
     // マウスジェスチャ
-    if( mg != CONTROL::None ) operate_win( mg );
+    if( mg != CONTROL::NoOperation ) operate_win( mg );
 
     return ret;
 }

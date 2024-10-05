@@ -34,7 +34,7 @@ bool JDEntry::on_key_press_event( GdkEventKey* event )
     std::cout << "JDEntry::on_key_press_event key = " << event->keyval << std::endl;
 #endif
 
-    m_controlid = CONTROL::None;
+    m_controlid = CONTROL::NoOperation;
 
     const guint key = event->keyval;
     const bool ctrl = ( event->state ) & GDK_CONTROL_MASK;
@@ -86,7 +86,7 @@ bool JDEntry::on_key_release_event( GdkEventKey* event )
             break;
     }
 
-    m_controlid = CONTROL::None;
+    m_controlid = CONTROL::NoOperation;
 
     return ret;
 }

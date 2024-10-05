@@ -135,7 +135,7 @@ static void slot_set_menu_motion( Gtk::Widget& widget )
         std::cout << label->get_text() << std::endl;
 #endif
         const int id = CONTROL::get_id( label->get_text() );
-        if( id != CONTROL::None ) {
+        if( id != CONTROL::NoOperation ) {
             const std::string str_label = CONTROL::get_label_with_mnemonic( id );
             std::string str_motions;
 
@@ -306,7 +306,7 @@ int CONTROL::get_id( const std::string& name )
         if( name == CONTROL::control_label[ id ][0] ) return id;
     }
 
-    return CONTROL::None;
+    return CONTROL::NoOperation;
 }
 
 
@@ -554,7 +554,7 @@ std::string CONTROL::get_label_motions( const int id )
 // 共通操作
 bool CONTROL::operate_common( const int control, const std::string& url, SKELETON::Admin* admin )
 {
-    if( control == CONTROL::None ) return false;
+    if( control == CONTROL::NoOperation ) return false;
 
     switch( control ){
             

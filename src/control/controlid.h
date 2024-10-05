@@ -316,7 +316,7 @@ namespace CONTROL
 
         // その他
         CancelMG,
-        None,
+        NoOperation,
 
         CONTROL_END
     };

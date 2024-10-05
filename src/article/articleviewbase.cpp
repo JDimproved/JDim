@@ -1039,7 +1039,7 @@ bool ArticleViewBase::operate_view( const int control )
 
     if( CONTROL::operate_common( control, get_url(), ARTICLE::get_admin() ) ) return true;
 
-    if( control == CONTROL::None ) return false;
+    if( control == CONTROL::NoOperation ) return false;
 
     // スクロール系操作
     if( m_drawarea->set_scroll( control ) ) return true;
@@ -2090,7 +2090,7 @@ bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkE
         if( ! is_mouse_on_popup() ){
 
             // マウスジェスチャ
-            if( mg != CONTROL::None && enable_mg() ){
+            if( mg != CONTROL::NoOperation && enable_mg() ){
                 hide_popup();
                 operate_view( mg );
             }
@@ -2154,7 +2154,7 @@ bool ArticleViewBase::slot_key_press( GdkEventKey* event )
 
     int key = get_control().key_press( event );
 
-    if( key != CONTROL::None ){
+    if( key != CONTROL::NoOperation ){
         if( operate_view( key ) ) return true;
     }
     else if( release_keyjump_key( event->keyval ) ) return true;
@@ -2195,7 +2195,7 @@ bool ArticleViewBase::slot_scroll_event( GdkEventScroll* event )
 
     // ホイールマウスジェスチャ
     int control = get_control().MG_wheel_scroll( event );
-    if( enable_mg() && control != CONTROL::None ){
+    if( enable_mg() && control != CONTROL::NoOperation ){
         operate_view( control );
         return true;
     }
