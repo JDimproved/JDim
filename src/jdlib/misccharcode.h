@@ -55,6 +55,9 @@ namespace MISC
     // 戻り値 : バイト数
     int utf32toutf8( const char32_t uch, char* utf8str );
 
+    // UTF-32 の値から Unicode のコードポイントを表す文字列("U+XXXX")を返す
+    std::string utf32tostr( const char32_t uch );
+
     /// 特定のUnicodeブロックかコードポイントを調べる
     UnicodeBlock get_unicodeblock( const char32_t unich );
 

@@ -793,6 +793,51 @@ TEST_F(Utf32ToUtf8Test, out_of_range)
 }
 
 
+class MISC_Utf32ToStrTest : public ::testing::Test {};
+
+TEST_F(MISC_Utf32ToStrTest, u_0000)
+{
+    constexpr char32_t ch = U'\u0000';
+    EXPECT_EQ( "U+0000", MISC::utf32tostr( ch ) );
+}
+
+TEST_F(MISC_Utf32ToStrTest, u_0041)
+{
+    constexpr char32_t ch = U'\u0041';
+    EXPECT_EQ( "U+0041", MISC::utf32tostr( ch ) );
+}
+
+TEST_F(MISC_Utf32ToStrTest, u_1000)
+{
+    constexpr char32_t ch = U'\uabcd';
+    EXPECT_EQ( "U+ABCD", MISC::utf32tostr( ch ) );
+}
+
+TEST_F(MISC_Utf32ToStrTest, u_10000)
+{
+    constexpr char32_t ch = U'\U0001fe00';
+    EXPECT_EQ( "U+1FE00", MISC::utf32tostr( ch ) );
+}
+
+TEST_F(MISC_Utf32ToStrTest, u_10FFFF)
+{
+    constexpr char32_t ch = U'\U0010ffff';
+    EXPECT_EQ( "U+10FFFF", MISC::utf32tostr( ch ) );
+}
+
+TEST_F(MISC_Utf32ToStrTest, out_of_range)
+{
+    char32_t ch = 0x110000;
+    EXPECT_EQ( "U+110000", MISC::utf32tostr( ch ) );
+
+    ch = 0x7FFF'FFFF;
+    EXPECT_EQ( "U+7FFFFFFF", MISC::utf32tostr( ch ) );
+
+    ch = static_cast<char32_t>( -1 );
+    EXPECT_EQ( "U+FFFFFFFF", MISC::utf32tostr( ch ) );
+}
+
+
 class GetUnicodeBlockTest : public ::testing::Test {};
 
 TEST_F(GetUnicodeBlockTest, basic_latin)
