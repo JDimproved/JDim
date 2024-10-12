@@ -1646,7 +1646,7 @@ int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pr
 #ifdef _DEBUG
             std::cout << "DrawAreaBase::get_width_of_one_char "
                       << "byte = " << byte
-                      << " code = " << code
+                      << " code = " << MISC::utf32tostr( code )
                       << " [" << tmpchar << "]\n";
 #endif
 
@@ -1654,7 +1654,8 @@ int DrawAreaBase::get_width_of_one_char( const char* utfstr, int& byte, char& pr
                 && ( code < 0xF0000 || code > 0x10FFFF ) // 私用面ではない
               ){
                 std::stringstream ss_err;
-                ss_err << "unknown font byte = " << byte << " ucs = " << code << " width = " << width;
+                ss_err << "unknown font byte = " << byte << " utf32 = " << MISC::utf32tostr( code )
+                       << " width = " << width;
 
                 MISC::ERRMSG( ss_err.str() );
             }
@@ -4203,7 +4204,7 @@ bool DrawAreaBase::set_carets_dclick( CARET_POSITION& caret_left, CARET_POSITION
                 const char32_t uch_pointer = MISC::utf8toutf32( layout->text + pos, byte_char_pointer );
                 const MISC::UnicodeBlock block_pointer = MISC::get_unicodeblock( uch_pointer );
 #ifdef _DEBUG
-                std::cout << "utf32 = " << std::hex << uch_pointer << std::dec
+                std::cout << "utf32 = " << MISC::utf32tostr( uch_pointer )
                           << " type = " << static_cast<int>( block_pointer ) << " pos = " << pos << std::endl;
 #endif
 

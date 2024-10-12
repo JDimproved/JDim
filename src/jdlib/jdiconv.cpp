@@ -287,7 +287,7 @@ std::string& Iconv::convert( char* str_in, std::size_t size_in, std::string& out
 
                         const std::string uni_str = std::to_string( unich );
 #ifdef _DEBUG
-                        std::cout << "utf32 = " << unich << " byte = " << byte << std::endl;
+                        std::cout << "utf32 = " << MISC::utf32tostr( unich ) << " byte = " << byte << std::endl;
 #endif
                         buf_in_tmp += byte;
 
