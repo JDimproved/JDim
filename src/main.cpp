@@ -372,10 +372,10 @@ void App::slot_startup()
     if( logfile_mode && CACHE::mkdir_logroot() ){
         const std::string logfile = Glib::locale_from_utf8( CACHE::path_msglog() );
         m_redirect_stdout = std::freopen( logfile.c_str(), "ab", stdout );
-        std::setbuf( m_redirect_stdout, nullptr );
         m_redirect_stderr = std::freopen( logfile.c_str(), "ab", stderr );
-        std::setbuf( m_redirect_stderr, nullptr );
-        // tmp のクローズはプロセス終了にまかせる
+
+        if( m_redirect_stdout ) std::setbuf( m_redirect_stdout, nullptr );
+        if( m_redirect_stderr ) std::setbuf( m_redirect_stderr, nullptr );
     }
 
     /*--- IOMonitor -------------------------------------------------*/
