@@ -733,6 +733,17 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
             }
         }
 
+        // Waylandでは最大化を解除したとき JDWindow::on_configure_event() が2回呼び出されないため、すぐにセットする
+        if( ENVIRONMENT::get_display_type() == ENVIRONMENT::DisplayType::wayland ) {
+            // サイズ変更
+            if( ( ! m_fold_when_focusout || m_mode == JDWIN_NORMAL || m_mode == JDWIN_FOLD )
+                    && height_new > min_height
+                ) {
+                set_width_win( width_new );
+                set_height_win( height_new );
+            }
+        }
+
 #ifdef _DEBUG
     std::cout << "configure fin --> mode = " << m_mode << " show = " << is_shown_win()
               << " maximized = " << is_maximized_win()

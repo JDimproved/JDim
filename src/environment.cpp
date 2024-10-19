@@ -411,21 +411,35 @@ std::string ENVIRONMENT::get_wm_str()
  */
 const char* ENVIRONMENT::get_display_str()
 {
+    constexpr const char* tbl_display[] = { " (Wayland)", " (X11)", " (Broadway)", "" };
+
+    const auto display_type = ENVIRONMENT::get_display_type();
+    return tbl_display[ static_cast<unsigned int>( display_type ) ];
+}
+
+
+/** @brief ディスプレイサーバーの種類を判定してenum型で返す
+ *
+ * @details ディスプレイサーバーが不明のときは DisplayType::unknown を返す。
+ * @return ディスプレイサーバーの種類を表すenum型
+ */
+ENVIRONMENT::DisplayType ENVIRONMENT::get_display_type()
+{
     GdkDisplay* display = gdk_display_get_default();
 
 #ifdef GDK_WINDOWING_WAYLAND
-    if( GDK_IS_WAYLAND_DISPLAY( display ) ) return " (Wayland)";
+    if( GDK_IS_WAYLAND_DISPLAY( display ) ) return DisplayType::wayland;
 #endif
 
 #ifdef GDK_WINDOWING_X11
-    if( GDK_IS_X11_DISPLAY( display ) ) return " (X11)";
+    if( GDK_IS_X11_DISPLAY( display ) ) return DisplayType::x11;
 #endif
 
 #ifdef GDK_WINDOWING_BROADWAY
-    if( GDK_IS_BROADWAY_DISPLAY( display ) ) return " (Broadway)";
+    if( GDK_IS_BROADWAY_DISPLAY( display ) ) return DisplayType::broadway;
 #endif
 
-    return "";
+    return DisplayType::unknown;
 }
 
 
