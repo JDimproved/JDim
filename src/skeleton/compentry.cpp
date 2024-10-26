@@ -9,12 +9,15 @@
 
 #include "compmanager.h"
 
+#include <algorithm>
+
+
 using namespace SKELETON;
 
-enum
-{
-    POPUP_SIZE = 5
-};
+
+namespace ce {
+constexpr int kPopupSize = 5;
+}
 
 
 CompletionEntry::CompletionEntry( const int mode )
@@ -47,6 +50,10 @@ CompletionEntry::CompletionEntry( const int mode )
     m_scr_win.set_size_request( 1, 1 );
 
     m_popup_win.add( m_scr_win );
+
+    // ウインドウを移動させる gdk_window_move_to_rect() は Gdk::Window が作成されてないと失敗する
+    // そのため、初回のポップアップ配置は Gdk::Window が関連付けられたときに行う
+    m_popup_win.signal_realize().connect( sigc::mem_fun( *this, &CompletionEntry::place_popup ) );
 
     set_size_request( 0 );
 }
@@ -93,6 +100,35 @@ void CompletionEntry::grab_focus()
 }
 
 
+/**
+ * @brief 入力補完のポップアップを配置する
+ */
+void CompletionEntry::place_popup()
+{
+    // ポップアップの表示位置を計算する
+    int x, y;
+    translate_coordinates( *get_toplevel(), 0, 0, x, y );
+    const GdkRectangle rect_dest = { x, y, get_allocated_width(), get_allocated_height() };
+#ifdef _DEBUG
+    std::cout << "CompletionEntry::place_popup: coords(x, y) = " << x << ", " << y
+              << "; (width, height) = " << rect_dest.width << ", " << rect_dest.height
+              << std::endl;
+#endif
+
+    // ウインドウが表示されていると、位置の変更が適応されないウインドウマネージャーがあるので非表示にする
+    hide_popup();
+
+    // Entryの左下角と、ポップアップの左上角を合わせる
+    constexpr GdkGravity rect_anchor = GDK_GRAVITY_SOUTH_WEST;
+    constexpr GdkGravity window_anchor = GDK_GRAVITY_NORTH_WEST;
+
+    constexpr GdkAnchorHints anchor_hints{};
+    constexpr int offset = 0;
+    gdk_window_move_to_rect( m_popup_win.get_window()->gobj(), &rect_dest,
+                             rect_anchor, window_anchor, anchor_hints, offset, offset );
+}
+
+
 //
 // ポップアップ表示
 //
@@ -131,14 +167,19 @@ void CompletionEntry::show_popup( const bool show_all )
 
     // 座標と大きさを計算してポップアップ表示
 
+    // gdk_window_move_to_rect() を使うためにポップアップの一時的な親ウインドウを設定する
+    Gtk::Widget* toplevel = get_toplevel();
+    if( auto win = dynamic_cast<Gtk::Window*>( toplevel ); win ) {
+        m_popup_win.set_transient_for( *win );
+    }
+
+    // Entryの幅に合わせてポップアップの幅を調整する
     const int cell_h = m_treeview.get_row_height() + mrg;
+    m_popup_win.resize( get_width(), cell_h * (std::min)( ce::kPopupSize, size ) + mrg );
 
-    int x, y;
-    get_window()->get_origin( x, y );
+    // Gdk::Window が関連付けられているならここでポップアップを配置する
+    if( m_popup_win.get_realized() ) place_popup();
 
-    Gdk::Rectangle rect = get_allocation();
-    m_popup_win.move( x + rect.get_x(), y + rect.get_y() + rect.get_height() );
-    m_popup_win.resize( get_width(), cell_h * MIN( POPUP_SIZE, size ) + mrg );
     m_popup_win.show_all();
     m_show_popup = true;
 

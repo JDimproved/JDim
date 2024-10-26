@@ -67,6 +67,9 @@ namespace SKELETON
 
       private:
 
+        // 入力補完のポップアップを配置する
+        void place_popup();
+
         // ポップアップ表示
         // show_all == true なら候補を全て表示する
         void show_popup( const bool show_all );
