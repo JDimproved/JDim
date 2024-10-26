@@ -10,6 +10,9 @@
 
 #include "config/globalconf.h"
 
+#include <fstream>
+
+
 using namespace JDLIB;
 
 /**********************************************************/
@@ -121,10 +124,9 @@ bool ImgLoader::load_imgfile( const int loadlevel )
 #endif
 
     bool ret = true;
-    FILE* f = nullptr;
 
-    f = fopen( to_locale_cstr( m_file ), "rb" );
-    if( ! f ){
+    std::ifstream f( to_locale_cstr( m_file ), std::ios_base::binary );
+    if( ! f.is_open() ) {
         m_errmsg = "cannot file open";
         return false;
     }
@@ -138,16 +140,17 @@ bool ImgLoader::load_imgfile( const int loadlevel )
         constexpr std::size_t bufsize = 8192;
         guint8 data[ bufsize ];
 
-        while( ! m_stop ){
+        while( ! m_stop && f ) {
 
-            const std::size_t readsize = fread( data, 1, bufsize, f );
-            if( readsize ) m_loader->write( data, readsize );
+            f.read( reinterpret_cast<char*>(data), bufsize );
+            const auto readsize = f.gcount();
+            if( readsize > 0 ) m_loader->write( data, readsize );
 
 #ifdef _DEBUG
             total += readsize;
 //            std::cout << readsize << " / " << total << std::endl;
 #endif
-            if( feof( f ) ){ // 画像データ全体を読み込み完了
+            if( f.eof() ) { // 画像データ全体を読み込み完了
                 m_loadedlevel = LOADLEVEL_NORMAL;
                 break;
             }
@@ -168,7 +171,7 @@ bool ImgLoader::load_imgfile( const int loadlevel )
         }
     }
 
-    fclose( f );
+    f.close();
 
 #ifdef _DEBUG
     std::cout << "ImgLoader::load_imgfile fisished read = " << total << "  w = " << m_width << " h = " << m_height
