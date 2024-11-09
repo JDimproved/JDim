@@ -171,6 +171,9 @@ namespace SKELETON
         //  ポップアップメニュー取得
         virtual Gtk::Menu* get_popupmenu( const std::string& url ){ return nullptr; }
 
+        void get_preferred_width_vfunc( int& minimum_width, int& natural_width ) const override;
+        void get_preferred_height_vfunc( int& minimum_height, int& natural_height ) const override;
+
     public:
 
         SIG_HIDE_POPUP sig_hide_popup(){ return m_sig_hide_popup; }

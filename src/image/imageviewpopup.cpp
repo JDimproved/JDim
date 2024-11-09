@@ -141,6 +141,30 @@ void ImageViewPopup::remove_label()
 
 
 
+/** @brief ウィジェットの自然な幅と高さを使用してビューのサイズを調整する
+ *
+ * @details 取得した自然なサイズが現在の値より大きい場合は更新する。
+ * @param[in] widget 自然な幅と高さを取得する対象
+ */
+void ImageViewPopup::adjust_client_size( Gtk::Widget& widget )
+{
+    [[maybe_unused]] int unused_value;
+    int natural_width = 0;
+    int natural_height = 0;
+
+    widget.get_preferred_width( unused_value, natural_width );
+    widget.get_preferred_height( unused_value, natural_height );
+
+    if( width_client() < natural_width ) {
+        set_width_client( natural_width );
+    }
+    if( height_client() < natural_height ) {
+        set_height_client( natural_height );
+    }
+}
+
+
+
 //
 // 表示
 //
@@ -257,6 +281,8 @@ void ImageViewPopup::show_view_impl()
             else{
                 set_label( "" );
                 m_label->set_text( imagearea->get_errmsg() );
+
+                adjust_client_size( *m_label );
             }
         }
 
@@ -265,6 +291,8 @@ void ImageViewPopup::show_view_impl()
             set_label( "" );
             if( get_img()->get_str_code( ).empty() ) m_label->set_text( "キャッシュが存在しません" );
             else m_label->set_text( get_img()->get_str_code( ) );
+
+            adjust_client_size( *m_label );
         }
     }
 

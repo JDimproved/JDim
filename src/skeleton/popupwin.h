@@ -26,6 +26,7 @@ namespace SKELETON
         std::unique_ptr<SKELETON::View> m_view;
         int m_mrg_x;  // ポップアップとマウスカーソルの間のマージン(水平方向)
         int m_mrg_y;  // ポップアップとマウスカーソルの間のマージン(垂直方向)
+        bool m_running_on_wayland{};
 
     public:
 
@@ -40,6 +41,13 @@ namespace SKELETON
 
         // ポップアップウィンドウの座標と幅と高さを計算して移動とリサイズ
         void slot_resize_popup();
+
+    private:
+
+        void slot_realize();
+
+        void move_resize_conventional();
+        void move_resize_wayland();
     };
 }
 
