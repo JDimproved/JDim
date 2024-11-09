@@ -51,6 +51,8 @@ namespace IMAGE
         void update_label();
         void set_label( const std::string& status );
         void remove_label();
+
+        void adjust_client_size( Gtk::Widget& widget );
     };
 
 }
