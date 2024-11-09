@@ -83,20 +83,20 @@ jobs:
       - name: git clone muon
         run: |
           git clone --depth 1 https://git.sr.ht/~lattis/muon muon-src
-        # Skip bootstrapping muon to do meson setup instead.
       - name: git log -n1 muon
         run: git -C muon-src log -n1
+        # Since 2024-11-03 07:27:25 -0500 (6ec469bb42), bootstrapping has used muon-bootstrap as exe name.
       - name: build muon stage1
         run: |
           cd muon-src
           ./bootstrap.sh stage1
-          ./stage1/muon version
+          ./stage1/muon-bootstrap version
           cd ..
       - name: build muon stage2
         run: |
           cd muon-src
-          ./stage1/muon setup -Ddocs=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled ../muon-build
-          ./stage1/muon samu -C ../muon-build
+          ./stage1/muon-bootstrap setup -Ddocs=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled ../muon-build
+          ./stage1/muon-bootstrap samu -C ../muon-build
           cd ..
       - name: muon version
         run: ./muon-build/muon version
