@@ -198,6 +198,7 @@ void DragTreeView::show_popup( const std::string& url, View* view )
     m_popup_win->sig_hide_popup().connect( sigc::mem_fun( *this, &DragTreeView::hide_popup ) );
 
     m_pre_popup_url = url;
+    m_popup_win->show_all();
     m_popup_shown = true;
 }
 

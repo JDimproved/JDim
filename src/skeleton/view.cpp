@@ -264,3 +264,27 @@ std::string View::get_color() const
 
     return "";
 }
+
+
+/** @brief 最小の幅と自然な幅の初期値を取得する
+ *
+ * @param[out] minimum_width ウィジェットの最小の幅
+ * @param[out] natural_width ウィジェットの自然な幅
+ */
+void View::get_preferred_width_vfunc( int& minimum_width, int& natural_width ) const
+{
+    minimum_width = 0;
+    natural_width = width_client();
+}
+
+
+/** @brief 最小の高さと自然な高さの初期値を取得する
+ *
+ * @param[out] minimum_width ウィジェットの最小の高さ
+ * @param[out] natural_width ウィジェットの自然な高さ
+ */
+void View::get_preferred_height_vfunc( int& minimum_height, int& natural_height ) const
+{
+    minimum_height = 0;
+    natural_height = height_client();
+}

@@ -2908,6 +2908,7 @@ void ArticleViewBase::show_popup( SKELETON::View* view, const int mrg_x, const i
     m_popup_win = std::make_unique<SKELETON::PopupWin>( this, view, mrg_x, mrg_y );
     m_popup_win->signal_leave_notify_event().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_popup_leave_notify_event ) );
     m_popup_win->sig_hide_popup().connect( sigc::mem_fun( *this, &ArticleViewBase::slot_hide_popup ) );
+    m_popup_win->show_all();
     m_popup_shown = true;
 }
 
