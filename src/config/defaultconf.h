@@ -237,6 +237,9 @@ namespace CONFIG
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"
 #define CONF_URL_SEARCH_WEB "http://www.google.co.jp/search?hl=ja&q=$TEXTU&btnG=Google+%E6%A4%9C%E7%B4%A2&lr="
 
+/// @brief GTKテーマの名前
+#define CONF_GTK_THEME_NAME ""
+
 // 2chのクッキー (互換性のため設定名は旧名称を使う)
 #define CONF_COOKIE_HAP ""
 #define CONF_COOKIE_HAP_BBSPINK ""

@@ -48,6 +48,10 @@ namespace CONFIG
     void set_color( const int id, const std::string& color );
     void reset_colors();
 
+    // GTKテーマの名前
+    const std::string& get_gtk_theme_name();
+    void set_gtk_theme_name( const std::string& name );
+
     // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
     bool get_use_message_gtktheme();
     void set_use_message_gtktheme( const bool use );
