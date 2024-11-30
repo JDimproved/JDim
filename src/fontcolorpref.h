@@ -76,6 +76,19 @@ namespace CORE
         Gtk::Button m_bt_reset_color;
         Gtk::Button m_bt_reset_all_colors;
 
+        // テーマの設定
+        Gtk::Grid m_grid_theme;
+        Gtk::Label m_label_gtk_theme;
+        Gtk::ComboBoxText m_combo_theme;
+        Gtk::CheckButton m_check_system_theme;
+        Glib::RefPtr<Glib::Binding> m_binding_theme; ///< ComboBoxTextとSettings gtk_theme_nameをバインドする
+        Glib::RefPtr<Glib::Binding> m_binding_system;
+        Gtk::Label m_label_dark_theme;
+        Gtk::CheckButton m_check_dark_theme;
+        /// @brief ComboBoxTextとSettings gtk_application_prefer_dark_themeをバインドする
+        Glib::RefPtr<Glib::Binding> m_binding_dark;
+        Gtk::Label m_label_note;
+
       public:
 
         FontColorPref( Gtk::Window* parent, const std::string& url );
