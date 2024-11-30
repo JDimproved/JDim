@@ -280,6 +280,9 @@ bool ConfigItems::load( const bool restore )
     // GTKテーマの名前
     gtk_theme_name = cf.get_option_str( "gtk_theme_name", CONF_GTK_THEME_NAME );
 
+    // ダークテーマを使用するか
+    use_dark_theme = cf.get_option_bool( "use_dark_theme", CONF_USE_DARK_THEME );
+
     // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
     use_message_gtktheme = cf.get_option_bool( "use_message_gtktheme", CONF_USE_MESSAGE_GTKTHEME );
 
@@ -832,6 +835,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_back_board_even", str_color[ COLOR_BACK_BOARD_EVEN ] );
 
     cf.update( "gtk_theme_name", gtk_theme_name );
+    cf.update( "use_dark_theme", use_dark_theme );
     cf.update( "use_message_gtktheme", use_message_gtktheme );
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
     cf.update( "use_select_gtkrc", use_select_gtkrc );
