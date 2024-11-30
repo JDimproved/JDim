@@ -52,6 +52,8 @@
 #include "link.h"
 #include "info.h"
 
+#include <algorithm>
+
 
 static ICON::ICON_Manager* instance_icon_manager = nullptr;
 
@@ -75,6 +77,55 @@ void ICON::delete_icon_manager()
 Glib::RefPtr< Gdk::Pixbuf > ICON::get_icon( int id )
 {
     return get_icon_manager()->get_icon( id );
+}
+
+
+/**
+ * @brief インストールされているGTKテーマの名前をまとめて返す
+ *
+ * @details GTKテーマを探す場所にあるテーマ名のディレクトリに
+ * gtk-3.X/gtk.css (Xは0, 2, 4, ..., 24) のファイルが存在するかチェックします。
+ *
+ * GTKテーマを探す場所
+ * 1. $XDG_DATA_HOME/themes/
+ * 2. $HOME/.themes/
+ * 3. $XDG_DATA_DIRS にある themes/
+ *
+ * @return 辞書順でソートされたテーマ名のvector
+ */
+std::vector<std::string> ICON::get_installed_gtk_theme_names()
+{
+    constexpr int minor = GTK_MINOR_VERSION + 1;
+    std::vector<std::string> names;
+
+    auto fill_gtk = [&]( const auto& themes_dir ) {
+        if( ! Glib::file_test( themes_dir, Glib::FILE_TEST_IS_DIR ) ) return;
+
+        for( auto dir_name : Glib::Dir( themes_dir ) ) {
+            for( int i = 0; i < minor; i += 2 ) {
+                auto file_path = Glib::ustring::compose( "%1/%2/gtk-3.%3/gtk.css", themes_dir, dir_name, i );
+                if( Glib::file_test( file_path, Glib::FILE_TEST_IS_REGULAR ) ) {
+                    names.push_back( std::move( dir_name ) );
+                    break;
+                }
+            }
+        }
+    };
+
+    fill_gtk( Glib::get_user_data_dir() + "/themes" );
+    fill_gtk( Glib::get_home_dir() + "/.themes" );
+
+    auto data_dirs = Glib::get_system_data_dirs();
+    for( auto& data_dir : data_dirs ) {
+        data_dir += "/themes";
+        fill_gtk( data_dir );
+    }
+
+    // ソートして重複した名前を取り除く
+    std::sort( names.begin(), names.end() );
+    names.erase( std::unique( names.begin(), names.end() ), names.end() );
+
+    return names;
 }
 
 

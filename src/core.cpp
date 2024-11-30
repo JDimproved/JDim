@@ -95,6 +95,13 @@ Core::Core( JDWinMain& win_main )
     , m_vpaned_message( SKELETON::PANE_FIXSIZE_PAGE2 )
     , m_enable_menuslot( true )
 {
+    if( auto gtk_theme_name = CONFIG::get_gtk_theme_name(); ! gtk_theme_name.empty() ) {
+        // GTKの仕様で property_gtk_theme_name() に代入するとデスクトップ環境のシステム設定と同期しなくなる
+        Gtk::Settings::get_default()->property_gtk_theme_name() = std::move( gtk_theme_name );
+    }
+    // property_gtk_application_prefer_dark_theme() は代入しても同期が維持される
+    Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = CONFIG::get_use_dark_theme();
+
     // ディスパッチマネージャ作成
     CORE::get_dispmanager();
 

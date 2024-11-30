@@ -42,6 +42,7 @@ namespace CONFIG
         CONF_REFPOPUP_BY_MO = 0,    // レス番号の上にマウスオーバーしたときに参照ポップアップ表示する
         CONF_NAMEPOPUP_BY_MO = 0,   // 名前の上にマウスオーバーしたときにポップアップ表示する
         CONF_IDPOPUP_BY_MO = 0,     // IDの上にマウスオーバーしたときにIDをポップアップ表示する
+        CONF_USE_DARK_THEME = 0,    ///< @brief ダークテーマを使用するか
         CONF_USE_MESSAGE_GTKTHEME = 0, // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
         CONF_USE_TREE_GTKRC = 0,    // ツリービューでgtkrcの設定を使用するか
         CONF_USE_SELECT_GTKRC = 0,  // スレビューの選択色でgtkrcの設定を使用するか
@@ -236,6 +237,9 @@ namespace CONFIG
 // WEB検索用メニュータイトルアドレス
 #define CONF_MENU_SEARCH_WEB  "WEB検索 (google)"
 #define CONF_URL_SEARCH_WEB "http://www.google.co.jp/search?hl=ja&q=$TEXTU&btnG=Google+%E6%A4%9C%E7%B4%A2&lr="
+
+/// @brief GTKテーマの名前
+#define CONF_GTK_THEME_NAME ""
 
 // 2chのクッキー (互換性のため設定名は旧名称を使う)
 #define CONF_COOKIE_HAP ""

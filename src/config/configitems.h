@@ -230,6 +230,12 @@ namespace CONFIG
         // 色
         std::vector< std::string > str_color;
 
+        /// @brief GTKテーマの名前
+        std::string gtk_theme_name;
+
+        /// @brief ダークテーマを使用するか
+        bool use_dark_theme{};
+
         // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
         bool use_message_gtktheme{};
 
