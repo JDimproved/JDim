@@ -126,13 +126,13 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
         m_combo_theme.append( name, name );
     }
 
-    m_check_system_theme.set_active( CONFIG::get_gtk_theme_name().empty() );
-    m_check_dark_theme.set_active( CONFIG::get_use_dark_theme() );
 
     if( auto env_theme = Glib::getenv( "GTK_THEME" ); ! env_theme.empty() ) {
         m_combo_theme.set_tooltip_text( "環境変数 GTK_THEME が設定されているため変更できません。" );
-        m_check_system_theme.set_tooltip_text( "環境変数 GTK_THEME が設定されているため無視されます。" );
+        m_check_system_theme.set_tooltip_text( "環境変数 GTK_THEME が設定されているため変更できません。" );
         m_check_dark_theme.set_tooltip_text( "環境変数 GTK_THEME が設定されているため変更できません。" );
+
+        m_check_system_theme.set_active( false );
 
         m_combo_theme.set_sensitive( false );
         m_check_system_theme.set_sensitive( false );
@@ -142,9 +142,15 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
             m_check_dark_theme.set_active( env_theme.compare( sep, 5, ":dark" ) == 0 );
             env_theme.resize( sep );
         }
+        else {
+            m_check_dark_theme.set_active( false );
+        }
         m_combo_theme.set_active_text( env_theme );
     }
     else {
+        m_check_system_theme.set_active( CONFIG::get_gtk_theme_name().empty() );
+        m_check_dark_theme.set_active( CONFIG::get_use_dark_theme() );
+
         // ComboBoxText に内容を追加した後でバインドしないとデスクトップのシステム設定と同期しない
         m_binding_theme = Glib::Binding::bind_property( Gtk::Settings::get_default()->property_gtk_theme_name(),
                                                         m_combo_theme.property_active_id(),
