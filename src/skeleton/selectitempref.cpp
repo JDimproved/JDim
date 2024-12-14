@@ -28,13 +28,14 @@ SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url )
 {
     m_list_default_data.clear();
 
-    m_button_top.set_image_from_icon_name( "go-top" );
-    m_button_up.set_image_from_icon_name( "go-up" );
-    m_button_down.set_image_from_icon_name( "go-down" );
-    m_button_bottom.set_image_from_icon_name( "go-bottom" );
+    const bool use_symbolic = CONFIG::get_use_symbolic_icon();
+    m_button_top.set_image_from_icon_name( use_symbolic ? "go-top-symbolic" : "go-top" );
+    m_button_up.set_image_from_icon_name( use_symbolic ? "go-up-symbolic" : "go-up" );
+    m_button_down.set_image_from_icon_name( use_symbolic ? "go-down-symbolic" : "go-down" );
+    m_button_bottom.set_image_from_icon_name( use_symbolic ? "go-bottom-symbolic" : "go-bottom" );
 
-    m_button_delete.set_image_from_icon_name( "go-next" );
-    m_button_add.set_image_from_icon_name( "go-previous" );
+    m_button_delete.set_image_from_icon_name( use_symbolic ? "go-next-symbolic" : "go-next" );
+    m_button_add.set_image_from_icon_name( use_symbolic ? "go-previous-symbolic" : "go-previous" );
 
     pack_widgets();
 }
@@ -58,12 +59,11 @@ void SelectItemPref::pack_widgets()
     // アイコン
     Gtk::CellRendererPixbuf* render_pixbuf_shown = Gtk::manage( new Gtk::CellRendererPixbuf() );
     view_column_shown->pack_start( *render_pixbuf_shown, false );
-    view_column_shown->add_attribute( *render_pixbuf_shown, "pixbuf", 0 );
+    view_column_shown->add_attribute( *render_pixbuf_shown, "gicon", 0 );
     // 項目名
     Gtk::CellRendererText* render_text_shown = Gtk::manage( new Gtk::CellRendererText() );
     view_column_shown->pack_start( *render_text_shown, true );
     view_column_shown->add_attribute( *render_text_shown, "text", 1 );
-
 
     // ボタン(縦移動)
     m_vbuttonbox_v.pack_start( m_button_top, Gtk::PACK_SHRINK );
@@ -97,12 +97,11 @@ void SelectItemPref::pack_widgets()
     // アイコン
     Gtk::CellRendererPixbuf* render_pixbuf_hidden = Gtk::manage( new Gtk::CellRendererPixbuf() );
     view_column_hidden->pack_start( *render_pixbuf_hidden, false );
-    view_column_hidden->add_attribute( *render_pixbuf_hidden, "pixbuf", 0 );
+    view_column_hidden->add_attribute( *render_pixbuf_hidden, "gicon", 0 );
     // 項目名
     Gtk::CellRendererText* render_text_hidden = Gtk::manage( new Gtk::CellRendererText() );
     view_column_hidden->pack_start( *render_text_hidden, true );
     view_column_hidden->add_attribute( *render_text_hidden, "text", 1 );
-
 
     // 全体のパッキング
     m_scroll_shown.add( m_tree_shown );
@@ -159,9 +158,9 @@ bool SelectItemPref::slot_focus_in_hidden( GdkEventFocus* event )
 //
 // 項目名でデフォルトデータからアイコンを取得
 //
-Glib::RefPtr< Gdk::Pixbuf > SelectItemPref::get_icon( const Glib::ustring& name )
+Glib::RefPtr< Gio::Icon > SelectItemPref::get_icon( const Glib::ustring& name )
 {
-    Glib::RefPtr< Gdk::Pixbuf > icon;
+    Glib::RefPtr< Gio::Icon > icon;
 
     auto it = std::find_if( m_list_default_data.cbegin(), m_list_default_data.cend(),
                             [&name]( const DEFAULT_DATA& data ) { return data.name == name; } );
@@ -187,7 +186,7 @@ void SelectItemPref::clear()
 // デフォルトデータを追加( 項目名、アイコンID )
 //
 void SelectItemPref::append_default_pair( const Glib::ustring& name,
-                                          const Glib::RefPtr< Gdk::Pixbuf > icon )
+                                          const Glib::RefPtr< Gio::Icon > icon )
 
 {
     if( name.empty() ) return;
@@ -260,7 +259,7 @@ Gtk::TreeRow SelectItemPref::append_shown( const std::string& name, const bool s
 
     row = *( m_store_shown->append() );
 
-    Glib::RefPtr< Gdk::Pixbuf > icon = get_icon( name );
+    Glib::RefPtr< Gio::Icon > icon = get_icon( name );
 
     if( icon ) row[ m_columns_shown.m_column_icon ] = icon;
     row[ m_columns_shown.m_column_text ] = name;
@@ -281,7 +280,7 @@ Gtk::TreeRow SelectItemPref::append_hidden( const std::string& name, const bool 
 {
     Gtk::TreeModel::Row row = *( m_store_hidden->append() );
 
-    Glib::RefPtr< Gdk::Pixbuf > icon = get_icon( name );
+    Glib::RefPtr< Gio::Icon > icon = get_icon( name );
 
     if( icon ) row[ m_columns_hidden.m_column_icon ] = icon;
     row[ m_columns_hidden.m_column_text ] = name;

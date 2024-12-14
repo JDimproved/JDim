@@ -148,6 +148,18 @@ void BBSListToolBar::set_view( SKELETON::View* view )
 }
 
 
+/**
+ * @brief ボタンのアイコンを再読み込み
+ */
+void BBSListToolBar::reload_ui_icon()
+{
+    SKELETON::ToolBar::reload_ui_icon();
+
+    set_button_icon( m_button_check_update_root, ICON::CHECK_UPDATE_ROOT );
+    set_button_icon( m_button_check_update_open_root, ICON::CHECK_UPDATE_OPEN_ROOT );
+}
+
+
 void BBSListToolBar::slot_toggle( const int i )
 {
 #ifdef _DEBUG

@@ -137,6 +137,7 @@ namespace SKELETON
         void focus_toolbar_search(); // ツールバー内の検索entryにフォーカスを移す
         void update_toolbar_url( const std::string& url_old, const std::string& url_new );
         void update_toolbar_button();
+        void reload_ui_icon();
 
         // タブの文字列取得/セット
         const std::string& get_tab_fulltext( const int page );

@@ -3539,3 +3539,19 @@ void BBSListViewBase::redo()
 {
     m_treeview.redo();
 }
+
+
+/** @brief TreeView の項目のアイコンを再読み込みする
+ *
+ * @note Gio::ThemedIcon のアイコンで表示する TreeView の項目は「外部BBSMENU」に
+ * 限られているため SKELETON::EditTreeViewIterator ですべての row を巡回すると無駄が多い。
+ * 効率化のため TreeModel の巡回範囲を「外部BBSMENU」直下の項目に決め打ちしている。
+ */
+void BBSListViewBase::reload_list_icon()
+{
+    auto row = m_treeview.get_row( Gtk::TreePath( "0:0" ) );
+    for( ; row; ++row ) {
+        const int type = row[ m_columns.m_type ];
+        row[ m_columns.m_image ] = XML::get_icon( type );
+    }
+}

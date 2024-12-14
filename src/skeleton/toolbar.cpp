@@ -178,6 +178,46 @@ void ToolBar::update_button()
 }
 
 
+/**
+ * @brief ボタンのアイコンを再読み込み
+ */
+void ToolBar::reload_ui_icon()
+{
+    set_button_icon( m_button_open_searchbar, ICON::SEARCH );
+    set_button_icon( m_button_close_searchbar, ICON::CLOSE_SEARCH );
+    set_button_icon( m_button_up_search, ICON::SEARCH_PREV );
+    set_button_icon( m_button_down_search, ICON::SEARCH_NEXT );
+    set_button_icon( m_button_clear_highlight, ICON::CLEAR_SEARCH );
+    set_button_icon( m_button_write, ICON::WRITE );
+    set_button_icon( m_button_reload, ICON::RELOAD );
+    set_button_icon( m_button_stop, ICON::STOPLOADING );
+    set_button_icon( m_button_close, ICON::QUIT );
+    set_button_icon( m_button_delete, ICON::DELETE );
+    set_button_icon( m_button_favorite, ICON::APPENDFAVORITE );
+    set_button_icon( m_button_undo, ICON::UNDO );
+    set_button_icon( m_button_redo, ICON::REDO );
+
+    if( m_button_back ) {
+        if( auto menu_button = m_button_back->get_button(); menu_button ) {
+            if( auto image = dynamic_cast<Gtk::Image*>(menu_button->get_label_widget()); image ) {
+                auto ptr = Glib::RefPtr<const Gio::Icon>::cast_const( ICON::get_icon( ICON::BACK ) );
+                image->set( ptr, Gtk::ICON_SIZE_SMALL_TOOLBAR );
+            }
+        }
+    }
+    if( m_button_forward ) {
+        if( auto menu_button = m_button_forward->get_button(); menu_button ) {
+            if( auto image = dynamic_cast<Gtk::Image*>(menu_button->get_label_widget()); image ) {
+                auto ptr = Glib::RefPtr<const Gio::Icon>::cast_const( ICON::get_icon( ICON::FORWARD ) );
+                image->set( ptr, Gtk::ICON_SIZE_SMALL_TOOLBAR );
+            }
+        }
+    }
+
+    set_button_icon( m_button_lock, ICON::LOCK );
+}
+
+
 // ボタンのアンパック
 void ToolBar::unpack_buttons()
 {
@@ -975,4 +1015,22 @@ void ToolBar::slot_lock_clicked()
 {
     if( ! m_enable_slot ) return;
     m_admin->set_command( "toolbar_lock_view", get_url() );
+}
+
+
+/** @brief ツールバーボタンのアイコンをキャッシュから読み込んで更新する
+ *
+ * @details Gio::ThemedIcon は選択されているアイコンテーマに合わせて絵柄が変わります。
+ * しかし、カラーとシンボリックは別の名前のアイコンであるため切り替えにはアイコンの再読み込みが必要です。
+ * @param[in,out] アイコンを更新するボタン
+ * @param[in]     iconid アイコンID
+ */
+void ToolBar::set_button_icon( Gtk::ToolButton* button, const int iconid )
+{
+    if( ! button ) return;
+
+    if( auto image = dynamic_cast<Gtk::Image*>(button->get_icon_widget()); image ) {
+        auto ptr = Glib::RefPtr<const Gio::Icon>::cast_const( ICON::get_icon( iconid ) );
+        image->set( ptr, Gtk::ICON_SIZE_SMALL_TOOLBAR );
+    }
 }

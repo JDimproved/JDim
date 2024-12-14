@@ -262,7 +262,8 @@ void HistorySubMenu::set_menulabel()
         }
         if( name.empty() ) name = HIST_NONAME;
 
-        m_vec_images[ i ]->set( XML::get_icon( type ) );
+        m_vec_images[ i ]->set( Glib::RefPtr<const Gio::Icon>::cast_const( XML::get_icon( type ) ),
+                                Gtk::ICON_SIZE_MENU );
         m_vec_label[ i ]->set_text( MISC::cut_str( name, HIST_MAX_LNG ) );
     }
 }

@@ -171,9 +171,9 @@ int XML::get_type( const std::string& node_name )
 //
 // TYPE_ID からアイコンを取得 ( アイコンは icons/iconmanager.h を参照 )
 //
-Glib::RefPtr< Gdk::Pixbuf > XML::get_icon( const int type_id )
+Glib::RefPtr< Gio::Icon > XML::get_icon( const int type_id )
 {
-	Glib::RefPtr< Gdk::Pixbuf > icon = ICON::get_icon( ICON::TRANSPARENT );
+    Glib::RefPtr< Gio::Icon > icon = ICON::get_icon( ICON::TRANSPARENT );
 
     switch( type_id )
     {

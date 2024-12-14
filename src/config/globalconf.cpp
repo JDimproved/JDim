@@ -94,6 +94,12 @@ void CONFIG::set_gtk_theme_name( const std::string& name ) { get_confitem()->gtk
 bool CONFIG::get_use_dark_theme() { return get_confitem()->use_dark_theme; }
 void CONFIG::set_use_dark_theme( const bool use ) { get_confitem()->use_dark_theme = use; }
 
+const std::string& CONFIG::get_gtk_icon_theme_name() { return get_confitem()->gtk_icon_theme_name; }
+void CONFIG::set_gtk_icon_theme_name( const std::string& name ) { get_confitem()->gtk_icon_theme_name = name; }
+
+bool CONFIG::get_use_symbolic_icon() { return get_confitem()->use_symbolic_icon; }
+void CONFIG::set_use_symbolic_icon( const bool use ) { get_confitem()->use_symbolic_icon = use; }
+
 bool CONFIG::get_use_message_gtktheme() { return get_confitem()->use_message_gtktheme; }
 void CONFIG::set_use_message_gtktheme( const bool use ) { get_confitem()->use_message_gtktheme = use; }
 

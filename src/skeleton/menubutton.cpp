@@ -69,7 +69,7 @@ MenuButton::MenuButton( const bool show_arrow, Gtk::Widget& label )
 
 
 MenuButton::MenuButton( const bool show_arrow, const int id )
-    : MenuButton( show_arrow, Gtk::manage( new Gtk::Image( ICON::get_icon( id ) ) ), Gtk::PACK_SHRINK )
+    : MenuButton( show_arrow, Gtk::manage( new Gtk::Image( ICON::get_icon( id ), Gtk::ICON_SIZE_SMALL_TOOLBAR ) ), Gtk::PACK_SHRINK )
 {
 }
 

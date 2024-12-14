@@ -43,6 +43,8 @@ namespace CORE
         MainToolBar(); 
         ~MainToolBar() noexcept override;
 
+        void reload_ui_icon() override;
+
       protected:
 
         void pack_buttons() override;

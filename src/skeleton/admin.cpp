@@ -742,6 +742,11 @@ void Admin::exec_command()
         update_toolbar_button();
     }
 
+    // ツールバーボタンのアイコンを再読み込み
+    else if( command.command == "reload_ui_icon" ){
+        reload_ui_icon();
+    }
+
     // 検索バー表示
     else if( command.command == "open_searchbar" ){
         open_searchbar();
@@ -1251,6 +1256,15 @@ void Admin::update_toolbar_button()
 {
     m_notebook->update_toolbar_button();
     redraw_toolbar();
+}
+
+
+/**
+ * @brief ツールバーボタンのアイコンを再読み込み
+ */
+void Admin::reload_ui_icon()
+{
+    m_notebook->reload_ui_icon();
 }
 
 

@@ -63,7 +63,7 @@ void TabLabel::set_id_icon( const int id )
 
     m_id_icon = id;
 
-    m_image->set( ICON::get_icon( id ) );
+    m_image->set( ICON::get_pixbuf( id ) );
 }
 
 
@@ -119,7 +119,7 @@ int TabLabel::get_label_margin() const
         + m_hbox.get_spacing() + m_hbox.get_border_width()*2
         + get_border_width()*2;
 
-    if( CONFIG::get_show_tab_icon() && m_id_icon < ICON::NUM_ICONS ) label_margin += ICON::get_icon( m_id_icon )->get_width();
+    if( CONFIG::get_show_tab_icon() && m_id_icon < ICON::NUM_ICONS ) label_margin += ICON::get_pixbuf( m_id_icon )->get_width();
 
 #ifdef _DEBUG
     std::cout << "image_w = " << ( m_image ? m_image->get_allocation().get_width() : 0 )

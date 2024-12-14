@@ -15,7 +15,7 @@ namespace SKELETON
     typedef struct
     {
         std::string name;
-        Glib::RefPtr< Gdk::Pixbuf > icon;
+        Glib::RefPtr< Gio::Icon > icon;
     } DEFAULT_DATA;
 
     class SelectItemPref : public SKELETON::PrefDiag
@@ -34,7 +34,7 @@ namespace SKELETON
                 add( m_column_text );
             }
 
-            Gtk::TreeModelColumn< Glib::RefPtr< Gdk::Pixbuf > >  m_column_icon;
+            Gtk::TreeModelColumn< Glib::RefPtr< Gio::Icon > >  m_column_icon;
             Gtk::TreeModelColumn< Glib::ustring > m_column_text;
         };
 
@@ -91,7 +91,7 @@ namespace SKELETON
         bool slot_focus_in_hidden( GdkEventFocus* event );
 
         // 項目名でデフォルトデータからアイコンを取得
-        Glib::RefPtr< Gdk::Pixbuf > get_icon( const Glib::ustring& name );
+        Glib::RefPtr< Gio::Icon > get_icon( const Glib::ustring& name );
 
       protected:
 
@@ -100,7 +100,7 @@ namespace SKELETON
 
         // デフォルトデータを追加
         void append_default_pair( const Glib::ustring& name,
-                                  const Glib::RefPtr< Gdk::Pixbuf > icon = Glib::RefPtr< Gdk::Pixbuf >() );
+                                  const Glib::RefPtr< Gio::Icon > icon = Glib::RefPtr< Gio::Icon >() );
 
         // 文字列を元に行を作成
         void append_rows( const std::string& str );

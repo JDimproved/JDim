@@ -73,10 +73,11 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     , m_button_delete( g_dpgettext( GTK_DOMAIN, "Stock label\x04_Delete", 12 ), true )
     , m_button_add( g_dpgettext( GTK_DOMAIN, "Stock label\x04_Add", 12 ), true )
 {
-    m_button_top.set_image_from_icon_name( "go-top" );
-    m_button_up.set_image_from_icon_name( "go-up" );
-    m_button_down.set_image_from_icon_name( "go-down" );
-    m_button_bottom.set_image_from_icon_name( "go-bottom" );
+    const bool use_symbolic = CONFIG::get_use_symbolic_icon();
+    m_button_top.set_image_from_icon_name( use_symbolic ? "go-top-symbolic" : "go-top" );
+    m_button_up.set_image_from_icon_name( use_symbolic ? "go-up-symbolic" : "go-up" );
+    m_button_down.set_image_from_icon_name( use_symbolic ? "go-down-symbolic" : "go-down" );
+    m_button_bottom.set_image_from_icon_name( use_symbolic ? "go-bottom-symbolic" : "go-bottom" );
 
     m_button_top.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_top ) );
     m_button_up.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterPref::slot_up ) );

@@ -21,7 +21,7 @@ enum
 
 PageStart::PageStart()
     : Gtk::Grid()
-    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
     , m_label( "１/５．JDim セットアップ開始", Gtk::ALIGN_START )
     , m_label2( "JDimセットアップウィザードへようこそ\n\n"
                 "このウィザードでネットワークとフォント等の設定をおこないます\n\n"
@@ -46,7 +46,7 @@ PageStart::PageStart()
 PageNet::PageNet( Gtk::Window* parent )
     : Gtk::Grid()
     , m_parent{ parent }
-    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
     , m_label( "２/５．ネットワークの設定をします", Gtk::ALIGN_START )
     , m_proxy( "プロキシ設定(_P)", true )
     , m_browser( "ブラウザ設定(_W)", true )
@@ -101,7 +101,7 @@ void PageNet::slot_setup_browser()
 
 PageFont::PageFont()
     : Gtk::Grid()
-    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
     , m_label( "３/５．フォントの設定をします", Gtk::ALIGN_START )
     , m_label_res( "スレ(_T)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
     , m_label_mail( "メール(_U)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
@@ -188,7 +188,7 @@ void PageFont::slot_font_tree()
 
 PagePane::PagePane()
     : Gtk::Grid()
-    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
     , m_label( "４/５．ペイン表示設定をします", Gtk::ALIGN_START )
     , m_2pane( m_radiogroup, "２ペイン表示(_2)", true )
     , m_3pane( m_radiogroup, "３ペイン表示(_3)", true )
@@ -247,7 +247,7 @@ void PagePane::slot_v3pane()
 
 PageEnd::PageEnd()
     : Gtk::Grid()
-    , m_icon( ICON::get_icon_manager()->get_icon( ICON::JD48 ) )
+    , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
     , m_label( "５/５．JDim セットアップ完了", Gtk::ALIGN_START )
     , m_label2( "その他の設定は起動後に設定及び表示メニューからおこなって下さい\n\n"
                 "完了を押すとJDimを起動して板一覧のリストをロードします\n"

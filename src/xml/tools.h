@@ -16,7 +16,7 @@ namespace XML
     int get_type( const std::string& node_name );
 
     // TYPE_ID からアイコンを取得 ( アイコンは icons/iconmanager.h を参照 )
-    Glib::RefPtr< Gdk::Pixbuf > get_icon( const int type_id );
+    Glib::RefPtr< Gio::Icon > get_icon( const int type_id );
 }
 
 #endif

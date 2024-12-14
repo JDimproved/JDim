@@ -64,6 +64,17 @@ void MessageToolBarBase::set_active_previewbutton( const bool active )
 }
 
 
+/**
+ * @brief ボタンのアイコンを再読み込み
+ */
+void MessageToolBarBase::reload_ui_icon()
+{
+    SKELETON::ToolBar::reload_ui_icon();
+
+    set_button_icon( m_button_preview, ICON::PREVIEW );
+}
+
+
 
 //////////////////////////////////
 
@@ -99,6 +110,18 @@ std::string MessageToolBar::get_new_subject() const
 void MessageToolBar::clear_new_subject()
 {
     if( m_entry_new_subject ) m_entry_new_subject->set_text( "" );
+}
+
+
+/**
+ * @brief ボタンのアイコンを再読み込み
+ */
+void MessageToolBar::reload_ui_icon()
+{
+    MessageToolBarBase::reload_ui_icon();
+
+    set_button_icon( m_button_undo, ICON::UNDO );
+    set_button_icon( m_button_insert_draft, ICON::INSERTTEXT );
 }
 
 
