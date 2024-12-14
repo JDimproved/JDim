@@ -2970,6 +2970,18 @@ void Core::set_command( const COMMAND_ARGS& command )
         return;
     }
 
+    // ツールバーボタンのアイコンを更新
+    else if( command.command == "reload_ui_icon" ) {
+
+        ARTICLE::get_admin()->set_command( "reload_ui_icon" );
+        BOARD::get_admin()->set_command( "reload_ui_icon" );
+        BBSLIST::get_admin()->set_command( "reload_ui_icon" );
+        IMAGE::get_admin()->set_command( "reload_ui_icon" );
+        MESSAGE::get_admin()->set_command( "reload_ui_icon" );
+        m_toolbar->reload_ui_icon();
+        return;
+    }
+
     ///////////////////////////////
 
     // 移転があった

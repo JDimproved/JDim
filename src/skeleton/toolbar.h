@@ -104,6 +104,9 @@ namespace SKELETON
         // ボタン表示更新
         void update_button();
 
+        // ボタンのアイコンを再読み込み
+        virtual void reload_ui_icon();
+
       protected:
 
         SKELETON::Admin* get_admin(){ return m_admin; }
@@ -165,6 +168,8 @@ namespace SKELETON
         void pack_separator();
         void pack_transparent_separator();
         void set_tooltip( Gtk::ToolItem& toolitem, const std::string& tip, const bool use_markup = false );
+
+        static void set_button_icon( Gtk::ToolButton* button, const int iconid );
 
       private:
 

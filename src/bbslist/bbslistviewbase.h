@@ -270,6 +270,8 @@ namespace BBSLIST
         void undo();
         void redo();
 
+        void reload_list_icon();
+
       private:
 
         void set_fgcolor_of_comment( const Gtk::TreeModel::Children& children );

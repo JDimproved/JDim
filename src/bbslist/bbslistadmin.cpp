@@ -179,6 +179,20 @@ void BBSListAdmin::toggle_toolbar()
 }
 
 
+/**
+ * @brief ツールバーと TreeView のアイコンを再読み込みする
+ */
+void BBSListAdmin::reload_ui_icon()
+{
+    SKELETON::Admin::reload_ui_icon();
+
+    SKELETON::View* view = get_view( URL_BBSLISTVIEW );
+    if( auto bbslistview = dynamic_cast<BBSListViewBase*>(view); bbslistview ) {
+        bbslistview->reload_list_icon();
+    }
+}
+
+
 SKELETON::View* BBSListAdmin::create_view( const COMMAND_ARGS& command )
 {
     int type = CORE::VIEW_NONE;

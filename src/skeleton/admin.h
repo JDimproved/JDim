@@ -261,6 +261,7 @@ namespace SKELETON
         void focus_toolbar_search();
         void redraw_toolbar();
         void update_toolbar_button();
+        virtual void reload_ui_icon();
         virtual void open_searchbar(){}
         virtual void close_searchbar(){}
 

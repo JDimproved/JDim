@@ -52,6 +52,7 @@ namespace BBSLIST
         // ツールバー
         void show_toolbar() override;
         void toggle_toolbar() override;
+        void reload_ui_icon() override;
 
         void command_local( const COMMAND_ARGS& command ) override;
 

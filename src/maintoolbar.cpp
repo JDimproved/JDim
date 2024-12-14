@@ -69,6 +69,17 @@ MainToolBar::MainToolBar()
 MainToolBar::~MainToolBar() noexcept = default;
 
 
+/**
+ * @brief ボタンのアイコンを再読み込み
+ */
+void MainToolBar::reload_ui_icon()
+{
+    SKELETON::ToolBar::reload_ui_icon();
+
+    set_button_icon( &m_button_go, ICON::GO );
+}
+
+
 // ボタンのパッキング
 // virtual
 void MainToolBar::pack_buttons()

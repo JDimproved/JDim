@@ -26,6 +26,8 @@ namespace MESSAGE
         // previewボタンのトグル
         void set_active_previewbutton( const bool active );
 
+        void reload_ui_icon() override;
+
       protected:
 
         Gtk::ToggleToolButton* get_button_preview();
@@ -57,6 +59,8 @@ namespace MESSAGE
         void show_entry_new_subject( bool show );
         std::string get_new_subject() const;
         void clear_new_subject();
+
+        void reload_ui_icon() override;
 
       protected:
 

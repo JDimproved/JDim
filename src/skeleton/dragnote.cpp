@@ -329,6 +329,18 @@ void DragableNoteBook::update_toolbar_button()
 }
 
 
+/**
+ * @brief ツールバーボタン表示更新
+ */
+void DragableNoteBook::reload_ui_icon()
+{
+    for( int i = 0; i < m_notebook_toolbar.get_n_pages(); ++i ){
+        SKELETON::ToolBar* toolbar = get_toolbar( i );
+        if( toolbar ) toolbar->reload_ui_icon();
+    }
+}
+
+
 //
 // タブのアイコンを取得する
 //

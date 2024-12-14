@@ -78,6 +78,19 @@ void ArticleToolBar::set_view( SKELETON::View * view )
 }
 
 
+/**
+ * @brief ボタンのアイコンを再読み込み
+ */
+void ArticleToolBar::reload_ui_icon()
+{
+    SKELETON::ToolBar::reload_ui_icon();
+
+    set_button_icon( &m_button_drawout_and, ICON::SEARCH_AND );
+    set_button_icon( &m_button_drawout_or, ICON::SEARCH_OR );
+    set_button_icon( m_button_live_play_stop, ICON::LIVE );
+}
+
+
 //
 // ボタンのパッキング
 //

@@ -34,6 +34,8 @@ namespace ARTICLE
         // タブが切り替わった時に呼び出される( Viewの情報を取得する )
         void set_view( SKELETON::View * view ) override;
 
+        void reload_ui_icon() override;
+
       protected:
 
         void pack_buttons() override;

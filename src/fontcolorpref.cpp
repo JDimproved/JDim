@@ -700,5 +700,8 @@ void FontColorPref::slot_reset_all_colors()
  */
 void FontColorPref::slot_toggled_symbolic()
 {
-    ICON::get_icon_manager()->reload_themed_icons( m_check_use_symbolic_icon.get_active() );
+    const bool use_symbolic = m_check_use_symbolic_icon.get_active();
+    CONFIG::set_use_symbolic_icon( use_symbolic );
+    ICON::get_icon_manager()->reload_themed_icons( use_symbolic );
+    CORE::core_set_command( "reload_ui_icon" );
 }
