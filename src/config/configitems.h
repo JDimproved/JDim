@@ -239,6 +239,9 @@ namespace CONFIG
         /// @brief アイコンテーマの名前
         std::string gtk_icon_theme_name;
 
+        /// @brief シンボリックアイコンを使用するか
+        bool use_symbolic_icon{};
+
         // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
         bool use_message_gtktheme{};
 

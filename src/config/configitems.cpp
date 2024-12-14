@@ -286,6 +286,9 @@ bool ConfigItems::load( const bool restore )
     // アイコンテーマの名前
     gtk_icon_theme_name = cf.get_option_str( "gtk_icon_theme_name", CONF_GTK_ICON_THEME_NAME );
 
+    // シンボリックアイコンを使用するか
+    use_symbolic_icon = cf.get_option_bool( "use_symbolic_icon", CONF_USE_SYMBOLIC_ICON );
+
     // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
     use_message_gtktheme = cf.get_option_bool( "use_message_gtktheme", CONF_USE_MESSAGE_GTKTHEME );
 
@@ -840,6 +843,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "gtk_theme_name", gtk_theme_name );
     cf.update( "use_dark_theme", use_dark_theme );
     cf.update( "gtk_icon_theme_name", gtk_icon_theme_name );
+    cf.update( "use_symbolic_icon", use_symbolic_icon );
     cf.update( "use_message_gtktheme", use_message_gtktheme );
     cf.update( "use_tree_gtkrc", use_tree_gtkrc );
     cf.update( "use_select_gtkrc", use_select_gtkrc );
