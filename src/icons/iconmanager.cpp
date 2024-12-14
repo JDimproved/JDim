@@ -9,6 +9,7 @@
 
 #include "cache.h"
 
+#include "config/globalconf.h"
 #include "jdlib/miscmsg.h"
 
 #include "jd16.h"
@@ -293,7 +294,7 @@ ICON_Manager::ICON_Manager()
 
     load_builtin_icons( m_list_icons );
 
-    load_themed_color_icons( m_list_icons );
+    reload_themed_icons( CONFIG::get_use_symbolic_icon() );
 
     load_theme();
 }
@@ -310,6 +311,21 @@ ICON_Manager::~ICON_Manager()
 Glib::RefPtr< Gdk::Pixbuf > ICON_Manager::get_icon( const int id )
 {
     return m_list_icons[ id ];
+}
+
+
+/** @brief アイコンテーマからロードしたアイコンを再読み込みをする
+ *
+ * @param[in] use_symbolic シンボリックアイコンで表示するならtrue
+ */
+void ICON_Manager::reload_themed_icons( const bool use_symbolic )
+{
+    if( use_symbolic ) {
+        load_themed_symbolic_icons( m_list_icons );
+    }
+    else {
+        load_themed_color_icons( m_list_icons );
+    }
 }
 
 

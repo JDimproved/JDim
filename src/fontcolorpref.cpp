@@ -43,6 +43,8 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
 
     , m_label_icon_theme{ "アイコンテーマ(_I):", true }
     , m_check_system_icon{ "システム設定のアイコンテーマを使う(_Y)（再起動後に有効になります）", true }
+    , m_label_use_symbolic_icon{ "スタイル:", false }
+    , m_check_use_symbolic_icon{ "シンボリックアイコンで表示する(_S)", true }
 
     , m_label_note{ "　「GTKテーマ」や「アイコンテーマ」をシステム設定に変更するときは、"
                     "アプリケーションの再起動が必要です。\n\n"
@@ -51,6 +53,9 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
                     "　一部のGTKテーマはダークテーマに対応していないため、"
                     "「ダークテーマで表示する」の効果がない場合があります。"
                     "その場合は、ダークテーマに対応したGTKテーマを設定してください。\n\n"
+                    "　アイコンテーマによっては、カラーアイコンかシンボリックアイコンの"
+                    "どちらかにしか対応していないため、「シンボリックアイコンで表示する」"
+                    "設定を切り替えても、アイコンが変わらない場合があります。\n\n"
                     "　書き込みビュー、ツリービュー、スレビューの選択範囲をGTKテーマの配色にするには"
                     "「色の設定」タブで設定を切り替えます。"
                     , false }
@@ -137,6 +142,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     }
 
     m_check_system_icon.set_active( CONFIG::get_gtk_icon_theme_name().empty() );
+    m_check_use_symbolic_icon.set_active( CONFIG::get_use_symbolic_icon() );
 
     if( auto env_theme = Glib::getenv( "GTK_THEME" ); ! env_theme.empty() ) {
         m_combo_theme.set_tooltip_text( "環境変数 GTK_THEME が設定されているため変更できません。" );
@@ -359,12 +365,17 @@ void FontColorPref::pack_widget()
     // アイコン
     m_label_icon_theme.set_halign( Gtk::ALIGN_START );
     m_label_icon_theme.set_mnemonic_widget( m_combo_icon );
+    m_label_use_symbolic_icon.set_halign( Gtk::ALIGN_START );
     m_combo_icon.set_hexpand( true );
     m_check_system_icon.set_halign( Gtk::ALIGN_START );
+    m_check_use_symbolic_icon.signal_toggled().connect(
+        sigc::mem_fun( *this, &FontColorPref::slot_toggled_symbolic ) );
 
     m_grid_theme.attach( m_label_icon_theme, 0, 3, 1, 1 );
     m_grid_theme.attach( m_combo_icon, 1, 3, 1, 1 );
     m_grid_theme.attach( m_check_system_icon, 1, 4, 1, 1 );
+    m_grid_theme.attach( m_label_use_symbolic_icon, 0, 5, 1, 1 );
+    m_grid_theme.attach( m_check_use_symbolic_icon, 1, 5, 1, 1 );
 
     m_scroll_note.add( m_label_note );
     m_scroll_note.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC );
@@ -377,8 +388,8 @@ void FontColorPref::pack_widget()
     m_label_note.set_line_wrap( true );
     m_label_note.set_vexpand( true );
 
-    m_grid_theme.attach( m_label_note_title, 0, 5, 2, 1 );
-    m_grid_theme.attach( m_scroll_note, 0, 6, 2, 1 );
+    m_grid_theme.attach( m_label_note_title, 0, 6, 2, 1 );
+    m_grid_theme.attach( m_scroll_note, 0, 7, 2, 1 );
 
     m_notebook.append_page( m_grid_theme, "テーマの設定" );
 
@@ -432,6 +443,7 @@ void FontColorPref::slot_ok_clicked()
     else {
         CONFIG::set_gtk_icon_theme_name( m_combo_icon.get_active_text() );
     }
+    CONFIG::set_use_symbolic_icon( m_check_use_symbolic_icon.get_active() );
 
     CORE::core_set_command( "relayout_all_bbslist" );
     CORE::core_set_command( "relayout_all_board" );
@@ -680,4 +692,13 @@ void FontColorPref::slot_reset_all_colors()
     CONFIG::reset_colors();
 
     m_treeview_color.queue_draw();
+}
+
+
+/**
+ * @brief 「シンボリックアイコンで表示する」設定を切り替えたときアイコンを再読み込みする
+ */
+void FontColorPref::slot_toggled_symbolic()
+{
+    ICON::get_icon_manager()->reload_themed_icons( m_check_use_symbolic_icon.get_active() );
 }

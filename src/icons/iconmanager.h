@@ -25,6 +25,8 @@ namespace ICON
 
         Glib::RefPtr< Gdk::Pixbuf > get_icon( const int id );
 
+        void reload_themed_icons( const bool use_symbolic );
+
       private:
 
         void load_theme();
