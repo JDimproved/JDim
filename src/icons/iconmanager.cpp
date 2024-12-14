@@ -291,52 +291,7 @@ ICON_Manager::ICON_Manager()
 {
     m_list_icons.resize( NUM_ICONS );
 
-    m_list_icons[ ICON::JD16 ] =  Gdk::Pixbuf::create_from_inline( sizeof( icon_jd16 ), icon_jd16 );
-    m_list_icons[ ICON::JD32 ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_jd32 ), icon_jd32 );
-    m_list_icons[ ICON::JD48 ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_jd48 ), icon_jd48 );
-    m_list_icons[ ICON::JD96 ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_jd96 ), icon_jd96 );
-
-    // サイドバーで使用するアイコン
-    m_list_icons[ ICON::DIR ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_dir ), icon_dir );
-    m_list_icons[ ICON::IMAGE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_image ), icon_image );
-    m_list_icons[ ICON::LINK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_link ), icon_link );
-
-    // サイドバーやタブで使用するアイコン
-    m_list_icons[ ICON::BOARD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board ), icon_board );
-    m_list_icons[ ICON::BOARD_UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board_update ), icon_board_update );
-    m_list_icons[ ICON::THREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread ), icon_thread );
-    m_list_icons[ ICON::THREAD_UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread_update ), icon_thread_update );
-    m_list_icons[ ICON::THREAD_OLD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread_old ), icon_thread_old );
-
-    // タブで使用するアイコン
-    m_list_icons[ ICON::BOARD_UPDATED ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board_updated ), icon_board_updated );
-    m_list_icons[ ICON::THREAD_UPDATED ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread_updated ), icon_thread_updated );
-    m_list_icons[ ICON::LOADING ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_loading ), icon_loading );
-    m_list_icons[ ICON::LOADING_STOP ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_loading_stop ), icon_loading_stop );
-
-    // スレ一覧で使用するアイコン
-    m_list_icons[ ICON::BKMARK_UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark_update ), icon_bkmark_update );
-    m_list_icons[ ICON::BKMARK_BROKEN_SUBJECT ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark_broken_subject ), icon_bkmark_broken_subject );
-    m_list_icons[ ICON::BKMARK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark ), icon_bkmark );
-    m_list_icons[ ICON::UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_update ), icon_update );
-    m_list_icons[ ICON::NEWTHREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_newthread ), icon_newthread );
-    m_list_icons[ ICON::NEWTHREAD_HOUR ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_newthread_hour ), icon_newthread_hour );
-    m_list_icons[ ICON::BROKEN_SUBJECT ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_broken_subject ), icon_broken_subject );
-    m_list_icons[ ICON::CHECK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_check ), icon_check );
-    m_list_icons[ ICON::OLD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_down ), icon_down );
-    m_list_icons[ ICON::INFO ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_info ), icon_info );
-
-    // スレビューで使用するアイコン
-    m_list_icons[ ICON::BKMARK_THREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark_thread ), icon_bkmark_thread );
-    m_list_icons[ ICON::POST ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_post ), icon_post );
-    m_list_icons[ ICON::POST_REFER ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_post_refer ), icon_post_refer );
-
-    // その他
-    m_list_icons[ ICON::DOWN ] = m_list_icons[ ICON::OLD ];
-
-    m_list_icons[ ICON::TRANSPARENT ] = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, true, 8, 1, 1 );
-    m_list_icons[ ICON::TRANSPARENT ]->fill( 0 );
-
+    load_builtin_icons( m_list_icons );
 
     //////////////////////////////
     // ツールバーのアイコン
@@ -356,7 +311,6 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::SEARCH_PREV ] = icon_loader.load_icon( "go-up", size_menu );
     m_list_icons[ ICON::SEARCH_NEXT ] = icon_loader.load_icon( "go-down", size_menu );
     m_list_icons[ ICON::STOPLOADING ] = icon_loader.load_icon( "process-stop", size_menu );
-    m_list_icons[ ICON::WRITE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_write ), icon_write );
     m_list_icons[ ICON::RELOAD ] = icon_loader.load_icon( "view-refresh", size_menu );
     icon_names.assign( { "bookmark-new", "edit-copy" } );
     m_list_icons[ ICON::APPENDFAVORITE ] = icon_loader.choose_icon( icon_names, size_menu );
@@ -368,23 +322,12 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::LOCK ] = icon_loader.choose_icon( icon_names, size_menu );
 
     // メイン
-    m_list_icons[ ICON::BBSLISTVIEW ] = m_list_icons[ ICON::DIR ];
-    m_list_icons[ ICON::FAVORITEVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_favorite ), icon_favorite );
-    m_list_icons[ ICON::HISTVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist ), icon_hist );
-    m_list_icons[ ICON::HIST_BOARDVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_board ), icon_hist_board );
-    m_list_icons[ ICON::HIST_CLOSEVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_close ), icon_hist_close );
-    m_list_icons[ ICON::HIST_CLOSEBOARDVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_closeboard ), icon_hist_closeboard );
-    m_list_icons[ ICON::HIST_CLOSEIMGVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_closeimg ), icon_hist_closeimg );
-    m_list_icons[ ICON::BOARDVIEW ] = m_list_icons[ ICON::BOARD ];
-    m_list_icons[ ICON::ARTICLEVIEW ] = m_list_icons[ ICON::THREAD ];
-    m_list_icons[ ICON::IMAGEVIEW ] = m_list_icons[ ICON::IMAGE ];
     m_list_icons[ ICON::GO ] = icon_loader.load_icon( "go-jump", size_menu );
     m_list_icons[ ICON::UNDO ] = icon_loader.load_icon( "edit-undo", size_menu );
     m_list_icons[ ICON::REDO ] = icon_loader.load_icon( "edit-redo", size_menu );
 
     // サイドバー
     m_list_icons[ ICON::CHECK_UPDATE_ROOT ] = icon_loader.load_icon( "view-refresh", size_menu );
-    m_list_icons[ ICON::CHECK_UPDATE_OPEN_ROOT ]  = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread ), icon_thread );
 
     // スレビュー
     m_list_icons[ ICON::SEARCH ] = icon_loader.load_icon( "edit-find", size_menu );
@@ -397,7 +340,6 @@ ICON_Manager::ICON_Manager()
     m_list_icons[ ICON::SEARCH_OR ] = icon_loader.load_icon( "list-add", size_menu );
 
     // 書き込みビュー
-    m_list_icons[ ICON::PREVIEW ] = m_list_icons[ ICON::THREAD ];
     m_list_icons[ ICON::INSERTTEXT ] = icon_loader.load_icon( "document-open", size_menu );
 
     load_theme();
@@ -465,4 +407,81 @@ void ICON_Manager::load_theme()
             ++id;
         }
     }
+}
+
+
+/** @brief JDimに組み込まれたアイコンを読み込む
+ *
+ * @details 組み込みのアイコンはアイコンテーマを変更しても変わらない。
+ */
+void ICON_Manager::load_builtin_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons )
+{
+    // JDim ロゴ
+    list_icons[ ICON::JD16 ] =  Gdk::Pixbuf::create_from_inline( sizeof( icon_jd16 ), icon_jd16 );
+    list_icons[ ICON::JD32 ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_jd32 ), icon_jd32 );
+    list_icons[ ICON::JD48 ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_jd48 ), icon_jd48 );
+    list_icons[ ICON::JD96 ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_jd96 ), icon_jd96 );
+
+    // サイドバーで使用するアイコン
+    list_icons[ ICON::DIR ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_dir ), icon_dir );
+    list_icons[ ICON::IMAGE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_image ), icon_image );
+    list_icons[ ICON::LINK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_link ), icon_link );
+
+    // サイドバーやタブで使用するアイコン
+    list_icons[ ICON::BOARD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board ), icon_board );
+    list_icons[ ICON::BOARD_UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board_update ), icon_board_update );
+    list_icons[ ICON::THREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread ), icon_thread );
+    list_icons[ ICON::THREAD_UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread_update ), icon_thread_update );
+    list_icons[ ICON::THREAD_OLD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread_old ), icon_thread_old );
+
+    // タブで使用するアイコン
+    list_icons[ ICON::BOARD_UPDATED ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_board_updated ), icon_board_updated );
+    list_icons[ ICON::THREAD_UPDATED ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread_updated ), icon_thread_updated );
+    list_icons[ ICON::LOADING ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_loading ), icon_loading );
+    list_icons[ ICON::LOADING_STOP ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_loading_stop ), icon_loading_stop );
+
+    // スレ一覧で使用するアイコン
+    list_icons[ ICON::BKMARK_UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark_update ), icon_bkmark_update );
+    list_icons[ ICON::BKMARK_BROKEN_SUBJECT ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark_broken_subject ), icon_bkmark_broken_subject );
+    list_icons[ ICON::BKMARK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark ), icon_bkmark );
+    list_icons[ ICON::UPDATE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_update ), icon_update );
+    list_icons[ ICON::NEWTHREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_newthread ), icon_newthread );
+    list_icons[ ICON::NEWTHREAD_HOUR ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_newthread_hour ), icon_newthread_hour );
+    list_icons[ ICON::BROKEN_SUBJECT ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_broken_subject ), icon_broken_subject );
+    list_icons[ ICON::CHECK ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_check ), icon_check );
+    list_icons[ ICON::OLD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_down ), icon_down );
+    list_icons[ ICON::INFO ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_info ), icon_info );
+
+    // スレビューで使用するアイコン
+    list_icons[ ICON::BKMARK_THREAD ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_bkmark_thread ), icon_bkmark_thread );
+    list_icons[ ICON::POST ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_post ), icon_post );
+    list_icons[ ICON::POST_REFER ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_post_refer ), icon_post_refer );
+
+    // その他
+    list_icons[ ICON::DOWN ] = list_icons[ ICON::OLD ];
+
+    list_icons[ ICON::TRANSPARENT ] = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, true, 8, 1, 1 );
+    list_icons[ ICON::TRANSPARENT ]->fill( 0 );
+
+    // ツールバーのアイコン
+    // 共通
+    list_icons[ ICON::WRITE ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_write ), icon_write );
+
+    // メイン
+    list_icons[ ICON::BBSLISTVIEW ] = list_icons[ ICON::DIR ];
+    list_icons[ ICON::FAVORITEVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_favorite ), icon_favorite );
+    list_icons[ ICON::HISTVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist ), icon_hist );
+    list_icons[ ICON::HIST_BOARDVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_board ), icon_hist_board );
+    list_icons[ ICON::HIST_CLOSEVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_close ), icon_hist_close );
+    list_icons[ ICON::HIST_CLOSEBOARDVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_closeboard ), icon_hist_closeboard );
+    list_icons[ ICON::HIST_CLOSEIMGVIEW ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_hist_closeimg ), icon_hist_closeimg );
+    list_icons[ ICON::BOARDVIEW ] = list_icons[ ICON::BOARD ];
+    list_icons[ ICON::ARTICLEVIEW ] = list_icons[ ICON::THREAD ];
+    list_icons[ ICON::IMAGEVIEW ] = list_icons[ ICON::IMAGE ];
+
+    // サイドバー
+    list_icons[ ICON::CHECK_UPDATE_OPEN_ROOT ] = Gdk::Pixbuf::create_from_inline( sizeof( icon_thread ), icon_thread );
+
+    // 書き込みビュー
+    list_icons[ ICON::PREVIEW ] = list_icons[ ICON::THREAD ];
 }
