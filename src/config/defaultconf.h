@@ -241,6 +241,9 @@ namespace CONFIG
 /// @brief GTKテーマの名前
 #define CONF_GTK_THEME_NAME ""
 
+/// @brief アイコンテーマの名前
+#define CONF_GTK_ICON_THEME_NAME ""
+
 // 2chのクッキー (互換性のため設定名は旧名称を使う)
 #define CONF_COOKIE_HAP ""
 #define CONF_COOKIE_HAP_BBSPINK ""

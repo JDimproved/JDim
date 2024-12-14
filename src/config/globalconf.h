@@ -56,6 +56,10 @@ namespace CONFIG
     bool get_use_dark_theme();
     void set_use_dark_theme( const bool use );
 
+    // アイコンテーマの名前
+    const std::string& get_gtk_icon_theme_name();
+    void set_gtk_icon_theme_name( const std::string& name );
+
     // 書き込みビューでGTKテーマの設定を使用するか (GTK3版のみ)
     bool get_use_message_gtktheme();
     void set_use_message_gtktheme( const bool use );
