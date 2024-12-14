@@ -87,6 +87,15 @@ namespace CORE
         Gtk::CheckButton m_check_dark_theme;
         /// @brief ComboBoxTextとSettings gtk_application_prefer_dark_themeをバインドする
         Glib::RefPtr<Glib::Binding> m_binding_dark;
+
+        Gtk::Label m_label_icon_theme;
+        Gtk::ComboBoxText m_combo_icon;
+        Gtk::CheckButton m_check_system_icon;
+        Glib::RefPtr<Glib::Binding> m_binding_icon; ///< ComboBoxTextとSettings gtk_icon_theme_nameをバインドする
+        Glib::RefPtr<Glib::Binding> m_binding_system_icon;
+
+        Gtk::ScrolledWindow m_scroll_note;
+        Gtk::Label m_label_note_title;
         Gtk::Label m_label_note;
 
       public:

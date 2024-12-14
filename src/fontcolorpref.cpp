@@ -40,8 +40,12 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     , m_check_system_theme{ "システム設定のGTKテーマを使う(_S)（再起動後に有効になります）", true }
     , m_label_dark_theme{ "ダークテーマ:", false }
     , m_check_dark_theme{ "ダークテーマで表示する(_D)", true }
-    , m_label_note{ "　手動で「GTKテーマ」を変更した場合(OKや適用ボタンを押さなくても)、"
-                    "システム設定のGTKテーマを適用するにはアプリケーションの再起動が必要です。\n\n"
+
+    , m_label_icon_theme{ "アイコンテーマ(_I):", true }
+    , m_check_system_icon{ "システム設定のアイコンテーマを使う(_Y)（再起動後に有効になります）", true }
+
+    , m_label_note{ "　「GTKテーマ」や「アイコンテーマ」をシステム設定に変更するときは、"
+                    "アプリケーションの再起動が必要です。\n\n"
                     "　環境変数 GTK_THEME を設定して起動した場合、アプリケーション側の"
                     "GTKテーマ設定は上書きされるため、テーマの変更はできません。\n\n"
                     "　一部のGTKテーマはダークテーマに対応していないため、"
@@ -126,6 +130,13 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
         m_combo_theme.append( name, name );
     }
 
+    // アイコンテーマの追加
+    const auto icon_names = ICON::get_installed_icon_theme_names();
+    for( const std::string& name : icon_names ) {
+        m_combo_icon.append( name, name );
+    }
+
+    m_check_system_icon.set_active( CONFIG::get_gtk_icon_theme_name().empty() );
 
     if( auto env_theme = Glib::getenv( "GTK_THEME" ); ! env_theme.empty() ) {
         m_combo_theme.set_tooltip_text( "環境変数 GTK_THEME が設定されているため変更できません。" );
@@ -162,6 +173,12 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
             Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme(),
             m_check_dark_theme.property_active(), Glib::BINDING_BIDIRECTIONAL | Glib::BINDING_SYNC_CREATE );
     }
+    m_binding_icon = Glib::Binding::bind_property( Gtk::Settings::get_default()->property_gtk_icon_theme_name(),
+                                                   m_combo_icon.property_active_id(),
+                                                   Glib::BINDING_BIDIRECTIONAL | Glib::BINDING_SYNC_CREATE );
+    m_binding_system_icon = Glib::Binding::bind_property( m_check_system_icon.property_active(),
+                                                          m_combo_icon.property_sensitive(),
+                                                          Glib::BINDING_INVERT_BOOLEAN | Glib::BINDING_SYNC_CREATE );
 
     set_title( "フォントと色の詳細設定" );
     // ウインドウの自然なサイズを設定するがディスプレイに合わせて調整される
@@ -329,10 +346,6 @@ void FontColorPref::pack_widget()
     m_combo_theme.set_hexpand( true );
     m_check_system_theme.set_halign( Gtk::ALIGN_START );
     m_label_dark_theme.set_halign( Gtk::ALIGN_START );
-    m_label_note.set_halign( Gtk::ALIGN_CENTER );
-    m_label_note.set_valign( Gtk::ALIGN_CENTER );
-    m_label_note.set_line_wrap( true );
-    m_label_note.set_vexpand( true );
 
     m_grid_theme.property_margin() = 8;
     m_grid_theme.set_column_spacing( 10 );
@@ -342,7 +355,30 @@ void FontColorPref::pack_widget()
     m_grid_theme.attach( m_check_system_theme, 1, 1, 1, 1 );
     m_grid_theme.attach( m_label_dark_theme, 0, 2, 1, 1 );
     m_grid_theme.attach( m_check_dark_theme, 1, 2, 1, 1 );
-    m_grid_theme.attach( m_label_note, 0, 3, 2, 1 );
+
+    // アイコン
+    m_label_icon_theme.set_halign( Gtk::ALIGN_START );
+    m_label_icon_theme.set_mnemonic_widget( m_combo_icon );
+    m_combo_icon.set_hexpand( true );
+    m_check_system_icon.set_halign( Gtk::ALIGN_START );
+
+    m_grid_theme.attach( m_label_icon_theme, 0, 3, 1, 1 );
+    m_grid_theme.attach( m_combo_icon, 1, 3, 1, 1 );
+    m_grid_theme.attach( m_check_system_icon, 1, 4, 1, 1 );
+
+    m_scroll_note.add( m_label_note );
+    m_scroll_note.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC );
+    m_label_note_title.set_markup(
+        "<b>注意</b>\nテーマの設定は実験的なサポートのため、変更または廃止の可能性があります。\n" );
+    m_label_note_title.set_halign( Gtk::ALIGN_CENTER );
+    m_label_note_title.set_justify( Gtk::JUSTIFY_CENTER );
+    m_label_note.set_halign( Gtk::ALIGN_CENTER );
+    m_label_note.set_valign( Gtk::ALIGN_CENTER );
+    m_label_note.set_line_wrap( true );
+    m_label_note.set_vexpand( true );
+
+    m_grid_theme.attach( m_label_note_title, 0, 5, 2, 1 );
+    m_grid_theme.attach( m_scroll_note, 0, 6, 2, 1 );
 
     m_notebook.append_page( m_grid_theme, "テーマの設定" );
 
@@ -388,6 +424,14 @@ void FontColorPref::slot_ok_clicked()
         }
     }
     CONFIG::set_use_dark_theme( m_check_dark_theme.get_active() );
+
+    if( m_check_system_icon.get_active() ) {
+        // システム設定のアイコンテーマを使うため、空文字列をセットする
+        CONFIG::set_gtk_icon_theme_name( "" );
+    }
+    else {
+        CONFIG::set_gtk_icon_theme_name( m_combo_icon.get_active_text() );
+    }
 
     CORE::core_set_command( "relayout_all_bbslist" );
     CORE::core_set_command( "relayout_all_board" );
