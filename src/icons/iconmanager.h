@@ -30,6 +30,8 @@ namespace ICON
         void load_theme();
 
         static void load_builtin_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons );
+        static void load_themed_color_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons );
+        static void load_themed_symbolic_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons );
     };
 
     ///////////////////////////////////////

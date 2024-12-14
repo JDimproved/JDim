@@ -293,54 +293,7 @@ ICON_Manager::ICON_Manager()
 
     load_builtin_icons( m_list_icons );
 
-    //////////////////////////////
-    // ツールバーのアイコン
-
-    // アイコン名はfreedesktop.orgの規格とGTK3デフォルトテーマのAdwaitaを参照する
-    // https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
-    // https://gitlab.gnome.org/GNOME/adwaita-icon-theme
-
-    constexpr int size_menu = 16; // Gtk::ICON_SIZE_MENU
-    const NamedIconLoader icon_loader{ size_menu };
-    std::vector<Glib::ustring> icon_names;
-
-    // サイドバーやタブで使用するアイコン
-    m_list_icons[ ICON::BBSMENU ] = icon_loader.load_icon( "emblem-documents", size_menu );
-
-    // 共通
-    m_list_icons[ ICON::SEARCH_PREV ] = icon_loader.load_icon( "go-up", size_menu );
-    m_list_icons[ ICON::SEARCH_NEXT ] = icon_loader.load_icon( "go-down", size_menu );
-    m_list_icons[ ICON::STOPLOADING ] = icon_loader.load_icon( "process-stop", size_menu );
-    m_list_icons[ ICON::RELOAD ] = icon_loader.load_icon( "view-refresh", size_menu );
-    icon_names.assign( { "bookmark-new", "edit-copy" } );
-    m_list_icons[ ICON::APPENDFAVORITE ] = icon_loader.choose_icon( icon_names, size_menu );
-    m_list_icons[ ICON::DELETE ] = icon_loader.load_icon( "edit-delete", size_menu );
-    m_list_icons[ ICON::QUIT ] = icon_loader.load_icon( "window-close", size_menu );
-    m_list_icons[ ICON::BACK ] = icon_loader.load_icon( "go-previous", size_menu );
-    m_list_icons[ ICON::FORWARD ] = icon_loader.load_icon( "go-next", size_menu );
-    icon_names.assign( { "changes-prevent-symbolic", "window-close" } );
-    m_list_icons[ ICON::LOCK ] = icon_loader.choose_icon( icon_names, size_menu );
-
-    // メイン
-    m_list_icons[ ICON::GO ] = icon_loader.load_icon( "go-jump", size_menu );
-    m_list_icons[ ICON::UNDO ] = icon_loader.load_icon( "edit-undo", size_menu );
-    m_list_icons[ ICON::REDO ] = icon_loader.load_icon( "edit-redo", size_menu );
-
-    // サイドバー
-    m_list_icons[ ICON::CHECK_UPDATE_ROOT ] = icon_loader.load_icon( "view-refresh", size_menu );
-
-    // スレビュー
-    m_list_icons[ ICON::SEARCH ] = icon_loader.load_icon( "edit-find", size_menu );
-    m_list_icons[ ICON::LIVE ] = icon_loader.load_icon( "media-playback-start", size_menu );
-
-    // 検索バー
-    m_list_icons[ ICON::CLOSE_SEARCH ] = icon_loader.load_icon( "edit-undo", size_menu );
-    m_list_icons[ ICON::CLEAR_SEARCH ] = icon_loader.load_icon( "edit-clear", size_menu );
-    m_list_icons[ ICON::SEARCH_AND ] = icon_loader.load_icon( "edit-cut", size_menu );
-    m_list_icons[ ICON::SEARCH_OR ] = icon_loader.load_icon( "list-add", size_menu );
-
-    // 書き込みビュー
-    m_list_icons[ ICON::INSERTTEXT ] = icon_loader.load_icon( "document-open", size_menu );
+    load_themed_color_icons( m_list_icons );
 
     load_theme();
 }
@@ -484,4 +437,109 @@ void ICON_Manager::load_builtin_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& l
 
     // 書き込みビュー
     list_icons[ ICON::PREVIEW ] = list_icons[ ICON::THREAD ];
+}
+
+
+/** @brief アイコンテーマからツールバーのカラーアイコンを読み込む
+ *
+ * @details アイコン名は freedesktop.org の規格とGTK3デフォルトテーマの Adwaita を参照する。
+ * - https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+ * - https://gitlab.gnome.org/GNOME/adwaita-icon-theme
+ * @param[in,out] list_icons アイコンをキャッシュする配列
+ */
+void ICON_Manager::load_themed_color_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons )
+{
+
+    constexpr int size_menu = 16; // Gtk::ICON_SIZE_MENU
+    const NamedIconLoader icon_loader{ size_menu };
+    std::vector<Glib::ustring> icon_names;
+
+    // サイドバーやタブで使用するアイコン
+    list_icons[ ICON::BBSMENU ] = icon_loader.load_icon( "emblem-documents", size_menu );
+
+    // 共通
+    list_icons[ ICON::SEARCH_PREV ] = icon_loader.load_icon( "go-up", size_menu );
+    list_icons[ ICON::SEARCH_NEXT ] = icon_loader.load_icon( "go-down", size_menu );
+    list_icons[ ICON::STOPLOADING ] = icon_loader.load_icon( "process-stop", size_menu );
+    list_icons[ ICON::RELOAD ] = icon_loader.load_icon( "view-refresh", size_menu );
+    icon_names.assign( { "bookmark-new", "edit-copy" } );
+    list_icons[ ICON::APPENDFAVORITE ] = icon_loader.choose_icon( icon_names, size_menu );
+    list_icons[ ICON::DELETE ] = icon_loader.load_icon( "edit-delete", size_menu );
+    list_icons[ ICON::QUIT ] = icon_loader.load_icon( "window-close", size_menu );
+    list_icons[ ICON::BACK ] = icon_loader.load_icon( "go-previous", size_menu );
+    list_icons[ ICON::FORWARD ] = icon_loader.load_icon( "go-next", size_menu );
+    icon_names.assign( { "changes-prevent", "window-close" } );
+    list_icons[ ICON::LOCK ] = icon_loader.choose_icon( icon_names, size_menu );
+
+    // メイン
+    list_icons[ ICON::GO ] = icon_loader.load_icon( "go-jump", size_menu );
+    list_icons[ ICON::UNDO ] = icon_loader.load_icon( "edit-undo", size_menu );
+    list_icons[ ICON::REDO ] = icon_loader.load_icon( "edit-redo", size_menu );
+
+    // サイドバー
+    list_icons[ ICON::CHECK_UPDATE_ROOT ] = icon_loader.load_icon( "view-refresh", size_menu );
+
+    // スレビュー
+    list_icons[ ICON::SEARCH ] = icon_loader.load_icon( "edit-find", size_menu );
+    list_icons[ ICON::LIVE ] = icon_loader.load_icon( "media-playback-start", size_menu );
+
+    // 検索バー
+    list_icons[ ICON::CLOSE_SEARCH ] = icon_loader.load_icon( "edit-undo", size_menu );
+    list_icons[ ICON::CLEAR_SEARCH ] = icon_loader.load_icon( "edit-clear", size_menu );
+    list_icons[ ICON::SEARCH_AND ] = icon_loader.load_icon( "edit-cut", size_menu );
+    list_icons[ ICON::SEARCH_OR ] = icon_loader.load_icon( "list-add", size_menu );
+
+    // 書き込みビュー
+    list_icons[ ICON::INSERTTEXT ] = icon_loader.load_icon( "document-open", size_menu );
+}
+
+
+/** @brief アイコンテーマからツールバーのシンボリックアイコンを読み込む
+ *
+ * @param[in,out] list_icons アイコンをキャッシュする配列
+ * @see ICON_Manager::load_themed_color_icons()
+ */
+void ICON_Manager::load_themed_symbolic_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons )
+{
+    constexpr int size_menu = 16; // Gtk::ICON_SIZE_MENU
+    const NamedIconLoader icon_loader{ size_menu };
+    std::vector<Glib::ustring> icon_names;
+
+    // サイドバーやタブで使用するアイコン
+    list_icons[ ICON::BBSMENU ] = icon_loader.load_icon( "emblem-documents-symbolic", size_menu );
+
+    // 共通
+    list_icons[ ICON::SEARCH_PREV ] = icon_loader.load_icon( "go-up-symbolic", size_menu );
+    list_icons[ ICON::SEARCH_NEXT ] = icon_loader.load_icon( "go-down-symbolic", size_menu );
+    list_icons[ ICON::STOPLOADING ] = icon_loader.load_icon( "process-stop-symbolic", size_menu );
+    list_icons[ ICON::RELOAD ] = icon_loader.load_icon( "view-refresh-symbolic", size_menu );
+    icon_names.assign( { "bookmark-new-symbolic", "edit-copy-symbolic" } );
+    list_icons[ ICON::APPENDFAVORITE ] = icon_loader.choose_icon( icon_names, size_menu );
+    list_icons[ ICON::DELETE ] = icon_loader.load_icon( "edit-delete-symbolic", size_menu );
+    list_icons[ ICON::QUIT ] = icon_loader.load_icon( "window-close-symbolic", size_menu );
+    list_icons[ ICON::BACK ] = icon_loader.load_icon( "go-previous-symbolic", size_menu );
+    list_icons[ ICON::FORWARD ] = icon_loader.load_icon( "go-next-symbolic", size_menu );
+    icon_names.assign( { "changes-prevent-symbolic", "window-close-symbolic" } );
+    list_icons[ ICON::LOCK ] = icon_loader.choose_icon( icon_names, size_menu );
+
+    // メイン
+    list_icons[ ICON::GO ] = icon_loader.load_icon( "go-jump-symbolic", size_menu );
+    list_icons[ ICON::UNDO ] = icon_loader.load_icon( "edit-undo-symbolic", size_menu );
+    list_icons[ ICON::REDO ] = icon_loader.load_icon( "edit-redo-symbolic", size_menu );
+
+    // サイドバー
+    list_icons[ ICON::CHECK_UPDATE_ROOT ] = icon_loader.load_icon( "view-refresh-symbolic", size_menu );
+
+    // スレビュー
+    list_icons[ ICON::SEARCH ] = icon_loader.load_icon( "edit-find-symbolic", size_menu );
+    list_icons[ ICON::LIVE ] = icon_loader.load_icon( "media-playback-start-symbolic", size_menu );
+
+    // 検索バー
+    list_icons[ ICON::CLOSE_SEARCH ] = icon_loader.load_icon( "edit-undo-symbolic", size_menu );
+    list_icons[ ICON::CLEAR_SEARCH ] = icon_loader.load_icon( "edit-clear-symbolic", size_menu );
+    list_icons[ ICON::SEARCH_AND ] = icon_loader.load_icon( "edit-cut-symbolic", size_menu );
+    list_icons[ ICON::SEARCH_OR ] = icon_loader.load_icon( "list-add-symbolic", size_menu );
+
+    // 書き込みビュー
+    list_icons[ ICON::INSERTTEXT ] = icon_loader.load_icon( "document-open-symbolic", size_menu );
 }
