@@ -448,7 +448,11 @@ Gtk::TreeViewColumn* EditTreeView::create_column( const int ypad )
 {
     // Gtk::mange　してるのでdeleteしなくてもよい
     Gtk::TreeViewColumn* col = Gtk::manage( new Gtk::TreeViewColumn( "name" ) );
-    col->pack_start( m_columns.m_image, Gtk::PACK_SHRINK );
+
+    // アイコン: Gio::ThemedIcon と Gdk::Pixbuf を表示するため CellRendererPixbuf を設定する
+    Gtk::CellRendererPixbuf* render_pixbuf = Gtk::make_managed<Gtk::CellRendererPixbuf>();
+    col->pack_start( *render_pixbuf, false );
+    col->add_attribute( *render_pixbuf, "gicon", 1 );
 
     m_ren_text = Gtk::manage( new Gtk::CellRendererText() );
     m_ren_text->signal_edited().connect( sigc::mem_fun( *this, &EditTreeView::slot_ren_text_on_edited ) );

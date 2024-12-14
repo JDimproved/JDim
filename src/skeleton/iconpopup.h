@@ -18,7 +18,7 @@ namespace SKELETON
 
         explicit IconPopup( const int icon_id )
             : Gtk::Window( Gtk::WINDOW_POPUP )
-            , m_pixbuf{ ICON::get_icon( icon_id ) }
+            , m_pixbuf{ ICON::get_pixbuf( icon_id ) }
         {
             m_img.set( m_pixbuf );
 

@@ -22,7 +22,7 @@ namespace BOARD
     {
     public:
         
-        Gtk::TreeModelColumn< Glib::RefPtr< Gdk::Pixbuf > > m_col_mark;
+        Gtk::TreeModelColumn< Glib::RefPtr< Gio::Icon > > m_col_mark;
         Gtk::TreeModelColumn< int > m_col_id;
         Gtk::TreeModelColumn< Glib::ustring > m_col_subject;
         Gtk::TreeModelColumn< int > m_col_res;

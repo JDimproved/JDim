@@ -76,9 +76,32 @@ void ICON::delete_icon_manager()
 }
 
 
-Glib::RefPtr< Gdk::Pixbuf > ICON::get_icon( int id )
+/** @brief アイコンIDに対応した Gio::Icon を返す
+ *
+ * @param[in] id JDimで定義したアイコンID
+ * @return アイコンテーマ(Gio::ThemedIcon)、
+ * または組み込みアイコン(Gdk::Pixbuf)がアップキャストされている。
+ * @see ICON::ICON_Manager::get_icon()
+ */
+Glib::RefPtr<Gio::Icon> ICON::get_icon( int id )
 {
     return get_icon_manager()->get_icon( id );
+}
+
+
+/** @brief アイコンIDに対応した Gdk::Pixbuf を返す
+ *
+ * @details この関数は、組み込みアイコンを Gdk::Pixbuf で取得する。
+ * 組み込みアイコンを使う処理のうち Gio::Icon が使用できない、
+ * または Gio::Icon に変更する必要性が低い処理で使う。
+ *
+ * @param[in] id JDimで定義したアイコンID
+ * @return 組み込みアイコンなら画像データを返す。そうでないならnullポインターを返す。
+ * @see ICON::ICON_Manager::get_pixbuf()
+ */
+Glib::RefPtr<Gdk::Pixbuf> ICON::get_pixbuf( int id )
+{
+    return get_icon_manager()->get_pixbuf( id );
 }
 
 
@@ -188,101 +211,6 @@ std::vector<std::string> ICON::get_installed_icon_theme_names()
 }
 
 
-namespace {
-
-/// アイコンを読み込むヘルパークラス
-struct NamedIconLoader
-{
-    Glib::RefPtr<Gtk::IconTheme> m_icon_theme = Gtk::IconTheme::get_default();
-    Glib::RefPtr<Gdk::Pixbuf> m_missing_icon;
-
-    explicit NamedIconLoader( int size );
-    Glib::RefPtr<Gdk::Pixbuf> load_icon( const Glib::ustring& icon_name, int size ) const;
-    Glib::RefPtr<Gdk::Pixbuf> choose_icon( const std::vector<Glib::ustring>& icon_names, int size ) const;
-};
-
-
-/** @brief コンストラクタ
- *
- * @param[in] size 見つからないときかわりに返すアイコンのサイズ
- */
-NamedIconLoader::NamedIconLoader( int size )
-{
-    // GTKテーマのforeground colorを取得して矩形枠の色に使う
-    Gdk::RGBA rgba;
-
-    Gtk::WidgetPath path;
-    path.path_append_type( Gtk::Window::get_type() );
-    path.path_append_type( Gtk::Label::get_type() );
-    auto context = Gtk::StyleContext::create();
-    context->set_path( path );
-    if( ! context->lookup_color( "theme_fg_color", rgba ) ) {
-        rgba.set_red( 0 );
-        rgba.set_green( 0 );
-        rgba.set_blue( 0 );
-        rgba.set_alpha( 1 );
-    }
-
-    // アイコンの読み込みに失敗したときかわりに表示するイメージ (点線の矩形で薄赤色)
-    auto surface = Cairo::ImageSurface::create( Cairo::FORMAT_ARGB32, size, size );
-    auto cr = Cairo::Context::create( surface );
-    cr->rectangle( 0, 0 , size, size );
-    cr->set_source_rgba( 1, 0, 0, 0.0625 );
-    cr->fill_preserve();
-    cr->set_source_rgba( rgba.get_red(), rgba.get_green(), rgba.get_blue(), rgba.get_alpha() );
-    cr->set_line_width( 1 );
-    const std::vector<double> dashes = { 1 };
-    cr->set_dash( dashes, 0 );
-    cr->stroke();
-    m_missing_icon = Gdk::Pixbuf::create( surface, 0, 0, size, size );
-}
-
-
-/** @brief アイコンを読み込んで Gdk::Pixbuf を返す
- *
- * アイコンが見つからないときは同名のsymbolic iconを探す。
- * @param[in] icon_name アイコン名
- * @param[in] size アイコンのサイズ
- * @return 読み込んだアイコン。見つからないときはかわりに表示するイメージを返す。
- */
-Glib::RefPtr<Gdk::Pixbuf> NamedIconLoader::load_icon( const Glib::ustring& icon_name, int size ) const
-{
-    Gtk::IconInfo icon_info = m_icon_theme->lookup_icon( icon_name, size );
-    if( icon_info ) return icon_info.load_icon();
-
-    icon_info = m_icon_theme->lookup_icon( icon_name, size, Gtk::ICON_LOOKUP_FORCE_SYMBOLIC );
-    if( icon_info ) return icon_info.load_icon();
-
-    MISC::MSG( "Icon \"" + icon_name + "\" is not found... "
-               "Please make sure that icon theme is installed on your desktop." );
-    return m_missing_icon;
-}
-
-
-/** @brief アイコンを読み込んで Gdk::Pixbuf を返す
- *
- * アイコンが見つからないときは同名のsymbolic iconを探す。
- * @param[in] icon_names アイコン名のリスト (1つ以上必須)
- * @param[in] size アイコンのサイズ
- * @return リストから最初に見つけたアイコン。見つからないときはかわりに表示するイメージを返す。
- */
-Glib::RefPtr<Gdk::Pixbuf> NamedIconLoader::choose_icon( const std::vector<Glib::ustring>& icon_names, int size ) const
-{
-    assert( ! icon_names.empty() );
-    Gtk::IconInfo icon_info = m_icon_theme->choose_icon( icon_names, size );
-    if( icon_info ) return icon_info.load_icon();
-
-    icon_info = m_icon_theme->choose_icon( icon_names, size, Gtk::ICON_LOOKUP_FORCE_SYMBOLIC );
-    if( icon_info ) return icon_info.load_icon();
-
-    MISC::MSG( "Icon \"" + icon_names[0] + "\" is not found... "
-               "Please make sure that icon theme is installed on your desktop." );
-    return m_missing_icon;
-}
-
-} // namespace
-
-
 ///////////////////////////////////////////////
 
 using namespace ICON;
@@ -308,9 +236,32 @@ ICON_Manager::~ICON_Manager()
 }
 
 
-Glib::RefPtr< Gdk::Pixbuf > ICON_Manager::get_icon( const int id )
+/** @brief アイコンIDに対応した Gio::Icon を返す
+ *
+ * @param[in] id JDimで定義したアイコンID
+ * @return アイコンテーマ(Gio::ThemedIcon)、
+ * または組み込みアイコン(Gdk::Pixbuf)がアップキャストされている。
+ */
+Glib::RefPtr<Gio::Icon> ICON_Manager::get_icon( const int id )
 {
     return m_list_icons[ id ];
+}
+
+
+/** @brief アイコンIDに対応した Gdk::Pixbuf を返す
+ *
+ * @details このメンバー関数は、組み込みアイコンを Gdk::Pixbuf で取得する。
+ * 組み込みアイコンを使う処理のうち Gio::Icon が使用できない、
+ * または Gio::Icon に変更する必要性が低い処理で使う。
+ *
+ * @note アイコンテーマ(Gio::ThemedIcon)で読み込んだアイコンを指定した場合は、
+ * ダウンキャストに失敗してnullポインターを返す。
+ * @param[in] id JDimで定義したアイコンID
+ * @return 組み込みアイコンなら画像データを返す。そうでないならnullポインターを返す。
+ */
+Glib::RefPtr<Gdk::Pixbuf> ICON_Manager::get_pixbuf( const int id )
+{
+    return Glib::RefPtr<Gdk::Pixbuf>::cast_dynamic( m_list_icons[ id ] );
 }
 
 
@@ -383,7 +334,7 @@ void ICON_Manager::load_theme()
  *
  * @details 組み込みのアイコンはアイコンテーマを変更しても変わらない。
  */
-void ICON_Manager::load_builtin_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons )
+void ICON_Manager::load_builtin_icons( std::vector<Glib::RefPtr<Gio::Icon>>& list_icons )
 {
     // JDim ロゴ
     list_icons[ ICON::JD16 ] =  Gdk::Pixbuf::create_from_inline( sizeof( icon_jd16 ), icon_jd16 );
@@ -429,8 +380,9 @@ void ICON_Manager::load_builtin_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& l
     // その他
     list_icons[ ICON::DOWN ] = list_icons[ ICON::OLD ];
 
-    list_icons[ ICON::TRANSPARENT ] = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, true, 8, 1, 1 );
-    list_icons[ ICON::TRANSPARENT ]->fill( 0 );
+    auto pixbuf = Gdk::Pixbuf::create( Gdk::COLORSPACE_RGB, true, 8, 1, 1 );
+    pixbuf->fill( 0 );
+    list_icons[ ICON::TRANSPARENT ] = std::move( pixbuf );
 
     // ツールバーのアイコン
     // 共通
@@ -463,50 +415,47 @@ void ICON_Manager::load_builtin_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& l
  * - https://gitlab.gnome.org/GNOME/adwaita-icon-theme
  * @param[in,out] list_icons アイコンをキャッシュする配列
  */
-void ICON_Manager::load_themed_color_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons )
+void ICON_Manager::load_themed_color_icons( std::vector<Glib::RefPtr<Gio::Icon>>& list_icons )
 {
-
-    constexpr int size_menu = 16; // Gtk::ICON_SIZE_MENU
-    const NamedIconLoader icon_loader{ size_menu };
     std::vector<Glib::ustring> icon_names;
 
     // サイドバーやタブで使用するアイコン
-    list_icons[ ICON::BBSMENU ] = icon_loader.load_icon( "emblem-documents", size_menu );
+    list_icons[ ICON::BBSMENU ] = Gio::ThemedIcon::create( "emblem-documents" );
 
     // 共通
-    list_icons[ ICON::SEARCH_PREV ] = icon_loader.load_icon( "go-up", size_menu );
-    list_icons[ ICON::SEARCH_NEXT ] = icon_loader.load_icon( "go-down", size_menu );
-    list_icons[ ICON::STOPLOADING ] = icon_loader.load_icon( "process-stop", size_menu );
-    list_icons[ ICON::RELOAD ] = icon_loader.load_icon( "view-refresh", size_menu );
+    list_icons[ ICON::SEARCH_PREV ] = Gio::ThemedIcon::create( "go-up" );
+    list_icons[ ICON::SEARCH_NEXT ] = Gio::ThemedIcon::create( "go-down" );
+    list_icons[ ICON::STOPLOADING ] = Gio::ThemedIcon::create( "process-stop" );
+    list_icons[ ICON::RELOAD ] = Gio::ThemedIcon::create( "view-refresh" );
     icon_names.assign( { "bookmark-new", "edit-copy" } );
-    list_icons[ ICON::APPENDFAVORITE ] = icon_loader.choose_icon( icon_names, size_menu );
-    list_icons[ ICON::DELETE ] = icon_loader.load_icon( "edit-delete", size_menu );
-    list_icons[ ICON::QUIT ] = icon_loader.load_icon( "window-close", size_menu );
-    list_icons[ ICON::BACK ] = icon_loader.load_icon( "go-previous", size_menu );
-    list_icons[ ICON::FORWARD ] = icon_loader.load_icon( "go-next", size_menu );
+    list_icons[ ICON::APPENDFAVORITE ] = Gio::ThemedIcon::create( icon_names );
+    list_icons[ ICON::DELETE ] = Gio::ThemedIcon::create( "edit-delete" );
+    list_icons[ ICON::QUIT ] = Gio::ThemedIcon::create( "window-close" );
+    list_icons[ ICON::BACK ] = Gio::ThemedIcon::create( "go-previous" );
+    list_icons[ ICON::FORWARD ] = Gio::ThemedIcon::create( "go-next" );
     icon_names.assign( { "changes-prevent", "window-close" } );
-    list_icons[ ICON::LOCK ] = icon_loader.choose_icon( icon_names, size_menu );
+    list_icons[ ICON::LOCK ] = Gio::ThemedIcon::create( icon_names );
 
     // メイン
-    list_icons[ ICON::GO ] = icon_loader.load_icon( "go-jump", size_menu );
-    list_icons[ ICON::UNDO ] = icon_loader.load_icon( "edit-undo", size_menu );
-    list_icons[ ICON::REDO ] = icon_loader.load_icon( "edit-redo", size_menu );
+    list_icons[ ICON::GO ] = Gio::ThemedIcon::create( "go-jump" );
+    list_icons[ ICON::UNDO ] = Gio::ThemedIcon::create( "edit-undo" );
+    list_icons[ ICON::REDO ] = Gio::ThemedIcon::create( "edit-redo" );
 
     // サイドバー
-    list_icons[ ICON::CHECK_UPDATE_ROOT ] = icon_loader.load_icon( "view-refresh", size_menu );
+    list_icons[ ICON::CHECK_UPDATE_ROOT ] = Gio::ThemedIcon::create( "view-refresh" );
 
     // スレビュー
-    list_icons[ ICON::SEARCH ] = icon_loader.load_icon( "edit-find", size_menu );
-    list_icons[ ICON::LIVE ] = icon_loader.load_icon( "media-playback-start", size_menu );
+    list_icons[ ICON::SEARCH ] = Gio::ThemedIcon::create( "edit-find" );
+    list_icons[ ICON::LIVE ] = Gio::ThemedIcon::create( "media-playback-start" );
 
     // 検索バー
-    list_icons[ ICON::CLOSE_SEARCH ] = icon_loader.load_icon( "edit-undo", size_menu );
-    list_icons[ ICON::CLEAR_SEARCH ] = icon_loader.load_icon( "edit-clear", size_menu );
-    list_icons[ ICON::SEARCH_AND ] = icon_loader.load_icon( "edit-cut", size_menu );
-    list_icons[ ICON::SEARCH_OR ] = icon_loader.load_icon( "list-add", size_menu );
+    list_icons[ ICON::CLOSE_SEARCH ] = Gio::ThemedIcon::create( "edit-undo" );
+    list_icons[ ICON::CLEAR_SEARCH ] = Gio::ThemedIcon::create( "edit-clear" );
+    list_icons[ ICON::SEARCH_AND ] = Gio::ThemedIcon::create( "edit-cut" );
+    list_icons[ ICON::SEARCH_OR ] = Gio::ThemedIcon::create( "list-add" );
 
     // 書き込みビュー
-    list_icons[ ICON::INSERTTEXT ] = icon_loader.load_icon( "document-open", size_menu );
+    list_icons[ ICON::INSERTTEXT ] = Gio::ThemedIcon::create( "document-open" );
 }
 
 
@@ -515,47 +464,45 @@ void ICON_Manager::load_themed_color_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf
  * @param[in,out] list_icons アイコンをキャッシュする配列
  * @see ICON_Manager::load_themed_color_icons()
  */
-void ICON_Manager::load_themed_symbolic_icons( std::vector<Glib::RefPtr<Gdk::Pixbuf>>& list_icons )
+void ICON_Manager::load_themed_symbolic_icons( std::vector<Glib::RefPtr<Gio::Icon>>& list_icons )
 {
-    constexpr int size_menu = 16; // Gtk::ICON_SIZE_MENU
-    const NamedIconLoader icon_loader{ size_menu };
     std::vector<Glib::ustring> icon_names;
 
     // サイドバーやタブで使用するアイコン
-    list_icons[ ICON::BBSMENU ] = icon_loader.load_icon( "emblem-documents-symbolic", size_menu );
+    list_icons[ ICON::BBSMENU ] = Gio::ThemedIcon::create( "emblem-documents-symbolic" );
 
     // 共通
-    list_icons[ ICON::SEARCH_PREV ] = icon_loader.load_icon( "go-up-symbolic", size_menu );
-    list_icons[ ICON::SEARCH_NEXT ] = icon_loader.load_icon( "go-down-symbolic", size_menu );
-    list_icons[ ICON::STOPLOADING ] = icon_loader.load_icon( "process-stop-symbolic", size_menu );
-    list_icons[ ICON::RELOAD ] = icon_loader.load_icon( "view-refresh-symbolic", size_menu );
+    list_icons[ ICON::SEARCH_PREV ] = Gio::ThemedIcon::create( "go-up-symbolic" );
+    list_icons[ ICON::SEARCH_NEXT ] = Gio::ThemedIcon::create( "go-down-symbolic" );
+    list_icons[ ICON::STOPLOADING ] = Gio::ThemedIcon::create( "process-stop-symbolic" );
+    list_icons[ ICON::RELOAD ] = Gio::ThemedIcon::create( "view-refresh-symbolic" );
     icon_names.assign( { "bookmark-new-symbolic", "edit-copy-symbolic" } );
-    list_icons[ ICON::APPENDFAVORITE ] = icon_loader.choose_icon( icon_names, size_menu );
-    list_icons[ ICON::DELETE ] = icon_loader.load_icon( "edit-delete-symbolic", size_menu );
-    list_icons[ ICON::QUIT ] = icon_loader.load_icon( "window-close-symbolic", size_menu );
-    list_icons[ ICON::BACK ] = icon_loader.load_icon( "go-previous-symbolic", size_menu );
-    list_icons[ ICON::FORWARD ] = icon_loader.load_icon( "go-next-symbolic", size_menu );
+    list_icons[ ICON::APPENDFAVORITE ] = Gio::ThemedIcon::create( icon_names );
+    list_icons[ ICON::DELETE ] = Gio::ThemedIcon::create( "edit-delete-symbolic" );
+    list_icons[ ICON::QUIT ] = Gio::ThemedIcon::create( "window-close-symbolic" );
+    list_icons[ ICON::BACK ] = Gio::ThemedIcon::create( "go-previous-symbolic" );
+    list_icons[ ICON::FORWARD ] = Gio::ThemedIcon::create( "go-next-symbolic" );
     icon_names.assign( { "changes-prevent-symbolic", "window-close-symbolic" } );
-    list_icons[ ICON::LOCK ] = icon_loader.choose_icon( icon_names, size_menu );
+    list_icons[ ICON::LOCK ] = Gio::ThemedIcon::create( icon_names );
 
     // メイン
-    list_icons[ ICON::GO ] = icon_loader.load_icon( "go-jump-symbolic", size_menu );
-    list_icons[ ICON::UNDO ] = icon_loader.load_icon( "edit-undo-symbolic", size_menu );
-    list_icons[ ICON::REDO ] = icon_loader.load_icon( "edit-redo-symbolic", size_menu );
+    list_icons[ ICON::GO ] = Gio::ThemedIcon::create( "go-jump-symbolic" );
+    list_icons[ ICON::UNDO ] = Gio::ThemedIcon::create( "edit-undo-symbolic" );
+    list_icons[ ICON::REDO ] = Gio::ThemedIcon::create( "edit-redo-symbolic" );
 
     // サイドバー
-    list_icons[ ICON::CHECK_UPDATE_ROOT ] = icon_loader.load_icon( "view-refresh-symbolic", size_menu );
+    list_icons[ ICON::CHECK_UPDATE_ROOT ] = Gio::ThemedIcon::create( "view-refresh-symbolic" );
 
     // スレビュー
-    list_icons[ ICON::SEARCH ] = icon_loader.load_icon( "edit-find-symbolic", size_menu );
-    list_icons[ ICON::LIVE ] = icon_loader.load_icon( "media-playback-start-symbolic", size_menu );
+    list_icons[ ICON::SEARCH ] = Gio::ThemedIcon::create( "edit-find-symbolic" );
+    list_icons[ ICON::LIVE ] = Gio::ThemedIcon::create( "media-playback-start-symbolic" );
 
     // 検索バー
-    list_icons[ ICON::CLOSE_SEARCH ] = icon_loader.load_icon( "edit-undo-symbolic", size_menu );
-    list_icons[ ICON::CLEAR_SEARCH ] = icon_loader.load_icon( "edit-clear-symbolic", size_menu );
-    list_icons[ ICON::SEARCH_AND ] = icon_loader.load_icon( "edit-cut-symbolic", size_menu );
-    list_icons[ ICON::SEARCH_OR ] = icon_loader.load_icon( "list-add-symbolic", size_menu );
+    list_icons[ ICON::CLOSE_SEARCH ] = Gio::ThemedIcon::create( "edit-undo-symbolic" );
+    list_icons[ ICON::CLEAR_SEARCH ] = Gio::ThemedIcon::create( "edit-clear-symbolic" );
+    list_icons[ ICON::SEARCH_AND ] = Gio::ThemedIcon::create( "edit-cut-symbolic" );
+    list_icons[ ICON::SEARCH_OR ] = Gio::ThemedIcon::create( "list-add-symbolic" );
 
     // 書き込みビュー
-    list_icons[ ICON::INSERTTEXT ] = icon_loader.load_icon( "document-open-symbolic", size_menu );
+    list_icons[ ICON::INSERTTEXT ] = Gio::ThemedIcon::create( "document-open-symbolic" );
 }

@@ -21,15 +21,15 @@ namespace SKELETON
 
     public:
         explicit ToolButtonExtension( const int iconid )
-            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ) ) ) )
+            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ), Gtk::ICON_SIZE_SMALL_TOOLBAR ) ) )
         {}
 
         explicit ToolButtonExtension( const int iconid, const int controlid )
-            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ) ) ), CONTROL::get_label( controlid ) )
+            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ), Gtk::ICON_SIZE_SMALL_TOOLBAR ) ), CONTROL::get_label( controlid ) )
         {}
 
         explicit ToolButtonExtension( const int iconid, const Glib::ustring& label )
-            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ) ) ), label )
+            : Base( *Gtk::manage( new Gtk::Image( ICON::get_icon( iconid ), Gtk::ICON_SIZE_SMALL_TOOLBAR ) ), label )
         {}
 
         ~ToolButtonExtension() noexcept override = default;

@@ -36,7 +36,7 @@ AboutDiag::AboutDiag( const Glib::ustring& title )
 
     set_default_response( Gtk::RESPONSE_CLOSE );
 
-    set_logo( ICON::get_icon( ICON::JD96 ) );
+    set_logo( ICON::get_pixbuf( ICON::JD96 ) );
     set_version( ENVIRONMENT::get_jdversion() );
     set_comments( ENVIRONMENT::get_jdcomments() );
     set_website( CONFIG::get_url_jdimhp() );

@@ -38,7 +38,7 @@ namespace SKELETON
     public:
         
         Gtk::TreeModelColumn< Glib::ustring > m_name; // サブジェクト
-        Gtk::TreeModelColumn< Glib::RefPtr< Gdk::Pixbuf > >  m_image; // アイコン画像
+        Gtk::TreeModelColumn< Glib::RefPtr< Gio::Icon > >  m_image; // アイコン画像
 
         Gtk::TreeModelColumn< int > m_type; // 行のタイプ
         Gtk::TreeModelColumn< Glib::ustring > m_url; // アドレス

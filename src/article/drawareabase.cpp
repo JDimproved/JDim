@@ -891,7 +891,7 @@ bool DrawAreaBase::exec_layout_impl( const bool is_popup, const int offset_y )
 
         // div の位置と幅を計算
         // 高さは子ノードのレイアウトが全て済んでから計算
-        if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD ); // 最低でもブックマークのアイコン分だけ左のスペース開ける
+        if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_pixbuf( ICON::BKMARK_THREAD ); // 最低でもブックマークのアイコン分だけ左のスペース開ける
         int x = MAX( 1 + m_pixbuf_bkmk->get_width() + 1, m_css_body.padding_left + header->css->mrg_left );
         y += header->css->mrg_top;
 
@@ -2072,7 +2072,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const CLIPINFO& ci )
                 // ブックマークのマーク描画
                 if( m_article->is_bookmarked( layout->res_number ) ){
 
-                    if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_icon( ICON::BKMARK_THREAD );
+                    if( ! m_pixbuf_bkmk ) m_pixbuf_bkmk = ICON::get_pixbuf( ICON::BKMARK_THREAD );
                     const int height_bkmk = m_pixbuf_bkmk->get_height();
 
                     y += ( m_font->height - height_bkmk ) / 2;
@@ -2093,7 +2093,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const CLIPINFO& ci )
                     // 書き込みのマーク表示
                     if( m_article->is_posted( layout->res_number ) ){
 
-                        if( ! m_pixbuf_post ) m_pixbuf_post = ICON::get_icon( ICON::POST );
+                        if( ! m_pixbuf_post ) m_pixbuf_post = ICON::get_pixbuf( ICON::POST );
                         const int height_post = m_pixbuf_post->get_height();
 
                         if( y == y_org ) y += ( m_font->height - height_post ) / 2;
@@ -2112,7 +2112,7 @@ bool DrawAreaBase::draw_one_node( LAYOUT* layout, const CLIPINFO& ci )
                     // 自分の書き込みに対するレスのマーク表示
                     if( m_article->is_refer_posted( layout->res_number ) ){
 
-                        if( ! m_pixbuf_refer_post ) m_pixbuf_refer_post = ICON::get_icon( ICON::POST_REFER );
+                        if( ! m_pixbuf_refer_post ) m_pixbuf_refer_post = ICON::get_pixbuf( ICON::POST_REFER );
                         const int height_refer_post = m_pixbuf_refer_post->get_height();
 
                         if( y == y_org ) y += ( m_font->height - height_refer_post ) / 2;

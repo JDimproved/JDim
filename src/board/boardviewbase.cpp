@@ -595,7 +595,16 @@ void BoardViewBase::update_columns()
         const int item = SESSION::get_item_board_col( num );
         if( item == ITEM_END ) break;
         switch( item ){
-            case ITEM_MARK: APPEND_COLUMN( m_col_mark, ITEM_NAME_MARK, m_columns.m_col_mark ); break;
+            case ITEM_MARK: {
+                    auto* col = Gtk::make_managed<Gtk::TreeViewColumn>( ITEM_NAME_MARK );
+                    auto* render_pixbuf = Gtk::make_managed<Gtk::CellRendererPixbuf>();
+                    col->pack_start( *render_pixbuf, false );
+                    col->add_attribute( *render_pixbuf, "gicon", 0 );
+                    col->set_sizing( Gtk::TREE_VIEW_COLUMN_FIXED );
+                    m_treeview.append_column( *col );
+                    m_col_mark = col;
+                }
+                break;
             case ITEM_ID: APPEND_COLUMN( m_col_id, ITEM_NAME_ID, m_columns.m_col_id ); break;
             case ITEM_BOARD: APPEND_COLUMN( m_col_board, ITEM_NAME_BOARD, m_columns.m_col_board ); break;
             case ITEM_NAME: APPEND_COLUMN( m_col_subject, ITEM_NAME_NAME, m_columns.m_col_subject ); break;
