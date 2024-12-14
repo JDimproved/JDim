@@ -96,11 +96,18 @@ Core::Core( JDWinMain& win_main )
     , m_enable_menuslot( true )
 {
     if( auto gtk_theme_name = CONFIG::get_gtk_theme_name(); ! gtk_theme_name.empty() ) {
-        // GTKの仕様で property_gtk_theme_name() に代入するとデスクトップ環境のシステム設定と同期しなくなる
+        // GTKの仕様により property_gtk_theme_name() に値を設定すると
+        // アプリケーションを終了するまでデスクトップ環境のシステム設定との同期が解除される
         Gtk::Settings::get_default()->property_gtk_theme_name() = std::move( gtk_theme_name );
     }
-    // property_gtk_application_prefer_dark_theme() は代入しても同期が維持される
+    // property_gtk_application_prefer_dark_theme() に値を設定しても同期は維持される
     Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = CONFIG::get_use_dark_theme();
+
+    if( auto icon_theme = CONFIG::get_gtk_icon_theme_name(); ! icon_theme.empty() ) {
+        // GTKの仕様により property_gtk_icon_theme_name() に値を設定すると
+        // アプリケーションを終了するまでデスクトップ環境のシステム設定との同期が解除される
+        Gtk::Settings::get_default()->property_gtk_icon_theme_name() = std::move( icon_theme );
+    }
 
     // ディスパッチマネージャ作成
     CORE::get_dispmanager();
