@@ -38,6 +38,7 @@ namespace ICON
 
     Glib::RefPtr< Gdk::Pixbuf > get_icon( const int id );
     std::vector<std::string> get_installed_gtk_theme_names();
+    std::vector<std::string> get_installed_icon_theme_names();
 }
 
 #endif

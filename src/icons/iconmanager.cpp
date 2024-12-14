@@ -53,6 +53,7 @@
 #include "info.h"
 
 #include <algorithm>
+#include <fstream>
 
 
 static ICON::ICON_Manager* instance_icon_manager = nullptr;
@@ -119,6 +120,63 @@ std::vector<std::string> ICON::get_installed_gtk_theme_names()
     for( auto& data_dir : data_dirs ) {
         data_dir += "/themes";
         fill_gtk( data_dir );
+    }
+
+    // ソートして重複した名前を取り除く
+    std::sort( names.begin(), names.end() );
+    names.erase( std::unique( names.begin(), names.end() ), names.end() );
+
+    return names;
+}
+
+
+/**
+ * @brief インストールされているアイコンテーマの名前をまとめて返す
+ *
+ * @details アイコンテーマを探す場所にあるテーマ名のディレクトリに
+ * index.theme のファイルが存在するかチェックし、必須のセクションとキーを確認します。
+ *
+ * アイコンテーマを探す場所
+ * 1. $XDG_DATA_HOME/icons/
+ * 2. $HOME/.icons/
+ * 3. $XDG_DATA_DIRS にある icons/
+ *
+ * @return 辞書順でソートされたテーマ名のvector
+ */
+std::vector<std::string> ICON::get_installed_icon_theme_names()
+{
+    std::vector<std::string> names;
+
+    auto fill_icon = [&]( const auto& themes_dir ) {
+        if( ! Glib::file_test( themes_dir, Glib::FILE_TEST_IS_DIR ) ) return;
+
+        for( auto dir_name : Glib::Dir( themes_dir ) ) {
+
+            std::ifstream index( themes_dir + "/" + dir_name + "/index.theme" );
+            if( ! index ) continue;
+
+            std::string line;
+            std::getline( index, line );
+            if( line.compare( 0, 12, "[Icon Theme]" ) != 0 ) continue;
+
+            // cursor テーマだけインストールされている場合があるので必須のキーがあるか調べる
+            while( std::getline( index, line ) ) {
+                // Directories キーが空データでないことを確認する
+                if( line.size() > 12 && line.compare( 0, 12, "Directories=" ) == 0 ) {
+                    names.push_back( std::move( dir_name ) );
+                    break;
+                }
+            }
+        }
+    };
+
+    fill_icon( Glib::get_user_data_dir() + "/icons" );
+    fill_icon( Glib::get_home_dir() + "/.icons" );
+
+    auto data_dirs = Glib::get_system_data_dirs();
+    for( auto& data_dir : data_dirs ) {
+        data_dir += "/icons";
+        fill_icon( data_dir );
     }
 
     // ソートして重複した名前を取り除く
