@@ -34,7 +34,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
 
     , m_bt_change_color{ "選択行の色を設定する(_S)", true }
     , m_bt_reset_color{ "選択行の色をデフォルトに戻す(_R)", true }
-    , m_bt_reset_all_colors{ "色の設定を全てデフォルトに戻す(_C)", true }
+    , m_bt_reset_all_colors{ "色の設定を全てデフォルトに戻す(_D)", true }
 
     , m_label_gtk_theme{ "GTKテーマ(_T):", true }
     , m_check_system_theme{ "システム設定のGTKテーマを使う(_S)（再起動後に有効になります）", true }
@@ -44,7 +44,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     , m_label_icon_theme{ "アイコンテーマ(_I):", true }
     , m_check_system_icon{ "システム設定のアイコンテーマを使う(_Y)（再起動後に有効になります）", true }
     , m_label_use_symbolic_icon{ "スタイル:", false }
-    , m_check_use_symbolic_icon{ "シンボリックアイコンで表示する(_S)", true }
+    , m_check_use_symbolic_icon{ "シンボリックアイコンで表示する(_M)", true }
 
     , m_label_note{ "　「GTKテーマ」や「アイコンテーマ」をシステム設定に変更するときは、"
                     "アプリケーションの再起動が必要です。\n\n"
@@ -325,11 +325,11 @@ void FontColorPref::pack_widget()
     m_chk_use_gtktheme_message.set_active( CONFIG::get_use_message_gtktheme() );
     m_vbox_color.pack_start( m_chk_use_gtktheme_message, Gtk::PACK_SHRINK );
 
-    m_chk_use_gtkrc_tree.add_label( "ツリービューの背景色設定に gtkrc を用いる(_T)", true ),
+    m_chk_use_gtkrc_tree.add_label( "ツリービューの背景色設定に GTKテーマ を用いる(_T)", true ),
     m_chk_use_gtkrc_tree.set_active( CONFIG::get_use_tree_gtkrc() );
     m_vbox_color.pack_start( m_chk_use_gtkrc_tree, Gtk::PACK_SHRINK );
 
-    m_chk_use_gtkrc_selection.add_label( "スレビューの選択範囲の色設定に gtkrc を用いる(_S)", true ),
+    m_chk_use_gtkrc_selection.add_label( "スレビューの選択範囲の色設定に GTKテーマ を用いる(_E)", true ),
     m_chk_use_gtkrc_selection.set_active( CONFIG::get_use_select_gtkrc() );
     m_vbox_color.pack_start( m_chk_use_gtkrc_selection, Gtk::PACK_SHRINK );
 
