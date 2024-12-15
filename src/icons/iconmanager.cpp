@@ -197,8 +197,14 @@ std::vector<std::string> ICON::get_installed_icon_theme_names()
     fill_icon( Glib::get_user_data_dir() + "/icons" );
     fill_icon( Glib::get_home_dir() + "/.icons" );
 
+    const bool running_on_snap{ ! Glib::getenv( "SNAP_DESKTOP_RUNTIME" ).empty()
+                                && Glib::getenv( "GTK_USE_PORTAL" ) == "1" };
+
     auto data_dirs = Glib::get_system_data_dirs();
     for( auto& data_dir : data_dirs ) {
+        // Snapで実行しているときは以下のディレクトリにアクセスすると Permission denied が発生する
+        if( running_on_snap && data_dir == "/var/lib/snapd/desktop" ) continue;
+
         data_dir += "/icons";
         fill_icon( data_dir );
     }
