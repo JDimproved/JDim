@@ -739,8 +739,11 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
             if( ( ! m_fold_when_focusout || m_mode == JDWIN_NORMAL || m_mode == JDWIN_FOLD )
                     && height_new > min_height
                 ) {
-                set_width_win( width_new );
-                set_height_win( height_new );
+                // eventでとれる値は
+                // resizeで指定したサイズより横約51 縦約89大きくなるため
+                // 打ち消すwaylandだから？
+                set_width_win( width_new - 51 );
+                set_height_win( height_new - 89 );
             }
         }
 
