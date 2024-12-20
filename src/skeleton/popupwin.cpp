@@ -86,16 +86,29 @@ void PopupWin::slot_realize()
  */
 void PopupWin::move_resize_conventional()
 {
-    // マウス座標
+    // ディスプレイの情報を取得する。
+    auto display = Gdk::Display::get_default();
+
+    // ディスプレイに対するマウス座標を取得する。
     int x_mouse, y_mouse;
-    Gdk::Display::get_default()->get_default_seat()->get_pointer()->get_position( x_mouse, y_mouse );
+    display->get_default_seat()->get_pointer()->get_position( x_mouse, y_mouse );
+
+    Gtk::Window* parent_win = get_transient_for();
+
+    // 以前は Gdk::Screen を使用してポップアップのサイズを計算していたが、
+    // Gdk::Screen は複数モニターを一つの画面領域として扱うため、
+    // マルチディスプレイ環境ではポップアップが画面を跨いで表示される問題があった。
+
+    // 親ウインドウが配置されている Gdk::Monitor の作業領域からポップアップのサイズと位置を計算する。
+    Gdk::Rectangle rect;
+    const auto monitor = display->get_monitor_at_window( parent_win->get_window() );
+    monitor->get_workarea( rect );
+    const int width_desktop = rect.get_width();
+    const int height_desktop = rect.get_height();
 
     // クライアントのサイズを取得
     const int width_client = m_view->width_client();
     const int height_client = m_view->height_client();
-
-    const int width_desktop = m_parent->get_screen()->get_width();
-    const int height_desktop = m_parent->get_screen()->get_height();
 
     // x 座標と幅
     const int width_popup = width_client;
