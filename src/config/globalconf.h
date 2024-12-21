@@ -72,7 +72,7 @@ namespace CONFIG
     bool get_use_tree_gtkrc();
     void set_use_tree_gtkrc( const bool use );
 
-    // スレビューの選択色でgtkrcの設定を使用するか
+    // スレビューの文字色、背景色、選択色でGTKテーマの設定を使用するか
     bool get_use_select_gtkrc();
     void set_use_select_gtkrc( const bool use );
 

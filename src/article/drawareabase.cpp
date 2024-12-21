@@ -321,14 +321,17 @@ void DrawAreaBase::init_color()
         m_color[ i ] = Gdk::RGBA( CONFIG::get_color( i ) );
     }
 
-    // スレビューの選択色でgtkrcの設定を使用
+    // スレビューの文字色、背景色、選択色でGTKテーマの設定を使用する
     if( CONFIG::get_use_select_gtkrc() ){
-        const bool fg_ok = context->lookup_color( "theme_selected_fg_color", m_color[ COLOR_CHAR_SELECTION ] );
-        const bool bg_ok = context->lookup_color( "theme_selected_bg_color", m_color[ COLOR_BACK_SELECTION ] );
+        bool fg_ok = context->lookup_color( "theme_text_color", m_color[ COLOR_CHAR ] );
+        bool bg_ok = context->lookup_color( "theme_base_color", m_color[ COLOR_BACK ] );
         if( !fg_ok || !bg_ok ) {
-#ifdef _DEBUG
-            std::cout << "ERROR:DrawAreaBase::init_color lookup theme color failed." << std::endl;
-#endif
+            MISC::ERRMSG( "DrawAreaBase::init_color: Failed to retrieve GTK theme char colors." );
+        }
+        fg_ok = context->lookup_color( "theme_selected_fg_color", m_color[ COLOR_CHAR_SELECTION ] );
+        bg_ok = context->lookup_color( "theme_selected_bg_color", m_color[ COLOR_BACK_SELECTION ] );
+        if( !fg_ok || !bg_ok ) {
+            MISC::ERRMSG( "DrawAreaBase::init_color: Failed to retrieve GTK theme selected color." );
         }
     }
 
