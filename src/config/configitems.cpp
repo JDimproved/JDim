@@ -810,6 +810,7 @@ void ConfigItems::save_impl( const std::string& path )
     cf.update( "cl_char_age", str_color[ COLOR_CHAR_AGE ] );
     cf.update( "cl_char_selection", str_color[ COLOR_CHAR_SELECTION ] );
     cf.update( "cl_char_highlight", str_color[ COLOR_CHAR_HIGHLIGHT ] );
+    cf.update( "cl_char_highlight_tree", str_color[ COLOR_CHAR_HIGHLIGHT_TREE ] );
     cf.update( "cl_char_link", str_color[ COLOR_CHAR_LINK ] );
     cf.update( "cl_char_link_id_low", str_color[ COLOR_CHAR_LINK_ID_LOW ] );
     cf.update( "cl_char_link_id_high", str_color[ COLOR_CHAR_LINK_ID_HIGH ] );
@@ -1082,6 +1083,9 @@ void ConfigItems::set_colors( JDLIB::ConfLoader& cf )
 
     // ハイライトの文字色
     str_color[ COLOR_CHAR_HIGHLIGHT ] = cf.get_option_str( "cl_char_highlight", CONF_COLOR_CHAR_HIGHLIGHT, 13 );
+
+    // ハイライトの文字色(ツリー用)
+    str_color[ COLOR_CHAR_HIGHLIGHT_TREE ] = cf.get_option_str( "cl_char_highlight_tree", CONF_COLOR_CHAR_HIGHLIGHT_TREE, 13 );
 
     // 通常のリンクの文字色
     str_color[ COLOR_CHAR_LINK ] = cf.get_option_str( "cl_char_link", CONF_COLOR_CHAR_LINK, 13 );

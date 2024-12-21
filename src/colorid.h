@@ -18,6 +18,7 @@ enum
     COLOR_CHAR_AGE,         // 非sageのメール欄
     COLOR_CHAR_SELECTION,   // 選択範囲の文字
     COLOR_CHAR_HIGHLIGHT,   // ハイライトの文字
+    COLOR_CHAR_HIGHLIGHT_TREE, ///< @brief ツリー表示における検索結果や抽出項目のハイライト文字色
     COLOR_CHAR_LINK,        // 通常のリンクの文字色
     COLOR_CHAR_LINK_ID_LOW, // 複数発言したIDの文字色
     COLOR_CHAR_LINK_ID_HIGH,// 多く発言したIDの文字色

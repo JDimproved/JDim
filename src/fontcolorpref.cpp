@@ -75,6 +75,7 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
 
     // 色設定をセット
     set_color_settings( COLOR_NONE, "■ " + CONTROL::get_mode_label( CONTROL::MODE_COMMON ), "" );
+    set_color_settings( COLOR_CHAR_HIGHLIGHT_TREE, "板、スレ一覧での検索結果などのハイライトの文字色", CONF_COLOR_CHAR_HIGHLIGHT_TREE );
     set_color_settings( COLOR_BACK_HIGHLIGHT_TREE, "板、スレ一覧での検索結果などのハイライトの背景色", CONF_COLOR_BACK_HIGHLIGHT_TREE );
 
     set_color_settings( COLOR_NONE, "", "" );
@@ -590,11 +591,17 @@ void FontColorPref::slot_cell_data_name( Gtk::CellRenderer* cell, const Gtk::Tre
 
     const int colorid = row[ m_columns_color.m_col_colorid ];
     const std::string defaultcolor = row[ m_columns_color.m_col_default ];
+    Gtk::CellRendererText* rentext = dynamic_cast<Gtk::CellRendererText*>( cell );
     if( colorid != COLOR_NONE && CONFIG::get_color( colorid ) != defaultcolor ){
-        cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
-        cell->property_cell_background_set() = true;
+        rentext->property_foreground() = CONFIG::get_color( COLOR_CHAR_HIGHLIGHT_TREE );
+        rentext->property_foreground_set() = true;
+        rentext->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
+        rentext->property_cell_background_set() = true;
     }
-    else cell->property_cell_background_set() = false;
+    else {
+        rentext->property_foreground_set() = false;
+        rentext->property_cell_background_set() = false;
+    }
 }
 
 
