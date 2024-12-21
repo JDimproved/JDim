@@ -329,7 +329,7 @@ void FontColorPref::pack_widget()
     m_chk_use_gtkrc_tree.set_active( CONFIG::get_use_tree_gtkrc() );
     m_vbox_color.pack_start( m_chk_use_gtkrc_tree, Gtk::PACK_SHRINK );
 
-    m_chk_use_gtkrc_selection.add_label( "スレビューの選択範囲の色設定に GTKテーマ を用いる(_E)", true ),
+    m_chk_use_gtkrc_selection.add_label( "スレビューの文字色、背景色、選択範囲の色設定に GTKテーマ を用いる(_E)", true ),
     m_chk_use_gtkrc_selection.set_active( CONFIG::get_use_select_gtkrc() );
     m_vbox_color.pack_start( m_chk_use_gtkrc_selection, Gtk::PACK_SHRINK );
 

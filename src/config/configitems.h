@@ -248,7 +248,7 @@ namespace CONFIG
         // ツリービューでgtkrcの設定を使用するか
         bool use_tree_gtkrc{};
 
-        // スレビューの選択色でgtkrcの設定を使用するか
+        /// @brief スレビューの文字色、背景色、選択色でGTKテーマの設定を使用するか
         bool use_select_gtkrc{};
 
         /// スレビューでHTMLタグ指定の色を使用するか

@@ -295,7 +295,7 @@ bool ConfigItems::load( const bool restore )
     // ツリービューでgtkrcの設定を使用するか
     use_tree_gtkrc = cf.get_option_bool( "use_tree_gtkrc", CONF_USE_TREE_GTKRC );
 
-    // スレビューの選択色でgtkrcの設定を使用するか
+    // スレビューの文字色、背景色、選択色でGTKテーマの設定を使用するか
     use_select_gtkrc = cf.get_option_bool( "use_select_gtkrc", CONF_USE_SELECT_GTKRC );
 
     // スレビューでHTMLタグ指定の色を使用するか
