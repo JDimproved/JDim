@@ -883,15 +883,18 @@ void BoardViewBase::slot_cell_data_markup( Gtk::CellRenderer* cell, const Gtk::T
 {
     Gtk::TreeModel::Row row = *it;
 
+    Gtk::CellRendererText* rentext = dynamic_cast<Gtk::CellRendererText*>( cell );
+
     // ハイライト色 ( 抽出状態 )
     if( row[ m_columns.m_col_drawbg ] ){
-        cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
-        cell->property_cell_background_set() = true;
+        rentext->property_foreground() = CONFIG::get_color( COLOR_CHAR_HIGHLIGHT_TREE );
+        rentext->property_foreground_set() = true;
+        rentext->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
+        rentext->property_cell_background_set() = true;
     }
 
     else m_treeview.slot_cell_data( cell, it );
 
-    Gtk::CellRendererText* rentext = dynamic_cast<Gtk::CellRendererText*>( cell );
     rentext->property_text() = "";
     rentext->property_markup() = row[ m_columns.m_col_subject ];
 }
@@ -907,8 +910,11 @@ void BoardViewBase::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeMode
 
     // ハイライト色 ( 抽出状態 )
     if( row[ m_columns.m_col_drawbg ] ){
-        cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
-        cell->property_cell_background_set() = true;
+        Gtk::CellRendererText* rentext = dynamic_cast<Gtk::CellRendererText*>( cell );
+        rentext->property_foreground() = CONFIG::get_color( COLOR_CHAR_HIGHLIGHT_TREE );
+        rentext->property_foreground_set() = true;
+        rentext->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
+        rentext->property_cell_background_set() = true;
     }
 
     else m_treeview.slot_cell_data( cell, it );

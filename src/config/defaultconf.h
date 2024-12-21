@@ -257,6 +257,7 @@ namespace CONFIG
 #define CONF_COLOR_CHAR_AGE "#fde800000000"    // ageの時のメール欄の文字色
 #define CONF_COLOR_CHAR_SELECTION "#ffffffffffff"  // 選択範囲の文字色
 #define CONF_COLOR_CHAR_HIGHLIGHT CONF_COLOR_CHAR  // ハイライトの文字色
+#define CONF_COLOR_CHAR_HIGHLIGHT_TREE CONF_COLOR_CHAR  // ハイライトの文字色
 #define CONF_COLOR_CHAR_LINK "#00000000ffff" //通常のリンクの文字色
 #define CONF_COLOR_CHAR_LINK_ID_LOW  CONF_COLOR_CHAR_LINK // 複数発言したIDの文字色
 #define CONF_COLOR_CHAR_LINK_ID_HIGH CONF_COLOR_CHAR_AGE // 多く発言したIDの文字色
