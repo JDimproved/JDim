@@ -893,7 +893,10 @@ void BoardViewBase::slot_cell_data_markup( Gtk::CellRenderer* cell, const Gtk::T
         rentext->property_cell_background_set() = true;
     }
 
-    else m_treeview.slot_cell_data( cell, it );
+    else {
+        rentext->property_foreground_set() = false;
+        m_treeview.slot_cell_data( cell, it );
+    }
 
     rentext->property_text() = "";
     rentext->property_markup() = row[ m_columns.m_col_subject ];
@@ -906,18 +909,30 @@ void BoardViewBase::slot_cell_data_markup( Gtk::CellRenderer* cell, const Gtk::T
 //
 void BoardViewBase::slot_cell_data( Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& it )
 {
+    // scanbuild-19 のレポートを抑制するためnullチェックする
+    // warning: Called C++ object pointer is null [core.CallAndMessage]
+    if( ! cell ) return;
+
     Gtk::TreeModel::Row row = *it;
+    // Gio::Icon を表示するcell (ITEM_MARK)は CellRendererText にキャストできない、nullptr が返る
+    Gtk::CellRendererText* rentext = dynamic_cast<Gtk::CellRendererText*>( cell );
 
     // ハイライト色 ( 抽出状態 )
     if( row[ m_columns.m_col_drawbg ] ){
-        Gtk::CellRendererText* rentext = dynamic_cast<Gtk::CellRendererText*>( cell );
-        rentext->property_foreground() = CONFIG::get_color( COLOR_CHAR_HIGHLIGHT_TREE );
-        rentext->property_foreground_set() = true;
-        rentext->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
-        rentext->property_cell_background_set() = true;
+        if( rentext ) {
+            rentext->property_foreground() = CONFIG::get_color( COLOR_CHAR_HIGHLIGHT_TREE );
+            rentext->property_foreground_set() = true;
+        }
+        cell->property_cell_background() = CONFIG::get_color( COLOR_BACK_HIGHLIGHT_TREE );
+        cell->property_cell_background_set() = true;
     }
 
-    else m_treeview.slot_cell_data( cell, it );
+    else {
+        if( rentext ) {
+            rentext->property_foreground_set() = false;
+        }
+        m_treeview.slot_cell_data( cell, it );
+    }
 }
 
 
