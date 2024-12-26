@@ -115,6 +115,10 @@ void PopupWin::move_resize()
     monitor->get_workarea( rect );
     const int height_desktop = rect.get_height();
 
+    // 作業領域上のマウス座標を計算する。
+    const int y_desktop = rect.get_y();
+    const int y_mouse_local = y_mouse - y_desktop;
+
     // クライアントのサイズを取得
     const int height_client = m_view->height_client();
     const int width_client = m_view->width_client();
@@ -127,27 +131,26 @@ void PopupWin::move_resize()
     GdkGravity rect_anchor; // 表示位置の角
     GdkGravity window_anchor; // ポップアップの角
     int height_popup; // ポップアップ表示中にリサイズするとき使う
-    if( y_mouse - ( height_client + m_mrg_y ) >= 0 ) { // 上にスペースがある
+    if( y_mouse_local - ( height_client + m_mrg_y ) >= 0 ) { // 上にスペースがある
         rect_anchor = GDK_GRAVITY_NORTH_WEST;
         window_anchor = GDK_GRAVITY_SOUTH_WEST;
         height_popup = height_client;
     }
-    else if( y_mouse + m_mrg_y + height_client <= height_desktop ) { // 下にスペースがある
+    else if( y_mouse_local + m_mrg_y + height_client <= height_desktop ) { // 下にスペースがある
         rect_anchor = GDK_GRAVITY_SOUTH_WEST;
         window_anchor = GDK_GRAVITY_NORTH_WEST;
         height_popup = height_client;
     }
-    else if( m_view->get_popup_upside() || y_mouse > height_desktop / 2 ) { // スペースは無いが上に表示
+    else if( m_view->get_popup_upside() || y_mouse_local > height_desktop / 2 ) { // スペースは無いが上に表示
         rect_anchor = GDK_GRAVITY_NORTH_WEST;
         window_anchor = GDK_GRAVITY_SOUTH_WEST;
-        const int y_popup = (std::max)( 0, y_mouse - ( height_client + m_mrg_y ) );
-        height_popup = y_mouse - ( y_popup + m_mrg_y );
+        const int y_popup = y_desktop + (std::max)( 0, y_mouse_local - ( height_client + m_mrg_y ) );
+        height_popup = y_mouse_local - ( y_popup - y_desktop + m_mrg_y );
     }
     else { // スペースは無いが下に表示
         rect_anchor = GDK_GRAVITY_SOUTH_WEST;
         window_anchor = GDK_GRAVITY_NORTH_WEST;
-        const int y_popup = y_mouse + m_mrg_y;
-        height_popup = height_desktop - y_popup;
+        height_popup = height_desktop - ( y_mouse_local + m_mrg_y );
     }
 
     // 3. リサイズと移動を行う
