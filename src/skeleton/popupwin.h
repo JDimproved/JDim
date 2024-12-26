@@ -46,8 +46,7 @@ namespace SKELETON
 
         void slot_realize();
 
-        void move_resize_conventional();
-        void move_resize_wayland();
+        void move_resize();
     };
 }
 
