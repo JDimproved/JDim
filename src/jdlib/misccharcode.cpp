@@ -512,7 +512,7 @@ int MISC::utf32toutf8( const char32_t uch,  char* utf8str )
     }
 #ifdef _DEBUG
     else{
-        std::cout << "MISC::utf32toutf8 : invalid uch = " << uch << std::endl;
+        std::cout << "MISC::utf32toutf8 : invalid uch = " << MISC::utf32tostr( uch ) << std::endl;
     }
 #endif
 
