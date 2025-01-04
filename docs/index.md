@@ -44,7 +44,7 @@ layout: default
 - [JDim 0.2.0-20190720](./link-20190720)
 - [JDim 0.1.0-20190122](./link-20190122)
 
-© 2019-2024 JDimproved project
+© 2019-2025 JDimproved project
 
 [dis592]: https://github.com/JDimproved/JDim/discussions/592
 [wiki-faq]: https://ja.osdn.net/projects/jd4linux/wiki/FAQ
