@@ -1,6 +1,6 @@
 // ライセンス: GPL2
 
-#define _DEBUG
+//#define _DEBUG
 #include "jddebug.h"
 
 #include "window.h"
@@ -146,8 +146,6 @@ void JDWindow::init_win()
 
         Glib::signal_idle().connect( sigc::mem_fun( *this, &JDWindow::slot_idle ) );
     }
-
-    signal_realize().connect( sigc::mem_fun( *this, &JDWindow::slot_realize ) );
 }
 
 
@@ -175,28 +173,6 @@ bool JDWindow::slot_idle()
     }
 
     return false;
-}
-
-
-/** @brief ウインドウの初期設定サイズとrealizeしたときのサイズの差を計算して記憶します。
- *
- * @details Waylandでは、ウインドウがrealizeしたときに初期設定で指定したサイズより
- * 大きく表示される環境があります。ウインドウの幅と高さは、デスクトップ環境やテーマごとに
- * 異なる固定値で増えていきます。
- *
- * そのため、初期設定のサイズからウインドウがrealizeしたときのサイズの差を求め、
- * サイズを保存する処理で差分を引いて補正を行うことでウインドウのサイズが拡大しないようにします。
- */
-void JDWindow::slot_realize()
-{
-    m_offset_width = get_width_win() - get_width();
-    // 折り畳む場合はinit_win()のresizeで高さを1に指定するため0で処理する。
-    m_offset_height = ( m_fold_when_focusout ? 0 : get_height_win() ) - get_height();
-
-#ifdef _DEBUG
-    std::cout << "JDWindow::slot_realize offset_width = " << m_offset_width
-              << ", offset_height = " << m_offset_height << std::endl;
-#endif
 }
 
 
@@ -719,12 +695,21 @@ bool JDWindow::on_window_state_event( GdkEventWindowState* event )
 }
 
 
-// 移動、サイズ変更イベント
+/** @brief 移動、サイズ変更イベント
+ *
+ * @note 一部のウィンドウマネージャーでは、 `event->width/height` の値に
+ * Client-side decoration (CSD)などの装飾が含まれている可能性があります。
+ * `Gtk::Window::resize()`はウィンドウのコンテンツ領域（クライアント領域）
+ * を指定したサイズに変更するため、装飾が含まれたサイズを渡すと、
+ * 保存したサイズに正しく復元しません。代わりに、コンテンツ領域の
+ * サイズ保存に適している `Gtk::Window::get_size()` を使用します。
+ */
 bool JDWindow::on_configure_event( GdkEventConfigure* event )
 {
     const int mrg = 16;
-    const int width_new = event->width;
-    const int height_new = event->height;
+    int width_new = 1;
+    int height_new = 1;
+    get_size( width_new, height_new );
     int min_height = 0;
     if( m_scrwin ) min_height = m_vbox.get_height() - m_scrwin->get_height() + mrg;
 
@@ -763,10 +748,8 @@ bool JDWindow::on_configure_event( GdkEventConfigure* event )
             if( ( ! m_fold_when_focusout || m_mode == JDWIN_NORMAL || m_mode == JDWIN_FOLD )
                     && height_new > min_height
                 ) {
-                // Waylandでは、eventでとれる値はinit_win()のresizeで指定したサイズより
-                // 大きくなる環境があるため計算した差分で打ち消す
-                set_width_win( width_new + m_offset_width );
-                set_height_win( height_new + m_offset_height );
+                set_width_win( width_new );
+                set_height_win( height_new );
             }
         }
 

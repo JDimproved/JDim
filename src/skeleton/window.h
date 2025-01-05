@@ -35,9 +35,6 @@ namespace SKELETON
         int m_counter{};
         int m_count_focusout{}; // フォーカス制御用カウンタ
 
-        int m_offset_width{}; ///< 初期設定と表示したときの幅の差
-        int m_offset_height{}; ///< 初期設定と表示したときの高さの差
-
         SKELETON::JDVBox m_vbox;
 
         std::unique_ptr<Gtk::ScrolledWindow> m_scrwin;
@@ -142,7 +139,6 @@ namespace SKELETON
       private:
 
         bool slot_idle();
-        void slot_realize();
 
         void move_win( const int x, const int y );
         void set_win_pos();
