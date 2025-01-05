@@ -158,7 +158,11 @@ void SelectListDialog::slot_show_tree()
     }
     else if( m_selectview ){
         get_content_area()->remove( *m_selectview );
-        resize( get_width(), 1 );
+        // CSDによる装飾を含まないコンテンツ領域の幅を取得し、
+        // resize()に指定することで、意図したサイズ変更を実現します。
+        int width = 1;
+        gtk_window_get_size( static_cast<Gtk::Window*>(this)->gobj(), &width, nullptr );
+        resize( width, 1 );
         m_selectview.reset();
     }
 }
