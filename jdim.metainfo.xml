@@ -7,6 +7,9 @@
   <project_license>GPL-2.0</project_license>
   <name>JDim</name>
   <summary>2ch browser for Linux</summary>
+  <developer id="com.github.jdimproved.jdim">
+    <name>JDimproved project</name>
+  </developer>
 
   <description>
     <p>
@@ -54,6 +57,12 @@
   </provides>
 
   <releases>
+    <release version="0.13.0" date="2025-01-11">
+      <description>
+        <p>Add GTK theme and Icon theme selection</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.13.0</url>
+    </release>
     <release version="0.12.0" date="2024-07-06">
       <description>
         <p>Support 5ch.net Donguri System login with guard account linked to Gmail</p>
