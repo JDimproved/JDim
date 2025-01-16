@@ -82,7 +82,7 @@ bool ARTICLE::get_width_of_char( const char32_t code, const char pre_char, int& 
             { 0x3099, 0x309A }, // COMBINING KATAKANA-HIRAGANA (SEMI-)VOICED SOUND MARK
             { 0xFE00, 0xFE0F }, // VS1-VS16
         };
-        for( const auto [start, end] : blocks ) {
+        for( const auto& [start, end] : blocks ) {
             for( int i = start; i <= end; ++i ) {
                 width_of_char[ mode ][ i ].width_wide = -1;
             }

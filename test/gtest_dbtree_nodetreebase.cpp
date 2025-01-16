@@ -34,7 +34,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, not_remove)
     };
 
     std::string buffer;
-    for( auto [input, expect] : test_data ) {
+    for( auto& [input, expect] : test_data ) {
         buffer.assign( input );
         EXPECT_FALSE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
         EXPECT_EQ( expect, buffer );
@@ -50,7 +50,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_ime_nu)
     };
 
     std::string buffer;
-    for( auto [input, expect] : test_data ) {
+    for( auto& [input, expect] : test_data ) {
         buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
         EXPECT_EQ( expect, buffer );
@@ -66,7 +66,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_ime_st)
     };
 
     std::string buffer;
-    for( auto [input, expect] : test_data ) {
+    for( auto& [input, expect] : test_data ) {
         buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
         EXPECT_EQ( expect, buffer );
@@ -82,7 +82,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_nun_nu)
     };
 
     std::string buffer;
-    for( auto [input, expect] : test_data ) {
+    for( auto& [input, expect] : test_data ) {
         buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
         EXPECT_EQ( expect, buffer );
@@ -98,7 +98,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_pinktower_com)
     };
 
     std::string buffer;
-    for( auto [input, expect] : test_data ) {
+    for( auto& [input, expect] : test_data ) {
         buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
         EXPECT_EQ( expect, buffer );
@@ -114,7 +114,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_jump_5ch_net)
     };
 
     std::string buffer;
-    for( auto [input, expect] : test_data ) {
+    for( auto& [input, expect] : test_data ) {
         buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
         EXPECT_EQ( expect, buffer );
@@ -130,7 +130,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_jump_2ch_net)
     };
 
     std::string buffer;
-    for( auto [input, expect] : test_data ) {
+    for( auto& [input, expect] : test_data ) {
         buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
         EXPECT_EQ( expect, buffer );
@@ -146,7 +146,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_machi_to_bbs_link_cgi)
     };
 
     std::string buffer;
-    for( auto [input, expect] : test_data ) {
+    for( auto& [input, expect] : test_data ) {
         buffer.assign( input );
         EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
         EXPECT_EQ( expect, buffer );
