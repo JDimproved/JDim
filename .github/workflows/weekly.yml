@@ -9,82 +9,68 @@ on:
 
 jobs:
 
-  Unity-build-gcc12-Werror:
-    runs-on: ubuntu-22.04
+  Unity-build-gcc14-Werror:
+    runs-on: ubuntu-24.04
     env:
-      CC: gcc-12
-      CXX: g++-12
+      CC: gcc-14
+      CXX: g++-14
     steps:
       - uses: actions/checkout@v4
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-12
-      - name: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
-        run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
-      - name: ninja -C builddir -k0
-        run: ninja -C builddir -k0
-      - name: meson test -v -C builddir
-        run: meson test -v -C builddir
-      - name: ./builddir/src/jdim -V
-        run: ./builddir/src/jdim -V
+          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-14
+      - run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
+      - run: ninja -C builddir -k0
+      - run: meson test -v -C builddir
+      - run: ./builddir/src/jdim -V
 
-  Unity-build-clang15-Werror:
-    runs-on: ubuntu-22.04
+  Unity-build-clang18-Werror:
+    runs-on: ubuntu-24.04
     env:
-      CC: clang-15
-      CXX: clang++-15
+      CC: clang-18
+      CXX: clang++-18
     steps:
       - uses: actions/checkout@v4
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev clang-15
-      - name: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
-        run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
-      - name: ninja -C builddir -k0
-        run: ninja -C builddir -k0
-      - name: meson test -v -C builddir
-        run: meson test -v -C builddir
-      - name: ./builddir/src/jdim -V
-        run: ./builddir/src/jdim -V
+          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev clang-18
+      - run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
+      - run: ninja -C builddir -k0
+      - run: meson test -v -C builddir
+      - run: ./builddir/src/jdim -V
 
-  Unity-build-gcc12-with-options-Werror:
-    runs-on: ubuntu-22.04
+  Unity-build-gcc14-with-options-Werror:
+    runs-on: ubuntu-24.04
     env:
-      CC: gcc-12
-      CXX: g++-12
+      CC: gcc-14
+      CXX: g++-14
     steps:
       - uses: actions/checkout@v4
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install g++-12 libasound2-dev libgtest-dev libgtkmm-3.0-dev libmigemo-dev libssl-dev meson zlib1g-dev
-      - name: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dalsa=enabled -Dmigemo=enabled -Dtls=openssl -Dcompat_cache_dir=disabled -Dsessionlib=no -Dwerror=true
-        run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dalsa=enabled -Dmigemo=enabled -Dtls=openssl -Dcompat_cache_dir=disabled -Dsessionlib=no -Dwerror=true
-      - name: ninja -C builddir -k0
-        run: ninja -C builddir -k0
-      - name: meson test -v -C builddir
-        run: meson test -v -C builddir
-      - name: ./builddir/src/jdim -V
-        run: ./builddir/src/jdim -V
+          sudo apt install g++-14 libasound2-dev libgtest-dev libgtkmm-3.0-dev libmigemo-dev libssl-dev meson zlib1g-dev
+      - run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dalsa=enabled -Dmigemo=enabled -Dtls=openssl -Dcompat_cache_dir=disabled -Dsessionlib=no -Dwerror=true
+      - run: ninja -C builddir -k0
+      - run: meson test -v -C builddir
+      - run: ./builddir/src/jdim -V
 
   muon-master:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
-      CC: gcc-11
-      CXX: g++-11
+      CC: gcc-13
+      CXX: g++-13
     steps:
       - uses: actions/checkout@v4
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev zlib1g-dev g++-11
-      - name: git clone muon
-        run: |
+          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev zlib1g-dev g++-13
+      - run: |
           git clone --depth 1 https://git.sr.ht/~lattis/muon muon-src
-      - name: git log -n1 muon
-        run: git -C muon-src log -n1
+      - run: git -C muon-src log -n1
         # Since 2024-11-03 07:27:25 -0500 (6ec469bb42), bootstrapping has used muon-bootstrap as exe name.
       - name: build muon stage1
         run: |
@@ -98,10 +84,8 @@ jobs:
           ./stage1/muon-bootstrap setup -Ddocs=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled ../muon-build
           ./stage1/muon-bootstrap samu -C ../muon-build
           cd ..
-      - name: muon version
-        run: ./muon-build/muon version
-      - name: muon setup builddir
-        run: ./muon-build/muon setup -Dcompat_cache_dir=disabled jdim-build
+      - run: ./muon-build/muon version
+      - run: ./muon-build/muon setup -Dcompat_cache_dir=disabled jdim-build
         # Use embedded samurai instead of ninja
       - run: ./muon-build/muon samu -C jdim-build -k0
       - name: muon test
@@ -109,5 +93,4 @@ jobs:
           cd jdim-build
           ../muon-build/muon test -v
           cd ..
-      - name: ./jdim-build/src/jdim -V
-        run: ./jdim-build/src/jdim -V
+      - run: ./jdim-build/src/jdim -V
