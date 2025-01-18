@@ -11,11 +11,11 @@ on:
 
 jobs:
 
-  ASan-22:
-    runs-on: ubuntu-22.04
+  ASan-24:
+    runs-on: ubuntu-24.04
     env:
-      CC: gcc-11
-      CXX: g++-11
+      CC: gcc-13
+      CXX: g++-13
       # Avoid crash for calling crypt_r() that is pointing invalid address.
       # https://github.com/JDimproved/JDim/issues/943
       AVOID_CRASH: -Wl,--push-state,--no-as-needed -lcrypt -Wl,--pop-state
@@ -24,55 +24,13 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-11
-      - name: meson setup builddir -Db_sanitize=address,undefined -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dcpp_link_args="${AVOID_CRASH}"
-        run: meson setup builddir -Db_sanitize=address,undefined -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dcpp_link_args="${AVOID_CRASH}"
+          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-13
+      - run: meson setup builddir -Db_sanitize=address,undefined -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dcpp_link_args="${AVOID_CRASH}"
         # `compile` subcommand requires Meson 0.54 or later.
-      - name: ninja -C builddir
-        run: ninja -C builddir
+      - run: ninja -C builddir
         # Since Meson 0.57, `test` subcommand will only rebuild test program.
-      - name: meson test -v -C builddir
-        run: meson test -v -C builddir
-      - name: ./builddir/src/jdim -V
-        run: ./builddir/src/jdim -V
-
-  compiler-20:
-    runs-on: ubuntu-20.04
-    env:
-      CC: ${{ matrix.sets.cc }}
-      CXX: ${{ matrix.sets.cxx }}
-    strategy:
-      matrix:
-        sets:
-          - cc: gcc-9
-            cxx: g++-9
-            package: g++-9
-          - cc: gcc-10
-            cxx: g++-10
-            package: g++-10
-          - cc: clang-10
-            cxx: clang++-10
-            package: clang-10
-          - cc: clang-11
-            cxx: clang++-11
-            package: clang-11
-          - cc: clang-12
-            cxx: clang++-12
-            package: clang-12
-    steps:
-      - uses: actions/checkout@v4
-      - name: dependencies installation
-        run: |
-          sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
-      - name: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
-        run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
-      - name: ninja -C builddir
-        run: ninja -C builddir
-      - name: meson test -v -C builddir
-        run: meson test -v -C builddir
-      - name: ./builddir/src/jdim -V
-        run: ./builddir/src/jdim -V
+      - run: meson test -v -C builddir
+      - run: ./builddir/src/jdim -V
 
   compiler-22:
     runs-on: ubuntu-22.04
@@ -82,6 +40,9 @@ jobs:
     strategy:
       matrix:
         sets:
+          - cc: gcc-10
+            cxx: g++-10
+            package: g++-10
           - cc: gcc-11
             cxx: g++-11
             package: g++-11
@@ -109,47 +70,46 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
-      - name: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
-        run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
-      - name: ninja -C builddir
-        run: ninja -C builddir
-      - name: meson test -v -C builddir
-        run: meson test -v -C builddir
-      - name: ./builddir/src/jdim -V
-        run: ./builddir/src/jdim -V
+      - run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+      - run: ninja -C builddir
+      - run: meson test -v -C builddir
+      - run: ./builddir/src/jdim -V
 
-  library-20:
-
-    runs-on: ubuntu-20.04
+  compiler-24:
+    runs-on: ubuntu-24.04
     env:
-      CC: gcc-9
-      CXX: g++-9
+      CC: ${{ matrix.sets.cc }}
+      CXX: ${{ matrix.sets.cxx }}
     strategy:
       matrix:
-        deps:
-          - config_args: -Dtls=gnutls -Dsessionlib=xsmp -Dmigemo=enabled -Dalsa=enabled -Dpangolayout=enabled
-            packages: libgnutls28-dev libmigemo-dev libasound2-dev
-          - config_args: -Dtls=openssl -Dsessionlib=no -Dmigemo=enabled -Dcompat_cache_dir=disabled
-            packages: libssl-dev libmigemo-dev
-          - config_args: -Dtls=openssl -Dsessionlib=xsmp -Dalsa=enabled -Dpangolayout=enabled
-            packages: libssl-dev libasound2-dev
+        sets:
+          - cc: gcc-13
+            cxx: g++-13
+            package: g++-13
+          - cc: gcc-14
+            cxx: g++-14
+            package: g++-14
+          - cc: clang-16
+            cxx: clang++-16
+            package: clang-16
+          - cc: clang-17
+            cxx: clang++-17
+            package: clang-17
+          - cc: clang-18
+            cxx: clang++-18
+            package: clang-18
     steps:
       - uses: actions/checkout@v4
-      - name: dependencies installation (${{ matrix.deps.packages }})
+      - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-9
-      - name: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
-        run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
-      - name: ninja -C builddir
-        run: ninja -C builddir
-      - name: meson test -v -C builddir
-        run: meson test -v -C builddir
-      - name: ./builddir/src/jdim -V
-        run: ./builddir/src/jdim -V
+          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
+      - run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
+      - run: ninja -C builddir
+      - run: meson test -v -C builddir
+      - run: ./builddir/src/jdim -V
 
   library-22:
-
     runs-on: ubuntu-22.04
     env:
       CC: gcc-11
@@ -169,17 +129,37 @@ jobs:
         run: |
           sudo apt update
           sudo apt install meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-11
-      - name: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
-        run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
-      - name: ninja -C builddir
-        run: ninja -C builddir
-      - name: meson test -v -C builddir
-        run: meson test -v -C builddir
-      - name: ./builddir/src/jdim -V
-        run: ./builddir/src/jdim -V
+      - run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+      - run: ninja -C builddir
+      - run: meson test -v -C builddir
+      - run: ./builddir/src/jdim -V
+
+  library-24:
+    runs-on: ubuntu-24.04
+    env:
+      CC: gcc-13
+      CXX: g++-13
+    strategy:
+      matrix:
+        deps:
+          - config_args: -Dtls=gnutls -Dsessionlib=xsmp -Dmigemo=enabled -Dalsa=enabled -Dpangolayout=enabled
+            packages: libgnutls28-dev libmigemo-dev libasound2-dev
+          - config_args: -Dtls=openssl -Dsessionlib=no -Dmigemo=enabled -Dcompat_cache_dir=disabled
+            packages: libssl-dev libmigemo-dev
+          - config_args: -Dtls=openssl -Dsessionlib=xsmp -Dalsa=enabled -Dpangolayout=enabled
+            packages: libssl-dev libasound2-dev
+    steps:
+      - uses: actions/checkout@v4
+      - name: dependencies installation (${{ matrix.deps.packages }})
+        run: |
+          sudo apt update
+          sudo apt install meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-13
+      - run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
+      - run: ninja -C builddir
+      - run: meson test -v -C builddir
+      - run: ./builddir/src/jdim -V
 
   manual-build:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
