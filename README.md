@@ -47,7 +47,7 @@ JDim は GPLv2 の下で公開されている [JD][jd-project] からforkした�
 LinuxなどのUnixライクなOS(FreeBSD,OpenBSD,Nexenta,MacOSXでも動作報告例があります)。
 
 ##### サポートの最新情報
-gccのバージョンが10未満のプラットフォームはサポートを終了する予定となりました。
+gccのバージョンが10未満のプラットフォームはサポートを終了しました。
 Debian bullseye(2021年)より前にリリースされたディストリビューションを利用されている場合は更新をお願いいたします。
 
 メンテナンスの都合によりWindows(MinGW)版のサポートは[終了][#445]しました。
@@ -90,7 +90,7 @@ sudo apt update
 sudo apt build-dep jdim
 ```
 
-#### Ubuntu (20.04以降)
+#### Ubuntu (22.04以降)
 開発環境が入っていない場合は、
 
 ```sh
