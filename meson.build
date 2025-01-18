@@ -13,7 +13,7 @@
 #   dnf install gnutls-devel gtkmm30-devel libSM-devel
 #   ```
 #
-# Debian bullseye, Ubuntu 20.04
+# Debian bullseye, Ubuntu 22.04
 #   ディストロのパッケージをインストールする
 #   ```
 #   sudo apt install build-essential git meson
@@ -37,7 +37,7 @@
 project('jdim', 'cpp',
         version : '0.14.0-alpha',
         license : 'GPL2',
-        meson_version : '>= 0.53.0',
+        meson_version : '>= 0.61.0',
         default_options : ['warning_level=3', 'cpp_std=c++17'])
 
 # 追加コンパイルオプション
@@ -119,7 +119,7 @@ endif
 # TLS
 tls_opt = get_option('tls')
 if tls_opt == 'gnutls'
-  tls_dep = dependency('gnutls', version : '>= 3.6.13')
+  tls_dep = dependency('gnutls', version : '>= 3.7.1')
   conf.set('USE_GNUTLS', 1)
 elif tls_opt == 'openssl'
   tls_dep = dependency('openssl', version : '>= 1.1.1')

@@ -20,12 +20,12 @@ layout: default
 #### 必須環境
 - gtkmm 3.24.2 以上
 - glibmm 2.64.2 以上
-- glib 2.64.2 以上 ( 2.66.8 未満のサポートは将来のリリースで廃止される )
+- glib 2.66.8 以上
 - zlib 1.2 以上
-- gnutls 3.6.13 以上 ( 3.7.1 未満のサポートは将来のリリースで廃止される )
+- gnutls 3.7.1 以上
 
 #### 推奨環境
-- Linux kernel 5.4.0 以上 ( 5.10.0 未満は将来のリリースで推奨環境から外れる )
+- Linux kernel 5.10.0 以上
 - UTF-8環境 ( EUC環境では `LANG="ja_JP.UTF-8"` を指定する必要がある )
 
 ※ GTK2版はv0.4.0リリースをもって廃止 ( <https://github.com/JDimproved/JDim/issues/229> を参照 )
@@ -38,8 +38,8 @@ Autotools(./configure)のサポートはv0.10.0(2023年7月)のリリースを�
 かわりに[meson][meson]を利用してください。([RFC 0012][rfc0012])
 
 #### 必須
-- meson 0.53.0 以上 ( 0.61.0 未満のサポートは将来のリリースで廃止される )
-- g++ 9 以上、または clang++ 10 以上 ( 将来のリリースで g++ 10 以上、または clang++ 11 以上になる )
+- meson 0.61.0 以上
+- g++ 10 以上、または clang++ 11 以上
 - gnutls
 - gtkmm
 - zlib

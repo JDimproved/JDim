@@ -1,8 +1,8 @@
 <!-- SPDX-License-Identifier: FSFAP -->
 # JDimへコントリビュートする
 
-はじめに、ガイドを読む時間を取っていただきありがとうございます。:+1:  
-私達はJDimを開発・保守してくためにパッチを歓迎しています！:revolving_hearts:
+はじめに、ガイドを読む時間を取っていただきありがとうございます。 :+1:  
+私達はJDimを開発・保守してくためにパッチを歓迎しています！ :revolving_hearts:
 
 JDimへのコントリビュート方法を案内します。
 
@@ -58,17 +58,16 @@ Pull requestは`master`ブランチに対してお願いいたします。
 * 修正前よりコンパイル時警告を増やさないように気をつける。
 * ファイルの作成、ファイル間で内容のコピーを行うとき[ライセンスに注意する点](#notice-about-license)があります。(下記参照)
 
-C++17で追加された標準ライブラリのうちg++ 9またはclang++ 10が[サポート][support]していないものに注意
+C++17で追加された標準ライブラリのうちg++ 10またはclang++ 11が[サポート][support]していないものに注意
 
 | JDimの動作環境に合わない標準ライブラリ | ヘッダー | gcc | clang |
 | --- | --- | ---:| ---:|
 | [Standardization of Parallelism TS][cpp17exe] | `<execution>` | 9 | n/a |
-| [Hardware interference size][cpp17his]  | | 12 | n/a |
+| [Hardware interference size][cpp17his]  | | 12 | 19 |
 | [Polymorphic memory resources][cpp17pmr] | `<memory_resources>` | 9 | 16 |
 | [Mathematical special functions][cpp17math] | | 7 | n/a |
 | [Elementary string conversions][cpp17conv] (floating-point support) | `<charconv>` | 11 | n/a |
-| `std::shared_ptr` and `std::weak_ptr` with array support | | 7 | 11 |
-| DR: [`std::hash<std::filesystem::path>`][cpp17fspathhash] | | 11.4  | 17 |
+| DR17: [`std::hash<std::filesystem::path>`][cpp17fspathhash] | | 11.4  | 17 |
 
 [readme-md]: https://github.com/JDimproved/JDim/tree/master/README.md
 [issues]: https://github.com/JDimproved/JDim/issues
