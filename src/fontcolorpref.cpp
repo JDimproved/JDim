@@ -32,9 +32,14 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     , m_label_aafont{ "AAレスと判定する正規表現(_R):", true }
     , m_bt_reset_font{ "フォントの設定を全てデフォルトに戻す(_F)", true }
 
+    , m_label_reset_color{ "選択行の色をデフォルトに戻す:", false }
     , m_bt_change_color{ "選択行の色を設定する(_S)", true }
-    , m_bt_reset_color{ "選択行の色をデフォルトに戻す(_R)", true }
-    , m_bt_reset_all_colors{ "色の設定を全てデフォルトに戻す(_D)", true }
+    , m_bt_reset_color{ "ライト(_R)", true }
+    , m_bt_reset_color_dark{ "ダーク(_A)", true }
+    , m_hbox_reset_all_colors{ Gtk::ORIENTATION_HORIZONTAL, 8 }
+    , m_label_reset_all_colors{ "色の設定を全てデフォルトに戻す:", false }
+    , m_bt_reset_all_colors{ "ライトテーマ(_D)", true }
+    , m_bt_reset_all_colors_dark{ "ダークテーマ(_K)", true }
 
     , m_label_gtk_theme{ "GTKテーマ(_T):", true }
     , m_check_system_theme{ "システム設定のGTKテーマを使う(_S)（再起動後に有効になります）", true }
@@ -316,9 +321,12 @@ void FontColorPref::pack_widget()
 
     m_bt_change_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_change_color ) );
     m_bt_reset_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_color ) );
+    m_bt_reset_color_dark.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_color_dark ) );
 
     m_hbox_change_color.set_spacing( mrg );
+    m_hbox_change_color.pack_end( m_bt_reset_color_dark, Gtk::PACK_SHRINK );
     m_hbox_change_color.pack_end( m_bt_reset_color, Gtk::PACK_SHRINK );
+    m_hbox_change_color.pack_end( m_label_reset_color, Gtk::PACK_SHRINK );
     m_hbox_change_color.pack_end( m_bt_change_color , Gtk::PACK_SHRINK );
     m_vbox_color.pack_start( m_hbox_change_color, Gtk::PACK_SHRINK );
 
@@ -339,7 +347,17 @@ void FontColorPref::pack_widget()
     m_vbox_color.pack_start( m_chk_use_html_color, Gtk::PACK_SHRINK );
 
     m_bt_reset_all_colors.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_all_colors ) );
-    m_vbox_color.pack_end( m_bt_reset_all_colors, Gtk::PACK_SHRINK );
+    m_bt_reset_all_colors_dark.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_all_colors_dark ) );
+    m_label_reset_all_colors.set_xalign( Gtk::ALIGN_END );
+    m_bt_reset_all_colors.set_hexpand( false );
+    m_bt_reset_all_colors_dark.set_hexpand( false );
+    m_bt_reset_all_colors_dark.set_tooltip_text(
+        "HTMLタグで指定された文字色は、ダークテーマでは視認性が低下する可能性があるため、無効にします。" );
+
+    m_hbox_reset_all_colors.pack_end( m_bt_reset_all_colors_dark, Gtk::PACK_SHRINK );
+    m_hbox_reset_all_colors.pack_end( m_bt_reset_all_colors, Gtk::PACK_SHRINK );
+    m_hbox_reset_all_colors.pack_end( m_label_reset_all_colors, Gtk::PACK_SHRINK );
+    m_vbox_color.pack_end( m_hbox_reset_all_colors, Gtk::PACK_SHRINK );
 
     // ディスプレイ解像度が小さい環境で表示できるようにスクロール可能にする
     m_scroll_color.add( m_vbox_color );
@@ -436,6 +454,8 @@ void FontColorPref::slot_ok_clicked()
         }
     }
     CONFIG::set_use_dark_theme( m_check_dark_theme.get_active() );
+    // GTKテーマを変更したときは、ビューで使用する文字色と背景色を更新する必要がある
+    CONFIG::update_view_colors();
 
     if( m_check_system_icon.get_active() ) {
         // システム設定のアイコンテーマを使うため、空文字列をセットする
@@ -686,6 +706,30 @@ void FontColorPref::slot_reset_color()
 }
 
 
+/**
+ * @brief 選択行の色をダークテーマ用のデフォルト値にリセット
+ */
+void FontColorPref::slot_reset_color_dark()
+{
+    std::vector<Gtk::TreePath> selection_paths = m_treeview_color.get_selection()->get_selected_rows();
+    if( selection_paths.empty() ) return;
+
+    for( const Gtk::TreePath& path : selection_paths ) {
+
+        Gtk::TreeRow row = *m_liststore_color->get_iter( path );
+        if( ! row ) continue;
+
+        const int colorid = row[ m_columns_color.m_col_colorid ];
+        if( colorid != COLOR_NONE ) {
+
+            const std::string default_dark = CONFIG::kDarkColors[ colorid ];
+            CONFIG::set_color( colorid, default_dark );
+            m_treeview_color.queue_draw();
+        }
+    }
+}
+
+
 //
 // 全ての色のリセット
 //
@@ -697,6 +741,23 @@ void FontColorPref::slot_reset_all_colors()
     m_chk_use_html_color.set_active( CONFIG::CONF_USE_COLOR_HTML );
 
     CONFIG::reset_colors();
+
+    m_treeview_color.queue_draw();
+}
+
+
+/** @brief 全ての色をダークテーマ用のデフォルト値にリセット
+ *
+ * @details HTMLタグで指定された文字色は、ダークテーマでは視認性が低下する可能性があるため、無効にします。
+ */
+void FontColorPref::slot_reset_all_colors_dark()
+{
+    m_chk_use_gtktheme_message.set_active( CONFIG::CONF_USE_MESSAGE_GTKTHEME );
+    m_chk_use_gtkrc_tree.set_active( CONFIG::CONF_USE_TREE_GTKRC );
+    m_chk_use_gtkrc_selection.set_active( CONFIG::CONF_USE_SELECT_GTKRC );
+    m_chk_use_html_color.set_active( false );
+
+    CONFIG::reset_colors_dark_theme();
 
     m_treeview_color.queue_draw();
 }
