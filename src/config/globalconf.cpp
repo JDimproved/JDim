@@ -87,6 +87,7 @@ void CONFIG::set_color( const int id, const std::string& color )
 }
 
 void CONFIG::reset_colors(){ get_confitem()->reset_colors(); }
+void CONFIG::reset_colors_dark_theme(){ get_confitem()->reset_colors_dark_theme(); }
 
 const std::string& CONFIG::get_gtk_theme_name() { return get_confitem()->gtk_theme_name; }
 void CONFIG::set_gtk_theme_name( const std::string& name ) { get_confitem()->gtk_theme_name = name; }

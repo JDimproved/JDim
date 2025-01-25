@@ -76,7 +76,10 @@ namespace CORE
         Gtk::Button m_bt_change_color;
         Gtk::Button m_bt_reset_color;
         Gtk::Button m_bt_reset_color_dark;
+        Gtk::Box m_hbox_reset_all_colors;
+        Gtk::Label m_label_reset_all_colors;
         Gtk::Button m_bt_reset_all_colors;
+        Gtk::Button m_bt_reset_all_colors_dark;
 
         // テーマの設定
         Gtk::Grid m_grid_theme;
@@ -128,6 +131,7 @@ namespace CORE
         void slot_reset_color();
         void slot_reset_color_dark();
         void slot_reset_all_colors();
+        void slot_reset_all_colors_dark();
         void slot_toggled_symbolic();
 
         // OK,cancel,apply が押された

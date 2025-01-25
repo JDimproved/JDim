@@ -610,6 +610,7 @@ namespace CONFIG
 
         // 色のリセット
         void reset_colors();
+        void reset_colors_dark_theme();
 
         // プロクシ設定
         void set_proxy_for2ch( const std::string& proxy );

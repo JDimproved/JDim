@@ -1193,6 +1193,25 @@ void ConfigItems::reset_colors()
 }
 
 
+/**
+ * @brief 色をダークテーマ用のデフォルト値にリセット
+ */
+void ConfigItems::reset_colors_dark_theme()
+{
+    for( unsigned int i = COLOR_CHAR; i != COLOR_NUM; ++i ) {
+        if( const char* dark = CONFIG::kDarkColors[i]; dark && dark[0] != '\0' ) {
+            str_color[i] = dark;
+        }
+    }
+
+    // Gtk::Entryのデフォルトの文字色
+    str_color[ COLOR_CHAR_ENTRY_DEFAULT ] = MISC::get_entry_color_text();
+
+    // Gtk::Entryのデフォルトの背景色
+    str_color[ COLOR_BACK_ENTRY_DEFAULT ] = MISC::get_entry_color_base();
+}
+
+
 //
 // プロクシ設定
 //
