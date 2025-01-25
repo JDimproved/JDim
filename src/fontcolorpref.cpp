@@ -32,8 +32,10 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     , m_label_aafont{ "AAレスと判定する正規表現(_R):", true }
     , m_bt_reset_font{ "フォントの設定を全てデフォルトに戻す(_F)", true }
 
+    , m_label_reset_color{ "選択行の色をデフォルトに戻す:", false }
     , m_bt_change_color{ "選択行の色を設定する(_S)", true }
-    , m_bt_reset_color{ "選択行の色をデフォルトに戻す(_R)", true }
+    , m_bt_reset_color{ "ライト(_R)", true }
+    , m_bt_reset_color_dark{ "ダーク(_A)", true }
     , m_bt_reset_all_colors{ "色の設定を全てデフォルトに戻す(_D)", true }
 
     , m_label_gtk_theme{ "GTKテーマ(_T):", true }
@@ -316,9 +318,12 @@ void FontColorPref::pack_widget()
 
     m_bt_change_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_change_color ) );
     m_bt_reset_color.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_color ) );
+    m_bt_reset_color_dark.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_color_dark ) );
 
     m_hbox_change_color.set_spacing( mrg );
+    m_hbox_change_color.pack_end( m_bt_reset_color_dark, Gtk::PACK_SHRINK );
     m_hbox_change_color.pack_end( m_bt_reset_color, Gtk::PACK_SHRINK );
+    m_hbox_change_color.pack_end( m_label_reset_color, Gtk::PACK_SHRINK );
     m_hbox_change_color.pack_end( m_bt_change_color , Gtk::PACK_SHRINK );
     m_vbox_color.pack_start( m_hbox_change_color, Gtk::PACK_SHRINK );
 
@@ -680,6 +685,30 @@ void FontColorPref::slot_reset_color()
 
             const std::string defaultcolor = row[ m_columns_color.m_col_default ];
             CONFIG::set_color( colorid , defaultcolor );
+            m_treeview_color.queue_draw();
+        }
+    }
+}
+
+
+/**
+ * @brief 選択行の色をダークテーマ用のデフォルト値にリセット
+ */
+void FontColorPref::slot_reset_color_dark()
+{
+    std::vector<Gtk::TreePath> selection_paths = m_treeview_color.get_selection()->get_selected_rows();
+    if( selection_paths.empty() ) return;
+
+    for( const Gtk::TreePath& path : selection_paths ) {
+
+        Gtk::TreeRow row = *m_liststore_color->get_iter( path );
+        if( ! row ) continue;
+
+        const int colorid = row[ m_columns_color.m_col_colorid ];
+        if( colorid != COLOR_NONE ) {
+
+            const std::string default_dark = CONFIG::kDarkColors[ colorid ];
+            CONFIG::set_color( colorid, default_dark );
             m_treeview_color.queue_draw();
         }
     }
