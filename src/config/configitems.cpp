@@ -1204,6 +1204,20 @@ void ConfigItems::reset_colors_dark_theme()
         }
     }
 
+    update_view_colors();
+}
+
+
+/** @brief ビューで使用する文字色と背景色を更新する
+ *
+ * @details ビューで使用する文字色と背景色はフォントと色の詳細設定ダイアログにある
+ * 「色の設定を全てデフォルトに戻す」ボタンで更新されますが、JDimを起動した直後や
+ * フォントと色の詳細設定ダイアログで「OK」ボタンを押した際も更新する必要があります。
+ * そのため、 `ConfigItems::reset_colors_dark_theme()` から処理を抽出して関数にまとめ、
+ * 更新が必要な箇所で呼び出しできるようにします。
+ */
+void ConfigItems::update_view_colors()
+{
     // Gtk::Entryのデフォルトの文字色
     str_color[ COLOR_CHAR_ENTRY_DEFAULT ] = MISC::get_entry_color_text();
 

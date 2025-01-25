@@ -102,6 +102,8 @@ Core::Core( JDWinMain& win_main )
     }
     // property_gtk_application_prefer_dark_theme() に値を設定しても同期は維持される
     Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = CONFIG::get_use_dark_theme();
+    // 色のセットアップが済んだのでビューで使う文字色と背景色を取得する
+    CONFIG::update_view_colors();
 
     if( auto icon_theme = CONFIG::get_gtk_icon_theme_name(); ! icon_theme.empty() ) {
         // GTKの仕様により property_gtk_icon_theme_name() に値を設定すると

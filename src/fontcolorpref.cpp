@@ -454,6 +454,8 @@ void FontColorPref::slot_ok_clicked()
         }
     }
     CONFIG::set_use_dark_theme( m_check_dark_theme.get_active() );
+    // GTKテーマを変更したときは、ビューで使用する文字色と背景色を更新する必要がある
+    CONFIG::update_view_colors();
 
     if( m_check_system_icon.get_active() ) {
         // システム設定のアイコンテーマを使うため、空文字列をセットする

@@ -48,6 +48,7 @@ namespace CONFIG
     void set_color( const int id, const std::string& color );
     void reset_colors();
     void reset_colors_dark_theme();
+    void update_view_colors();
 
     // GTKテーマの名前
     const std::string& get_gtk_theme_name();
