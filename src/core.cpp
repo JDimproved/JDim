@@ -1363,6 +1363,26 @@ void Core::first_setup()
     SetupWizard wizard;
     wizard.run();
 
+    // テーマのセットアップ処理
+    if( CONFIG::get_use_dark_theme() ) {
+        // HTMLタグによる文字色指定は、視認性低下を防ぐために無効化します。
+        CONFIG::set_use_color_html( false );
+
+        constexpr const char* kDefaultThemeName = "Adwaita";
+        CONFIG::set_gtk_theme_name( kDefaultThemeName );
+        CONFIG::set_use_dark_theme( true );
+        CONFIG::set_gtk_icon_theme_name( kDefaultThemeName );
+        CONFIG::set_use_symbolic_icon( true );
+
+        Gtk::Settings::get_default()->property_gtk_theme_name() = kDefaultThemeName;
+        Gtk::Settings::get_default()->property_gtk_application_prefer_dark_theme() = true;
+        Gtk::Settings::get_default()->property_gtk_icon_theme_name() = kDefaultThemeName;
+
+        constexpr bool kUseSymbolicIcon = true;
+        ICON::get_icon_manager()->reload_themed_icons( kUseSymbolicIcon );
+        CONFIG::reset_colors_dark_theme();
+    }
+
     m_init = false;
 }
 
