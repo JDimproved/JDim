@@ -92,6 +92,35 @@ namespace CORE
 /////////////////////////////////////////////
 
 
+    /** @brief テーマを選択するページ
+     *
+     * @details ユーザーがテーマを選択した後、変更はセットアップ完了後に適用されます。
+     */
+    class PageTheme : public Gtk::Grid
+    {
+        Gtk::Image m_icon;
+        Gtk::Label m_label;
+
+        Gtk::RadioButtonGroup m_radiogroup;
+        Gtk::RadioButton m_system_theme;
+        Gtk::RadioButton m_dark_theme;
+
+        Gtk::Label m_label_inst;
+
+      public:
+
+        PageTheme();
+
+      private:
+
+        void slot_system_theme();
+        void slot_dark_theme();
+    };
+
+
+/////////////////////////////////////////////
+
+
     class PagePane : public Gtk::Grid
     {
         Gtk::Image m_icon;
@@ -143,6 +172,7 @@ namespace CORE
         PageStart  m_page_start;
         PageNet  m_page_network;
         PageFont m_page_font;
+        PageTheme m_page_theme;
         PagePane m_page_pane;
         PageEnd  m_page_end;
 

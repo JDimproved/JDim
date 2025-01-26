@@ -22,7 +22,7 @@ enum
 PageStart::PageStart()
     : Gtk::Grid()
     , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
-    , m_label( "１/５．JDim セットアップ開始", Gtk::ALIGN_START )
+    , m_label( "１/６．JDim セットアップ開始", Gtk::ALIGN_START )
     , m_label2( "JDimセットアップウィザードへようこそ\n\n"
                 "このウィザードでネットワークとフォント等の設定をおこないます\n\n"
                 "設定を始めるには［次へ］を押してください",
@@ -47,7 +47,7 @@ PageNet::PageNet( Gtk::Window* parent )
     : Gtk::Grid()
     , m_parent{ parent }
     , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
-    , m_label( "２/５．ネットワークの設定をします", Gtk::ALIGN_START )
+    , m_label( "２/６．ネットワークの設定をします", Gtk::ALIGN_START )
     , m_proxy( "プロキシ設定(_P)", true )
     , m_browser( "ブラウザ設定(_W)", true )
     , m_frame( "ブラウザ起動コマンド" ) // フレーム
@@ -102,7 +102,7 @@ void PageNet::slot_setup_browser()
 PageFont::PageFont()
     : Gtk::Grid()
     , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
-    , m_label( "３/５．フォントの設定をします", Gtk::ALIGN_START )
+    , m_label( "３/６．フォントの設定をします", Gtk::ALIGN_START )
     , m_label_res( "スレ(_T)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
     , m_label_mail( "メール(_U)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
     , m_label_popup( "ポップアップ(_P)", Gtk::ALIGN_START, Gtk::ALIGN_CENTER, true )
@@ -186,10 +186,70 @@ void PageFont::slot_font_tree()
 /////////////////////////////////////////////
 
 
+PageTheme::PageTheme()
+    : Gtk::Grid()
+    , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
+    , m_label( "４/６．テーマの設定をします", Gtk::ALIGN_START )
+    , m_system_theme( m_radiogroup, "システム設定(_S)", true )
+    , m_dark_theme( m_radiogroup, "ダークテーマ(_D)", true )
+    , m_label_inst( "", Gtk::ALIGN_START )
+{
+    m_label_inst.set_line_wrap( true );
+    m_label_inst.set_hexpand( false );
+
+    if( CONFIG::get_use_dark_theme() ) {
+        m_dark_theme.set_active( true );
+        slot_dark_theme();
+    }
+    else {
+        m_system_theme.set_active( true );
+        slot_system_theme();
+    }
+
+    m_system_theme.signal_toggled().connect( sigc::mem_fun( *this, &PageTheme::slot_system_theme ) );
+    m_dark_theme.signal_toggled().connect( sigc::mem_fun( *this, &PageTheme::slot_dark_theme ) );
+
+    set_column_spacing( SPACING_SIZE );
+    set_row_spacing( SPACING_SIZE );
+
+    // Gtk::Grid::attach( child, column, row, width, height )
+    attach( m_icon, 0, 0, 1, 1 );
+    attach( m_label, 1, 0, 1, 1 );
+    attach( m_system_theme, 0, 1, 2, 1 );
+    attach( m_dark_theme, 0, 2, 2, 1 );
+    attach( m_label_inst, 0, 3, 2, 1 );
+
+    m_label.set_hexpand( true );
+}
+
+
+/**
+ * @brief システム設定を選択します。
+ */
+void PageTheme::slot_system_theme()
+{
+    CONFIG::set_use_dark_theme( false );
+    m_label_inst.set_text( "システム設定のGTKテーマで表示します。" );
+}
+
+
+/**
+ * @brief ダークテーマを選択します。
+ */
+void PageTheme::slot_dark_theme()
+{
+    CONFIG::set_use_dark_theme( true );
+    m_label_inst.set_text( "ダークテーマ（暗いカラーパターン）で表示します。" );
+}
+
+
+/////////////////////////////////////////////
+
+
 PagePane::PagePane()
     : Gtk::Grid()
     , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
-    , m_label( "４/５．ペイン表示設定をします", Gtk::ALIGN_START )
+    , m_label( "５/６．ペイン表示設定をします", Gtk::ALIGN_START )
     , m_2pane( m_radiogroup, "２ペイン表示(_2)", true )
     , m_3pane( m_radiogroup, "３ペイン表示(_3)", true )
     , m_v3pane( m_radiogroup, "縦３ペイン表示(_V)", true )
@@ -248,7 +308,7 @@ void PagePane::slot_v3pane()
 PageEnd::PageEnd()
     : Gtk::Grid()
     , m_icon( ICON::get_icon_manager()->get_pixbuf( ICON::JD48 ) )
-    , m_label( "５/５．JDim セットアップ完了", Gtk::ALIGN_START )
+    , m_label( "６/６．JDim セットアップ完了", Gtk::ALIGN_START )
     , m_label2( "その他の設定は起動後に設定及び表示メニューからおこなって下さい\n\n"
                 "完了を押すとJDimを起動して板一覧のリストをロードします\n"
                 "板一覧が表示されるまでしばらくお待ち下さい",
@@ -297,6 +357,7 @@ SetupWizard::SetupWizard()
     m_notebook.append_page( m_page_start );
     m_notebook.append_page( m_page_network );
     m_notebook.append_page( m_page_font );
+    m_notebook.append_page( m_page_theme );
     m_notebook.append_page( m_page_pane );
     m_notebook.append_page( m_page_end );
 
@@ -330,12 +391,13 @@ void SetupWizard::slot_switch_page( Gtk::Widget* notebookpage, guint page )
         case 1:
         case 2:
         case 3:
+        case 4:
             m_back.set_sensitive( true );
             m_next.set_sensitive( true );
             m_fin->set_sensitive( false );
             break;
 
-        case 4:
+        case 5:
             m_back.set_sensitive( true );
             m_next.set_sensitive( false );
             m_fin->set_sensitive( true );
