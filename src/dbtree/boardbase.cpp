@@ -1555,7 +1555,7 @@ bool BoardBase::is_abone_thread( ArticleBase* article )
     // スレ立てからの時間であぼーん
     if( check_hour ) if( article->get_hour() >= check_hour ) return true;
     
-    // スレあぼーん
+    // スレあぼーんは、未変換のスレタイトルで完全一致するかチェックします。
     if( check_thread ){
         auto it = std::find_if( m_list_abone_thread.cbegin(), m_list_abone_thread.cend(),
                                 [a = article](const std::string& subj) { return a->get_subject() == subj; } );

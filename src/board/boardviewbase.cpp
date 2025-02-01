@@ -3047,9 +3047,10 @@ void BoardViewBase::slot_search_next()
 }
 
 
-//
-// 選択したスレをあぼーん
-//
+/** @brief 選択したスレをあぼーん
+ *
+ * @details NG スレタイトルは未変換のスレタイトルで比較します。
+ */
 void BoardViewBase::slot_abone_thread()
 {
     std::list< Gtk::TreeModel::iterator > list_it = m_treeview.get_selected_iterators();
@@ -3059,8 +3060,9 @@ void BoardViewBase::slot_abone_thread()
 
     for( const Gtk::TreeModel::iterator& iter : list_it ) {
         Gtk::TreeModel::Row row = *iter;
-        Glib::ustring subject = row[ m_columns.m_col_subject ];
-        threads.push_back( subject );
+        if( const DBTREE::ArticleBase* art = row[ m_columns.m_col_article ]; art ) {
+            threads.push_back( art->get_subject() );
+        }
     }
 
     // あぼーん情報更新
