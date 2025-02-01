@@ -322,6 +322,8 @@ WaylandやXWaylandではX11限定の機能を使うことができないため�
   `AddressSanitizer:DEADLYSIGNAL`を出力し続けてハングアップすることがあります。([上記](#hungup-with-asan)を参照)
 * Waylandでは、多段ポップアップ表示中にマウスポインターをポップアップ外に移動しても、ポップアップが消えない場合があります。
   この場合、Escキーを押すことでポップアップを閉じることができます。
+* アプリケーションの外部で GTK テーマを変更すると、板のプロパティ内のローカルルールなどの配色が更新されません。
+  この場合、JDim を再起動するか、フォントと色の詳細設定で「色の設定を全てデフォルトに戻す」を選択すると色が更新されます。
 
 [#1472]: https://github.com/JDimproved/JDim/issues/1472
 [#1498]: https://github.com/JDimproved/JDim/pull/1498
