@@ -3866,6 +3866,17 @@ void DrawAreaBase::clear_highlight()
 }
 
 
+/**
+ * @brief キャレットの位置をリセットします。
+ */
+void DrawAreaBase::reset_caret_position()
+{
+    m_caret_pos = CARET_POSITION();
+    m_caret_pos_pre = CARET_POSITION();
+    m_caret_pos_dragstart = CARET_POSITION();
+}
+
+
 //
 // 実況開始
 //

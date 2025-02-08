@@ -377,6 +377,7 @@ namespace ARTICLE
         int search( const std::list< std::string >& list_query, const bool reverse );
         int search_move( const bool reverse );
         void clear_highlight();
+        void reset_caret_position();
 
         // 実況モード
         void live_start();
