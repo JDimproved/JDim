@@ -3680,6 +3680,7 @@ int DrawAreaBase::search( const std::list< std::string >& list_query, const bool
                     // 選択設定
                     SELECTION selection;
                     selection.select = false;
+                    selection.click_pos = SELECTION::ClickPosition::unknown;
                     selection.caret_from.set( layout_from, offset_from );
                     selection.caret_to.set( layout_to, offset_to );
                     m_multi_selection.push_back( selection );
@@ -3745,22 +3746,53 @@ int DrawAreaBase::search_move( const bool reverse )
     if( it != m_multi_selection.end() ){
         it->select = false;
 
+        // NOTE: マウスクリックして検索開始位置を変更したときは、 slot_button_press_event() で
+        // SELECTION::select を変更するだけでは自然な移動にならないため移動先を補正します。
+        // - 「前検索」ではキャレット位置の前にある検索結果へ移動します。
+        // - 「次検索」ではキャレット位置の後にある検索結果へ移動します。
+
+        // クリックして選択を変更したときの位置情報を一時変数に移してリセットします。
+        const SELECTION::ClickPosition click_pos = it->click_pos;
+        it->click_pos = SELECTION::ClickPosition::unknown;
+
         // 前に移動
         if( reverse ){
+            // マウスクリックした位置がヒットとヒットの間なら、
+            // slot_button_press_event() で一つ戻してあるので下のデクリメントを打ち消します。
+            // ヒットの上(on_hit)にある場合は、前の検索結果に移動します。
+            if( click_pos == SELECTION::ClickPosition::between_hits ) {
+                ++it;
+            }
+
             if( it == m_multi_selection.begin() ) it = m_multi_selection.end();
             --it;
         }
 
         // 次に移動
         else{
-            if( ( ++it ) == m_multi_selection.end() ) it = m_multi_selection.begin();
+            // マウスクリックした位置が先頭のヒットより前でないなら、次の検索結果に移動します。
+            if( click_pos != SELECTION::ClickPosition::before_first_hit ) {
+                ++it;
+            }
+
+            if( it == m_multi_selection.end() ) it = m_multi_selection.begin();
         }
 
         it->select = true;
 
         // 移動先を範囲選択状態にする
-        m_caret_pos_dragstart = it->caret_from;
-        set_selection( it->caret_to );
+        if( m_caret_pos != it->caret_to ) {
+            m_caret_pos_dragstart = it->caret_from;
+            set_selection( it->caret_to );
+        }
+        else {
+            // m_caret_pos == it->caret_to のときに上記の引数で呼び出すと、
+            // 前回の呼び出しからキャレット位置が変わないため選択できません。
+            // そのため、引数を逆にして呼び出します。
+            m_caret_pos_dragstart = it->caret_to;
+            set_selection( it->caret_from );
+            m_caret_pos_dragstart = it->caret_from;
+        }
 
         const int y = MAX( 0, it->caret_from.layout->rect->y - 10 );
 
@@ -3781,6 +3813,46 @@ int DrawAreaBase::search_move( const bool reverse )
     }
 
     return m_multi_selection.size();
+}
+
+
+/** @brief 引数のキャレット位置に合わせて検索開始位置を更新します。
+ *
+ * @param[in] caret_pos 検索開始位置にするキャレット位置
+ */
+void DrawAreaBase::update_search_start_position( const CARET_POSITION& caret_pos )
+{
+    if( m_multi_selection.empty() ) return;
+
+    // 現在選択中の検索結果の情報をリセットします。
+    // XXX: 後続の find_if() とループをまとめたほうが良いか？
+    auto it = std::find_if( m_multi_selection.begin(), m_multi_selection.end(),
+                            []( const SELECTION& s ) { return s.select; } );
+    if( it != m_multi_selection.end() ) {
+        it->select = false;
+        it->click_pos = SELECTION::ClickPosition::unknown;
+    }
+
+    // 新しいキャレット位置より後ろにある検索結果を探します。
+    it = std::find_if( m_multi_selection.begin(), m_multi_selection.end(),
+                       [&caret_pos]( const SELECTION& s ) { return caret_pos < s.caret_from; } );
+    if( it == m_multi_selection.begin() ) {
+        // 先頭のヒットより前にキャレットがあります。
+        it->click_pos = SELECTION::ClickPosition::before_first_hit;
+    }
+    else {
+        // 先頭のヒット以降にキャレットがあるときは一つ戻して選択します。
+        --it;
+        if( ! ( it->caret_to < caret_pos ) ) {
+            // ヒットの上にキャレットがあります。
+            it->click_pos = SELECTION::ClickPosition::on_hit;
+        }
+        else {
+            // ヒットとヒットの間にキャレットがあります。
+            it->click_pos = SELECTION::ClickPosition::between_hits;
+        }
+    }
+    it->select = true;
 }
 
 
@@ -4902,6 +4974,9 @@ bool DrawAreaBase::slot_button_press_event( GdkEventButton* event )
 
         // 範囲選択解除、及びドラッグ開始
         if( m_control.button_alloted( event, CONTROL::ClickButton ) ){
+
+            // 引数のキャレット位置に合わせて検索開始位置を更新します。
+            update_search_start_position( caret_pos );
 
             m_drugging = true;
             m_selection.select = false;
