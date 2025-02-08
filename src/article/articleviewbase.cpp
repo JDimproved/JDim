@@ -4273,6 +4273,8 @@ void ArticleViewBase::exec_search()
     std::string query = get_search_query();
     if( query.empty() ){
         clear_highlight();
+        // 検索entryが空欄の状態で検索したときは、キャレット（検索開始位置）を一番上に移動します。
+        m_drawarea->reset_caret_position();
         focus_view();
         CORE::core_set_command( "set_info", "", "" );
         return;

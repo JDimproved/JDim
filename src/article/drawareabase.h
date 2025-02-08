@@ -49,7 +49,17 @@ namespace ARTICLE
     // 範囲選択用
     struct SELECTION
     {
+        /// @brief クリックして選択を変更したときの位置情報
+        enum class ClickPosition : char
+        {
+            unknown,          ///< @brief クリックした位置を記憶していない
+            before_first_hit, ///< @brief クリックした位置が先頭のヒットより前
+            between_hits,     ///< @brief クリックした位置がヒットとヒットの間
+            on_hit,           ///< @brief クリックした位置がヒットの上
+        };
+
         bool select;
+        ClickPosition click_pos;
         CARET_POSITION caret_from;
         CARET_POSITION caret_to;
         std::string str;      // 現在の選択文字列
@@ -367,6 +377,7 @@ namespace ARTICLE
         int search( const std::list< std::string >& list_query, const bool reverse );
         int search_move( const bool reverse );
         void clear_highlight();
+        void reset_caret_position();
 
         // 実況モード
         void live_start();
@@ -473,6 +484,8 @@ namespace ARTICLE
         bool set_selection_str();
         bool is_caret_on_selection( const CARET_POSITION& caret_pos ) const;
         std::string get_selection_as_url( const CARET_POSITION& caret_pos ) const;
+
+        void update_search_start_position( const CARET_POSITION& caret_pos );
 
         // マウスが動いた時の処理
         bool motion_mouse();
