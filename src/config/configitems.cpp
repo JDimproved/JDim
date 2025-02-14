@@ -527,9 +527,9 @@ bool ConfigItems::load( const bool restore )
     // スレ あぼーん( レス数 )
     // abone_number_thread は変数や関数と名前が異なるが互換性のため維持する
     abone_low_number_thread = cf.get_option_int( "abone_low_number_thread", CONF_ABONE_LOW_NUMBER_THREAD, 0,
-                                                 CONFIG::get_max_resnumber() );
+                                                 std::numeric_limits<int>::max() - 1 );
     abone_high_number_thread = cf.get_option_int( "abone_number_thread", CONF_ABONE_HIGH_NUMBER_THREAD, 0,
-                                                  CONFIG::get_max_resnumber() );
+                                                  std::numeric_limits<int>::max() - 1 );
 
     // スレ あぼーん( スレ立てからの経過時間 )
     abone_hour_thread = cf.get_option_int( "abone_hour_thread", CONF_ABONE_HOUR_THREAD, 0, 9999 );
