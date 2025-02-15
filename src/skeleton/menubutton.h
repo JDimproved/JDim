@@ -70,11 +70,6 @@ namespace SKELETON
 
       void slot_menu_selected( int i );
 
-#if ! GTK_CHECK_VERSION(3,24,6)
-        /// ポップアップメニューの位置決め
-        void slot_popup_pos( int& x, int& y, bool& push_in );
-#endif
-
       bool slot_enter( GdkEventCrossing* event );
       bool slot_leave( GdkEventCrossing* event );
       bool slot_motion( GdkEventMotion* event );
