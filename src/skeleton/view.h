@@ -156,9 +156,6 @@ namespace SKELETON
         // ポップアップメニュー表示
         void show_popupmenu( const std::string& url, bool use_slot = false );
 
-        // ポップアップメニュー表示時に表示位置を決めるスロット
-        void slot_popup_menu_position( int& x, int& y, bool& push_in );
-
         // ポップアップメニューがmapした時に呼び出されるスロット
         void slot_map_popupmenu();
 
