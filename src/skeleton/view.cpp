@@ -204,22 +204,12 @@ void View::show_popupmenu( const std::string& url, bool use_slot )
             popupmenu->signal_hide().connect( sigc::mem_fun( *this, &View::slot_hide_popupmenu ) );
         }
 
-        if( use_slot ) popupmenu->popup( sigc::mem_fun( *this, &View::slot_popup_menu_position ), 0, gtk_get_current_event_time() );
+        if( use_slot ) {
+            // viewと左上とメニューの左上を揃える
+            popupmenu->popup_at_widget( this, Gdk::GRAVITY_NORTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr );
+        }
         else popupmenu->popup( 0, gtk_get_current_event_time() );
     }
-}
-
-
-// ポップアップメニュー表示時に表示位置を決めるスロット
-void View::slot_popup_menu_position( int& x, int& y, bool& push_in)
-{
-    // viewの左上の座標をセットする
-    int x2, y2;
-    get_window()->get_position( x, y );
-    translate_coordinates( *dynamic_cast< Gtk::Widget* >( get_toplevel() ), 0, 0, x2, y2 );
-    x += x2;
-    y += y2;
-    push_in = false;
 }
 
 
