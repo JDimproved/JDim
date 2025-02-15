@@ -569,5 +569,11 @@ bool ImageViewMain::operate_view( const int control )
         else cntl = CONTROL::OrgSizeImage;
     }
 
+    if( cntl == CONTROL::ShowPopupMenu ) {
+        // ポップアップメニュー表示
+        show_popupmenu( "", true );
+        return true;
+    }
+
     return ImageViewBase::operate_view( cntl );
 }
