@@ -624,9 +624,13 @@ void ImageViewBase::clicked()
 
 
 
-//
-// viewの操作
-//
+/** @brief viewの操作
+ *
+ * @param[in] control GdkEvent 構造体を解析して取得したコントロールID
+ * @return true ならイベントの伝播を止めて他のハンドラーを呼び出さない
+ * @note ImageViewMain でも呼び出されるので、動作の重複を避けるため
+ * 処理を行ったときは true を返してイベントが伝播しないようにします。
+ */
 bool ImageViewBase::operate_view( const int control )
 {
     if( CONTROL::operate_common( control, get_url(), IMAGE::get_admin() ) ) return true;

@@ -352,6 +352,12 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
         // view作成
         auto view = std::unique_ptr<SKELETON::View>( CORE::ViewFactory( CORE::VIEW_IMAGEVIEW, command.url ) );
         if( view ){
+            // 画像ビューはタブにフォーカスが当たる仕組みになっているため、
+            // 画像ビュー内でメニューキーを押すとタブの画像アイコン(icon)でキー入力が処理されます。
+            // そのため、 view に対してメニューキーを押してコンテキストメニューを表示する処理を追加しても
+            // キー入力を受け取れず動作しません。 (`ImageAdmin::focus_view()`を参照)
+            // そこで、 icon に view のシグナルハンドラを接続して、 icon のキー入力イベントを view に伝達します。
+            icon->signal_key_press_event().connect( sigc::mem_fun( *view, &SKELETON::View::slot_key_press ) );
             view->show_view();
             m_list_view.push_back( std::move( view ) );
         }
