@@ -2,7 +2,6 @@
 
 //#define _DEBUG
 #include "jddebug.h"
-#include "gtkmmversion.h"
 
 #include "usrcmdpref.h"
 #include "usrcmdmanager.h"
@@ -242,12 +241,8 @@ void UsrCmdPref::show_popupmenu()
         act_delete->set_enabled( true );
     }
 
-#if GTK_CHECK_VERSION(3,24,6)
     // Specify the current event by nullptr.
     m_treeview_menu.popup_at_pointer( nullptr );
-#else
-    m_treeview_menu.popup( 0, gtk_get_current_event_time() );
-#endif
 }
 
 
