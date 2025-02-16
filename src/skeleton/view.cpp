@@ -204,14 +204,13 @@ void View::show_popupmenu( const std::string& url, bool use_slot )
             popupmenu->signal_hide().connect( sigc::mem_fun( *this, &View::slot_hide_popupmenu ) );
         }
 
-        // メニューのサイズが大きく、ディスプレイの外にはみ出す場合でも、
-        // 自動的に画面内に収まるように調整します。
         if( use_slot ) {
             // viewの左上とメニューの左上を揃える
+            // メニューのサイズが大きく、ディスプレイの外にはみ出す場合でも、
+            // 自動的に画面内に収まるように調整します。
             popupmenu->popup_at_widget( this, Gdk::GRAVITY_NORTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr );
         }
-        // 現在のイベントに関連するマウスポインターの位置にメニューを表示する
-        else popupmenu->popup_at_pointer( nullptr );
+        else popupmenu->popup( 0, gtk_get_current_event_time() );
     }
 }
 
