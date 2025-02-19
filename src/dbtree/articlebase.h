@@ -57,7 +57,8 @@ namespace DBTREE
         // 詳しくはコンストラクタの説明を参照せよ
         std::string m_org_host;
 
-        std::string m_subject;           // サブジェクト
+        std::string m_subject;           ///< サブジェクト(スレタイトル)。先頭と末尾のASCII空白文字は削除される。
+
         std::string m_modified_subject;  // 置換で変更されたサブジェクト
         int m_number{};                  // サーバ上にあるレスの数
         int m_number_diff{};             // レス増分( subject.txt をロードした時の m_number の増分 )
