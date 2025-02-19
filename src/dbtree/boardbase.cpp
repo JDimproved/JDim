@@ -1775,8 +1775,12 @@ void BoardBase::reset_abone_thread( const std::list< std::string >& threads,
 
     // 前後の空白と空白行を除く
 
-    m_list_abone_thread = MISC::remove_space_from_list( threads );
-    m_list_abone_thread = MISC::remove_nullline_from_list( m_list_abone_thread );
+    m_list_abone_thread.clear();
+    for( const std::string& th : threads ) {
+        // NG スレタイトルの登録時に、先頭と末尾のASCIIの空白文字のみ削除し、全角空白は保持する。`
+        std::string tmp_th = MISC::ascii_trim( th );
+        if( ! tmp_th.empty() ) m_list_abone_thread.push_back( std::move( tmp_th ) );
+    }
 
     m_list_abone_word_thread = MISC::remove_space_from_list( words );
     m_list_abone_word_thread = MISC::remove_nullline_from_list( m_list_abone_word_thread );
