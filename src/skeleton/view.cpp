@@ -185,8 +185,12 @@ bool View::is_mouse_on_view() const
 
 
 
-// ポップアップメニュー表示
-void View::show_popupmenu( const std::string& url, bool use_slot )
+/** @brief ポップアップメニューを指定位置に表示する
+ *
+ * @param[in] url      ビューのURL、またはメニューを識別するID文字列
+ * @param[in] position ポップアップメニューの表示位置
+ */
+void View::show_popupmenu( const std::string& url, PopupMenuPosition position )
 {
     // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
     activate_act_before_popupmenu( url );
@@ -204,13 +208,15 @@ void View::show_popupmenu( const std::string& url, bool use_slot )
             popupmenu->signal_hide().connect( sigc::mem_fun( *this, &View::slot_hide_popupmenu ) );
         }
 
-        if( use_slot ) {
+        if( position == PopupMenuPosition::view_top_left ) {
             // viewの左上とメニューの左上を揃える
             // メニューのサイズが大きく、ディスプレイの外にはみ出す場合でも、
             // 自動的に画面内に収まるように調整します。
             popupmenu->popup_at_widget( this, Gdk::GRAVITY_NORTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr );
         }
-        else popupmenu->popup( 0, gtk_get_current_event_time() );
+        // 現在のイベントに関連するマウスポインターの座標にメニューを表示する
+        // nullptr を渡すことで現在のイベントから自動的に座標を取得します。
+        else popupmenu->popup_at_pointer( nullptr );
     }
 }
 

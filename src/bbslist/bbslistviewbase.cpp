@@ -61,11 +61,11 @@ enum
 #define GET_PATH( row ) m_treestore->get_path( row )
 
 
-// ポップアップメニュー表示
-#define SHOW_POPUPMENU(slot) do{\
+/// @brief ポップアップメニューを指定位置に表示
+#define SHOW_POPUPMENU(position) do{\
 std::string url = path2url( m_path_selected ); \
 if( ! m_path_selected.empty() && url.empty() ) url = "dummy_url"; \
-show_popupmenu( url, slot ); \
+show_popupmenu( url, position ); \
 }while(0)
 
 
@@ -943,7 +943,7 @@ bool BBSListViewBase::operate_view( const int control )
             if( m_treeview.get_selection()->get_selected_rows().size() >= 1 ){
                 m_path_selected = * (m_treeview.get_selection()->get_selected_rows().begin() );
             }
-            SHOW_POPUPMENU(true);
+            SHOW_POPUPMENU( SKELETON::PopupMenuPosition::view_top_left );
             break;
         }
 
@@ -1220,7 +1220,9 @@ bool BBSListViewBase::slot_button_release( GdkEventButton* event )
     else if( get_control().button_alloted( event, CONTROL::OpenBoardTabButton ) ) operate_view( CONTROL::OpenBoardTabButton );
 
     // ポップアップメニューボタン
-    else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ) SHOW_POPUPMENU( false );
+    else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ) {
+        SHOW_POPUPMENU( SKELETON::PopupMenuPosition::mouse_pointer );
+    }
 
     // その他の操作
     else operate_view( get_control().button_press( event ) );

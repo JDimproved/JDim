@@ -1609,9 +1609,9 @@ bool BoardViewBase::operate_view( const int control )
             break;
         }
 
-        // ポップアップメニュー表示
+        // ポップアップメニューをビューの左上に表示
         case CONTROL::ShowPopupMenu:
-            show_popupmenu( "", true );
+            show_popupmenu( "", SKELETON::PopupMenuPosition::view_top_left );
             break;
 
         // 検索
@@ -2212,7 +2212,7 @@ bool BoardViewBase::slot_button_release( GdkEventButton* event )
         // ポップアップメニューボタン
         else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
-            show_popupmenu( "", false );
+            show_popupmenu( "", SKELETON::PopupMenuPosition::mouse_pointer );
         }
 
         else operate_view( get_control().button_press( event ) );
@@ -2476,7 +2476,7 @@ void BoardViewBase::write()
 //
 void BoardViewBase::delete_view()
 {
-    show_popupmenu( "popup_menu_delete", false );
+    show_popupmenu( "popup_menu_delete", SKELETON::PopupMenuPosition::mouse_pointer );
 }
 
 
@@ -2485,7 +2485,7 @@ void BoardViewBase::delete_view()
 //
 void BoardViewBase::set_favorite()
 {
-    show_popupmenu( "popup_menu_favorite", false );
+    show_popupmenu( "popup_menu_favorite", SKELETON::PopupMenuPosition::mouse_pointer );
 }
 
 

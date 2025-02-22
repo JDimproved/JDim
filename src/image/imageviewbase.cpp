@@ -800,7 +800,7 @@ bool ImageViewBase::slot_button_release( GdkEventButton* event )
     // ポップアップメニュー
     if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ){
 
-        show_popupmenu( "", false );
+        show_popupmenu( "", SKELETON::PopupMenuPosition::mouse_pointer );
     }
 
     else if( is_under_mouse() ) operate_view( get_control().button_press( event ) );

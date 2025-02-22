@@ -956,7 +956,7 @@ void ArticleViewBase::close_view()
 //
 void ArticleViewBase::delete_view()
 {
-    show_popupmenu( "popup_menu_delete", false );
+    show_popupmenu( "popup_menu_delete", SKELETON::PopupMenuPosition::mouse_pointer );
 }
 
 
@@ -1159,9 +1159,9 @@ bool ArticleViewBase::operate_view( const int control )
             forward_viewhistory( 1 );
             break;
 
-        // ポップアップメニュー表示
+        // ポップアップメニューをビューの左上に表示
         case CONTROL::ShowPopupMenu:
-            show_popupmenu( "", true );
+            show_popupmenu( "", SKELETON::PopupMenuPosition::view_top_left );
             break;
 
             // ブックマーク移動
@@ -2098,8 +2098,10 @@ bool ArticleViewBase::slot_button_release( std::string url, int res_number, GdkE
             // リンクをクリック
             else if( click_url( url, res_number, event ) );
 
-            // コンテキストメニュー表示
-            else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ) show_popupmenu( url, false );
+            // コンテキストメニューをマウスポインターの位置に表示
+            else if( get_control().button_alloted( event, CONTROL::PopupmenuButton ) ) {
+                show_popupmenu( url, SKELETON::PopupMenuPosition::mouse_pointer );
+            }
 
             // 実況中の場合は停止
             else if( get_control().button_alloted( event, CONTROL::ClickButton ) && get_live() )
@@ -2529,7 +2531,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             }
             else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_id();
             else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
-                show_popupmenu( url, false );
+                show_popupmenu( url, SKELETON::PopupMenuPosition::mouse_pointer );
             }
         }
     }
@@ -2560,7 +2562,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             }
             else if( control.button_alloted( event, CONTROL::DrawoutIDButton ) ) slot_drawout_name();
             else if( control.button_alloted( event, CONTROL::PopupmenuIDButton ) ){
-                show_popupmenu( url, false );
+                show_popupmenu( url, SKELETON::PopupMenuPosition::mouse_pointer );
             }
         }
     }
@@ -2572,7 +2574,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
-            show_popupmenu( url, false );
+            show_popupmenu( url, SKELETON::PopupMenuPosition::mouse_pointer );
         }
     }
 
@@ -2583,7 +2585,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
         hide_popup();
 
         if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ){
-            show_popupmenu( url, false );
+            show_popupmenu( url, SKELETON::PopupMenuPosition::mouse_pointer );
         }
     }
 
@@ -2619,7 +2621,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 #endif
         if( control.button_alloted( event, CONTROL::OpenBeButton ) ) CORE::core_set_command( "open_url_browser", openurl );
         else if( control.button_alloted( event, CONTROL::PopupmenuBeButton ) ){
-            show_popupmenu( openurl, false );
+            show_popupmenu( openurl, SKELETON::PopupMenuPosition::mouse_pointer );
         }
     }
 
@@ -2643,7 +2645,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             hide_popup();
 
             if( control.button_alloted( event, CONTROL::JumpAncButton ) ) slot_jump();
-            else if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ) show_popupmenu( url, false );
+            else if( control.button_alloted( event, CONTROL::PopupmenuAncButton ) ) {
+                show_popupmenu( url, SKELETON::PopupMenuPosition::mouse_pointer );
+            }
             else if( control.button_alloted( event, CONTROL::DrawoutAncButton ) ) slot_drawout_around();
         }
     }
@@ -2667,7 +2671,9 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
             m_jump_to = m_str_num;
             m_jump_from = m_str_num;
 
-            if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ) show_popupmenu( url, false );
+            if( control.button_alloted( event, CONTROL::PopupmenuResButton ) ) {
+                show_popupmenu( url, SKELETON::PopupMenuPosition::mouse_pointer );
+            }
 
             // ブックマークセット
             else if( control.button_alloted( event, CONTROL::BmResButton ) ) slot_bookmark();
@@ -2731,7 +2737,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         if( control.button_alloted( event, CONTROL::PopupmenuImageButton ) ){
             m_str_num = std::to_string( res_number );
-            show_popupmenu( url, false );
+            show_popupmenu( url, SKELETON::PopupMenuPosition::mouse_pointer );
         }
 
         else if( ! DBIMG::is_cached( url ) && ! SESSION::is_online() ){
