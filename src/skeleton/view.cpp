@@ -210,7 +210,9 @@ void View::show_popupmenu( const std::string& url, bool use_slot )
             // 自動的に画面内に収まるように調整します。
             popupmenu->popup_at_widget( this, Gdk::GRAVITY_NORTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr );
         }
-        else popupmenu->popup( 0, gtk_get_current_event_time() );
+        // 現在のイベントに関連するマウスポインターの座標にメニューを表示する
+        // nullptr を渡すことで現在のイベントから自動的に座標を取得します。
+        else popupmenu->popup_at_pointer( nullptr );
     }
 }
 

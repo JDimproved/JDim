@@ -844,7 +844,9 @@ void ToolBar::slot_clicked_delete()
     std::cout << "ToolBar::slot_clicked_delete\n";
 #endif
 
-    m_admin->set_command( "toolbar_delete_view", m_url );
+    // ツールバーの削除ボタンを押すとポップアップメニューを表示するビューがあります。
+    // GdkEvent が必要なため、コマンドを即時実行してイベント処理中に表示します。
+    m_admin->set_command_immediately( "toolbar_delete_view", m_url );
 }
 
 
@@ -873,7 +875,9 @@ void ToolBar::slot_clicked_favorite()
     std::cout << "ToolBar::slot_clicked_favorite\n";
 #endif
 
-    m_admin->set_command( "toolbar_set_favorite", m_url );
+    // ツールバーのお気に入りボタンを押すとポップアップメニューを表示するビューがあります。
+    // GdkEvent が必要なため、コマンドを即時実行してイベント処理中に表示します。
+    m_admin->set_command_immediately( "toolbar_set_favorite", m_url );
 }
 
 
