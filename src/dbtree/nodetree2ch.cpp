@@ -58,17 +58,6 @@ NodeTree2ch::~NodeTree2ch()
 }
 
 
-//
-// キャッシュに保存する前の前処理
-//
-// 先頭にrawモードのステータスが入っていたら取り除く
-//
-char* NodeTree2ch::process_raw_lines( std::string& rawlines )
-{
-    return NodeTree2chCompati::process_raw_lines( rawlines );
-}
-
-
 /** @brief 5chスレッドの拡張属性を取り出す
  *
  * @param[in] str スレのレス番号1(`>>1`)の本文テキストデータ
