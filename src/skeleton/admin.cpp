@@ -2064,6 +2064,31 @@ View* Admin::get_current_view()
 }
 
 
+/** @brief 配置用のウィジェットを取得する
+ *
+ * @param[in] id 紐づけのID
+ * @return id に紐づけられたウィジェット、無ければ nullptr を返す
+ */
+Gtk::Widget* Admin::get_anchor_widget( const std::size_t id )
+{
+    if( m_vec_anchor_widget.size() <= id ) return nullptr;
+    return m_vec_anchor_widget[id];
+}
+
+
+/** @brief 配置用のウィジェットを設定する
+ *
+ * @note Admin では anchor_widget の寿命を管理しない。
+ * @param[in] id            紐づけのID
+ * @param[in] anchor_widget IDに紐づける配置用ウィジェット
+ */
+void Admin::set_anchor_widget( const std::size_t id, Gtk::Widget* anchor_widget )
+{
+    if( m_vec_anchor_widget.size() <= id ) {
+        m_vec_anchor_widget.resize( id + 1 );
+    }
+    m_vec_anchor_widget[id] = anchor_widget;
+}
 
 
 //

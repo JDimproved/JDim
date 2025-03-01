@@ -69,6 +69,9 @@ namespace SKELETON
         bool m_use_switchhistory{};
         std::list< std::string > m_list_switchhistory;
 
+        /// @brief 配置用ウィジェットのポインターを保持する。Adminではウィジェットの寿命を管理しない。
+        std::vector<Gtk::Widget*> m_vec_anchor_widget;
+
     public:
 
         explicit Admin( const std::string& url );
@@ -151,6 +154,10 @@ namespace SKELETON
         void set_current_page_focus( const Glib::VariantBase& page );
 
         virtual View* get_current_view();
+
+        // 配置用のウィジェットを取得する/設定する
+        Gtk::Widget* get_anchor_widget( const std::size_t id );
+        void set_anchor_widget( const std::size_t id, Gtk::Widget* anchor_widget );
 
     protected:
 
