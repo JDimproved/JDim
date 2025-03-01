@@ -31,8 +31,6 @@ namespace DBTREE
 
       protected:
 
-        char* process_raw_lines( std::string& rawlines ) override;
-
         void create_loaderdata( JDLIB::LOADERDATA& data ) override;
 
         void parse_extattr( std::string_view str ) override;

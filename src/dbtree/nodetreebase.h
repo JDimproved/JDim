@@ -296,8 +296,8 @@ namespace DBTREE
         virtual void create_loaderdata( JDLIB::LOADERDATA& data ){}
 
         // 保存前にrawデータを加工
-        // デフォルトでは何もしない
-        virtual char* process_raw_lines( std::string& rawlines ){ return rawlines.data(); }
+        // NOTE: 派生クラスでのrawデータ加工が不要になったため、メンバー関数を削除しました。
+        virtual char* process_raw_lines( std::string& rawlines ) = delete;
 
         // raw データを dat に変換
         // デフォルトでは何もしない
