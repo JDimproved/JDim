@@ -86,10 +86,13 @@ void BoardToolBar::pack_toolbar()
                 get_buttonbar().append( *get_button_favorite() );
                 set_tooltip( *get_button_favorite(), CONTROL::get_label_motions( CONTROL::AppendFavorite )
                              + "\n\nスレ一覧のタブか選択したスレをお気に入りに直接Ｄ＆Ｄしても登録可能" );
+                // ポップアップメニューの配置に利用するためツールバーボタンをIDに紐づけします。
+                get_admin()->set_anchor_widget( kToolbarWidgetFavoriteAdd, get_button_favorite() );
                 break;
 
             case ITEM_DELETE:
                 get_buttonbar().append( *get_button_delete() );
+                get_admin()->set_anchor_widget( kToolbarWidgetDelete, get_button_delete() );
                 break;
 
             case ITEM_QUIT:

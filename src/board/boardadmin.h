@@ -16,6 +16,11 @@
 
 namespace BOARD
 {
+    /// @brief ツールバーのお気に入り追加ボタンを紐づけるID
+    static constexpr std::size_t kToolbarWidgetFavoriteAdd = 0;
+    /// @brief ツールバーの削除ボタンを紐づけるID
+    static constexpr std::size_t kToolbarWidgetDelete = 1;
+
     class BoardToolBar;
 
     class BoardAdmin : public SKELETON::Admin

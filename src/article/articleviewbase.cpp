@@ -956,7 +956,9 @@ void ArticleViewBase::close_view()
 //
 void ArticleViewBase::delete_view()
 {
-    show_popupmenu( "popup_menu_delete", SKELETON::PopupMenuPosition::mouse_pointer );
+    // IDに紐づけたツールバーボタンを取得してポップアップメニューの表示位置に指定します。
+    show_popupmenu( "popup_menu_delete", SKELETON::PopupMenuPosition::toolbar_button,
+                    get_admin()->get_anchor_widget( kToolbarWidgetDelete ) );
 }
 
 

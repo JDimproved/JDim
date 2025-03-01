@@ -2476,7 +2476,9 @@ void BoardViewBase::write()
 //
 void BoardViewBase::delete_view()
 {
-    show_popupmenu( "popup_menu_delete", SKELETON::PopupMenuPosition::mouse_pointer );
+    // IDに紐づけたツールバーボタンを取得してポップアップメニューの表示位置に指定します。
+    show_popupmenu( "popup_menu_delete", SKELETON::PopupMenuPosition::toolbar_button,
+                    get_admin()->get_anchor_widget( kToolbarWidgetDelete ) );
 }
 
 
@@ -2485,7 +2487,8 @@ void BoardViewBase::delete_view()
 //
 void BoardViewBase::set_favorite()
 {
-    show_popupmenu( "popup_menu_favorite", SKELETON::PopupMenuPosition::mouse_pointer );
+    show_popupmenu( "popup_menu_favorite", SKELETON::PopupMenuPosition::toolbar_button,
+                    get_admin()->get_anchor_widget( kToolbarWidgetFavoriteAdd ) );
 }
 
 
