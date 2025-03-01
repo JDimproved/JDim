@@ -15,6 +15,7 @@ namespace SKELETON
     enum class PopupMenuPosition {
         mouse_pointer, ///< マウスポインターの位置
         view_top_left, ///< ビューの左上
+        toolbar_button, ///< ツールバーボタンの下
     };
 
     class Admin;
@@ -160,7 +161,7 @@ namespace SKELETON
         bool release_keyjump_key( int key );
 
         // ポップアップメニューを指定位置に表示する
-        void show_popupmenu( const std::string& url, PopupMenuPosition position );
+        void show_popupmenu( const std::string& url, PopupMenuPosition position, Gtk::Widget* anchor_widget = nullptr );
 
         // ポップアップメニューがmapした時に呼び出されるスロット
         void slot_map_popupmenu();
