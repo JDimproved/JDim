@@ -23,6 +23,9 @@ namespace JDLIB
 
 namespace ARTICLE
 {
+    /// @brief ツールバーの削除ボタンを紐づけるID
+    static constexpr std::size_t kToolbarWidgetDelete = 0;
+
     class ArticleToolBar;
     class ArticleToolBarSimple;
     class SearchToolBar;

@@ -138,6 +138,8 @@ void ArticleToolBar::pack_buttons()
 
             case ITEM_DELETE:
                 get_buttonbar().append( *get_button_delete() );
+                // ポップアップメニューの配置に利用するためツールバーボタンをIDに紐づけします。
+                get_admin()->set_anchor_widget( kToolbarWidgetDelete, get_button_delete() );
 
                 break;
 

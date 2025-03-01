@@ -9,6 +9,7 @@
 #include "config/globalconf.h"
 #include "history/historymanager.h"
 #include "jdlib/miscgtk.h"
+#include "jdlib/miscmsg.h"
 
 #include "global.h"
 #include "session.h"
@@ -187,10 +188,11 @@ bool View::is_mouse_on_view() const
 
 /** @brief ポップアップメニューを指定位置に表示する
  *
- * @param[in] url      ビューのURL、またはメニューを識別するID文字列
- * @param[in] position ポップアップメニューの表示位置
+ * @param[in] url           ビューのURL、またはメニューを識別するID文字列
+ * @param[in] position      ポップアップメニューの表示位置
+ * @param[in] anchor_widget メニューの表示位置に指定するウィジェット
  */
-void View::show_popupmenu( const std::string& url, PopupMenuPosition position )
+void View::show_popupmenu( const std::string& url, PopupMenuPosition position, Gtk::Widget* anchor_widget )
 {
     // ポップアップメニューを表示する前にメニューのアクティブ状態を切り替える
     activate_act_before_popupmenu( url );
@@ -214,9 +216,23 @@ void View::show_popupmenu( const std::string& url, PopupMenuPosition position )
             // 自動的に画面内に収まるように調整します。
             popupmenu->popup_at_widget( this, Gdk::GRAVITY_NORTH_WEST, Gdk::GRAVITY_NORTH_WEST, nullptr );
         }
-        // 現在のイベントに関連するマウスポインターの座標にメニューを表示する
-        // nullptr を渡すことで現在のイベントから自動的に座標を取得します。
-        else popupmenu->popup_at_pointer( nullptr );
+        else if( position == PopupMenuPosition::mouse_pointer ) {
+            // 現在のイベントに関連するマウスポインターの座標にメニューを表示する
+            // nullptr を渡すことで現在のイベントから自動的に座標を取得します。
+            popupmenu->popup_at_pointer( nullptr );
+        }
+        else if( position == PopupMenuPosition::toolbar_button && anchor_widget ) {
+            // anchor_widgetの右下とメニューの右上を揃える
+            // メニューのサイズが大きく、ディスプレイの外にはみ出す場合でも、
+            // 自動的に画面内に収まるように調整します。
+            popupmenu->popup_at_widget( anchor_widget, Gdk::GRAVITY_SOUTH_EAST, Gdk::GRAVITY_NORTH_EAST, nullptr );
+        }
+        else {
+            std::string errmsg = "View::show_popupmenu: Incorrect argument value: position=";
+            errmsg.append( std::to_string( static_cast<int>( position ) ) );
+            errmsg.append( static_cast<bool>( anchor_widget ) ? ", with anchor" : "without anchor" );
+            MISC::ERRMSG( errmsg );
+        }
     }
 }
 
