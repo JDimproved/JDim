@@ -640,6 +640,27 @@ void ImageAdmin::close_window()
 }
 
 
+/** @brief キューからURLを取り出して画像を閉じるコマンドを送信する割り込みハンドラ
+ *
+ * @details 多量の画像URLを一度に閉じると、ウインドウが操作を受け付けなくなりフリーズします。
+ * そのため、保留中の優先度が高いイベントがないときに実行する割り込みハンドラで
+ * 閉じるコマンドの送信を断続的に行い、メインスレッドで他の処理が実行できるようにします。
+ * @note このメンバー関数はスレッドセーフではないため、
+ * メインスレッドまたは割り込みハンドラから呼び出す必要があります。
+ * @return キューが空になったら false を返してハンドラの接続を解除する
+ */
+bool ImageAdmin::slot_close_command()
+{
+    if( ! m_que_close_url.empty() ) {
+        std::string target_url = std::move( m_que_close_url.front() );
+        m_que_close_url.pop();
+        set_command( "close_view", target_url );
+        return true; // 継続
+    }
+    set_command( "set_imgtab_operating", "", "false" );
+    return false; // 終了
+}
+
 //
 // url 以外の画像を閉じる
 //
@@ -650,11 +671,16 @@ void ImageAdmin::close_other_views( const std::string& url )
     m_iconbox.foreach( [this, &url]( Gtk::Widget& w ) {
         auto view = dynamic_cast< SKELETON::View* >( &w );
         if( view && view->get_url() != url ) {
-            set_command( "close_view", view->get_url() );
+            // ウインドウのフリーズを回避するため、
+            // 閉じる画像のURLをキューに追加し、割り込みハンドラにコマンド送信を委ねます。
+            m_que_close_url.push( view->get_url() );
         }
     } );
 
-    set_command( "set_imgtab_operating", "", "false" );
+    // 割り込みハンドラが未接続であれば接続を行います。
+    if( m_conn_close_cmd.empty() ) {
+        m_conn_close_cmd = Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageAdmin::slot_close_command ) );
+    }
 }
 
 
@@ -668,11 +694,14 @@ void ImageAdmin::close_left_views( const std::string& url )
     for( auto&& widget : m_iconbox.get_children() ) {
         if( auto view{ dynamic_cast<SKELETON::View*>( widget ) } ) {
             if( view->get_url() == url ) break;
-            set_command( "close_view", view->get_url() );
+            // 閉じる画像のURLをキューに追加し、割り込みハンドラにコマンド送信を委ねます。
+            m_que_close_url.push( view->get_url() );
         }
     }
 
-    set_command( "set_imgtab_operating", "", "false" );
+    if( m_conn_close_cmd.empty() ) {
+        m_conn_close_cmd = Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageAdmin::slot_close_command ) );
+    }
 }
 
 
@@ -692,11 +721,14 @@ void ImageAdmin::close_right_views( const std::string& url )
     for( ++it; it != widgets.end(); ++it ) {
         auto view = dynamic_cast< SKELETON::View* >( *it );
         if( view ) {
-            set_command( "close_view", view->get_url() );
+            // 閉じる画像のURLをキューに追加し、割り込みハンドラにコマンド送信を委ねます。
+            m_que_close_url.push( view->get_url() );
         }
     }
 
-    set_command( "set_imgtab_operating", "", "false" );
+    if( m_conn_close_cmd.empty() ) {
+        m_conn_close_cmd = Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageAdmin::slot_close_command ) );
+    }
 }
 
 
@@ -727,13 +759,16 @@ void ImageAdmin::close_error_views( const std::string& mode )
                 || ( mode == "nocached"  && code == HTTP_INIT ) // キャッシュに無い(削除済み)の画像
                 || mode == "all"  // 読み込み中も含めて閉じる
                 ){
-                set_command( "close_view", url );
+                // 閉じる画像のURLをキューに追加し、割り込みハンドラにコマンド送信を委ねます。
+                m_que_close_url.push( view->get_url() );
                 if( mode == "all" ) DBIMG::stop_load( url );
             }
         }
     }
 
-    set_command( "set_imgtab_operating", "", "false" );
+    if( m_conn_close_cmd.empty() ) {
+        m_conn_close_cmd = Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageAdmin::slot_close_command ) );
+    }
 }
 
 
@@ -757,11 +792,14 @@ void ImageAdmin::close_noerror_views()
             if( ! DBIMG::is_cached ( url ) ) continue;
 
             const int code = DBIMG::get_code( url );
-            if( code == HTTP_OK ) set_command( "close_view", url );
+            // 閉じる画像のURLをキューに追加し、割り込みハンドラにコマンド送信を委ねます。
+            if( code == HTTP_OK ) m_que_close_url.push( view->get_url() );
         }
     }
 
-    set_command( "set_imgtab_operating", "", "false" );
+    if( m_conn_close_cmd.empty() ) {
+        m_conn_close_cmd = Glib::signal_idle().connect( sigc::mem_fun( *this, &ImageAdmin::slot_close_command ) );
+    }
 }
 
 

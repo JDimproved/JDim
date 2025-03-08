@@ -9,6 +9,7 @@
 #include "skeleton/admin.h"
 
 #include <memory>
+#include <queue>
 #include <string>
 
 
@@ -30,6 +31,10 @@ namespace IMAGE
         Gtk::EventBox m_view;
 
         std::list<std::unique_ptr<SKELETON::View>> m_list_view;
+        /// @brief 画像を閉じるURLを入れるキュー（待ち行列）
+        std::queue<std::string> m_que_close_url;
+        /// @brief 割り込みハンドラの接続状況を管理する
+        sigc::connection m_conn_close_cmd;
 
         int m_scroll;
         int m_counter_scroll{};
@@ -128,6 +133,8 @@ namespace IMAGE
 
         bool copy_file( const std::string& url, const std::string& path_from, const std::string& path_to );
         void save_all();
+
+        bool slot_close_command();
     };
 
     IMAGE::ImageAdmin* get_admin();
