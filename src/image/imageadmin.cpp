@@ -640,6 +640,27 @@ void ImageAdmin::close_window()
 }
 
 
+/** @brief キューからURLを取り出して画像を閉じるコマンドを送信する割り込みハンドラ
+ *
+ * @details 多量の画像URLを一度に閉じると、ウインドウが操作を受け付けなくなりフリーズします。
+ * そのため、保留中の優先度が高いイベントがないときに実行する割り込みハンドラで
+ * 閉じるコマンドの送信を断続的に行い、メインスレッドで他の処理が実行できるようにします。
+ * @note このメンバー関数はスレッドセーフではないため、
+ * メインスレッドまたは割り込みハンドラから呼び出す必要があります。
+ * @return キューが空になったら false を返してハンドラの接続を解除する
+ */
+bool ImageAdmin::slot_close_command()
+{
+    if( ! m_que_close_url.empty() ) {
+        std::string target_url = std::move( m_que_close_url.front() );
+        m_que_close_url.pop();
+        set_command( "close_view", target_url );
+        return true; // 継続
+    }
+    set_command( "set_imgtab_operating", "", "false" );
+    return false; // 終了
+}
+
 //
 // url 以外の画像を閉じる
 //
