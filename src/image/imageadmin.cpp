@@ -121,7 +121,9 @@ void ImageAdmin::restore( const bool only_locked )
     std::list< bool > list_locked = SESSION::get_image_locked();
     std::list< bool >::iterator it_locked = list_locked.begin();
 
-    for( int page = 0; it_url != list_url.end(); ++it_url, ++page ){
+    // タブ操作中を表すフラグを設定して、ビューの更新処理を無効化します。
+    SESSION::set_tab_operating( get_url(), true );
+    for( int page = 0; it_url != list_url.end(); ++page ){
 
         // タブのロック状態
         bool lock_img = false;
@@ -136,6 +138,12 @@ void ImageAdmin::restore( const bool only_locked )
         if( page == SESSION::image_page() ) set_page_num = get_tab_nums();
 
         COMMAND_ARGS command_arg = url_to_openarg( *it_url, true, lock_img );
+        // it_url のインクリメントはここで行い、終端に達しているかチェックします。
+        // 終端に達していたらタブ操作中を表すフラグを解除して、ビューの更新処理を有効化します。
+        ++it_url;
+        if( it_url == list_url.end() ) {
+            SESSION::set_tab_operating( get_url(), false );
+        }
         if( ! command_arg.url.empty() ) open_view( command_arg );
     }
 
