@@ -33,6 +33,8 @@ namespace IMAGE
         std::list<std::unique_ptr<SKELETON::View>> m_list_view;
         /// @brief 画像を閉じるURLを入れるキュー（待ち行列）
         std::queue<std::string> m_que_close_url;
+        /// @brief 割り込みハンドラの接続状況を管理する
+        sigc::connection m_conn_close_cmd;
 
         int m_scroll;
         int m_counter_scroll{};
