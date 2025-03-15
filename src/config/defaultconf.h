@@ -205,10 +205,10 @@ namespace CONFIG
 #define CONF_REGEX_RES_AA "\"" CONF_REGEX_RES_AA_DEFAULT "\""
 
 // 2ch にアクセスするときのエージェント名
-#define CONF_AGENT_FOR2CH "Monazilla/1.00 JD"
+#define CONF_AGENT_FOR2CH "Monazilla/1.00 JD/2006.1.1"
 
 // 2ch外にアクセスするときのエージェント名
-#define CONF_AGENT_FOR_DATA "Monazilla/1.00 JD"
+#define CONF_AGENT_FOR_DATA "Monazilla/1.00 JD/2006.1.1"
 
 // 2ch にログインするときのX-2ch-UA
 #define CONF_X_2CH_UA "Navigator for 2ch 1.7.5"
