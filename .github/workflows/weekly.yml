@@ -81,7 +81,7 @@ jobs:
       - name: build muon stage2
         run: |
           cd muon-src
-          ./stage1/muon-bootstrap setup -Ddocs=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled ../muon-build
+          ./stage1/muon-bootstrap setup -Dman-pages=disabled -Dmeson-docs=disabled -Dmeson-tests=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled ../muon-build
           ./stage1/muon-bootstrap samu -C ../muon-build
           cd ..
       - run: ./muon-build/muon version
