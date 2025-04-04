@@ -16,6 +16,7 @@
 #include "login2ch.h"
 
 #include <sstream>
+#include <ctime>
 
 using namespace DBTREE;
 
@@ -49,7 +50,7 @@ std::string Article2ch::create_write_message( const std::string& name, const std
             << "&MESSAGE=" << MISC::url_encode_plus( msg, enc )
             << "&bbs=" << DBTREE::board_id( get_url() )
             << "&key=" << get_key()
-            << "&time=" << get_time_modified()
+            << "&time=" << time(0)
             << "&submit=" << MISC::url_encode_plus( "書き込む", enc )
             // XXX: ブラウザの種類に関係なく含めて問題ないか？
             << "&oekaki_thread1=";
