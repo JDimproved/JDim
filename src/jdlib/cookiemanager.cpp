@@ -206,6 +206,9 @@ std::string SimpleCookieManager::get_cookie_by_host( const std::string& hostname
             }
         }
         i = hostname.find( '.', i + 1 );
+        if (i != std::string::npos) {
+            ++i; // ピリオドの分1個進める
+        }
     }
     return output;
 }
