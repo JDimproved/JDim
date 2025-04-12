@@ -116,7 +116,7 @@ TEST_F(CookieManager_GetCookieByHost, parsing_bbspink)
     EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "mercury.bbspink.com" ) );
 
     the_cookie_manager->feed( "mercury.bbspink.com",
-                              "yuki=akari; Path=/; Domain=bbspink.com; Expires=Fri, 18 Apr 2025 00:00:00 GMT" );
+                              "yuki=akari; Path=/; Domain=bbspink.com;" );
     expect = "yuki=akari";
     EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "mercury.bbspink.com" ) );
 }
