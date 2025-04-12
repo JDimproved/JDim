@@ -65,6 +65,14 @@ TEST_F(CookieManager_GetCookieByHost, parsing_domain)
     EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "second.hello.world.test" ) );
 }
 
+TEST_F(CookieManager_GetCookieByHost, parsing_domain_ignore_leading_dot)
+{
+    the_cookie_manager->feed( "first.hello.world.test", "foo=bar; Domain=world.test" );
+    the_cookie_manager->feed( "second.hello.world.test", "baz=qux" );
+    const std::string expect = "baz=qux; foo=bar";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "second.hello.world.test" ) );
+}
+
 TEST_F(CookieManager_GetCookieByHost, parsing_path)
 {
     // ルート(/)以外のpathは無視する
@@ -93,6 +101,26 @@ TEST_F(CookieManager_GetCookieByHost, parsing_expires)
     EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "example.test" ) );
 }
 
+TEST_F(CookieManager_GetCookieByHost, parsing_bbspink)
+{
+    std::string expect;
+
+    the_cookie_manager->feed( "mercury.bbspink.com",
+                              "PON=100.200.300.400; Path=/; Expires=Fri, 04 Apr 2025 00:00:00 GMT" );
+    expect = "";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "mercury.bbspink.com" ) );
+
+    the_cookie_manager->feed( "mercury.bbspink.com",
+                              "PON=100.200.300.400; Path=/; Domain=bbspink.com; Expires=Fri, 04 Apr 2025 00:00:00 GMT" );
+    expect = "";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "mercury.bbspink.com" ) );
+
+    the_cookie_manager->feed( "mercury.bbspink.com",
+                              "yuki=akari; Path=/; Domain=bbspink.com; Expires=Fri, 18 Apr 2025 00:00:00 GMT" );
+    expect = "yuki=akari";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "mercury.bbspink.com" ) );
+}
+
 
 class CookieManager_DeleteCookieByHost : public CookieManager_TestBase {};
 
@@ -100,7 +128,18 @@ TEST_F(CookieManager_DeleteCookieByHost, delete_toplevel)
 {
     the_cookie_manager->feed( "hello.world.test", "foo=bar; domain=.world.test" );
     the_cookie_manager->feed( "hello.world.test", "baz=qux;" );
-    // トップレベルのドメインまで削除される
+    // ドメイン全体の Cookie が削除される
+    the_cookie_manager->delete_cookie_by_host( "hello.world.test" );
+
+    const std::string expect = "";
+    EXPECT_EQ( expect, the_cookie_manager->get_cookie_by_host( "hello.world.test" ) );
+}
+
+TEST_F(CookieManager_DeleteCookieByHost, delete_cookie_ignore_leading_dot)
+{
+    the_cookie_manager->feed( "hello.world.test", "foo=bar; domain=world.test" );
+    the_cookie_manager->feed( "hello.world.test", "baz=qux;" );
+    // ドメイン全体の Cookie が削除される
     the_cookie_manager->delete_cookie_by_host( "hello.world.test" );
 
     const std::string expect = "";

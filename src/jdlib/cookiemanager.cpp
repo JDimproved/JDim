@@ -142,7 +142,8 @@ bool SimpleCookieParser::parse( const std::string& input, SimpleCookie& result )
         // ルート(/)以外のpathは解析失敗にする
         if( regex.length( 1 ) ) return false;
     }
-    if( regex.exec( R"-(domain=([^;]+))-", input, offset, icase, newline, usemigemo, wchar ) ) {
+    // Cookie の仕様により、ドメイン名の先頭のドットは無視する
+    if( regex.exec( R"-(domain=\.?([^;]+))-", input, offset, icase, newline, usemigemo, wchar ) ) {
         result.domain = regex.str( 1 );
     }
 
@@ -160,7 +161,7 @@ void SimpleCookieManager::feed( const std::string& hostname, const std::string& 
     SimpleCookie result;
     if( ! m_parser.parse( input, result ) ) return;
 
-    // ドメインの解析結果が空、またはホスト名と一致する場合はホスト名を使う
+    // ドメインの解析結果が空、または先頭にドットがついたホスト名と一致する場合はホスト名を使う
     if( result.domain.empty() || result.domain == "." + hostname ) {
         result.domain = hostname;
     }
@@ -206,6 +207,9 @@ std::string SimpleCookieManager::get_cookie_by_host( const std::string& hostname
             }
         }
         i = hostname.find( '.', i + 1 );
+        if (i != std::string::npos) {
+            ++i; // ピリオドの分1個進める
+        }
     }
     return output;
 }
@@ -222,5 +226,8 @@ void SimpleCookieManager::delete_cookie_by_host( const std::string& hostname )
             m_storage.erase( it );
         }
         i = hostname.find( '.', i + 1 );
+        if (i != std::string::npos) {
+            ++i; // ドメイン名の先頭から区切り(.)を取り除くためピリオドの分1個進める
+        }
     }
 }
