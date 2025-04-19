@@ -2321,7 +2321,7 @@ void Core::set_command( const COMMAND_ARGS& command )
             if( current_url.rfind( command.url, 0 ) == 0 ) current_url = command.url;
 
             // タブを開く位置を取得
-            const std::list<std::string> list_urls = ARTICLE::get_admin()->get_URLs();
+            const std::vector<std::string> list_urls = ARTICLE::get_admin()->get_URLs();
             for( const std::string& url : list_urls ) {
 
                 if( url == command.url ) break;

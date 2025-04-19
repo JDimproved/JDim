@@ -1103,7 +1103,7 @@ void Core::slot_clear_post_history()
     // ビューの表示更新
     CORE::core_set_command( "redraw_article" );
 
-    std::list< std::string > list_urls = BOARD::get_admin()->get_URLs();
+    std::vector<std::string> list_urls = BOARD::get_admin()->get_URLs();
     for( const std::string& url : list_urls ) CORE::core_set_command( "update_board", url );
 }
 

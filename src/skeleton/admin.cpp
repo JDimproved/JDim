@@ -343,10 +343,10 @@ int Admin::get_tab_nums()
 //
 // 含まれているページのURLのリスト取得
 //
-std::list<std::string> Admin::get_URLs()
+std::vector<std::string> Admin::get_URLs()
 {
-    std::list<std::string> urls;
-    
+    std::vector<std::string> urls;
+
     const int pages = m_notebook->get_n_pages();
     if( pages ){
 

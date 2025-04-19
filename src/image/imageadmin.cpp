@@ -115,8 +115,8 @@ void ImageAdmin::restore( const bool only_locked )
 
     int set_page_num = 0;
 
-    std::list< std::string > list_url = SESSION::image_URLs();
-    std::list< std::string >::iterator it_url= list_url.begin();
+    const std::vector<std::string>& list_url = SESSION::image_URLs();
+    auto it_url = list_url.begin();
 
     std::list< bool > list_locked = SESSION::get_image_locked();
     std::list< bool >::iterator it_locked = list_locked.begin();
@@ -196,9 +196,9 @@ int ImageAdmin::get_tab_nums()
 //
 // 含まれているページのURLのリスト取得
 //
-std::list< std::string > ImageAdmin::get_URLs()
+std::vector<std::string> ImageAdmin::get_URLs()
 {
-    std::list< std::string > urls;
+    std::vector<std::string> urls;
     m_iconbox.foreach( [&urls]( Gtk::Widget& w ) {
         auto view = dynamic_cast< SKELETON::View* >( &w );
         if( view ) {
@@ -1164,7 +1164,7 @@ void ImageAdmin::save_all()
             int overwrite = Gtk::RESPONSE_NO;
             bool use_name_in_cache = false;
 
-            const std::list<std::string> list_urls = get_URLs();
+            const std::vector<std::string> list_urls = get_URLs();
             for( const std::string& url : list_urls ) {
 
                 if( ! DBIMG::is_cached( url ) || DBIMG::get_mosaic( url ) ) continue;

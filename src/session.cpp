@@ -43,15 +43,15 @@ int win_board_page;
 int win_article_page;
 int win_image_page;
 
-std::list< std::string > board_urls;
+std::vector<std::string> board_urls;
 std::list< bool > board_locked;
 std::list< std::string > board_switchhistory;
 
-std::list< std::string > article_urls;
+std::vector<std::string> article_urls;
 std::list< bool > article_locked;
 std::list< std::string > article_switchhistory;
 
-std::list< std::string > image_urls;
+std::vector<std::string> image_urls;
 std::list< bool > image_locked;
 
 std::string items_sidebar_toolbar_str;
@@ -285,6 +285,18 @@ static std::vector<int> parse_items( const std::string& items_str )
 
 
 static void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls,  std::list< std::string >& list_urls )
+{
+    list_urls.clear();
+
+    const std::string str_tmp = cf.get_option_str( id_urls, "" );
+    if( ! str_tmp.empty() ){
+        std::list<std::string> list_tmp = MISC::split_line( str_tmp );
+        for( std::string& url : list_tmp ) if( ! url.empty() ) list_urls.push_back( std::move( url ) );
+    }
+}
+
+
+static void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls,  std::vector<std::string>& list_urls )
 {
     list_urls.clear();
 
@@ -548,7 +560,11 @@ void SESSION::save_session()
         if( ! url.empty() ) str_article_urls.append( " \"" + url + "\"" );
     }
     for( const std::string& url : image_urls ) {
-        if( ! url.empty() ) str_image_urls.append( " \"" + url + "\"" );
+        if( ! url.empty() ) {
+            str_image_urls.append( " \"" );
+            str_image_urls.append( url );
+            str_image_urls.push_back( '"' );
+        }
     }
 
     // 開いているタブのロック状態
@@ -869,8 +885,8 @@ void SESSION::set_bbslist_page( const int page ){ win_bbslist_page = page; }
 // 前回閉じたときに開いていたboardのページ番号とURL
 int SESSION::board_page(){ return win_board_page; }
 void SESSION::set_board_page( const int page ){ win_board_page = page; }
-const std::list< std::string >& SESSION::get_board_URLs(){ return board_urls; }
-void SESSION::set_board_URLs( const std::list< std::string >& urls ){ board_urls = urls; }
+const std::vector<std::string>& SESSION::get_board_URLs(){ return board_urls; }
+void SESSION::set_board_URLs( std::vector<std::string> urls ){ board_urls = std::move( urls ); }
 
 // スレ一覧のロック状態
 const std::list< bool >& SESSION::get_board_locked(){ return board_locked; }
@@ -883,8 +899,8 @@ void SESSION::set_board_switchhistory( const std::list< std::string >& hist ){ b
 // 前回閉じたときに開いていたスレタブのページ番号とURL
 int SESSION::article_page(){ return win_article_page; }
 void SESSION::set_article_page( const int page ){ win_article_page = page; }
-const std::list< std::string >& SESSION::get_article_URLs(){ return article_urls; }
-void SESSION::set_article_URLs( const std::list< std::string >& urls ){ article_urls = urls; }
+const std::vector<std::string>& SESSION::get_article_URLs(){ return article_urls; }
+void SESSION::set_article_URLs( std::vector<std::string> urls ){ article_urls = std::move( urls ); }
 
 // スレタブのロック状態
 const std::list< bool >& SESSION::get_article_locked(){ return article_locked; }
@@ -897,8 +913,8 @@ void SESSION::set_article_switchhistory( const std::list< std::string >& hist ){
 // 前回閉じたときに開いていたimageのページ番号とURL
 int SESSION::image_page(){ return win_image_page; }
 void SESSION::set_image_page( const int page ){ win_image_page = page; }
-const std::list< std::string >& SESSION::image_URLs(){ return image_urls; }
-void SESSION::set_image_URLs( const std::list< std::string >& urls ){ image_urls = urls; }
+const std::vector<std::string>& SESSION::image_URLs(){ return image_urls; }
+void SESSION::set_image_URLs( std::vector<std::string> urls ){ image_urls = std::move( urls ); }
 
 // 画像タブのロック状態
 const std::list< bool >& SESSION::get_image_locked(){ return image_locked; }
