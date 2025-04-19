@@ -2671,9 +2671,9 @@ void Admin::slot_append_favorite()
 
 
 // ページがロックされているかリストで取得
-std::list< bool > Admin::get_locked()
+std::vector<char> Admin::get_locked()
 {
-    std::list< bool > locked;
+    std::vector<char> locked;
     
     const int pages = m_notebook->get_n_pages();
     if( pages ){

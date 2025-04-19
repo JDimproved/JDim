@@ -321,7 +321,7 @@ namespace SKELETON
         virtual void append_favorite_impl( const std::string& url ) {}
 
         // ページがロックされているかリストで取得
-        virtual std::list< bool > get_locked();
+        virtual std::vector<char> get_locked();
 
         // タブのロック/アンロック
         virtual bool is_lockable( const int page );

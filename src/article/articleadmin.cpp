@@ -123,8 +123,8 @@ void ArticleAdmin::restore( const bool only_locked )
 
     std::list< std::string > list_switchhistory = SESSION::get_article_switchhistory();
 
-    const std::list< bool >& list_locked = SESSION::get_article_locked();
-    std::list< bool >::const_iterator it_locked = list_locked.begin();
+    const std::vector<char>& list_locked = SESSION::get_article_locked();
+    auto it_locked = list_locked.begin();
 
     for( int page = 0; it_url != list_url.end(); ++it_url, ++page ){
 

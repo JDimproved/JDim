@@ -93,7 +93,7 @@ namespace IMAGE
         SKELETON::View* get_current_view() override;
 
         // ページがロックされているかリストで取得
-        std::list< bool > get_locked() override;
+        std::vector<char> get_locked() override;
 
         // タブのロック/アンロック
         bool is_lockable( const int page ) override;

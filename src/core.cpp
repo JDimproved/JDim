@@ -3146,7 +3146,7 @@ void Core::exec_command()
         // ロックされている画像があるか調べる
         bool img_locked = false;
         if( ! CONFIG::get_restore_image() ){
-            std::list< bool > list_locked = SESSION::get_image_locked();
+            const std::vector<char>& list_locked = SESSION::get_image_locked();
             img_locked = std::any_of( list_locked.cbegin(), list_locked.cend(), []( bool b ) { return b; } );
         }
 

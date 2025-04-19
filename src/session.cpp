@@ -44,15 +44,16 @@ int win_article_page;
 int win_image_page;
 
 std::vector<std::string> board_urls;
-std::list< bool > board_locked;
+// bool フラグを格納するが vector<bool> は特殊化で取り扱いに注意が必要なので利用しない
+std::vector<char> board_locked;
 std::list< std::string > board_switchhistory;
 
 std::vector<std::string> article_urls;
-std::list< bool > article_locked;
+std::vector<char> article_locked;
 std::list< std::string > article_switchhistory;
 
 std::vector<std::string> image_urls;
-std::list< bool > image_locked;
+std::vector<char> image_locked;
 
 std::string items_sidebar_toolbar_str;
 std::vector< int > items_sidebar_toolbar;
@@ -308,7 +309,7 @@ static void read_list_urls( JDLIB::ConfLoader& cf, const std::string& id_urls,  
 }
 
 
-static void read_list_locked( JDLIB::ConfLoader& cf, const std::string& id_locked, std::list< bool >& list_locked )
+static void read_list_locked( JDLIB::ConfLoader& cf, const std::string& id_locked, std::vector<char>& list_locked )
 {
     list_locked.clear();
 
@@ -889,8 +890,8 @@ const std::vector<std::string>& SESSION::get_board_URLs(){ return board_urls; }
 void SESSION::set_board_URLs( std::vector<std::string> urls ){ board_urls = std::move( urls ); }
 
 // スレ一覧のロック状態
-const std::list< bool >& SESSION::get_board_locked(){ return board_locked; }
-void SESSION::set_board_locked( const std::list< bool >& locked ){ board_locked = locked; }
+const std::vector<char>& SESSION::get_board_locked(){ return board_locked; }
+void SESSION::set_board_locked( std::vector<char> locked ){ board_locked = std::move( locked ); }
 
 // スレ一覧の切り替え履歴    
 const std::list< std::string >& SESSION::get_board_switchhistory(){ return board_switchhistory; }
@@ -903,8 +904,8 @@ const std::vector<std::string>& SESSION::get_article_URLs(){ return article_urls
 void SESSION::set_article_URLs( std::vector<std::string> urls ){ article_urls = std::move( urls ); }
 
 // スレタブのロック状態
-const std::list< bool >& SESSION::get_article_locked(){ return article_locked; }
-void SESSION::set_article_locked( const std::list< bool >& locked ){ article_locked = locked; }
+const std::vector<char>& SESSION::get_article_locked(){ return article_locked; }
+void SESSION::set_article_locked( std::vector<char> locked ){ article_locked = std::move( locked ); }
 
 // スレタブの切り替え履歴    
 const std::list< std::string >& SESSION::get_article_switchhistory(){ return article_switchhistory; }
@@ -917,8 +918,8 @@ const std::vector<std::string>& SESSION::image_URLs(){ return image_urls; }
 void SESSION::set_image_URLs( std::vector<std::string> urls ){ image_urls = std::move( urls ); }
 
 // 画像タブのロック状態
-const std::list< bool >& SESSION::get_image_locked(){ return image_locked; }
-void SESSION::set_image_locked( const std::list< bool >& locked ){ image_locked = locked; }
+const std::vector<char>& SESSION::get_image_locked(){ return image_locked; }
+void SESSION::set_image_locked( std::vector<char> locked ){ image_locked = std::move( locked ); }
 
 // サイドバーのツールバーの項目
 const std::string& SESSION::get_items_sidebar_toolbar_str(){ return items_sidebar_toolbar_str; }

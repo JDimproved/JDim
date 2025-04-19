@@ -118,8 +118,8 @@ void ImageAdmin::restore( const bool only_locked )
     const std::vector<std::string>& list_url = SESSION::image_URLs();
     auto it_url = list_url.begin();
 
-    std::list< bool > list_locked = SESSION::get_image_locked();
-    std::list< bool >::iterator it_locked = list_locked.begin();
+    const std::vector<char>& list_locked = SESSION::get_image_locked();
+    auto it_locked = list_locked.begin();
 
     // タブ操作中を表すフラグを設定して、ビューの更新処理を無効化します。
     SESSION::set_tab_operating( get_url(), true );
@@ -1265,9 +1265,9 @@ void ImageAdmin::save_all()
 
 
 // ページがロックされているかリストで取得
-std::list< bool > ImageAdmin::get_locked()
+std::vector<char> ImageAdmin::get_locked()
 {
-    std::list< bool > locked;
+    std::vector<char> locked;
 
     m_iconbox.foreach( [&locked]( Gtk::Widget& w ) {
         const auto view = dynamic_cast< SKELETON::View* >( &w );
