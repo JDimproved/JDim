@@ -343,10 +343,10 @@ int Admin::get_tab_nums()
 //
 // 含まれているページのURLのリスト取得
 //
-std::list<std::string> Admin::get_URLs()
+std::vector<std::string> Admin::get_URLs()
 {
-    std::list<std::string> urls;
-    
+    std::vector<std::string> urls;
+
     const int pages = m_notebook->get_n_pages();
     if( pages ){
 
@@ -2671,9 +2671,9 @@ void Admin::slot_append_favorite()
 
 
 // ページがロックされているかリストで取得
-std::list< bool > Admin::get_locked()
+std::vector<char> Admin::get_locked()
 {
-    std::list< bool > locked;
+    std::vector<char> locked;
     
     const int pages = m_notebook->get_n_pages();
     if( pages ){

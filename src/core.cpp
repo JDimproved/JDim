@@ -2321,7 +2321,7 @@ void Core::set_command( const COMMAND_ARGS& command )
             if( current_url.rfind( command.url, 0 ) == 0 ) current_url = command.url;
 
             // タブを開く位置を取得
-            const std::list<std::string> list_urls = ARTICLE::get_admin()->get_URLs();
+            const std::vector<std::string> list_urls = ARTICLE::get_admin()->get_URLs();
             for( const std::string& url : list_urls ) {
 
                 if( url == command.url ) break;
@@ -3146,7 +3146,7 @@ void Core::exec_command()
         // ロックされている画像があるか調べる
         bool img_locked = false;
         if( ! CONFIG::get_restore_image() ){
-            std::list< bool > list_locked = SESSION::get_image_locked();
+            const std::vector<char>& list_locked = SESSION::get_image_locked();
             img_locked = std::any_of( list_locked.cbegin(), list_locked.cend(), []( bool b ) { return b; } );
         }
 

@@ -16,6 +16,7 @@
 #include <list>
 #include <memory>
 #include <string>
+#include <vector>
 
 
 namespace SKELETON
@@ -100,7 +101,7 @@ namespace SKELETON
         virtual int get_tab_nums();
 
         // 含まれているページのURLのリスト取得
-        virtual std::list< std::string > get_URLs();
+        virtual std::vector<std::string> get_URLs();
 
         // Core からのクロック入力。
         // Coreでタイマーをひとつ動かして全体の同期を取るようにしているので
@@ -320,7 +321,7 @@ namespace SKELETON
         virtual void append_favorite_impl( const std::string& url ) {}
 
         // ページがロックされているかリストで取得
-        virtual std::list< bool > get_locked();
+        virtual std::vector<char> get_locked();
 
         // タブのロック/アンロック
         virtual bool is_lockable( const int page );

@@ -265,12 +265,12 @@ namespace SESSION
     // 前回閉じたときに開いていたスレ一覧のページ番号とURL
     int board_page();
     void set_board_page( const int page );
-    const std::list< std::string >& get_board_URLs();
-    void set_board_URLs( const std::list< std::string >& urls );
+    const std::vector<std::string>& get_board_URLs();
+    void set_board_URLs( std::vector<std::string> urls );
 
     // スレ一覧のロック状態
-    const std::list< bool >& get_board_locked();
-    void set_board_locked( const std::list< bool >& locked );
+    const std::vector<char>& get_board_locked();
+    void set_board_locked( std::vector<char> locked );
 
     // スレ一覧の切り替え履歴    
     const std::list< std::string >& get_board_switchhistory();
@@ -279,12 +279,12 @@ namespace SESSION
     // 前回閉じたときに開いていたスレタブのページ番号とURL
     int article_page();
     void set_article_page( const int page );
-    const std::list< std::string >& get_article_URLs();
-    void set_article_URLs( const std::list< std::string >& urls );
+    const std::vector<std::string>& get_article_URLs();
+    void set_article_URLs( std::vector<std::string> urls );
 
     // スレタブのロック状態
-    const std::list< bool >& get_article_locked();
-    void set_article_locked( const std::list< bool >& locked );
+    const std::vector<char>& get_article_locked();
+    void set_article_locked( std::vector<char> locked );
 
     // スレタブの切り替え履歴    
     const std::list< std::string >& get_article_switchhistory();
@@ -293,12 +293,12 @@ namespace SESSION
     // 前回閉じたときに開いていたimageのページ番号とURL
     int image_page();
     void set_image_page( const int page );
-    const std::list< std::string >& image_URLs();
-    void set_image_URLs( const std::list< std::string >& urls );
+    const std::vector<std::string>& image_URLs();
+    void set_image_URLs( std::vector<std::string> urls );
 
     // 画像タブのロック状態
-    const std::list< bool >& get_image_locked();
-    void set_image_locked( const std::list< bool >& locked );
+    const std::vector<char>& get_image_locked();
+    void set_image_locked( std::vector<char> locked );
 
     // 現在開いているサイドバーのページ
     int get_sidebar_current_page();

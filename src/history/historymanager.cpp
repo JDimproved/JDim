@@ -278,8 +278,8 @@ void History_Manager::viewhistory2xml()
 
     // タブに表示されているViewのアドレスを取得
     std::set< std::string > taburls;
-    const std::list< std::string >& article_urls = SESSION::get_article_URLs();
-    const std::list< std::string >& board_urls = SESSION::get_board_URLs();
+    const std::vector<std::string>& article_urls = SESSION::get_article_URLs();
+    const std::vector<std::string>& board_urls = SESSION::get_board_URLs();
 
     for( const std::string& url : article_urls ) {
 #ifdef _DEBUG

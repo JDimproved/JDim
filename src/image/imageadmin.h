@@ -61,7 +61,7 @@ namespace IMAGE
         int get_tab_nums() override;
 
         // 含まれているページのURLのリスト取得
-        std::list< std::string > get_URLs() override;
+        std::vector<std::string> get_URLs() override;
 
         // 現在表示してるページ番号
         int get_current_page() override;
@@ -93,7 +93,7 @@ namespace IMAGE
         SKELETON::View* get_current_view() override;
 
         // ページがロックされているかリストで取得
-        std::list< bool > get_locked() override;
+        std::vector<char> get_locked() override;
 
         // タブのロック/アンロック
         bool is_lockable( const int page ) override;
