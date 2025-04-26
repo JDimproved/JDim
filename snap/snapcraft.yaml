@@ -17,6 +17,8 @@ architectures:
     build-for: arm64
   - build-on: armhf
     build-for: armhf
+  - build-on: riscv64
+    build-for: riscv64
 
 # https://snapcraft.io/docs/gnome-extension
 parts:
