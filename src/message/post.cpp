@@ -425,6 +425,7 @@ void Post::receive_finish()
             }
 
             ConfirmDiag mdiag( m_url, diagmsg );
+            mdiag.set_default_size( 600, 400 );
             const int response = mdiag.run();
             mdiag.hide();
             if( response != Gtk::RESPONSE_OK ){

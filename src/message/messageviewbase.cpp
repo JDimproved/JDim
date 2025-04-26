@@ -861,6 +861,7 @@ void MessageViewBase::post_fin()
                           m_post->get_return_html(), "詳細" );
 
         ddiag.set_title( "書き込みエラー" );
+        ddiag.set_default_size( 600, 400 );
         ddiag.run();
     }
 }
