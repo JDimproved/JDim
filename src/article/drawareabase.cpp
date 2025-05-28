@@ -543,23 +543,55 @@ std::string DrawAreaBase::str_selection() const
 }
 
 
-// 範囲選択を開始したレス番号
+/**
+ * @brief 範囲選択の開始位置に対応するレス番号を取得します。
+ *
+ * 選択範囲の開始位置が「ここまで読んだ」セパレーターに含まれる場合でも、
+ * 正しいレス番号を返します。
+ *
+ * @return 選択範囲の開始位置のレス番号。選択されていない場合や、
+ * 有効なレス番号が取得できない場合は0を返します。
+ */
 int DrawAreaBase::get_selection_resnum_from() const
 {
     if( ! m_selection.select ) return 0;
-    if( ! m_selection.caret_from.layout ) return 0;
+    const LAYOUT* layout = m_selection.caret_from.layout;
+    if( ! layout ) return 0;
 
-    return m_selection.caret_from.layout->res_number;
+    // 範囲選択の開始位置がレス番号を持っているなら返す。
+    if( const int res_number = layout->res_number; res_number ) return res_number;
+
+    // 範囲選択の開始位置の親ヘッダーが新着セパレータなら新着セパレータの位置(レス番号)を返す。
+    if( layout->header == m_layout_tree->get_separator() ) {
+        return m_layout_tree->get_separator_new();
+    }
+    return 0;
 }
 
 
-// 範囲選択を終了したレス番号
+/**
+ * @brief 範囲選択の終了位置に対応するレス番号を取得します。
+ *
+ * 選択範囲の終了位置が「ここまで読んだ」セパレーターに含まれる場合でも、
+ * 正しいレス番号を返します。
+ *
+ * @return 選択範囲の終了位置のレス番号。選択されていない場合や、
+ * 有効なレス番号が取得できない場合は0を返します。
+ */
 int DrawAreaBase::get_selection_resnum_to() const
 {
     if( ! m_selection.select ) return 0;
-    if( ! m_selection.caret_to.layout ) return 0;
+    const LAYOUT* layout = m_selection.caret_to.layout;
+    if( ! layout ) return 0;
 
-    return m_selection.caret_to.layout->res_number;
+    // 範囲選択の終了位置がレス番号を持っているなら返す。
+    if( const int res_number = layout->res_number; res_number ) return res_number;
+
+    // 範囲選択の終了位置の親ヘッダーが新着セパレータなら新着セパレータの位置(レス番号)の一つ前を返す。
+    if( layout->header == m_layout_tree->get_separator() ) {
+        return m_layout_tree->get_separator_new() - 1;
+    }
+    return 0;
 }
 
 
