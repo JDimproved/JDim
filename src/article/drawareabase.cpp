@@ -546,8 +546,8 @@ std::string DrawAreaBase::str_selection() const
 /**
  * @brief 範囲選択の開始位置に対応するレス番号を取得します。
  *
- * 選択範囲の開始位置が「ここまで読んだ」セパレーターに含まれる場合でも、
- * 正しいレス番号を返します。
+ * 選択範囲の開始位置が通常のレス位置、または「ここまで読んだ」セパレーター、
+ * あるいはその親ヘッダーに含まれる場合に対応し、適切なレス番号を返します。
  *
  * @return 選択範囲の開始位置のレス番号。選択されていない場合や、
  * 有効なレス番号が取得できない場合は0を返します。
@@ -561,9 +561,15 @@ int DrawAreaBase::get_selection_resnum_from() const
     // 範囲選択の開始位置がレス番号を持っているなら返す。
     if( const int res_number = layout->res_number; res_number ) return res_number;
 
+    const LAYOUT* header = layout->header;
     // 範囲選択の開始位置の親ヘッダーが新着セパレータなら新着セパレータの位置(レス番号)を返す。
-    if( layout->header == m_layout_tree->get_separator() ) {
-        return m_layout_tree->get_separator_new();
+    if( header == m_layout_tree->get_separator() ) {
+        const int res_number = m_layout_tree->get_separator_new();
+        return res_number;
+    }
+    if( header ) {
+        const int res_number = header->res_number;
+        return res_number;
     }
     return 0;
 }
@@ -572,8 +578,9 @@ int DrawAreaBase::get_selection_resnum_from() const
 /**
  * @brief 範囲選択の終了位置に対応するレス番号を取得します。
  *
- * 選択範囲の終了位置が「ここまで読んだ」セパレーターに含まれる場合でも、
- * 正しいレス番号を返します。
+ * 選択範囲の終了位置が通常のレス位置、または「ここまで読んだ」セパレーター、
+ * あるいはその親ヘッダーに含まれる場合に対応し、適切なレス番号を返します。
+ * セパレーターに含まれる場合はその直前のレス番号を返します。
  *
  * @return 選択範囲の終了位置のレス番号。選択されていない場合や、
  * 有効なレス番号が取得できない場合は0を返します。
@@ -587,9 +594,15 @@ int DrawAreaBase::get_selection_resnum_to() const
     // 範囲選択の終了位置がレス番号を持っているなら返す。
     if( const int res_number = layout->res_number; res_number ) return res_number;
 
+    const LAYOUT* header = layout->header;
     // 範囲選択の終了位置の親ヘッダーが新着セパレータなら新着セパレータの位置(レス番号)の一つ前を返す。
-    if( layout->header == m_layout_tree->get_separator() ) {
-        return m_layout_tree->get_separator_new() - 1;
+    if( header == m_layout_tree->get_separator() ) {
+        const int res_number = m_layout_tree->get_separator_new() - 1;
+        return res_number;
+    }
+    if( header ) {
+        const int res_number = header->res_number;
+        return res_number;
     }
     return 0;
 }
