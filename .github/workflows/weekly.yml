@@ -81,7 +81,10 @@ jobs:
       - name: build muon stage2
         run: |
           cd muon-src
-          ./stage1/muon-bootstrap setup -Dman-pages=disabled -Dmeson-docs=disabled -Dmeson-tests=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=enabled ../muon-build
+          # Disable libpkgconf. The version available in the GitHub Actions environment (1.8.1)
+          # doesn't meet muon's requirement (>= 1.9.0), causing build failures.
+          # Using the system's pkg-config binary instead.
+          ./stage1/muon-bootstrap setup -Dman-pages=disabled -Dmeson-docs=disabled -Dmeson-tests=disabled -Dlibarchive=disabled -Dlibcurl=disabled -Dlibpkgconf=disabled ../muon-build
           ./stage1/muon-bootstrap samu -C ../muon-build
           cd ..
       - run: ./muon-build/muon version
