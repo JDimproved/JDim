@@ -444,7 +444,7 @@ void ArticleViewSearch::operate_search( const std::string& controlid )
 
     if( id == CONTROL::Cancel ){
         focus_view();
-        ARTICLE::get_admin()->set_command( "close_searchbar" );
+        // 一貫性のあるUIにするため、検索のタブではESCキーで検索バーを閉じない。
     }
     else if( id == CONTROL::DrawOutAnd ) reload();
 }
