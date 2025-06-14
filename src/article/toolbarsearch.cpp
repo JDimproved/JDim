@@ -30,7 +30,12 @@ SearchToolBar::SearchToolBar()
     // 検索バー    
     get_searchbar()->append( *get_tool_search( CORE::COMP_SEARCH_ARTICLE ) );
     get_searchbar()->append( m_tool_bm );
-    get_searchbar()->append( *get_button_close_searchbar() );
+    // 一貫性のあるUIにするため検索のタブでは検索バーを常に開いたままにする。
+    // そのため、検索バーを閉じるボタンは無効にする。
+    auto button_close_searchbar = get_button_close_searchbar();
+    get_searchbar()->append( *button_close_searchbar );
+    button_close_searchbar->set_sensitive( false );
+    button_close_searchbar->set_tooltip_text( "検索バーは常に表示されます。" );
 
     SearchToolBar::pack_buttons();
 }
@@ -57,7 +62,14 @@ void SearchToolBar::pack_buttons()
                 break;
 
             case ITEM_SEARCH:
-                get_buttonbar().append( *get_button_open_searchbar() );
+                // 一貫性のあるUIにするため検索のタブでは検索バーを常に開いたままにする。
+                // そのため、検索バーを開くボタンは無効にする。
+                {
+                    auto button_open_searchbar = get_button_open_searchbar();
+                    get_buttonbar().append( *button_open_searchbar );
+                    button_open_searchbar->set_sensitive( false );
+                    button_open_searchbar->set_tooltip_text( "検索バーは常に表示されます。" );
+                }
                 break;
 
             case ITEM_RELOAD:
