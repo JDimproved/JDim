@@ -43,6 +43,9 @@ std::string Article2ch::create_write_message( const std::string& name, const std
     if( msg.empty() ) return std::string();
 
     const Encoding enc{ utf8_post ? Encoding::utf8 : get_encoding() };
+    // 5chサーバーが現在時刻の`time`値でCookie発行を拒否し書き込みに失敗する場合があるため、
+    // 現在時刻から30秒前のUNIXタイムスタンプにする。
+    constexpr int kTimeOffsetSeconds = 30;
 
     std::stringstream ss_post;
     ss_post << "FROM=" << MISC::url_encode_plus( name, enc )
@@ -50,7 +53,7 @@ std::string Article2ch::create_write_message( const std::string& name, const std
             << "&MESSAGE=" << MISC::url_encode_plus( msg, enc )
             << "&bbs=" << DBTREE::board_id( get_url() )
             << "&key=" << get_key()
-            << "&time=" << time(0)
+            << "&time=" << ( time(0) - kTimeOffsetSeconds )
             << "&submit=" << MISC::url_encode_plus( "書き込む", enc )
             // XXX: ブラウザの種類に関係なく含めて問題ないか？
             << "&oekaki_thread1=";
