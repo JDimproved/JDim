@@ -57,6 +57,12 @@
   </provides>
 
   <releases>
+    <release version="0.14.0" date="2025-07-27">
+      <description>
+        <p>Fixes an issue where posting to 5ch.net would fail.</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.14.0</url>
+    </release>
     <release version="0.13.0" date="2025-01-11">
       <description>
         <p>Add GTK theme and Icon theme selection</p>
