@@ -43,7 +43,14 @@ layout: default
 
 <dl>
   <dt>$VIEW</dt>
-  <dd>ネットワーク設定で指定されたwebブラウザで開く ( 例: <code>$VIEW $LINK</code> でリンクをブラウザで開く )</dd>
+  <dd>ネットワーク設定で指定されたwebブラウザで開く ( 例: <code>$VIEW $LINK</code> でリンクをブラウザで開く )<br>
+    <b>$VIEW</b> コマンドのURL引数は、シングルクオート(')、ダブルクオート(")、またはクオートなしで指定可能です。例：
+    <ul>
+      <li><code>$VIEW '$LINK'</code> <small>(v0.15.0-alpha20250820 からサポート)</small></li>
+      <li><code>$VIEW "$LINK"</code></li>
+      <li><code>$VIEW $LINK</code></li>
+    </ul>
+  </dd>
   <dt>$DIALOG</dt>
   <dd><code>$DIALOG</code>の後の文字列をダイアログ表示</dd>
 
