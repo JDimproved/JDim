@@ -427,6 +427,32 @@ std::string MISC::remove_str_regex( const std::string& str1, const std::string& 
 }
 
 
+/**
+ * @brief クオートで囲まれた文字列を抽出します。
+ *
+ * 入力文字列がシングルクオート（'）またはダブルクオート（"）で囲まれている場合、
+ * クオート内部の文字列を返します。囲まれていない場合は元の文字列を返します。
+ *
+ * 以下のような特殊ケースでは元の文字列をそのまま返します：
+ * - クオートが対になっていない場合（例："abc）
+ * - 異なる種類のクオートで囲まれている場合（例："abc'）
+ *
+ * @param str 入力文字列
+ * @return クオート内の文字列、または元の文字列
+ */
+std::string MISC::remove_quotes( std::string_view str )
+{
+    if( str.size() >= 2 ) {
+        const char first = str.front();
+        const char last = str.back();
+        if( ( first == '\'' || first == '"' ) && first == last ) {
+            return std::string( str.substr( 1, str.size() - 2 ) );
+        }
+    }
+    return std::string( str );
+}
+
+
 /** @brief front_sep, back_sep に囲まれた文字列を切り出す
  *
  * @param[in] str 処理する文字列

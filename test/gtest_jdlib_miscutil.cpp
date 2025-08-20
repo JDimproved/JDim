@@ -225,6 +225,75 @@ TEST_F(RemoveStrStartEndTest, much_end_marks)
 }
 
 
+class MISC_RemoveQuotesTest : public ::testing::Test {};
+
+// 正常なケース: クオートがない文字列
+TEST_F(MISC_RemoveQuotesTest, no_quotes)
+{
+    EXPECT_EQ( MISC::remove_quotes( "http://example.com" ), "http://example.com" );
+    EXPECT_EQ( MISC::remove_quotes( "url" ), "url" );
+}
+
+// 正常なケース: ダブルクオートで囲まれた文字列
+TEST_F(MISC_RemoveQuotesTest, double_quotes)
+{
+    EXPECT_EQ( MISC::remove_quotes( "\"http://example.com\"" ), "http://example.com" );
+    EXPECT_EQ( MISC::remove_quotes( "\"url\"" ), "url" );
+}
+
+// 正常なケース: シングルクオートで囲まれた文字列
+TEST_F(MISC_RemoveQuotesTest, single_quotes)
+{
+    EXPECT_EQ( MISC::remove_quotes( "'http://example.com'" ), "http://example.com" );
+    EXPECT_EQ( MISC::remove_quotes( "'url'" ), "url" );
+}
+
+// エッジケース: 空の文字列
+TEST_F(MISC_RemoveQuotesTest, empty_string)
+{
+    EXPECT_EQ( MISC::remove_quotes( "" ), "" );
+}
+
+// エッジケース: クオートの種類が不一致
+// 動作の想定: 対になっていないため、変更なし
+TEST_F(MISC_RemoveQuotesTest, mismatched_quotes)
+{
+    EXPECT_EQ( MISC::remove_quotes( "'test string\"" ), "'test string\"" );
+    EXPECT_EQ( MISC::remove_quotes( "\"test string'" ), "\"test string'" );
+}
+
+// エッジケース: 片側のみのクオート
+// 動作の想定: 対になっていないため、変更なし
+TEST_F(MISC_RemoveQuotesTest, unpaired_quotes)
+{
+    EXPECT_EQ( MISC::remove_quotes( "\"test string" ), "\"test string" );
+    EXPECT_EQ( MISC::remove_quotes( "test string\"" ), "test string\"" );
+    EXPECT_EQ( MISC::remove_quotes( "'test string" ), "'test string"  );
+    EXPECT_EQ( MISC::remove_quotes( "test string'" ), "test string'"  );
+}
+
+// エッジケース: 複数のクオート（例：`"'url'"`）
+// 動作の想定: 外側のクオートのみを削除
+TEST_F(MISC_RemoveQuotesTest, nested_quotes)
+{
+    EXPECT_EQ( MISC::remove_quotes( "\"'http://example.com'\"" ), "'http://example.com'" );
+    EXPECT_EQ( MISC::remove_quotes( "'\"url\"'" ), "\"url\"" );
+}
+
+// エッジケース: 空のクオート
+TEST_F(MISC_RemoveQuotesTest, empty_quotes) {
+    EXPECT_EQ( MISC::remove_quotes( "''" ), "" );
+    EXPECT_EQ( MISC::remove_quotes( "\"\"" ), "" );
+}
+
+// エッジケース: 不正なURL（例：`http://'example.com'`）
+// 動作の想定: クオートが先頭と末尾にないため、変更なし
+TEST_F(MISC_RemoveQuotesTest, invalid_url_like_quotes)
+{
+    EXPECT_EQ( MISC::remove_quotes("http://'example.com'" ), "http://'example.com'" );
+}
+
+
 class CutStrFrontBackTest : public ::testing::Test {};
 
 TEST_F(CutStrFrontBackTest, empty_data)

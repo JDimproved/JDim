@@ -89,6 +89,9 @@ namespace MISC
     // 正規表現を使ってstr1からqueryで示された文字列を除く
     std::string remove_str_regex( const std::string& str1, const std::string& query );
 
+    // クオートで囲まれた文字列を抽出します。
+    std::string remove_quotes( std::string_view str );
+
     /// front_sep, back_sep に囲まれた文字列を切り出す
     std::string cut_str( const std::string& str, std::string_view front_sep, std::string_view back_sep );
 
