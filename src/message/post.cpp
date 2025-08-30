@@ -476,3 +476,55 @@ void Post::receive_finish()
     set_code( HTTP_ERR );
     emit_sigfin();
 }
+
+
+/**
+ * @brief エラーメッセージをクリーンアップ（テスト用にprotected）。
+ *
+ * <a>タグのhrefとテキストが同一ならテキストのみ保持、異なるなら両方を連結。
+ * 改行置換なども行う。samba秒を抽出し、副作用なしで結果を返す。
+ *
+ * @note <a>タグはhref属性が必須で、属性順序は固定と仮定。
+ * @param[in]  html_errmsg   入力エラーメッセージ
+ * @param[out] samba_sec_out samba秒の出力（マッチしたらセット）
+ * @return 処理後のエラーメッセージ
+ */
+std::string Post::process_error_message( const std::string& html_errmsg, std::time_t& samba_sec_out )
+{
+    std::string errmsg = MISC::replace_str( html_errmsg, "\n", "" );
+
+    // <a>タグを除去し、hrefとテキストが同一ならテキストのみ保持、異なるなら両方を連結
+    JDLIB::Regex regex;
+    constexpr std::size_t offset = 0;
+    constexpr bool icase = false;
+    bool newline = true;
+    constexpr bool usemigemo = false;
+    constexpr bool wchar = false;
+    while( regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)",
+                       errmsg, offset, icase, newline, usemigemo, wchar ) ) {
+        const std::string href = regex.str( 2 );
+        const std::string text = regex.str( 3 );
+        if( href == text ) {
+            errmsg = regex.str( 1 ) + " " + text + regex.str( 4 );
+        } else {
+            errmsg = regex.str( 1 ) + " " + href + " " + text + regex.str( 4 );
+        }
+    }
+
+    // 改行その他
+    errmsg = MISC::replace_str( errmsg, "<br>", "\n" );
+    errmsg = MISC::replace_str( errmsg, "<hr>", "\n-------------------\n" );
+
+    // samba秒取得（副作用なし: マッチ結果を返すだけ）
+    samba_sec_out = 0;
+    newline = false;
+    // Smaba24規制の場合
+    //   ＥＲＲＯＲ - 593 60 sec たたないと書けません。(1回目、8 sec しかたってない)
+    //   ERROR: Samba24:Caution 25 秒たたないと書けません。(1 回目、24 秒しかたってない)
+    if( regex.exec( "(ＥＲＲＯＲ +- +593|ERROR: +Samba24:Caution|) +([0-9]+) +",
+                    errmsg, offset, icase, newline, usemigemo, wchar ) ) {
+        samba_sec_out = std::atoi( regex.str( 2 ).c_str() );
+    }
+
+    return errmsg;
+}

@@ -79,6 +79,12 @@ namespace MESSAGE
 
         void receive_data( std::string_view buf ) override;
         void receive_finish() override;
+
+      protected:
+        /**
+         * @brief エラーメッセージをクリーンアップ（テスト用にprotected）。
+         */
+        std::string process_error_message( const std::string& html_errmsg, std::time_t& samba_sec_out );
     };
     
 }
