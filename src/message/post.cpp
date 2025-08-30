@@ -321,32 +321,16 @@ void Post::receive_finish()
 
     if( ! m_errmsg.empty() ){
 
-        m_errmsg = MISC::replace_str( m_errmsg, "\n", "" ); 
+        // エラーメッセージをクリーンアップし、samba秒を取得
+        std::time_t samba_sec = 0;
+        m_errmsg = process_error_message( m_errmsg, samba_sec );
 
-        // <a 〜を取り除く
-        icase = false;
-        newline = true;
-        while( regex.exec( "(.*)<a +href *= *\"([^\"]*)\" *>(.*)</a>(.*)", m_errmsg, offset, icase, newline, usemigemo, wchar ) ){
-            m_errmsg = regex.str( 1 ) + " " + regex.str( 2 ) + " " + regex.str( 3 ) + regex.str( 4 );
-        }
-
-        // 改行その他
-        m_errmsg= MISC::replace_str( m_errmsg, "<br>", "\n" );
-        m_errmsg= MISC::replace_str( m_errmsg, "<hr>", "\n-------------------\n" );
-
-        // samba秒取得
-        icase = false;
-        newline = false; // . に改行をマッチさせる
-        // Smaba24規制の場合
-        //   ＥＲＲＯＲ - 593 60 sec たたないと書けません。(1回目、8 sec しかたってない)
-        //   ERROR: Samba24:Caution 25 秒たたないと書けません。(1 回目、24 秒しかたってない)
-        if( regex.exec( "(ＥＲＲＯＲ +- +593|ERROR: +Samba24:Caution|) +([0-9]+) +",
-                        m_errmsg, offset, icase, newline, usemigemo, wchar ) ) {
-            time_t sec = atoi( regex.str( 2 ).c_str() );
+        if( samba_sec > 0 ) {
 #ifdef _DEBUG
-            std::cout << "samba = " << sec << std::endl;
+            std::cout << "samba = " << samba_sec << std::endl;
 #endif
-            DBTREE::board_set_samba_sec( m_url, sec );
+            // Samba規制時間をボードに設定
+            DBTREE::board_set_samba_sec( m_url, samba_sec );
             DBTREE::board_update_writetime( m_url );
         }
     }
