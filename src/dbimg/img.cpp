@@ -319,15 +319,22 @@ void Img::download_img( const std::string& refurl, const int mosaic_mode, const 
     std::string referer;
     if( CORE::get_urlreplace_manager()->referer( m_url, referer ) ) data.referer = referer;
 
-    // 効率がよい画像形式を受け入れる(Accept)クライアントに対して
-    // URLの拡張子と異なる画像形式でデータを送信するサイトがある
-    // 拡張子の偽装をチェックしないURLなら画像の軽量化を利用する
-    data.accept = "text/html,application/xhtml+xml,application/xml;q=0.9,";
-    if( m_imgctrl & CORE::IMGCTRL_GENUINE ) {
-        if( DBIMG::is_avif_support() ) data.accept.append( "image/avif," );
-        if( DBIMG::is_webp_support() ) data.accept.append( "image/webp," );
+    // Acceptヘッダーにtext/htmlが含まれている場合imgurやredditは
+    // 画像ではなくhtmlを返すため回避策としてAcceptヘッダーを
+    // image/*のみにする
+    if ( data.url.find("imgur.com") != std::string::npos || data.url.find("i.redd.it") != std::string::npos ) {
+        data.accept = "image/*";
+    } else {
+        // 効率がよい画像形式を受け入れる(Accept)クライアントに対して
+        // URLの拡張子と異なる画像形式でデータを送信するサイトがある
+        // 拡張子の偽装をチェックしないURLなら画像の軽量化を利用する
+        data.accept = "text/html,application/xhtml+xml,application/xml;q=0.9,";
+        if( m_imgctrl & CORE::IMGCTRL_GENUINE ) {
+            if( DBIMG::is_avif_support() ) data.accept.append( "image/avif," );
+            if( DBIMG::is_webp_support() ) data.accept.append( "image/webp," );
+        }
+        data.accept.append( "*/*;q=0.8" );
     }
-    data.accept.append( "*/*;q=0.8" );
 
     if( !start_load( data ) ) receive_finish();
     else CORE::core_set_command( "redraw", m_url );
