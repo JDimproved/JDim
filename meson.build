@@ -17,7 +17,7 @@
 #   ディストロのパッケージをインストールする
 #   ```
 #   sudo apt install build-essential git meson
-#   sudo apt install libgnutls28-dev libgtkmm-3.0-dev libltdl-dev
+#   sudo apt install libgnutls28-dev libgtkmm-3.0-dev
 #   ```
 
 # ビルドの手順

@@ -100,7 +100,7 @@ sudo apt install build-essential git meson
 必要なライブラリを入れます。(抜けがあるかも)
 
 ```sh
-sudo apt install libcrypt-dev libgtkmm-3.0-dev libltdl-dev libgnutls28-dev
+sudo apt install libcrypt-dev libgtkmm-3.0-dev libgnutls28-dev
 ```
 
 
