@@ -24,7 +24,7 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-13
+          sudo apt install libcrypt-dev libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-13
       - run: meson setup builddir -Db_sanitize=address,undefined -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dcpp_link_args="${AVOID_CRASH}"
         # `compile` subcommand requires Meson 0.54 or later.
       - run: ninja -C builddir
@@ -69,7 +69,7 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
+          sudo apt install libcrypt-dev libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
       - run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
       - run: ninja -C builddir
       - run: meson test -v -C builddir
@@ -103,7 +103,7 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
+          sudo apt install libcrypt-dev libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev ${{ matrix.sets.package }}
       - run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG"
       - run: ninja -C builddir
       - run: meson test -v -C builddir
@@ -128,7 +128,7 @@ jobs:
       - name: dependencies installation (${{ matrix.deps.packages }})
         run: |
           sudo apt update
-          sudo apt install meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-11
+          sudo apt install libcrypt-dev meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-11
       - run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
       - run: ninja -C builddir
       - run: meson test -v -C builddir
@@ -153,7 +153,7 @@ jobs:
       - name: dependencies installation (${{ matrix.deps.packages }})
         run: |
           sudo apt update
-          sudo apt install meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-13
+          sudo apt install libcrypt-dev meson libgtest-dev libgtkmm-3.0-dev ${{ matrix.deps.packages }} g++-13
       - run: meson setup builddir -Dbuildtype=debug -Dcpp_args="-D_DEBUG" ${{ matrix.deps.config_args }}
       - run: ninja -C builddir
       - run: meson test -v -C builddir

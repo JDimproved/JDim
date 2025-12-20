@@ -19,7 +19,7 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-14
+          sudo apt install libcrypt-dev libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev g++-14
       - run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
       - run: ninja -C builddir -k0
       - run: meson test -v -C builddir
@@ -35,7 +35,7 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev clang-18
+          sudo apt install libcrypt-dev libgnutls28-dev libgtest-dev libgtkmm-3.0-dev meson zlib1g-dev clang-18
       - run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dwerror=true
       - run: ninja -C builddir -k0
       - run: meson test -v -C builddir
@@ -51,7 +51,7 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install g++-14 libasound2-dev libgtest-dev libgtkmm-3.0-dev libmigemo-dev libssl-dev meson zlib1g-dev
+          sudo apt install g++-14 libcrypt-dev libasound2-dev libgtest-dev libgtkmm-3.0-dev libmigemo-dev libssl-dev meson zlib1g-dev
       - run: meson setup builddir -Dunity=on -Dunity_size=1000 -Dbuildtype=debug -Dcpp_args="-D_DEBUG" -Dalsa=enabled -Dmigemo=enabled -Dtls=openssl -Dcompat_cache_dir=disabled -Dsessionlib=no -Dwerror=true
       - run: ninja -C builddir -k0
       - run: meson test -v -C builddir
@@ -67,7 +67,7 @@ jobs:
       - name: dependencies installation
         run: |
           sudo apt update
-          sudo apt install git libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev zlib1g-dev g++-13
+          sudo apt install git libcrypt-dev libgnutls28-dev libpkgconf-dev libgtest-dev libgtkmm-3.0-dev zlib1g-dev g++-13
       - run: |
           git clone --depth 1 https://git.sr.ht/~lattis/muon muon-src
       - run: git -C muon-src log -n1
