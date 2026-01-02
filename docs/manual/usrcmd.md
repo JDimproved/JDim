@@ -36,7 +36,7 @@ layout: default
 
 <a name="replacement"></a>
 ### 置換文字一覧
-ユーザコマンドの具体的な使いかたは [ユーザーコマンド設定集][wiki-usrcmd] (JD wiki) を参照すること。
+ユーザコマンドの具体的な使いかたは [ユーザーコマンド設定集 - JD wiki][wiki-usrcmd] (Internet Archive) を参照すること。
 
 以下の説明はスレビューでユーザーコマンドを使用する場合であるので、画像ビューで使用する場合は `$URL`
 等は画像が貼ってあったスレのアドレス、`$LINK` 等は画像のアドレス、`$CACHEDIMG` は画像キャッシュのパスに読み替える。
@@ -213,4 +213,4 @@ layout: default
 </dl>
 
 
-[wiki-usrcmd]: https://ja.osdn.net/projects/jd4linux/wiki/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E8%A8%AD%E5%AE%9A%E9%9B%86
+[wiki-usrcmd]: https://web.archive.org/web/20220527002006/https://ja.osdn.net/projects/jd4linux/wiki/%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC%E3%82%B3%E3%83%9E%E3%83%B3%E3%83%89%E8%A8%AD%E5%AE%9A%E9%9B%86

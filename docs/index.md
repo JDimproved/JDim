@@ -23,8 +23,8 @@ layout: default
 - [アスキーアート(AA)の入力について]({{ site.baseurl }}/asciiart/)
 - [次スレ検索について]({{ site.baseurl }}/next/)
 
-- [FAQ][wiki-faq] (JD wiki)
-- [Tips][wiki-tips] (JD wiki)
+- [FAQ - JD wiki][wiki-faq] (Internet Archive)
+- [Tips - JD wiki][wiki-tips] (Internet Archive)
 - [開発ドキュメント][wiki-rfcs] (GitHub wiki)
 - [その他]({{ site.baseurl }}/info/)
 - [更新履歴]({{ site.baseurl }}/history/)
@@ -46,9 +46,9 @@ layout: default
 - [JDim 0.2.0-20190720](./link-20190720)
 - [JDim 0.1.0-20190122](./link-20190122)
 
-© 2019-2025 JDimproved project
+Copyright © 2019-2026 JDimproved project
 
 [dis592]: https://github.com/JDimproved/JDim/discussions/592
-[wiki-faq]: https://ja.osdn.net/projects/jd4linux/wiki/FAQ
-[wiki-tips]: https://ja.osdn.net/projects/jd4linux/wiki/Tips
+[wiki-faq]: https://web.archive.org/web/20231209162353/https://ja.osdn.net/projects/jd4linux/wiki/FAQ
+[wiki-tips]: https://web.archive.org/web/20220125151730/https://ja.osdn.net/projects/jd4linux/wiki/Tips
 [wiki-rfcs]: https://github.com/JDimproved/rfcs/wiki/rfc-index "Request for Comments"

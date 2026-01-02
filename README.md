@@ -30,14 +30,13 @@
 ## 概要
 
 JDim (JD improved) は gtkmm/GTK+ を使用した"２ちゃんねる"型マルチスレッドBBSを閲覧するためのブラウザです。
-JDim は GPLv2 の下で公開されている [JD][jd-project] からforkしたソフトウェアであり、
+JDim は GPLv2 の下で公開されている JD からforkしたソフトウェアであり、
 ルック・アンド・フィールや環境設定は JD と互換性があります。
 (JDim projectを立ち上げた経緯については [Issue 15][issue15] を参照してください)
 
 **注意: 2023-07-11 からJDim本体で5chのスレ閲覧が可能になっています。**
 5ch.netのDATファイルへのアクセスが[開放][5ch-924]されていますが今後の動向に注意してください。
 
-[jd-project]: https://ja.osdn.net/projects/jd4linux/
 [5ch-924]: https://agree.5ch.net/test/read.cgi/operate/9240230711/
 [issue15]: https://github.com/JDimproved/JDim/issues/15
 
@@ -367,14 +366,14 @@ JDimで追加された不具合や機能の修正については[Pull requests][
 
 ## 著作権
 
-© 2017-2019 yama-natuki [https://github.com/yama-natuki/JD]  
-© 2019-2025 JDimproved project [https://github.com/JDimproved/JDim]
+Copyright © 2017-2019 yama-natuki [https://github.com/yama-natuki/JD]  
+Copyright © 2019-2026 JDimproved project [https://github.com/JDimproved/JDim]
 
 パッチやファイルを取り込んだ場合、それらのコピーライトは「JDimproved project」に統一します。
 
 fork元の JD:
 
-© 2006-2015 JD project [https://ja.osdn.net/projects/jd4linux/]
+Copyright © 2006-2015 JD project [https://ja.osdn.net/projects/jd4linux/] \(リンク切れ\)
 
 
 ## ライセンス
