@@ -57,6 +57,12 @@
   </provides>
 
   <releases>
+    <release version="0.15.0" date="2026-01-10">
+      <description>
+        <p>Fixes bugs.</p>
+      </description>
+      <url>https://github.com/JDimproved/JDim/releases/tag/JDim-v0.15.0</url>
+    </release>
     <release version="0.14.0" date="2025-07-27">
       <description>
         <p>Fixes an issue where posting to 5ch.net would fail.</p>
