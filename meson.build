@@ -13,7 +13,7 @@
 #   dnf install gnutls-devel gtkmm30-devel libSM-devel
 #   ```
 #
-# Debian bullseye, Ubuntu 22.04
+# Debian bookworm, Ubuntu 22.04
 #   ディストロのパッケージをインストールする
 #   ```
 #   sudo apt install build-essential git meson
@@ -63,7 +63,7 @@ endif
 #
 # 必須パッケージのチェック
 #
-gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.24.2')
+gtkmm_dep = dependency('gtkmm-3.0', version : '>= 3.24.5')
 gtkmm_dep = declare_dependency(compile_args : '-DGTK_DOMAIN="gtk30"',
                                dependencies : gtkmm_dep)
 threads_dep = dependency('threads')
@@ -119,10 +119,10 @@ endif
 # TLS
 tls_opt = get_option('tls')
 if tls_opt == 'gnutls'
-  tls_dep = dependency('gnutls', version : '>= 3.7.1')
+  tls_dep = dependency('gnutls', version : '>= 3.7.3')
   conf.set('USE_GNUTLS', 1)
 elif tls_opt == 'openssl'
-  tls_dep = dependency('openssl', version : '>= 1.1.1')
+  tls_dep = dependency('openssl', version : '>= 3.0.2')
   conf.set('USE_OPENSSL', 1)
   configure_args += '\'--with-tls=openssl\''
 endif
@@ -154,7 +154,7 @@ if not build_tests_opt.disabled()
   # ディストロのパッケージとmeson wrapに対応
   gtest_main_dep = dependency('gtest_main',
                               fallback : ['gtest', 'gtest_main_dep'],
-                              version : '>= 1.10.0',
+                              version : '>= 1.11.0',
                               required : build_tests_opt)
   build_tests = gtest_main_dep.found()
 else
