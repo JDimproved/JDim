@@ -38,7 +38,7 @@ project('jdim', 'cpp',
         version : '0.16.0-alpha',
         license : 'GPL2',
         meson_version : '>= 0.61.0',
-        default_options : ['warning_level=3', 'cpp_std=c++17'])
+        default_options : ['warning_level=3', 'cpp_std=c++20'])
 
 # 追加コンパイルオプション
 # -Wextraで有効になる-Wunused-parameterは修正方法の検討が必要なので暫定的に無効

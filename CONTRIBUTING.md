@@ -51,7 +51,7 @@ Pull requestは`master`ブランチに対してお願いいたします。
 
 #### :pencil: C++ソースコードを修正するときの注意
 
-* C++17の機能を使う。迷ったときは[C++ Core Guidelines][isocpp]を参考にする。
+* C++20の機能を使う。迷ったときは[C++ Core Guidelines][isocpp]を参考にする。
 * CIのビルドで失敗する機能は使わなくてもビルドできるようにする。(下記参照)
 * コーディングスタイルは周囲のコードになるべく合わせる。
 * ソースコードを修正したときはビルド可能なことチェックする。
@@ -60,7 +60,7 @@ Pull requestは`master`ブランチに対してお願いいたします。
 
 C++17で追加された標準ライブラリのうちg++ 11またはclang++ 14が[サポート][support]していないものに注意
 
-| JDimの動作環境に合わない標準ライブラリ | ヘッダー | gcc | clang |
+| JDimの動作環境に合わない C++17 標準ライブラリ | ヘッダー | gcc | clang |
 | --- | --- | ---:| ---:|
 | [Standardization of Parallelism TS][cpp17exe] | `<execution>` | 9 | n/a |
 | [Hardware interference size][cpp17his]  | | 12 | 19 |
@@ -88,6 +88,103 @@ C++17で追加された標準ライブラリのうちg++ 11またはclang++ 14�
 [cpp17math]: https://en.cppreference.com/w/cpp/numeric/special_functions
 [cpp17conv]: https://en.cppreference.com/w/cpp/header/charconv
 [cpp17fspathhash]: https://en.cppreference.com/w/cpp/filesystem/path/hash
+
+C++20で追加されたコア言語機能や標準ライブラリのうちg++ 11またはclang++ 14が[サポート][support20]していないものに注意
+
+[support20]: https://en.cppreference.com/w/cpp/compiler_support/20
+
+**JDimの動作環境では使用できない主な C++20 コア言語機能**
+
+Feature (Core) | Standard | Paper(s) | GCC | Clang
+--- | --- | --- | --- | ---
+Modules | C++20 | P1103 etc. | 16* | 21*
+Immediate functions (consteval) | C++20 |  P1073 | 11* | 17*
+Coroutines | C++20 |  P0912 etc. | 10* | 17*
+
+<details>
+<summary>完全な禁止リストはこちら</summary>
+
+この禁止リストは GCC ≥11 / Clang ≥14 で安定して利用できない、または実装が不完全な C++20 機能を対象としています。
+表はより高いコンパイラバージョンを要求する機能ほど上位に来るよう並べています。
+
+Feature (Core) | Standard | Paper(s) | GCC | Clang
+--- | --- | --- | --- | ---
+Simplifying implicit lambda capture  |  C++20  |  P0588  | 8 | —
+Modules  |  C++20  |  P1103 P1703 P1766 P1779 P1811 P1815 P1857 P1874 P1979 P2115 P2615 P2788  | 16* | 21*
+Inconsistencies with constant template parameters  |  C++20  |   P1907  | 11* | 18*
+Class template argument deduction for alias templates  |  C++20  |   P1814  | 10 | 19*
+Converting from T* to bool should be considered narrowing  |  C++20  |   P1957  | 11* | 18
+Immediate functions (consteval)  |  C++20  |   P1073  | 11* | 17*
+Coroutines  |  C++20  |   P0912 LWG3393  | 10* | 17*
+Class template argument deduction for aggregates  |  C++20  |   P1816 P2082  | 11 | 17
+Wording for lambdas in unevaluated contexts  |  C++20  |   P0315  | 9 | 17*
+Structured binding extensions  |  C++20  |   P1091 P1381  | 10 | 16*
+Fixing functionality gaps in constraints  |  C++20  |   P0857  | 10 | 16
+Conditionally trivial special member functions  |  C++20  |   P0848  | 10 | 16
+Parenthesized initialization of aggregates  |  C++20  |   P0960 P1975  | 10 | 16
+Down with typename!   |  C++20  |   P0634  | 9 | 16
+\_\_VA\_OPT\_\_  |  C++20  |  P0306 P1042  | 12* | 9
+
+</details>
+
+**JDimの動作環境では使用できない主な C++20 標準ライブラリ**
+
+Feature (Library) | Standard | Paper(s) | GCC | Clang
+--- | --- | --- | --- | ---
+Extending <chrono> to calendars and time zones | C++20 | P0355 | 14* | 19*
+std::format() | C++20 | P0645 | 13 | 17
+constexpr std::string | C++20 | P0980 etc. | 12 | 15
+constexpr std::vector | C++20 | P1004 | 12 | 15
+The One Ranges Proposal (std::ranges) | C++20 |  P0896 | 10 | 15*
+
+<details>
+<summary>完全な禁止リストはこちら</summary>
+
+この禁止リストは GCC ≥11 / Clang ≥14 で安定して利用できない、または実装が不完全な C++20 機能を対象としています。
+表はより高いコンパイラバージョンを要求する機能ほど上位に来るよう並べています。
+
+Feature (Library) | Standard | Paper(s) | GCC | Clang
+--- | --- | --- | --- | ---
+Atomic compare-and-exchange with padding bits  |  C++20  |  P0528  | 13 | —
+Atomic std::shared_ptr and std::weak_ptr  |  C++20  |  P0718  | 12 | —
+Layout-compatibility and pointer-interconvertibility traits  |  C++20  |  P0466  | 12 | —
+Standard library header units  |  C++20  |  P1502  | 11 | —
+Extending <chrono> to calendars and time zones  |  C++20  |  P0355  | 14* | 19*
+Integration of chrono with text formatting  |  C++20  |  P1361  | 13 | 21
+Reviewing deprecated facilities of C++17 for C++20  |  C++20  |  P0619  | 12 | 20*
+std::stop_token and std::jthread  |  C++20  |   P0660  | 10 | 20*
+std::format()  |  C++20  |  P0645  | 13 | 17
+std::atomic_ref::wait(), std::atomic_ref::notify_one() and std::atomic_ref::notify_all()  |  C++20  |   P1643  | 11 | 19
+Output chrono::days with 'd' suffix  |  C++20  |  P1650  | 13 | 16
+C++ Synchronized Buffered Ostream (std::basic_osyncstream)  |  C++20  |   P0053  | 11 | 18
+std::atomic_ref  |  C++20  |   P0019  | 10 | 19
+The Mothership has Landed: Adding <=> to the Library  |  C++20  |   P1614  | 10 | 19
+Smart pointer creation with default initialization (e.g. std::make\_unique\_for\_overwrite())  |  C++20  |  P1020 P1973  | 12 | 16
+Floating Point Atomic  |  C++20  |   P0020  | 10 | 18
+Efficient access to std::basic_stringbuf's buffer  |  C++20  |   P0408  | 11 | 17
+Library support for operator<=> (<compare>)  |  C++20  |   P0768  | 10 | 17*
+Extending std::make\_shared() to support arrays  |  C++20  |  P0674  | 12 | 15
+constexpr std::string  |  C++20  |  P0426 P1032 P0980  | 12 | 15
+constexpr std::vector  |  C++20  |  P1004  | 12 | 15
+std::source_location  |  C++20  |   P1208  | 11 | 16
+ranges::basic_istream_view::iterator should not be copyable  |  C++20  |   P1638  | 11 | 16
+Target Vectorization Policies from Parallelism V2 TS to C++20 (std::execution::unseq)  |  C++20  |   P1001  | 9 | 17*
+std::assume_aligned()  |  C++20  |   P1007  | 11 | 15
+Input range adaptors  |  C++20  |   P1035  | 10 | 16
+Ranges adaptors for non-copyable iterators  |  C++20  |   P1862  | 10 | 16
+ranges::elements_view needs its own sentinel  |  C++20  |   P1994  | 10 | 16
+constexpr for std::complex  |  C++20  |   P0415  | 9 | 16*
+[[nodiscard]] in the library  |  C++20  |   P0600  | 9 | 16*
+Library support for char8_t  |  C++20  |   P0482  | 9 | 16*
+The One Ranges Proposal  |  C++20  |   P0896  | 10 | 15*
+Utility functions to implement uses-allocator construction  |  C++20  |   P0591  | 9 | 16
+Make stateful allocator propagation more consistent for operator+(basic_string)  |  C++20  |   P1165  | 10 | 15
+pmr::polymorphic_allocator<> as a vocabulary type  |  C++20  |   P0339  | 9 | 16
+char8_t backward compatibility remediation  |  C++20  |   P1423  | 10 | 15
+
+</details>
+
+コンパイラーのC++20コア言語機能と標準ライブラリのサポート状況は <https://cppstat.dev/> を参考にしました。
 
 #### :chains: Unity buildの注意
 ビルドツールMesonは複数のソースファイルを1つに結合してコンパイルする
