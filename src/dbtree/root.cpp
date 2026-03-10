@@ -1591,7 +1591,7 @@ void Root::save_movetable()
 
 
 
-/** @brief 2ch.net or 5ch.net or bbspink.comのURLかどうか
+/** @brief 2ch.net or 5ch.net or 5ch.io or bbspink.comのURLかどうか
  *
  * @param[in] url チェック対象
  * @return マッチしたらtrueを返す
@@ -1601,10 +1601,11 @@ bool Root::is_2ch( std::string_view url )
     constexpr bool protocol = false;
     const std::string hostname = MISC::get_hostname( url, protocol );
 
-    if( ( MISC::ends_with( hostname, ".2ch.net" ) && hostname != "info.2ch.net" )
+    if( ( hostname.ends_with( ".2ch.net" ) && hostname != "info.2ch.net" )
         // サブドメイン無しのURLに対応する
-        || ( MISC::ends_with( hostname, "5ch.net" ) && hostname != "info.5ch.net" )
-        || MISC::ends_with( hostname, ".bbspink.com" ) ) return true;
+        || ( hostname.ends_with( "5ch.io" ) && hostname != "info.5ch.io" )
+        || ( hostname.ends_with( "5ch.net" ) && hostname != "info.5ch.net" )
+        || hostname.ends_with( ".bbspink.com" ) ) return true;
 
     return false;
 }
