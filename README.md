@@ -34,10 +34,11 @@ JDim は GPLv2 の下で公開されている JD からforkしたソフトウェ
 ルック・アンド・フィールや環境設定は JD と互換性があります。
 (JDim projectを立ち上げた経緯については [Issue 15][issue15] を参照してください)
 
-**注意: 2023-07-11 からJDim本体で5chのスレ閲覧が可能になっています。**
-5ch.netのDATファイルへのアクセスが[開放][5ch-924]されていますが今後の動向に注意してください。
+**注意: 2026-03-06 から５ちゃんねるのドメイン名が 5ch.net から 5ch.io に[変更][5ch-924]されました。**<br>
+JDim最新版では 5ch.io のスレ閲覧が可能になっていますが、現在書き込みに失敗する場合があります。
+対応状況の詳細は [Issue #1578](https://github.com/JDimproved/JDim/issues/1578) を参照してください。
 
-[5ch-924]: https://agree.5ch.net/test/read.cgi/operate/9240230711/
+[5ch-924]: https://agree.5ch.io/test/read.cgi/operate/9240230711/9-10n
 [issue15]: https://github.com/JDimproved/JDim/issues/15
 
 
@@ -399,7 +400,7 @@ JDim は GPLv2 の下で公開されています。
 
 ## 連絡先
 
-バグ報告その他は [Linux板@５ちゃんねる](http://mao.5ch.net/linux/) のJD/JDimスレ、
+バグ報告その他は [Linux板@５ちゃんねる](http://mao.5ch.io/linux/) のJD/JDimスレ、
 またはJDimのリポジトリにて行ってください。詳しい方法は[ガイド][contrib]をご覧ください。
 
 [contrib]: https://github.com/JDimproved/JDim/tree/master/CONTRIBUTING.md
