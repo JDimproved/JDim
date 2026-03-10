@@ -57,6 +57,24 @@ TEST_F(DBTREE_Root_Is2chTest, not_match_5ch_with_info_subdomain)
     EXPECT_FALSE( DBTREE::Root::is_2ch( "https://info.5ch.net/board" ) );
 }
 
+TEST_F(DBTREE_Root_Is2chTest, match_5ch_io_without_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_2ch( "http://5ch.io/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_2ch( "https://5ch.io/board" ) );
+}
+
+TEST_F(DBTREE_Root_Is2chTest, match_5ch_io_with_subdomain)
+{
+    EXPECT_TRUE( DBTREE::Root::is_2ch( "http://subdomain.5ch.io/board" ) );
+    EXPECT_TRUE( DBTREE::Root::is_2ch( "https://subdomain.5ch.io/board" ) );
+}
+
+TEST_F(DBTREE_Root_Is2chTest, not_match_5ch_io_with_info_subdomain)
+{
+    EXPECT_FALSE( DBTREE::Root::is_2ch( "http://info.5ch.io/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_2ch( "https://info.5ch.io/board" ) );
+}
+
 TEST_F(DBTREE_Root_Is2chTest, not_match_bbspink_without_subdomain)
 {
     EXPECT_FALSE( DBTREE::Root::is_2ch( "http://bbspink.com/board" ) );
@@ -87,6 +105,7 @@ TEST_F(DBTREE_Root_IsJBBSTest, not_match_other_domains)
 {
     EXPECT_FALSE( DBTREE::Root::is_JBBS( "https://subdomain.2ch.net/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_JBBS( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_JBBS( "https://5ch.io/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_JBBS( "http://subdomain.bbspink.com/board" ) );
 }
 
@@ -120,6 +139,7 @@ TEST_F(DBTREE_Root_IsMachiTest, not_match_other_domains)
 {
     EXPECT_FALSE( DBTREE::Root::is_machi( "https://subdomain.2ch.net/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_machi( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_machi( "https://5ch.io/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_machi( "http://subdomain.bbspink.com/board" ) );
 }
 
@@ -147,6 +167,7 @@ TEST_F(DBTREE_Root_IsVip2chTest, not_match_other_domains)
 {
     EXPECT_FALSE( DBTREE::Root::is_vip2ch( "https://subdomain.2ch.net/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_vip2ch( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_vip2ch( "https://5ch.io/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_vip2ch( "http://subdomain.bbspink.com/board" ) );
 }
 
@@ -174,6 +195,7 @@ TEST_F(DBTREE_Root_IsOpen2chTest, not_match_other_domains)
 {
     EXPECT_FALSE( DBTREE::Root::is_open2ch( "https://subdomain.2ch.net/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_open2ch( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_open2ch( "https://5ch.io/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_open2ch( "http://subdomain.bbspink.com/board" ) );
 }
 
@@ -201,6 +223,7 @@ TEST_F(DBTREE_Root_IsNext2chTest, not_match_other_domains)
 {
     EXPECT_FALSE( DBTREE::Root::is_next2ch( "https://subdomain.2ch.net/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_next2ch( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_next2ch( "https://5ch.io/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_next2ch( "http://subdomain.bbspink.com/board" ) );
 }
 
@@ -230,6 +253,7 @@ TEST_F(DBTREE_Root_Is2chscTest, not_match_other_domains)
     EXPECT_FALSE( DBTREE::Root::is_2chsc( "https://next2ch.net/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_2chsc( "http://subdomain.2ch.net/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_2chsc( "http://subdomain.5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_2chsc( "http://subdomain.5ch.io/board" ) );
 }
 
 TEST_F(DBTREE_Root_Is2chscTest, not_match_2chsc_without_subdomain)
@@ -262,6 +286,7 @@ TEST_F(DBTREE_Root_IsLocalTest, not_match_other_domains)
 {
     EXPECT_FALSE( DBTREE::Root::is_local( "https://subdomain.2ch.net/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_local( "https://5ch.net/board" ) );
+    EXPECT_FALSE( DBTREE::Root::is_local( "https://5ch.io/board" ) );
     EXPECT_FALSE( DBTREE::Root::is_local( "http://subdomain.bbspink.com/board" ) );
 }
 
@@ -276,6 +301,7 @@ TEST_F(DBTREE_Root_IsLocalTest, match_file_scheme_at_middle_or_tail)
     // file:// の位置が先頭にあるかチェックしていない
     EXPECT_TRUE( DBTREE::Root::is_local( "http://2ch.net/file://board" ) );
     EXPECT_TRUE( DBTREE::Root::is_local( "https:://5ch.net/board/file://" ) );
+    EXPECT_TRUE( DBTREE::Root::is_local( "https:://5ch.io/board/file://" ) );
 }
 
 } // namespace

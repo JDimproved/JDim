@@ -206,13 +206,14 @@ void NodeTree2ch::receive_finish()
 
 /*
         DATファイルへのアクセス方法 ( 2023-07-11 からの仕様 )
-        参考文献: https://agree.5ch.net/test/read.cgi/operate/9240230711/3
+        参考文献: https://agree.5ch.io/test/read.cgi/operate/9240230711/3
+        2026-03-06 のドメイン変更 ( 5ch.net -> 5ch.io ) に合わせて例のURLを修正した。
 
         ・スレIDが10桁の場合 -> https://サーバ/板ID/oyster/IDの上位4桁/ID.dat
 
-        (例) https://HOGE.5ch.net/test/read.cgi/hoge/1234567890/ を取得
-        (1) https://HOGE.5ch.net/hoge/dat/1234567890.dat から DAT を取得。
-        (2) https://HOGE.5ch.net/hoge/oyster/1234/1234567890.dat から取得。
+        (例) https://HOGE.5ch.io/test/read.cgi/hoge/1234567890/ を取得
+        (1) https://HOGE.5ch.io/hoge/dat/1234567890.dat から DAT を取得。
+        (2) https://HOGE.5ch.io/hoge/oyster/1234/1234567890.dat から取得。
         (3) 旧URL(過去ログサーバ)がある場合、そのURLから取得
         取得できなかったとき -> 最初にプロキシを使わない接続で読み込めるか試す設定なら(4)へ
 
@@ -221,9 +222,9 @@ void NodeTree2ch::receive_finish()
 
         ・スレIDが9桁の場合 -> https://サーバ/板ID/oyster/IDの上位3桁/ID.dat
 
-        (例) https://HOGE.5ch.net/test/read.cgi/hoge/123456789/ を取得
-        (1) https://HOGE.5ch.net/hoge/dat/123456789.dat から DAT を取得。
-        (2) https://HOGE.5ch.net/hoge/oyster/123/123456789.dat から取得。
+        (例) https://HOGE.5ch.io/test/read.cgi/hoge/123456789/ を取得
+        (1) https://HOGE.5ch.io/hoge/dat/123456789.dat から DAT を取得。
+        (2) https://HOGE.5ch.io/hoge/oyster/123/123456789.dat から取得。
         (3) 旧URL(過去ログサーバ)がある場合、そのURLから取得
         取得できなかったとき -> 最初にプロキシを使わない接続で読み込めるか試す設定なら(4)へ
 

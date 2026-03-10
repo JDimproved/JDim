@@ -87,7 +87,7 @@ void BBSMenu::download_bbsmenu()
 
     constexpr bool protocol = false;
     const std::string host = MISC::get_hostname( data.url, protocol );
-    if( MISC::ends_with( host, ".5ch.net ") || MISC::ends_with( host, ".2ch.net" ) ) {
+    if( host.ends_with( ".5ch.io" ) || host.ends_with( ".5ch.net" ) || host.ends_with( ".2ch.net" ) ) {
         data.agent = CONFIG::get_agent_for2ch();
         if( CONFIG::get_use_proxy_for2ch() ) {
             data.host_proxy = CONFIG::get_proxy_for2ch();

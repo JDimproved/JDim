@@ -4065,7 +4065,10 @@ bool NodeTreeBase::remove_imenu( std::string& str_link )
     else return false;
 
     std::size_t cut_end;
-    if( str_link.compare( host_start, 14, "jump.5ch.net/?" ) == 0
+    if( str_link.compare( host_start, 13, "jump.5ch.io/?" ) == 0 ) {
+        cut_end = host_start + 13;
+    }
+    else if( str_link.compare( host_start, 14, "jump.5ch.net/?" ) == 0
             || str_link.compare( host_start, 14, "pinktower.com/" ) == 0
             || str_link.compare( host_start, 14, "jump.2ch.net/?" ) == 0 ) {
         cut_end = host_start + 14;

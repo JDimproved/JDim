@@ -85,4 +85,4 @@ layout: default
 
 
 [jdversion]: https://github.com/JDimproved/JDim/tree/master/src/jdversion.h "JDim/jdversion.h at master"
-[thread]: https://mao.5ch.net/test/read.cgi/linux/1540656394/
+[thread]: https://mao.5ch.io/test/read.cgi/linux/1540656394/
