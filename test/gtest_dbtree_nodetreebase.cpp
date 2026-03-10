@@ -27,6 +27,7 @@ TEST_F(NodeTreeBase_RemoveImenuTest, not_remove)
         { "https://ime.nu/", "https://ime.nu/" },
         { "https://ime.st/", "https://ime.st/" },
         { "https://nun.nu/", "https://nun.nu/" },
+        { "https://jump.5ch.io/?", "https://jump.5ch.io/?" },
         { "https://jump.5ch.net/?", "https://jump.5ch.net/?" },
         { "https://jump.2ch.net/?", "https://jump.2ch.net/?" },
         { "https://pinktower.com/", "https://pinktower.com/" },
@@ -111,6 +112,22 @@ TEST_F(NodeTreeBase_RemoveImenuTest, single_jump_5ch_net)
         { "http://jump.5ch.net/?http://foobar.baz", "http://foobar.baz" },
         { "https://jump.5ch.net/?https://foobar.baz", "https://foobar.baz" },
         { "http://jump.5ch.net/?https://foobar.baz", "https://foobar.baz" },
+    };
+
+    std::string buffer;
+    for( auto& [input, expect] : test_data ) {
+        buffer.assign( input );
+        EXPECT_TRUE( DBTREE::NodeTreeBase::remove_imenu( buffer ) );
+        EXPECT_EQ( expect, buffer );
+    }
+}
+
+TEST_F(NodeTreeBase_RemoveImenuTest, single_jump_5ch_io)
+{
+    constexpr const char* test_data[][2] = {
+        { "http://jump.5ch.io/?http://foobar.baz", "http://foobar.baz" },
+        { "https://jump.5ch.io/?https://foobar.baz", "https://foobar.baz" },
+        { "http://jump.5ch.io/?https://foobar.baz", "https://foobar.baz" },
     };
 
     std::string buffer;
