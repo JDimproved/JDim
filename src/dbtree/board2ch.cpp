@@ -293,7 +293,7 @@ ArticleBase* Board2ch::append_article( const std::string& datbase, const std::st
 
 
 
-/** @brief 5ch.net または bbspink.com のクッキーを取得する
+/** @brief 5ch.net, 5ch.io または bbspink.com のクッキーを取得する
  *
  * @details about:config 設定から取得したクッキーはHTTPクッキー管理マネージャにまとめる。
  */
@@ -306,6 +306,10 @@ std::string Board2ch::get_hap() const
     if( get_root().find( ".bbspink.com" ) != std::string::npos ) {
         saved_cookie = CONFIG::get_cookie_hap_bbspink();
         domain = ".bbspink.com";
+    }
+    else if( get_root().ends_with( ".5ch.io" ) ) {
+        saved_cookie = CONFIG::get_cookie_hap();
+        domain = ".5ch.io";
     }
     else {
         saved_cookie = CONFIG::get_cookie_hap();

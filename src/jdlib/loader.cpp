@@ -633,7 +633,7 @@ bool Loader::run( SKELETON::Loadable* cb, const LOADERDATA& data_in )
     }
 
     // SSL/TLS使用の指定
-    constexpr std::array<const char*, 3> domains{ ".5ch.net", ".2ch.net", ".bbspink.com" };
+    constexpr std::array<const char*, 4> domains{ ".5ch.io", ".5ch.net", ".2ch.net", ".bbspink.com" };
     const std::string& hostname = m_data.host;
     const auto has_domain = [&hostname]( const char* d ) { return hostname.find( d ) != std::string::npos; };
 

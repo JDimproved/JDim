@@ -313,7 +313,7 @@ void Root::download_bbsmenu()
 
     constexpr bool protocol = false;
     const std::string host = MISC::get_hostname( data.url, protocol );
-    if( host.find( ".5ch.net" ) != std::string::npos || host.find( ".2ch.net" ) != std::string::npos ) {
+    if( host.ends_with( ".5ch.io" ) || host.ends_with( ".5ch.net" ) || host.ends_with( ".2ch.net" ) ) {
         data.agent = CONFIG::get_agent_for2ch();
         if( CONFIG::get_use_proxy_for2ch() ) {
             data.host_proxy = CONFIG::get_proxy_for2ch();
