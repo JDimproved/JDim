@@ -2617,7 +2617,7 @@ bool ArticleViewBase::click_url( std::string url, int res_number, GdkEventButton
 
         hide_popup();
 
-        const std::string openurl = "http://be.5ch.net/user/" + url.substr( std::strlen( PROTO_BE ) );
+        const std::string openurl = "https://be.5ch.io/user/" + url.substr( std::strlen( PROTO_BE ) );
 #ifdef _DEBUG
         std::cout << "open  " << openurl << std::endl;
 #endif

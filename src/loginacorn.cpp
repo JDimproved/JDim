@@ -21,8 +21,8 @@
 namespace CORE::ac {
 constexpr std::size_t kSizeOfRawData = 64 * 1024;
 
-constexpr const char* kHostDonguri = "donguri.5ch.net";
-constexpr const char* kOriginDonguri = "https://donguri.5ch.net";
+constexpr const char* kHostDonguri = "donguri.5ch.io";
+constexpr const char* kOriginDonguri = "https://donguri.5ch.io";
 }
 
 
