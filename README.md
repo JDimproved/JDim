@@ -35,7 +35,7 @@ JDim は GPLv2 の下で公開されている JD からforkしたソフトウェ
 (JDim projectを立ち上げた経緯については [Issue 15][issue15] を参照してください)
 
 **注意: 2026-03-06 から５ちゃんねるのドメイン名が 5ch.net から 5ch.io に[変更][5ch-924]されました。**<br>
-JDim最新版では 5ch.io のスレ閲覧が可能になっていますが、現在書き込みに失敗する場合があります。
+2026年3月にリリースされたJDimのバージョン0.16.0では５ちゃんねるドメイン変更（5ch.net -> 5ch.io）に対応しています。
 対応状況の詳細は [Issue #1578](https://github.com/JDimproved/JDim/issues/1578) を参照してください。
 
 [5ch-924]: https://agree.5ch.io/test/read.cgi/operate/9240230711/9-10n
