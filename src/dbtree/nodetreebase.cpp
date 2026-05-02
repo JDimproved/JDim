@@ -1904,7 +1904,7 @@ void NodeTreeBase::parse_date_id( NODE* header, std::string_view str )
 
         if(
             // ID
-            ( str[ start_block ] == 'I' && str[ start_block + 1 ] == 'D' )
+            ( str.compare( start_block, 2, "ID" ) == 0 )
 
             // HOST
             || ( str.compare( start_block, 4, "HOST" ) == 0 )
