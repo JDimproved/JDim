@@ -15,7 +15,7 @@ jobs:
       CC: gcc-14
       CXX: g++-14
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: dependencies installation
         run: |
           sudo apt update
@@ -31,7 +31,7 @@ jobs:
       CC: clang-18
       CXX: clang++-18
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: dependencies installation
         run: |
           sudo apt update
@@ -47,7 +47,7 @@ jobs:
       CC: gcc-14
       CXX: g++-14
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: dependencies installation
         run: |
           sudo apt update
@@ -63,7 +63,7 @@ jobs:
       CC: gcc-13
       CXX: g++-13
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: dependencies installation
         run: |
           sudo apt update
