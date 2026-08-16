@@ -1,6 +1,7 @@
 buildinfo.h
 src/jdim
 src/**/*.a
+src/icons.gresource.cpp
 src/icons/*.h
 !src/icons/iconmanager.h
 !src/icons/iconid.h

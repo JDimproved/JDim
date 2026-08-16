@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: GPL-2.0-or-later -->
+<gresources>
+  <gresource prefix="/com/github/jdimproved/JDim">
+    <file>bkmark.png</file>
+    <file>bkmark_broken_subject.png</file>
+    <file>bkmark_thread.png</file>
+    <file>bkmark_update.png</file>
+    <file>board.png</file>
+    <file>board_update.png</file>
+    <file>board_updated.png</file>
+    <file>broken_subject.png</file>
+    <file>check.png</file>
+    <file>dir.png</file>
+    <file>down.png</file>
+    <file>favorite.png</file>
+    <file>hist.png</file>
+    <file>hist_board.png</file>
+    <file>hist_close.png</file>
+    <file>hist_closeboard.png</file>
+    <file>hist_closeimg.png</file>
+    <file>image.png</file>
+    <file>info.png</file>
+    <file>jd16.png</file>
+    <file>jd32.png</file>
+    <file>jd48.png</file>
+    <file>jd96.png</file>
+    <file>link.png</file>
+    <file>loading.png</file>
+    <file>loading_stop.png</file>
+    <file>newthread.png</file>
+    <file>newthread_hour.png</file>
+    <file>post.png</file>
+    <file>post_refer.png</file>
+    <file>thread.png</file>
+    <file>thread_old.png</file>
+    <file>thread_update.png</file>
+    <file>thread_updated.png</file>
+    <file>update.png</file>
+    <file>write.png</file>
+  </gresource>
+</gresources>

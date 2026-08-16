@@ -1,54 +1,19 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
+#
+# gnome.compile_resources() は meson 0.56 から C++ プロジェクトでcppソースファイルを
+# 出力するようになった。 https://github.com/mesonbuild/meson/pull/7841
+#
+# 静的ライブラリに生成したソースファイルを含めると __attribute__((constructor)) gcc拡張が機能しない
+# そのため実行ファイルのターゲット jdim_exe のソースに追加する
 
-gdk_pixbuf_csource = find_program('gdk-pixbuf-csource')
-gen = generator(gdk_pixbuf_csource,
-                output : '@BASENAME@.h',
-                capture : true,
-                arguments : ['--raw', '--build-list', 'icon_@BASENAME@', '@INPUT@'])
+gnome = import('gnome')
 
-icon_files = [
-  'bkmark.png',
-  'bkmark_broken_subject.png',
-  'bkmark_thread.png',
-  'bkmark_update.png',
-  'board.png',
-  'board_update.png',
-  'board_updated.png',
-  'broken_subject.png',
-  'check.png',
-  'dir.png',
-  'down.png',
-  'favorite.png',
-  'hist.png',
-  'hist_board.png',
-  'hist_close.png',
-  'hist_closeboard.png',
-  'hist_closeimg.png',
-  'image.png',
-  'info.png',
-  'jd16.png',
-  'jd32.png',
-  'jd48.png',
-  'jd96.png',
-  'link.png',
-  'loading.png',
-  'loading_stop.png',
-  'newthread.png',
-  'newthread_hour.png',
-  'post.png',
-  'post_refer.png',
-  'thread.png',
-  'thread_old.png',
-  'thread_update.png',
-  'thread_updated.png',
-  'update.png',
-  'write.png',
-]
+icons_gresource_cpp = gnome.compile_resources(
+  'icons',
+  'icons.gresource.xml',
+  source_dir: '.',
+)
 
-generated_headers = []
-foreach f : icon_files
-  generated_headers += gen.process(f)
-endforeach
 
 sources = [
   'iconmanager.cpp',
@@ -56,7 +21,7 @@ sources = [
 
 
 icon_lib = static_library(
-  'icon', [sources, generated_headers],
+  'icon', [sources],
   dependencies : gtkmm_dep,
   include_directories : include_directories('..'),
 )
