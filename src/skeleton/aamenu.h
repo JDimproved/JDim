@@ -47,7 +47,7 @@ namespace SKELETON
         int get_size() const;
 
         void set_text( const std::string& text );
-        void create_menuitem( Glib::RefPtr< Gtk::ActionGroup > actiongroup, Gtk::Menu* menu, const int id );
+        void create_menuitem( Gtk::Menu* menu, const int id );
         void create_popupmenu();
 
         bool move_down();
