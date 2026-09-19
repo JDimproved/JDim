@@ -146,7 +146,7 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
 {
     const int mrg = 16;
                 
-    Gtk::HBox* hbox = Gtk::manage( new Gtk::HBox );
+    Gtk::Box* hbox = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
     hbox->pack_start( m_chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
     get_content_area()->pack_start( *hbox, Gtk::PACK_SHRINK );
 

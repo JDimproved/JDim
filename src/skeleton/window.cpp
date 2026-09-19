@@ -57,6 +57,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     , m_boot( true )
     , m_enable_fold( m_fold_when_focusout )
     , m_mode( JDWIN_INIT )
+    , m_statbar{ Gtk::ORIENTATION_HORIZONTAL, 0 }
 {
     // ステータスバー
     m_label_stat.set_size_request( 0, -1 );

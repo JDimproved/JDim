@@ -50,6 +50,8 @@ using namespace IMAGE;
 
 ImageAdmin::ImageAdmin( const std::string& url )
     : SKELETON::Admin( url )
+    , m_tab{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_iconbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
     , m_scroll( SCROLL_NO )
 {
     m_scrwin.add( m_iconbox );

@@ -23,8 +23,9 @@ enum
 
 
 EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeStore >& treestore )
-    : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
-      m_label( "マウスの中ボタンドラッグで行の複数選択が可能です。" )
+    : Gtk::Window( Gtk::WINDOW_TOPLEVEL )
+    , m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_label( "マウスの中ボタンドラッグで行の複数選択が可能です。" )
 {
     // ツールバー
     m_toolbar = Gtk::manage( new EditListToolBar() );

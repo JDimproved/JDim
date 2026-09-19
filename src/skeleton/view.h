@@ -28,7 +28,7 @@ namespace SKELETON
     // にリサイズを依頼するシグナル。PopupWin::PopupWin()でPopupWin::slot_resize_popup()にコネクトされる。
     typedef sigc::signal< void > SIG_RESIZE_POPUP;
     
-    class View : public Gtk::VBox
+    class View : public Gtk::Box
     {
         SIG_HIDE_POPUP m_sig_hide_popup;
         SIG_RESIZE_POPUP m_sig_resize_popup;

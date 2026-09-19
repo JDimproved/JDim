@@ -7,6 +7,13 @@
 
 using namespace SKELETON;
 
+
+JDVBox::JDVBox()
+    : Gtk::Box{ Gtk::ORIENTATION_VERTICAL, 0 }
+{
+}
+
+
 JDVBox::~JDVBox() noexcept = default;
 
 

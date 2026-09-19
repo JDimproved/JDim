@@ -59,7 +59,7 @@ namespace SKELETON
         Gtk::VButtonBox m_vbuttonbox_action;
 
         // まとめ( m_vbuttonbox_* )
-        Gtk::VBox m_vbox;
+        Gtk::Box m_vbox;
 
         // 非表示項目
         Gtk::TreeView m_tree_hidden;
@@ -68,7 +68,7 @@ namespace SKELETON
         Gtk::ScrolledWindow m_scroll_hidden;
 
         // まとめ( m_tree.shown, m_vbox, m_tree_hidden )
-        Gtk::HBox m_hbox;
+        Gtk::Box m_hbox;
 
         // キーフック用
         typedef sigc::signal< bool, GdkEventKey* > SIG_KEY_PRESS;

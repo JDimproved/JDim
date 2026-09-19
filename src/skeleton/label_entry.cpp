@@ -10,7 +10,8 @@ using namespace SKELETON;
 
 
 LabelEntry::LabelEntry( const bool editable, const std::string& label, const std::string& text )
-    : m_editable( editable )
+    : Gtk::Box{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_editable( editable )
 {
     set_label( label );
     m_label.set_mnemonic_widget ( m_entry );

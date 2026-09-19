@@ -14,7 +14,7 @@ namespace CONFIG
         std::string* m_value;
         const std::string m_defaultval;
 
-        Gtk::HBox m_hbox;
+        Gtk::Box m_hbox;
         Gtk::Entry m_entry;
         Gtk::Button m_button_default;
 
@@ -37,7 +37,7 @@ namespace CONFIG
         int* m_value;
         const int m_defaultval;
 
-        Gtk::HBox m_hbox;
+        Gtk::Box m_hbox;
         Gtk::Entry m_entry;
         Gtk::Button m_button_default;
 
@@ -60,7 +60,7 @@ namespace CONFIG
         bool* m_value;
         const bool m_defaultval;
 
-        Gtk::HBox m_hbox;
+        Gtk::Box m_hbox;
         Gtk::RadioButtonGroup m_radiogroup;
         Gtk::RadioButton m_radio_true;
         Gtk::RadioButton m_radio_false;

@@ -25,6 +25,8 @@ SelectItemPref::SelectItemPref( Gtk::Window* parent, const std::string& url )
     , m_button_down( g_dpgettext( GTK_DOMAIN, "Stock label, navigation\x04_Down", 24 ), true )
     , m_button_bottom( g_dpgettext( GTK_DOMAIN, "Stock label, navigation\x04_Bottom", 24 ), true )
     , m_button_default( g_dpgettext( GTK_DOMAIN, "Stock label\x04_Revert", 12 ), true )
+    , m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
 {
     m_list_default_data.clear();
 

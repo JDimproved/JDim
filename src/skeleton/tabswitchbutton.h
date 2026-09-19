@@ -15,7 +15,7 @@ namespace SKELETON
 
     class TabSwitchButton: public Gtk::Notebook
     {
-        Gtk::VBox m_vbox;
+        Gtk::Box m_vbox;
         Gtk::Button m_button;
         Gtk::Image m_arrow;
 

@@ -24,8 +24,8 @@ namespace IMAGE
 
     class ImageAdmin : public SKELETON::Admin
     {
-        Gtk::HBox m_tab;
-        Gtk::HBox m_iconbox;
+        Gtk::Box m_tab;
+        Gtk::Box m_iconbox;
         Gtk::ScrolledWindow m_scrwin;
         Gtk::Button m_left, m_right;
         Gtk::EventBox m_view;
@@ -51,7 +51,7 @@ namespace IMAGE
 
         void save_session() override;
 
-        Gtk::HBox& tab() { return m_tab; }
+        Gtk::Box& tab() { return m_tab; }
         Gtk::Widget* get_widget() override { return &m_view; }
 
         bool empty() const override;

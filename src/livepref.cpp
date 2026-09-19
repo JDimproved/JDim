@@ -13,11 +13,12 @@
 using namespace CORE;
 
 LivePref::LivePref( Gtk::Window* parent, const std::string& url )
-    : SKELETON::PrefDiag( parent, url ),
-      m_label_inst( "実況を行うには始めに板のプロパティで更新間隔を設定して下さい。\n速度を0にするとスクロールしません。" ),
-      m_mode1( m_radiogroup, "速度可変、速度がしきい値を越えると行単位でスクロール(_1)", true ),
-      m_mode2( m_radiogroup, "速度一定、遅れがしきい値を越えると行単位でスクロール(_2)", true ),
-      m_bt_reset( "設定を全てデフォルトに戻す(_F)", true )
+    : SKELETON::PrefDiag( parent, url )
+    , m_label_inst( "実況を行うには始めに板のプロパティで更新間隔を設定して下さい。\n速度を0にするとスクロールしません。" )
+    , m_vbox_mode{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_mode1( m_radiogroup, "速度可変、速度がしきい値を越えると行単位でスクロール(_1)", true )
+    , m_mode2( m_radiogroup, "速度一定、遅れがしきい値を越えると行単位でスクロール(_2)", true )
+    , m_bt_reset( "設定を全てデフォルトに戻す(_F)", true )
 {
     const int mrg = 8;
 

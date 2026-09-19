@@ -118,7 +118,8 @@ struct LAYOUT_TABLE
 
 
 DrawAreaBase::DrawAreaBase( const std::string& url )
-    : m_url( url )
+    : Gtk::Box{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_url( url )
     , m_backscreen( nullptr, cairo_surface_destroy )
     , m_enable_draw{ true }
     , m_back_frame_top( nullptr, cairo_surface_destroy )

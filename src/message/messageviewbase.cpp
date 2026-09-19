@@ -64,6 +64,7 @@ enum
 
 MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url )
+    , m_msgview{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_entry_name( CORE::COMP_NAME )
     , m_entry_mail( CORE::COMP_MAIL )
     , m_enable_focus( true )

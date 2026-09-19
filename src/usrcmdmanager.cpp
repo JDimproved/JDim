@@ -46,14 +46,16 @@ void CORE::delete_usrcmd_manager()
 
 class ReplaceTextDiag : public SKELETON::PrefDiag
 {
-    Gtk::VBox m_vbox;
+    Gtk::Box m_vbox;
     Gtk::Entry m_entry;
     Gtk::Label m_label;
 
 public:
 
     ReplaceTextDiag( Gtk::Window* parent, const std::string& title )
-        : SKELETON::PrefDiag( parent, "" ), m_label( title + "を置き換えるテキストを入力してください。" )
+        : SKELETON::PrefDiag( parent, "" )
+        , m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+        , m_label( title + "を置き換えるテキストを入力してください。" )
     {
         resize( 640, 1 );
 

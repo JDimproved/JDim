@@ -31,7 +31,8 @@ using namespace SKELETON;
 
 
 ToolBar::ToolBar( Admin* admin )
-    : m_admin( admin )
+    : Gtk::Box{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_admin( admin )
     , m_enable_slot{ true }
 {
     m_buttonbar.set_border_width( 0 );

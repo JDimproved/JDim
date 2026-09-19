@@ -35,6 +35,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_label_size{ "サイズ( byte / Kbyte ):" }
     , m_label_maxres{ "最大レス数 (0 : 未設定):" }
     , m_label_charset{ "テキストエンコーディング:" }
+    , m_vbox_abone{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_vbox_abone_id{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_check_transpabone( "透明あぼ〜ん" )
     , m_check_chainabone( "連鎖あぼ〜ん" )
     , m_check_ageabone( "sage以外をあぼ〜ん" )

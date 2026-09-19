@@ -32,6 +32,8 @@ FontColorPref::FontColorPref( Gtk::Window* parent, const std::string& url )
     , m_label_aafont{ "AAレスと判定する正規表現(_R):", true }
     , m_bt_reset_font{ "フォントの設定を全てデフォルトに戻す(_F)", true }
 
+    , m_vbox_color{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_hbox_change_color{ Gtk::ORIENTATION_HORIZONTAL, 0 }
     , m_label_reset_color{ "選択行の色をデフォルトに戻す:", false }
     , m_bt_change_color{ "選択行の色を設定する(_S)", true }
     , m_bt_reset_color{ "ライト(_R)", true }

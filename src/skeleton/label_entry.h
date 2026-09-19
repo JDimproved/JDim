@@ -13,7 +13,7 @@
 
 namespace SKELETON
 {
-    class LabelEntry : public Gtk::HBox
+    class LabelEntry : public Gtk::Box
     {
         typedef sigc::signal< void > SIG_ACTIVATE;
 

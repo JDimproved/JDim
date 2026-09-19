@@ -25,7 +25,7 @@ namespace CORE
         SKELETON::EditView m_edit_word, m_edit_regex;
         Gtk::Label m_label_warning;
 
-        Gtk::VBox m_vbox_abone_thread;
+        Gtk::Box m_vbox_abone_thread;
         Gtk::Label m_label_abone_thread;
 
         Gtk::Box m_hbox_low_number;
@@ -36,7 +36,7 @@ namespace CORE
         Gtk::Label m_label_high_number;
         Gtk::SpinButton m_spin_high_number;
 
-        Gtk::HBox m_hbox_hour;
+        Gtk::Box m_hbox_hour;
         Gtk::Label m_label_hour;
         Gtk::SpinButton m_spin_hour;
 
@@ -68,8 +68,10 @@ namespace CORE
 
         GlobalAboneThreadPref( Gtk::Window* parent, const std::string& url )
             : SKELETON::PrefDiag( parent, url )
+            , m_vbox_abone_thread{ Gtk::ORIENTATION_VERTICAL, 0 }
             , m_hbox_low_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
             , m_hbox_high_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
+            , m_hbox_hour{ Gtk::ORIENTATION_HORIZONTAL, 0 }
         {
             // スレ数、時間
             m_label_abone_thread.set_text( "以下の数字が0の時は未設定になります。\nまたキャッシュにログがあるスレはあぼ〜んされません。\n\n" );

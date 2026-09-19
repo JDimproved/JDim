@@ -24,8 +24,8 @@ namespace CORE
 
     class ProxyFrame : public Gtk::Frame
     {
-        Gtk::VBox m_vbox;
-        Gtk::HBox m_hbox;
+        Gtk::Box m_vbox;
+        Gtk::Box m_hbox;
 
         Gtk::Box m_hbox_port; ///< "ポート番号"のラベルと入力欄を一つにまとめる
         Gtk::Label m_label_port; ///< "ポート番号"のラベル
@@ -39,7 +39,9 @@ namespace CORE
 
         ProxyFrame( const std::string& title, const Glib::ustring& ckbt_label, const Glib::ustring& send_label,
                     const Glib::ustring& host_label, const Glib::ustring& port_label )
-            : m_hbox_port{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+            : m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+            , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+            , m_hbox_port{ Gtk::ORIENTATION_HORIZONTAL, 0 }
             , m_label_port{ port_label, true }
             , ckbt( ckbt_label, true )
             , send_cookie_check( send_label, true )

@@ -77,8 +77,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_hbox_abone_consecutive{ Gtk::ORIENTATION_HORIZONTAL, 0 }
     , m_label_abone_consecutive{ "(実験的な機能) 連続投稿したIDをスレのNG IDに追加する (0 : 未設定)：" }
     , m_label_abone_consecutive_over_n_times{ " 回以上" }
+    , m_vbox_abone_thread{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_hbox_low_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
     , m_hbox_high_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
+    , m_hbox_hour{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_vbox_abone_title{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_button_remove_old_title( "dat落ちしたスレのタイトルを削除する" )
 {
     m_edit_cookies.set_editable( false );

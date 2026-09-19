@@ -10,11 +10,11 @@
 
 namespace SKELETON
 {
-    class JDVBox : public Gtk::VBox
+    class JDVBox : public Gtk::Box
     {
       public:
 
-        using Gtk::VBox::VBox;
+        JDVBox();
         ~JDVBox() noexcept override;
 
         // unpack = true の時取り除く
