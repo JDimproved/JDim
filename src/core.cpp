@@ -1264,7 +1264,7 @@ void Core::pack_widget( bool unpack )
         m_notebook_right.append_remove_page( unpack, *BOARD::get_admin()->get_widget(), "スレ一覧" );
 
         if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT )
-            m_vbox_article.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_article.pack_remove_start( unpack, *m_toolbar, false, false );
 
         m_vbox_article.pack_remove_start( unpack, m_notebook_right );
 
@@ -1281,7 +1281,7 @@ void Core::pack_widget( bool unpack )
 
         if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT ){
 
-            m_vbox_toolbar.pack_remove_start( unpack, *m_toolbar, Gtk::PACK_SHRINK );
+            m_vbox_toolbar.pack_remove_start( unpack, *m_toolbar, false, false );
             m_vbox_toolbar.pack_remove_start( unpack, *get_rpane() );
 
             m_hpaned.get_ctrl().add_remove2( unpack, m_vbox_toolbar );
@@ -1290,11 +1290,11 @@ void Core::pack_widget( bool unpack )
     }
 
     // メインwindowのパッキング
-    if( SESSION::get_show_main_statbar() ) m_win_main.pack_remove_end( unpack, m_win_main.get_statbar(), Gtk::PACK_SHRINK );
+    if( SESSION::get_show_main_statbar() ) m_win_main.pack_remove_end( unpack, m_win_main.get_statbar(), false, false );
     m_win_main.pack_remove_end( unpack, m_hpaned );
     if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_NORMAL )
-        m_win_main.pack_remove_end( unpack, *m_toolbar, Gtk::PACK_SHRINK );
-    if( SESSION::show_menubar() ) m_win_main.pack_remove_end( unpack, *m_menubar, Gtk::PACK_SHRINK );
+        m_win_main.pack_remove_end( unpack, *m_toolbar, false, false );
+    if( SESSION::show_menubar() ) m_win_main.pack_remove_end( unpack, *m_menubar, false, false );
 
     if( ! unpack ){
 

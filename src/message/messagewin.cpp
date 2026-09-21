@@ -26,7 +26,7 @@ MessageWin::MessageWin()
               << " " << MessageWin::get_width_win() << " " << MessageWin::get_height_win() << std::endl;
 #endif
 
-    get_vbox().pack_remove_end( false, get_statbar(), Gtk::PACK_SHRINK );
+    get_vbox().pack_remove_end( false, get_statbar(), false, false );
     init_win();
 
     if( ! CONFIG::get_fold_message() ) set_transient_for( *CORE::get_mainwindow() );
