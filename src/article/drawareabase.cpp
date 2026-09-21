@@ -293,7 +293,7 @@ void DrawAreaBase::create_scrbar()
     if( CONFIG::get_left_scrbar() ) remove( m_view );
 
     m_event->add( *m_vscrbar );
-    pack_start( *m_event, Gtk::PACK_SHRINK );
+    pack_start( *m_event, false, false );
 
     if( CONFIG::get_left_scrbar() ) pack_start( m_view );
 

@@ -440,7 +440,7 @@ void MessageViewBase::pack_widget()
     m_toolbar_name_mail.append( m_tool_fixmail );
     m_toolbar_name_mail.append( m_tool_entry_mail );
 
-    m_msgview.pack_start( m_toolbar_name_mail, Gtk::PACK_SHRINK );
+    m_msgview.pack_start( m_toolbar_name_mail, false, false );
 
     if( ! m_text_message ){
 

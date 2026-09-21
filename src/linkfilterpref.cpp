@@ -38,13 +38,13 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
     m_button_manual.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterDiag::slot_show_manual ) );
 
     m_vbox.set_spacing( 8 );
-    m_vbox.pack_start( m_label_url, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_entry_url, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_label_url, false, false );
+    m_vbox.pack_start( m_entry_url, false, false );
 
-    m_hbox_cmd.pack_start( m_label_cmd, Gtk::PACK_SHRINK );
-    m_hbox_cmd.pack_end( m_button_manual, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_cmd, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_entry_cmd, Gtk::PACK_SHRINK );
+    m_hbox_cmd.pack_start( m_label_cmd, false, false );
+    m_hbox_cmd.pack_end( m_button_manual, false, false );
+    m_vbox.pack_start( m_hbox_cmd, false, false );
+    m_vbox.pack_start( m_entry_cmd, false, false );
 
     set_activate_entry( m_entry_url );
     set_activate_entry( m_entry_cmd );
@@ -110,20 +110,20 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     m_scrollwin.add( m_treeview );
     m_scrollwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
-    m_vbuttonbox.pack_start( m_button_top, Gtk::PACK_SHRINK );
-    m_vbuttonbox.pack_start( m_button_up, Gtk::PACK_SHRINK );
-    m_vbuttonbox.pack_start( m_button_down, Gtk::PACK_SHRINK );
-    m_vbuttonbox.pack_start( m_button_bottom, Gtk::PACK_SHRINK );
-    m_vbuttonbox.pack_start( m_button_delete, Gtk::PACK_SHRINK );
-    m_vbuttonbox.pack_start( m_button_add, Gtk::PACK_SHRINK );
+    m_vbuttonbox.pack_start( m_button_top, false, false );
+    m_vbuttonbox.pack_start( m_button_up, false, false );
+    m_vbuttonbox.pack_start( m_button_down, false, false );
+    m_vbuttonbox.pack_start( m_button_bottom, false, false );
+    m_vbuttonbox.pack_start( m_button_delete, false, false );
+    m_vbuttonbox.pack_start( m_button_add, false, false );
     m_vbuttonbox.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox.set_spacing( 4 );
 
-    m_hbox.pack_start( m_scrollwin, Gtk::PACK_EXPAND_WIDGET );
-    m_hbox.pack_start( m_vbuttonbox, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_scrollwin, true, true );
+    m_hbox.pack_start( m_vbuttonbox, false, false );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_label, false, false );
     get_content_area()->pack_start( m_hbox );
 
     show_all_children();

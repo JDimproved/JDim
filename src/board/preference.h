@@ -42,14 +42,14 @@ namespace BOARD
             m_hbox.set_spacing( 8 );
             m_hbox.set_border_width( 8 );
             m_hbox.pack_start( entry_host );
-            m_hbox.pack_start( entry_port, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( entry_port, false, false );
 
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );
-            m_vbox.pack_start( rd_global, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( rd_disable, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( rd_local, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_hbox, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( rd_global, false, false );
+            m_vbox.pack_start( rd_disable, false, false );
+            m_vbox.pack_start( rd_local, false, false );
+            m_vbox.pack_start( m_hbox, false, false );
 
             set_label( title );
             set_border_width( 8 );

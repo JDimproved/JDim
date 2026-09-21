@@ -292,17 +292,17 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
     m_button_add.signal_clicked().connect( sigc::mem_fun( *this, &MouseKeyDiag::slot_add ) );
     m_button_reset.signal_clicked().connect( sigc::mem_fun( *this, &MouseKeyDiag::slot_reset ) );
 
-    m_vbuttonbox.pack_start( m_button_delete, Gtk::PACK_SHRINK );
-    m_vbuttonbox.pack_start( m_button_add, Gtk::PACK_SHRINK );
-    m_vbuttonbox.pack_start( m_button_reset, Gtk::PACK_SHRINK );
+    m_vbuttonbox.pack_start( m_button_delete, false, false );
+    m_vbuttonbox.pack_start( m_button_add, false, false );
+    m_vbuttonbox.pack_start( m_button_reset, false, false );
     m_vbuttonbox.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox.set_spacing( 4 );
 
-    m_hbox.pack_start( m_scrollwin, Gtk::PACK_EXPAND_WIDGET );
-    m_hbox.pack_start( m_vbuttonbox, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_scrollwin, true, true );
+    m_hbox.pack_start( m_vbuttonbox, false, false );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_label, false, false );
     get_content_area()->pack_start( m_hbox );
 
     show_all_children();
@@ -509,8 +509,8 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
 {
     signal_key_press_event().connect( sigc::mem_fun( *this, &MouseKeyPref::slot_key_press_event ) );
 
-    m_hbox_search.pack_start( m_label, Gtk::PACK_SHRINK );
-    m_hbox_search.pack_end( m_toggle_search, Gtk::PACK_SHRINK );
+    m_hbox_search.pack_start( m_label, false, false );
+    m_hbox_search.pack_end( m_toggle_search, false, false );
 
     m_label.set_hexpand( true );
     m_toggle_search.set_image_from_icon_name( "edit-find-symbolic" );
@@ -559,12 +559,12 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     m_scrollwin.set_propagate_natural_width( true );
 
     m_button_reset.signal_clicked().connect( sigc::mem_fun( *this, &MouseKeyPref::slot_reset ) );
-    m_hbox.pack_start( m_button_reset, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_button_reset, false, false );
 
-    get_content_area()->pack_start( m_hbox_search, Gtk::PACK_SHRINK );
-    get_content_area()->pack_start( m_search_bar, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_hbox_search, false, false );
+    get_content_area()->pack_start( m_search_bar, false, false );
     get_content_area()->pack_start( m_scrollwin );
-    get_content_area()->pack_start( m_hbox, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_hbox, false, false );
 
     show_all_children();
     set_title( target + "設定" );

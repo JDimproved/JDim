@@ -154,7 +154,7 @@ void ArticleViewBase::setup_view()
     m_drawarea->sig_on_url().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_on_url ) );
     m_drawarea->sig_leave_url().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_leave_url ) );
 
-    pack_start( *m_drawarea, Gtk::PACK_EXPAND_WIDGET );
+    pack_start( *m_drawarea, true, true );
     setup_action();
 
     show_all_children();

@@ -51,7 +51,7 @@ BBSListToolBar::BBSListToolBar()
     m_tool_label.set_toolbar_style( Gtk::TOOLBAR_ICONS );
     m_tool_label.append( m_button_toggle );
     m_tool_label.append( *get_button_close() );
-    pack_start( m_tool_label, Gtk::PACK_SHRINK );
+    pack_start( m_tool_label, false, false );
 
     BBSListToolBar::pack_buttons();
     add_search_control_mode( CONTROL::MODE_BBSLIST );

@@ -39,13 +39,13 @@ UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Gl
     m_button_manual.signal_clicked().connect( sigc::mem_fun( *this, &UsrCmdDiag::slot_show_manual ) );
 
     m_vbox.set_spacing( 8 );
-    m_vbox.pack_start( m_label_name, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_entry_name, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_label_name, false, false );
+    m_vbox.pack_start( m_entry_name, false, false );
 
-    m_hbox_cmd.pack_start( m_label_cmd, Gtk::PACK_SHRINK );
-    m_hbox_cmd.pack_end( m_button_manual, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_hbox_cmd, Gtk::PACK_SHRINK );
-    m_vbox.pack_start( m_entry_cmd, Gtk::PACK_SHRINK );
+    m_hbox_cmd.pack_start( m_label_cmd, false, false );
+    m_hbox_cmd.pack_end( m_button_manual, false, false );
+    m_vbox.pack_start( m_hbox_cmd, false, false );
+    m_vbox.pack_start( m_entry_cmd, false, false );
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->pack_start( m_vbox );
@@ -89,11 +89,11 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     m_scrollwin.set_size_request( 640, 400 );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_label, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_label, false, false );
     get_content_area()->pack_start( m_scrollwin );
 
     m_ckbt_hide_usrcmd.set_active( CONFIG::get_hide_usrcmd() );
-    get_content_area()->pack_start( m_ckbt_hide_usrcmd, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_ckbt_hide_usrcmd, false, false );
 
     // ポップアップメニュー
     m_action_group = Gio::SimpleActionGroup::create();

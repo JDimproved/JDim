@@ -140,9 +140,9 @@ public:
 
         m_label_enable_hash.set_ellipsize( Pango::ELLIPSIZE_END );
 
-        m_hbox_check_enable_hash.pack_start( m_label_enable_hash, Gtk::PACK_EXPAND_WIDGET );
-        m_hbox_check_enable_hash.pack_start( m_switch_enable_hash, Gtk::PACK_SHRINK );
-        m_hbox_check_enable_hash.pack_start( m_toggle_notes, Gtk::PACK_SHRINK );
+        m_hbox_check_enable_hash.pack_start( m_label_enable_hash, true, true );
+        m_hbox_check_enable_hash.pack_start( m_switch_enable_hash, false, false );
+        m_hbox_check_enable_hash.pack_start( m_toggle_notes, false, false );
         m_hbox_check_enable_hash.show();
 
         m_vbox_check_enable_hash.pack_start( m_hbox_check_enable_hash );
@@ -168,9 +168,9 @@ public:
         m_link_manual.set_halign( Gtk::ALIGN_END );
         m_link_manual.set_use_underline( true );
         m_link_manual.show();
-        m_hbox_initial_threshold.pack_start( m_spin_initial_threshold, Gtk::PACK_SHRINK );
-        m_hbox_initial_threshold.pack_start( m_button_reset_initial_threshold, Gtk::PACK_SHRINK );
-        m_hbox_initial_threshold.pack_end( m_link_manual, Gtk::PACK_SHRINK );
+        m_hbox_initial_threshold.pack_start( m_spin_initial_threshold, false, false );
+        m_hbox_initial_threshold.pack_start( m_button_reset_initial_threshold, false, false );
+        m_hbox_initial_threshold.pack_end( m_link_manual, false, false );
         m_hbox_initial_threshold.show();
 
         m_label_tool.set_halign( Gtk::ALIGN_START );
@@ -213,10 +213,10 @@ public:
         m_label_num_of_items.show();
 
         m_box_tool.set_hexpand( true );
-        m_box_tool.pack_start( m_button_delete, Gtk::PACK_SHRINK );
-        m_box_tool.pack_start( m_button_set_threshold, Gtk::PACK_SHRINK );
-        m_box_tool.pack_start( m_button_copy, Gtk::PACK_SHRINK );
-        m_box_tool.pack_end( m_label_num_of_items, Gtk::PACK_SHRINK );
+        m_box_tool.pack_start( m_button_delete, false, false );
+        m_box_tool.pack_start( m_button_set_threshold, false, false );
+        m_box_tool.pack_start( m_button_copy, false, false );
+        m_box_tool.pack_end( m_label_num_of_items, false, false );
         m_box_tool.show();
 
         // あぼーん設定一覧のセットアップ
@@ -274,8 +274,8 @@ public:
         m_box.set_vexpand( true );
         m_box.property_margin() = 8;
         m_box.insert_action_group( "image-hash", m_action_group );
-        m_box.pack_start( m_grid, Gtk::PACK_SHRINK );
-        m_box.pack_start( m_scroll, Gtk::PACK_EXPAND_WIDGET );
+        m_box.pack_start( m_grid, false, false );
+        m_box.pack_start( m_scroll, true, true );
         m_box.show();
 
         m_treeview.grab_focus();

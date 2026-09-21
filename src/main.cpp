@@ -424,7 +424,7 @@ bool App::setup_fifo( std::string url )
                                       false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
             Gtk::CheckButton chk_button( "今後表示しない" );
-            mdiag.get_content_area()->pack_start( chk_button, Gtk::PACK_SHRINK );
+            mdiag.get_content_area()->pack_start( chk_button, false, false );
             chk_button.show();
 
             const int ret = mdiag.run();

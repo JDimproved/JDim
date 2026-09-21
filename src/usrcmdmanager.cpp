@@ -59,8 +59,8 @@ public:
     {
         resize( 640, 1 );
 
-        m_vbox.pack_start( m_label, Gtk::PACK_SHRINK );
-        m_vbox.pack_start( m_entry, Gtk::PACK_SHRINK );
+        m_vbox.pack_start( m_label, false, false );
+        m_vbox.pack_start( m_entry, false, false );
 
         get_content_area()->set_spacing( 8 );
         get_content_area()->pack_start( m_vbox );

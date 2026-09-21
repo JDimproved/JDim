@@ -65,9 +65,9 @@ namespace CORE
             m_label_notice.set_xalign( 0 );
 
             m_vbox.set_border_width( mrg );
-            m_vbox.pack_start( m_label_notice, Gtk::PACK_EXPAND_WIDGET, mrg );
-            m_vbox.pack_start( m_combo, Gtk::PACK_EXPAND_WIDGET, 0 );
-            m_vbox.pack_start( m_frame, Gtk::PACK_EXPAND_WIDGET, mrg );
+            m_vbox.pack_start( m_label_notice, true, true, mrg );
+            m_vbox.pack_start( m_combo, true, true, 0 );
+            m_vbox.pack_start( m_frame, true, true, mrg );
 
             get_content_area()->set_spacing( 0 );
             get_content_area()->pack_start( m_vbox );

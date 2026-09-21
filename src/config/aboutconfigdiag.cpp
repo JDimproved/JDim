@@ -20,7 +20,7 @@ AboutConfigDiagStr::AboutConfigDiagStr( Gtk::Window* parent, std::string* value,
     m_hbox.pack_start( m_entry );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagStr::slot_default ) );
-    m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_button_default, false, false );
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->pack_start( m_hbox );
@@ -60,7 +60,7 @@ AboutConfigDiagInt::AboutConfigDiagInt( Gtk::Window* parent, int* value, const i
     m_hbox.pack_start( m_entry );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagInt::slot_default ) );
-    m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_button_default, false, false );
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->pack_start( m_hbox );
@@ -106,7 +106,7 @@ AboutConfigDiagBool::AboutConfigDiagBool( Gtk::Window* parent, bool* value, cons
     m_hbox.pack_start( m_radio_false );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagBool::slot_default ) );
-    m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_button_default, false, false );
 
 
     get_content_area()->set_spacing( 8 );

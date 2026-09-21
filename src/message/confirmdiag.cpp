@@ -22,8 +22,8 @@ ConfirmDiag::ConfirmDiag( const std::string& url, const std::string& message )
 {
     const int mrg = 16;
     Gtk::Box* hbox = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
-    hbox->pack_start( m_chkbutton, Gtk::PACK_EXPAND_WIDGET, mrg );
-    get_content_area()->pack_start( *hbox, Gtk::PACK_SHRINK );
+    hbox->pack_start( m_chkbutton, true, true, mrg );
+    get_content_area()->pack_start( *hbox, false, false );
 
     set_title( "投稿確認" );
     show_all_children();

@@ -73,7 +73,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     if( need_mginfo ){
         m_mginfo_ebox.add( m_mginfo );
         m_mginfo_ebox.set_visible_window( false );
-        m_statbar.pack_start( m_mginfo_ebox, Gtk::PACK_SHRINK );
+        m_statbar.pack_start( m_mginfo_ebox, false, false );
     }
 
     m_mginfo.set_width_chars( MGINFO_CHARS );

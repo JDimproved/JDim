@@ -70,7 +70,7 @@ LivePref::LivePref( Gtk::Window* parent, const std::string& url )
 
     m_grid.attach( m_bt_reset, 0, 4, 4, 1 );
 
-    get_content_area()->pack_start( m_grid, Gtk::PACK_SHRINK );
+    get_content_area()->pack_start( m_grid, false, false );
 
     set_title( "実況設定" );
     show_all_children();

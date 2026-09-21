@@ -74,9 +74,9 @@ HistorySubMenu::HistorySubMenu( const std::string& url_history )
 
         Gtk::Box* hbox = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
         hbox->set_spacing( SPACING_MENU );
-        hbox->pack_start( *image, Gtk::PACK_SHRINK );
-        hbox->pack_start( *label, Gtk::PACK_SHRINK );
-        hbox->pack_end( *label_motion, Gtk::PACK_SHRINK );
+        hbox->pack_start( *image, false, false );
+        hbox->pack_start( *label, false, false );
+        hbox->pack_end( *label_motion, false, false );
 
         item = Gtk::manage( new Gtk::MenuItem( *hbox ) );
         append( *item );

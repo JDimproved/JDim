@@ -31,7 +31,7 @@ MenuButton::MenuButton( const bool show_arrow, Gtk::Widget* label, Gtk::PackOpti
     if( show_arrow ){
         m_arrow = Gtk::manage( new Gtk::Image() );
         m_arrow->set_from_icon_name( "pan-down-symbolic", Gtk::ICON_SIZE_SMALL_TOOLBAR );
-        hbox->pack_start( *m_arrow, Gtk::PACK_SHRINK );
+        hbox->pack_start( *m_arrow, false, false );
     }
     else m_enable_sig_clicked = false;
 

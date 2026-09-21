@@ -70,11 +70,11 @@ namespace CORE
             m_vbox.pack_start( m_bt_mail );
 
             m_bt_selectall.signal_clicked().connect( sigc::mem_fun( *this, &PrivacyPref::slot_selectall ) );
-            m_hbox_selectall.pack_start( m_bt_selectall, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_hbox_selectall, Gtk::PACK_SHRINK );
+            m_hbox_selectall.pack_start( m_bt_selectall, false, false );
+            m_vbox.pack_start( m_hbox_selectall, false, false );
 
             get_content_area()->set_spacing( 8 );
-            get_content_area()->pack_start( m_vbox, Gtk::PACK_SHRINK );
+            get_content_area()->pack_start( m_vbox, false, false );
 
             set_title( "プライバシー情報の消去" );
             show_all_children();

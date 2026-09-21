@@ -68,15 +68,15 @@ void SelectItemPref::pack_widgets()
     view_column_shown->add_attribute( *render_text_shown, "text", 1 );
 
     // ボタン(縦移動)
-    m_vbuttonbox_v.pack_start( m_button_top, Gtk::PACK_SHRINK );
-    m_vbuttonbox_v.pack_start( m_button_up, Gtk::PACK_SHRINK );
-    m_vbuttonbox_v.pack_start( m_button_down, Gtk::PACK_SHRINK );
-    m_vbuttonbox_v.pack_start( m_button_bottom, Gtk::PACK_SHRINK );
+    m_vbuttonbox_v.pack_start( m_button_top, false, false );
+    m_vbuttonbox_v.pack_start( m_button_up, false, false );
+    m_vbuttonbox_v.pack_start( m_button_down, false, false );
+    m_vbuttonbox_v.pack_start( m_button_bottom, false, false );
     // ボタン(横移動)
-    m_vbuttonbox_h.pack_start( m_button_delete, Gtk::PACK_SHRINK );
-    m_vbuttonbox_h.pack_start( m_button_add, Gtk::PACK_SHRINK );
+    m_vbuttonbox_h.pack_start( m_button_delete, false, false );
+    m_vbuttonbox_h.pack_start( m_button_add, false, false );
     // ボタン(アクション)
-    m_vbuttonbox_action.pack_start( m_button_default, Gtk::PACK_SHRINK );
+    m_vbuttonbox_action.pack_start( m_button_default, false, false );
 
     // ボタン(スロット関数)
     m_button_top.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_top ) );
@@ -110,27 +110,27 @@ void SelectItemPref::pack_widgets()
     m_scroll_shown.set_size_request( 250, 300 );
     m_scroll_shown.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
 
-    m_hbox.pack_start( m_scroll_shown, Gtk::PACK_EXPAND_WIDGET );
+    m_hbox.pack_start( m_scroll_shown, true, true );
 
     m_vbuttonbox_v.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox_v.set_spacing( 4 );
-    m_vbox.pack_start( m_vbuttonbox_v, Gtk::PACK_EXPAND_WIDGET );
+    m_vbox.pack_start( m_vbuttonbox_v, true, true );
 
     m_vbuttonbox_h.set_layout( Gtk::BUTTONBOX_EDGE );
     m_vbuttonbox_h.set_spacing( 4 );
-    m_vbox.pack_start( m_vbuttonbox_h, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_vbuttonbox_h, false, false );
 
     m_vbuttonbox_action.set_layout( Gtk::BUTTONBOX_END );
     m_vbuttonbox_action.set_spacing( 4 );
-    m_vbox.pack_start( m_vbuttonbox_action, Gtk::PACK_EXPAND_WIDGET );
+    m_vbox.pack_start( m_vbuttonbox_action, true, true );
 
-    m_hbox.pack_start( m_vbox, Gtk::PACK_SHRINK, 4 );
+    m_hbox.pack_start( m_vbox, false, false, 4 );
 
     m_scroll_hidden.add( m_tree_hidden );
     m_scroll_hidden.set_size_request( 250, 300 );
     m_scroll_hidden.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
 
-    m_hbox.pack_start( m_scroll_hidden, Gtk::PACK_EXPAND_WIDGET );
+    m_hbox.pack_start( m_scroll_hidden, true, true );
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->pack_start( m_hbox );
