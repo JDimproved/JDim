@@ -326,10 +326,11 @@ void FontColorPref::pack_widget()
     m_bt_reset_color_dark.signal_clicked().connect( sigc::mem_fun( *this, &FontColorPref::slot_reset_color_dark ) );
 
     m_hbox_change_color.set_spacing( mrg );
-    m_hbox_change_color.pack_end( m_bt_reset_color_dark, false, false );
-    m_hbox_change_color.pack_end( m_bt_reset_color, false, false );
-    m_hbox_change_color.pack_end( m_label_reset_color, false, false );
-    m_hbox_change_color.pack_end( m_bt_change_color , false, false );
+    m_hbox_change_color.pack_start( m_bt_change_color , false, false );
+    m_hbox_change_color.pack_start( m_label_reset_color, false, false );
+    m_hbox_change_color.pack_start( m_bt_reset_color, false, false );
+    m_hbox_change_color.pack_start( m_bt_reset_color_dark, false, false );
+    m_hbox_change_color.set_halign( Gtk::ALIGN_END );
     m_vbox_color.pack_start( m_hbox_change_color, false, false );
 
     m_chk_use_gtktheme_message.add_label( "書き込みビューの配色設定に GTKテーマ を用いる(_W)", true );
@@ -356,10 +357,11 @@ void FontColorPref::pack_widget()
     m_bt_reset_all_colors_dark.set_tooltip_text(
         "HTMLタグで指定された文字色は、ダークテーマでは視認性が低下する可能性があるため、無効にします。" );
 
-    m_hbox_reset_all_colors.pack_end( m_bt_reset_all_colors_dark, false, false );
-    m_hbox_reset_all_colors.pack_end( m_bt_reset_all_colors, false, false );
-    m_hbox_reset_all_colors.pack_end( m_label_reset_all_colors, false, false );
-    m_vbox_color.pack_end( m_hbox_reset_all_colors, false, false );
+    m_hbox_reset_all_colors.pack_start( m_label_reset_all_colors, false, false );
+    m_hbox_reset_all_colors.pack_start( m_bt_reset_all_colors, false, false );
+    m_hbox_reset_all_colors.pack_start( m_bt_reset_all_colors_dark, false, false );
+    m_hbox_reset_all_colors.set_halign( Gtk::ALIGN_END );
+    m_vbox_color.pack_start( m_hbox_reset_all_colors, false, false );
 
     // ディスプレイ解像度が小さい環境で表示できるようにスクロール可能にする
     m_scroll_color.add( m_vbox_color );

@@ -79,8 +79,8 @@ ImageAdmin::ImageAdmin( const std::string& url )
     m_tab.signal_scroll_event().connect( sigc::mem_fun( *this, &ImageAdmin::slot_scroll_event ) );
 
     m_tab.pack_start( m_scrwin );
-    m_tab.pack_end( m_right, false, false );
-    m_tab.pack_end( m_left, false, false );
+    m_tab.pack_start( m_left, false, false );
+    m_tab.pack_start( m_right, false, false );
     m_tab.show_all_children();
 }
 

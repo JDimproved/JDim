@@ -510,7 +510,7 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     signal_key_press_event().connect( sigc::mem_fun( *this, &MouseKeyPref::slot_key_press_event ) );
 
     m_hbox_search.pack_start( m_label, false, false );
-    m_hbox_search.pack_end( m_toggle_search, false, false );
+    m_hbox_search.pack_start( m_toggle_search, false, false );
 
     m_label.set_hexpand( true );
     m_toggle_search.set_image_from_icon_name( "edit-find-symbolic" );

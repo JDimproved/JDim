@@ -42,7 +42,9 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
     m_vbox.pack_start( m_entry_url, false, false );
 
     m_hbox_cmd.pack_start( m_label_cmd, false, false );
-    m_hbox_cmd.pack_end( m_button_manual, false, false );
+    auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
+    m_hbox_cmd.pack_start( *spacer, true, true );
+    m_hbox_cmd.pack_start( m_button_manual, false, false );
     m_vbox.pack_start( m_hbox_cmd, false, false );
     m_vbox.pack_start( m_entry_cmd, false, false );
 
