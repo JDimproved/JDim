@@ -99,6 +99,7 @@ namespace CORE
 
         // ツールバー
         std::unique_ptr<MainToolBar> m_toolbar;
+        SKELETON::JDVBox m_toolbar_socket;
 
         // タイトルに表示する文字列
         // set_maintitle() 参照
