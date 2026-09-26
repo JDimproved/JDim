@@ -124,7 +124,7 @@ void JDWindow::init_win()
         m_scrwin->set_size_request( 0, 0 );
         m_scrwin->set_policy( Gtk::POLICY_EXTERNAL, Gtk::POLICY_EXTERNAL );
         m_scrwin->add( *m_vbox_view );
-        m_vbox.pack_remove_end( false, *m_scrwin, true, true );
+        m_vbox.pack_remove_start( false, *m_scrwin, true, true );
 
         set_skip_taskbar_hint( true );
         resize( get_width_win(), 1 );

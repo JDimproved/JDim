@@ -17,7 +17,7 @@ using namespace MESSAGE;
 
 // メッセージウィンドウにはステータスバー内のマウスジェスチャ表示欄が
 // 不要なので SKELETON::JDWindow() の第2引数を flase にする
-MessageWin::MessageWin()
+MessageWin::MessageWin( Gtk::Widget& widget )
     : SKELETON::JDWindow( CONFIG::get_fold_message(), false )
 {
 #ifdef _DEBUG
@@ -26,8 +26,13 @@ MessageWin::MessageWin()
               << " " << MessageWin::get_width_win() << " " << MessageWin::get_height_win() << std::endl;
 #endif
 
-    get_vbox().pack_remove_end( false, get_statbar(), false, false );
     init_win();
+
+    // widget は折り畳みの対象
+    pack_remove_start( false, widget, true, true );
+
+    // statbar は折り畳まない
+    get_vbox().pack_remove_start( false, get_statbar(), false, false );
 
     if( ! CONFIG::get_fold_message() ) set_transient_for( *CORE::get_mainwindow() );
 

@@ -15,11 +15,9 @@ namespace IMAGE
 {
     class ImageWin : public SKELETON::JDWindow
     {
-        Gtk::Widget* m_tab{};
-
       public:
 
-        ImageWin();
+        ImageWin( Gtk::Widget& tab, Gtk::Widget& view );
         ~ImageWin() override;
 
         void pack_remove_tab( bool unpack, Widget& tab );

@@ -16,7 +16,7 @@
 using namespace IMAGE;
 
 
-ImageWin::ImageWin()
+ImageWin::ImageWin( Gtk::Widget& tab, Gtk::Widget& view )
     : SKELETON::JDWindow( CONFIG::get_fold_image() )
 {
 #ifdef _DEBUG
@@ -25,8 +25,13 @@ ImageWin::ImageWin()
               << " " << ImageWin::get_width_win() << " " << ImageWin::get_height_win() << std::endl;
 #endif
 
+    // tab は折り畳まない
+    get_vbox().pack_remove_start( false, tab, false, false );
+
     init_win();
-    pack_remove_end( false, get_statbar(), false, false );
+    // view と statbar は折り畳みの対象
+    pack_remove_start( false, view );
+    pack_remove_start( false, get_statbar(), false, false );
 
     if( ! CONFIG::get_fold_image() ) set_transient_for( *CORE::get_mainwindow() );
 
@@ -139,6 +144,5 @@ void ImageWin::switch_admin()
 
 void ImageWin::pack_remove_tab( bool unpack, Widget& tab )
 {
-    m_tab = &tab;
     get_vbox().pack_remove_start( unpack, tab, false, false );
 }

@@ -177,10 +177,8 @@ void MessageAdmin::open_window()
     std::cout << "MessageAdmin::open_window\n";
 #endif
 
-        set_jdwin( std::make_unique<MESSAGE::MessageWin>() );
-        win = get_jdwin();
-        win->pack_remove_end( false, *get_widget() );
-        win->show_all();
+        set_jdwin( std::make_unique<MESSAGE::MessageWin>( *get_widget() ) );
+        get_jdwin()->show_all();
     }
     else if( win && win->is_hide() ){
         win->show();
@@ -200,7 +198,7 @@ void MessageAdmin::close_window()
 #ifdef _DEBUG
     std::cout << "MessageAdmin::close_window\n";
 #endif
-        get_jdwin()->pack_remove_end( true, *get_widget() );
+        get_jdwin()->pack_remove_start( true, *get_widget() );
         delete_jdwin();
     }
 }
