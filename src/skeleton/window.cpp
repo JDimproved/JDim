@@ -367,19 +367,6 @@ void JDWindow::pack_remove_start( bool unpack, Widget& child, bool expand, bool 
 }
 
 
-void JDWindow::pack_remove_end( bool unpack, Widget& child, bool expand, bool fill, guint padding )
-{
-    if( m_fold_when_focusout ){
-        m_vbox_view->pack_remove_end( unpack, child, expand, fill, padding );
-        if( ! unpack ) m_vbox_view->show_all_children();
-    }
-    else{
-        m_vbox.pack_remove_end( unpack, child, expand, fill, padding );
-        if( ! unpack ) m_vbox.show_all_children();
-    }
-}
-
-
 // ステータスバー表示
 void JDWindow::set_status( const std::string& stat )
 {
