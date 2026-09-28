@@ -5,6 +5,7 @@
 
 #include "menubutton.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 #include "icons/iconmanager.h"
@@ -31,7 +32,7 @@ MenuButton::MenuButton( const bool show_arrow, Gtk::Widget* label, bool expand, 
     if( show_arrow ){
         m_arrow = Gtk::manage( new Gtk::Image() );
         m_arrow->set_from_icon_name( "pan-down-symbolic", Gtk::ICON_SIZE_SMALL_TOOLBAR );
-        hbox->pack_start( *m_arrow, false, false );
+        JDLIB::compat::box_append_shrink( *hbox, *m_arrow );
     }
     else m_enable_sig_clicked = false;
 

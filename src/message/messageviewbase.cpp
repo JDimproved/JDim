@@ -15,6 +15,7 @@
 #include "skeleton/editview.h"
 #include "skeleton/detaildiag.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/jdiconv.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/misccharcode.h"
@@ -440,7 +441,7 @@ void MessageViewBase::pack_widget()
     m_toolbar_name_mail.append( m_tool_fixmail );
     m_toolbar_name_mail.append( m_tool_entry_mail );
 
-    m_msgview.pack_start( m_toolbar_name_mail, false, false );
+    JDLIB::compat::box_append_shrink( m_msgview, m_toolbar_name_mail );
 
     if( ! m_text_message ){
 

@@ -13,6 +13,7 @@
 
 #include "config/globalconf.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 
@@ -37,7 +38,7 @@ DelImgCacheDiag::DelImgCacheDiag()
     const int mrg = 8;
     get_content_area()->set_spacing( mrg );
     set_border_width( mrg );
-    get_content_area()->pack_start( m_label, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_label );
     show_all_children();
 }
 

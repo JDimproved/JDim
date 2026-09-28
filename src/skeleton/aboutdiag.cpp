@@ -11,6 +11,7 @@
 
 #include "config/globalconf.h"
 #include "icons/iconmanager.h"
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscgtk.h"
 
 #include <glib/gi18n.h>
@@ -90,7 +91,7 @@ void AboutDiag::init()
     // ロゴ
     if( get_logo() )
     {
-        m_vbox_info.pack_start( m_image_logo, false, false );
+        JDLIB::compat::box_append_shrink( m_vbox_info, m_image_logo );
     }
     // バージョン 
     if( ! get_version().empty() )
@@ -100,19 +101,19 @@ void AboutDiag::init()
     // コメント
     if( ! get_comments().empty() )
     {
-        m_vbox_info.pack_start( m_label_comments, false, false );
+        JDLIB::compat::box_append_shrink( m_vbox_info, m_label_comments );
     }
     // コピーライト
     if( ! get_copyright().empty() )
     {
         m_label_copyright.set_justify( Gtk::JUSTIFY_CENTER );
-        m_vbox_info.pack_start( m_label_copyright, false, false );
+        JDLIB::compat::box_append_shrink( m_vbox_info, m_label_copyright );
     }
     // Webサイト
     if( ! get_website_label().empty() )
     {
         m_hbox_url.pack_start( m_button_website, true, false );
-        m_vbox_info.pack_start( m_hbox_url, false, false );
+        JDLIB::compat::box_append_shrink( m_vbox_info, m_hbox_url );
     }
     m_notebook.append_page( m_vbox_info, m_label_tab_info );
 
@@ -133,8 +134,8 @@ void AboutDiag::init()
     // クリップボードへコピーのボタン
     m_button_copy_environment.signal_clicked().connect( sigc::mem_fun( *this, &AboutDiag::slot_copy_environment ) );
     m_hbuttonbox_environment.set_layout( Gtk::BUTTONBOX_END );
-    m_hbuttonbox_environment.pack_start( m_button_copy_environment, false, false );
-    m_vbox_environment.pack_start( m_hbuttonbox_environment, false, false );
+    JDLIB::compat::box_append_shrink( m_hbuttonbox_environment, m_button_copy_environment );
+    JDLIB::compat::box_append_shrink( m_vbox_environment, m_hbuttonbox_environment );
 
     get_content_area()->pack_start( m_notebook, true, true, MARGIN );
 

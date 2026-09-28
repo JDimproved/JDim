@@ -9,6 +9,8 @@
 
 #include "config/globalconf.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "cache.h"
 
 #include <sstream>
@@ -45,13 +47,13 @@ namespace DBIMG
             
             m_hbox.set_border_width( 8 );
             m_hbox.set_spacing( 4 );
-            m_hbox.pack_start( m_spin, false, false );
-            m_hbox.pack_start( m_spinlabel, false, false );
+            JDLIB::compat::box_append_shrink( m_hbox, m_spin );
+            JDLIB::compat::box_append_shrink( m_hbox, m_spinlabel );
 
             m_vbox.set_spacing( 16 );
             m_vbox.set_border_width( 8 );
-            m_vbox.pack_start( m_label, false, false );
-            m_vbox.pack_start( m_hbox, false, false );
+            JDLIB::compat::box_append_shrink( m_vbox, m_label );
+            JDLIB::compat::box_append_shrink( m_vbox, m_hbox );
 
             set_border_width( 8 );
             set_label( "画像キャッシュ" );
@@ -84,8 +86,8 @@ namespace DBIMG
             
             m_hbox.set_border_width( 16 );
             m_hbox.set_spacing( 4 );
-            m_hbox.pack_start( m_spin, false, false );
-            m_hbox.pack_start( m_spinlabel, false, false );
+            JDLIB::compat::box_append_shrink( m_hbox, m_spin );
+            JDLIB::compat::box_append_shrink( m_hbox, m_spinlabel );
 
             set_border_width( 8 );
             set_label( "画像あぼ〜ん" );

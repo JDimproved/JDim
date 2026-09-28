@@ -9,6 +9,7 @@
 #include "prefdiagfactory.h"
 #include "session.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 #include "skeleton/msgdiag.h"
@@ -74,11 +75,11 @@ HistorySubMenu::HistorySubMenu( const std::string& url_history )
 
         Gtk::Box* hbox = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
         hbox->set_spacing( SPACING_MENU );
-        hbox->pack_start( *image, false, false );
-        hbox->pack_start( *label, false, false );
+        JDLIB::compat::box_append_shrink( *hbox, *image );
+        JDLIB::compat::box_append_shrink( *hbox, *label );
         auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
         hbox->pack_start( *spacer, true, true );
-        hbox->pack_start( *label_motion, false, false );
+        JDLIB::compat::box_append_shrink( *hbox, *label_motion );
 
         item = Gtk::manage( new Gtk::MenuItem( *hbox ) );
         append( *item );

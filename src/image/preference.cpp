@@ -8,6 +8,7 @@
 #include "dbimg/imginterface.h"
 
 #include "config/globalconf.h"
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/miscutil.h"
 
@@ -154,7 +155,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
     set_title( "画像のプロパティ" );
     get_content_area()->property_margin() = 16;
     get_content_area()->pack_start( m_grid_info );
-    get_content_area()->pack_start( m_check_protect, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_check_protect );
     set_default_size( 700, 400 );
     show_all_children();
 }

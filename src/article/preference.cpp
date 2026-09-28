@@ -4,6 +4,7 @@
 
 #include "dbtree/interface.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/misccharcode.h"
 #include "jdlib/misctime.h"
 #include "jdlib/miscutil.h"
@@ -199,18 +200,18 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     if( CONFIG::get_abone_transparent() ) m_check_transpabone.set_sensitive( false );
     if( CONFIG::get_abone_chain() ) m_check_chainabone.set_sensitive( false );
 
-    m_vbox_abone.pack_start( m_check_transpabone, false, false );
-    m_vbox_abone.pack_start( m_check_chainabone, false, false );
-    m_vbox_abone.pack_start( m_check_ageabone, false, false );
-    m_vbox_abone.pack_start( m_check_defnameabone, false, false );
-    m_vbox_abone.pack_start( m_check_noidabone, false, false );
-    m_vbox_abone.pack_start( m_check_boardabone, false, false );
-    m_vbox_abone.pack_start( m_check_globalabone, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox_abone, m_check_transpabone );
+    JDLIB::compat::box_append_shrink( m_vbox_abone, m_check_chainabone );
+    JDLIB::compat::box_append_shrink( m_vbox_abone, m_check_ageabone );
+    JDLIB::compat::box_append_shrink( m_vbox_abone, m_check_defnameabone );
+    JDLIB::compat::box_append_shrink( m_vbox_abone, m_check_noidabone );
+    JDLIB::compat::box_append_shrink( m_vbox_abone, m_check_boardabone );
+    JDLIB::compat::box_append_shrink( m_vbox_abone, m_check_globalabone );
 
     if( CONFIG::get_abone_transparent() || CONFIG::get_abone_chain() ){
         m_label_abone.set_text( "チェック出来ない場合は設定メニューから「デフォルトで透明/連鎖あぼ〜ん」を解除して下さい" );
         m_label_abone.set_xalign( 0 );
-        m_vbox_abone.pack_start( m_label_abone, false, false );
+        JDLIB::compat::box_append_shrink( m_vbox_abone, m_label_abone );
     }
 
     if( DBTREE::article_is_cached( get_url() ) ){ 
@@ -274,7 +275,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         );
 
     m_vbox_abone.set_spacing( 8 );
-    m_vbox_abone_id.pack_start( m_label_abone_id, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_id, m_label_abone_id );
     m_vbox_abone_id.pack_start( m_edit_id );
 
     m_notebook_abone.append_page( m_vbox_abone, "一般" );

@@ -8,6 +8,7 @@
 
 #include "config/globalconf.h"
 #include "control/controlid.h"
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscgtk.h"
 #include "skeleton/msgdiag.h"
 #include "xml/document.h"
@@ -55,10 +56,10 @@ ReplaceStrDiag::ReplaceStrDiag( Gtk::Window* parent, ReplaceStrCondition conditi
     m_check_wchar.set_tooltip_text( "英数字とカナの文字幅(いわゆる全角半角)を区別しない" );
     m_check_norm.set_tooltip_text( "Unicodeの互換文字を区別しない" );
 
-    m_hbox_regex.pack_start( m_check_regex, false, false );
-    m_hbox_regex.pack_start( m_check_icase, false, false );
-    m_hbox_regex.pack_start( m_check_wchar, false, false );
-    m_hbox_regex.pack_start( m_check_norm, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_regex, m_check_regex );
+    JDLIB::compat::box_append_shrink( m_hbox_regex, m_check_icase );
+    JDLIB::compat::box_append_shrink( m_hbox_regex, m_check_wchar );
+    JDLIB::compat::box_append_shrink( m_hbox_regex, m_check_norm );
 
     m_entry_pattern.set_text( pattern );
     m_entry_replace.set_text( replace );
@@ -75,12 +76,12 @@ ReplaceStrDiag::ReplaceStrDiag( Gtk::Window* parent, ReplaceStrCondition conditi
     m_grid_entry.set_row_spacing( 8 );
 
     m_hbox_active.pack_start( m_check_active );
-    m_hbox_active.pack_start( m_button_copy, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_active, m_button_copy );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_hbox_active, false, false );
-    get_content_area()->pack_start( m_hbox_regex, false, false );
-    get_content_area()->pack_start( m_grid_entry, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_hbox_active );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_hbox_regex );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_grid_entry );
 
     set_title( "置換条件設定" );
     show_all_children();
@@ -203,16 +204,16 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
     m_scrollwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
     m_scrollwin.set_size_request( 640, 400 );
 
-    m_vbuttonbox.pack_start( m_button_top, false, false );
-    m_vbuttonbox.pack_start( m_button_up, false, false );
-    m_vbuttonbox.pack_start( m_button_down, false, false );
-    m_vbuttonbox.pack_start( m_button_bottom, false, false );
-    m_vbuttonbox.pack_start( m_button_delete, false, false );
-    m_vbuttonbox.pack_start( m_button_add, false, false );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_top );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_up );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_down );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_bottom );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_delete );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_add );
     m_vbuttonbox.set_spacing( 4 );
 
     m_hbox.pack_start( m_scrollwin, true, true );
-    m_hbox.pack_start( m_vbuttonbox, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox, m_vbuttonbox );
 
     for( const char* target : kReplStrTargetLabels ) {
         m_menu_target.append( target );
@@ -235,7 +236,7 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
                                       "文字参照をデコードしてから置換を行います。" );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_grid_head, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_grid_head );
     get_content_area()->pack_start( m_hbox );
 
     show_all_children();

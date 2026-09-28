@@ -15,6 +15,7 @@
 #include "font.h"
 #include "embeddedimage.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/misccharcode.h"
 #include "jdlib/miscgtk.h"
@@ -293,7 +294,7 @@ void DrawAreaBase::create_scrbar()
     if( CONFIG::get_left_scrbar() ) remove( m_view );
 
     m_event->add( *m_vscrbar );
-    pack_start( *m_event, false, false );
+    JDLIB::compat::box_append_shrink( *this, *m_event );
 
     if( CONFIG::get_left_scrbar() ) pack_start( m_view );
 

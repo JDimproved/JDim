@@ -14,6 +14,8 @@
 #include "configitems.h"
 #include "defaultconf.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "skeleton/msgdiag.h"
 
 #include "colorid.h"
@@ -49,7 +51,7 @@ void AboutConfig::pack_widgets()
     signal_key_press_event().connect( sigc::mem_fun( *this, &AboutConfig::slot_key_press_event ) );
 
     m_hbox_search.pack_start( m_label );
-    m_hbox_search.pack_start( m_toggle_search, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_search, m_toggle_search );
 
     m_label.set_hexpand( true );
     m_toggle_search.set_image_from_icon_name( "edit-find-symbolic" );
@@ -98,8 +100,8 @@ void AboutConfig::pack_widgets()
     m_scrollwin.set_propagate_natural_height( true );
     m_scrollwin.set_propagate_natural_width( true );
 
-    get_content_area()->pack_start( m_hbox_search, false, false );
-    get_content_area()->pack_start( m_search_bar, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_hbox_search );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_search_bar );
     get_content_area()->pack_start( m_scrollwin );
 
     set_title( "about:config 高度な設定" );

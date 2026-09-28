@@ -7,6 +7,8 @@
 
 #include "config/globalconf.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "environment.h"
 #include "global.h"
 #include "session.h"
@@ -73,7 +75,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     if( need_mginfo ){
         m_mginfo_ebox.add( m_mginfo );
         m_mginfo_ebox.set_visible_window( false );
-        m_statbar.pack_start( m_mginfo_ebox, false, false );
+        JDLIB::compat::box_append_shrink( m_statbar, m_mginfo_ebox );
     }
 
     m_mginfo.set_width_chars( MGINFO_CHARS );

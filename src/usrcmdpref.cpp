@@ -18,6 +18,7 @@
 
 #include "config/globalconf.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 using namespace CORE;
@@ -39,15 +40,15 @@ UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Gl
     m_button_manual.signal_clicked().connect( sigc::mem_fun( *this, &UsrCmdDiag::slot_show_manual ) );
 
     m_vbox.set_spacing( 8 );
-    m_vbox.pack_start( m_label_name, false, false );
-    m_vbox.pack_start( m_entry_name, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox, m_label_name );
+    JDLIB::compat::box_append_shrink( m_vbox, m_entry_name );
 
-    m_hbox_cmd.pack_start( m_label_cmd, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_cmd, m_label_cmd );
     auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
     m_hbox_cmd.pack_start( *spacer, true, true );
-    m_hbox_cmd.pack_start( m_button_manual, false, false );
-    m_vbox.pack_start( m_hbox_cmd, false, false );
-    m_vbox.pack_start( m_entry_cmd, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_cmd, m_button_manual );
+    JDLIB::compat::box_append_shrink( m_vbox, m_hbox_cmd );
+    JDLIB::compat::box_append_shrink( m_vbox, m_entry_cmd );
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->pack_start( m_vbox );
@@ -91,11 +92,11 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
     m_scrollwin.set_size_request( 640, 400 );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_label, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_label );
     get_content_area()->pack_start( m_scrollwin );
 
     m_ckbt_hide_usrcmd.set_active( CONFIG::get_hide_usrcmd() );
-    get_content_area()->pack_start( m_ckbt_hide_usrcmd, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_ckbt_hide_usrcmd );
 
     // ポップアップメニュー
     m_action_group = Gio::SimpleActionGroup::create();

@@ -39,6 +39,7 @@
 #include "config/globalconf.h"
 #include "config/defaultconf.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/cookiemanager.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
@@ -4316,7 +4317,7 @@ void Core::show_imagetab()
         int pos = 0;
         if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_RIGHT && SESSION::get_mode_pane() == SESSION::MODE_2PANE ) pos = 1;
 
-        m_vbox_article.pack_start( IMAGE::get_admin()->tab(), false, false );
+        JDLIB::compat::box_append_shrink( m_vbox_article, IMAGE::get_admin()->tab() );
         m_vbox_article.reorder_child( IMAGE::get_admin()->tab(), pos );
 
         m_win_main.show_all_children();

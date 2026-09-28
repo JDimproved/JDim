@@ -21,6 +21,7 @@
 
 #include "history/historymanager.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/miscmsg.h"
 
@@ -79,8 +80,8 @@ ImageAdmin::ImageAdmin( const std::string& url )
     m_tab.signal_scroll_event().connect( sigc::mem_fun( *this, &ImageAdmin::slot_scroll_event ) );
 
     m_tab.pack_start( m_scrwin );
-    m_tab.pack_start( m_left, false, false );
-    m_tab.pack_start( m_right, false, false );
+    JDLIB::compat::box_append_shrink( m_tab, m_left );
+    JDLIB::compat::box_append_shrink( m_tab, m_right );
     m_tab.show_all_children();
 }
 
@@ -355,7 +356,7 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
             if( command.arg3 == "lock" ) icon->lock();
             icon->set_size_request( ICON_SIZE ,  ICON_SIZE );
             icon->show_view();
-            m_iconbox.pack_start( *icon, false, false );
+            JDLIB::compat::box_append_shrink( m_iconbox, *icon );
             m_iconbox.show_all_children();
         }
 

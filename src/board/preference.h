@@ -5,6 +5,8 @@
 
 #include "gtkmmversion.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "skeleton/view.h"
 #include "skeleton/prefdiag.h"
 #include "skeleton/editview.h"
@@ -42,14 +44,14 @@ namespace BOARD
             m_hbox.set_spacing( 8 );
             m_hbox.set_border_width( 8 );
             m_hbox.pack_start( entry_host );
-            m_hbox.pack_start( entry_port, false, false );
+            JDLIB::compat::box_append_shrink( m_hbox, entry_port );
 
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );
-            m_vbox.pack_start( rd_global, false, false );
-            m_vbox.pack_start( rd_disable, false, false );
-            m_vbox.pack_start( rd_local, false, false );
-            m_vbox.pack_start( m_hbox, false, false );
+            JDLIB::compat::box_append_shrink( m_vbox, rd_global );
+            JDLIB::compat::box_append_shrink( m_vbox, rd_disable );
+            JDLIB::compat::box_append_shrink( m_vbox, rd_local );
+            JDLIB::compat::box_append_shrink( m_vbox, m_hbox );
 
             set_label( title );
             set_border_width( 8 );

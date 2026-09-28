@@ -6,6 +6,7 @@
 #include "selectitempref.h"
 
 #include "config/globalconf.h"
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 #include "global.h"
@@ -68,15 +69,15 @@ void SelectItemPref::pack_widgets()
     view_column_shown->add_attribute( *render_text_shown, "text", 1 );
 
     // ボタン(縦移動)
-    m_vbuttonbox_v.pack_start( m_button_top, false, false );
-    m_vbuttonbox_v.pack_start( m_button_up, false, false );
-    m_vbuttonbox_v.pack_start( m_button_down, false, false );
-    m_vbuttonbox_v.pack_start( m_button_bottom, false, false );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox_v, m_button_top );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox_v, m_button_up );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox_v, m_button_down );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox_v, m_button_bottom );
     // ボタン(横移動)
-    m_vbuttonbox_h.pack_start( m_button_delete, false, false );
-    m_vbuttonbox_h.pack_start( m_button_add, false, false );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox_h, m_button_delete );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox_h, m_button_add );
     // ボタン(アクション)
-    m_vbuttonbox_action.pack_start( m_button_default, false, false );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox_action, m_button_default );
 
     // ボタン(スロット関数)
     m_button_top.signal_clicked().connect( sigc::mem_fun( *this, &SelectItemPref::slot_top ) );
@@ -118,13 +119,13 @@ void SelectItemPref::pack_widgets()
 
     m_vbuttonbox_h.set_layout( Gtk::BUTTONBOX_EDGE );
     m_vbuttonbox_h.set_spacing( 4 );
-    m_vbox.pack_start( m_vbuttonbox_h, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox, m_vbuttonbox_h );
 
     m_vbuttonbox_action.set_layout( Gtk::BUTTONBOX_END );
     m_vbuttonbox_action.set_spacing( 4 );
     m_vbox.pack_start( m_vbuttonbox_action, true, true );
 
-    m_hbox.pack_start( m_vbox, false, false, 4 );
+    JDLIB::compat::box_append_shrink( m_hbox, m_vbox, 4 );
 
     m_scroll_hidden.add( m_tree_hidden );
     m_scroll_hidden.set_size_request( 250, 300 );

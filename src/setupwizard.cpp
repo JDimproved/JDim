@@ -12,6 +12,8 @@
 
 #include "icons/iconmanager.h"
 
+#include "jdlib/gtk_compat.h"
+
 using namespace CORE;
 
 enum
@@ -342,8 +344,8 @@ SetupWizard::SetupWizard()
 
     // ボタン
     get_action_area()->set_spacing( SPACING_SIZE / 2 );
-    get_action_area()->pack_start( m_back, false, false );
-    get_action_area()->pack_start( m_next, false, false );
+    JDLIB::compat::box_append_shrink( *get_action_area(), m_back );
+    JDLIB::compat::box_append_shrink( *get_action_area(), m_next );
     m_fin = add_button( "完了(_C)", Gtk::RESPONSE_OK );
 
     m_back.set_sensitive( false );

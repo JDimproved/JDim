@@ -14,6 +14,7 @@
 
 #include "xml/tools.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/jdregex.h"
 
@@ -59,8 +60,8 @@ public:
     {
         resize( 640, 1 );
 
-        m_vbox.pack_start( m_label, false, false );
-        m_vbox.pack_start( m_entry, false, false );
+        JDLIB::compat::box_append_shrink( m_vbox, m_label );
+        JDLIB::compat::box_append_shrink( m_vbox, m_entry );
 
         get_content_area()->set_spacing( 8 );
         get_content_area()->pack_start( m_vbox );

@@ -10,6 +10,7 @@
 
 #include "config/globalconf.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 #include "control/controlid.h"
@@ -38,15 +39,15 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
     m_button_manual.signal_clicked().connect( sigc::mem_fun( *this, &LinkFilterDiag::slot_show_manual ) );
 
     m_vbox.set_spacing( 8 );
-    m_vbox.pack_start( m_label_url, false, false );
-    m_vbox.pack_start( m_entry_url, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox, m_label_url );
+    JDLIB::compat::box_append_shrink( m_vbox, m_entry_url );
 
-    m_hbox_cmd.pack_start( m_label_cmd, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_cmd, m_label_cmd );
     auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
     m_hbox_cmd.pack_start( *spacer, true, true );
-    m_hbox_cmd.pack_start( m_button_manual, false, false );
-    m_vbox.pack_start( m_hbox_cmd, false, false );
-    m_vbox.pack_start( m_entry_cmd, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_cmd, m_button_manual );
+    JDLIB::compat::box_append_shrink( m_vbox, m_hbox_cmd );
+    JDLIB::compat::box_append_shrink( m_vbox, m_entry_cmd );
 
     set_activate_entry( m_entry_url );
     set_activate_entry( m_entry_cmd );
@@ -112,20 +113,20 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     m_scrollwin.add( m_treeview );
     m_scrollwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
-    m_vbuttonbox.pack_start( m_button_top, false, false );
-    m_vbuttonbox.pack_start( m_button_up, false, false );
-    m_vbuttonbox.pack_start( m_button_down, false, false );
-    m_vbuttonbox.pack_start( m_button_bottom, false, false );
-    m_vbuttonbox.pack_start( m_button_delete, false, false );
-    m_vbuttonbox.pack_start( m_button_add, false, false );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_top );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_up );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_down );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_bottom );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_delete );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_add );
     m_vbuttonbox.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox.set_spacing( 4 );
 
     m_hbox.pack_start( m_scrollwin, true, true );
-    m_hbox.pack_start( m_vbuttonbox, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox, m_vbuttonbox );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_label, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_label );
     get_content_area()->pack_start( m_hbox );
 
     show_all_children();

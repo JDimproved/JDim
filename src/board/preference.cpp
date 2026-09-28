@@ -10,6 +10,7 @@
 
 #include "skeleton/msgdiag.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/misccharcode.h"
 #include "jdlib/misctime.h"
 #include "jdlib/miscutil.h"
@@ -121,7 +122,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_button_clearsamba.set_halign( Gtk::ALIGN_END );
 
     m_hbox_samba.pack_start( m_label_samba_value );
-    m_hbox_samba.pack_start( m_button_clearsamba, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_samba, m_button_clearsamba );
 
     m_check_utf8_post.set_halign( Gtk::ALIGN_START );
     m_check_noname.set_halign( Gtk::ALIGN_START );
@@ -132,11 +133,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_label_writemail.set_halign( Gtk::ALIGN_START );
     m_bt_set_default_namemail.set_halign( Gtk::ALIGN_END );
 
-    m_hbox_write.pack_start( m_label_writename, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_write, m_label_writename );
     m_hbox_write.pack_start( m_entry_writename );
-    m_hbox_write.pack_start( m_label_writemail, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_write, m_label_writemail );
     m_hbox_write.pack_start( m_entry_writemail );
-    m_hbox_write.pack_start( m_bt_set_default_namemail, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_write, m_bt_set_default_namemail );
 
     m_grid_write.property_margin() = 8;
     m_grid_write.set_column_spacing( 10 );
@@ -229,7 +230,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_toggle_encoding.set_halign( Gtk::ALIGN_END );
 
         m_hbox_charset.pack_start( m_label_charset_value );
-        m_hbox_charset.pack_start( m_toggle_encoding, false, false );
+        JDLIB::compat::box_append_shrink( m_hbox_charset, m_toggle_encoding );
 
         m_label_encoding_analysis_method.set_markup( "<b>テキストエンコーディングを判定する方法</b>" );
         m_label_encoding_analysis_method.set_halign( Gtk::ALIGN_START );
@@ -247,10 +248,10 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_vbox_encoding_analysis_method.set_margin_end( 30 );
         m_vbox_encoding_analysis_method.set_margin_top( 10 );
         m_vbox_encoding_analysis_method.set_margin_bottom( 10 );
-        m_vbox_encoding_analysis_method.pack_start( m_label_encoding_analysis_method, false, false );
-        m_vbox_encoding_analysis_method.pack_start( m_radio_encoding_default, false, false );
-        m_vbox_encoding_analysis_method.pack_start( m_radio_encoding_http_header, false, false );
-        m_vbox_encoding_analysis_method.pack_start( m_radio_encoding_guess, false, false );
+        JDLIB::compat::box_append_shrink( m_vbox_encoding_analysis_method, m_label_encoding_analysis_method );
+        JDLIB::compat::box_append_shrink( m_vbox_encoding_analysis_method, m_radio_encoding_default );
+        JDLIB::compat::box_append_shrink( m_vbox_encoding_analysis_method, m_radio_encoding_http_header );
+        JDLIB::compat::box_append_shrink( m_vbox_encoding_analysis_method, m_radio_encoding_guess );
 
         m_revealer_encoding.add( m_vbox_encoding_analysis_method );
 
@@ -323,13 +324,13 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_button_clearmodified.set_halign( Gtk::ALIGN_END );
 
     m_hbox_modified.pack_start( m_label_modified_value );
-    m_hbox_modified.pack_start( m_button_clearmodified, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_modified, m_button_clearmodified );
 
     m_spin_live.set_halign( Gtk::ALIGN_START );
     m_check_live.set_halign( Gtk::ALIGN_START );
     m_check_live.set_hexpand( true );
 
-    m_hbox_live.pack_start( m_spin_live, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_live, m_spin_live );
     m_hbox_live.pack_start( m_check_live );
 
     m_grid_general.property_margin() = 16;
@@ -411,7 +412,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     m_hbox_agent.set_margin_top( 8 );
     m_hbox_agent.set_margin_bottom( 12 );
-    m_hbox_agent.pack_start( m_label_agent, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_agent, m_label_agent );
     m_hbox_agent.pack_start( m_entry_agent );
 
     // プロキシ
@@ -440,11 +441,11 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_proxy_frame_w.entry_host.set_text( host );
     m_proxy_frame_w.entry_port.set_text( std::to_string( DBTREE::board_get_local_proxy_port_w( get_url() ) ) );
 
-    m_vbox_network.pack_start( m_comment_agent, false, false );
-    m_vbox_network.pack_start( m_hbox_agent, false, false );
-    m_vbox_network.pack_start( m_comment_proxy, false, false );
-    m_vbox_network.pack_start( m_proxy_frame, false, false );
-    m_vbox_network.pack_start( m_proxy_frame_w, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox_network, m_comment_agent );
+    JDLIB::compat::box_append_shrink( m_vbox_network, m_hbox_agent );
+    JDLIB::compat::box_append_shrink( m_vbox_network, m_comment_proxy );
+    JDLIB::compat::box_append_shrink( m_vbox_network, m_proxy_frame );
+    JDLIB::compat::box_append_shrink( m_vbox_network, m_proxy_frame_w );
 
     set_activate_entry( m_proxy_frame.entry_host );
     set_activate_entry( m_proxy_frame.entry_port );
@@ -489,16 +490,16 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     const int abone_consecutive = DBTREE::board_get_abone_consecutive( get_url() );
     m_spin_abone_consecutive.set_value( abone_consecutive );
 
-    m_hbox_abone_consecutive.pack_start( m_label_abone_consecutive, false, false );
-    m_hbox_abone_consecutive.pack_start( m_spin_abone_consecutive, false, false );
-    m_hbox_abone_consecutive.pack_start( m_label_abone_consecutive_over_n_times, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_abone_consecutive, m_label_abone_consecutive );
+    JDLIB::compat::box_append_shrink( m_hbox_abone_consecutive, m_spin_abone_consecutive );
+    JDLIB::compat::box_append_shrink( m_hbox_abone_consecutive, m_label_abone_consecutive_over_n_times );
     m_hbox_abone_consecutive.set_tooltip_text(
         "このオプションは実験的なサポートのため変更または廃止の可能性があります。" );
 
-    m_vbox_abone_general.pack_start( m_label_warning_subject, false, false );
-    m_vbox_abone_general.pack_start( m_label_warning, false, false );
-    m_vbox_abone_general.pack_start( m_sep_general, false, false );
-    m_vbox_abone_general.pack_start( m_hbox_abone_consecutive, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_general, m_label_warning_subject );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_general, m_label_warning );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_general, m_sep_general );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_general, m_hbox_abone_consecutive );
     m_vbox_abone_general.set_margin_start( 20 );
     m_vbox_abone_general.set_margin_end( 20 );
 
@@ -518,8 +519,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_spin_low_number.set_increments( 1, 1 );
     m_spin_low_number.set_value( DBTREE::get_abone_low_number_thread( get_url() ) );
 
-    m_hbox_low_number.pack_start( m_spin_low_number, false, false );
-    m_hbox_low_number.pack_start( m_label_low_number, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_low_number, m_spin_low_number );
+    JDLIB::compat::box_append_shrink( m_hbox_low_number, m_label_low_number );
 
     set_activate_entry( m_spin_low_number );
 
@@ -528,8 +529,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_spin_high_number.set_increments( 1, 1 );
     m_spin_high_number.set_value( DBTREE::get_abone_high_number_thread( get_url() ) );
 
-    m_hbox_high_number.pack_start( m_spin_high_number, false, false );
-    m_hbox_high_number.pack_start( m_label_high_number, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_high_number, m_spin_high_number );
+    JDLIB::compat::box_append_shrink( m_hbox_high_number, m_label_high_number );
 
     set_activate_entry( m_spin_high_number );
 
@@ -539,17 +540,17 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_spin_hour.set_value( DBTREE::get_abone_hour_thread( get_url() ) );
             
     m_hbox_hour.set_spacing( 4 );
-    m_hbox_hour.pack_start( m_spin_hour, false, false );
-    m_hbox_hour.pack_start( m_label_hour, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_hour, m_spin_hour );
+    JDLIB::compat::box_append_shrink( m_hbox_hour, m_label_hour );
 
     set_activate_entry( m_spin_hour );
 
     m_vbox_abone_thread.set_border_width( 16 );
     m_vbox_abone_thread.set_spacing( 8 );
-    m_vbox_abone_thread.pack_start( m_label_abone_thread, false, false );
-    m_vbox_abone_thread.pack_start( m_hbox_low_number, false, false );
-    m_vbox_abone_thread.pack_start( m_hbox_high_number, false, false );
-    m_vbox_abone_thread.pack_start( m_hbox_hour, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_thread, m_label_abone_thread );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_thread, m_hbox_low_number );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_thread, m_hbox_high_number );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_thread, m_hbox_hour );
 
     // スレあぼーん
     std::list< std::string > list_thread = DBTREE::get_abone_list_thread( get_url() );
@@ -557,7 +558,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     m_button_remove_old_title.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_remove_old_title ) );
     m_vbox_abone_title.pack_start( m_edit_thread );
-    m_vbox_abone_title.pack_start( m_button_remove_old_title, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox_abone_title, m_button_remove_old_title );
 
     // スレwordあぼーん
     std::list< std::string > list_word_thread = DBTREE::get_abone_list_word_thread( get_url() );

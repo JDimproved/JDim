@@ -8,6 +8,8 @@
 #include "toolbar.h"
 #include "bbslistadmin.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "skeleton/compentry.h"
 #include "skeleton/undobuffer.h"
 
@@ -30,7 +32,7 @@ EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeS
     // ツールバー
     m_toolbar = Gtk::manage( new EditListToolBar() );
     m_toolbar->open_buttonbar();
-    m_vbox.pack_start( *m_toolbar, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox, *m_toolbar );
     m_toolbar->show_toolbar();
 
     // Adminクラスが無いのでツールバーのボタン等のシグナルを直接つなぐ
@@ -45,7 +47,7 @@ EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeS
     m_toolbar->get_button_redo()->signal_clicked().connect( sigc::mem_fun( *this, &EditListWin::slot_redo ) );
 
     // ラベル
-    m_vbox.pack_start( m_label, false, false );
+    JDLIB::compat::box_append_shrink( m_vbox, m_label );
 
     // ビュー
     m_selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, url ) ) );

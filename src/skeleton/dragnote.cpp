@@ -13,6 +13,8 @@
 
 #include "control/controlid.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "command.h"
 #include "dndmanager.h"
 #include "session.h"
@@ -43,11 +45,11 @@ DragableNoteBook::DragableNoteBook()
     m_notebook_tab.sig_scroll_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_scroll_event ) );
 
     m_hbox_tab.pack_start( m_notebook_tab );
-    m_hbox_tab.pack_start( m_bt_tabswitch, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_tab, m_bt_tabswitch );
     m_bt_tabswitch.set_tooltip_text( "タブの一覧表示" );
 
-    pack_start( m_hbox_tab, false, false );
-    pack_start( m_notebook_toolbar, false, false );
+    JDLIB::compat::box_append_shrink( *this, m_hbox_tab );
+    JDLIB::compat::box_append_shrink( *this, m_notebook_toolbar );
     pack_start( m_notebook_view );
 
     show_all_children();
@@ -85,9 +87,9 @@ void DragableNoteBook::set_show_tabs( bool show_tabs )
             remove( m_notebook_toolbar );
         remove( m_notebook_view );
 
-        pack_start( m_hbox_tab, false, false );
+        JDLIB::compat::box_append_shrink( *this, m_hbox_tab );
         if( m_show_toolbar && m_notebook_toolbar.get_n_pages() )
-            pack_start( m_notebook_toolbar, false, false );
+            JDLIB::compat::box_append_shrink( *this, m_notebook_toolbar );
         pack_start( m_notebook_view );
 
         m_show_tabs = true;
@@ -220,7 +222,7 @@ void DragableNoteBook::show_toolbar()
 
         remove( m_notebook_view );
 
-        pack_start( m_notebook_toolbar, false, false );
+        JDLIB::compat::box_append_shrink( *this, m_notebook_toolbar );
         pack_start( m_notebook_view );
 
         m_show_toolbar = true;
