@@ -78,7 +78,7 @@ HistorySubMenu::HistorySubMenu( const std::string& url_history )
         JDLIB::compat::box_append_shrink( *hbox, *image );
         JDLIB::compat::box_append_shrink( *hbox, *label );
         auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
-        hbox->pack_start( *spacer, true, true );
+        JDLIB::compat::box_append_expand( *hbox, *spacer );
         JDLIB::compat::box_append_shrink( *hbox, *label_motion );
 
         item = Gtk::manage( new Gtk::MenuItem( *hbox ) );

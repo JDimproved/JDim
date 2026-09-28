@@ -42,7 +42,7 @@ InputDiag::InputDiag( Gtk::Window* parent, const std::string& url,
     set_title( CONTROL::get_label( m_id ) + " ( " + CONTROL::get_mode_label( m_controlmode ) + " )" );
     resize( 400, 400 );
 
-    get_content_area()->pack_start( m_label );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_label );
 
     show_all_children();
 }
@@ -299,12 +299,12 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
     m_vbuttonbox.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox.set_spacing( 4 );
 
-    m_hbox.pack_start( m_scrollwin, true, true );
+    JDLIB::compat::box_append_expand( m_hbox, m_scrollwin );
     JDLIB::compat::box_append_shrink( m_hbox, m_vbuttonbox );
 
     get_content_area()->set_spacing( 8 );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_label );
-    get_content_area()->pack_start( m_hbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_hbox );
 
     show_all_children();
     set_title( CONTROL::get_label( m_id ) + " ( " + CONTROL::get_mode_label( m_controlmode ) + " )" );
@@ -564,7 +564,7 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
 
     JDLIB::compat::box_append_shrink( *get_content_area(), m_hbox_search );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_search_bar );
-    get_content_area()->pack_start( m_scrollwin );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_scrollwin );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_hbox );
 
     show_all_children();

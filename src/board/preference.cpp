@@ -121,7 +121,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_label_samba_value.set_selectable( true );
     m_button_clearsamba.set_halign( Gtk::ALIGN_END );
 
-    m_hbox_samba.pack_start( m_label_samba_value );
+    JDLIB::compat::box_append_expand( m_hbox_samba, m_label_samba_value );
     JDLIB::compat::box_append_shrink( m_hbox_samba, m_button_clearsamba );
 
     m_check_utf8_post.set_halign( Gtk::ALIGN_START );
@@ -134,9 +134,9 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_bt_set_default_namemail.set_halign( Gtk::ALIGN_END );
 
     JDLIB::compat::box_append_shrink( m_hbox_write, m_label_writename );
-    m_hbox_write.pack_start( m_entry_writename );
+    JDLIB::compat::box_append_expand( m_hbox_write, m_entry_writename );
     JDLIB::compat::box_append_shrink( m_hbox_write, m_label_writemail );
-    m_hbox_write.pack_start( m_entry_writemail );
+    JDLIB::compat::box_append_expand( m_hbox_write, m_entry_writemail );
     JDLIB::compat::box_append_shrink( m_hbox_write, m_bt_set_default_namemail );
 
     m_grid_write.property_margin() = 8;
@@ -212,7 +212,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_combo_charset.set_halign( Gtk::ALIGN_START );
         m_combo_charset.set_hexpand( true );
 
-        m_hbox_charset.pack_start( m_combo_charset );
+        JDLIB::compat::box_append_expand( m_hbox_charset, m_combo_charset );
     }
     else {
         // エンコーディング設定は安全でないので無効のときは設定欄(コンボボックス)を表示しない
@@ -229,7 +229,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_label_charset_value.set_selectable( true );
         m_toggle_encoding.set_halign( Gtk::ALIGN_END );
 
-        m_hbox_charset.pack_start( m_label_charset_value );
+        JDLIB::compat::box_append_expand( m_hbox_charset, m_label_charset_value );
         JDLIB::compat::box_append_shrink( m_hbox_charset, m_toggle_encoding );
 
         m_label_encoding_analysis_method.set_markup( "<b>テキストエンコーディングを判定する方法</b>" );
@@ -323,7 +323,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_label_modified_value.set_selectable( true );
     m_button_clearmodified.set_halign( Gtk::ALIGN_END );
 
-    m_hbox_modified.pack_start( m_label_modified_value );
+    JDLIB::compat::box_append_expand( m_hbox_modified, m_label_modified_value );
     JDLIB::compat::box_append_shrink( m_hbox_modified, m_button_clearmodified );
 
     m_spin_live.set_halign( Gtk::ALIGN_START );
@@ -331,7 +331,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_check_live.set_hexpand( true );
 
     JDLIB::compat::box_append_shrink( m_hbox_live, m_spin_live );
-    m_hbox_live.pack_start( m_check_live );
+    JDLIB::compat::box_append_expand( m_hbox_live, m_check_live );
 
     m_grid_general.property_margin() = 16;
     m_grid_general.set_column_spacing( 10 );
@@ -413,7 +413,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_hbox_agent.set_margin_top( 8 );
     m_hbox_agent.set_margin_bottom( 12 );
     JDLIB::compat::box_append_shrink( m_hbox_agent, m_label_agent );
-    m_hbox_agent.pack_start( m_entry_agent );
+    JDLIB::compat::box_append_expand( m_hbox_agent, m_entry_agent );
 
     // プロキシ
     std::string host;
@@ -557,7 +557,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_edit_thread.set_text( MISC::concat_with_suffix( list_thread, '\n' ) );
 
     m_button_remove_old_title.signal_clicked().connect( sigc::mem_fun(*this, &Preferences::slot_remove_old_title ) );
-    m_vbox_abone_title.pack_start( m_edit_thread );
+    JDLIB::compat::box_append_expand( m_vbox_abone_title, m_edit_thread );
     JDLIB::compat::box_append_shrink( m_vbox_abone_title, m_button_remove_old_title );
 
     // スレwordあぼーん
@@ -594,7 +594,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_notebook.append_page( m_edit_settingtxt, "SETTING.TXT" );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &Preferences::slot_switch_page ) );
 
-    get_content_area()->pack_start( m_notebook );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_notebook );
     set_title( "「" + DBTREE::board_name( get_url() ) + "」のプロパティ" );
     // ウインドウの自然なサイズを設定するがディスプレイに合わせて調整される
     set_default_size( 850, 750 );

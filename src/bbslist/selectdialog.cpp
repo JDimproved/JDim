@@ -14,6 +14,8 @@
 #include "type.h"
 #include "sharedbuffer.h"
 
+#include "jdlib/gtk_compat.h"
+
 using namespace BBSLIST;
 
 
@@ -94,7 +96,7 @@ SelectListDialog::SelectListDialog( Gtk::Window* parent, const std::string& url,
     m_grid.attach( m_bt_show_tree, 2, 1, 1, 1 );
 
     get_content_area()->property_margin() = 8;
-    get_content_area()->pack_start( m_grid );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_grid );
 
     set_title( "お気に入り追加先選択" );
     set_default_size( SELECTDIAG_WIDTH, -1 );
@@ -151,7 +153,7 @@ void SelectListDialog::slot_show_tree()
         m_selectview->copy_treestore( m_treestore );
         m_selectview->sig_close_dialog().connect( sigc::mem_fun( *this, &SelectListDialog::hide ) );
 
-        get_content_area()->pack_start( *m_selectview );
+        JDLIB::compat::box_append_expand( *get_content_area(), *m_selectview );
         m_selectview->set_size_request( -1, SELECTDIAG_TREEHEIGHT );
         m_selectview->focus_view();
         show_all_children();

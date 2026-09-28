@@ -8,6 +8,8 @@
 #include "command.h"
 #include "session.h"
 
+#include "jdlib/gtk_compat.h"
+
 
 using namespace BBSLIST;
 
@@ -67,8 +69,8 @@ AddEtcDialog::AddEtcDialog( const bool move, const std::string& url, const std::
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->property_margin() = 8;
-    get_content_area()->pack_start( m_grid );
-    get_content_area()->pack_start( m_frame );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_grid );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_frame );
 
     if( move ){
         set_title( "外部板編集" );
@@ -121,8 +123,8 @@ AddEtcBBSMenuDialog::AddEtcBBSMenuDialog( Gtk::Window* parent, const bool edit,
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->property_margin() = 8;
-    get_content_area()->pack_start( m_label_supplement );
-    get_content_area()->pack_start( m_grid );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_label_supplement );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_grid );
 
     set_activate_entry( m_entry_name );
     set_activate_entry( m_entry_url );

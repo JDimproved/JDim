@@ -75,7 +75,7 @@ ReplaceStrDiag::ReplaceStrDiag( Gtk::Window* parent, ReplaceStrCondition conditi
     m_grid_entry.attach( m_entry_replace, 1, 1, 1, 1 );
     m_grid_entry.set_row_spacing( 8 );
 
-    m_hbox_active.pack_start( m_check_active );
+    JDLIB::compat::box_append_expand( m_hbox_active, m_check_active );
     JDLIB::compat::box_append_shrink( m_hbox_active, m_button_copy );
 
     get_content_area()->set_spacing( 8 );
@@ -212,7 +212,7 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
     JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_add );
     m_vbuttonbox.set_spacing( 4 );
 
-    m_hbox.pack_start( m_scrollwin, true, true );
+    JDLIB::compat::box_append_expand( m_hbox, m_scrollwin );
     JDLIB::compat::box_append_shrink( m_hbox, m_vbuttonbox );
 
     for( const char* target : kReplStrTargetLabels ) {
@@ -237,7 +237,7 @@ ReplaceStrPref::ReplaceStrPref( Gtk::Window* parent, const std::string& url )
 
     get_content_area()->set_spacing( 8 );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_grid_head );
-    get_content_area()->pack_start( m_hbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_hbox );
 
     show_all_children();
     m_treeview.grab_focus();

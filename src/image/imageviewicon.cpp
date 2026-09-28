@@ -9,6 +9,7 @@
 
 #include "dbimg/img.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 #include "control/controlid.h"
@@ -39,7 +40,7 @@ ImageViewIcon::ImageViewIcon( const std::string& url )
     set_name( "jdim-imageview-icon" );
 
     // 選択されてる画像アイコンの背景色を赤にするための設定
-    pack_start( get_event() );
+    JDLIB::compat::box_append_expand( *this, get_event() );
     get_event().set_border_width( 1 );
     try {
         m_provider->load_from_data( ".selected { background-color: red; }" );

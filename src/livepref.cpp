@@ -27,8 +27,8 @@ LivePref::LivePref( Gtk::Window* parent, const std::string& url )
     // スクロールモード
     m_vbox_mode.set_spacing( mrg );
     m_vbox_mode.set_border_width( mrg );
-    m_vbox_mode.pack_start( m_mode1 );
-    m_vbox_mode.pack_start( m_mode2 );
+    JDLIB::compat::box_append_expand( m_vbox_mode, m_mode1 );
+    JDLIB::compat::box_append_expand( m_vbox_mode, m_mode2 );
     m_frame_mode.set_label( "オートスクロールモード" );
     m_frame_mode.add( m_vbox_mode );
     if( CONFIG::get_live_mode() == LIVE_SCRMODE_VARIABLE ) m_mode1.set_active( true );

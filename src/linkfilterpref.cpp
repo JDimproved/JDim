@@ -44,7 +44,7 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
 
     JDLIB::compat::box_append_shrink( m_hbox_cmd, m_label_cmd );
     auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
-    m_hbox_cmd.pack_start( *spacer, true, true );
+    JDLIB::compat::box_append_expand( m_hbox_cmd, *spacer );
     JDLIB::compat::box_append_shrink( m_hbox_cmd, m_button_manual );
     JDLIB::compat::box_append_shrink( m_vbox, m_hbox_cmd );
     JDLIB::compat::box_append_shrink( m_vbox, m_entry_cmd );
@@ -53,7 +53,7 @@ LinkFilterDiag::LinkFilterDiag( Gtk::Window* parent, const std::string& url, con
     set_activate_entry( m_entry_cmd );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_vbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_vbox );
 
     set_title( "フィルタ設定" );
     show_all_children();
@@ -122,12 +122,12 @@ LinkFilterPref::LinkFilterPref( Gtk::Window* parent, const std::string& url )
     m_vbuttonbox.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox.set_spacing( 4 );
 
-    m_hbox.pack_start( m_scrollwin, true, true );
+    JDLIB::compat::box_append_expand( m_hbox, m_scrollwin );
     JDLIB::compat::box_append_shrink( m_hbox, m_vbuttonbox );
 
     get_content_area()->set_spacing( 8 );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_label );
-    get_content_area()->pack_start( m_hbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_hbox );
 
     show_all_children();
     set_title( "リンクフィルタ設定" );

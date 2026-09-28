@@ -58,7 +58,7 @@ EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeS
         m_selectview->sig_close_dialog().connect( sigc::mem_fun(*this, &EditListWin::hide ) );
         m_selectview->sig_focus_entry_search().connect( sigc::mem_fun(*this, &EditListWin::slot_focus_entry_search ) );
 
-        m_vbox.pack_start( *m_selectview );
+        JDLIB::compat::box_append_expand( m_vbox, *m_selectview );
         m_selectview->focus_view();
     }
 

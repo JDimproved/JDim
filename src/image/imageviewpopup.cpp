@@ -12,6 +12,8 @@
 
 #include "control/controlid.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "colorid.h"
 #include "cssmanager.h"
 
@@ -50,7 +52,7 @@ ImageViewPopup::ImageViewPopup( const std::string& url )
         if( css.color >= 0 ) text_color.set( manager->get_color( css.color ) );
     }
 
-    pack_start( get_event() );
+    JDLIB::compat::box_append_expand( *this, get_event() );
 
     try {
         // XXX: 修正前の動作を維持するためmaginの値はpaddingとして反映している

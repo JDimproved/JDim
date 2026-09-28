@@ -222,7 +222,7 @@ void FontColorPref::pack_widget()
     m_combo_font.set_hexpand( false );
     m_fontbutton.set_hexpand( true );
     JDLIB::compat::box_append_shrink( m_hbox_font, m_event_font );
-    m_hbox_font.pack_start( m_fontbutton, true, true );
+    JDLIB::compat::box_append_expand( m_hbox_font, m_fontbutton );
 
     m_grid_font.attach( m_hbox_font, 0, 0, 2, 1 );
 
@@ -307,7 +307,7 @@ void FontColorPref::pack_widget()
     m_scrollwin_color.add( m_treeview_color );
     m_scrollwin_color.set_min_content_height( 180 );
     m_scrollwin_color.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
-    m_vbox_color.pack_start( m_scrollwin_color, true, true );
+    JDLIB::compat::box_append_expand( m_vbox_color, m_scrollwin_color );
 
     Gtk::TreeViewColumn* column = Gtk::manage( new Gtk::TreeViewColumn( "設定名", m_columns_color.m_col_name ) );
     column->set_fixed_width( 430 );
@@ -418,7 +418,7 @@ void FontColorPref::pack_widget()
     m_notebook.append_page( m_grid_theme, "テーマの設定" );
 
     // 全体
-    get_content_area()->pack_start( m_notebook );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_notebook );
     get_content_area()->set_spacing( mrg );
     set_border_width( mrg );
 }

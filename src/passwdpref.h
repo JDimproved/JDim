@@ -11,6 +11,7 @@
 #include "loginbe.h"
 #include "loginacorn.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 enum
@@ -279,7 +280,7 @@ namespace CORE
             m_notebook.append_page( m_frame_2ch, "2ch" );
             m_notebook.append_page( m_frame_be, "BE" );
             m_notebook.append_page( m_frame_acorn, "どんぐりシステム" );
-            get_content_area()->pack_start( m_notebook );
+            JDLIB::compat::box_append_expand( *get_content_area(), m_notebook );
 
             set_title( "パスワード設定" );
             show_all_children();

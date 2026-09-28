@@ -43,7 +43,7 @@ namespace BOARD
 
             m_hbox.set_spacing( 8 );
             m_hbox.set_border_width( 8 );
-            m_hbox.pack_start( entry_host );
+            JDLIB::compat::box_append_expand( m_hbox, entry_host );
             JDLIB::compat::box_append_shrink( m_hbox, entry_port );
 
             m_vbox.set_spacing( 8 );

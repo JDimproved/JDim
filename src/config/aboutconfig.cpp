@@ -50,7 +50,7 @@ void AboutConfig::pack_widgets()
 {
     signal_key_press_event().connect( sigc::mem_fun( *this, &AboutConfig::slot_key_press_event ) );
 
-    m_hbox_search.pack_start( m_label );
+    JDLIB::compat::box_append_expand( m_hbox_search, m_label );
     JDLIB::compat::box_append_shrink( m_hbox_search, m_toggle_search );
 
     m_label.set_hexpand( true );
@@ -102,7 +102,7 @@ void AboutConfig::pack_widgets()
 
     JDLIB::compat::box_append_shrink( *get_content_area(), m_hbox_search );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_search_bar );
-    get_content_area()->pack_start( m_scrollwin );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_scrollwin );
 
     set_title( "about:config 高度な設定" );
     show_all_children();

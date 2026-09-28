@@ -154,7 +154,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url )
 
     set_title( "画像のプロパティ" );
     get_content_area()->property_margin() = 16;
-    get_content_area()->pack_start( m_grid_info );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_grid_info );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_check_protect );
     set_default_size( 700, 400 );
     show_all_children();

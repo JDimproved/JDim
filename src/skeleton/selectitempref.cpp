@@ -111,11 +111,11 @@ void SelectItemPref::pack_widgets()
     m_scroll_shown.set_size_request( 250, 300 );
     m_scroll_shown.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
 
-    m_hbox.pack_start( m_scroll_shown, true, true );
+    JDLIB::compat::box_append_expand( m_hbox, m_scroll_shown );
 
     m_vbuttonbox_v.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox_v.set_spacing( 4 );
-    m_vbox.pack_start( m_vbuttonbox_v, true, true );
+    JDLIB::compat::box_append_expand( m_vbox, m_vbuttonbox_v );
 
     m_vbuttonbox_h.set_layout( Gtk::BUTTONBOX_EDGE );
     m_vbuttonbox_h.set_spacing( 4 );
@@ -123,7 +123,7 @@ void SelectItemPref::pack_widgets()
 
     m_vbuttonbox_action.set_layout( Gtk::BUTTONBOX_END );
     m_vbuttonbox_action.set_spacing( 4 );
-    m_vbox.pack_start( m_vbuttonbox_action, true, true );
+    JDLIB::compat::box_append_expand( m_vbox, m_vbuttonbox_action );
 
     JDLIB::compat::box_append_shrink( m_hbox, m_vbox, 4 );
 
@@ -131,10 +131,10 @@ void SelectItemPref::pack_widgets()
     m_scroll_hidden.set_size_request( 250, 300 );
     m_scroll_hidden.set_policy( Gtk::POLICY_NEVER, Gtk::POLICY_ALWAYS );
 
-    m_hbox.pack_start( m_scroll_hidden, true, true );
+    JDLIB::compat::box_append_expand( m_hbox, m_scroll_hidden );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_hbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_hbox );
 
     show_all_children();
 }

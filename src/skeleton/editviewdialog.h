@@ -8,6 +8,8 @@
 
 #include "editview.h"
 
+#include "jdlib/gtk_compat.h"
+
 namespace SKELETON
 {
     class EditViewDialog : public Gtk::Dialog
@@ -23,7 +25,7 @@ namespace SKELETON
             m_edit.set_editable( editable );
 
             add_button( g_dgettext( GTK_DOMAIN, "_OK" ), Gtk::RESPONSE_OK );
-            get_content_area()->pack_start( m_edit );
+            JDLIB::compat::box_append_expand( *get_content_area(), m_edit );
             set_title( title );
             show_all_children();
 

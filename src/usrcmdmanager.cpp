@@ -64,7 +64,7 @@ public:
         JDLIB::compat::box_append_shrink( m_vbox, m_entry );
 
         get_content_area()->set_spacing( 8 );
-        get_content_area()->pack_start( m_vbox );
+        JDLIB::compat::box_append_expand( *get_content_area(), m_vbox );
 
         set_title( "テキスト入力" );
         show_all_children();

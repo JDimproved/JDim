@@ -13,6 +13,7 @@
 
 #include "skeleton/msgdiag.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/misctime.h"
@@ -490,7 +491,7 @@ BBSListViewBase::BBSListViewBase( const std::string& url, const std::string& arg
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC );
 
-    pack_start( m_scrwin );
+    JDLIB::compat::box_append_expand( *this, m_scrwin );
     show_all_children();
 
     m_treestore = Gtk::TreeStore::create( m_columns );

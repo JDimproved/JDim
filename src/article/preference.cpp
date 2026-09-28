@@ -276,7 +276,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
 
     m_vbox_abone.set_spacing( 8 );
     JDLIB::compat::box_append_shrink( m_vbox_abone_id, m_label_abone_id );
-    m_vbox_abone_id.pack_start( m_edit_id );
+    JDLIB::compat::box_append_expand( m_vbox_abone_id, m_edit_id );
 
     m_notebook_abone.append_page( m_vbox_abone, "一般" );
     m_notebook_abone.append_page( m_vbox_abone_id, "NG ID" );
@@ -289,7 +289,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     const int page_abone = 1;
     m_notebook.append_page( m_notebook_abone, "あぼ〜ん設定" );
 
-    get_content_area()->pack_start( m_notebook );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_notebook );
     set_title( "「" + MISC::to_plain( DBTREE::article_modified_subject( get_url() ) ) + "」のプロパティ" );
     resize( 600, 400 );
     show_all_children();

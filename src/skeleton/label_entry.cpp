@@ -35,8 +35,8 @@ LabelEntry::~LabelEntry() noexcept = default;
 
 void LabelEntry::setup()
 {
-    if( m_editable ) pack_start( m_entry );
-    else pack_start( m_info );
+    if( m_editable ) JDLIB::compat::box_append_expand( *this, m_entry );
+    else JDLIB::compat::box_append_expand( *this, m_info );
 
     show_all_children();
 }

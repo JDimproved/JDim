@@ -459,7 +459,7 @@ void MessageViewBase::pack_widget()
     set_wrap();
 
     if( m_text_message->get_parent() ) m_text_message->reparent( m_msgview );
-    else m_msgview.pack_start( *m_text_message );
+    else JDLIB::compat::box_append_expand( m_msgview, *m_text_message );
 
     m_text_message->set_accepts_tab( false );
     m_text_message->sig_key_press().connect( sigc::mem_fun(*this, &MessageViewBase::slot_key_press ) );
@@ -476,7 +476,7 @@ void MessageViewBase::pack_widget()
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &MessageViewBase::slot_switch_page ) );
     m_notebook.set_current_page( PAGE_MESSAGE );
 
-    pack_start( m_notebook );
+    JDLIB::compat::box_append_expand( *this, m_notebook );
     set_size_request( 1, 1 );
 
     // フォントセット

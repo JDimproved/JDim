@@ -44,13 +44,13 @@ DragableNoteBook::DragableNoteBook()
 
     m_notebook_tab.sig_scroll_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_scroll_event ) );
 
-    m_hbox_tab.pack_start( m_notebook_tab );
+    JDLIB::compat::box_append_expand( m_hbox_tab, m_notebook_tab );
     JDLIB::compat::box_append_shrink( m_hbox_tab, m_bt_tabswitch );
     m_bt_tabswitch.set_tooltip_text( "タブの一覧表示" );
 
     JDLIB::compat::box_append_shrink( *this, m_hbox_tab );
     JDLIB::compat::box_append_shrink( *this, m_notebook_toolbar );
-    pack_start( m_notebook_view );
+    JDLIB::compat::box_append_expand( *this, m_notebook_view );
 
     show_all_children();
 }
@@ -90,7 +90,7 @@ void DragableNoteBook::set_show_tabs( bool show_tabs )
         JDLIB::compat::box_append_shrink( *this, m_hbox_tab );
         if( m_show_toolbar && m_notebook_toolbar.get_n_pages() )
             JDLIB::compat::box_append_shrink( *this, m_notebook_toolbar );
-        pack_start( m_notebook_view );
+        JDLIB::compat::box_append_expand( *this, m_notebook_view );
 
         m_show_tabs = true;
     }
@@ -223,7 +223,7 @@ void DragableNoteBook::show_toolbar()
         remove( m_notebook_view );
 
         JDLIB::compat::box_append_shrink( *this, m_notebook_toolbar );
-        pack_start( m_notebook_view );
+        JDLIB::compat::box_append_expand( *this, m_notebook_view );
 
         m_show_toolbar = true;
     }

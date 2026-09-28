@@ -96,7 +96,7 @@ void AboutDiag::init()
     // バージョン 
     if( ! get_version().empty() )
     {
-        m_vbox_info.pack_start( m_label_version, true, true, MARGIN );
+        JDLIB::compat::box_append_expand( m_vbox_info, m_label_version, MARGIN );
     }
     // コメント
     if( ! get_comments().empty() )
@@ -129,7 +129,7 @@ void AboutDiag::init()
     m_notebook.append_page( m_vbox_environment, m_label_tab_environment );
 
     // 動作環境一覧
-    m_vbox_environment.pack_start( m_scrollwindow_environment, true, true );
+    JDLIB::compat::box_append_expand( m_vbox_environment, m_scrollwindow_environment );
 
     // クリップボードへコピーのボタン
     m_button_copy_environment.signal_clicked().connect( sigc::mem_fun( *this, &AboutDiag::slot_copy_environment ) );
@@ -137,7 +137,7 @@ void AboutDiag::init()
     JDLIB::compat::box_append_shrink( m_hbuttonbox_environment, m_button_copy_environment );
     JDLIB::compat::box_append_shrink( m_vbox_environment, m_hbuttonbox_environment );
 
-    get_content_area()->pack_start( m_notebook, true, true, MARGIN );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_notebook, MARGIN );
 
     show_all_children();
 

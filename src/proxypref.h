@@ -61,7 +61,7 @@ namespace CORE
             m_hbox.set_spacing( 8 );
             JDLIB::compat::box_append_shrink( m_hbox, ckbt );
             JDLIB::compat::box_append_shrink( m_hbox, send_cookie_check );
-            m_hbox.pack_start( entry_host );
+            JDLIB::compat::box_append_expand( m_hbox, entry_host );
             JDLIB::compat::box_append_shrink( m_hbox, m_hbox_port );
 
             m_hbox.set_border_width( 8 );
@@ -139,7 +139,7 @@ namespace CORE
 
             JDLIB::compat::box_append_shrink( m_hbox, ckbt );
             JDLIB::compat::box_append_shrink( m_hbox, send_cookie_check );
-            m_hbox.pack_start( entry_host );
+            JDLIB::compat::box_append_expand( m_hbox, entry_host );
             JDLIB::compat::box_append_shrink( m_hbox, m_hbox_port );
 
             m_hbox_fallback_proxy.set_hexpand( true );
@@ -147,7 +147,7 @@ namespace CORE
             m_hbox_fallback_proxy.set_margin_end( 8 );
             JDLIB::compat::box_append_shrink( m_hbox_fallback_proxy, fallback_proxy_check );
             auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
-            m_hbox_fallback_proxy.pack_start( *spacer, true, true );
+            JDLIB::compat::box_append_expand( m_hbox_fallback_proxy, *spacer );
             JDLIB::compat::box_append_shrink( m_hbox_fallback_proxy, m_toggle_notice );
             JDLIB::compat::box_append_shrink( m_vbox_exp_option, m_hbox_fallback_proxy );
             JDLIB::compat::box_append_shrink( m_vbox_exp_option, m_revealer_notice );
@@ -249,10 +249,10 @@ namespace CORE
             set_activate_entry( m_frame_data.entry_port );
 
             get_content_area()->set_spacing( 4 );
-            get_content_area()->pack_start( m_label );
-            get_content_area()->pack_start( m_frame_2ch );
-            get_content_area()->pack_start( m_frame_2ch_w );
-            get_content_area()->pack_start( m_frame_data );
+            JDLIB::compat::box_append_expand( *get_content_area(), m_label );
+            JDLIB::compat::box_append_expand( *get_content_area(), m_frame_2ch );
+            JDLIB::compat::box_append_expand( *get_content_area(), m_frame_2ch_w );
+            JDLIB::compat::box_append_expand( *get_content_area(), m_frame_data );
 
             set_title( "プロキシ設定" );
             // 2ch読み込み用設定にある label のテキストを wrap するためダイアログのサイズを設定しておく

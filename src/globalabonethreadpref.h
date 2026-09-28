@@ -130,7 +130,7 @@ namespace CORE
             m_notebook.append_page( m_edit_word, "NG ワード" );
             m_notebook.append_page( m_edit_regex, "NG 正規表現" );
 
-            get_content_area()->pack_start( m_notebook );
+            JDLIB::compat::box_append_expand( *get_content_area(), m_notebook );
             set_title( "全体スレあぼ〜ん設定" );
             resize( 600, 400 );
             show_all_children();

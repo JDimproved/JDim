@@ -9,6 +9,8 @@
 
 #include "compmanager.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include <algorithm>
 
 
@@ -35,7 +37,7 @@ CompletionEntry::CompletionEntry( const int mode )
     m_entry.set_max_width_chars( 1 );
     m_entry.set_width_chars( 1 );
     m_entry.set_hexpand( true );
-    pack_start( m_entry );
+    JDLIB::compat::box_append_expand( *this, m_entry );
 
     // ポップアップ
     m_column_record.add( m_column );

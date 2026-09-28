@@ -149,7 +149,7 @@ MsgCheckDiag::MsgCheckDiag( Gtk::Window* parent,
     const int mrg = 16;
                 
     Gtk::Box* hbox = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
-    hbox->pack_start( m_chkbutton, true, true, mrg );
+    JDLIB::compat::box_append_expand( *hbox, m_chkbutton, mrg );
     JDLIB::compat::box_append_shrink( *get_content_area(), *hbox );
 
     if( buttons == Gtk::BUTTONS_OK ){

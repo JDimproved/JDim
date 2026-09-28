@@ -45,13 +45,13 @@ UsrCmdDiag::UsrCmdDiag( Gtk::Window* parent, const Glib::ustring& name, const Gl
 
     JDLIB::compat::box_append_shrink( m_hbox_cmd, m_label_cmd );
     auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
-    m_hbox_cmd.pack_start( *spacer, true, true );
+    JDLIB::compat::box_append_expand( m_hbox_cmd, *spacer );
     JDLIB::compat::box_append_shrink( m_hbox_cmd, m_button_manual );
     JDLIB::compat::box_append_shrink( m_vbox, m_hbox_cmd );
     JDLIB::compat::box_append_shrink( m_vbox, m_entry_cmd );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_vbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_vbox );
 
     set_activate_entry( m_entry_name );
     set_activate_entry( m_entry_cmd );
@@ -93,7 +93,7 @@ UsrCmdPref::UsrCmdPref( Gtk::Window* parent, const std::string& url )
 
     get_content_area()->set_spacing( 8 );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_label );
-    get_content_area()->pack_start( m_scrollwin );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_scrollwin );
 
     m_ckbt_hide_usrcmd.set_active( CONFIG::get_hide_usrcmd() );
     JDLIB::compat::box_append_shrink( *get_content_area(), m_ckbt_hide_usrcmd );

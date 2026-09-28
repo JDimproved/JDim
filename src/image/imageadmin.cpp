@@ -79,7 +79,7 @@ ImageAdmin::ImageAdmin( const std::string& url )
     m_tab.add_events( Gdk::SMOOTH_SCROLL_MASK );
     m_tab.signal_scroll_event().connect( sigc::mem_fun( *this, &ImageAdmin::slot_scroll_event ) );
 
-    m_tab.pack_start( m_scrwin );
+    JDLIB::compat::box_append_expand( m_tab, m_scrwin );
     JDLIB::compat::box_append_shrink( m_tab, m_left );
     JDLIB::compat::box_append_shrink( m_tab, m_right );
     m_tab.show_all_children();

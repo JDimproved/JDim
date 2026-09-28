@@ -10,6 +10,7 @@
 
 #include "skeleton/msgdiag.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/miscx.h"
@@ -154,7 +155,7 @@ void ArticleViewBase::setup_view()
     m_drawarea->sig_on_url().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_on_url ) );
     m_drawarea->sig_leave_url().connect( sigc::mem_fun(*this, &ArticleViewBase::slot_leave_url ) );
 
-    pack_start( *m_drawarea, true, true );
+    JDLIB::compat::box_append_expand( *this, *m_drawarea );
     setup_action();
 
     show_all_children();
