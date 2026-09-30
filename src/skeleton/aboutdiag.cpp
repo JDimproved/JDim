@@ -112,7 +112,7 @@ void AboutDiag::init()
     // Webサイト
     if( ! get_website_label().empty() )
     {
-        m_hbox_url.pack_start( m_button_website, true, false );
+        JDLIB::compat::box_append_expand_nofill( m_hbox_url, m_button_website );
         JDLIB::compat::box_append_shrink( m_vbox_info, m_hbox_url );
     }
     m_notebook.append_page( m_vbox_info, m_label_tab_info );
