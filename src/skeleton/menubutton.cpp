@@ -27,7 +27,18 @@ MenuButton::MenuButton( const bool show_arrow, Gtk::Widget* label, bool expand, 
     Gtk::Box* hbox = Gtk::manage( new Gtk::Box( Gtk::ORIENTATION_HORIZONTAL ) );
 
     hbox->set_spacing( 4 );
-    if( m_label ) hbox->pack_start( *m_label, expand, fill );
+    if( m_label ) {
+        if( expand && fill ) {
+            JDLIB::compat::box_append_expand( *hbox, *m_label );
+        }
+        else if( expand ) {
+            JDLIB::compat::box_append_expand_nofill( *hbox, *m_label );
+        }
+        else {
+            assert( ! fill ); // 呼び出し元に expand=false, fill=true のパターンがないため
+            JDLIB::compat::box_append_shrink( *hbox, *m_label );
+        }
+    }
 
     if( show_arrow ){
         m_arrow = Gtk::manage( new Gtk::Image() );
