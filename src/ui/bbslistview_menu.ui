@@ -1,0 +1,740 @@
+<interface>
+  <!-- 板一覧 (板) -->
+  <menu id="popup_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">タブで開く(_T)</attribute>
+        <attribute name="action">bbslist.OpenTab</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">ブラウザで開く(_W)</attribute>
+        <attribute name="action">bbslist.OpenBrowser</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">URLをコピー(_U)</attribute>
+        <attribute name="action">bbslist.CopyURL</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">タイトルとURLをコピー(_L)</attribute>
+        <attribute name="action">bbslist.CopyTitleURL</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">bbslist.AppendFavorite</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">キャッシュ内ログ検索(_S)</attribute>
+        <attribute name="action">bbslist.SearchCacheBoard</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">datのインポート(_I)</attribute>
+        <attribute name="action">bbslist.ImportDat</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">板のプロパティ(_O)...</attribute>
+        <attribute name="action">bbslist.PreferenceBoard</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!-- 板一覧 (外部BBSMENU) -->
+  <menu id="popup_menu_bbsmenu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">ブラウザで開く(_W)</attribute>
+        <attribute name="action">bbslist.OpenBrowser</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">URLをコピー(_U)</attribute>
+        <attribute name="action">bbslist.CopyURL</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">タイトルとURLをコピー(_L)</attribute>
+        <attribute name="action">bbslist.CopyTitleURL</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">bbslist.AppendFavorite</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">編集(_E)...</attribute>
+        <attribute name="action">bbslist.MoveBBSMenu</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">外部BBSMENUを削除する(_D)</attribute>
+          <attribute name="action">bbslist.DeleteBBSMenu</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">BBSMENUのプロパティ(_B)...</attribute>
+        <attribute name="action">bbslist.PreferenceBBSMenu</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!--  板一覧 (外部板) -->
+  <menu id="popup_menu_etc">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">タブで開く(_T)</attribute>
+        <attribute name="action">bbslist.OpenTab</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">ブラウザで開く(_W)</attribute>
+        <attribute name="action">bbslist.OpenBrowser</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">URLをコピー(_U)</attribute>
+        <attribute name="action">bbslist.CopyURL</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">タイトルとURLをコピー(_L)</attribute>
+        <attribute name="action">bbslist.CopyTitleURL</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">bbslist.AppendFavorite</attribute>
+      </item>
+    </section>
+    <item>
+      <attribute name="label" translatable="yes">編集(_E)...</attribute>
+      <attribute name="action">bbslist.MoveEtc</attribute>
+    </item>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">外部板を削除する(_D)</attribute>
+          <attribute name="action">bbslist.DeleteEtc</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">キャッシュ内ログ検索(_S)</attribute>
+        <attribute name="action">bbslist.SearchCacheBoard</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">datのインポート(_I)</attribute>
+        <attribute name="action">bbslist.ImportDat</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">板のプロパティ(_O)...</attribute>
+        <attribute name="action">bbslist.PreferenceBoard</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!--  板一覧 (複数選択) -->
+  <menu id="popup_menu_mul">
+    <item>
+      <attribute name="label" translatable="yes">選択した行を開く(_O)</attribute>
+      <attribute name="action">bbslist.OpenRows</attribute>
+    </item>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">bbslist.AppendFavorite</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!--  板一覧 (複数選択,外部BBSMENU含む) -->
+  <menu id="popup_menu_mul_bbsmenu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">bbslist.AppendFavorite</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">外部BBSMENUを削除する(_D)</attribute>
+          <attribute name="action">bbslist.DeleteBBSMenu</attribute>
+        </item>
+      </submenu>
+    </section>
+  </menu>
+
+  <!--  板一覧 (複数選択, 外部板含む) -->
+  <menu id="popup_menu_mul_etc">
+    <item>
+      <attribute name="label" translatable="yes">選択した行を開く(_O)</attribute>
+      <attribute name="action">bbslist.OpenRows</attribute>
+    </item>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">bbslist.AppendFavorite</attribute>
+      </item>
+    </section>
+    <submenu>
+      <attribute name="label" translatable="yes">削除(_D)</attribute>
+      <item>
+        <attribute name="label" translatable="yes">外部板を削除する(_D)</attribute>
+        <attribute name="action">bbslist.DeleteEtc</attribute>
+      </item>
+    </submenu>
+  </menu>
+
+  <!--  板一覧 (ディレクトリ) -->
+  <menu id="popup_menu_dir">
+    <item>
+      <attribute name="label" translatable="yes">全て選択(_A)</attribute>
+      <attribute name="action">bbslist.SelectDir</attribute>
+    </item>
+  </menu>
+
+  <!--  板一覧 (外部BBSMENUディレクトリ) -->
+  <menu id="popup_menu_bbsmenudir">
+    <item>
+      <attribute name="label" translatable="yes">全て選択(_A)</attribute>
+      <attribute name="action">bbslist.SelectDir</attribute>
+    </item>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">外部BBSMENU追加(_B)...</attribute>
+        <attribute name="action">bbslist.NewBBSMenu</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!--  板一覧 (外部板ディレクトリ) -->
+  <menu id="popup_menu_etcdir">
+    <item>
+      <attribute name="label" translatable="yes">全て選択(_A)</attribute>
+      <attribute name="action">bbslist.SelectDir</attribute>
+    </item>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">外部板追加(_E)...</attribute>
+        <attribute name="action">bbslist.NewEtc</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!--  お気に入り -->
+  <menu id="popup_menu_favorite">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">タブで開く(_T)</attribute>
+        <attribute name="action">bbslist.OpenTab</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">ブラウザで開く(_W)</attribute>
+        <attribute name="action">bbslist.OpenBrowser</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">キャッシュをブラウザで開く(_X)</attribute>
+        <attribute name="action">bbslist.OpenCacheBrowser</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">URLをコピー(_U)</attribute>
+        <attribute name="action">bbslist.CopyURL</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">タイトルとURLをコピー(_L)</attribute>
+        <attribute name="action">bbslist.CopyTitleURL</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">名前変更(_R)</attribute>
+        <attribute name="action">bbslist.Rename</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">新規ディレクトリ(_N)</attribute>
+        <attribute name="action">bbslist.NewDir</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">コメント挿入(_I)</attribute>
+        <attribute name="action">bbslist.NewCom</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">並び替え(_G)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">種類順(_T)</attribute>
+          <attribute name="action">bbslist.ArrangeType</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">名前順(_N)</attribute>
+          <attribute name="action">bbslist.ArrangeName</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">お気に入りから削除する(_D)</attribute>
+          <attribute name="action">bbslist.Delete</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">キャッシュ内ログ検索(_S)</attribute>
+        <attribute name="action">bbslist.SearchCacheBoard</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">datのインポート(_I)</attribute>
+        <attribute name="action">bbslist.ImportDat</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">スレのプロパティ(_P)...</attribute>
+        <attribute name="action">bbslist.PreferenceArticle</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">板のプロパティ(_O)...</attribute>
+        <attribute name="action">bbslist.PreferenceBoard</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">画像のプロパティ(_M)...</attribute>
+        <attribute name="action">bbslist.PreferenceImage</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!--  お気に入り (複数選択) -->
+  <menu id="popup_menu_favorite_mul">
+    <item>
+      <attribute name="label" translatable="yes">選択した行を開く(_O)</attribute>
+      <attribute name="action">bbslist.OpenRows</attribute>
+    </item>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">更新チェック(_M)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">更新チェックのみ(_H)</attribute>
+          <attribute name="action">bbslist.CheckUpdateRows</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">更新された行をタブで開く(_E)</attribute>
+          <attribute name="action">bbslist.CheckUpdateOpenRows</attribute>
+        </item>
+        <section>
+          <item>
+            <attribute name="label" translatable="yes">キャンセル(_C)</attribute>
+            <attribute name="action">bbslist.CancelCheckUpdate</attribute>
+          </item>
+        </section>
+      </submenu>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">お気に入りから削除する(_D)</attribute>
+          <attribute name="action">bbslist.Delete</attribute>
+        </item>
+      </submenu>
+    </section>
+  </menu>
+
+  <!--  お気に入り (何もないところをクリック) -->
+  <menu id="popup_menu_favorite_space">
+    <item>
+      <attribute name="label" translatable="yes">新規ディレクトリ(_N)</attribute>
+      <attribute name="action">bbslist.NewDir</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">コメント挿入(_I)</attribute>
+      <attribute name="action">bbslist.NewCom</attribute>
+    </item>
+  </menu>
+
+  <!--  お気に入り (ディレクトリ) -->
+  <menu id="popup_menu_favorite_dir">
+    <submenu>
+      <attribute name="label" translatable="yes">更新チェック(_M)</attribute>
+      <item>
+        <attribute name="label" translatable="yes">更新チェックのみ(_R)</attribute>
+        <attribute name="action">bbslist.CheckUpdateDir</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">更新された行をタブで開く(_A)</attribute>
+        <attribute name="action">bbslist.CheckUpdateOpenDir</attribute>
+      </item>
+      <section>
+        <item>
+          <attribute name="label" translatable="yes">キャンセル(_C)</attribute>
+          <attribute name="action">bbslist.CancelCheckUpdate</attribute>
+        </item>
+      </section>
+    </submenu>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">全て選択(_A)</attribute>
+        <attribute name="action">bbslist.SelectDir</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">名前変更(_R)</attribute>
+        <attribute name="action">bbslist.Rename</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">新規ディレクトリ(_N)</attribute>
+        <attribute name="action">bbslist.NewDir</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">コメント挿入(_I)</attribute>
+        <attribute name="action">bbslist.NewCom</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">ディレクトリをスレ一覧に表示(_B)</attribute>
+        <attribute name="action">bbslist.OpenAsBoard</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">仮想板作成(_V)</attribute>
+        <attribute name="action">bbslist.CreateVBoard</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">ディレクトリ内の並び替え(_G)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">種類順(_T)</attribute>
+          <attribute name="action">bbslist.ArrangeType</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">名前順(_N)</attribute>
+          <attribute name="action">bbslist.ArrangeName</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">お気に入りから削除する(_D)</attribute>
+          <attribute name="action">bbslist.Delete</attribute>
+        </item>
+      </submenu>
+    </section>
+  </menu>
+
+  <!--  お気に入り (コメント) -->
+  <menu id="popup_menu_favorite_com">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">名前変更(_R)</attribute>
+        <attribute name="action">bbslist.Rename</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">新規ディレクトリ(_N)</attribute>
+        <attribute name="action">bbslist.NewDir</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">コメント挿入(_I)</attribute>
+        <attribute name="action">bbslist.NewCom</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">並び替え(_G)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">種類順(_T)</attribute>
+          <attribute name="action">bbslist.ArrangeType</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">名前順(_N)</attribute>
+          <attribute name="action">bbslist.ArrangeName</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">お気に入りから削除する(_D)</attribute>
+          <attribute name="action">bbslist.Delete</attribute>
+        </item>
+      </submenu>
+    </section>
+  </menu>
+
+  <!--  お気に入り (仮想板) -->
+  <menu id="popup_menu_favorite_vboard">
+    <item>
+      <attribute name="label" translatable="yes">タブで開く(_T)</attribute>
+      <attribute name="action">bbslist.OpenTab</attribute>
+    </item>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">名前変更(_R)</attribute>
+        <attribute name="action">bbslist.Rename</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">新規ディレクトリ(_N)</attribute>
+        <attribute name="action">bbslist.NewDir</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">コメント挿入(_I)</attribute>
+        <attribute name="action">bbslist.NewCom</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">並び替え(_G)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">種類順(_T)</attribute>
+          <attribute name="action">bbslist.ArrangeType</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">名前順(_N)</attribute>
+          <attribute name="action">bbslist.ArrangeName</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">お気に入りから削除する(_D)</attribute>
+          <attribute name="action">bbslist.Delete</attribute>
+        </item>
+      </submenu>
+    </section>
+  </menu>
+
+  <!--  選択(selectlistview) -->
+  <menu id="popup_menu_select">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">URLをコピー(_U)</attribute>
+        <attribute name="action">bbslist.CopyURL</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">タイトルとURLをコピー(_L)</attribute>
+        <attribute name="action">bbslist.CopyTitleURL</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">名前変更(_R)</attribute>
+        <attribute name="action">bbslist.Rename</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">新規ディレクトリ(_N)</attribute>
+        <attribute name="action">bbslist.NewDir</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">コメント挿入(_I)</attribute>
+        <attribute name="action">bbslist.NewCom</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">並び替え(_G)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">種類順(_T)</attribute>
+          <attribute name="action">bbslist.ArrangeType</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">名前順(_N)</attribute>
+          <attribute name="action">bbslist.ArrangeName</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">お気に入りから削除する(_D)</attribute>
+          <attribute name="action">bbslist.Delete</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">キャッシュ内ログ検索(_S)</attribute>
+        <attribute name="action">bbslist.SearchCacheBoard</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">datのインポート(_I)</attribute>
+        <attribute name="action">bbslist.ImportDat</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">スレのプロパティ(_P)...</attribute>
+        <attribute name="action">bbslist.PreferenceArticle</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">板のプロパティ(_O)...</attribute>
+        <attribute name="action">bbslist.PreferenceBoard</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">画像のプロパティ(_M)...</attribute>
+        <attribute name="action">bbslist.PreferenceImage</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!--  履歴 -->
+  <menu id="popup_menu_history">
+    <item>
+      <attribute name="label" translatable="yes">タブで開く(_T)</attribute>
+      <attribute name="action">bbslist.OpenTab</attribute>
+    </item>
+    <item>
+      <attribute name="label" translatable="yes">ブラウザで開く(_W)</attribute>
+      <attribute name="action">bbslist.OpenBrowser</attribute>
+    </item>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">URLをコピー(_U)</attribute>
+        <attribute name="action">bbslist.CopyURL</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">タイトルとURLをコピー(_L)</attribute>
+        <attribute name="action">bbslist.CopyTitleURL</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">bbslist.AppendFavorite</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">履歴から削除する(_D)</attribute>
+          <attribute name="action">bbslist.DeleteHist</attribute>
+        </item>
+      </submenu>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">キャッシュ内ログ検索(_S)</attribute>
+        <attribute name="action">bbslist.SearchCacheBoard</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">datのインポート(_I)</attribute>
+        <attribute name="action">bbslist.ImportDat</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">スレのプロパティ(_P)...</attribute>
+        <attribute name="action">bbslist.PreferenceArticle</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">板のプロパティ(_O)...</attribute>
+        <attribute name="action">bbslist.PreferenceBoard</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">画像のプロパティ(_M)...</attribute>
+        <attribute name="action">bbslist.PreferenceImage</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!--  履歴 (複数選択) -->
+  <menu id="popup_menu_history_mul">
+    <item>
+      <attribute name="label" translatable="yes">選択した行を開く(_O)</attribute>
+      <attribute name="action">bbslist.OpenRows</attribute>
+    </item>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">お気に入りに追加(_F)...</attribute>
+        <attribute name="action">bbslist.AppendFavorite</attribute>
+      </item>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">更新チェック(_M)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">更新チェックのみ(_H)</attribute>
+          <attribute name="action">bbslist.CheckUpdateRows</attribute>
+        </item>
+        <item>
+          <attribute name="label" translatable="yes">更新された行をタブで開く(_E)</attribute>
+          <attribute name="action">bbslist.CheckUpdateOpenRows</attribute>
+        </item>
+        <section>
+          <item>
+            <attribute name="label" translatable="yes">キャンセル(_C)</attribute>
+            <attribute name="action">bbslist.CancelCheckUpdate</attribute>
+          </item>
+        </section>
+      </submenu>
+    </section>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">履歴から削除する(_D)</attribute>
+          <attribute name="action">bbslist.DeleteHist</attribute>
+        </item>
+      </submenu>
+    </section>
+  </menu>
+
+  <!--  履歴 (仮想板) -->
+  <menu id="popup_menu_history_vboard">
+    <item>
+      <attribute name="label" translatable="yes">タブで開く(_T)</attribute>
+      <attribute name="action">bbslist.OpenTab</attribute>
+    </item>
+    <section>
+      <submenu>
+        <attribute name="label" translatable="yes">削除(_D)</attribute>
+        <item>
+          <attribute name="label" translatable="yes">履歴から削除する(_D)</attribute>
+          <attribute name="action">bbslist.DeleteHist</attribute>
+        </item>
+      </submenu>
+    </section>
+  </menu>
+</interface>
