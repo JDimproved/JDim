@@ -28,6 +28,7 @@ subdir('jdlib')
 subdir('message')
 subdir('skeleton')
 subdir('sound')
+subdir('ui')
 subdir('xml')
 
 
@@ -124,14 +125,26 @@ jdim_libs = [
   xml_lib,
 ]
 
+gresource_sources = [
+  icons_gresource_cpp,
+  jdim_ui_common_gresource_cpp, # GTKのバージョンに関係なく使用するUI
+]
 
-# Generated resource source must be linked into the final executable.
-# Linking it only into a static library prevents the constructor from
-# registering the resource at startup.
+# meson の unity build で GResource 由来の識別子が衝突するため、
+# 生成ソースを unity=off の静的ライブラリに分け、実行ファイルへ
+# link_whole します。constructor によるリソース登録は維持します。
+jdim_resources_lib = static_library(
+  'jdim-resources',
+  gresource_sources,
+  dependencies : [gtkmm_dep],  # gio に依存している
+  override_options : ['unity=off'],
+)
+
 jdim_exe = executable(
-  'jdim', [sources, buildinfo_h, icons_gresource_cpp],
+  'jdim', [sources, buildinfo_h],
   dependencies : [config_h_dep, jdim_deps],
   include_directories : jdim_incs,
+  link_whole: jdim_resources_lib,
   link_with : jdim_libs,
   install : true,
 )
