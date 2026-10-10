@@ -18,15 +18,15 @@ layout: default
 ### 動作環境
 
 #### 必須環境
-- gtkmm 3.24.5 以上
-- glibmm 2.66.2 以上
-- glib 2.72.1 以上
+- gtkmm 3.24.5 以上 ( 3.24.7 未満のサポートは将来のリリースで廃止される )
+- glibmm 2.66.2 以上 ( 2.66.5 未満のサポートは将来のリリースで廃止される )
+- glib 2.72.1 以上 ( 2.74.6 未満のサポートは将来のリリースで廃止される )
 - zlib 1.2 以上
-- gnutls 3.7.3 以上
+- gnutls 3.7.3 以上 ( 3.7.9 未満のサポートは将来のリリースで廃止される )
 - crypt(3) ( OS 依存のライブラリ。 Debian 系の場合は libcrypt-dev をインストール )
 
 #### 推奨環境
-- Linux kernel 5.15.0 以上
+- Linux kernel 5.15.0 以上 ( 6.1.0 未満のサポートは将来のリリースで廃止される )
 - UTF-8環境 ( EUC環境では `LANG="ja_JP.UTF-8"` を指定する必要がある )
 
 ※ GTK2版はv0.4.0リリースをもって廃止 ( <https://github.com/JDimproved/JDim/issues/229> を参照 )
@@ -39,17 +39,17 @@ Autotools(./configure)のサポートはv0.10.0(2023年7月)のリリースを�
 かわりに[meson][meson]を利用してください。([RFC 0012][rfc0012])
 
 #### 必須
-- meson 0.61.0 以上
-- g++ 11 以上、または clang++ 14 以上
+- meson 0.61.0 以上 ( 1.3.0 未満のサポートは将来のリリースで廃止される )
+- g++ 11 以上、または clang++ 14 以上 ( 将来のリリースで g++ 12 以上、または clang++ 16 以上になる )
 - gnutls
 - gtkmm
 - zlib
 
 #### オプション
 - alsa-lib (`-Dalsa=enabled`)
-- openssl 3.0.2 以上 (`-Dtls=openssl`)
+- openssl 3.0.2 以上 (`-Dtls=openssl`, 3.0.8 未満のサポートは将来のリリースで廃止される )
 - migemo (`-Dmigemo=enabled`)
-- googletest 1.11.0 以上 ([test/RADME.md][testreadme]を参照)
+- googletest 1.11.0 以上 ([test/RADME.md][testreadme]を参照, 1.12.0 未満のサポートは将来のリリースで廃止される )
 
 #### WebPやAVIF画像の表示に必要なパッケージ
 インストールされていない環境では`.webp`や`.avif`で終わるURLは通常リンクになる。
