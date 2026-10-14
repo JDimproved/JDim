@@ -6,6 +6,8 @@
 #include "openurldiag.h"
 #include "command.h"
 
+#include "jdlib/gtk_compat.h"
+
 using namespace CORE;
 
 OpenURLDialog::OpenURLDialog( const std::string& url )
@@ -15,7 +17,7 @@ OpenURLDialog::OpenURLDialog( const std::string& url )
     m_label_url.set_text( url );
     set_activate_entry( m_label_url );
 
-    get_content_area()->pack_start( m_label_url, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_label_url );
 
     set_title( "URLを開く" );
     resize( 600, 1 );

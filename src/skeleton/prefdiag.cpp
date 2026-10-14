@@ -12,6 +12,8 @@
 #include "global.h"
 #include "session.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include <glib/gi18n.h>
 
 
@@ -31,7 +33,7 @@ PrefDiag::PrefDiag( Gtk::Window* parent, const std::string& url, const bool add_
             get_header_bar()->pack_start( m_bt_apply );
         }
         else {
-            get_action_area()->pack_start( m_bt_apply );
+            JDLIB::compat::box_append_expand( *get_action_area(), m_bt_apply );
         }
     }
 

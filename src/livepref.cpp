@@ -8,6 +8,8 @@
 #include "config/globalconf.h"
 #include "config/defaultconf.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "global.h"
 
 using namespace CORE;
@@ -25,8 +27,8 @@ LivePref::LivePref( Gtk::Window* parent, const std::string& url )
     // スクロールモード
     m_vbox_mode.set_spacing( mrg );
     m_vbox_mode.set_border_width( mrg );
-    m_vbox_mode.pack_start( m_mode1 );
-    m_vbox_mode.pack_start( m_mode2 );
+    JDLIB::compat::box_append_expand( m_vbox_mode, m_mode1 );
+    JDLIB::compat::box_append_expand( m_vbox_mode, m_mode2 );
     m_frame_mode.set_label( "オートスクロールモード" );
     m_frame_mode.add( m_vbox_mode );
     if( CONFIG::get_live_mode() == LIVE_SCRMODE_VARIABLE ) m_mode1.set_active( true );
@@ -70,7 +72,7 @@ LivePref::LivePref( Gtk::Window* parent, const std::string& url )
 
     m_grid.attach( m_bt_reset, 0, 4, 4, 1 );
 
-    get_content_area()->pack_start( m_grid, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_grid );
 
     set_title( "実況設定" );
     show_all_children();

@@ -8,6 +8,7 @@
 #include "config/defaultconf.h"
 #include "config/globalconf.h"
 #include "dbimg/imginterface.h"
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/misctime.h"
 #include "skeleton/msgdiag.h"
@@ -140,13 +141,13 @@ public:
 
         m_label_enable_hash.set_ellipsize( Pango::ELLIPSIZE_END );
 
-        m_hbox_check_enable_hash.pack_start( m_label_enable_hash, true, true );
-        m_hbox_check_enable_hash.pack_start( m_switch_enable_hash, false, false );
-        m_hbox_check_enable_hash.pack_start( m_toggle_notes, false, false );
+        JDLIB::compat::box_append_expand( m_hbox_check_enable_hash, m_label_enable_hash );
+        JDLIB::compat::box_append_shrink( m_hbox_check_enable_hash, m_switch_enable_hash );
+        JDLIB::compat::box_append_shrink( m_hbox_check_enable_hash, m_toggle_notes );
         m_hbox_check_enable_hash.show();
 
-        m_vbox_check_enable_hash.pack_start( m_hbox_check_enable_hash );
-        m_vbox_check_enable_hash.pack_start( m_revealer_notes );
+        JDLIB::compat::box_append_expand( m_vbox_check_enable_hash, m_hbox_check_enable_hash );
+        JDLIB::compat::box_append_expand( m_vbox_check_enable_hash, m_revealer_notes );
         m_vbox_check_enable_hash.show();
         m_listbox.append( m_vbox_check_enable_hash );
         m_listbox.set_selection_mode( Gtk::SELECTION_NONE );
@@ -168,13 +169,13 @@ public:
         m_link_manual.set_halign( Gtk::ALIGN_END );
         m_link_manual.set_use_underline( true );
         m_link_manual.show();
-        m_hbox_initial_threshold.pack_start( m_spin_initial_threshold, false, false );
-        m_hbox_initial_threshold.pack_start( m_button_reset_initial_threshold, false, false );
+        JDLIB::compat::box_append_shrink( m_hbox_initial_threshold, m_spin_initial_threshold );
+        JDLIB::compat::box_append_shrink( m_hbox_initial_threshold, m_button_reset_initial_threshold );
         {
             auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
-            m_hbox_initial_threshold.pack_start( *spacer, true, true );
+            JDLIB::compat::box_append_expand( m_hbox_initial_threshold, *spacer );
         }
-        m_hbox_initial_threshold.pack_start( m_link_manual, false, false );
+        JDLIB::compat::box_append_shrink( m_hbox_initial_threshold, m_link_manual );
         m_hbox_initial_threshold.show();
 
         m_label_tool.set_halign( Gtk::ALIGN_START );
@@ -217,14 +218,14 @@ public:
         m_label_num_of_items.show();
 
         m_box_tool.set_hexpand( true );
-        m_box_tool.pack_start( m_button_delete, false, false );
-        m_box_tool.pack_start( m_button_set_threshold, false, false );
-        m_box_tool.pack_start( m_button_copy, false, false );
+        JDLIB::compat::box_append_shrink( m_box_tool, m_button_delete );
+        JDLIB::compat::box_append_shrink( m_box_tool, m_button_set_threshold );
+        JDLIB::compat::box_append_shrink( m_box_tool, m_button_copy );
         {
             auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
-            m_box_tool.pack_start( *spacer, true, true );
+            JDLIB::compat::box_append_expand( m_box_tool, *spacer );
         }
-        m_box_tool.pack_start( m_label_num_of_items, false, false );
+        JDLIB::compat::box_append_shrink( m_box_tool, m_label_num_of_items );
         m_box_tool.show();
 
         // あぼーん設定一覧のセットアップ
@@ -282,8 +283,8 @@ public:
         m_box.set_vexpand( true );
         m_box.property_margin() = 8;
         m_box.insert_action_group( "image-hash", m_action_group );
-        m_box.pack_start( m_grid, false, false );
-        m_box.pack_start( m_scroll, true, true );
+        JDLIB::compat::box_append_shrink( m_box, m_grid );
+        JDLIB::compat::box_append_expand( m_box, m_scroll );
         m_box.show();
 
         m_treeview.grab_focus();

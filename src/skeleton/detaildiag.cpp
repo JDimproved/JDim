@@ -9,6 +9,8 @@
 
 #include "viewfactory.h"
 
+#include "jdlib/gtk_compat.h"
+
 using namespace SKELETON;
 
 DetailDiag::DetailDiag( Gtk::Window* parent, const std::string& url,
@@ -31,7 +33,7 @@ DetailDiag::DetailDiag( Gtk::Window* parent, const std::string& url,
     m_notebook.append_page( *m_detail, tab_detail );
     m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &DetailDiag::slot_switch_page ) );
 
-    get_content_area()->pack_start( m_notebook );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_notebook );
 
     show_all_children();
     grab_ok();

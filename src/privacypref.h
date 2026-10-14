@@ -8,6 +8,8 @@
 #include "skeleton/prefdiag.h"
 #include "skeleton/msgdiag.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "command.h"
 
 namespace CORE
@@ -62,19 +64,19 @@ namespace CORE
         {
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );
-            m_vbox.pack_start( m_bt_thread );
-            m_vbox.pack_start( m_bt_board );
-            m_vbox.pack_start( m_bt_close );
-            m_vbox.pack_start( m_bt_search );
-            m_vbox.pack_start( m_bt_name );
-            m_vbox.pack_start( m_bt_mail );
+            JDLIB::compat::box_append_expand( m_vbox, m_bt_thread );
+            JDLIB::compat::box_append_expand( m_vbox, m_bt_board );
+            JDLIB::compat::box_append_expand( m_vbox, m_bt_close );
+            JDLIB::compat::box_append_expand( m_vbox, m_bt_search );
+            JDLIB::compat::box_append_expand( m_vbox, m_bt_name );
+            JDLIB::compat::box_append_expand( m_vbox, m_bt_mail );
 
             m_bt_selectall.signal_clicked().connect( sigc::mem_fun( *this, &PrivacyPref::slot_selectall ) );
-            m_hbox_selectall.pack_start( m_bt_selectall, false, false );
-            m_vbox.pack_start( m_hbox_selectall, false, false );
+            JDLIB::compat::box_append_shrink( m_hbox_selectall, m_bt_selectall );
+            JDLIB::compat::box_append_shrink( m_vbox, m_hbox_selectall );
 
             get_content_area()->set_spacing( 8 );
-            get_content_area()->pack_start( m_vbox, false, false );
+            JDLIB::compat::box_append_shrink( *get_content_area(), m_vbox );
 
             set_title( "プライバシー情報の消去" );
             show_all_children();

@@ -15,6 +15,7 @@
 #include "font.h"
 #include "embeddedimage.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/jdregex.h"
 #include "jdlib/misccharcode.h"
 #include "jdlib/miscgtk.h"
@@ -201,7 +202,7 @@ void DrawAreaBase::setup( const bool show_abone, const bool show_scrbar, const b
     m_view.signal_key_press_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_press_event ));
     m_view.signal_key_release_event().connect( sigc::mem_fun(*this, &DrawAreaBase::slot_key_release_event ));
 
-    pack_start( m_view );
+    JDLIB::compat::box_append_expand( *this, m_view );
 
     // pango layout 作成
     m_pango_layout = m_view.create_pango_layout( "" );
@@ -293,9 +294,9 @@ void DrawAreaBase::create_scrbar()
     if( CONFIG::get_left_scrbar() ) remove( m_view );
 
     m_event->add( *m_vscrbar );
-    pack_start( *m_event, false, false );
+    JDLIB::compat::box_append_shrink( *this, *m_event );
 
-    if( CONFIG::get_left_scrbar() ) pack_start( m_view );
+    if( CONFIG::get_left_scrbar() ) JDLIB::compat::box_append_expand( *this, m_view );
 
     m_vscrbar->get_adjustment()->signal_value_changed().connect( sigc::mem_fun( *this, &DrawAreaBase::slot_change_adjust ) );
 

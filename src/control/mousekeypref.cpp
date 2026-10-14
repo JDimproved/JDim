@@ -11,6 +11,7 @@
 
 #include "skeleton/msgdiag.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 #include "colorid.h"
@@ -41,7 +42,7 @@ InputDiag::InputDiag( Gtk::Window* parent, const std::string& url,
     set_title( CONTROL::get_label( m_id ) + " ( " + CONTROL::get_mode_label( m_controlmode ) + " )" );
     resize( 400, 400 );
 
-    get_content_area()->pack_start( m_label );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_label );
 
     show_all_children();
 }
@@ -292,18 +293,18 @@ MouseKeyDiag::MouseKeyDiag( Gtk::Window* parent, const std::string& url,
     m_button_add.signal_clicked().connect( sigc::mem_fun( *this, &MouseKeyDiag::slot_add ) );
     m_button_reset.signal_clicked().connect( sigc::mem_fun( *this, &MouseKeyDiag::slot_reset ) );
 
-    m_vbuttonbox.pack_start( m_button_delete, false, false );
-    m_vbuttonbox.pack_start( m_button_add, false, false );
-    m_vbuttonbox.pack_start( m_button_reset, false, false );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_delete );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_add );
+    JDLIB::compat::box_append_shrink( m_vbuttonbox, m_button_reset );
     m_vbuttonbox.set_layout( Gtk::BUTTONBOX_START );
     m_vbuttonbox.set_spacing( 4 );
 
-    m_hbox.pack_start( m_scrollwin, true, true );
-    m_hbox.pack_start( m_vbuttonbox, false, false );
+    JDLIB::compat::box_append_expand( m_hbox, m_scrollwin );
+    JDLIB::compat::box_append_shrink( m_hbox, m_vbuttonbox );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_label, false, false );
-    get_content_area()->pack_start( m_hbox );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_label );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_hbox );
 
     show_all_children();
     set_title( CONTROL::get_label( m_id ) + " ( " + CONTROL::get_mode_label( m_controlmode ) + " )" );
@@ -509,8 +510,8 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
 {
     signal_key_press_event().connect( sigc::mem_fun( *this, &MouseKeyPref::slot_key_press_event ) );
 
-    m_hbox_search.pack_start( m_label, false, false );
-    m_hbox_search.pack_start( m_toggle_search, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox_search, m_label );
+    JDLIB::compat::box_append_shrink( m_hbox_search, m_toggle_search );
 
     m_label.set_hexpand( true );
     m_toggle_search.set_image_from_icon_name( "edit-find-symbolic" );
@@ -559,12 +560,12 @@ MouseKeyPref::MouseKeyPref( Gtk::Window* parent, const std::string& url, const s
     m_scrollwin.set_propagate_natural_width( true );
 
     m_button_reset.signal_clicked().connect( sigc::mem_fun( *this, &MouseKeyPref::slot_reset ) );
-    m_hbox.pack_start( m_button_reset, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox, m_button_reset );
 
-    get_content_area()->pack_start( m_hbox_search, false, false );
-    get_content_area()->pack_start( m_search_bar, false, false );
-    get_content_area()->pack_start( m_scrollwin );
-    get_content_area()->pack_start( m_hbox, false, false );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_hbox_search );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_search_bar );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_scrollwin );
+    JDLIB::compat::box_append_shrink( *get_content_area(), m_hbox );
 
     show_all_children();
     set_title( target + "設定" );

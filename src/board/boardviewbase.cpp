@@ -10,6 +10,7 @@
 #include "skeleton/msgdiag.h"
 #include "skeleton/filediag.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 #include "jdlib/miscgtk.h"
 #include "jdlib/jdregex.h"
@@ -115,7 +116,7 @@ BoardViewBase::BoardViewBase( const std::string& url, const bool show_col_board 
     m_scrwin.add( m_treeview );
     m_scrwin.set_policy( Gtk::POLICY_AUTOMATIC, Gtk::POLICY_ALWAYS );
 
-    pack_start( m_scrwin );
+    JDLIB::compat::box_append_expand( *this, m_scrwin );
     show_all_children();
 
     // ツリービュー設定

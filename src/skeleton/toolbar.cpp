@@ -14,6 +14,7 @@
 
 #include "dbtree/interface.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscutil.h"
 
 #include "icons/iconmanager.h"
@@ -120,8 +121,8 @@ void ToolBar::show_toolbar()
     if( m_buttonbar_shown && ! m_buttonbar_packed ){
 
         if( m_searchbar_packed ) remove( *m_searchbar );
-        pack_start( m_buttonbar, false, false );
-        if( m_searchbar_packed ) pack_start( *m_searchbar, false, false );
+        JDLIB::compat::box_append_shrink( *this, m_buttonbar );
+        if( m_searchbar_packed ) JDLIB::compat::box_append_shrink( *this, *m_searchbar );
 
         show_all_children();
         set_relief();
@@ -132,7 +133,7 @@ void ToolBar::show_toolbar()
     // 検索バーのpack
     if( m_searchbar_shown && ! m_searchbar_packed ){
 
-        pack_start( *m_searchbar, false, false );
+        JDLIB::compat::box_append_shrink( *this, *m_searchbar );
 
         show_all_children();
         set_relief();

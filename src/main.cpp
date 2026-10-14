@@ -15,6 +15,7 @@
 #include "environment.h"
 #include "iomonitor.h"
 
+#include "jdlib/gtk_compat.h"
 #include "jdlib/miscmsg.h"
 #include "jdlib/jdsocket.h"
 #include "jdlib/jdregex.h"
@@ -424,7 +425,7 @@ bool App::setup_fifo( std::string url )
                                       false, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO );
 
             Gtk::CheckButton chk_button( "今後表示しない" );
-            mdiag.get_content_area()->pack_start( chk_button, false, false );
+            JDLIB::compat::box_append_shrink( *mdiag.get_content_area(), chk_button );
             chk_button.show();
 
             const int ret = mdiag.run();

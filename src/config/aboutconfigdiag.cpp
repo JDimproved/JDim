@@ -5,6 +5,8 @@
 
 #include "aboutconfigdiag.h"
 
+#include "jdlib/gtk_compat.h"
+
 using namespace CONFIG;
 
 AboutConfigDiagStr::AboutConfigDiagStr( Gtk::Window* parent, std::string* value, const std::string& defaultval )
@@ -17,13 +19,13 @@ AboutConfigDiagStr::AboutConfigDiagStr( Gtk::Window* parent, std::string* value,
     resize( 600, 1 );
 
     m_entry.set_text( *value );
-    m_hbox.pack_start( m_entry );
+    JDLIB::compat::box_append_expand( m_hbox, m_entry );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagStr::slot_default ) );
-    m_hbox.pack_start( m_button_default, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox, m_button_default );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_hbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_hbox );
 
     set_activate_entry( m_entry );
 
@@ -57,13 +59,13 @@ AboutConfigDiagInt::AboutConfigDiagInt( Gtk::Window* parent, int* value, const i
     resize( 200, 1 );
 
     m_entry.set_text( std::to_string( *value ) );
-    m_hbox.pack_start( m_entry );
+    JDLIB::compat::box_append_expand( m_hbox, m_entry );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagInt::slot_default ) );
-    m_hbox.pack_start( m_button_default, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox, m_button_default );
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_hbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_hbox );
 
     set_activate_entry( m_entry );
 
@@ -102,15 +104,15 @@ AboutConfigDiagBool::AboutConfigDiagBool( Gtk::Window* parent, bool* value, cons
     if( *value ) m_radio_true.set_active();
     else m_radio_false.set_active();
 
-    m_hbox.pack_start( m_radio_true );
-    m_hbox.pack_start( m_radio_false );
+    JDLIB::compat::box_append_expand( m_hbox, m_radio_true );
+    JDLIB::compat::box_append_expand( m_hbox, m_radio_false );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagBool::slot_default ) );
-    m_hbox.pack_start( m_button_default, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox, m_button_default );
 
 
     get_content_area()->set_spacing( 8 );
-    get_content_area()->pack_start( m_hbox );
+    JDLIB::compat::box_append_expand( *get_content_area(), m_hbox );
 
     set_title( "真偽値設定" );
     show_all_children();

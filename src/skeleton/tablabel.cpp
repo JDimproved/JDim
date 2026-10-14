@@ -9,6 +9,8 @@
 
 #include "config/globalconf.h"
 
+#include "jdlib/gtk_compat.h"
+
 #include "dndmanager.h"
 
 using namespace SKELETON;
@@ -36,7 +38,7 @@ TabLabel::TabLabel( const std::string& url )
     add_events( Gdk::SMOOTH_SCROLL_MASK ); // マウスホイールによるタブの切り替え
 
     add( m_hbox );
-    m_hbox.pack_start( m_label, false, false );
+    JDLIB::compat::box_append_shrink( m_hbox, m_label );
 
     show_all_children();
 }
@@ -53,8 +55,8 @@ void TabLabel::set_id_icon( const int id )
         m_image = std::make_unique<Gtk::Image>();
         m_hbox.remove( m_label );
         m_hbox.set_spacing( SPACING_LABEL );
-        m_hbox.pack_start( *m_image, false, false );
-        m_hbox.pack_start( m_label, false, false );
+        JDLIB::compat::box_append_shrink( m_hbox, *m_image );
+        JDLIB::compat::box_append_shrink( m_hbox, m_label );
         show_all_children();
     }
 
