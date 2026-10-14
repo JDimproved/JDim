@@ -24,8 +24,8 @@ namespace CORE
 
     class ProxyFrame : public Gtk::Frame
     {
-        Gtk::VBox m_vbox;
-        Gtk::HBox m_hbox;
+        Gtk::Box m_vbox;
+        Gtk::Box m_hbox;
 
         Gtk::Box m_hbox_port; ///< "ポート番号"のラベルと入力欄を一つにまとめる
         Gtk::Label m_label_port; ///< "ポート番号"のラベル
@@ -39,7 +39,9 @@ namespace CORE
 
         ProxyFrame( const std::string& title, const Glib::ustring& ckbt_label, const Glib::ustring& send_label,
                     const Glib::ustring& host_label, const Glib::ustring& port_label )
-            : m_hbox_port{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+            : m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+            , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+            , m_hbox_port{ Gtk::ORIENTATION_HORIZONTAL, 0 }
             , m_label_port{ port_label, true }
             , ckbt( ckbt_label, true )
             , send_cookie_check( send_label, true )
@@ -56,14 +58,14 @@ namespace CORE
             m_hbox_port.pack_start( entry_port, 0, 0, false );
 
             m_hbox.set_spacing( 8 );
-            m_hbox.pack_start( ckbt, Gtk::PACK_SHRINK );
-            m_hbox.pack_start( send_cookie_check, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( ckbt, false, false );
+            m_hbox.pack_start( send_cookie_check, false, false );
             m_hbox.pack_start( entry_host );
-            m_hbox.pack_start( m_hbox_port, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( m_hbox_port, false, false );
 
             m_hbox.set_border_width( 8 );
             m_vbox.set_spacing( 8 );
-            m_vbox.pack_start( m_hbox, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( m_hbox, false, false );
 
             set_label( title );
             set_border_width( 8 );
@@ -134,22 +136,22 @@ namespace CORE
             m_binding_notice = Glib::Binding::bind_property( m_toggle_notice.property_active(),
                                                              m_revealer_notice.property_reveal_child() );
 
-            m_hbox.pack_start( ckbt, Gtk::PACK_SHRINK );
-            m_hbox.pack_start( send_cookie_check, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( ckbt, false, false );
+            m_hbox.pack_start( send_cookie_check, false, false );
             m_hbox.pack_start( entry_host );
-            m_hbox.pack_start( m_hbox_port, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( m_hbox_port, false, false );
 
             m_hbox_fallback_proxy.set_hexpand( true );
             m_hbox_fallback_proxy.set_margin_start( 8 );
             m_hbox_fallback_proxy.set_margin_end( 8 );
-            m_hbox_fallback_proxy.pack_start( fallback_proxy_check, Gtk::PACK_SHRINK );
-            m_hbox_fallback_proxy.pack_end( m_toggle_notice, Gtk::PACK_SHRINK );
-            m_vbox_exp_option.pack_start( m_hbox_fallback_proxy, Gtk::PACK_SHRINK );
-            m_vbox_exp_option.pack_start( m_revealer_notice, Gtk::PACK_SHRINK );
+            m_hbox_fallback_proxy.pack_start( fallback_proxy_check, false, false );
+            m_hbox_fallback_proxy.pack_end( m_toggle_notice, false, false );
+            m_vbox_exp_option.pack_start( m_hbox_fallback_proxy, false, false );
+            m_vbox_exp_option.pack_start( m_revealer_notice, false, false );
 
             m_hbox.set_border_width( 8 );
-            m_vbox.pack_start( m_hbox, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_vbox_exp_option, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( m_hbox, false, false );
+            m_vbox.pack_start( m_vbox_exp_option, false, false );
 
             set_label( title );
             set_border_width( 8 );

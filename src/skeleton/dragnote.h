@@ -60,7 +60,7 @@ namespace SKELETON
         int height_box;
     };
 
-    class DragableNoteBook : public Gtk::VBox
+    class DragableNoteBook : public Gtk::Box
     {
         SIG_SWITCH_PAGE m_sig_switch_page;
         SIG_TAB_CLICKED m_sig_tab_clicked;
@@ -76,7 +76,7 @@ namespace SKELETON
         ToolBarNotebook m_notebook_toolbar; // ツールバー
         ViewNotebook m_notebook_view; // ビュー
 
-        Gtk::HBox m_hbox_tab;
+        Gtk::Box m_hbox_tab;
         TabSwitchButton m_bt_tabswitch; // タブの切り替えボタン
 
         bool m_show_tabs;

@@ -35,6 +35,8 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     , m_label_size{ "サイズ( byte / Kbyte ):" }
     , m_label_maxres{ "最大レス数 (0 : 未設定):" }
     , m_label_charset{ "テキストエンコーディング:" }
+    , m_vbox_abone{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_vbox_abone_id{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_check_transpabone( "透明あぼ〜ん" )
     , m_check_chainabone( "連鎖あぼ〜ん" )
     , m_check_ageabone( "sage以外をあぼ〜ん" )
@@ -197,18 +199,18 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     if( CONFIG::get_abone_transparent() ) m_check_transpabone.set_sensitive( false );
     if( CONFIG::get_abone_chain() ) m_check_chainabone.set_sensitive( false );
 
-    m_vbox_abone.pack_start( m_check_transpabone, Gtk::PACK_SHRINK );
-    m_vbox_abone.pack_start( m_check_chainabone, Gtk::PACK_SHRINK );
-    m_vbox_abone.pack_start( m_check_ageabone, Gtk::PACK_SHRINK );
-    m_vbox_abone.pack_start( m_check_defnameabone, Gtk::PACK_SHRINK );
-    m_vbox_abone.pack_start( m_check_noidabone, Gtk::PACK_SHRINK );
-    m_vbox_abone.pack_start( m_check_boardabone, Gtk::PACK_SHRINK );
-    m_vbox_abone.pack_start( m_check_globalabone, Gtk::PACK_SHRINK );
+    m_vbox_abone.pack_start( m_check_transpabone, false, false );
+    m_vbox_abone.pack_start( m_check_chainabone, false, false );
+    m_vbox_abone.pack_start( m_check_ageabone, false, false );
+    m_vbox_abone.pack_start( m_check_defnameabone, false, false );
+    m_vbox_abone.pack_start( m_check_noidabone, false, false );
+    m_vbox_abone.pack_start( m_check_boardabone, false, false );
+    m_vbox_abone.pack_start( m_check_globalabone, false, false );
 
     if( CONFIG::get_abone_transparent() || CONFIG::get_abone_chain() ){
         m_label_abone.set_text( "チェック出来ない場合は設定メニューから「デフォルトで透明/連鎖あぼ〜ん」を解除して下さい" );
         m_label_abone.set_xalign( 0 );
-        m_vbox_abone.pack_start( m_label_abone, Gtk::PACK_SHRINK );
+        m_vbox_abone.pack_start( m_label_abone, false, false );
     }
 
     if( DBTREE::article_is_cached( get_url() ) ){ 
@@ -272,7 +274,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         );
 
     m_vbox_abone.set_spacing( 8 );
-    m_vbox_abone_id.pack_start( m_label_abone_id, Gtk::PACK_SHRINK );
+    m_vbox_abone_id.pack_start( m_label_abone_id, false, false );
     m_vbox_abone_id.pack_start( m_edit_id );
 
     m_notebook_abone.append_page( m_vbox_abone, "一般" );

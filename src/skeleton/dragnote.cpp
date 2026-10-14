@@ -22,10 +22,11 @@
 using namespace SKELETON;
 
 DragableNoteBook::DragableNoteBook()
-    : Gtk::VBox()
+    : Gtk::Box{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_notebook_tab( this )
     , m_notebook_toolbar( this )
     , m_notebook_view( this )
+    , m_hbox_tab{ Gtk::ORIENTATION_HORIZONTAL, 0 }
     , m_bt_tabswitch( this )
     , m_show_tabs{ true }
     , m_show_toolbar{ true }
@@ -42,11 +43,11 @@ DragableNoteBook::DragableNoteBook()
     m_notebook_tab.sig_scroll_event().connect( sigc::mem_fun(*this, &DragableNoteBook::slot_scroll_event ) );
 
     m_hbox_tab.pack_start( m_notebook_tab );
-    m_hbox_tab.pack_start( m_bt_tabswitch, Gtk::PACK_SHRINK );
+    m_hbox_tab.pack_start( m_bt_tabswitch, false, false );
     m_bt_tabswitch.set_tooltip_text( "タブの一覧表示" );
 
-    pack_start( m_hbox_tab, Gtk::PACK_SHRINK );
-    pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
+    pack_start( m_hbox_tab, false, false );
+    pack_start( m_notebook_toolbar, false, false );
     pack_start( m_notebook_view );
 
     show_all_children();
@@ -84,9 +85,9 @@ void DragableNoteBook::set_show_tabs( bool show_tabs )
             remove( m_notebook_toolbar );
         remove( m_notebook_view );
 
-        pack_start( m_hbox_tab, Gtk::PACK_SHRINK );
+        pack_start( m_hbox_tab, false, false );
         if( m_show_toolbar && m_notebook_toolbar.get_n_pages() )
-            pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
+            pack_start( m_notebook_toolbar, false, false );
         pack_start( m_notebook_view );
 
         m_show_tabs = true;
@@ -219,7 +220,7 @@ void DragableNoteBook::show_toolbar()
 
         remove( m_notebook_view );
 
-        pack_start( m_notebook_toolbar, Gtk::PACK_SHRINK );
+        pack_start( m_notebook_toolbar, false, false );
         pack_start( m_notebook_view );
 
         m_show_toolbar = true;

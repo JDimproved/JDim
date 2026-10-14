@@ -57,6 +57,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     , m_boot( true )
     , m_enable_fold( m_fold_when_focusout )
     , m_mode( JDWIN_INIT )
+    , m_statbar{ Gtk::ORIENTATION_HORIZONTAL, 0 }
 {
     // ステータスバー
     m_label_stat.set_size_request( 0, -1 );
@@ -72,7 +73,7 @@ JDWindow::JDWindow( const bool fold_when_focusout, const bool need_mginfo )
     if( need_mginfo ){
         m_mginfo_ebox.add( m_mginfo );
         m_mginfo_ebox.set_visible_window( false );
-        m_statbar.pack_start( m_mginfo_ebox, Gtk::PACK_SHRINK );
+        m_statbar.pack_start( m_mginfo_ebox, false, false );
     }
 
     m_mginfo.set_width_chars( MGINFO_CHARS );
@@ -123,7 +124,7 @@ void JDWindow::init_win()
         m_scrwin->set_size_request( 0, 0 );
         m_scrwin->set_policy( Gtk::POLICY_EXTERNAL, Gtk::POLICY_EXTERNAL );
         m_scrwin->add( *m_vbox_view );
-        m_vbox.pack_remove_end( false, *m_scrwin, Gtk::PACK_EXPAND_WIDGET );
+        m_vbox.pack_remove_end( false, *m_scrwin, true, true );
 
         set_skip_taskbar_hint( true );
         resize( get_width_win(), 1 );
@@ -353,27 +354,27 @@ bool JDWindow::is_hide() const
 }
 
 
-void JDWindow::pack_remove_start( bool unpack, Widget& child, Gtk::PackOptions options, guint padding )
+void JDWindow::pack_remove_start( bool unpack, Widget& child, bool expand, bool fill, guint padding )
 {
     if( m_fold_when_focusout ){
-        m_vbox_view->pack_remove_start( unpack, child, options, padding );
+        m_vbox_view->pack_remove_start( unpack, child, expand, fill, padding );
         if( ! unpack ) m_vbox_view->show_all_children();
     }
     else{
-        m_vbox.pack_remove_start( unpack, child, options, padding );
+        m_vbox.pack_remove_start( unpack, child, expand, fill, padding );
         if( ! unpack ) m_vbox.show_all_children();
     }
 }
 
 
-void JDWindow::pack_remove_end( bool unpack, Widget& child, Gtk::PackOptions options, guint padding )
+void JDWindow::pack_remove_end( bool unpack, Widget& child, bool expand, bool fill, guint padding )
 {
     if( m_fold_when_focusout ){
-        m_vbox_view->pack_remove_end( unpack, child, options, padding );
+        m_vbox_view->pack_remove_end( unpack, child, expand, fill, padding );
         if( ! unpack ) m_vbox_view->show_all_children();
     }
     else{
-        m_vbox.pack_remove_end( unpack, child, options, padding );
+        m_vbox.pack_remove_end( unpack, child, expand, fill, padding );
         if( ! unpack ) m_vbox.show_all_children();
     }
 }

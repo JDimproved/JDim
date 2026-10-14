@@ -118,7 +118,8 @@ struct LAYOUT_TABLE
 
 
 DrawAreaBase::DrawAreaBase( const std::string& url )
-    : m_url( url )
+    : Gtk::Box{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_url( url )
     , m_backscreen( nullptr, cairo_surface_destroy )
     , m_enable_draw{ true }
     , m_back_frame_top( nullptr, cairo_surface_destroy )
@@ -292,7 +293,7 @@ void DrawAreaBase::create_scrbar()
     if( CONFIG::get_left_scrbar() ) remove( m_view );
 
     m_event->add( *m_vscrbar );
-    pack_start( *m_event, Gtk::PACK_SHRINK );
+    pack_start( *m_event, false, false );
 
     if( CONFIG::get_left_scrbar() ) pack_start( m_view );
 

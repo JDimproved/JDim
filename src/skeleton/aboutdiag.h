@@ -18,10 +18,10 @@ namespace SKELETON
         Gtk::Label m_label_tab_info;
         Gtk::Image m_image_logo;
         Gtk::Label m_label_version;
-        Gtk::VBox m_vbox_info;
+        Gtk::Box m_vbox_info;
         Gtk::Label m_label_info;
         Gtk::Label m_label_comments;
-        Gtk::HBox m_hbox_url;
+        Gtk::Box m_hbox_url;
         Gtk::Button m_button_website;
         Gtk::Label m_label_copyright;
 
@@ -32,7 +32,7 @@ namespace SKELETON
 
         // 動作環境タブ
         Gtk::Label m_label_tab_environment;
-        Gtk::VBox m_vbox_environment;
+        Gtk::Box m_vbox_environment;
         Gtk::HButtonBox m_hbuttonbox_environment;
 		Gtk::Button m_button_copy_environment;
         Gtk::ScrolledWindow m_scrollwindow_environment;

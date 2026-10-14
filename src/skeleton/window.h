@@ -43,7 +43,7 @@ namespace SKELETON
         // ステータスバー
         std::string m_status;
 
-        Gtk::HBox m_statbar;
+        Gtk::Box m_statbar;
         Gtk::Label m_label_stat;
         Gtk::EventBox m_label_stat_ebox;
         Gtk::EventBox m_mginfo_ebox;
@@ -57,7 +57,7 @@ namespace SKELETON
         explicit JDWindow( const bool fold_when_focusout, const bool need_mginfo = true );
         ~JDWindow() noexcept override = default;
 
-        Gtk::HBox& get_statbar(){ return  m_statbar; }
+        Gtk::Box& get_statbar(){ return  m_statbar; }
 
         virtual void clock_in();
 
@@ -74,8 +74,8 @@ namespace SKELETON
         // 起動中
         bool is_booting() const { return m_boot; }
 
-        void pack_remove_start( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
-        void pack_remove_end( bool unpack, Widget& child, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET, guint padding = 0 );
+        void pack_remove_start( bool unpack, Widget& child, bool expand = true, bool fill = true, guint padding = 0 );
+        void pack_remove_end( bool unpack, Widget& child, bool expand = true, bool fill = true, guint padding = 0 );
 
         void set_status( const std::string& stat );
         void set_status_temporary( const std::string& stat );

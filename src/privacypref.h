@@ -14,7 +14,7 @@ namespace CORE
 {
     class PrivacyPref : public SKELETON::PrefDiag
     {
-        Gtk::VBox m_vbox;
+        Gtk::Box m_vbox;
         Gtk::CheckButton m_bt_board;
         Gtk::CheckButton m_bt_thread;
         Gtk::CheckButton m_bt_close;
@@ -22,7 +22,7 @@ namespace CORE
         Gtk::CheckButton m_bt_name;
         Gtk::CheckButton m_bt_mail;
 
-        Gtk::HBox m_hbox_selectall;
+        Gtk::Box m_hbox_selectall;
         Gtk::Button m_bt_selectall;
 
         void slot_selectall()
@@ -49,14 +49,16 @@ namespace CORE
       public:
 
         PrivacyPref( Gtk::Window* parent, const std::string& url )
-        : SKELETON::PrefDiag( parent, url ),
-        m_bt_board( "板履歴(_B)", true ),
-        m_bt_thread( "スレ履歴(_T)", true ),
-        m_bt_close( "最近閉じたスレの履歴(_R)", true ),
-        m_bt_search( "検索履歴(_F)", true ),
-        m_bt_name( "書き込みビューの名前履歴(_N)", true ),
-        m_bt_mail( "書き込みビューのメール履歴(_E)", true ),
-        m_bt_selectall( "全て選択(_A)", true )
+            : SKELETON::PrefDiag( parent, url )
+            , m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+            , m_bt_board( "板履歴(_B)", true )
+            , m_bt_thread( "スレ履歴(_T)", true )
+            , m_bt_close( "最近閉じたスレの履歴(_R)", true )
+            , m_bt_search( "検索履歴(_F)", true )
+            , m_bt_name( "書き込みビューの名前履歴(_N)", true )
+            , m_bt_mail( "書き込みビューのメール履歴(_E)", true )
+            , m_hbox_selectall{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+            , m_bt_selectall( "全て選択(_A)", true )
         {
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );
@@ -68,11 +70,11 @@ namespace CORE
             m_vbox.pack_start( m_bt_mail );
 
             m_bt_selectall.signal_clicked().connect( sigc::mem_fun( *this, &PrivacyPref::slot_selectall ) );
-            m_hbox_selectall.pack_start( m_bt_selectall, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_hbox_selectall, Gtk::PACK_SHRINK );
+            m_hbox_selectall.pack_start( m_bt_selectall, false, false );
+            m_vbox.pack_start( m_hbox_selectall, false, false );
 
             get_content_area()->set_spacing( 8 );
-            get_content_area()->pack_start( m_vbox, Gtk::PACK_SHRINK );
+            get_content_area()->pack_start( m_vbox, false, false );
 
             set_title( "プライバシー情報の消去" );
             show_all_children();

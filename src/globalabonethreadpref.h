@@ -25,7 +25,7 @@ namespace CORE
         SKELETON::EditView m_edit_word, m_edit_regex;
         Gtk::Label m_label_warning;
 
-        Gtk::VBox m_vbox_abone_thread;
+        Gtk::Box m_vbox_abone_thread;
         Gtk::Label m_label_abone_thread;
 
         Gtk::Box m_hbox_low_number;
@@ -36,7 +36,7 @@ namespace CORE
         Gtk::Label m_label_high_number;
         Gtk::SpinButton m_spin_high_number;
 
-        Gtk::HBox m_hbox_hour;
+        Gtk::Box m_hbox_hour;
         Gtk::Label m_label_hour;
         Gtk::SpinButton m_spin_hour;
 
@@ -68,8 +68,10 @@ namespace CORE
 
         GlobalAboneThreadPref( Gtk::Window* parent, const std::string& url )
             : SKELETON::PrefDiag( parent, url )
+            , m_vbox_abone_thread{ Gtk::ORIENTATION_VERTICAL, 0 }
             , m_hbox_low_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
             , m_hbox_high_number{ Gtk::ORIENTATION_HORIZONTAL, 4 }
+            , m_hbox_hour{ Gtk::ORIENTATION_HORIZONTAL, 0 }
         {
             // スレ数、時間
             m_label_abone_thread.set_text( "以下の数字が0の時は未設定になります。\nまたキャッシュにログがあるスレはあぼ〜んされません。\n\n" );
@@ -79,8 +81,8 @@ namespace CORE
             m_spin_low_number.set_increments( 1, 1 );
             m_spin_low_number.set_value( CONFIG::get_abone_low_number_thread() );
 
-            m_hbox_low_number.pack_start( m_spin_low_number, Gtk::PACK_SHRINK );
-            m_hbox_low_number.pack_start( m_label_low_number, Gtk::PACK_SHRINK );
+            m_hbox_low_number.pack_start( m_spin_low_number, false, false );
+            m_hbox_low_number.pack_start( m_label_low_number, false, false );
 
             set_activate_entry( m_spin_low_number );
 
@@ -89,8 +91,8 @@ namespace CORE
             m_spin_high_number.set_increments( 1, 1 );
             m_spin_high_number.set_value( CONFIG::get_abone_high_number_thread() );
 
-            m_hbox_high_number.pack_start( m_spin_high_number, Gtk::PACK_SHRINK );
-            m_hbox_high_number.pack_start( m_label_high_number, Gtk::PACK_SHRINK );
+            m_hbox_high_number.pack_start( m_spin_high_number, false, false );
+            m_hbox_high_number.pack_start( m_label_high_number, false, false );
 
             set_activate_entry( m_spin_high_number );
 
@@ -100,17 +102,17 @@ namespace CORE
             m_spin_hour.set_value( CONFIG::get_abone_hour_thread() );
             
             m_hbox_hour.set_spacing( 4 );
-            m_hbox_hour.pack_start( m_spin_hour, Gtk::PACK_SHRINK );
-            m_hbox_hour.pack_start( m_label_hour, Gtk::PACK_SHRINK );
+            m_hbox_hour.pack_start( m_spin_hour, false, false );
+            m_hbox_hour.pack_start( m_label_hour, false, false );
 
             set_activate_entry( m_spin_hour );
 
             m_vbox_abone_thread.set_border_width( 16 );
             m_vbox_abone_thread.set_spacing( 8 );
-            m_vbox_abone_thread.pack_start( m_label_abone_thread, Gtk::PACK_SHRINK );
-            m_vbox_abone_thread.pack_start( m_hbox_low_number, Gtk::PACK_SHRINK );
-            m_vbox_abone_thread.pack_start( m_hbox_high_number, Gtk::PACK_SHRINK );
-            m_vbox_abone_thread.pack_start( m_hbox_hour, Gtk::PACK_SHRINK );
+            m_vbox_abone_thread.pack_start( m_label_abone_thread, false, false );
+            m_vbox_abone_thread.pack_start( m_hbox_low_number, false, false );
+            m_vbox_abone_thread.pack_start( m_hbox_high_number, false, false );
+            m_vbox_abone_thread.pack_start( m_hbox_hour, false, false );
 
             // word
             std::list< std::string > list_word = CONFIG::get_list_abone_word_thread();

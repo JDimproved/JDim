@@ -23,13 +23,14 @@ enum
 
 
 EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeStore >& treestore )
-    : Gtk::Window( Gtk::WINDOW_TOPLEVEL ),
-      m_label( "マウスの中ボタンドラッグで行の複数選択が可能です。" )
+    : Gtk::Window( Gtk::WINDOW_TOPLEVEL )
+    , m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_label( "マウスの中ボタンドラッグで行の複数選択が可能です。" )
 {
     // ツールバー
     m_toolbar = Gtk::manage( new EditListToolBar() );
     m_toolbar->open_buttonbar();
-    m_vbox.pack_start( *m_toolbar, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( *m_toolbar, false, false );
     m_toolbar->show_toolbar();
 
     // Adminクラスが無いのでツールバーのボタン等のシグナルを直接つなぐ
@@ -44,7 +45,7 @@ EditListWin::EditListWin( const std::string& url, const Glib::RefPtr< Gtk::TreeS
     m_toolbar->get_button_redo()->signal_clicked().connect( sigc::mem_fun( *this, &EditListWin::slot_redo ) );
 
     // ラベル
-    m_vbox.pack_start( m_label, Gtk::PACK_SHRINK );
+    m_vbox.pack_start( m_label, false, false );
 
     // ビュー
     m_selectview = dynamic_cast< SelectListView* > ( Gtk::manage( CORE::ViewFactory( CORE::VIEW_SELECTLIST, url ) ) );

@@ -37,7 +37,7 @@ namespace MESSAGE
 
         Gtk::Notebook m_notebook;
         std::unique_ptr<SKELETON::View> m_preview;
-        Gtk::VBox m_msgview;
+        Gtk::Box m_msgview;
 
         SKELETON::JDToolbar m_toolbar_name_mail;
 

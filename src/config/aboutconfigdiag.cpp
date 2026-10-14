@@ -8,8 +8,11 @@
 using namespace CONFIG;
 
 AboutConfigDiagStr::AboutConfigDiagStr( Gtk::Window* parent, std::string* value, const std::string& defaultval )
-    : SKELETON::PrefDiag( parent, "", true ), m_value( value ), m_defaultval( defaultval ),
-      m_button_default( "デフォルト" )
+    : SKELETON::PrefDiag( parent, "", true )
+    , m_value( value )
+    , m_defaultval( defaultval )
+    , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_button_default( "デフォルト" )
 {
     resize( 600, 1 );
 
@@ -17,7 +20,7 @@ AboutConfigDiagStr::AboutConfigDiagStr( Gtk::Window* parent, std::string* value,
     m_hbox.pack_start( m_entry );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagStr::slot_default ) );
-    m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_button_default, false, false );
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->pack_start( m_hbox );
@@ -45,8 +48,11 @@ void AboutConfigDiagStr::slot_default()
 
 
 AboutConfigDiagInt::AboutConfigDiagInt( Gtk::Window* parent, int* value, const int defaultval )
-    : SKELETON::PrefDiag( parent, "", true ), m_value( value ), m_defaultval( defaultval ),
-      m_button_default( "デフォルト" )
+    : SKELETON::PrefDiag( parent, "", true )
+    , m_value( value )
+    , m_defaultval( defaultval )
+    , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_button_default( "デフォルト" )
 {
     resize( 200, 1 );
 
@@ -54,7 +60,7 @@ AboutConfigDiagInt::AboutConfigDiagInt( Gtk::Window* parent, int* value, const i
     m_hbox.pack_start( m_entry );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagInt::slot_default ) );
-    m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_button_default, false, false );
 
     get_content_area()->set_spacing( 8 );
     get_content_area()->pack_start( m_hbox );
@@ -82,8 +88,13 @@ void AboutConfigDiagInt::slot_default()
 
 
 AboutConfigDiagBool::AboutConfigDiagBool( Gtk::Window* parent, bool* value, const bool defaultval )
-    : SKELETON::PrefDiag( parent, "", true ), m_value( value ), m_defaultval( defaultval ),
-      m_radio_true( "はい" ), m_radio_false( "いいえ" ),  m_button_default( "デフォルト" )
+    : SKELETON::PrefDiag( parent, "", true )
+    , m_value( value )
+    , m_defaultval( defaultval )
+    , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_radio_true( "はい" )
+    , m_radio_false( "いいえ" )
+    , m_button_default( "デフォルト" )
 {
     m_radio_true.set_group( m_radiogroup );
     m_radio_false.set_group( m_radiogroup );
@@ -95,7 +106,7 @@ AboutConfigDiagBool::AboutConfigDiagBool( Gtk::Window* parent, bool* value, cons
     m_hbox.pack_start( m_radio_false );
 
     m_button_default.signal_clicked().connect( sigc::mem_fun( *this, &AboutConfigDiagBool::slot_default ) );
-    m_hbox.pack_start( m_button_default, Gtk::PACK_SHRINK );
+    m_hbox.pack_start( m_button_default, false, false );
 
 
     get_content_area()->set_spacing( 8 );

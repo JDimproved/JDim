@@ -21,7 +21,8 @@ constexpr int kPopupSize = 5;
 
 
 CompletionEntry::CompletionEntry( const int mode )
-    : m_mode( mode )
+    : Gtk::Box{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_mode( mode )
     , m_enable_changed( true )
     , m_popup_win( SKELETON::POPUPWIN_DRAWFRAME )
 {

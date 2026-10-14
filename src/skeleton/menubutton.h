@@ -33,7 +33,7 @@ namespace SKELETON
         bool m_on_arrow{};
         bool m_enable_sig_clicked;
 
-        MenuButton( const bool show_arrow, Gtk::Widget* label, Gtk::PackOptions options = Gtk::PACK_EXPAND_WIDGET );
+        MenuButton( const bool show_arrow, Gtk::Widget* label, bool expand = true, bool fill = true );
 
       public:
 

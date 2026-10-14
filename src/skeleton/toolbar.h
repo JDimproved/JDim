@@ -20,7 +20,7 @@ namespace SKELETON
     class BackForwardButton;
     class CompletionEntry;
 
-    class ToolBar : public Gtk::VBox
+    class ToolBar : public Gtk::Box
     {
         SKELETON::Admin* m_admin;
         std::string m_url;

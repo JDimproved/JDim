@@ -50,6 +50,8 @@ using namespace IMAGE;
 
 ImageAdmin::ImageAdmin( const std::string& url )
     : SKELETON::Admin( url )
+    , m_tab{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_iconbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
     , m_scroll( SCROLL_NO )
 {
     m_scrwin.add( m_iconbox );
@@ -77,8 +79,8 @@ ImageAdmin::ImageAdmin( const std::string& url )
     m_tab.signal_scroll_event().connect( sigc::mem_fun( *this, &ImageAdmin::slot_scroll_event ) );
 
     m_tab.pack_start( m_scrwin );
-    m_tab.pack_end( m_right, Gtk::PACK_SHRINK );
-    m_tab.pack_end( m_left, Gtk::PACK_SHRINK );
+    m_tab.pack_end( m_right, false, false );
+    m_tab.pack_end( m_left, false, false );
     m_tab.show_all_children();
 }
 
@@ -353,7 +355,7 @@ void ImageAdmin::open_view( const COMMAND_ARGS& command )
             if( command.arg3 == "lock" ) icon->lock();
             icon->set_size_request( ICON_SIZE ,  ICON_SIZE );
             icon->show_view();
-            m_iconbox.pack_start( *icon, Gtk::PACK_SHRINK );
+            m_iconbox.pack_start( *icon, false, false );
             m_iconbox.show_all_children();
         }
 

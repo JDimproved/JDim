@@ -14,7 +14,7 @@
 
 namespace SKELETON
 {
-    class CompletionEntry : public Gtk::HBox
+    class CompletionEntry : public Gtk::Box
     {
         typedef sigc::signal< void, int > SIG_OPERATE;
         typedef sigc::signal< void > SIG_ACTIVATE;

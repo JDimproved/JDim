@@ -17,7 +17,7 @@ namespace CORE
         Gtk::Label m_label_inst;
 
         Gtk::Frame m_frame_mode;
-        Gtk::VBox m_vbox_mode;
+        Gtk::Box m_vbox_mode;
         Gtk::RadioButtonGroup m_radiogroup;
         Gtk::RadioButton m_mode1;
         Gtk::RadioButton m_mode2;

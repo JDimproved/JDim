@@ -17,8 +17,8 @@ namespace DBIMG
 {
     class ImgCacheFrame : public Gtk::Frame
     {
-        Gtk::VBox m_vbox;
-        Gtk::HBox m_hbox;
+        Gtk::Box m_vbox;
+        Gtk::Box m_hbox;
 
         Gtk::Label m_label;
         Gtk::Label m_spinlabel;
@@ -30,6 +30,8 @@ namespace DBIMG
         Gtk::SpinButton& get_spin(){ return m_spin; }
 
         ImgCacheFrame()
+            : m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+            , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
         {
             std::stringstream ss;
             ss << "現在の画像キャッシュサイズ : " << ( CACHE::get_dirsize( CACHE::path_img_root() ) / 1024 / 1024 ) << "M";
@@ -43,13 +45,13 @@ namespace DBIMG
             
             m_hbox.set_border_width( 8 );
             m_hbox.set_spacing( 4 );
-            m_hbox.pack_start( m_spin, Gtk::PACK_SHRINK );
-            m_hbox.pack_start( m_spinlabel, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( m_spin, false, false );
+            m_hbox.pack_start( m_spinlabel, false, false );
 
             m_vbox.set_spacing( 16 );
             m_vbox.set_border_width( 8 );
-            m_vbox.pack_start( m_label, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_hbox, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( m_label, false, false );
+            m_vbox.pack_start( m_hbox, false, false );
 
             set_border_width( 8 );
             set_label( "画像キャッシュ" );
@@ -59,8 +61,8 @@ namespace DBIMG
 
     class ImgAboneFrame : public Gtk::Frame
     {
-        Gtk::VBox m_vbox;
-        Gtk::HBox m_hbox;
+        Gtk::Box m_vbox;
+        Gtk::Box m_hbox;
 
         Gtk::Label m_spinlabel;
 
@@ -71,6 +73,8 @@ namespace DBIMG
         Gtk::SpinButton& get_spin(){ return m_spin; }
 
         ImgAboneFrame()
+            : m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+            , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
         {
             m_spinlabel.set_text_with_mnemonic( "日より以前のあぼ〜ん情報を消去(_A)" );
             m_spinlabel.set_mnemonic_widget( m_spin );
@@ -80,8 +84,8 @@ namespace DBIMG
             
             m_hbox.set_border_width( 16 );
             m_hbox.set_spacing( 4 );
-            m_hbox.pack_start( m_spin, Gtk::PACK_SHRINK );
-            m_hbox.pack_start( m_spinlabel, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( m_spin, false, false );
+            m_hbox.pack_start( m_spinlabel, false, false );
 
             set_border_width( 8 );
             set_label( "画像あぼ〜ん" );

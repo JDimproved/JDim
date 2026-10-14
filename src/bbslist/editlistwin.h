@@ -18,7 +18,7 @@ namespace BBSLIST
     {
         SelectListView* m_selectview;
 
-        Gtk::VBox m_vbox;
+        Gtk::Box m_vbox;
         Gtk::Label m_label;
 
         EditListToolBar* m_toolbar;

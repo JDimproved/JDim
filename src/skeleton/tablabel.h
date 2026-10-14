@@ -35,7 +35,7 @@ namespace SKELETON
         int m_height{};
 
         std::string m_url;
-        Gtk::HBox m_hbox;
+        Gtk::Box m_hbox;
         int m_id_icon;
 
         Gtk::Label m_label;

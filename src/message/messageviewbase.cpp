@@ -64,6 +64,7 @@ enum
 
 MessageViewBase::MessageViewBase( const std::string& url )
     : SKELETON::View( url )
+    , m_msgview{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_entry_name( CORE::COMP_NAME )
     , m_entry_mail( CORE::COMP_MAIL )
     , m_enable_focus( true )
@@ -439,7 +440,7 @@ void MessageViewBase::pack_widget()
     m_toolbar_name_mail.append( m_tool_fixmail );
     m_toolbar_name_mail.append( m_tool_entry_mail );
 
-    m_msgview.pack_start( m_toolbar_name_mail, Gtk::PACK_SHRINK );
+    m_msgview.pack_start( m_toolbar_name_mail, false, false );
 
     if( ! m_text_message ){
 

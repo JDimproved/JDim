@@ -18,7 +18,8 @@
 using namespace SKELETON;
 
 View::View( const std::string& url, const std::string& arg1 ,const std::string& arg2 )
-    : m_url( url )
+    : Gtk::Box{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_url( url )
     , m_autoreload_mode( AUTORELOAD_NOT )
     , m_lockable( true )
     , m_writeable( true )

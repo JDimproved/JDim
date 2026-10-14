@@ -17,8 +17,8 @@ namespace BOARD
 {
     class ProxyFrame : public Gtk::Frame
     {
-        Gtk::VBox m_vbox;
-        Gtk::HBox m_hbox;
+        Gtk::Box m_vbox;
+        Gtk::Box m_hbox;
 
       public:
 
@@ -27,8 +27,13 @@ namespace BOARD
         SKELETON::LabelEntry entry_port;
 
         explicit ProxyFrame( const std::string& title )
-        : rd_global( "全体設定を使用する" ), rd_disable( "全体設定を無効にする" ), rd_local( "ローカル設定を使用する" ),
-        entry_host( true, "ホスト：" ), entry_port( true, "ポート：" )
+            : m_vbox{ Gtk::ORIENTATION_VERTICAL, 0 }
+            , m_hbox{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+            , rd_global( "全体設定を使用する" )
+            , rd_disable( "全体設定を無効にする" )
+            , rd_local( "ローカル設定を使用する" )
+            , entry_host( true, "ホスト：" )
+            , entry_port( true, "ポート：" )
         {
             Gtk::RadioButton::Group grp = rd_global.get_group();
             rd_disable.set_group( grp );
@@ -37,14 +42,14 @@ namespace BOARD
             m_hbox.set_spacing( 8 );
             m_hbox.set_border_width( 8 );
             m_hbox.pack_start( entry_host );
-            m_hbox.pack_start( entry_port, Gtk::PACK_SHRINK );
+            m_hbox.pack_start( entry_port, false, false );
 
             m_vbox.set_spacing( 8 );
             m_vbox.set_border_width( 8 );
-            m_vbox.pack_start( rd_global, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( rd_disable, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( rd_local, Gtk::PACK_SHRINK );
-            m_vbox.pack_start( m_hbox, Gtk::PACK_SHRINK );
+            m_vbox.pack_start( rd_global, false, false );
+            m_vbox.pack_start( rd_disable, false, false );
+            m_vbox.pack_start( rd_local, false, false );
+            m_vbox.pack_start( m_hbox, false, false );
 
             set_label( title );
             set_border_width( 8 );
@@ -172,7 +177,7 @@ namespace BOARD
         Gtk::Notebook m_notebook_abone_thread;
         SKELETON::EditView m_edit_thread, m_edit_word_thread, m_edit_regex_thread;
 
-        Gtk::VBox m_vbox_abone_thread;
+        Gtk::Box m_vbox_abone_thread;
         Gtk::Label m_label_abone_thread;
 
         Gtk::Box m_hbox_low_number;
@@ -183,11 +188,11 @@ namespace BOARD
         Gtk::Label m_label_high_number;
         Gtk::SpinButton m_spin_high_number;
 
-        Gtk::HBox m_hbox_hour;
+        Gtk::Box m_hbox_hour;
         Gtk::Label m_label_hour;
         Gtk::SpinButton m_spin_hour;
 
-        Gtk::VBox m_vbox_abone_title;
+        Gtk::Box m_vbox_abone_title;
         Gtk::Button m_button_remove_old_title;
 
         // ローカルルール

@@ -27,6 +27,9 @@ enum
 AboutDiag::AboutDiag( const Glib::ustring& title )
     : Gtk::Dialog( title, ENVIRONMENT::get_dialog_use_header_bar() ? Gtk::DIALOG_USE_HEADER_BAR
                                                                    : Gtk::DialogFlags{} )
+    , m_vbox_info{ Gtk::ORIENTATION_VERTICAL, 0 }
+    , m_hbox_url{ Gtk::ORIENTATION_HORIZONTAL, 0 }
+    , m_vbox_environment{ Gtk::ORIENTATION_VERTICAL, 0 }
     , m_button_copy_environment( "クリップボードへコピー" )
 {
     set_transient_for( *CORE::get_mainwindow() );
@@ -87,29 +90,29 @@ void AboutDiag::init()
     // ロゴ
     if( get_logo() )
     {
-        m_vbox_info.pack_start( m_image_logo, Gtk::PACK_SHRINK );
+        m_vbox_info.pack_start( m_image_logo, false, false );
     }
     // バージョン 
     if( ! get_version().empty() )
     {
-        m_vbox_info.pack_start( m_label_version, Gtk::PACK_EXPAND_WIDGET, MARGIN );
+        m_vbox_info.pack_start( m_label_version, true, true, MARGIN );
     }
     // コメント
     if( ! get_comments().empty() )
     {
-        m_vbox_info.pack_start( m_label_comments, Gtk::PACK_SHRINK );
+        m_vbox_info.pack_start( m_label_comments, false, false );
     }
     // コピーライト
     if( ! get_copyright().empty() )
     {
         m_label_copyright.set_justify( Gtk::JUSTIFY_CENTER );
-        m_vbox_info.pack_start( m_label_copyright, Gtk::PACK_SHRINK );
+        m_vbox_info.pack_start( m_label_copyright, false, false );
     }
     // Webサイト
     if( ! get_website_label().empty() )
     {
-        m_hbox_url.pack_start( m_button_website, Gtk::PACK_EXPAND_PADDING );
-        m_vbox_info.pack_start( m_hbox_url, Gtk::PACK_SHRINK );
+        m_hbox_url.pack_start( m_button_website, true, false );
+        m_vbox_info.pack_start( m_hbox_url, false, false );
     }
     m_notebook.append_page( m_vbox_info, m_label_tab_info );
 
@@ -125,15 +128,15 @@ void AboutDiag::init()
     m_notebook.append_page( m_vbox_environment, m_label_tab_environment );
 
     // 動作環境一覧
-    m_vbox_environment.pack_start( m_scrollwindow_environment, Gtk::PACK_EXPAND_WIDGET );
+    m_vbox_environment.pack_start( m_scrollwindow_environment, true, true );
 
     // クリップボードへコピーのボタン
     m_button_copy_environment.signal_clicked().connect( sigc::mem_fun( *this, &AboutDiag::slot_copy_environment ) );
     m_hbuttonbox_environment.set_layout( Gtk::BUTTONBOX_END );
-    m_hbuttonbox_environment.pack_start( m_button_copy_environment, Gtk::PACK_SHRINK );
-    m_vbox_environment.pack_start( m_hbuttonbox_environment, Gtk::PACK_SHRINK );
+    m_hbuttonbox_environment.pack_start( m_button_copy_environment, false, false );
+    m_vbox_environment.pack_start( m_hbuttonbox_environment, false, false );
 
-    get_content_area()->pack_start( m_notebook, Gtk::PACK_EXPAND_WIDGET, MARGIN );
+    get_content_area()->pack_start( m_notebook, true, true, MARGIN );
 
     show_all_children();
 

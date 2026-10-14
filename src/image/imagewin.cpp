@@ -26,7 +26,7 @@ ImageWin::ImageWin()
 #endif
 
     init_win();
-    pack_remove_end( false, get_statbar(), Gtk::PACK_SHRINK );
+    pack_remove_end( false, get_statbar(), false, false );
 
     if( ! CONFIG::get_fold_image() ) set_transient_for( *CORE::get_mainwindow() );
 
@@ -140,5 +140,5 @@ void ImageWin::switch_admin()
 void ImageWin::pack_remove_tab( bool unpack, Widget& tab )
 {
     m_tab = &tab;
-    get_vbox().pack_remove_start( unpack, tab, Gtk::PACK_SHRINK );
+    get_vbox().pack_remove_start( unpack, tab, false, false );
 }

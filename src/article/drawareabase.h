@@ -116,7 +116,7 @@ namespace ARTICLE
     ///////////////////////////////////
 
 
-    class DrawAreaBase : public Gtk::HBox
+    class DrawAreaBase : public Gtk::Box
     {
         SIG_BUTTON_PRESS m_sig_button_press;
         SIG_BUTTON_RELEASE m_sig_button_release;

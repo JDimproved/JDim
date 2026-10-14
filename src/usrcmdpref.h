@@ -15,11 +15,11 @@ namespace CORE
 {
     class UsrCmdDiag : public SKELETON::PrefDiag
     {
-        Gtk::VBox m_vbox;
+        Gtk::Box m_vbox;
         Gtk::Entry m_entry_name;
         Gtk::Entry m_entry_cmd;
         Gtk::Label m_label_name;
-        Gtk::HBox m_hbox_cmd;
+        Gtk::Box m_hbox_cmd;
         Gtk::Label m_label_cmd;
         Gtk::Button m_button_manual;
 

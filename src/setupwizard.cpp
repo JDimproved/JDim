@@ -342,8 +342,8 @@ SetupWizard::SetupWizard()
 
     // ボタン
     get_action_area()->set_spacing( SPACING_SIZE / 2 );
-    get_action_area()->pack_start( m_back, Gtk::PACK_SHRINK );
-    get_action_area()->pack_start( m_next, Gtk::PACK_SHRINK );
+    get_action_area()->pack_start( m_back, false, false );
+    get_action_area()->pack_start( m_next, false, false );
     m_fin = add_button( "完了(_C)", Gtk::RESPONSE_OK );
 
     m_back.set_sensitive( false );
@@ -366,7 +366,7 @@ SetupWizard::SetupWizard()
     m_notebook.set_show_tabs( false );
     m_sigc_switch_page = m_notebook.signal_switch_page().connect( sigc::mem_fun( *this, &SetupWizard::slot_switch_page ) );
 
-    get_content_area()->pack_start( m_notebook, Gtk::PACK_EXPAND_PADDING, SPACING_SIZE );
+    get_content_area()->pack_start( m_notebook, true, false, SPACING_SIZE );
 
     show_all_children();
 }
