@@ -145,7 +145,9 @@ namespace CORE
             m_hbox_fallback_proxy.set_margin_start( 8 );
             m_hbox_fallback_proxy.set_margin_end( 8 );
             m_hbox_fallback_proxy.pack_start( fallback_proxy_check, false, false );
-            m_hbox_fallback_proxy.pack_end( m_toggle_notice, false, false );
+            auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
+            m_hbox_fallback_proxy.pack_start( *spacer, true, true );
+            m_hbox_fallback_proxy.pack_start( m_toggle_notice, false, false );
             m_vbox_exp_option.pack_start( m_hbox_fallback_proxy, false, false );
             m_vbox_exp_option.pack_start( m_revealer_notice, false, false );
 

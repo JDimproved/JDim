@@ -13,7 +13,7 @@ namespace MESSAGE
     {
       public:
 
-        MessageWin();
+        MessageWin( Gtk::Widget& widget );
         ~MessageWin() override;
 
       protected:

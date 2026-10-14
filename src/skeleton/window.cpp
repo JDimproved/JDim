@@ -124,7 +124,7 @@ void JDWindow::init_win()
         m_scrwin->set_size_request( 0, 0 );
         m_scrwin->set_policy( Gtk::POLICY_EXTERNAL, Gtk::POLICY_EXTERNAL );
         m_scrwin->add( *m_vbox_view );
-        m_vbox.pack_remove_end( false, *m_scrwin, true, true );
+        m_vbox.pack_remove_start( false, *m_scrwin, true, true );
 
         set_skip_taskbar_hint( true );
         resize( get_width_win(), 1 );
@@ -362,19 +362,6 @@ void JDWindow::pack_remove_start( bool unpack, Widget& child, bool expand, bool 
     }
     else{
         m_vbox.pack_remove_start( unpack, child, expand, fill, padding );
-        if( ! unpack ) m_vbox.show_all_children();
-    }
-}
-
-
-void JDWindow::pack_remove_end( bool unpack, Widget& child, bool expand, bool fill, guint padding )
-{
-    if( m_fold_when_focusout ){
-        m_vbox_view->pack_remove_end( unpack, child, expand, fill, padding );
-        if( ! unpack ) m_vbox_view->show_all_children();
-    }
-    else{
-        m_vbox.pack_remove_end( unpack, child, expand, fill, padding );
         if( ! unpack ) m_vbox.show_all_children();
     }
 }

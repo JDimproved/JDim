@@ -121,7 +121,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_button_clearsamba.set_halign( Gtk::ALIGN_END );
 
     m_hbox_samba.pack_start( m_label_samba_value );
-    m_hbox_samba.pack_end( m_button_clearsamba, false, false );
+    m_hbox_samba.pack_start( m_button_clearsamba, false, false );
 
     m_check_utf8_post.set_halign( Gtk::ALIGN_START );
     m_check_noname.set_halign( Gtk::ALIGN_START );
@@ -229,7 +229,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
         m_toggle_encoding.set_halign( Gtk::ALIGN_END );
 
         m_hbox_charset.pack_start( m_label_charset_value );
-        m_hbox_charset.pack_end( m_toggle_encoding, false, false );
+        m_hbox_charset.pack_start( m_toggle_encoding, false, false );
 
         m_label_encoding_analysis_method.set_markup( "<b>テキストエンコーディングを判定する方法</b>" );
         m_label_encoding_analysis_method.set_halign( Gtk::ALIGN_START );
@@ -323,7 +323,7 @@ Preferences::Preferences( Gtk::Window* parent, const std::string& url, const std
     m_button_clearmodified.set_halign( Gtk::ALIGN_END );
 
     m_hbox_modified.pack_start( m_label_modified_value );
-    m_hbox_modified.pack_end( m_button_clearmodified, false, false );
+    m_hbox_modified.pack_start( m_button_clearmodified, false, false );
 
     m_spin_live.set_halign( Gtk::ALIGN_START );
     m_check_live.set_halign( Gtk::ALIGN_START );

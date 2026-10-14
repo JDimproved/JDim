@@ -75,7 +75,6 @@ namespace SKELETON
         bool is_booting() const { return m_boot; }
 
         void pack_remove_start( bool unpack, Widget& child, bool expand = true, bool fill = true, guint padding = 0 );
-        void pack_remove_end( bool unpack, Widget& child, bool expand = true, bool fill = true, guint padding = 0 );
 
         void set_status( const std::string& stat );
         void set_status_temporary( const std::string& stat );

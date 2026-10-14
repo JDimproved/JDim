@@ -1150,6 +1150,17 @@ void Core::run( const bool init, const bool skip_setupdiag )
     if( CONFIG::get_open_sidebar_by_click() ) m_hpaned.get_ctrl().set_click_fold( SKELETON::PANE_CLICK_FOLD_PAGE1 );
     m_hpaned.get_ctrl().add_remove1( false, *m_sidebar );
 
+    // メインwindowのUIパッキング
+    m_win_main.pack_remove_start( false, *m_menubar, false, false );
+    m_win_main.pack_remove_start( false, m_toolbar_socket, false, false );
+    m_win_main.pack_remove_start( false, m_hpaned );
+    m_win_main.pack_remove_start( false, m_win_main.get_statbar(), false, false );
+
+    // メインウインドウの show_all() から切り離して設定の表示・非表示の切り替えに限定する
+    m_menubar->set_no_show_all( true );
+    m_win_main.get_statbar().set_no_show_all( true );
+    // ツールバーは box へのパッキング状態で表示・非表示を切り替える
+
     pack_widget( false );
 
     m_sigc_switch_page = m_notebook_right.signal_switch_page().connect( sigc::mem_fun( *this, &Core::slot_switch_page ) );
@@ -1289,12 +1300,14 @@ void Core::pack_widget( bool unpack )
         else m_hpaned.get_ctrl().add_remove2( unpack, *get_rpane() );
     }
 
-    // メインwindowのパッキング
-    if( SESSION::get_show_main_statbar() ) m_win_main.pack_remove_end( unpack, m_win_main.get_statbar(), false, false );
-    m_win_main.pack_remove_end( unpack, m_hpaned );
-    if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_NORMAL )
-        m_win_main.pack_remove_end( unpack, *m_toolbar, false, false );
-    if( SESSION::show_menubar() ) m_win_main.pack_remove_end( unpack, *m_menubar, false, false );
+    // メインwindowのUI表示切り替え
+    if( ! unpack ) m_hpaned.show_all();
+    m_menubar->set_visible( SESSION::show_menubar() );
+    if( SESSION::get_show_main_toolbar() && SESSION::get_toolbar_pos() == SESSION::TOOLBAR_POS_NORMAL ) {
+        m_toolbar_socket.pack_remove_start( unpack, *m_toolbar, false, false );
+        if( ! unpack ) m_toolbar_socket.show_all();
+    }
+    m_win_main.get_statbar().set_visible( SESSION::get_show_main_statbar() );
 
     if( ! unpack ){
 
@@ -1778,9 +1791,8 @@ void Core::toggle_menubar()
     std::cout << "Core::toggle_menubar\n";
 #endif
 
-    pack_widget( true );
     SESSION::set_show_menubar( ! SESSION::show_menubar() );
-    pack_widget( false );
+    m_menubar->set_visible( SESSION::show_menubar() );
 
     restore_focus( true, false );
 
@@ -1808,9 +1820,8 @@ void Core::toggle_statbar()
     std::cout << "Core::toggle_statbar\n";
 #endif
 
-    pack_widget( true );
     SESSION::set_show_main_statbar( ! SESSION::get_show_main_statbar() );
-    pack_widget( false );
+    m_win_main.get_statbar().set_visible( SESSION::get_show_main_statbar() );
 
     restore_focus( true, false );
 }

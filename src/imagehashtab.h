@@ -170,7 +170,11 @@ public:
         m_link_manual.show();
         m_hbox_initial_threshold.pack_start( m_spin_initial_threshold, false, false );
         m_hbox_initial_threshold.pack_start( m_button_reset_initial_threshold, false, false );
-        m_hbox_initial_threshold.pack_end( m_link_manual, false, false );
+        {
+            auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
+            m_hbox_initial_threshold.pack_start( *spacer, true, true );
+        }
+        m_hbox_initial_threshold.pack_start( m_link_manual, false, false );
         m_hbox_initial_threshold.show();
 
         m_label_tool.set_halign( Gtk::ALIGN_START );
@@ -216,7 +220,11 @@ public:
         m_box_tool.pack_start( m_button_delete, false, false );
         m_box_tool.pack_start( m_button_set_threshold, false, false );
         m_box_tool.pack_start( m_button_copy, false, false );
-        m_box_tool.pack_end( m_label_num_of_items, false, false );
+        {
+            auto* spacer = Gtk::make_managed<Gtk::Box>( Gtk::ORIENTATION_HORIZONTAL, 0 );
+            m_box_tool.pack_start( *spacer, true, true );
+        }
+        m_box_tool.pack_start( m_label_num_of_items, false, false );
         m_box_tool.show();
 
         // あぼーん設定一覧のセットアップ

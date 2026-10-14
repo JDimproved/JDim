@@ -79,8 +79,8 @@ ImageAdmin::ImageAdmin( const std::string& url )
     m_tab.signal_scroll_event().connect( sigc::mem_fun( *this, &ImageAdmin::slot_scroll_event ) );
 
     m_tab.pack_start( m_scrwin );
-    m_tab.pack_end( m_right, false, false );
-    m_tab.pack_end( m_left, false, false );
+    m_tab.pack_start( m_left, false, false );
+    m_tab.pack_start( m_right, false, false );
     m_tab.show_all_children();
 }
 
@@ -622,11 +622,8 @@ void ImageAdmin::open_window()
     ImageWin* win = dynamic_cast< ImageWin* >( get_jdwin() );
 
     if( ! SESSION::get_embedded_img() && ! win && ! empty() ){
-        set_jdwin( std::make_unique<IMAGE::ImageWin>() );
-        win = dynamic_cast<IMAGE::ImageWin*>( get_jdwin() );
-        win->pack_remove_tab( false, m_tab );
-        win->pack_remove_end( false, m_view );
-        win->show_all();
+        set_jdwin( std::make_unique<IMAGE::ImageWin>( m_tab, m_view ) );
+        get_jdwin()->show_all();
     }
     else if( win && win->is_hide() ){
         win->show();
@@ -644,7 +641,7 @@ void ImageAdmin::close_window()
 
     if( win ){
         win->pack_remove_tab( true, m_tab );
-        win->pack_remove_end( true, m_view );
+        win->pack_remove_start( true, m_view );
         delete_jdwin();
     }
 }
