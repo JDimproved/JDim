@@ -125,8 +125,11 @@ jdim_libs = [
 ]
 
 
+# Generated resource source must be linked into the final executable.
+# Linking it only into a static library prevents the constructor from
+# registering the resource at startup.
 jdim_exe = executable(
-  'jdim', [sources, buildinfo_h],
+  'jdim', [sources, buildinfo_h, icons_gresource_cpp],
   dependencies : [config_h_dep, jdim_deps],
   include_directories : jdim_incs,
   link_with : jdim_libs,
