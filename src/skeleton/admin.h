@@ -10,6 +10,7 @@
 #include "dispatchable.h"
 
 #include "command_args.h"
+#include "tabswitchmenu.h"
 
 #include <gtkmm.h>
 
@@ -24,7 +25,6 @@ namespace SKELETON
     class JDWindow;
     class View;
     class DragableNoteBook;
-    class TabSwitchMenu;
 
     class Admin : public Dispatchable
     {
