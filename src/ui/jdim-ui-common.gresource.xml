@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/github/jdimproved/JDim">
+    <file>admin_menu.ui</file>
+    <file>bbslistview_menu.ui</file>
+    <file>boardview_menu.ui</file>
+  </gresource>
+</gresources>

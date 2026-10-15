@@ -265,88 +265,10 @@ void BoardViewBase::setup_action()
 
     insert_action_group( "board", m_action_group );
 
-    Glib::ustring menu_ui = R"(
-<interface>
-  <!-- 複数選択した時のメニュー -->
-  <menu id="popup_menu_mul">
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">選択したスレを開く(_O)</attribute>
-        <attribute name="action">board.OpenRows</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">スレ情報を消さずにスレを再取得(_R)</attribute>
-        <attribute name="action">board.RegetRows</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">しおりを設定(_S)</attribute>
-        <attribute name="action">board.SetBookMark</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">しおりを解除(_U)</attribute>
-        <attribute name="action">board.UnsetBookMark</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">)" ITEM_NAME_SAVE_DAT R"((_S)...</attribute>
-        <attribute name="action">board.SaveDat</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">)" ITEM_NAME_FAVORITE_ARTICLE R"((_F)...</attribute>
-        <attribute name="action">board.FavoriteArticle</attribute>
-      </item>
-    </section>
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">)" ITEM_NAME_ABONE_ARTICLE R"((_N)...</attribute>
-        <attribute name="action">board.AboneThread</attribute>
-      </item>
-    </section>
-    <section>
-      <submenu>
-        <attribute name="label" translatable="yes">)" ITEM_NAME_DELETE R"((_D)</attribute>
-        <item>
-          <attribute name="label" translatable="yes">選択した行のログを削除する(_D)</attribute>
-          <attribute name="action">board.Delete</attribute>
-        </item>
-      </submenu>
-    </section>
-  </menu>
-  <!-- お気に入りボタン押した時のメニュー -->
-  <menu id="popup_menu_favorite">
-    <item>
-      <attribute name="label" translatable="yes">)" ITEM_NAME_FAVORITE_ARTICLE R"((_F)...</attribute>
-      <attribute name="action">board.FavoriteArticle</attribute>
-    </item>
-    <item>
-      <attribute name="label" translatable="yes">板をお気に入りに追加(_A)</attribute>
-      <attribute name="action">board.FavoriteBoard</attribute>
-    </item>
-  </menu>
-  <!-- お気に入りボタン押した時のメニュー( スレのみ ) -->
-  <menu id="popup_menu_favorite_article">
-    <item>
-      <attribute name="label" translatable="yes">)" ITEM_NAME_FAVORITE_ARTICLE R"((_F)...</attribute>
-      <attribute name="action">board.FavoriteArticle</attribute>
-    </item>
-  </menu>
-  <!-- 削除ボタン押した時のメニュー -->
-  <menu id="popup_menu_delete">
-    <item>
-      <attribute name="label" translatable="yes">選択した行のログを削除する(_D)</attribute>
-      <attribute name="action">board.Delete</attribute>
-    </item>
-  </menu>
-</interface>)";
 
-    auto builder = Gtk::Builder::create_from_string( menu_ui );
+    // UI 定義: src/ui/boardview_menu.ui
+    // リソース URI: /com/github/jdimproved/JDim/boardview_menu.ui (src/ui/jdim-ui-common.gresource.xml)
+    auto builder = Gtk::Builder::create_from_resource( "/com/github/jdimproved/JDim/boardview_menu.ui" );
 
     m_popup_menu.bind_model( create_context_menu(), true );
     m_popup_menu.attach_to_widget( *this );
